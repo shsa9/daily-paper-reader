@@ -15,6 +15,12 @@
 [使用教程](https://ziwenhahaha.github.io/daily-paper-reader/#/newbie/README) ·
 [提交 Issue](https://github.com/ziwenhahaha/daily-paper-reader/issues)
 
+## 界面预览
+
+首屏建议先看这里，`demo2.png` 基本覆盖了论文列表、TLDR、元信息和 AI 提问入口这四个核心区域。
+
+![Daily Paper Reader 界面预览](others/demo2.png)
+
 ## News
 
 - **2026-03-04** Released **v1.2.0** — 优化整体使用体验。
