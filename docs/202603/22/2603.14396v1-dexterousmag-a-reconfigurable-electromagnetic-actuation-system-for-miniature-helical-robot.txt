@@ -1,0 +1,364 @@
+Title: DexterousMag: A Reconfigurable Electromagnetic Actuation System for Miniature Helical Robot
+
+URL Source: https://arxiv.org/pdf/2603.14396v1
+
+Published Time: Tue, 17 Mar 2026 05:42:43 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# DexterousMag: A Reconfigurable Electromagnetic Actuation System for Miniature Helical Robot 
+
+Jialin Lin, Dandan Zhang 
+
+Abstract — Despite the promise of magnetically actuated miniature helical robots for minimally invasive interventions, state-of-the-art electromagnetic actuation systems are often space-inefficient and geometrically fixed. These constraints hin-der clinical translation and, moreover, prevent task-adaptive trade-offs among workspace coverage, energy distribution, and field/gradient capability. We present DexterousMag, a robot-arm-assisted three-coil electromagnetic actuation system that enables continuous geometric reconfiguration of a compact coil group, thereby redistributing magnetic-field and gradient capability for task-adaptive operation. The reconfiguration is realized by a parallel mechanism that exposes a single geometric DOF of the coil group, conveniently parameterized by the polar angle θ.Using an FEM-based modeling pipeline, we precompute actuation and gradient libraries and quantify the resulting trade-offs under current limits: configurations that favor depth reach expand the feasible region but reduce peak field/gradient, whereas configu-rations that favor near-surface capability concentrate stronger fields/gradients and support lifting. We validate these trade-offs on representative tasks (deep translation, planar tracking, and 3D lifting) and further demonstrate a proof-of-concept online geometry scheduling scheme for combined tasks, benchmarked against fixed-geometry settings. Overall, DexterousMag estab-lishes continuous geometric reconfiguration as an operational mechanism for enlarging the practical envelope of miniature helical robot actuation while improving energy efficiency and safety. 
+
+Index Terms —Magnetic actuation, small-scale robots, recon-figurable systems, robotic-arm-assisted actuation 
+
+I. I NTRODUCTION 
+
+Magnetic actuation is a compelling approach for driving small-scale robots in biomedical settings because it is wireless, untethered, and can provide precise remote control within enclosed and delicate environments [1]. By enabling targeted locomotion and positioning, magnetically actuated robots can, in principle, deliver therapeutic agents directly to diseased tissues, reducing systemic dispersion and off-target effects, and improving access to hard-to-reach sites [2]. These advantages motivate continued development of magnetic actuation plat-forms that can support long-range navigation and task-adaptive control under realistic anatomical and procedural constraints. Existing magnetic actuation platforms can be organized along two orthogonal axes: field source (permanent-magnet vs. elec-tromagnetic) and deployment strategy (stationary vs. robot-arm-assisted). Permanent-magnet systems exploit strong static fields and spatial gradients to pull or orient miniature robots, often by translating or rotating magnets [3]–[5]. While their high field strength is attractive, permanent magnets cannot 
+
+Jialin Lin, Dandan Zhang are with the Department of Bioengineering, Imperial College London. 
+
+Fig. 1. Concept of DexterousMag: a reconfigurable, robot-arm-assisted elec-tromagnetic actuation system that redistributes magnetic energy and gradient capability through continuous coil-group reconfiguration (parameterized by θ)for task-adaptive control of a miniature helical robot for biomedical treatment. 
+
+be instantaneously switched off, which makes transient forces difficult to “hard-stop” and complicates fine force modulation near delicate vessel walls [6]. This limitation is particularly relevant for safety-critical interactions and closed-loop control where rapid field shutoff can be desirable. Electromagnetic actuation systems (EMAs), by contrast, can modulate and null magnetic fields/gradients by controlling coil currents, offering stronger controllability and potentially safer opera-tion. Traditional stationary EMAs, as summarized in Table I, typically employ fixed coil arrangements, including Helmholtz pairs [7], Maxwell coils [8], and multi-coil platforms such as OctoMag [9], CardioMag [10], and Navion [11]. These systems can generate uniform fields and/or controllable gradi-ents with good isotropy in a bounded region, supporting high-precision manipulation. However, their fixed geometries often translate into poor space utilization and a confined feasible workspace, limiting practical in vivo navigation over long access paths from distal entry points to deep targets. In clinical workflows, this limitation commonly leads to hybrid strategies (e.g., catheterization to place an agent near the target before re-lease) [12], which forfeit end-to-end magnetic navigation and reintroduce catheter-related risks and procedural complexity. To alleviate geometric constraints and enlarge coverage, arm-assisted designs move coils relative to the target. Delta-Mag [14] employs a parallel mechanism and demonstrates 2D tubular locomotion of helical robots. RoboMag [15], [16] uses three robotic arms carrying coils to generate magnetic torque and gradient forces in 3D, reporting a substantially larger hemispherical workspace, though the effective region 
+
+> arXiv:2603.14396v1 [eess.SY] 15 Mar 2026
+
+TABLE I: Comparison with representative magnetic actuation systems. Checks indicate features explicitly reported.                                                           
+
+> System Mounting # Coils Repositioning Tunable θθ→Workspace/Gradient/Energy Model Space efficiency Validated Task(s)
+> OctoMag [9] Stationary 8✗✗✗Poor Local interventions CardioMag/Navion [8], [10] Stationary Multi ✗✗✗Poor Local interventions Human-scale EMA [11], [13] Stationary Multi ✗✗✗Poor Local interventions DeltaMag [14] Parallel robot 3✓✗✗Moderate (planar) 2D tube motion RoboMag [15], [16] 3 Arms 3✓✗✗Better (limited by 3-arm intersection) 3D helical robot TrinityMag [17] Single Arm 3✓✗✗Maximised 2D milli-robot
+> DexterousMag (this work) Single Arm 3✓✓✓Maximised Deep reach, cruise & near-surface lift
+
+remains constrained by arm intersection and mechanical reach. TrinityMag [17] mounts three coils on a single robotic arm to navigate a cubic millirobot in 2D. Collectively, these works primarily expand workspace by repositioning coils, but they do not provide a unified framework that quantifies how the intrinsic coil-group geometry governs the redistribution of field/gradient capability under current limits, nor do they ex-perimentally validate such geometric tuning as a task-adaptive operational parameter for 3D miniature helical robot actuation in viscous media. Motivated by this gap, we argue ( Fig. 1) the coil-group geometry should be treated as an operational variable. In Dex-terousMag, this geometry is parameterized by θ. Changing θ
+
+directly redistributes magnetic energy in space and therefore reshapes the achievable field magnitude and gradient distri-bution under a fixed current budget. Intuitively, decreasing θ
+
+spreads the feasible actuation region deeper into the workspace but lowers peak field/gradient. Increasing θ concentrates mag-netic energy closer to the coil assembly, shrinking the feasible region while boosting near-coil field/gradient. This trade-off is especially relevant for miniature helical robots, where dipole-gradient interaction can generate a vertical lifting component 
+
+Fz that helps counter gravity and maintain elevation in viscous media. Treating θ as an operational knob thus enables task-adaptive trade-offs among depth reach, control accuracy, and power/current usage. In this paper, we present DexterousMag, a robot-arm-assisted, reconfigurable EMA that implements this geometric-tuning principle with three coils mounted on a compact parallel mechanism. Our contributions are threefold:  
+
+> •
+
+We present DexterousMag, a robot-arm-assisted, recon-figurable EMA that employs three coils on a compact parallel mechanism to drive small-scale helical robots and enable 3D motion in viscous media.  
+
+> •
+
+We develop an FEM-based pipeline to quantify fields and gradients for workspace evaluation and field synthesis under current limits.  
+
+> •
+
+We experimentally validate task-adaptive reconfiguration: varying the coil-group geometry ( θ) trades depth reach for near-surface field/gradient concentration and lift Fz ,and we further demonstrate a proof-of-concept online 
+
+θ(z) scheduling scheme on a combined-task trajectory, benchmarked against fixed-θ settings. II. M ETHOD 
+
+In this section, we firstly define frames and conventions globally. We then present the hardware–software overview of DexterousMag (Fig. 2a), detail the reconfigurable coil mechanism (Fig. 2b-d), and finally describe the modeling pipeline used to build offline libraries of the actuation matrix and gradient Jacobian. (Fig. 2e). This pipeline is used to test how the polar angle θ reshapes the field/gradient distribution under current limits, in order to select task-oriented θ.
+
+A. Frames and Conventions 
+
+The coil assembly is threefold rotationally symmetric about the C 3 axis. We use two right-handed frames: the world frame 
+
+Fw, which is fixed to the table and coincident with the robotic arm’s base frame link_00 , and the mechanism frame Fm
+
+(Fig. 2c), which is rigidly attached to the coil assembly with its origin on the C 3 axis. Because the mechanism is mounted on the arm, it can be treated as the arm’s end effector, and unless stated otherwise all fields, coordinates, and plots are expressed in Fm. For brevity, we write p ≡ pm = [ x y z ]⊤
+
+and z ≡ zm; “deeper” denotes motion toward more negative 
+
+z along the C 3 axis of Fm.
+
+B. System Overview Hardware 
+
+DexterousMag consists of a host PC, an STM32-based current-control unit, a 6-DoF robotic arm, and a three-coil electromagnetic actuation module mounted at the arm flange. Each coil is driven by an H-bridge with inline current sens-ing. A stepper-driven ball-screw stage actuates a compact mechanism that synchronously adjusts the coil-group polar angle θ. Perception is provided by an eye-in-hand camera aligned with the coil triad centreline and a fixed side-view camera; together they enable stereo 3-D pose estimation of the miniature helical robot. This configuration mirrors the intended in vivo workflow, where the arm carries local imaging (e.g., ultrasound). Coil specifications are reported on the project website (Table S1), and the hardware connections are summarized in Fig. 2a. 
+
+Software 
+
+All software runs in a Dockerised Ubuntu/ROS Noetic environment for reproducibility. The microcontroller interfaces with ROS via rosserial. The cameras are calibrated and reg-istered to the robot using standard hand-eye calibration, and the robot description publishes the TF tree for frame transfor-mations. The robot 3-D pose is estimated from principal-axis recovery and plane intersection [18]. During experiments, the arm performs visual servoing to maintain the robot near the image center while aligning it with the C3 axis. Fig. 2. DexterousMag overview. (a) Schematic of the hardware and signal architecture. (b) Exploded view of the proposed mechanism that converts stepper–motor rotation into changes of the coil-group polar angle θ. (c) Assembly diagram; plane P denotes the cross-section of one coil mechanism. (d) One-coil mechanism: a planar four-bar linkage in plane P . (e) Modeling pipeline for building offline libraries of the actuation matrix A(p, θ ) and gradient Jacobian G(p, θ ), enabling offline workspace analysis and online magnetic-field synthesis. 
+
+C. Reconfigurable Coil Mechanism 
+
+Robot-arm-assisted EMA arrays can tune the azimuthal interval ϕ, the polar angle θ, and the target-coil spacing r [16]. For a tri-coil layout, ϕ = 120 ◦ provides near-isotropic fields and r is typically adjusted by arm positioning; therefore, we treat θ as the primary reconfiguration variable that redistributes field energy, trading depth reach against near-surface field strength and gradients. 
+
+Architecture. 
+
+Fig. 2b-c illustrates the proposed mechanism. Three identi-cal coplanar PRRR four-bar units are coupled by a common pull ring, such that a single prismatic input produces a syn-chronized change in the polar angle θ across all three coils.The current mechanism couples the three coils to preserve the coil group’s C3 symmetry, exposing a single interpretable reconfiguration DOF θ. A stepper motor drives a ball screw to translate the pull ring along the vertical axis, while linear guides constrain the motion and bearings provide low-friction revolute joints. A sacrificial 3D-printed flange is used for collision protection, and the lightweight assembly remains within the arm payload limit. 
+
+Planar kinematics. 
+
+For kinematic derivation, we define a cross-sectional plane 
+
+P that contains one coil unit (Fig. 2c); the same plane is sketched in Fig. 2d to introduce the planar geometry. The point O coincides with the origin of frame Fm. This 2-D slice captures the PRRR loop and the s → θ mapping used for mechanism actuation. Let the slider S translate along OS 
+
+with travel s = |OS |. Denote the revolute chain B → C → A
+
+and let D be a point on link CA (Fig. 2 d); A is the ground. The feasible coupler position C satisfies 
+
+∥C − B∥ = |BC |, ∥C − D∥ = |CD |.
+
+Define the rocker orientation from the +x axis by 
+
+ψ = atan2( zC − zD , x C − xD ).
+
+The coil axis DE is obtained by rotating −−→
+
+DC counter-clockwise by a fixed offset α = π/ 3, i.e. φ = ψ + α. With +z
+
+pointing upward, the coil polar angle and the coil-tip position are 
+
+θ = φ − π 
+
+> 2
+
+, E = D + |DE | [ cos φ, sin φ ].
+
+This kinematic mapping s 7 → θ is used to command the stepper stage and to register θ for simulation analysis and real platform experiment. 
+
+D. Actuation Matrix and Gradient Jacobian 
+
+Unlike conventional robots whose power is transmitted through rigid links, a magnetic miniature helical robot is driven by a contactless field. Control thus begins by identifying the linear maps from coil currents to the local magnetic field and its gradients. We therefore build reusable FEM-derived libraries to quantify feasibility and field/gradient authority un-der current limits and collision constraints. Directly calibrating 
+
+A and G on hardware is time-consuming and costly, while full-assembly FEM at every configuration is prohibitive, especially in a reconfigurable structure where changing θ reshapes the field/gradient envelope and shifts the collision-free workspace. To balance accuracy and efficiency, we adopt the pipeline in Fig. 2e: (i) define an anti-collision workspace W(θ) that re-spects geometric clearances of the arm-mechanism-coil stack; (ii) precompute single-coil FEM fields for unit current, and place each coil in pose by rigid spatial projection for any given θ; and (iii) aggregate these fields to build offline libraries 
+
+A(p, θ ) and G(p, θ ) over p ∈ W (θ) and a discrete set of θ.
+
+1) Definition of Anti-Collision Workspace 
+
+When the coil inclination angle θ changes, the overall height of the mechanism increases. To prevent collision with the human body in envisioned in vivo scenarios and with the experimental fixture in our setup, we define 
+
+W(θ) = [ −0.05 , 0.05] 2 × [−0.3, z limit (θ)] .
+
+Here, x and y span a 0.05 m × 0.05 m region to focus on field distributions as depth z increases. The upper bound zlimit (θ) is Fig. 3. Simulated workspace analysis across θ. (a) Energy density log u at θ = 35 ◦, 45 ◦, 55 ◦. (b) Mean log u vs. depth z (at x=y=0 ). (c) Feasible workspace                       
+
+> Wθcolored by Bmin . (d) Effective workspace volume V(θ)(convex hull). (e) Gradient disturbance map gF=∥∇ B∥Fvs. zand elevation εunder B0=1
+> mT; azimuth is averaged due to threefold symmetry. (f) Cycle-averaged vertical force Fzvs. zat (x, y ) = (0 ,0) ,ε=0 . All panels use common color scales and current limits for across θcomparability.
+
+the maximum admissible height without collision for a given 
+
+θ, defined in Fm.
+
+2) Modeling of Actuation Matrix and Gradient Jacobian 
+
+The actuation matrix A(p, θ ) is constructed from FEM of the individual coils. Each coil is modeled with a two-dimensional axisymmetric FEM setup at 1 A, yielding Br (r, z )
+
+and Bz (r, z ); by linearity assumption, fields scale proportion-ally with current. For efficient evaluation, the FEM results are interpolated. Evaluation is restricted to W(θ), which accounts for coil geometry and mechanical clearance. For each workspace point 
+
+p and inclination θ, the local cylindrical coordinates (ri, z i)
+
+relative to coil i are obtained by projection Pi(θ). Interpolated FEM data provide: 
+
+Bri = Bri (ri, z i), Bzi = Bzi (ri, z i),
+
+which are transformed to the global frame using the local radial unit vector eri (θ) and coil-axis direction ui(θ):
+
+ai(p, θ ) = Bri eri (θ) + Bzi ui(θ).
+
+Collecting the three coil contributions gives: 
+
+A(p, θ ) =  a1(p, θ ) a2(p, θ ) a3(p, θ ) 
+
+where the k-th column ak(p, θ ) ∈ R3 is the global field from coil k at 1 A. Hence B(p, θ ) = A(p, θ ) i for any current vector 
+
+i = [ i1, i 2, i 3]T . For each coil k (1 A), define the per-coil gradient tensor 
+
+Gk(p, θ ) ≜ ∇ak(p, θ ) ∈ R3×3.
+
+We compute Gk numerically from the interpolated single-coil FEM field using second-order central differences in x, y, z ,with a step size δ matched to the spatial sampling reso-lution. With three coils, we do not claim full 3D gradient controllability; instead, Gk(p, θ ) is used to characterize θ-dependent parasitic gradient components within the collision-free workspace. Collect the three tensors as: 
+
+G(p, θ ) = [ G1(p, θ ), G2(p, θ ), G3(p, θ ) ] ,
+
+which we refer to as the gradient tensor basis.Then, for any current vector i = [ i1, i 2, i 3]T ,
+
+∇B(p, θ ; i) = 
+
+> 3
+
+X
+
+> k=1
+
+ik Gk(p, θ ) ∈ R3×3.
+
+Together with B = A i , these libraries support constraint-aware analysis of energy distribution, feasible workspace, and field/gradient (including lift) maps, and they enable quantita-tive comparison across reconfigurable geometries. Fig. 4. Experiments 1-3 on the physical DexterousMag. a) Three mechanism configurations at θ = 35 ◦, 45 ◦, 55 ◦. b) Exp. 1: Straight line in a tube. Let B⋆                 
+
+> 0
+> denote the critical field magnitude at the target point at which the miniature helical robot transitions from static to accelerated motion. We compare the total coil current required to reach B⋆
+> 0across θ: smaller θattains the same depth with less current, indicating greater depth reach per ampere. c) Exp. 2: Circular tracking in free space ( B= 1 mT ): θ≈45 ◦yields the lowest planar tracking error with comparable current to 35 ◦, while 55 ◦degrades tracking due to stronger, more disruptive gradients. d) Exp. 3: Straight z-ramping in free space: θ= 55 ◦provides steeper gradients and the most efficient lifting.
+
+E. Workspace Analysis 
+
+We analyze the FEM–derived actuation matrix A(p, θ ) and Jacobian G(p, θ ) to quantify how the reconfigurable polar angle θ redistributes magnetic energy density and thereby the feasible workspace, gradient and force. 
+
+1) Energy Distribution 
+
+Magnetic energy density is 
+
+u(p, θ ; i) = 12μ0 ∥B(p, θ ; i)∥22, (1) which scales quadratically with current. For visualization, we set i = 1 (each coil at 1 A). 
+
+2) Feasible Workspace Under Current Limits 
+
+Since actuation is magnetic rather than transmitted through rigid links, the conventional manipulator notion of “workspace” does not apply. We therefore adopt the feasibility-based definition of workspace proposed by Boehler 
+
+et al. [19]; our formulation is an adapted specialization of their method. We evaluate feasibility under per–coil current limits ∥i∥∞ ≤
+
+Imax . The maximum field along a unit direction u ∈ S2 is given by the ℓ∞–ℓ1 duality: 
+
+max 
+
+> ∥i∥∞≤Imax
+
+u⊤A(p, θ )i = Imax ∥A(p, θ )⊤u∥1. (2) The worst-case directional capability is: 
+
+Bmin (p, θ ) = min  
+
+> ∥u∥2=1
+
+Imax ∥A(p, θ )⊤u∥1, (3) approximated by quasi-uniform sphere sampling (e.g., Fi-bonacci grid). The feasible workspace for inclination θ is: 
+
+Wθ = {p : bBmin (p, θ ) ≥ Breq }, (4) and its effective size is quantified by the convex-hull volume: 
+
+V (θ) = Vol  ConvHull( Wθ ). (5) This provides a conservative yet informative measure of workspace enlargement achievable by reconfiguring θ.
+
+3) Gradient for a Target Field 
+
+In three–coil actuation for miniature helical robot control, we typically command only the rotating field’s magnitude and direction, while spatial gradients are not independently controllable and are therefore treated as disturbances (three inputs for six field/gradient components). In this study, we characterize the disturbance gradients that arise under field control and examine how they can be exploited. Given a target field of magnitude B0 along d(α, ε ) at point p, currents are synthesized via the least–norm solution. Fig. 5. Experiment 4: Depth-based θ scheduling in a tortuous tube under an obstacle constraint. (a) Setup: a 3D-printed tortuous tube provides a vessel-like path, and an acrylic plate emulates anatomical thickness and imposes a collision constraint. The trajectory concatenates the three task primitives from Experiments 1-3 (deep reach, cruise, and shallow/climb). (b) Tube views and the depth-triggered schedule showing online updates of θ based on target robot’s height. For fair comparison, we align a common collision-free lower boundary across configurations to decouple θ-dependent geometry from the effect of field redistribution. (c) Results: median E/B 2 and P (Ipeak ≥ 7 A) across depth-triggered auto θ schedule and fixed 35,45,55 θ
+
+Using the precomputed per–coil gradient basis {G k(p, θ )}, we evaluate the resulting gradient at (p, θ ) and define 
+
+gF (α, ε, p) = ∇B(α, ε, p) F .
+
+By the threefold rotational symmetry of our coil layout about the system axis, gF is expected to be invariant to azimuth α for a fixed elevation ε due to the coil group’s central symmetry. For a compact 1-D summary, we report the azimuth-averaged profile at each elevation 
+
+M (ε, p) = 12π
+
+Z 2π
+
+> 0
+
+gF (α, ε, p) dα, 
+
+using uniform sampling of α and a common B0 and current limits across all θ.
+
+4) Mean Force under a Rotating Field 
+
+Small-scale helical robots driven by rotating fields typically operate at low frequencies in highly viscous media (about 3–10 Hz). It is therefore appropriate to evaluate the cycle-averaged magnetic loading. Assuming phase locking ( m ∥ B) and rotation about axis 
+
+ˆn, we command B(ϕ) = B0 ˆb(ϕ) in the plane orthogonal to ˆn
+
+and synthesize currents at each phase ϕ using the same least-norm procedure as above. The dipole–gradient force satisfies 
+
+F(ϕ) ∝  ∇B(ϕ)⊤B(ϕ),
+
+and we define the cycle average 
+
+¯F(ˆ n) = 12π
+
+Z 2π
+
+> 0
+
+F(ϕ) dϕ . 
+
+For interpretation we report the vertical (lift) component 
+
+Fz = ¯F · ˆz,
+
+Besides Fz , forces parallel and perpendicular to the rotation axis exist; however, in our mechanism they are not prominent relative to Fz . A detailed analysis is provided in the project website. III. E XPERIMENTS AND RESULTS 
+
+We evaluate DexterousMag using (i) simulation-based workspace analysis and (ii) four physical experiments that test the key trade-offs predicted by the simulations: depth reach, planar controllability, and gradient-assisted lift. 
+
+A. Simulation Studies 
+
+We use an FEM-based pipeline to quantify how the polar angle θ redistributes magnetic field energy, feasible workspace under current limits, and gradient-induced effects relevant to helical robot actuation. 
+
+1) Field-energy redistribution with depth 
+
+Fig. 3a visualizes the magnetic energy density distribution (log-scale) under identical coil currents. As θ decreases, the energy distribution extends deeper along negative z, indicating improved penetration. Along the symmetry axis (C 3), Fig. 3b further shows a depth-dependent crossover: larger θ concen-trates higher energy near the coil assembly, whereas smaller θ
+
+sustains comparatively higher energy at greater depths. This confirms a depth-strength trade-off governed by θ.
+
+2) Feasible workspace under current limits 
+
+Under a per-coil current limit of 5 A, Fig. 3c visualizes feasible workspaces Wθ (colored by worst-case directional capability Bmin ). Smaller θ produces a noticeably larger and deeper feasible region for generating a 1 mT rotating field. The workspace volume (Fig. 3d) increases as θ decreases, demonstrating that θ can be used to trade peak capability for depth reach. 
+
+3) Gradient disturbance and mean lift 
+
+Fig. 3e maps the induced gradient magnitude gF = ∥∇ B∥F
+
+while tracking a 1 mT target field. Across all θ, gF decays with depth and increases when the field is closer to horizontal (small elevation angle). Importantly, larger θ yields sharper near-coil gradient peaks, which can amplify undesired disturbance forces during planar control. Fig. 3f reports the cycle-averaged vertical component, indicating that larger θ produces stronger near-coil lift, whereas smaller θ maintains non-negligible lift TABLE II. Coordinate setpoints and depth references used in physical experiments. Fw denotes the world frame and Fm denotes the mechanism frame. Unless stated otherwise, the robot arm tracks the robot to keep (x, y ) ≈ (0 , 0) in Fm.Experiment Trajectory / endpoints in Fw Depth reference / windows (signal and thresholds) Notes Exp. 1: Straight line in tube Start (0 .295 , 0, 0.03) m → End                                                                                          
+
+> (0 .350 ,0,0.03) mTarget depth in Fm:z=−0.23 m (all θ)Tube test at fixed depth; field magnitude ramped (see text / Fig. 4b). Exp. 2: Circular cruise in free space Circle center (0 .295 ,0,0.034) m; radius
+> 0.02 mCommanded depth setpoints in Fm:z=
+> −0.24 m (35 ◦), z=−0.22 m (45 ◦), z=
+> −0.20 m (55 ◦)Mechanism lowered slightly to place the robot in the shallowest feasible layer for each θwhile avoiding collision. Exp. 3: 3D straight ramping in free space Start (0 .27 ,0,0.038) m→End
+> (0 .31 ,0,0.048) mDepth windows in Fm:
+> z∈[−0.24 ,−0.23] m(35 ◦),
+> z∈[−0.23 ,−0.22] m(45 ◦),
+> z∈[−0.20 ,−0.19] m (55 ◦)Ramp executed within the shallowest fea-sible layer for each θto compare maxi-mum gradient/lift capability fairly. Exp. 4: Depth-based θscheduling in a tortuous tube Compound trajectory in a tortuous tube (see Fig. 5a) Depth signal in Fw:zfrom minia-ture robot’s position; common collision-free lower boundary: z= 0 .075 m in Fw.Same trajectory executed with fixed θ∈{35 ◦,45 ◦,55 ◦}and scheduled θ(z);compare E/B 2and P(Ipeak ≥7 A) .
+
+deeper in the workspace. These results motivate the four physical experiments below. 
+
+B. Physical Experiments 
+
+To validate the simulated trends, we conducted four physical experiments on the DexterousMag platform (Figs. 4 and 5). Experiments 1-3 benchmark depth reach, planar tracking, and gradient-assisted lift under three fixed mechanism angles 
+
+θ ∈ { 35 ◦, 45 ◦, 55 ◦}. Experiment 4 extends the above tests to a constrained, more realistic scenario: the robot traverses a tortuous tube that concatenates the three task primitives, while an acrylic plate is placed above the workspace to emulate anatomical thickness and impose a collision constraint. Using the robotic arm for global re-positioning, we align a collision-free lower boundary across configurations and then compare fixed θ ∈ { 35 ◦, 45 ◦, 55 ◦} against the depth-based θ scheduled mode along the same compound trajectory. 
+
+1) Experimental setup 
+
+The miniature helical robot (Fig. 1) follows the design of Xu et al. [20] and was tested in 350 cSt silicone oil to emulate low-Reynolds-number conditions. A robot arm maintained the robot near the C 3 axis to reduce asymmetry. Each coil was current-limited to 5 A and we performed five trials per condition ( n=5 ). The detailed coordinate setpoints and depth references used in experiments is summarized in Table II. 
+
+a) Experiment 1: Depth reach in a tube. 
+
+We evaluated depth reach by driving the robot along a straight segment in a tube while ramping the commanded field magnitude. The key metric is the total current required to reach the onset of sustained forward motion at the target depth. As shown in Fig. 4b, smaller θ required substantially less current to achieve the same transition, whereas θ = 55 ◦ reached the current limit earlier and exhibited loss of synchrony at depth, consistent with the simulated feasible-workspace trends. 
+
+b) Experiment 2: Planar tracking accuracy versus gra-dient disturbance. 
+
+We assessed planar controllability by tracking a circular path at fixed field magnitude ( B0 = 1 mT) using the same controller across θ. Figure 4c shows that θ ≈ 45 ◦ achieved the lowest tracking error with the lowest current cost, while 
+
+θ = 55 ◦ degraded both accuracy and efficiency, consistent with larger near-coil gradients inducing stronger force disturbances. 
+
+c) Experiment 3: Gradient-assisted lift in z-ramping. 
+
+We tested gradient-assisted lift by commanding a straight 
+
+z-ramping trajectory. As shown in Fig. 4d, θ = 55 ◦ produced the most monotonic and steep z progression, while smaller θ
+
+yielded weaker lift over the same duration. The improved lift at θ = 55 ◦ did not require higher current cost, indicating that concentrating gradient capability near the coils benefits tasks that rely on vertical force components. 
+
+d) Experiment 4: Depth-based θ scheduling on a com-pound trajectory. 
+
+Motivated by Experiments 1-3, we evaluated a depth-triggered deterministic θ schedule along a compound trajectory spanning three depth regimes.(Fig. 5a, b): 
+
+θ(z) = 
+
+
+
+35 ◦, z < 0.035 m (deep/depth reach) ,
+
+45 ◦, 0.035 < z < 0.045 m (mid/cruise) ,
+
+55 ◦, z > 0.045 m (shallow/ramping) .
+
+For fair comparison, we aligned the lower feasible boundary across configurations (to z = 0 .075 m in Fw) and repeated the same trajectory with fixed θ ∈ { 35 ◦, 45 ◦, 55 ◦} and with the scheduled mode. Figure 5c reports the energy proxy E/B 2 and the high-current risk P (Ipeak ≥ 7 A) over the full run and within each depth regime. Energy proxy E/B 2 is defined as the ratio of mean squared current to the square of the mean magnetic field magnitude per 1-second window. This normalized in-dex evaluates the current cost relative to the generated field strength. Ipeak = max t∈window ∥I(t)∥2 is computed within each 1 s window; note that Ipeak may exceed 5 A because it is the norm of the three-coil current vector, while each coil is individually saturated at 5 A. We prioritize P (Ipeak ≥ 7 A) 
+
+as a key performance indicator to address a critical trade-off: although increasing current allows for field generation at any depth, it triggers low energy efficiency, parasitic vibrations via inter-coil interaction forces and gradient fluctuations. Dex-terousMag distinguishes itself by prioritizing an operational regime that circumvents these high-current hazards, foster-ing an electromagnetic system that is both energy-efficient and structurally stable. Over the full trajectory, scheduled θ
+
+reduced high-current events to 2.1% , while keeping E/B 2
+
+competitive. Across regimes, the schedule avoids the dominant failure modes of fixed angles: in the shallow/climb regime, fixed 35 ◦ exceeded the peak-current threshold in all windows, whereas the scheduled mode and fixed 55 ◦ avoided such events; in the mid/cruise regime, fixed 45 ◦ achieved the lowest 
+
+E/B 2, consistent with energy-efficient cruising (and under constrained motion, reduced z-regulation can make 55 ◦ appear similarly efficient); and in the deep regime, fixed 55 ◦ exhibited frequent margin violations, whereas the scheduled mode and fixed 35 ◦/45 ◦ remained within the threshold ( 0% ). Overall, a simple depth-based schedule leverages recon-figurability to improve task-level robustness under current constraints, combining the deep-workspace margin of smaller 
+
+θ, the cruising efficiency near θ ≈ 45 ◦, and the shallow/climb safety of larger θ.IV. C ONCLUSION 
+
+This letter presents DexterousMag , a robot-arm-assisted three-coil electromagnetic actuation system whose compact parallel mechanism exposes the coil-group polar angle θ as a reconfigurable geometric DOF. We precompute FEM-based libraries A(p, θ ) and Gk(p, θ ) to quantify field/gradient capa-bility and feasibility under current and collision constraints, revealing a depth-strength trade-off across θ. Experiments validate these predictions, and an added depth-triggered, piece-wise θ(z) schedule demonstrates online reconfiguration on a compound tube task for improved robustness. A limitation of the present prototype is its restricted coil size for clinical translation. Nevertheless, the role of θ is expected to persist under scaling: θ changes the coil-group geometry and thus redistributes field/gradient authority in a manner consistent with standard scaling behaviour, so the same trade-offs and scheduling principle should apply when integrated with larger coils and higher-payload clinical manipulators. REFERENCES [1] J. Lin, Q. Cong, and D. Zhang, “Magnetic Microrobots for In Vivo Cargo Delivery: A Review,” Micromachines , vol. 15, no. 5, p. 664, May 2024, number: 5 Publisher: Multidisciplinary Digital Publishing Institute. [Online]. Available: https://www.mdpi.com/2072-666X/15/5/664 [2] Y. Alapan, U. Bozuyuk, P. Erkoc, A. C. Karacakol, and M. Sitti, “Multifunctional surface microrollers for targeted cargo delivery in physiological blood flow,” Science Robotics , vol. 5, no. 42, p. eaba5726, May 2020. [Online]. Available: https://www.science.org/doi/10.1126/sc irobotics.aba5726 [3] H. Nadour, A. Bozorg Grayeli, G. Poisson, and K. Belharet, “CochleRob: Parallel-Serial Robot to Position a Magnetic Actuator around a Patient’s Head for Intracochlear Microrobot Navigation,” 
+
+Sensors , vol. 23, no. 6, p. 2973, Jan. 2023, number: 6 Publisher: Multidisciplinary Digital Publishing Institute. [Online]. Available: https://www.mdpi.com/1424-8220/23/6/2973 [4] Y. Mao and D. Zhang, “Deep reinforcement learning-based semi-autonomous control for magnetic micro-robot navigation with immersive manipulation,” in 2025 IEEE International Conference on Robotics and Automation (ICRA) . IEEE, 2025, pp. 9088–9094. [5] T. W. R. Fountain, P. V. Kailat, and J. J. Abbott, “Wireless control of magnetic helical microrobots using a rotating-permanent-magnet manipulator,” in 2010 IEEE International Conference on Robotics and Automation . Anchorage, AK: IEEE, May 2010, pp. 576–581. [Online]. Available: http://ieeexplore.ieee.org/document/5509245/ [6] Y. Shao, A. Fahmy, M. Li, C. Li, W. Zhao, and J. Sienz, “Study on Magnetic Control Systems of Micro-Robots,” Frontiers in Neuroscience , vol. 15, p. 736730, Aug. 2021. [Online]. Available: https://www.frontiersin.org/articles/10.3389/fnins.2021.736730/full [7] X. Wu, J. Liu, C. Huang, M. Su, and T. Xu, “3-D Path Following of Helical Microswimmers With an Adaptive Orientation Compensation Model,” IEEE Transactions on Automation Science and Engineering ,vol. 17, no. 2, pp. 823–832, Apr. 2020, publisher: Institute of Electrical and Electronics Engineers (IEEE). [Online]. Available: https://ieeexplore.ieee.org/document/8894106/ [8] S. Song, S. Song, and M. Q.-H. Meng, “Electromagnetic actuation system using stationary six-pair coils for three-dimensional wireless locomotive microrobot,” in 2017 IEEE International Conference on Information and Automation (ICIA) . Macau SAR, China: IEEE, Jul. 2017, pp. 305–310. [Online]. Available: http://ieeexplore.ieee.org/docu ment/8078924/ [9] M. P. Kummer, J. J. Abbott, B. E. Kratochvil, R. Borer, A. Sengul, and B. J. Nelson, “OctoMag: An Electromagnetic System for 5-DOF Wireless Micromanipulation,” IEEE Transactions on Robotics ,vol. 26, no. 6, pp. 1006–1017, Dec. 2010. [Online]. Available: http://ieeexplore.ieee.org/document/5595508/ [10] S. L. Charreyron, Q. Boehler, B. Kim, C. Weibel, C. Chautems, and B. J. Nelson, “Modeling Electromagnetic Navigation Systems,” IEEE Transactions on Robotics , vol. 37, no. 4, pp. 1009–1021, Aug. 2021. [Online]. Available: https://ieeexplore.ieee.org/document/9329101/ [11] S. Gervasoni, N. Pedrini, T. Rifai, C. Fischer, F. C. Landers, M. Mattmann, R. Dreyfus, S. Viviani, A. Veciana, E. Masina, B. Aktas, J. Puigmart´ ı-Luis, C. Chautems, S. Pan´ e, Q. Boehler, P. Gruber, and B. J. Nelson, “A Human-Scale Clinically Ready Electromagnetic Navigation System for Magnetically Responsive Biomaterials and Medical Devices.” [Online]. Available: https: //onlinelibrary.wiley.com/doi/10.1002/adma.202310701 [12] B. J. Nelson and S. Pan´ e, “Delivering drugs with microrobots,” Science ,vol. 382, no. 6675, pp. 1120–1122, Dec. 2023. [Online]. Available: https://www.science.org/doi/10.1126/science.adh3073 [13] G. Go, S.-G. Jeong, A. Yoo, J. Han, B. Kang, S. Kim, K. T. Nguyen, Z. Jin, C.-S. Kim, Y. R. Seo, J. Y. Kang, J. Y. Na, E. K. Song, Y. Jeong, J. K. Seon, J.-O. Park, and E. Choi, “Human adipose–derived mesenchymal stem cell–based medical microrobot system for knee cartilage regeneration in vivo,” Science Robotics ,vol. 5, no. 38, p. eaay6626, Jan. 2020. [Online]. Available: https://www.science.org/doi/10.1126/scirobotics.aay6626 [14] L. Yang, X. Du, E. Yu, D. Jin, and L. Zhang, “DeltaMag: An Electromagnetic Manipulation System with Parallel Mobile Coils,” in 
+
+2019 International Conference on Robotics and Automation (ICRA) .Montreal, QC, Canada: IEEE, May 2019, pp. 9814–9820. [Online]. Available: https://ieeexplore.ieee.org/document/8793543/ [15] X. Du, L. Yang, J. Yu, K. F. Chan, P. W. Y. Chiu, and L. Zhang, “RoboMag: A Magnetic Actuation System Based on Mobile Electromagnetic Coils With Tunable Working Space,” in 2020 5th International Conference on Advanced Robotics and Mechatronics (ICARM) . Shenzhen, China: IEEE, Dec. 2020, pp. 125–131. [Online]. Available: https://ieeexplore.ieee.org/document/9195280/ [16] M. Cai, Z. Qi, Y. Cao, X. Liu, X. Wu, T. Xu, and L. Zhang, “Performance-Guided Rotating Magnetic Field Control in Large Workspaces With Reconfigurable Electromagnetic Actuation System,” 
+
+IEEE Transactions on Robotics , vol. 40, pp. 4117–4131, 2024. [Online]. Available: https://ieeexplore.ieee.org/document/10663932/ [17] D. Li, B. Chen, C. Huang, S. Xu, X. Wu, and T. Xu, “TrinityMag: A novel magnetically actuated miniature robot manipulating system with a human-scale workspace,” Science China Technological Sciences ,vol. 67, no. 11, pp. 3546–3558, Nov. 2024. [Online]. Available: https://link.springer.com/10.1007/s11431-023-2591-6 [18] T. Xu, G. Hwang, N. Andreff, and S. Regnier, “Planar Path Following of 3-D Steering Scaled-Up Helical Microswimmers,” IEEE Transactions on Robotics , vol. 31, no. 1, pp. 117–127, Feb. 2015. [Online]. Available: http://ieeexplore.ieee.org/document/7015549/ [19] Q. Boehler, S. Gervasoni, S. L. Charreyron, C. Chautems, and B. J. Nelson, “On the Workspace of Electromagnetic Navigation Systems,” 
+
+IEEE Transactions on Robotics , vol. 39, no. 1, pp. 791–807, Feb. 2023, publisher: Institute of Electrical and Electronics Engineers (IEEE). [Online]. Available: https://ieeexplore.ieee.org/document/9868240/ [20] T. Xu, Y. Guan, J. Liu, and X. Wu, “Image-Based Visual Servoing of Helical Microswimmers for Planar Path Following,” IEEE Transactions on Automation Science and Engineering , vol. 17, no. 1, pp. 325–333, Jan. 2020, publisher: Institute of Electrical and Electronics Engineers (IEEE). [Online]. Available: https://ieeexplore.ieee.org/document/87140 28/

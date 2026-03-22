@@ -6,38 +6,41 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-02-21 ~ 2026-03-22
-- 运行时间：2026-03-22 10:12:03 UTC
+- 最新运行日期：2026-03-22
+- 运行时间：2026-03-22 20:04:53 UTC
 - 运行状态：成功
-- 本次总论文数：5
+- 本次总论文数：6
 - 精读区：0
-- 速读区：5
+- 速读区：6
 
 ### 今日简报（AI）
-今日聚焦精密制造与电磁控制，深度解析主动磁轴承电主轴设计及磁场数值计算新方法。
-重点推荐 9.0 分的主动磁轴承微铣削电主轴框架，以及针对复杂迟滞系统的无逆前馈控制稳定性研究。
-建议关注高阶样条函数在磁场仿真中的应用，以提升精密加工设备的建模精度与控制性能。
-- 详情：[/20260221-20260322/README](/20260221-20260322/README)
+今日速览微型机器人电磁驱动、执行器抖振抑制及光学扭矩传感的前沿进展。
+重点推荐 DexterousMag 系统对微型螺旋机器人的灵巧操控，以及基于二次规划校准的高精度光学扭矩传感器。
+建议关注微型医疗机器人硬件设计与精密控制算法的深度结合。
+- 详情：[/202603/22/README](/202603/22/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Design Framework and Manufacturing of an Active Magnetic Bearing Spindle for Micro-Milling Applications](/20260221-20260322/2603.00169v2-design-framework-and-manufacturing-of-an-active-magnetic-bearing-spindle-for-micro-milling-applications)  
-   标签：评分：9.0/10、query:em-force
-   evidence：主动磁轴承电主轴设计及动力学主动调节
-2. [A Reduced Magnetic Vector Potential Approach with Higher-Order Splines](/20260221-20260322/2602.22997v1-a-reduced-magnetic-vector-potential-approach-with-higher-order-splines)  
-   标签：评分：8.0/10、query:em-force
-   evidence：磁准静态涡流问题公式化
-3. [On Cauchy problem and stability of inversion-free feedforward control of piecewise monotonic Krasnoselskii-Pokrovskii hysteresis](/20260221-20260322/2603.03891v1-on-cauchy-problem-and-stability-of-inversion-free-feedforward-control-of-piecewise-monotonic-krasnoselskii-pokrovskii-hysteresis)  
-   标签：评分：8.0/10、query:em-force
-   evidence：减轻磁性执行器磁滞影响的无逆前馈控制
-4. [Embedded Model Predictive Control for EMS-type Maglev Vehicles](/20260221-20260322/2603.09671v1-embedded-model-predictive-control-for-ems-type-maglev-vehicles)  
-   标签：评分：8.0/10、query:em-force
-   evidence：磁悬浮系统的模型预测控制
-5. [Context-Aware Adaptive Shared Control for Magnetically-Driven Bimanual Dexterous Micromanipulation](/20260221-20260322/2603.14388v1-context-aware-adaptive-shared-control-for-magnetically-driven-bimanual-dexterous-micromanipulation)  
-   标签：评分：8.0/10、query:em-force
-   evidence：多磁源协调控制以实现精确旋转和引导
+1. [DexterousMag: A Reconfigurable Electromagnetic Actuation System for Miniature Helical Robot](/202603/22/2603.14396v1-dexterousmag-a-reconfigurable-electromagnetic-actuation-system-for-miniature-helical-robot)  
+   标签：评分：7.0/10、query:em-force
+   evidence：用于磁场和梯度控制的可重构电磁驱动系统
+2. [Chattering Reduction for a Second-Order Actuator via Dynamic Sliding Manifolds](/202603/22/2603.14990v1-chattering-reduction-for-a-second-order-actuator-via-dynamic-sliding-manifolds)  
+   标签：评分：6.0/10、query:em-force
+   evidence：通过动态滑模面减少二阶执行器的抖振
+3. [Compact Optical Single-axis Joint Torque Sensor Using Redundant Photo-Reflectors and Quadratic-Programming Calibration](/202603/22/2603.16040v1-compact-optical-single-axis-joint-torque-sensor-using-redundant-photo-reflectors-and-quadratic-programming-calibration)  
+   标签：评分：6.0/10、query:em-force
+   evidence：用于精确扭矩控制和非线性补偿的非接触式传感器
+4. [Neural-NPV Control: Learning Parameter-Dependent Controllers and Lyapunov Functions with Neural Networks](/202603/22/2603.17134v1-neural-npv-control-learning-parameter-dependent-controllers-and-lyapunov-functions-with-neural-networks)  
+   标签：评分：6.0/10、query:em-force
+   evidence：用于非线性参数变化控制综合的Neural-NPV框架
+5. [Certainty-equivalent adaptive MPC for uncertain nonlinear systems](/202603/22/2603.17843v1-certainty-equivalent-adaptive-mpc-for-uncertain-nonlinear-systems)  
+   标签：评分：6.0/10、query:em-force
+   evidence：针对执行器限制和跟踪的自适应MPC
+6. [Inductance-Based Force Self-Sensing in Fiber-Reinforced Pneumatic Twisted-and-Coiled Actuators](/202603/22/2603.18555v1-inductance-based-force-self-sensing-in-fiber-reinforced-pneumatic-twisted-and-coiled-actuators)  
+   标签：评分：6.0/10、query:em-force
+   evidence：基于电感的执行器力估算与闭环控制
 
 
 <div class="dpr-home-promo-card">

@@ -1,0 +1,2794 @@
+Title: Certainty-equivalent adaptive MPC for uncertain nonlinear systems
+
+URL Source: https://arxiv.org/pdf/2603.17843v1
+
+Published Time: Thu, 19 Mar 2026 01:27:36 GMT
+
+Number of Pages: 25
+
+Markdown Content:
+# Certainty-equivalent adaptive MPC for uncertain nonlinear systems 
+
+# Johannes Kohler 
+
+Department of Mechanical Engineering, Imperial College London, London, UK 
+
+Abstract 
+
+We provide a method to design adaptive controllers for nonlinear systems using model predictive control (MPC). By combining a certainty-equivalent MPC formulation with least-mean-square parameter adaptation, we obtain an adaptive controller with strong robust performance guarantees: The cumulative tracking error and violation of state constraints scale linearly with noise energy, disturbance energy, and path length of parameter variation. A key technical contribution is developing the underlying certainty-equivalent MPC that tracks output references, accounts for actuator limitations and desired state constraints, requires no system-specific offline design, and provides strong inherent robustness properties. This is achieved by leveraging finite-horizon rollouts, artificial references, recent analysis techniques for optimization-based controllers, and soft state constraints. For open-loop stable systems, we derive a semi-global result that applies to arbitrarily large measurement noise, disturbances, and parametric uncertainty. For stabilizable systems, we derive a regional result that is valid within a given region of attraction and for sufficiently small uncertainty. Applicability and benefits are demonstrated with numerical simulations involving systems with large parametric uncertainty: a linear stable chain of mass-spring-dampers and a nonlinear unstable quadrotor navigating obstacles. 
+
+1 Introduction 
+
+Controllers should ensure key requirements such as sta-bility, performance, and constraint satisfaction. Achiev-ing these objectives becomes particularly challenging when the model is nonlinear and uncertain. The treat-ment of model uncertainty is divided into robust control methods [21] and adaptive methods [17]. In this paper, we study adaptive control methods due to their ability to accommodate large model uncertainty. Boundedness and convergence in adaptive control have been studied for multiple decades and corresponding de-sign methods for direct or indirect adaptive control are well established [17]. Furthermore, robustness issues in adaptive control due to noise or unmodelled dynam-ics [48] have been addressed in the literature [38]. How-ever, most adaptive control designs are limited to specific system classes - for example, linear dynamics, noise-free continuous-time measurements, or matched uncertainty; and face significant challenges when accounting for ad-ditional input or state constraints [1,57,4]. In this pa-
+
+Email address: j.kohler@imperial.ac.uk (Johannes Kohler).  
+
+> 1
+
+This research was primarily carried out while the author was at the Institute for Dynamic Systems and Control, ETH Zurich, Switzerland. 
+
+per, we propose a simple-to-implement adaptive model predictive control (MPC) scheme that provides high-performance tracking for nonlinear uncertain systems while accounting for input and state constraints. 
+
+Adaptive control for nonlinear systems: One of the prac-tical challenges in adaptive control for nonlinear sys-tems is the design of a feedback and Lyapunov function that ensures stability for all possible parameter values. If a corresponding parametrized CLF is given, existing adaptive control methods can be applied to linearly parametrized uncertain nonlinear systems [44,27,31]. Corresponding CLFs can be constructed for specific system classes, e.g., using feedback linearization [10], sliding-mode/boundary-layer control [53], or backstep-ping [26]. Nonlinear adaptive control is also possible using the immersion and invariance approach [5], which requires the construction of model-specific functions of-fline. Other recent results for nonlinear adaptive control utilize control contraction metrics [31] or assume that the value function from infinite-horizon optimal control is analytically given [32]. Overall, application of nonlin-ear adaptive control is limited due to the explicit offline design of suitable parametrized feedback and Lyapunov functions (cf. [57, Sec. 5.3]). 
+
+Adaptive control under constraints: Adaptive control un-der additional input constraints needs to either assume open-loop stable systems or restrict attention to small 
+
+Preprint submitted to Automatica 19 March 2026 
+
+> arXiv:2603.17843v1 [math.OC] 18 Mar 2026
+
+parametric uncertainty and local initial states to ensure boundedness [3]. Furthermore, convergence results re-quire additional modifications: In [11,12], convergence for (asymptotically) constant references is achieved by using a specific pole placement formula that depends on the input saturation. Alternatively, in [63], sufficient conditions for convergence are derived assuming bounds on the maximal reference magnitude and the paramet-ric error. In [60], the input saturation is treated as a bounded nonlinearity and convergence is achieved using backstepping. Results for state constraints in adaptive control typically require the design of a suitable barrier function [30,59], whose construction is, in general, even more challenging than that of a CLF. Hence, while there exist adaptive control methods to account for input sat-uration or even state constraints, the parametric error must be sufficiently small and additional modifications are required that may significantly degrade performance. Overall, the consideration of more general nonlinear sys-tems, the incorporation of constraints, and transient per-formance beyond boundedness remain limiting factors for the application of adaptive control [4]. 
+
+Adaptive MPC : In contrast to classical adaptive control methods, MPC does not rely on an offline-parametrized analytical feedback law. Instead, feedback is generated by repeatedly solving finite-horizon open-loop optimal control problems online [45,18]. MPC can directly con-sider general nonlinear systems, incorporate both input and state constraints, and achieve close-to-optimal per-formance [45,18]. The combination of MPC with online parameter adaptation has also been explored early in the literature, empirically demonstrating high perfor-mance [61]. However, the lack of a theoretical founda-tion in early MPC formulations has led many researchers to instead focus on classical (unconstrained) adaptive control [8]. As a result, the theoretical development of adaptive MPC methods has historically received lim-ited attention [37]. In recent years, there have been sig-nificant contributions towards adaptive MPC, ranging from finite-impulse response (FIR) models [56], to gen-eral linear systems [34,42,58,55,43], to different classes of nonlinear models [16,33,24,52,50,14], and even to non-parametric models [36,51,15]. However, these MPC for-mulations are best characterized as robust MPC meth-ods that additionally use online data to reduce conser-vatism. As a result, they can only be applied if the un-certainty is sufficiently small. Robust methods also often rely on offline-computed polytopic invariant sets, which results in scalability issues. Both of these issues are sig-nificant limitations of existing adaptive MPC formula-tions for linear systems, and they are further exacer-bated in the case of nonlinear systems. In addition, most MPC formulations are limited to the problem of stabi-lizing a known equilibrium point, although the optimal steady-state is a function of the model parameters and thus requires online re-computation [43,55,14]. 
+
+Contribution: We present a certainty-equivalent adap-tive MPC scheme for nonlinear systems with large para-metric uncertainty. We combine a certainty-equivalent tracking MPC with a least-mean-square parameter adaptation, yielding an adaptive controller with strong theoretical guarantees: The cumulative tracking er-ror and violation of state constraints scale linearly with noise energy, disturbance energy, and path length of parameter variation. This result relies on a novel certainty-equivalent MPC, which provides strong inher-ent robustness properties. This MPC design combines and extends results on: (i) MPC theory without CLFs [18,25]; (ii) finite-horizon rollout penalties (cf. [35,23,9]); (iii) MPC-for-tracking formulations [29,54,28]. We provide our design and analysis for two cases: a) For open-loop (exponentially) stable systems, we pro-vide a semi-global result that applies to arbitrarily large noise, disturbances, and parameter uncertainty. b) Under a weaker local stabilizability condition, we provide a regional result which holds within a specified region of attraction for sufficiently small uncertainty. The proposed MPC approach is easy to implement, as no specific offline design is required. In contrast to classical adaptive control methods, we can directly con-sider input and state constraints and a general class of nonlinear systems. We demonstrate these advantages in two numerical examples with large parametric uncer-tainty: a linear stable mass-spring-damper chain and a nonlinear unstable quadrotor navigating obstacles. 
+
+Notation: The interior of a set X is denoted by int( X). The set of integers in the interval [ a, b ] ⊆ R is denoted by 
+
+I[a,b ]. By K∞, we denote the set of continuous functions 
+
+α : R≥0 → R≥0 that are strictly increasing, unbounded, and satisfy α(0) = 0. We denote the Euclidean norm of a vector x ∈ Rn by ∥x∥ = √x⊤x. The point-to-set distance for a set A ⊂ Rn and a vector x ∈ Rn is denoted by ∥x∥A := inf s∈A ∥x − s∥. By Q ≻ 0 ( Q ⪰ 0), we indicate that a matrix Q = Q⊤ ∈ Rn×n is symmetric and positive definite (positive semi-definite). We denote the maximal and minimal eigenvalue of a matrix Q = Q⊤
+
+by σmax (Q) and σmin (Q), respectively. For a positive definite matrix Q = Q⊤ ∈ Rn and a vector x ∈ Rn, we denote ∥x∥Q := px⊤Qx . The identity matrix is I.
+
+2 Problem setup and proposed approach 
+
+We first pose the control problem, describe the proposed approach, and detail the considered assumptions. 
+
+2.1 Problem setup 
+
+We consider a nonlinear discrete-time system 
+
+xk+1 = f (xk, u k, θ k, w k), k ∈ I≥0, (1) with state xk ∈ Rnx , control input uk ∈ U ⊆ Rnu , pa-rameter θk ∈ Rnθ , disturbances wk ∈ Rnw , time k ∈ I≥0,2and a compact input constraint set U. The parameters can change online with θk+1 = θk + ∆ θk ∈ Rnθ , k ∈ I≥0.We have access to noisy state measurements ˆxk = xk + vk, k ∈ I≥0, (2) with measurement noise vk ∈ Rnx . Ideally, the state should lie in a desired set xk ∈ X, although we allow for temporary violations. In this work, we focus on poly-topic 2 sets: 
+
+X = {x ∈ Rnx | Dix ≤ di, i ∈ I[1 ,r ]}. (3) Furthermore, we have given an output target yd ∈ Rny
+
+that should be tracked by the system output 
+
+yk = h(xk, u k, θ k) ∈ Rny , k ∈ I≥0. (4) While the functions f, h are known, the parameters θk,disturbances wk, and noise vk are not known. The (un-known) optimal setpoint is given by (xrd ,θ , u rd ,θ , y rd ,θ ) ∈ arg min  
+
+> (x,u,y )∈S(θ)
+
+∥yd − y∥2 
+
+> T
+
+, (5) which is defined with some positive definite weighting matrix T ∈ Rny ×ny and the set of feasible setpoints 
+
+S(θ) = {(x, u, y ) ∈ X × U × Rny |
+
+f (x, u, θ, 0) = x, y = h(x, u, θ )}. (6) We want to track the optimal feasible output yrd ,θ , which coincides with the target yd whenever the latter is feasi-ble. Note that the optimal steady-state xrd ,θ is unknown since it depends on the unknown parameters θ. We con-sider two different objectives: 
+
+Objective 1 (Semi-global) Given any compact sets X0, Θ, W, V, design an adaptive controller that ensures 
+
+> K−1
+
+X
+
+> k=0
+
+∥yk − yrd ,θ k ∥2 + ∥xk∥2
+
+> X
+
+ (7) 
+
+≤C1
+
+> K−1
+
+X
+
+> k=0
+
+∥wk∥2 + ∥vk∥2 + ∥∆θk∥
+
++ C2(∥θ0 − ˆθ0∥2 + ∥x0 − xrd ,θ 0 ∥2), ∀K ∈ I≥0,
+
+with uniform constants C1, C 2 ≥ 0, for all initial conditions x0 ∈ X0, ˆθ0 ∈ Θ, (unknown) parameters 
+
+θk ∈ Θ, disturbances wk ∈ W, and measurement noise vk ∈ V, k ∈ I≥0.   
+
+> 2For general closed sets X, the standard penalty in (14) needs to be replaced by the point-to-set distance ∥x∥2
+> X.
+
+Inequality (7) reflects the fact that both the tracking error and the state constraint violation get small if the measurement noise and disturbances become small and the parameter variation is small. Due to the adaptation, the initial parameter error ˆθ0 − θ0 only has a transient effect that becomes negligible as T → ∞ . This result is semi-global as arbitrarily large sets X0, W, V, Θ are ad-missible, however, the adaptive control design may de-pend on a conservative bound of these values. Depend-ing on the precise regularity conditions, the result may additionally require sufficiently small parameter varia-tions ∆ θk, see Appendix F for details. Since this objec-tive cannot be achieved for general unstable dynamics under compact input constraints U, we also consider the following weaker regional version. 
+
+Objective 2 (Regional) Given a suitable compact set of initial conditions (ˆ x0, ˆθ0) ∈ X ¯J and sufficiently small bounds on parameters θk ∈ Θ, disturbances 
+
+wk ∈ W, and measurement noise vk ∈ V, design an adaptive controller such that the closed-loop system satisfies (7) .
+
+2.2 Proposed approach & Outline 
+
+The proposed approach combines a certainty-equivalent tracking MPC with parameter adaptation. We introduce the parameter adaptation in Section 3, which provides suitable bounds on the cumulative closed-loop predic-tion error given that the MPC keeps the system in some compact set. The certainty-equivalent MPC is designed to track the desired setpoint and satisfy constraints when a perfect prediction model is available, while also pro-viding inherent robustness to disturbances, noise, and inaccurate model parameters. Section 4 presents such an MPC formulation for open-loop stable systems, which can handle arbitrarily large disturbances and noise. This approach achieves Objective 1 when combined with the parameter adaptation. For Objective 2, a relaxed lo-cal stabilizability condition is considered and a slightly modified MPC design is presented, which is analysed in Section 5. Section 6 provides a discussion and Section 7 presents numerical examples. Detailed proofs and aux-iliary results are provided in the appendix. 
+
+2.3 Technical assumptions 
+
+We consider the following standing assumptions. 
+
+Assumption 1 (Standing assumptions) a) (Known set of parameters) There exists a known set 
+
+Θ ⊆ Rnθ , such that θk ∈ Θ, ∀k ∈ I≥0.b) (Feasible setpoints) The set S(θ) is non-empty, closed, and uniformly bounded ∀θ ∈ Θ.c) (Regularity) The functions f , h are continuously dif-ferentiable and Lipschitz continuous with constants 
+
+Lf , Lh. The sets U, Θ are convex and compact. 
+
+3While Conditions a)–b) in Assumption 1 are quite stan-dard, the uniform Lipschitz constant in condition c) can be restrictive. Appendix F details how it can be relaxed to a local Lipschitz constant. To leverage standard model adaptation techniques, we assume that the model is lin-early parametrized. 
+
+Assumption 2 (Linear parametrization) The dynam-ics (1) are linear in θ, i.e., 
+
+f (x, u, θ, w ) ≡ f (x, u, 0, w ) + G(x, u, w )θ. 
+
+The following assumption characterizes further condi-tions on the steady-state manifold. 
+
+Assumption 3 (Regularity of optimal steady-states) a) (Unique optimal setpoint) There exist functions 
+
+gy,x : Rny × Θ → Rnx , gy,u : Rny × Θ → Rnu ,such that for all θ ∈ Θ and any (x, u, y ) ∈ S(θ),we have x = gy,x(y, θ ) u = gy,u(y, θ ). Furthermore, 
+
+gy,x, g y,u are Lipschitz continuous, i.e., there exists a constant Lgy ≥ 0, such that for all θ, ˜θ ∈ Θ,
+
+y, ˜y ∈ Rny :
+
+∥gy,x(y, θ ) − gy,x(˜ y, ˜θ)∥2 
+
+> Q
+
++ ∥gy,u(y, θ ) − gy,u(˜ y, ˜θ)∥2
+
+> R
+
+≤Lgy (∥y − ˜y∥2 
+
+> T
+
++ ∥θ − ˜θ∥2). (8) 
+
+b) (Convex output space) For any θ ∈ Θ, and all 
+
+(x1, u 1, y 1) ∈ S(θ), (x2, u 2, y 2) ∈ S(θ), β ∈ [0 , 1] ,the convex combination ˜y = βy 1 +(1 −β)y2, satisfies 
+
+(˜ x, ˜u, ˜y) ∈ S(θ) with ˜x = gy,x(˜ y, θ ), ˜u = gy,u(˜ y, θ ).c) (Feasible target) For any θ ∈ Θ, yrd ,θ = yd.d) (Regularity - setpoints) For any parameters θ, ˜θ ∈
+
+Θ, setpoint (xs, u s, y s) ∈ S(θ), it holds that 
+
+min 
+
+> (˜ xs,˜us,˜ys)∈S(˜θ)
+
+∥ys − ˜ys∥2 
+
+> T
+
+≤ Ls∥θ − ˜θ∥2. (9) In the special case of known model parameters Θ = {θ},these conditions reduce to standard assumptions from the MPC-for-tracking literature [29,28]. Conditions a)– b) ensure that the optimal steady-state xrd ,θ (5) is unique. Condition a) follows from the implicit function theorem under standard regularity conditions if the system is square ( nu = ny ≤ nx) [29, Remark 1]. Note that Condition b) does not require convexity of the set 
+
+S(θ), but only its projection on the output coordinates, which holds for many nonlinear systems. Condition c) requires that the output target yd is feasible. Condi-tion d) requires further that the change in the feasible outputs is bounded by the change in the parameters. In addition to Assumptions 1–3, we impose either an open-loop stability condition (Asm. 5) or a local stabi-lizability condition (Asm. 6) in Sections 4 and 5, respec-tively. Furthermore, the parameter adaptation in Sec-tion 3 will invoke an additional condition on the param-eter gain (Asm. 4), which is constructively satisfied in Sections 4 and 5, respectively. In Section 6.2, we show how these assumptions simplify in case of linear dynam-ics. 
+
+3 Parameter adaptation 
+
+In this section, we present the parameter adaptation method. Recall that we know a compact and convex set Θ containing the true unknown parameters θk (Asm. 1) and the model is linear in the unknown parameters (Asm. 2). Similar to [34,24,14], we use a projected least-mean-square (LMS) adaptation: ˜θk+1 =ˆθk + Γ ˆΦ⊤ 
+
+> k
+
+(ˆ xk+1 − ˆx1|k), (10a) ˆθk+1 = arg min  
+
+> θ∈Θ
+
+∥θ − ˜θk+1 ∥2Γ−1 , (10b) where Γ = Γ ⊤ ≻ 0, Γ ∈ Rnθ ×nθ is a parameter gain, ˆx1|k = f (ˆ xk, u k, ˆθk, 0) is the certainty-equivalent one-step prediction, ˆΦk = G(ˆ xk, u k, 0) ∈ Rnx×nθ is the re-gressor, and ˆθ0 ∈ Θ is an initial estimate. Equation (10b) invokes a weighted projection on the parameter set Θ. 
+
+Assumption 4 (LMS parameter gain) The parameter gain satisfies Γ ≻ 0 and ˆΦkΓ ˆΦ⊤ 
+
+> k
+
+⪯ I ∀k ∈ I≥0.
+
+A parameter gain Γ ≻ 0 satisfying Assumption 4 is easy to choose if an upper bound on ∥ ˆΦk∥ is known. This known upper bound will be addressed separately for Ob-jectives 1 and 2 in Sections 4 and 5, respectively. For many applications, such bounds are known beforehand. 
+
+Theorem 1 Let Assumptions 1a), c), 2, 4 hold and con-sider Vθ (θ) := ∥θ∥2Γ−1 , system (1) , and noisy measure-ments (2) . For all k ∈ I≥0, the LMS update (10) satisfies 
+
+Vθ (ˆθk+1 − θk+1 ) − Vθ (ˆθk − θk) (11a) 
+
+≤ − ∥ ˜x1|k∥2 + ∥ ˜wk∥2 + cθ
+
+pVθ (∆ θk),Vθ (ˆθk+1 − ˆθk) ≤∥ ˜x1|k + ˜ wk∥2, (11b) 
+
+∥ ˜wk∥ ≤ Lf (∥wk∥ + ∥vk∥) + ∥vk+1 ∥, (11c) 
+
+with 
+
+˜x1|k := ˆΦk(θk − ˆθk), (12a) ˜wk :=ˆ xk+1 − f (ˆ xk, u k, θ k, 0) (12b) =f (xk, u k, θ k, w k) + vk+1 − f (xk + vk, u k, θ k, 0) ,cθ := max 
+
+> θ,θ ′∈Θ
+
+pVθ (θ − θ′). (12c) Theorem 1 extends the LMS results from [34, Lem. 5] and [14, Prop. 1] to account for general gains Γ ≻ 0, noisy 4measurements ˆ xk̸ = xk, and time-varying parameters θk.The proof can be found in Appendix A. In Equation (12), ˜x1|k reflects the prediction error due to the inaccurate parameter estimate while ˜ wk reflects the prediction error due to disturbances wk and measurement noise vk, vk+1 .Inequality (11a) ensures that the model prediction error ˜x1|k decays asymptotically if the disturbances, noise and parameter variations decay. 
+
+4 Semi-global adaptive tracking 
+
+In this section, we address Objective 1, i.e., designing a semi-global adaptive tracking controller for open-loop stable systems. First, we introduce the open-loop stabil-ity assumption (Sec. 4.1) before presenting the proposed adaptive tracking MPC (Sec. 4.2). Then, we establish closed-loop properties of this certainty-equivalent for-mulation, including nominal stability (Sec. 4.3) and in-herent robustness (Sec. 4.4). Finally, we show that com-bining the certainty-equivalent MPC with the LMS pa-rameter adaptation yields an adaptive controller that achieves Objective 1 (Sec. 4.5). 
+
+4.1 Open-loop stable systems 
+
+For a given initial state x ∈ Rnx , constant parameter θ ∈
+
+Θ, input sequence u ∈ UN , we denote the solution to (1) with w ≡ 0 after k steps by xu(k, x, θ ) ∈ Rnx , k ∈ I[0 ,N ]
+
+with xu(0 , x, θ ) = x. For u ∈ UN , uk ∈ U denotes the k-th element in the sequence with k ∈ I[0 ,N −1] . Given any input us ∈ U, we denote the constant input sequence by uN 
+
+> s
+
+∈ UN . In this section, we consider open-loop exponentially stable systems, as formalized below. 
+
+Assumption 5 (Open-loop exponentially stable) There exist constants Cρ ≥ 1, ρ ∈ (0 , 1) , such that for any parameter θ ∈ Θ, any corresponding stationary state-input pair (xs, u s) ∈ Rnx × U, i.e., those satisfying xs =
+
+f (xs, u s, θ, 0) , and any state x ∈ Rnx , we have 
+
+∥xuk 
+
+> s
+
+(k, x, θ ) − xs∥ ≤ Cρρk∥x − xs∥, k ∈ I≥0. (13) This assumption implies that a constant input yields exponential stability of the associated steady state xs.
+
+4.2 Certainty-equivalent tracking MPC 
+
+The goal of steering the system to a given setpoint (xs, u s) while penalizing state constraint violations is encoded in the following standard stage cost (cf. [29,62]) 
+
+ℓ(x, u, x s, u s) (14) := ∥x − xs∥2 
+
+> Q
+
++ ∥u − us∥2 
+
+> R
+
++
+
+> r
+
+X
+
+> i=1
+
+qξ,i max {Dix − di, 0}2,
+
+with weighting matrices Q, R ≻ 0 and weights qξ,i > 0. The penalty on the constraint violation can be imple-mented by defining slack variables [62]. Given a horizon 
+
+M ∈ I≥1, we define the terminal penalty using the fol-lowing finite-tail cost (cf. [35,23,9]) 
+
+Vf (x, x s, u s, θ ) :=  
+
+> M−1
+
+X
+
+> k=0
+
+ℓ(xuM 
+
+> s
+
+(k, x, θ ), u s, x s, u s). (15) For a given state x ∈ Rnx , parameter θ ∈ Θ, horizon N ∈
+
+I≥1, input sequence u ∈ UN , and setpoint ( xs, u s, y s) ∈
+
+S(θ), we define the finite-horizon cost 
+
+JN (x, θ, u, x s, u s) (16) = 
+
+> N−1
+
+X
+
+> k=0
+
+ℓ(xu(k, x, θ ), uk, x s, u s) + ωV f (xu(N, x, θ ), x s, u s, θ ),
+
+with some tunable weight ω > 0. The proposed track-ing MPC is characterized by the following optimization problem: min  
+
+> u∈UN,(xs,u s,y s)∈S(θ)
+
+JN (x, θ, u, x s, u s) + ∥ys − yd∥2 
+
+> T
+
+.
+
+(17) This MPC design leverages online computed set-points (xs, u s, y s) [29,54,28], a penalty Vf based on a finite-horizon rollout [35,23,9], and soft state con-straints [62]. These components ensure that the method is easy to implement and provides strong stability and robustness properties, see Section 6 for a discus-sion. A resulting minimizer is denoted by u⋆x,θ ∈ UN ,(x⋆ 
+
+> s,x,θ
+
+, u ⋆ 
+
+> s,x,θ
+
+, y ⋆ 
+
+> s,x,θ
+
+) ∈ S(θ) and the corresponding minimum is J ⋆N (x, θ ). 3 The corresponding feedback 
+
+π : Rnx × Θ → U applies the first element of a minimiz-ing input sequence u⋆x,θ, 0 ∈ U. The closed-loop system is given by 
+
+xk+1 = f (xk, π (ˆ xk, ˆθk), θ k, w k), k ∈ I≥0, (18) where the MPC policy is computed based on the state estimate ˆ xk and the parameter estimate ˆθk.
+
+4.3 Nominal stability analysis 
+
+We first focus on the nominal closed-loop system 
+
+xk+1 = f (xk, π (xk, θ ), θ, 0) , k ∈ I≥0, (19) which considers no noise, no disturbances, and constant, exactly known parameters. The following analysis com- 
+
+> 3A minimizer exists since the constraints are compact and the involved functions are continuous [45, Prop. 2.4]. We assume w.l.o.g. that a unique minimizer is chosen.
+
+5bines results on the finite-tail cost Vf [23], stability analy-sis techniques for MPC schemes without a local CLF [25], and tracking MPC formulations [54]. We first establish some preliminary results regarding the stage cost ℓ, the terminal cost Vf , and the value function J ⋆N . Then, we show that a suitable choice of the scaling ω ≥ 1 and roll-out horizon M ensures stability. Finally, we show asymp-totic stability of the optimal setpoint. The proofs are deferred to Appendix B. 
+
+Preliminary results: 
+
+First, we provide a quadratic bound for the stage cost. 
+
+Proposition 1 Let Assumption 5 hold. There exists a constant Cℓ ≥ 1, such that for any (x, θ ) ∈ Rnx × Θ and any (xs, u s, y s) ∈ S(θ), it holds 
+
+ℓ(xuk 
+
+> s
+
+(k, x, θ ), u s, x s, u s) ≤ Cℓρk∥x − xs∥2
+
+> Q
+
+, k ∈ I≥0.
+
+(20) The following proposition provides an upper bound on the value function, which also corresponds to the expo-nential cost controllability condition in [18,25]. 
+
+Proposition 2 Let Assumption 5 hold. There exist con-stants γN ≥ 1, N ∈ I≥1, such that for any N ∈ I≥1, for any (x, θ ) ∈ Rnx × Θ, and any (xs, u s, y s) ∈ S(θ), it holds that 
+
+min 
+
+> u∈UN
+
+JN (x, θ, u, x s, u s) ≤ γN ∥x − xs∥2
+
+> Q
+
+. (21) This result also yields a uniform upper bound with 
+
+γN ≤ γ := Cℓ
+
+max {1, ω }
+
+1 − ρ , N ∈ I≥1.
+
+The following proposition characterizes how the termi-nal penalty Vf is an approximate CLF by extending the linear programming (LP) analysis from [23]. 
+
+Proposition 3 Let Assumption 5 hold and suppose ω ≥
+
+1. Then, for any (x, θ ) ∈ Rnx × Θ and any (xs, u s, y s) ∈
+
+S(θ), it holds that 
+
+min  
+
+> u∈U
+
+ωV f (f (x, u, θ, 0) , x s, u s, θ ) + ℓ(x, u, x s, u s)
+
+≤(1 + ϵf )ωV f (x, x s, u s, θ ), (22) 
+
+ϵf := max 
+
+ 1 − ρ
+
+1 − ρM
+
+
+
+CℓρM + 1 − ωω
+
+
+
+, 0
+
+
+
+. (23) By choosing the horizon M such that CℓρM < 1 and the weight ω ≥ 1/(1 − CℓρM ) > 1, we can ensure ϵf = 0. 
+
+Stability analysis: The following theorem establishes suf-ficient conditions to ensure that the value function J ⋆N
+
+decreases in the nominal case. 
+
+Theorem 2 Let Assumptions 1b) and 5 hold. Given any 
+
+ω ≥ 1, M ∈ I≥0, there exists a horizon N ∈ I≥1, such that the following inequality holds for all (x, θ ) ∈ Rnx ×Θ
+
+with a uniform constant α > 0:
+
+J ⋆N (f (x, π (x, θ ), θ, 0) , θ ) − J ⋆N (x, θ )
+
+≤ − α · ℓ(x, π (x, θ ), x ⋆ 
+
+> s,x,θ
+
+, u ⋆ 
+
+> s,x,θ
+
+). (24) 
+
+Furthermore, in case CℓρM < 1, there exists a constant 
+
+ω ≥ 1, such that α > 0 holds for all ω > ω and all horizons N ∈ I≥1.
+
+Using Inequality (24) with α > 0 in a telescopic sum and the definition of the stage cost ℓ (14), we can ensure that the nominal closed-loop system (19) converges to a steady-state xs and the cumulative state constraint vio-lation is bounded. The exact condition to ensure α > 0can be found in (B.3) in Appendix B, which adapts the worst-case linear programming analysis from [25, Thm. 6–7]. This condition also highlights that the horizon N
+
+can be drastically reduced by slightly increasing the roll-out horizon M , without affecting the stability guaran-tees. A scaling of ω = 1 is desirable to approximate opti-mal performance (cf. discussion and results in [35, Se. 4], [25, Sec. 4]), while short horizons N, M reduce compu-tational demand. 
+
+Stability of the optimal reachable steady-state: The fol-lowing proposition is an adaptation of [54, Prop. 1]. 
+
+Proposition 4 Let Assumptions 3a), b), and 5 hold. There exists a constant a > 0, such that for any (x, θ ) ∈
+
+Rnx × Θ, the minimizer to Problem (17) satisfies 
+
+∥x − x⋆ 
+
+> s,x,θ
+
+∥2 
+
+> Q
+
+≥ a∥x⋆ 
+
+> s,x,θ
+
+− xrd ,θ ∥2
+
+> Q
+
+. (25) Inequality (25) ensures that convergence to the artifi-cial steady-state x⋆ 
+
+> s,x,θ
+
+(optimized by the MPC) ensures convergence to the optimal steady-state xrd ,θ .
+
+Corollary 1 Let Assumptions 1b), 3a), b), and 5 hold. Suppose N, M, ω are chosen such that α > 0 according to Theorem 2. Then, for any (x0, θ ) ∈ Rnx × Θ, the optimal steady-state xrd ,θ is exponentially stable for the nominal closed loop (19) .
+
+Corollary 1 ensures that the proposed MPC scheme suc-cessfully stabilizes the optimal setpoint and tracks the desired reference yd as well as possible. However, the stability guarantees in Corollary 1 are only valid for the nominal system (19), which neglects noise, disturbances, and uncertainty in the model parameters. 64.4 Inherent robustness 
+
+In this section, we establish inherent robustness of the certainty-equivalent tracking MPC to disturbances, noisy measurements, and parameter mismatch. Note that the policy π(ˆ x, ˆθ) resulting from Problem (17) may in general be discontinuous. Hence, the following the-orem also leverages ideas from [49] to provide robust stability guarantees despite the noisy measurements. 
+
+Theorem 3 Let Assumptions 1, 3, and 5 hold. Suppose 
+
+M, N, ω are chosen such that α > 0 according to The-orem 2. For any parameter estimates ˆθk ∈ Θ, parame-ters θk ∈ Θ, disturbances wk ∈ Rnw , noise vk ∈ Rnx ,
+
+k ∈ I≥0, and any initial condition x0 ∈ Rnx , the closed-loop system (18) satisfies 
+
+J ⋆N (ˆ xk+1 , ˆθk+1 ) ≤ρVJ ⋆N (ˆ xk, ˆθk) (26) + cV
+
+
+
+∥ ˜wk + ˜ x1|k∥2 + ∥ˆθk+1 − ˆθk∥2
+
+with uniform constants ρV ∈ (0 , 1) , cV > 0, and ˜wk, ˜x1|k
+
+corresponding to the prediction error defined in (12) .
+
+The proof is deferred to Appendix C. Inequality (26) is similar to an input-to-state stability condition, with the optimal cost J ⋆N exponentially contracting with ρV ∈
+
+(0 , 1) and the increase in the cost bounded by the change in the parameter estimate ˆθk+1 − ˆθk and the prediction error ˜ wk + ˜ x1|k. This prediction error includes the effect of the measurement noise vk, the disturbances wk, and the parametric uncertainty ˆθk − θk.
+
+4.5 Online adaptation 
+
+In this section, we analyse the combination of the certainty-equivalent MPC with the LMS parameter adaptation and show that it achieves Objective 1. The proofs are deferred to Appendix D. First, the following lemma addresses the choice of the parameter gain Γ ≻ 0 satisfying Assumption 4. 
+
+Lemma 1 Let Assumptions 1b), c), and 5 hold. Suppose we have known compact sets X0, W, V, Θ satisfying wk ∈
+
+W, uk ∈ U, vk ∈ V, θk ∈ Θ, k ∈ I≥0, and x0 ∈ X0.Then, choosing the gain Γ ≻ 0 according to Appendix D satisfies Assumption 4. 
+
+A simple gain Γ = μI with μ > 0 can be chosen such that μ∥Φ( xk + vk, u k)∥2 ≤ 1. Corresponding uniform bounds for xk are provided in the proof of Lemma 1. This uniform bound relies not only on open-loop sta-bility (Asm. 5), but also leverages a uniform Lipschitz continuity of the dynamics w.r.t. θ (Asm. 1c)). Under a more relaxed local Lipschitz bound, uniform bounded-ness additionally requires a sufficiently small parameter variation ∆ θ, see Appendix F for details. The following theorem combines the LMS properties from Theorem 1 with the inherent robustness properties in Theorem 3 to provide closed-loop properties of the adaptive MPC. 
+
+Theorem 4 Let Assumptions 1, 2, 3, and 5 hold. Sup-pose we have known compact sets X0, W, V, Θ satisfying 
+
+wk ∈ W, vk ∈ V, θk ∈ Θ, k ∈ I≥0, and x0 ∈ X0. Con-sider the gain Γ ≻ 0 chosen according to Lemma 1 and 
+
+N, M, ω chosen such that α > 0 according to Theorem 2. Then, the closed-loop system consisting of the dynam-ics (18) , the LMS adaptation (10) and noisy measure-ments (2) satisfies Objective 1, i.e., there exist uniform constants C1, C 2 > 0, such that Inequality (7) holds. 
+
+Corollary 2 Let the conditions in Theorem 4 hold. Sup-pose further that there are no disturbances, no measure-ment noise, and the parameters are constant, i.e., vk ∈
+
+V = {0}, wk ∈ W = {0}, and ∆θk = 0 , ∀k ∈ I≥0. Then, for any initial condition x0 ∈ X0, ˆθ0 ∈ Θ, the closed-loop system satisfies 
+
+lim sup 
+
+> K→∞
+> K−1
+
+X
+
+> k=0
+
+∥yk − yrd ,θ ∥2 + ∥xk∥2
+
+> X
+
+ < ∞. (27) Theorem 4 shows that the adaptive controller meets Objective 1, i.e., provides strong nominal performance guarantees and inherent robustness to arbitrary large noise, disturbances, and parameter variations. In case the model mismatch is only due to the epistemic uncer-tainty related to the unknown model parameters, Corol-lary 2 ensures the system converges to the optimal fea-sible setpoint. 
+
+5 Adaptive tracking for unstable systems 
+
+In this section, we adjust the design and analysis from Section 4 to relax the open-loop stability condition (Asm. 5). Instead, we consider a locally stabilizing feed-back κ. For the design, we construct a finite-tail cost 
+
+Vf,κ with a rollout of the feedback κ, instead of an open-loop input (cf. (15)). Compared to the analysis in Sec-tion 4, there are two main differences: (i) the certainty-equivalent MPC only ensures stability within a certain region of attraction; (ii) different sublevel arguments are leveraged to recursively ensure boundedness. Thus, we only establish the (weaker) regional guarantees (Ob-jective 2), which require sufficiently small uncertainty and initial conditions in the region of attraction. As most results are analogous to Section 4, the following exposition only focuses on highlighting differences. The proofs can be found in Appendix E. 75.1 Stabilizing feedback 
+
+We consider a feedback of the form κ : Rnx ×Θ×X×U →
+
+U, κ(x, θ, x s, u s), that satisfies κ(xs, θ, x s, u s) = us
+
+∀(θ, x s, u s). For technical reasons (cf. [29,28]), we in-troduce a compact set ¯U ⊆ int( U) for the steady-state input constraints. We denote the feasible setpoints (6) subject to the tighter constraint ¯U by ¯S(θ) ⊆ S(θ). In this section, we consider Assumptions 1 and 3 us-ing these slightly modified sets ¯U, ¯S. We denote by 
+
+ℓκ(k, x, θ, x s, u s), k ∈ I≥0, the stage cost ℓ evaluated along the nominal prediction under the feedback κ, i.e., 
+
+xk+1 =f (xk, θ, u k, 0) , x 0 = x, (28a) 
+
+uk =κ(xk, θ, x s, u s), ℓ k = ℓκ(k, x, θ, x s, u s). (28b) We assume that the feedback κ ensures stability in some 
+
+local region: 
+
+Sloc ={(x, θ, x s, u s)
+
+| ∃ ys : ( xs, u s, y s) ∈ ¯S(θ), ∥x − xs∥2 
+
+> Q
+
+≤ cloc , θ ∈ Θ},
+
+where cloc > 0 characterizes the local attraction. 
+
+Assumption 6 (Local exponentially stabilizing feed-back) There exist constants Cℓ ≥ 1, ρ ∈ (0 , 1) , such that for any (x, θ, x s, u s) ∈ Sloc , we have 
+
+ℓκ(k, x, θ, x s, u s) ≤Cℓρk∥x − xs∥2
+
+> Q
+
+, k ∈ I≥0. (29) 
+
+Furthermore, κ is Lipschitz continuous with constant Lκ.
+
+Analogous to Proposition 1, Condition (29) holds for an exponentially stabilizing and Lipschitz continuous feed-back κ, see [35,23] for similar conditions. A correspond-ing feedback κ is, e.g., given by an LQR for the dynam-ics linearized around ( xs, u s) with parameter θ, assum-ing the linearization is stabilizable. In this case, the lo-cal region of attraction Sloc of κ is determined by the input constraints ¯U ⊆ int( U) and the local region of at-traction of the LQR, assuming the dynamics are twice continuously differentiable [13, Lemma 1]. Contrary to many existing designs, Condition (29) does not require a common feedback that robustly stabilizes all models 
+
+θ ∈ Θ, as κ depends on θ.
+
+5.2 Certainty-equivalent tracking MPC 
+
+For the finite-tail cost in (15), we replace the open-loop simulation by the finite-horizon rollout of the policy κ:
+
+Vf,κ (x, x s, u s, θ ) :=  
+
+> M−1
+
+X
+
+> k=0
+
+ℓκ(k, x, θ, x s, u s), (30) similar to [35,23]. Except for this modified terminal penalty Vf,κ and the tightened set of setpoints ¯S, the MPC formulation and closed-loop system are defined analogous to Section 4.2. We denote the corresponding open-loop cost and optimal cost by JN,κ and J ⋆N,κ ,respectively. We denote the minimizers with the su-perscript ⋆, κ and the MPC policy by πκ(x, θ ). The resulting closed-loop system is given by 
+
+xk+1 = f (xk, π κ(ˆ xk, ˆθk), θ k, w k), k ∈ I≥0. (31) 
+
+5.3 Nominal stability analysis 
+
+Due to the local condition (Asm. 6), we follow [54,23] and characterize the region of attraction as a sublevel set with a user-chosen constant ¯J > 0: 
+
+X ¯J := {(x, θ ) ∈ Rnx × Θ| J ⋆N,κ (x, θ ) ≤ ¯J } . (32) We first study the nominal closed loop 
+
+xk+1 = f (xk, π κ(xk, θ ), θ, 0) . (33) The following theorem extends the nominal stability analysis from Theorem 2, leveraging the region of at-traction characterization from [22, Thm. 4.37]. 
+
+Theorem 5 Let Assumptions 1b) and 6 hold. For any 
+
+¯J > 0, and any ω ≥ 1, M ∈ I≥0, there exists a horizon 
+
+N ∈ I≥1, such that the following inequality holds for all 
+
+(x, θ ) ∈ X ¯J with a uniform constant α > 0:
+
+J ⋆N,κ (f (x, π κ(x, θ ), θ, 0) , θ ) − J ⋆N,κ (x, θ )
+
+≤ − α · ℓ(x, π κ(x, θ ), x ⋆,κ  
+
+> s,x,θ
+
+, u ⋆,κ  
+
+> s,x,θ
+
+). (34) 
+
+Corollary 3 Assumptions 1b), 3a), b), and 6 hold. Sup-pose N, M, ω, ¯J are chosen according to Theorem 5. For any (x0, θ ) ∈ X ¯J , the optimal steady-state xrd ,θ is expo-nentially stable for the nominal closed loop (33) .
+
+Compared to Theorem 2, the length of the horizon N
+
+needs to be increased by a factor that scales linearly in ¯J > 0, the desired sublevel set; see (E.1) in Appendix E. More discussions regarding the role of the horizon N for the region of attraction can be found in [22, Sec. 4.1]. 
+
+5.4 Inherent robustness 
+
+The following theorem extends the robustness analysis from Theorem 3, assuming a sufficiently small bound on the prediction error. 
+
+Theorem 6 Let Assumptions 1, 3, and 6 hold. Suppose 
+
+M, N, ω, ¯J are chosen according to Theorem 5. There exist uniform constants ρV ∈ (0 , 1) , cV > 0, such that for any initial condition (x0, ˆθ0) ∈ X ¯J , any parameter 
+
+8estimates ˆθk ∈ Θ, parameters θk ∈ Θ, noise vk ∈ Rnx ,disturbances wk ∈ Rnw satisfying 
+
+∥ ˜wk + ˜ x1|k∥2 + ∥ˆθk+1 − ˆθk∥2 ≤ ¯J
+
+cV(1 − ρV) , ∀k ∈ I≥0,
+
+(35) 
+
+the closed-loop system (31) satisfies (ˆ xk, ˆθk) ∈ X ¯J and 
+
+J ⋆N,κ (ˆ xk+1 , ˆθk+1 ) ≤ρVJ ⋆N,κ (ˆ xk, ˆθk) (36) + cV
+
+
+
+∥ ˜wk + ˜ x1|k∥2 + ∥ˆθk+1 − ˆθk∥2
+
+.
+
+Note that the robust stability guarantees (36) only hold for sufficiently small model mismatch (35). To allow for a larger mismatch in (35), the constant ¯J may need to be larger, which may also require a larger prediction horizon N .
+
+5.5 Online adaptation 
+
+The following lemma addresses the suitable choice of the parameter gain Γ ≻ 0. 
+
+Lemma 2 Let Assumptions 1b)–c) hold. Suppose we have a known compact set V and a constant ¯J > 0, such that vk ∈ V, (ˆ xk, ˆθk) ∈ X ¯J , ∀k ∈ I≥0. Then, choos-ing the gain Γ ≻ 0 according to Appendix E satisfies Assumption 4. 
+
+Lemma 2 relies on positive invariance of X ¯J , which needs to be recursively established to ensure that we can apply the LMS bounds (Thm. 1). To study closed-loop prop-erties, we consider the Lyapunov candidate function 
+
+Vκ(ˆ xk, ˆθk, θ k) := JN,κ (ˆ xk, ˆθk) + ˜ cVVθ (θk − ˆθk), (37) with ˜ cV = cV(1+ σmin (Γ −1)) > 0. The following theorem shows that the adaptive controller addresses Objective 2. 
+
+Theorem 7 Let Assumptions 1, 2, 3, and 6 hold. Con-sider M, N, ω, ¯J according to Theorem 5 and Γ accord-ing to Lemma 2. Suppose wk ∈ W, vk ∈ V, θk ∈ Θ,
+
+k ∈ I≥0, and (ˆ x0, ˆθ0) ∈ X ¯J with sufficiently small sets 
+
+W, V, Θ. Then, the closed-loop system consisting of the dynamics (31) with the LMS adaptation (10) , and noisy measurements (2) satisfies Objective 2, i.e., there exist uniform constants C1, C 2 > 0, such that (7) holds. 
+
+Compared to Theorem 4, this result uses additional ar-guments to ensure invariance of X ¯J . We have a clear characterization of the region of attraction X ¯J , e.g., we can ensure that all initial conditions close to a steady-state lie in the region of attraction [6]. In contrast, the restriction on the sufficiently small sets Θ , V, W is only qualitative due to the utilization of conservative Lip-schitz continuity bounds. The following corollary pro-vides a more quantitative description of the permissible parameters Θ for a special case. 
+
+Corollary 4 Let the conditions in Theorem 7 hold. Sup-pose further that there are no disturbances, no measure-ment noise, and the parameters are constant, i.e., vk ∈
+
+V = {0}, wk ∈ W = {0}, and θk = θ, ∀k ∈ I≥0. Then, for any initial condition Vκ(ˆ x0, ˆθ0, θ 0) ≤ ¯J , the closed-loop system satisfies (7) and 
+
+lim sup 
+
+> K→∞
+> K−1
+
+X
+
+> k=0
+
+∥yk − yrd ,θ ∥2 + ∥xk∥2
+
+> X
+
+ < ∞. (38) Corollary 4 ensures that the cumulative tracking error and the state constraint violation are uniformly bounded and thus converge to zero. The considered bound on the Lyapunov function Vκ highlights the interplay between the parameter estimation error Vθ and the region of at-traction characterized by ¯J .
+
+6 Discussion 
+
+We first discuss the properties of the proposed approach in contrast to existing approaches (Sec. 6.1). Then, we show how the considered conditions simplify in the spe-cial case of linear dynamics (Sec. 6.2). 
+
+6.1 Proposed design & properties 
+
+The proposed MPC design utilizes an (artificial) online computed setpoint ( xs, u s, y s) with a quadratic offset cost [29,54,28]. Thus, we can directly pass arbitrary tar-get setpoints yd to the controller. The prediction hori-zon N is extended by applying the steady-state input us
+
+or a local feedback κ over M steps [35,23,9]. By choos-ing M sufficiently long, we ensure stability without re-quiring an explicit design of a local CLF. The state con-straints along the prediction horizon are softened using a quadratic penalty in the stage cost ℓ [62], which al-lows for implementation of a simple certainty-equivalent approach. Compared to a standard MPC implementa-tion [45], the complexity of the online computation and offline design are only moderately increased. Contrary to many competing robust and adaptive MPC approaches, we do not require any specific offline design and no re-design is required if the parameter θ or the reference 
+
+yd change during online operation. In the nominal case (no disturbances, no measurement noise, constant un-known parameters), Objective 1/2 ensures that we con-verge to the optimal feasible setpoint, despite the poten-tially large parametric error (cf. Cor. 2/4). In addition, Equation (7) shows that small noise, disturbances, and parameter variation do not have a significant effect on 9the closed loop. Below, we discuss alternatives and pos-sible modifications. 
+
+Robustness considerations: Unmodelled dynamics and noisy measurements can yield instability in adaptive control implementations [48]. Although we establish ro-bustness properties of the proposed approach, the em-ployment of additional robustification methods can be vital to reduce the tracking error [38]. In particular, ad-ditional slowly time-varying disturbances can be com-pensated by additionally estimating additive parameters 
+
+θ [39,41]. High-frequency noise can be attenuated with suitably designed filters [16]. The least-squares adapta-tion could be robustified using a deadzone and normal-ization, though a rigorous analysis is left for future work. 
+
+CLF: A natural alternative to the considered MPC for-mulation would be to compute a CLF offline and use it as a terminal cost [45]. However, computing a terminal cost that is valid for all states x ∈ Rnx , all setpoints ( xs, u s), and all parameters θ ∈ Θ is even more challenging than computing the adaptive CLF required in classical non-linear adaptive control [44]. Most adaptive MPC formu-lations assume a common Lyapunov function (indepen-dent of the parameters θ) [56,34,52], in which case also robust methods without model adaptations can be uti-lized. The main benefit of the proposed approach is the ease of implementation without cumbersome offline de-sign, which is achieved through an implicit approxima-tion of a CLF using a finite-horizon rollout. Such finite-horizon rollouts are not only utilized in classical [35] and recent [23,9] MPC designs, but also play an important role in unifying MPC and reinforcement learning meth-ods [7,46]. 
+
+State constraints and safety considerations: In many applications, we might also be interested in obtaining pointwise in-time satisfaction of state constraints, i.e., 
+
+xk ∈ X, k ∈ I≥0. In this case, a certainty-equivalent MPC may fail to ensure recursive feasibility. This prob-lem can be circumvented by posing prior bounds on the set of possible parameters and disturbances and em-ploying robust MPC designs [16,33,24,50,14,52]. How-ever, these methods can typically only be applied if the parametric uncertainty is quite small. 
+
+6.2 Special case: Linear systems 
+
+In the following, we discuss how the conditions simplify for linear systems 
+
+f (x, u, θ, w ) = Aθ x + Bθ u + Ew + eθ , (39) 
+
+h(x, u, θ ) = Cθ x + Dθ u + fθ ,
+
+with Aθ , B θ , e θ , C θ , D θ , f θ affine in θ (cf. [34]). We con-sider polytopic input constraints U and suppose some polytopic parameter set Θ with θk ∈ Θ is known, 
+
+Regularity (Asm. 1): Condition a) holds, e.g., if the ori-gin is a feasible equilibrium, i.e., eθ = 0, 0 ∈ U, 0 ∈ X.Condition b) holds trivially. Although linear systems are trivially Lipschitz continuous w.r.t. ( x, u, w ), they are in fact not globally Lipschitz continuous w.r.t. θ, i.e., Condition c) does not hold directly. However, a slightly weaker local Lipschitz condition holds trivially. In Ap-pendix F, we show how our analysis naturally generalizes to such a local Lipschitz condition, with the main caveat that the parameter variation ∆ θ needs to be sufficiently small. This is not surprising, given that we analyse a lin-ear time-varying systems. 
+
+Linear parametrization: Assumption 2 regarding linear parametrization is also easy to satisfy for linear systems. 
+
+Steady-states (Asm. 3): The uniqueness condition (Asm. 3a)) reduces to a standard rank condition (cf. [29, Rk. 1], [45, Lemma 1.8]) that holds for generic linear systems. Convexity (Asm. 3b)) holds trivially. Assump-tion 3c) follows from linear independence constraint qualification and second order sufficient conditions [47, Thm. 4.1]. Assumption 3d) requires a feasible target yd.
+
+Stability/stabilizability: Assumption 5 reduces to Aθ
+
+Schur stable for all θ ∈ Θ. Assumption 6 holds if ( Aθ , B θ )is stabilizable by, e.g., using the LQR κ = us +KLQR (θ)·
+
+(x − xs). The restriction to a local condition cloc > 0ensures κ(·) ∈ U given us ∈ ¯U ⊆ int( U). 
+
+Implementation: The MPC optimization problem (17) is a convex linearly constrained quadratic program, which can be efficiently solved. In the absence of state constraints, i.e., X = Rn, the terminal costs 
+
+Vf /V f,κ (15)/(30) can be implemented as a quadratic function ∥x − xs∥2  
+
+> P(ˆθk)
+
+, where P (ˆθk) is computed online. Overall, most conditions are satisfied by generic linear systems. The restriction to square systems ( ny = nu) to ensure uniqueness can be naturally relaxed [54]. In addi-tion, as detailed in Appendix F, the parameter variation ∆θ needs to be sufficiently small, which holds trivially if we consider a linear time-invariant system. A horizon 
+
+N, M and weighting ω ensuring stability (Thm. 2/5) can be efficiently determined based on a generalized eigen-value [25,22]. 
+
+7 Numerical examples 
+
+First, we consider a linear open-loop stable chain of mass-spring-dampers (Sec. 7.1). Then, we consider a nonlinear unstable quadrotor navigating obstacles (Sec. 7.2). Optimization problems are solved using Matlab with quadprog or IPOPT with CasADi [2]. Computation times were measured on a laptop with an Intel Core i7-10750H processor (2.6 GHz), 32 GB RAM, running Windows 11, without compilation. 10 Fig. 1. Chain of masses connected by springs and dampers. 
+
+All constants are provided in the open-source code: 
+
+https://github.com/KohlerJohannes/Adaptive 
+
+7.1 Linear stable mass-spring-damper chain 
+
+We first consider a linear system adapted from [25]: We have 10 series-connected mass-spring-dampers ( nx =20) with one actuator ( nu = 1) and the output y corre-sponding to the position of the first mass ( ny = 1), see Figure 1. We have bounded inputs U = [ −25 , 25] and a soft state constraint y ≤ 0.7. The system is open-loop stable, under-actuated, and non-minimum-phase. 
+
+Adaptive MPC design: We have given an initial param-eter estimate and the true (unknown) physical param-eters may differ by up to ±50%. The linear dynamics are exactly discretized with a sampling time of 500 [ms] and we treat all entries in the resulting discrete-time sys-tem as uncertain, yielding nθ = 20 · 21 = 420 uncertain parameters. Despite this large uncertainty, it is easy to verify that the system is open-loop stable for all θ ∈ Θ. The MPC implementation uses a horizon of M = 22, 
+
+N = 6, and a scaling ω = 5, which satisfies the stability conditions in Theorem 2. The parameter gain Γ is cho-sen according to (D.8) using U and a box R ⊆ Rnx on the magnitude of possible states. 
+
+Numerical simulations: The true parameters are con-stant and deviate exactly by ±50% from the initial es-timate ˆθ0. Disturbances wk and noise vk are uniformly distributed. A piece-wise constant reference yrd is cho-sen, which yields optimal steady-states that are some-times on the boundary of the constraints X. We compare the following designs: (i) Proposed : the proposed adaptive MPC; (ii) No-term : Proposed without terminal cost ( M = 0); (iii) No-adapt : Proposed without adaptation (Γ = 0); (iv) Robust : a robust adaptive MPC [34]. The Robust implementation requires an offline design of a Lyapunov function that is valid for all θ ∈ Θ. However, even with a uncertainty of only ±20%, such a common Lyapunov function does not exist and hence we were unable to implement this method. Numerical results for the remaining methods can be seen in Figure 2. A quan-titative comparison is found in Table 1. The proposed adaptive MPC successfully converges to the optimal set-points. In the first few steps, the method shows con-straint violations and overshoot. However, as the model is adapted during closed-loop operation, overshoot and constraint violations become negligible. The approach without the finite-horizon rollout terminal cost Vf (No-term ) also improves over time and successfully converges Proposed No-term No-adapt Robust Track 1.00 2.51 1.38 NA Constr. 1.00 18 .97 698 .05 NA           
+
+> Table 1 Cumulative tracking error P
+> k∥yk−yrd ,θ ∥2and constraint violation P
+> k∥xk∥2
+> Xfor a simulation of 200 [s], normalized to the performance of the proposed method.
+> Fig. 2. Simulation result for stable mass-spring-dampers.
+
+to the targets. However, the controller shows a rather sluggish response and takes visibly longer to get close to the target. The approach without adaptation ( No-adapt ) yields large and persistent constraint violations and tracking errors, i.e., fails to achieve Objective 1. Computation times of the proposed MPC are 60 ±5 [ ms ], which is almost one order of magnitude faster than re-quired for real-time. 
+
+7.2 Nonlinear unstable quadrotor navigating obstacles 
+
+We consider a planar quadrotor problem adapted from [50]: 
+
+
+
+˙p1
+
+˙p2
+
+˙ϕ
+
+˙v1
+
+˙v2
+
+¨ϕ
+
+
+
+=
+
+
+
+v1 cos( ϕ) − v2 sin( ϕ)
+
+v1 sin( ϕ) + v2 cos( ϕ)˙ϕv2 ˙ϕ − g · sin( ϕ) + cos( ϕ)w
+
+−v1 ˙ϕ − g · cos( ϕ) + θ1(u1 + u2) − sin( ϕ)wθ2(u1 − u2)
+
+
+
+with positions p1, p 2, velocities v1, v 2, angle and angular velocities ϕ, ˙ϕ, thrust u1, u 2, wind disturbance w, and dimensions nx = 6, nu = 2, nw = 1, nθ = 2. The un-certain parameters correspond to uncertainty in mass and geometry (inertia and distance of propellers). The system is nonlinear and unstable. This example focuses on demonstrating performance under realistic model er-11 rors, and we do not explicitly verify whether the suffi-cient conditions on the prediction horizons and uncer-tainty levels in Theorem 7 are satisfied. We have compact input constraints U = [ −1, 4] 2. In ad-dition to desired bounds on velocity and angles, the state constraint X includes obstacle avoidance constraints. We consider the problem of reaching a distant setpoint yd
+
+while subject to large disturbances, noise, and paramet-ric uncertainty. The initial parameter estimate ˆθ0 devi-ates by a factor 2 from the unknown true parameters. The model is discretized using Euler with sampling time 25 [ ms ]. We choose the feedback κ (Asm. 6) based on the LQR. The LMS gain Γ is chosen according to (D.8). The horizon is chosen as N = 5, M = 10. We considered again the following designs: (i) Proposed : the proposed adaptive MPC; (ii) No-term : Proposed without terminal cost ( M = 0); (iii) No-adapt : Proposed without adaptation (Γ = 0); (iv) Robust : a robust adaptive MPC [50]. The Robust implementation [50] became infeasible for 6% parametric uncertainty, which was well below the considered range of over 50% uncertainty, and was hence not implemented. Numerical results for the remaining methods can be seen in Figure 3. The No-adapt imple-
+
+Fig. 3. Simulation result for unstable nonlinear quadrotor. 
+
+mentation was unstable and diverged due to the signif-icant model error. The Proposed implementation suc-cessfully navigates the obstacles and reaches the target in few seconds. The No-term implementation also avoids the obstacle, but its response is rather slow, taking about five times longer to reach within one centimetre of the target. Even after convergence, the No-term implemen-tation shows significant oscillations around the target (> 10 [cm]), while the Proposed approach manages to hover close to the target ( ≈ 4 [mm]). Computation times for the proposed MPC are 14 .1 ± 5.0 [ ms ], which is sig-nificantly below the real-time requirement. 
+
+8 Conclusion 
+
+We presented an adaptive control design for nonlinear systems by combining a certainty-equivalent tracking MPC formulation with online parameter adaptation. The proposed methodology provides strong inherent robustness properties and can be directly applied to nonlinear dynamics, input constraints, (soft) state con-straints, and setpoint tracking. Two numerical examples illustrate the practicality and benefits of the proposed method. Future work is focused on assessing reliability in experimental settings. 
+
+Acknowledgements 
+
+The author thanks colleagues at ETH Zurich for helpful suggestions, in particular Melanie Zeilinger. 
+
+References                                                                                       
+
+> [1] Brian DO Anderson and Arvin Dehghani. Challenges of adaptive control–past, permanent and future. Annual reviews in control , 32(2):123–135, 2008. [2] Joel AE Andersson, Joris Gillis, Greg Horn, James BRawlings, and Moritz Diehl. CasADi: A software framework for nonlinear optimization and optimal control. Mathematical Programming Computation , 11(1):1–36, 2019. [3] AM Annaswamy and Jo-Ey Wong. Adaptive control in the presence of saturation non-linearity. Int. J. Adaptive Control and Signal processing , 11(1):3–19, 1997. [4] Anuradha MAnnaswamy and Alexander LFradkov. Ahistorical perspective of adaptive control and learning.
+> Annual Reviews in Control , 52:18–41, 2021. [5] Alessandro Astolfi and Romeo Ortega. Immersion and invariance: Anew tool for stabilization and adaptive control of nonlinear systems. IEEE Trans. Autom. Control ,48(4):590–606, 2003. [6] Julian Berberich, Johannes K¨ ohler, Matthias AM¨ uller, and Frank Allg¨ ower. Linear tracking mpc for nonlinear systems—part i: The model-based case. IEEE Trans. Autom. Control , 67(9):4390–4405, 2022. [7] Dimitri Bertsekas. Lessons from alphazero for optimal, model predictive, and adaptive control . Athena Scientific, 2022. [8] Robert RBitmead, Michel Gevers, and Vincent Wertz.
+> Adaptive optimal control: The thinking man’s GPC . Prentice Hall, 1990. [9] Fabio Bonassi, Alessio La Bella, Marcello Farina, and Riccardo Scattolini. Nonlinear MPC design for incrementally ISS systems with application to gru networks. Automatica ,159:111381, 2024. [10] Guy Campion and Georges Bastin. Indirect adaptive state feedback control of linearly parametrized non-linear systems.
+> Int. J. Adaptive Control and Signal processing , 4(5):345–358, 1990. [11] Fatima-Zahra Chaoui, Fouad Giri, Luc Dugard, Jean-Michel Dion, and Mohammed M’saad. Adaptive tracking with saturating input and controller integral action. IEEE Trans. Autom. Control , 43(11):1638–1643, 1998.
+
+12 [12] FZ Chaoui, Fouad Giri, and Mohammed M’Saad. Adaptive control of input-constrained type-1 plants stabilization and tracking. Automatica , 37(2):197–203, 2001. [13] H Chen and F Allg¨ ower. A quasi-infinite horizon nonlinear model predictive control scheme with guaranteed stability. 
+
+Automatica , 34:1205–1217, 1998. [14] Maximilian Degner, Raffaele Soloperto, Melanie N Zeilinger, John Lygeros, and Johannes K¨ ohler. Adaptive economic model predictive control: Performance guarantees for nonlinear systems. IEEE Trans. Autom. Control , 2026. [15] Mathieu Dubied, Amon Lahr, Melanie N Zeilinger, and Johannes K¨ ohler. A robust and adaptive MPC formulation for gaussian process models. arXiv preprint arXiv:2507.02098 , 2025. [16] Guilherme AA Gon¸ calves and Martin Guay. Robust discrete-time set-based adaptive predictive control for nonlinear systems. J. Proc. Contr. , 39:111–122, 2016. [17] Graham C Goodwin and Kwai Sang Sin. Adaptive filtering prediction and control . Courier Corporation, 2014. [18] Lars Gr¨ une and J¨ urgen Pannek. Nonlinear Model Predictive Control . Springer, 2017. [19] Alan J Hoffman. On approximate solutions of systems of linear inequalities. In Selected Papers Of Alan J Hoffman: With Commentary , pages 174–176. World Scientific, 2003. [20] Aren Karapetyan, Efe C Balta, Andrea Iannelli, and John Lygeros. Closed-loop finite-time analysis of suboptimal online control. IEEE Trans. Autom. Control , 70(8):5270–5285, 2025. [21] Islam SM Khalil, JC Doyle, and K Glover. Robust and optimal control . Prentice-Hall, Inc., Englewood Cliffs, N.J., 1996. [22] Johannes K¨ ohler. Analysis and design of MPC frameworks for dynamic operation of nonlinear constrained systems . PhD thesis, Universit¨ at Stuttgart, 2021. doi:0.18419/opus-11742. [23] Johannes K¨ ohler and Frank Allg¨ ower. Stability and performance in MPC using a finite-tail cost. In Proc. IFAC Conf. Nonlinear Model Predictive Control , pages 166–171, 2021. [24] Johannes K¨ ohler, Peter K¨ otting, Raffaele Soloperto, Frank Allg¨ ower, and Matthias A M¨ uller. A robust adaptive model predictive control framework for nonlinear uncertain systems. 
+
+Int. J. Robust Nonlinear Control , 31:8725–8749, 2021. [25] Johannes K¨ ohler, Melanie N Zeilinger, and Lars Gr¨ une. Stability and performance analysis of NMPC: Detectable stage costs and general terminal costs. IEEE Trans. Autom. Control , 68(10):6114–6129, 2023. [26] M Krsti´ c, Ioannis Kanellakopoulos, and PV Kokotovi´ c. Adaptive nonlinear control without overparametrization. 
+
+Systems & Control Letters , 19(3):177–185, 1992. [27] Miroslav Krsti´ c and Peter V Kokotovi´ c. Control lyapunov functions for adaptive nonlinear stabilization. Systems & Control Letters , 26(1):17–23, 1995. [28] Pablo Krupa, Johannes K¨ ohler, Antonio Ferramosca, Ignacio Alvarado, Melanie N Zeilinger, Teodoro Alamo, and Daniel Limon. Model predictive control for tracking using artificial references: Fundamentals, recent results and practical implementation. In Proc. 63rd IEEE Conference on Decision and Control (CDC) , pages 2977–2991. IEEE, 2024. [29] Daniel Limon, Antonio Ferramosca, Ignacio Alvarado, and Teodoro Alamo. Nonlinear MPC for tracking piece-wise constant reference signals. IEEE Trans. Autom. Control ,63:3735–3750, 2018. [30] Yan-Jun Liu and Shaocheng Tong. Barrier Lyapunov functions-based adaptive control for a class of nonlinear pure-feedback systems with full state constraints. Automatica ,64:70–75, 2016. [31] Brett T Lopez and Jean-Jacques E Slotine. Universal adaptive control of nonlinear systems. IEEE Control Systems Letters , 6:1826–1830, 2021. [32] Brett T Lopez and Jean-Jacques E Slotine. Adaptive variants of optimal feedback policies. In Proc. Learning for Dynamics and Control Conf. , pages 1125–1136, 2022. [33] Brett Thomas Lopez. Adaptive robust model predictive control for nonlinear systems . PhD thesis, Massachusetts Institute of Technology, 2019. [34] Matthias Lorenzen, Mark Cannon, and Frank Allg¨ ower. Robust MPC with recursive model update. Automatica ,103:461–471, 2019. [35] Lalo Magni, Giuseppe De Nicolao, Lorenza Magnani, and Riccardo Scattolini. A stabilizing model-based predictive control algorithm for nonlinear systems. Automatica ,37(9):1351–1362, 2001. [36] Jos´ e Mar´ ıa Manzano, Daniel Limon, David Mu˜ noz de la Pe˜ na, and Jan-Peter Calliess. Robust learning-based MPC for nonlinear constrained systems. Automatica , 117:108948, 2020. [37] David Q Mayne. Model predictive control: Recent developments and future promise. Automatica , 50(12):2967– 2986, 2014. [38] Richard H Middleton, Graham C Goodwin, David J Hill, and David Q Mayne. Design issues in adaptive control. IEEE Trans. Autom. Control , 33(1):50–58, 1988. [39] Manfred Morari and Urban Maeder. Nonlinear offset-free model predictive control. Automatica , 48(9):2059–2067, 2012. [40] Marko Nonhoff, Johannes K¨ ohler, and Matthias A M¨ uller. Online convex optimization for constrained control of nonlinear systems. Automatica , 2026. [41] Dimitris Papadimitriou, Ugo Rosolia, and Francesco Borrelli. Control of unknown nonlinear systems with linear time-varying MPC. In Proc. 59th IEEE Conference on Decision and Control (CDC) , pages 2258–2263, 2020. [42] Karime Pereida, Lukas Brunke, and Angela P Schoellig. Robust adaptive model predictive control for guaranteed fast and accurate stabilization in the presence of model errors. 
+
+Int. J. Robust Nonlinear Control , 31(18):8750–8784, 2021. [43] Tobias Peschke and Daniel G¨ orges. Robust adaptive tube tracking model predictive control forpiece-wise constant reference signals. Int. J. Robust and Nonlinear Control ,33(14):8158–8182, 2023. [44] Jean-Baptiste Pomet, Laurent Praly, et al. Adaptive nonlinear regulation: Estimation from the Lyapunov equation. IEEE Trans. Autom. Control , 37(6):729–740, 1992. [45] James Blake Rawlings, David Q Mayne, and Moritz Diehl. 
+
+Model Predictive Control: Theory, Computation, and Design .Nob Hill Publishing, 2017. [46] Rudolf Reiter, Andrea Ghezzi, Katrin Baumg¨ artner, Jasper Hoffmann, Robert D McAllister, and Moritz Diehl. AC4MPC: Actor-critic reinforcement learning for nonlinear model predictive control. IEEE Trans. Control Systems Technology , 2025. [47] Stephen M Robinson. Strongly regular generalized equations. 
+
+Mathematics of Operations Research , 5(1):43–62, 1980. [48] Charles E Rohrs, Lena Valavani, Michael Athans, and Gunter Stein. Robustness of adaptive control algorithms in the 
+
+13 presence of unmodeled dynamics. In Proc. 21st IEEE Conference on Decision and Control , pages 3–11, 1982. [49] BJP Roset, WPMH Heemels, Mircea Lazar, and Henk Nijmeijer. On robustness of constrained discrete-time systems to state measurement errors. Automatica ,44(4):1161–1165, 2008. [50] Andr´ as Sasfi, Melanie N Zeilinger, and Johannes K¨ ohler. Robust adaptive MPC using control contraction metrics. 
+
+Automatica , 155:111169, 2023. [51] Anna Scampicchio, Elena Arcari, Amon Lahr, and Melanie N Zeilinger. Gaussian processes for dynamics learning in model predictive control. Annual Reviews in Control , 60:101034, 2025. [52] Rohan Sinha, James Harrison, Spencer M Richards, and Marco Pavone. Adaptive robust model predictive control with matched and unmatched uncertainty. In Proc. American Control Conf. (ACC) , pages 906–913, 2022. [53] J-JE Slotine and JA Coetsee. Adaptive sliding controller synthesis for non-linear systems. Int. J. Control , 43(6):1631– 1651, 1986. [54] Raffaele Soloperto, Johannes K¨ ohler, and Frank Allg¨ ower. A nonlinear MPC scheme for output tracking without terminal ingredients. IEEE Trans. Autom. Control , 68(4):2368–2375, 2022. [55] Tatiana Strelnikova, Johannes K¨ ohler, and Julian Berberich. Adaptive tracking MPC for nonlinear systems via online linear system identification. In Systems Theory in Data and Optimization , pages 69–84, Cham, 2025. Springer Nature Switzerland. [56] Marko Tanaskovic, Lorenzo Fagiano, Roy Smith, and Manfred Morari. Adaptive receding horizon control for constrained MIMO systems. Automatica , 50(12):3019–3029, 2014. [57] Gang Tao. Multivariable adaptive control: A survey. 
+
+Automatica , 50(11):2737–2764, 2014. [58] Ran Tao, Pan Zhao, Ilya Kolmanovsky, and Naira Hovakimyan. Robust adaptive MPC using uncertainty compensation. In Proc. American Control Conference (ACC) , pages 1873–1878, 2024. [59] Andrew J Taylor and Aaron D Ames. Adaptive safety with control barrier functions. In Proc. American Control Conf. (ACC) , pages 1399–1405, 2020. [60] Changyun Wen, Jing Zhou, Zhitao Liu, and Hongye Su. Robust adaptive control of uncertain nonlinear systems in the presence of input saturation and external disturbance. 
+
+IEEE Trans. Autom. Control , 56(7):1672–1678, 2011. [61] Tae-Woong Yoon and David W Clarke. Adaptive predictive control of the benchmark plant. Automatica , 30(4):621–628, 1994. [62] Melanie N Zeilinger, Manfred Morari, and Colin N Jones. Soft constrained model predictive control with robust stability guarantees. IEEE Trans. Autom. Control , 59:1190–1202, 2014. [63] Y-S Zhong. Globally stable adaptive system design for minimum phase SISO plants with input saturation. 
+
+Automatica , 41(9):1539–1547, 2005. 
+
+A Proof of Section 3 
+
+Proof of Theorem 1: Assumptions 1a) and 1c) together with non-expansiveness of the projection operator en-sure Vθ (ˆθk+1 − θk+1 ) ≤ Vθ (˜θk+1 − θk+1 ). Furthermore, the update (10a) satisfies ˜θk+1 − ˆθk = Γ ˆΦ⊤ 
+
+> k
+
+(˜ x1|k + ˜ wk)using definitions (12a)–(12b). Thus, it holds that 
+
+Vθ (ˆθk+1 − θk) − Vθ (ˆθk − θk) (A.1) 
+
+≤Vθ (˜θk+1 − θk) − Vθ (ˆθk − θk)=∥˜θk+1 − ˆθk∥2Γ−1 + 2( ˜θk+1 − ˆθk)⊤Γ−1(ˆθk − θk)
+
+> (10a)
+
+= ∥ ˆΦ⊤ 
+
+> k
+
+(˜ x1|k + ˜ wk)∥2Γ + 2(˜ x1|k + ˜ wk)⊤ ˆΦk(ˆθk − θk)
+
+| {z } 
+
+> =−˜x1|k
+> Asm .4
+
+≤ ∥˜x1|k + ˜ wk∥2 − 2∥˜x1|k∥2 − 2˜ x⊤ 
+
+> 1|k
+
+˜wk
+
+= − ∥ ˜x1|k∥2 + ∥ ˜wk∥2.
+
+To account for the change in the parameters ∆ θk =
+
+θk+1 − θk, note that the quadratic function Vθ satisfies 
+
+Vθ (ˆθk+1 − θk+1 ) − Vθ (ˆθk+1 − θk) (A.2) =∥∆θk∥2Γ−1 + ∆ θ⊤ 
+
+> k
+
+Γ−1(θk − ˆθk)=∆ θ⊤ 
+
+> k
+
+Γ−1(θk+1 − ˆθk) − ∥ ∆θk∥2Γ−1 ≤ pVθ (∆ θk)cθ ,
+
+with cθ from (12c) and ˆθk, ˆθk+1 ∈ Θ due to (10b). Com-bining (A.1) and (A.2) yields (11a). The bound (11b) follows with 
+
+∥ˆθk+1 − ˆθk∥2Γ−1
+
+> (10b)
+
+≤ ∥˜θk+1 − ˆθk∥2Γ−1
+
+> (10a)
+
+= ∥ ˆΦ⊤ 
+
+> k
+
+(˜ x1|k + ˜ wk)∥2ΓAsm . 4
+
+≤ ∥˜x1|k + ˜ wk∥2.
+
+Lastly, the bound (11c) follows from (2), (12b) and Lip-schitz continuity (Asm. 1c)). 14 B Proofs of Section 4.3 
+
+Proof of Prop. 1: We have xs ∈ X from (6) and thus 
+
+Dix − di = Di(x − xs) + Dixs − di ≤ Di(x − xs),
+
+for any x ∈ Rnx , i ∈ I[1 ,r ]. Correspondingly, we max {Dix − di, 0}2 ≤ max {Di(x − xs), 0}2 ≤ (Di(x − xs)) 2.
+
+Thus, for any x ∈ Rnx , the stage cost satisfies 
+
+ℓ(x, u s, x s, u s) = ∥x − xs∥2 
+
+> Q
+
++
+
+> r
+
+X
+
+> i=1
+
+qξ,i max {Dix − di, 0}2
+
+≤∥ x − xs∥2 
+
+> Q
+
++
+
+> r
+
+X
+
+> i=1
+
+qξ,i ∥Di(x − xs)∥2
+
+≤(σmax (Q) + σmax 
+
+> r
+
+X
+
+> i=1
+
+qξ,i D⊤ 
+
+> i
+
+Di
+
+!| {z }
+
+> =σξ
+
+)∥x − xs∥2.
+
+Assumption 5 implies 
+
+ℓ(xuk 
+
+> s
+
+(k, x, θ ), u s, x s, u s)
+
+≤(σmax (Q) + σξ )∥xuk 
+
+> s
+
+(k, x, θ ) − xs∥2(13) 
+
+≤ Cρ(σmax (Q) + σξ )ρk∥x − xs∥2
+
+≤ Cρ
+
+σmax (Q) + σξ
+
+σmin (Q)
+
+| {z }
+
+> =: Cℓ
+
+ρk∥x − xs∥2
+
+> Q
+
+.
+
+Proof of Prop. 2: Considering the candidate solution ˜ u =
+
+uN 
+
+> s
+
+∈ UN and Proposition 1, we get min 
+
+> u∈UN
+
+JN (x, θ, u, x s, u s) ≤ J N (x, θ, ˜u, x s, u s)
+
+> (16) ,(20)
+
+≤ 
+
+> N−1
+
+X
+
+> k=0
+
+Cℓρk∥x − xs∥2 
+
+> Q
+
++ ω  
+
+> N+M−1
+
+X
+
+> k=N
+
+Cℓρk∥x − xs∥2
+
+> Q
+
+= Cℓ
+
+ 1 − ρN
+
+1 − ρ + ωρ N 1 − ρM
+
+1 − ρ
+
+| {z }
+
+> =: γN
+
+∥x − xs∥2
+
+> Q
+
+.
+
+Proof of Prop. 3: Abbreviate ℓk = ℓ(xuk 
+
+> s
+
+(k, x, θ ), u s, x s, u s), 
+
+k ∈ I[0 ,M ].
+
+Part I: We prove Inequality (22) with the candidate input u = us ∈ U. Given the definition of Vf (15), and the candidate input, Condition (22) reduces to 
+
+ℓ0 + ω
+
+> M
+
+X
+
+> k=1
+
+ℓk ≤ (1 + ϵf )ω 
+
+> M−1
+
+X
+
+> k=0
+
+ℓk,
+
+or equivalently 
+
+ℓM + 1 − ωω ℓ0 ≤ ϵf 
+
+> M−1
+
+X
+
+> k=0
+
+ℓk.
+
+For the special case ω = 1, this condition has been anal-ysed in [25, Prop. 4]. Following the same arguments, a constant ϵf satisfying (22) can be computed using the following LP: 
+
+ϵf := max 
+
+> ˜ℓk
+
+˜ℓM + 1 − ωω ˜ℓ0 (B.1a) s.t.  
+
+> M−1
+
+X
+
+> k=0
+
+˜ℓk = 1 , (B.1b) ˜ℓM ≤ CℓρM −k ˜ℓk, k ∈ I[0 ,M −1] , (B.1c) ˜ℓM ≥ 0. (B.1d) We denote a maximizer by ˜ℓ⋆k. Note that Inequal-ity (B.1c) corresponds to Inequality (20) from Proposi-tion 1. 
+
+Part II: Next, we show that the maximizer satis-fies the constraints (B.1c) with equality for k = 0. For contradiction, suppose Inequality (B.1c) for 
+
+k = 0 is not active, i.e., ˜ℓ⋆M < CℓρM ˜ℓ⋆
+
+> 0
+
+. Consider the candidate ˜ℓM = ˜ℓ⋆M + δ, ˜ℓk = ˜ℓ⋆k + δCℓρM −k ,
+
+k ∈ I[1 ,M −1] with some δ > 0, which satisfies (B.1c) for k ∈ I[1 ,M −1] . Equation (B.1b) holds by choosing ˜ℓ0 = ˜ℓ⋆ 
+
+> 0
+
+− δCℓ
+
+PM −1 
+
+> k=1
+
+ρk−M = ˜ℓ⋆ 
+
+> 0
+
+− δCℓρM −1  
+
+> 1−ρM−1
+> 1−ρ
+
+. In-equality (B.1c) for k = 0 remains valid by choosing 
+
+δ > 0 sufficiently small. Considering the cost of this candidate, we have ˜ℓM − ˜ℓ⋆M + 1 − ωω (˜ℓ0 − ˜ℓ⋆
+
+> 0
+
+)=δ
+
+
+
+1 − 1 − ωω
+
+1
+
+CℓρM −1
+
+1 − ρM −1
+
+1 − ρ
+
+
+
+≥ δ > 0,
+
+where the last inequality used ω ≥ 1. This result contra-dicts optimality. Thus, Inequality (B.1c) for k = 0 holds with equality and the LP (B.1) reduces to 
+
+ϵf := max 
+
+> ˜ℓk
+
+˜ℓM
+
+
+
+1 + 1 − ωωC ℓρM
+
+
+
+(B.2a) s.t. ˜ℓM /(CℓρM ) +  
+
+> M−1
+
+X
+
+> k=1
+
+˜ℓk = 1 , (B.2b) 15 ˜ℓM ≤ CℓρM −k ˜ℓk, k ∈ I[1 ,M −1] , (B.2c) ˜ℓM ≥ 0. (B.2d) 
+
+Part III: Next, we use a case distinction to show that the solution to (B.2) is given by (23). 
+
+Case a: Suppose that 1 + 1−ωωC ℓρM > 0, i.e., the ob-jective is to maximize ˜ℓM . For contradiction, suppose that ˜ℓ⋆M < C ℓρM −k′ ˜ℓ⋆k′ for some k′ ∈ I[1 ,M −1] . Con-sider the candidate ˜ℓM = ˜ℓ⋆M + δ, ˜ℓj = ˜ℓ⋆j + δCℓρM −j ,
+
+j ∈ I[1 ,k ′−1] ∪[k′+1 ,M −1] with some δ > 0 and ˜ℓk′
+
+such that Equality (B.2b) holds. Inequalities (B.2c), 
+
+k ∈ I[1 ,k ′−1] ∪[k′+1 ,M −1] hold by definition and Inequal-ity (B.2c) for k = k′ holds by choosing δ > 0 sufficiently small. Hence, we have a feasible candidate with a strictly better cost ( ˜ℓM > ˜ℓ⋆M ), contradicting optimality. Given that (B.2c) hold with equality, Equation (B.1b)/(B.2b) yields 
+
+Cℓ = CℓM −1X
+
+> k=0
+
+˜ℓ⋆k = ˜ℓ⋆MM −1X
+
+> k=0
+
+ρk−M = ˜ℓ⋆M ρ−M 1 − ρM
+
+1 − ρ ,
+
+and thus ˜ℓ⋆M = CℓρM 1 − ρ
+
+1 − ρM .
+
+Hence, the maximum in (B.1)/(B.2) is given by 
+
+ϵ⋆ 
+
+> f
+
+=˜ℓ⋆M
+
+
+
+1 + 1 − ωωC ℓρM
+
+
+
+= 1 − ρ
+
+1 − ρM
+
+
+
+CℓρM + 1 − ωω
+
+
+
+.
+
+Case b: Suppose that 1 + 1−ωCℓρM ω ≤ 0, i.e., the objective is to minimize ˜ℓM (or is independent of ˜ℓM ). In this case, a (non-unique) maximizer is given by ˜ℓ⋆M = 0, ˜ℓ⋆ 
+
+> 1
+
+= 1, ˜ℓ⋆k = 0, k ∈ I[2 ,M −1] , with ϵf = 0. 
+
+Combination: By combining the two cases, we get (23). 
+
+Proof of Thm. 2: Considering the candidate ( xs, u s, y s) = (x⋆ 
+
+> s,x,θ
+
+, u ⋆ 
+
+> s,x,θ
+
+, y ⋆ 
+
+> s,x,θ
+
+), Inequality (24) holds if min 
+
+> u∈UN
+
+JN (f (x, π (x, θ ), θ ), θ, u, x ⋆ 
+
+> s,x,θ
+
+, u ⋆ 
+
+> s,x,θ
+
+)
+
+≤ min 
+
+> u∈UN
+
+JN (x, θ, u, x ⋆ 
+
+> s,x,θ
+
+, u ⋆ 
+
+> s,x,θ
+
+)
+
+− αℓ (x, π (x, θ ), x ⋆ 
+
+> s,x,θ
+
+, u ⋆ 
+
+> s,x,θ
+
+),
+
+i.e., it suffices to consider Problem (17) with a fixed artificial setpoint xs. This problem has been analysed in [25, Thm. 6–7] using an LP analysis. In particular, the bounds derived in Propositions 2–3 correspond to [25, Asm. 4-5]. 4 Using [25, Thm. 7], Inequality (24) holds  
+
+> 4
+
+The lower and upper bound in [25, Asm. 4-5] hold trivially by defining cf = γ1/(1 + ϵf ) and cf = ω.
+
+with 
+
+α = 1 − ϵf (γN − 1) QN −1 
+
+> j=1
+
+(γN −j+1 − 1) (1 + ϵf ) QN −1 
+
+> j=1
+
+γN −j+1 − ϵf
+
+QN −1 
+
+> j=1
+
+(γN −j+1 − 1) .
+
+(B.3) Using the fact that γk ≤ γ, we also get 
+
+α ≥ 1 − ϵf (γ − 1) N
+
+(1 + ϵf )γN −1 − ϵf (γ − 1) N −1 .
+
+Correspondingly, α > 0 if (1+ ϵf )γN −1 > ϵ f γ(γ −1) N −1.For any finite ϵf ≥ 0, this condition holds by choos-ing N large enough. Furthermore, to ensure any horizon 
+
+N ∈ I≥1 ensures stability, a sufficient condition is given by γϵ f < 1. Using the specific formulas for γ, ϵ f , 5 this condition reduces to: 
+
+Cℓω  1 − CℓρM  > C ℓ − 1 + ρM .
+
+In case 1 − CℓρM > 0, this holds if 
+
+ω > ω := max 
+
+ Cℓ − 1 + ρM
+
+Cℓ(1 − CℓρM ) , 1
+
+
+
+.
+
+Proof of Prop. 4: The proof follows the arguments in [54, Prop. 1]. For contradiction, suppose Inequality (25) does not hold, i.e., 
+
+∥x − x⋆ 
+
+> s,x,θ
+
+∥2 
+
+> Q
+
+> a ∥x⋆ 
+
+> s,x,θ
+
+− xrd ,θ ∥2
+
+> Q
+
+. (B.4) Consider ˜ y = βy ⋆ 
+
+> s,x,θ
+
++(1 −β)yrd ,θ with some later speci-fied constant β ∈ (0 , 1). Assumptions 3a)–b) ensure that (˜ xs, ˜us, ˜ys) ∈ S(θ) with ˜ xs = gy,x(˜ ys, θ ), ˜ us = gy,u(˜ ys, θ ). Furthermore, the convex quadratic offset cost satisfies 
+
+∥˜ys − yd∥2 
+
+> T
+
+− ∥ y⋆ 
+
+> s,x,θ
+
+− yd∥2 
+
+> T
+
+≤ − (1 − β2)∥y⋆ 
+
+> s,x,θ
+
+− yrd ,θ ∥2 
+
+> T
+
+.
+
+(B.5) Utilizing the feasible candidate solution (˜ xs, ˜us, ˜ys) ∈
+
+S(θ), we have 0 ≤J ⋆N (x, θ ) − ∥ y⋆ 
+
+> s,x,θ
+
+− yd∥2
+
+> T
+
+≤ min 
+
+> u∈UN
+
+JN (x, θ, u, ˜xs, ˜us) + ∥˜ys − yd∥2 
+
+> T
+
+− ∥ y⋆ 
+
+> s,x,θ
+
+− yd∥2
+
+> T
+> (21) ,(B.5)
+
+≤ γN ∥x − ˜xs∥2 
+
+> Q
+
+− (1 − β2)∥y⋆ 
+
+> s,x,θ
+
+− yrd ,θ ∥2
+
+> T
+
+≤2γN (∥x − x⋆ 
+
+> s,x,θ
+
+∥2 
+
+> Q
+
++ ∥x⋆ 
+
+> s,x,θ
+
+− ˜xs∥2
+
+> Q
+
+)
+
+− (1 − β2)∥y⋆ 
+
+> s,x,θ
+
+− yrd ,θ ∥2
+
+> T
+> (8) ,(B.4)
+
+< 2γN a∥x⋆ 
+
+> s,x,θ
+
+− xrd ,θ ∥2 
+
+> Q
+
++ 2 γN Lg∥y⋆ 
+
+> s,x,θ
+
+− ˜ys∥2 
+
+> T
+> 5
+
+The case distinction in (23) can be ignored, since ϵf = 0 trivially satisfies the condition. 
+
+16 − (1 − β2)∥y⋆ 
+
+> s,x,θ
+
+− yrd ,θ ∥2
+
+> T
+> (8)
+
+≤ 2γN Lg(a + (1 − β)2) − (1 − β2) ∥y⋆ 
+
+> s,x,θ
+
+− yrd ,θ ∥2 
+
+> T
+
+,
+
+where the last step also used y⋆ 
+
+> s,x,θ
+
+− ˜y = (1 − β)( y⋆ 
+
+> s,x,θ
+
+−
+
+yrd ,θ ). For β sufficiently close to 1 and a sufficiently small, the last term is non-positive, which results in a contra-diction. 
+
+Proof of Corollary 1: We show stability using the Lyapunov function V (x, θ ) := J ⋆N (x, θ ) − ∥ yrd ,θ −
+
+yd∥2 
+
+> T
+
+[29,54]. Abbreviate x+ = f (x, u, θ, 0), u = π(x, θ ). Proposition 4 implies 
+
+ℓ(x, u, x ⋆ 
+
+> s,x,θ
+
+, u ⋆ 
+
+> s,x,θ
+
+) ≥ ∥ x − x⋆ 
+
+> s,x,θ
+
+∥2
+
+> Q
+> (25)
+
+≥ 12 ∥x − x⋆ 
+
+> s,x,θ
+
+∥2 
+
+> Q
+
++ a
+
+2 ∥x⋆ 
+
+> s,x,θ
+
+− xrd ,θ ∥2
+
+> Q
+
+≥ min {a, 1}
+
+4 ∥x − xrd ,θ ∥2
+
+> Q
+
+. (B.6) By applying this bound to the decrease condition in The-orem 2, we get 
+
+V (x+, θ ) − V (x, θ ) (24) 
+
+≤ −αℓ (x, π (x, θ ), x s,x,θ , u ⋆ 
+
+> s,x,θ
+
+)
+
+> (B.6)
+
+≤ − min {a, 1}α
+
+4 ∥x − xrd ,θ ∥2
+
+> Q
+
+. (B.7) The lower bound on V holds with 
+
+V (x, θ ) ≥ ℓ(x, π (x, θ ), x s,x,θ , u ⋆ 
+
+> s,x,θ
+
+)
+
+> (B.6)
+
+≥ min {a, 1}
+
+4 ∥x − xrd ,θ ∥2
+
+> Q
+
+, (B.8) where the first inequality uses the fact that yrd ,θ is a minimizer for (5). An upper bound on V follows using Proposition 2 and the candidate ( xs, u s, y s) =(xrd ,θ , u rd ,θ , y rd ,θ ): 
+
+V (x, θ ) ≤ min 
+
+> u∈UN
+
+JN (x, θ, u, x rd ,θ , u rd ,θ ) (21) 
+
+≤ γN ∥x − xrd ,θ ∥2
+
+> Q
+
+.
+
+(B.9) Exponential stability of xrd ,θ follows using standard Lya-punov arguments [45, App. B]. 
+
+C Proofs of Section 4.4 
+
+We first provide a series of lemmas to establish continuity of the stage cost (Lemma 3), dynamics (Lemma 4), open-loop cost (Lemma 5), feasible steady-states (Lemma 6), and the optimal cost (Lemma 7), before proving Theo-rem 3. 
+
+Lemma 3 There exists a constant σξ > 0, such that for any x, ˜x, ˜xs, x s ∈ Rnx , u, ˜u, u s, ˜us ∈ Rnu , and any ϵ > 0,the quadratic stage cost satisfies 
+
+11 + ϵ ℓ(x + ˜ x, u + ˜ u, x s + ˜ xs, u s + ˜ us) (C.1) 
+
+≤ℓ(x, u, x s, u s) + 1
+
+ϵ
+
+∥˜x − ˜xs∥2 
+
+> Q
+
++ ∥˜u − ˜us∥2 
+
+> R
+
++ σξ ∥˜x∥2 .
+
+PROOF. Cauchy-Schwarz and Young’s inequality ap-plied to the quadratic part of the stage cost (14) imply 
+
+∥x + ˜ x − (xs + ˜ xs)∥2 
+
+> Q
+
++ ∥u + ˜ u − (us + ˜ us)∥2
+
+> R
+
+≤(1 + ϵ) ∥x − xs∥2 
+
+> Q
+
++ ∥u − us∥2
+
+> R
+
+
+
++ 1 + ϵϵ
+
+∥˜x − ˜xs∥2 
+
+> Q
+
++ ∥˜u − ˜us∥2
+
+> R
+
+ .
+
+For the soft-constrained penalty, note that max {Di(x + ˜ x) − di, 0} ≤ max {Dix − di, 0} + |Di ˜x|
+
+and hence 
+
+> r
+
+X
+
+> i=1
+
+qξ,i max {Di(x + ˜ x) − di, 0}2
+
+≤(1 + ϵ)
+
+> r
+
+X
+
+> i=1
+
+qξ,i max {Dix − di, 0}2 + 1 + ϵϵ σξ ∥˜x∥2,
+
+with σξ = σmax (Pri=1 qξ,i D⊤ 
+
+> i
+
+Di) from Appendix B. Adding both bounds, using the definition of the cost (14) and dividing by 1 + ϵ yields (C.1). 
+
+Lemma 4 (Lipschitz continuity) Let Assumption 1c) hold. There exist constants cx,k ≥ 0, k ∈ I≥0, such that for all x, ˜x ∈ Rnx , θ, ˜θ ∈ Θ, N ∈ I≥0 and all u, ˜u ∈ UN ,it holds that 
+
+∥x˜u(k, ˜x, ˜θ) − xu(k, x, θ )∥ (C.2) 
+
+≤cx,k 
+
+
+
+∥˜x − x∥ + ∥˜θ − θ∥ + max 
+
+> j∈I[0 ,k −1]
+
+∥˜uj − uj ∥
+
+
+
+.
+
+PROOF. Denote ˜ xk = x˜u(k, ˜x, ˜θ), xk = xu(k, x, θ ), 17 k ∈ I≥0. For any k ∈ I≥0, it holds that 
+
+∥˜xk+1 − xk+1 ∥ ≤ Lf (∥˜xk − xk∥ + ∥˜θ − θ∥ + ∥˜uk − uk∥)
+
+≤ . . . 
+
+≤Lk+1 f (∥˜x0 − x0∥ +
+
+> k+1
+
+X
+
+> j=1
+
+Lj 
+
+> f
+
+(∥˜θ − θ∥ + max 
+
+> j∈I[0 ,k ]
+
+∥˜uj − uj ∥),
+
+which ensures (C.2) with cx,k = Pkj=1 Lj 
+
+> f
+
+.While the constant cx,k in (C.2) depends on the horizon 
+
+k, uniform bounds could also be established by using the fact that exponential stability (Asm. 5) and a compact invariant set (cf. proof Lemma 1) imply incremental sta-bility [20, Thm. 8]. 
+
+Lemma 5 Let Assumptions 1c) hold. For any N, M ∈
+
+I≥0, ω ∈ R, there exists a constant cJ > 0, such that for all x, ˜x, x s, ˜xs ∈ Rnx , θ, ˜θ ∈ Θ, us, ˜us ∈ U, N ∈ I≥0, all 
+
+u ∈ UN , and any ϵ > 0 it holds that 
+
+ϵ
+
+1 + ϵ JN (˜ x, ˜θ, u, ˜xs, ˜us) − ϵJN (x, θ, u, x s, u s) (C.3) 
+
+≤cJ
+
+h
+
+∥x − ˜x∥2 + ∥θ − ˜θ∥2 + ∥us − ˜us∥2 + ∥xs − ˜xs∥2i
+
+.
+
+PROOF. Let us define the extended input sequences 
+
+u′, ˜u′ ∈ UN +M with u′ 
+
+> k
+
+= ˜ uk = uk, k ∈ I[0 ,N −1] , u′ 
+
+> k
+
+=
+
+us, ˜ u′ 
+
+> k
+
+= ˜ us, k ∈ I[N,N +M −1] . Furthermore, we denote the two state predictions by xk = xu′ (k, x, θ ), ˜ xk =
+
+x˜u′ (k, ˜x, ˜θ), k ∈ I[0 ,N +M −1] . Lemma 4 in combination with Cauchy Schwarz inequality yields 
+
+∥xk − ˜xk∥2 ≤ 3cx,k 
+
+h
+
+∥x − ˜x∥2 + ∥θ − ˜θ∥2 + ∥us − ˜us∥2i
+
+.
+
+(C.4) Applying Lemma 3 then yields the following bound on the stage cost 
+
+ϵ
+
+1 + ϵ ℓ(˜ xk, ˜u′
+
+> k
+
+, ˜xs, ˜us) − ϵℓ (xk, u′
+
+> k
+
+, x s, u s)
+
+≤∥ xk − ˜xk + ˜ xs − xs∥2 
+
+> Q
+
++ ∥us − ˜us∥2 
+
+> R
+
++ σξ ∥xk − ˜xk∥2
+
+≤(2 σmax (Q) + σξ )∥xk − ˜xk∥2 + 2 ∥˜xs − xs∥2 
+
+> Q
+
++ ∥us − ˜us∥2
+
+> R
+
+.
+
+Applying this bound in the definition of the finite-horizon cost (15), (16) and applying (C.4) yields (C.3) with cJ > 0. 
+
+Lemma 6 Let Assumptions 1b) and 3a), d) hold. For any θ, ˜θ ∈ Θ, any (xs, u s, y s) ∈ S(θ), there exists 
+
+(˜ xs, ˜us, ˜ys) ∈ S(˜θ):
+
+∥˜xs − xs∥2 
+
+> Q
+
++ ∥˜us − us∥2 
+
+> R
+
++ ∥˜ys − ys∥2 
+
+> T
+
+≤ cs∥θ − ˜θ∥2.
+
+(C.5) 
+
+PROOF. Pick (˜ xs, ˜us, ˜ys) ∈ S(˜θ) according to Assump-tion 3d). The Lipschitz continuous mapping ( x, u ) = 
+
+gy(y, θ ) from Assumption 3a) ensures 
+
+∥˜xs − xs∥2 
+
+> Q
+
++ ∥˜us − us∥2 
+
+> R
+
++ ∥˜ys − ys∥2
+
+> T
+> (8)
+
+≤ (Lgy + 1) ∥˜ys − ys∥2 
+
+> T
+
++ Lgy ∥θ − ˜θ∥2(9) 
+
+≤ (Ls(Lgy + 1) + Lgy )∥θ − ˜θ∥2.
+
+Lemma 7 Let Assumptions 1b), c) and 3a), d) hold. There exists a constant cJ⋆ > 0, such that for any x, ˜x ∈
+
+Rnx , θ, ˜θ ∈ Θ, and any ϵ > 0, the optimal cost J ⋆N from Problem (17) satisfies 
+
+ϵ
+
+1 + ϵ J ⋆N (˜ x, ˜θ) ≤ ϵJ ⋆N (x, θ ) + cJ⋆
+
+h
+
+∥x − ˜x∥2 + ∥θ − ˜θ∥2i
+
+(C.6) 
+
+PROOF. For ( x, θ ), the optimal solution to Prob-lem (17) is given by J ⋆N (x, θ ), u⋆x,θ ∈ UN , and (x⋆ 
+
+> s,x,θ
+
+, u ⋆ 
+
+> s,x,θ
+
+, y ⋆ 
+
+> s,x,θ
+
+) ∈ S(θ). Consider (˜ xs, ˜us, ˜ys) ∈ S(˜θ)according to Lemma 6, i.e., 
+
+∥˜xs − xs,x,θ ∥2 
+
+> Q
+
++ ∥˜us − us,x,θ ∥2 
+
+> R
+
++ ∥˜ys − ys,x,θ ∥2 
+
+> T
+
+≤ cs∥θ − ˜θ∥2.
+
+(C.7) We derive an upper bound for J ⋆N (˜ x, ˜θ) by using the feasible candidate solution ˜ u = u⋆x,θ ∈ UN , (˜ xs, ˜us, ˜ys) ∈
+
+S(˜θ) to Problem (17): 
+
+ϵ
+
+1 + ϵ J ⋆N (˜ x, ˜θ)
+
+≤ ϵ
+
+1 + ϵ JN (˜ x, ˜θ, ˜u, ˜xs, ˜us) + ϵ
+
+1 + ϵ ∥˜ys − yd∥2
+
+> T
+> (C.3)
+
+≤ ϵJN (x, θ, u⋆x,θ , x ⋆ 
+
+> s,x,θ
+
+, u ⋆ 
+
+> s,x,θ
+
+) + ϵ∥y⋆ 
+
+> s,x,θ
+
+− yd∥2
+
+> T
+
++ cJ∥x − ˜x∥2 + cJ∥θ − ˜θ∥2
+
++ cJ∥u⋆ 
+
+> s,x,θ
+
+− ˜us∥2 + cJ∥x⋆ 
+
+> s,x,θ
+
+− ˜xs∥2 + ∥y⋆ 
+
+> s,x,θ
+
+− ˜ys∥2
+
+> T
+> (C.7)
+
+≤ ϵJ ⋆N (x, θ ) + cJ∥x − ˜x∥2
+
++
+
+
+
+cJ + cs max 
+
+
+
+1, cJ
+
+min {σmin (Q), σ min (R)}
+
+ | {z }
+
+> cJ⋆
+
+∥θ − ˜θ∥2,
+
+where, analogous to Lemma 3, the second inequality applied Cauchy-Schwarz and Young’s inequality to the 18 quadratic term. 
+
+Proof of Thm. 3: The closed-loop dynamics (18) satisfy: ˆxk+1 =f (ˆ xk − vk, π (ˆ xk, ˆθk), θ k, w k) − vk+1 
+
+=f (ˆ xk, π (ˆ xk, ˆθk), ˆθk, 0) + ˜ wk + ˜ x1|k, k ∈ I≥0,
+
+(C.8) with ˜ x1|k and ˜ wk defined in (12). Inequality (B.7) from Corollary 1 applied to (ˆ xk, ˆθk) ensures the following nominal decrease 
+
+J ⋆N (f (ˆ xk, π (ˆ xk, ˆθk), ˆθk, 0) , ˆθk) − J ⋆N (ˆ xk, ˆθk)
+
+≤ − αc 1∥ˆxk − xrd ,ˆθk ∥2
+
+> Q
+
+. (C.9) with c1 := min {a, 1} 
+
+> 4
+
+> 0 and α > 0 from Theo-rem 2. Combining this with the continuity bound from Lemma 7 and the prediction error (C.8) yields 
+
+J ⋆N (ˆ xk+1 , ˆθk+1 ) (C.10) 
+
+> (C.6) ,(C.8)
+
+≤ (1 + ϵ)J ⋆N (f (ˆ xk, π (ˆ xk, ˆθk), ˆθk, 0) , ˆθk)+ 1 + ϵϵ cJ⋆
+
+h
+
+∥ ˜wk + ˜ x1|k∥2 + ∥ˆθk+1 − ˆθk∥2i
+
+> (C.9)
+
+≤ (1 + ϵ)J ⋆N (ˆ xk, ˆθk) − αc 1∥ˆxk − xrd ,ˆθk ∥2
+
+> Q
+
++ 1 + ϵϵ cJ⋆
+
+h
+
+∥ ˜wk + ˜ x1|k∥2 + ∥ˆθk+1 − ˆθk∥2i
+
+.
+
+Due to Assumption 3c), 
+
+V (ˆ xk, ˆθk) = J ⋆N (ˆ xk, ˆθk) − ∥ yrd ,ˆθk − yd∥2
+
+> T
+
+| {z }
+
+> =0
+
+,
+
+i.e., the Lyapunov function from Corollary 1 is simply the optimal cost J ⋆N . Inequalities (B.8)–(B.9) ensure 
+
+c1∥ˆxk − xrd ,ˆθk ∥2 
+
+> Q
+
+≤ J ⋆N (ˆ xk, ˆθk) ≤ γN ∥ˆxk − xrd ,ˆθk ∥2
+
+> Q
+
+.
+
+(C.11) Thus, we have 
+
+ϵJ ⋆N (ˆ xk, ˆθk) − αc 1∥ˆxk − xrd ,ˆθk ∥2 
+
+> Q
+
+(C.12) 
+
+> (C.11)
+
+≤ − [αc 1 − γN ϵ] ∥ˆxk − xrd ,ˆθk ∥2
+
+> Q
+
+= − αc 1/2∥ˆxk − xrd ,ˆθk ∥2
+
+> Q
+
+≤ − (1 − ρV)J ⋆N (ˆ xk, ˆθk),
+
+where the second-to-last equality holds by choosing ϵ =
+
+αc 1/(2 γN ) > 0 and the last equality holds with ρV := 1 − αc 1/(2 γN ) ∈ (0 , 1). Plugging Inequality (C.12) in (C.10) yields (26) with cV = 1 + ϵϵ cJ⋆ .19 D Proofs of Section 4.5 
+
+The following lemma provides a further characterization of the steady-states, which is needed to show Lemma 1. 
+
+Lemma 8 Let Assumptions 1b), c), and 5 hold. There exists a function gu : U × Θ → Rnx , such that for all 
+
+(u, θ ) ∈ U × Θ, x = gu(u, θ ) satisfies x = f (x, u, θ, 0) .Furthermore, gu is Lipschitz continuous with constant 
+
+Lgu ≥ 0 and the set of steady-states for (u, θ ) ∈ U × Θ is compact. 
+
+PROOF. The proof builds on ideas from [29,6]. The function gu needs to satisfy f (gu(u, θ ), u, θ, 0) −
+
+gu(u, θ ) = 0 for all ( u, θ ) ∈ U × Θ. Analogous to [29], existence of this function follows from the implicit func-tion theorem, taking into account stability (Asm. 5), differentiability (Asm. 1c)), existence of some steady-state (Asm. 1b)), and convexity of the set U × Θ(Asm. 1c)). Let us denote the Jacobian of f w.r.t. 
+
+{x, u, θ } by {fx, f u, f θ } and the Jacobian of gu by 
+
+g′
+
+> u
+
+, where we omit the arguments for simplicity. Us-ing the implicit function theorem, the Jacobian satis-fies g′ 
+
+> u
+
+= (I − fx)−1[f ⊤ 
+
+> u
+
+, f ⊤ 
+
+> θ
+
+]⊤. Exponential stability (Asm. 5) and continuous differentiability (Asm. 1c)) im-ply that ∥(I − fx)−1∥ ≤ σ, with some uniform constant 
+
+σ > 0, see also [6, Asm. 4]. Furthermore, ∥[f ⊤ 
+
+> u
+
+, f ⊤ 
+
+> θ
+
+]⊤∥
+
+is uniformly bounded given Assumption 1c). Thus, g′
+
+> u
+
+is uniformly bounded and gu is Lipschitz continuous. Compactness of the set of steady-states follows from Lipschitz continuity of gu and compactness of U × Θ. 
+
+Proof of Lemma 1: First, we derive a compact set R such that xk ∈ R ∀ k ∈ I≥0 by adapting the results in [40, Lemmas 1–2]. Then we compute a gain Γ ≻ 0 satisfying Assumption 4. Given Lemma 8, recall that an input u ∈ U and param-eter θ ∈ Θ uniquely define a corresponding steady-state 
+
+xs = gu(u, θ ). Consider the Lyapunov function 
+
+W (x, θ, u ) :=  
+
+> M−1
+
+X
+
+> k=0
+
+∥xuk (k, x, θ ) − gu(u, θ )∥ (D.1) with any fixed finite horizon M ∈ I≥0 satisfying CρρM <
+
+1 with Cρ > 0, ρ ∈ [0 , 1) from Assumption 5. Analogous to [40, Lemma 1], for any ( x, θ, u ) ∈ Rnx × Θ × U and 
+
+xs = gu(u, θ ): 
+
+∥x − xs∥ ≤ W (x, θ, u ) (13) 
+
+≤ Cρ
+
+1 − ρ
+
+| {z } 
+
+> =: c2
+
+∥x − xs∥, (D.2) 
+
+W (f (x, u, θ, 0) , θ, u ) − W (x, θ, u )
+
+> (13)
+
+≤ − (1 − CρρM )
+
+| {z }
+
+> =: c3>0
+
+∥x − xs∥ ≤ − (1 − λ)W (x, θ, u ),
+
+(D.3) with the exponential contraction rate λ = 1 − c3 
+
+> c2
+
+∈ (0 , 1). Furthermore, for any ( x, θ, u ), (˜ x, ˜θ, ˜u) ∈ Rnx × Θ × U
+
+with steady-state xs = gu(u, θ ), ˜ xs = gu(˜ u, ˜θ), it holds that 
+
+W (x, θ, u ) − W (˜ x, ˜θ, ˜u)
+
+≤ 
+
+> M−1
+
+X
+
+> k=0
+
+∥xuk (k, x, θ ) − x˜uk (k, ˜x, ˜θ)∥ + ∥xs − ˜xs∥. (D.4) For any k ∈ I≥1, Lipschitz continuity of f implies 
+
+∥xuk (k, x, θ ) − x˜uk (k, ˜x, ˜θ)∥≤Lf ∥xuk (k − 1, x, θ ) − x˜uk (k − 1, ˜x, ˜θ)∥
+
++ Lf (∥θ − ˜θ∥ + ∥u − ˜u∥)
+
+≤ · · · ≤ Lk 
+
+> f
+
+∥x − ˜x∥ + ( ∥θ − ˜θ∥ + ∥u − ˜u∥)
+
+> k
+
+X
+
+> j=1
+
+Lj 
+
+> f
+
+.
+
+Plugging this bound into (D.4) and using Lipschitz con-tinuity of gu (Lemma 8) yields 
+
+W (x, θ, u ) − W (˜ x, ˜θ, ˜u) (D.5) 
+
+≤ 
+
+> M−1
+
+X
+
+> k=0
+
+Lk 
+
+> f
+
+∥x − ˜x∥ + ( ∥θ − ˜θ∥ + ∥u − ˜u∥)
+
+> k
+
+X
+
+> j=1
+
+Lj
+
+> f
+
+
+
++ M · Lgu (∥u − ˜u∥ + ∥θ − ˜θ∥)=: cx∥x − ˜x∥ + cθ ∥θ − ˜θ∥ + cu∥u − ˜u∥.
+
+For arbitrary inputs uk ∈ U, disturbances wk ∈ W, and parameters θk ∈ Θ, System (1) satisfies 
+
+W (xk+1 , θ k+1 , u k+1 ) (D.6) 
+
+> (1)
+
+= W (f (xk, u k, θ k, w k), θ k+1 , u k+1 )
+
+> (D.5)
+
+≤ W (f (xk, u k, θ k, 0) , θ k, u k)+ cθ ∥θk+1 − θk∥ + cu∥uk+1 − uk∥ + cxLf ∥wk∥
+
+> (D.3)
+
+≤ λW (xk, θ k, u k) + cθ ∥∆θk∥ + cu∥uk+1 − uk∥ + cxLf ∥wk∥,
+
+where the first inequality also used Lipschitz continuity of f (Asm. 1c)). Given the compact sets W, U, Θ, we define ¯c := cθ max 
+
+> θ, ˜θ∈Θ
+
+∥θ − ˜θ∥ + cu max  
+
+> u, ˜u∈U
+
+∥u − ˜u∥ + cxLf max  
+
+> w∈W
+
+∥w∥.
+
+20 This yields 
+
+W (xk+1 , θ k+1 , u k+1 ) ≤ λW (xk, θ k, u k) + ¯ c
+
+≤ · · · ≤ λk+1 W (x0, θ 0, u 0) + 1 − λk+1 
+
+1 − λ ¯c. 
+
+Lastly, we can bound 
+
+W (x0, θ 0, u 0) (D.2) 
+
+≤ max 
+
+> u∈U,x ∈X0,θ ∈Θ
+
+Cρ
+
+1 − ρ ∥x − gu(u, θ )∥ =: ¯W0
+
+(D.7) using the compact set of initial conditions x0 ∈ X0 and Lipschitz continuity of gu. Thus, the following set 
+
+R =
+
+
+
+x ∈ Rnx | W (x, θ, u ) ≤ ¯W0 + ¯c
+
+1 − λ , u ∈ U, θ ∈ Θ
+
+
+
+,
+
+satisfies xk ∈ R, k ∈ I≥0. Furthermore, R is com-pact given (D.2) and the compact set of steady-states (Lemma 8). Using ˆΦk = G(ˆ xk, u k, 0), ˆ xk = xk + vk with 
+
+vk ∈ V, a gain Γ ≻ 0 satisfying the Assumption 4 can be computed with the following semidefinite program Γ = arg max trace(Γ) (D.8) s.t. Φ( x + v, u )ΓΦ( x + v, u )⊤ ⪯ I
+
+∀(x, u, v ) ∈ R × U × V.
+
+Note that Γ ≻ 0 follows from Lipschitz continuity of Φ (Asm. 3c)) and compactness of R × U × V.
+
+Proof of Thm. 4: We first relate the stage cost ℓ to the desired quantities (output tracking and constraint vio-lation) in Objective 1. Then, we use the robust stability properties of the MPC (Thm. 3) and the LMS (Thm. 1) in a telescopic sum. Lastly, we bound all remaining terms using noise, disturbances, parameter variations, and ini-tial condition. 
+
+Part I: Given that the state constraints X are given by a finite number of half space constraints (3), Hoffman’s Lemma [19] yields a uniform constant cX > 0, such that for all ∀x ∈ Rnx :
+
+∥x∥2 
+
+> X
+
+≤ cX
+
+> r
+
+X
+
+> i=1
+
+max {Dix − di, 0}2, (D.9) i.e., the soft constraint penalty provides a bound on the distance to the constraint set. Given Lipschitz continu-ity of y = h(x) (Asm. 1c)) and yrd ,θ independent of θ
+
+(Asm. 3c)), the output tracking error satisfies 
+
+∥yk − yrd ,θ ∥ ≤ Lh∥xk − xrd ,ˆθk ∥ (2) 
+
+≤ Lh∥ˆxk − xrd ,ˆθk ∥ + Lh∥vk∥.
+
+Analogous to Inequality (B.6), the stage cost ℓ satisfies 
+
+ℓ(x, u, x ⋆ 
+
+> s,x,θ
+
+, u ⋆ 
+
+> s,x,θ
+
+) (D.10) 
+
+≥ min {a, 1}
+
+4 ∥x − xrd ,θ ∥2 
+
+> Q
+
++
+
+> r
+
+X
+
+> i=1
+
+qξ,i max {Dix − di, 0}2,
+
+for all x ∈ Rnx , θ ∈ Θ. Combining all three bounds yields 
+
+∥xk∥2 
+
+> X
+
++ ∥yk − yrd ,θ k ∥2 (D.11) 
+
+≤2∥ˆxk∥2 
+
+> X
+
++ 2 ∥vk∥2 + 2 L2h∥ˆxk − xrd ,ˆθk ∥2 + 2 L2h∥vk∥2
+
+≤2cX
+
+> r
+
+X
+
+> i=1
+
+max {Di ˆxk − di, 0}2 + 2 ∥vk∥2
+
++ 2 L2h∥ˆxk − xrd ,ˆθk ∥2 + 2 L2h∥vk∥2
+
+≤ max 
+
+ 2cX
+
+min i qξ,i 
+
+, 8L2h
+
+σmin (Q) min {1, ¯a}
+
+| {z }
+
+> =: cℓ
+
+"
+
+min {a, 1}
+
+4 ∥ˆxk − xrd ,ˆθk ∥2 
+
+> Q
+
++
+
+> r
+
+X
+
+> i=1
+
+qξ,i max {Di ˆxk − di, 0}2
+
+#
+
++ 2(1 + L2h)∥vk∥2
+
+≤cℓℓ(ˆ xk, u k, x ⋆ 
+
+> s,ˆxk,ˆθk
+
+, u ⋆ 
+
+> s,ˆxk,ˆθk
+
+) + 2(1 + L2h)∥vk∥2,
+
+where the last inequality used (D.10) with x = ˆ xk, θ =ˆθk and the first inequality used ∥a+b∥2 ≤ 2∥a∥2 +2 ∥b∥2.
+
+Part II: Applying Inequality (11b) from the LMS to the robust stability Inequality (26) yields 
+
+J ⋆N (ˆ xk+1 , ˆθk+1 ) − ρVJ ⋆N (ˆ xk, ˆθk)
+
+> (26)
+
+≤ cV
+
+
+
+∥ ˜wk + ˜ x1|k∥2 + ∥ˆθk+1 − ˆθk∥2
+
+> (11b)
+
+≤ cV(1 + σmin (Γ −1)) ∥ ˜wk + ˜ x1|k∥2
+
+≤ 2cV(1 + σmin (Γ −1)) 
+
+| {z }
+
+> ˜cV
+
+∥ ˜wk∥2 + ∥˜x1|k∥2 . (D.12) The combined Lyapunov function V (ˆ xk, ˆθk, θ k) := 
+
+J ⋆N (ˆ xk, ˆθk) + ˜ cVVθ (ˆθk − θk) satisfies 
+
+V (ˆ xk+1 , ˆθk+1 , θ k+1 ) − V (ˆ xk, ˆθk, θ k) (D.13) 
+
+> (11a)
+
+≤ ˜cVcθ
+
+pVθ (∆ θk) + 2˜ cV∥ ˜wk∥2 − (1 − ρV)J ⋆N (ˆ xk, ˆθk).
+
+Using V ≥ 0 and a telescopic sum yields 
+
+> K−1
+
+X
+
+> k=0
+
+(1 − ρV)J ⋆N (ˆ xk, ˆθk) (D.14) 
+
+≤
+
+> K−1
+
+X
+
+> k=0
+
+˜cVcθ
+
+pVθ (∆ θk) + 2˜ cV∥ ˜wk∥2 + V (ˆ x0, ˆθ0, θ 0).
+
+21 Furthermore, ℓ(ˆ xk, u k, x ⋆ 
+
+> s,ˆxk,ˆθk
+
+, u ⋆ 
+
+> s,ˆxk,ˆθk
+
+) ≤ J ⋆N (ˆ xk, ˆθk)yields 
+
+> K−1
+
+X
+
+> k=0
+
+∥xk∥2 
+
+> X
+
++ ∥yk − yrd ,θ k ∥2(D.11) 
+
+≤
+
+> K−1
+
+X
+
+> k=0
+
+cℓℓ(ˆ xk, u k, x ⋆ 
+
+> s,ˆxk,ˆθk
+
+, u ⋆ 
+
+> s,ˆxk,ˆθk
+
+) + 2(1 + L2h)∥vk∥2(D.14) 
+
+≤ cℓ
+
+1 − ρV
+
+"
+
+V (ˆ x0, ˆθ0, θ 0) + 
+
+> K−1
+
+X
+
+> k=0
+
+˜cVcθ
+
+pVθ (∆ θk) + 2˜ cV∥ ˜wk∥2
+
+#
+
++
+
+> K−1
+
+X
+
+> k=0
+
+2(1 + L2h)∥vk∥2. (D.15) 
+
+Part III: To ensure (7), all terms on the right hand side in (D.15) need to be bounded proportional to ∥wk∥2 +
+
+∥vk∥2 + ∥∆θk∥. The prediction error due to noise ˜ w sat-isfies 
+
+∥ ˜wk∥2 (11c) 
+
+≤ (∥vk+1 ∥ + Lf (∥wk∥ + ∥vk∥)) 2
+
+≤ 3 max {1, L 2f } ∥vk+1 ∥2 + ∥vk∥2 + ∥wk∥2 .
+
+The parameter variation satisfies 
+
+pVθ (∆ θk) = 
+
+q
+
+∆θ⊤ 
+
+> k
+
+Γ−1∆θk ≤ pσmin (Γ −1)∥∆θk∥.
+
+From Assumption 3a) and yrd ,θ = yrd ,ˆθ0 (Asm. 3c)), we have 
+
+∥xrd ,ˆθ0 − xrd ,θ 0 ∥2 
+
+> Q
+
+≤ Lgy ∥θ0 − ˆθ0∥2. (D.16) Thus, the Lyapunov function V at time k = 0 can be bounded using Proposition 2: 
+
+V (ˆ x0, ˆθ0, θ 0) = J ⋆N (ˆ x0, ˆθ0) + ˜ cVVθ (ˆθ0 − θ0)
+
+> (B.9)
+
+≤ γN ∥ˆx0 − xrd ,ˆθ0 ∥2 
+
+> Q
+
++ ˜ cVVθ (ˆθ0 − θ0)
+
+≤2γN (∥ˆx0 − xrd ,θ 0 ∥2 
+
+> Q
+
++ ∥xrd ,θ 0 − xrd ,ˆθ0 ∥2
+
+> Q
+
+) + ˜ cVVθ (ˆθ0 − θ0)
+
+> (D.16)
+
+≤ (˜ cVσmin (Γ −1) + 2 γN Lgy )∥ˆθ0 − θ0∥2
+
++ 4 γN
+
+ ∥x0 − xrd ,θ 0 ∥2 + ∥v0∥2 .
+
+22 E Proof of Section 5 
+
+Proof of Theorem 5: Propositions 2 and 3 directly gen-eralize under Assumption 6 and Vf,κ , however, the re-sults only hold in the local neighbourhood Sloc . Com-pared to Theorem 2, further steps are required to de-rive a region of attraction X ¯J which is not restricted to the (potentially small) neighbourhood Sloc . By con-sidering a fixed artificial setpoint xs as a candidate so-lution, Inequality (34) reduces to the stability analysis in [22, Thm. 4.37]. Specifically, a case distinction en-sures that Inequalities (21) and (22) remain valid for the tail of the prediction horizon k ∈ I≥N0 , with N0 := max 
+
+
+
+0, ¯J − ¯γc loc 
+
+cloc 
+
+
+
+and ¯ γ = max k γk. Thus, a simple sufficient condition for Inequality (34) with α > 0 and, e.g., ω = 1, is given by 
+
+N ≥ N0 + log(¯ γ) + log( ϵf )log(¯ γ) − log(¯ γ − 1) (E.1) with ϵf according to (23), see [22, Equ. (4.53)]. 
+
+Proof of Corollary 3: Given Theorem 5, we adapt the proof of Corollary 1, which leverages Proposition 4. The proof of Proposition 4 leverages the upper bound ¯ γ from Proposition 2, which only holds on the local set Sloc 
+
+under Assumption 6. However, a simple case distinc-tion shows that the larger bound ¯ γ ¯J := max {¯γ, ¯J 
+
+> cloc
+
+} is valid in the region of attraction X ¯J , see, e.g., [54]. Thus, Proposition 4 remains valid for all ( x, θ ) ∈ X ¯J with a possibly smaller constant ¯ a > 0. We define Vκ(x, θ ) := 
+
+J ⋆N,κ (x, θ ) − ∥ yrd ,θ − yd∥2 
+
+> T
+
+, which is a monotonically de-creasing function. Thus, the sublevel set X ¯J also remains positively invariant. Exponential stability follows with the Lyapunov function Vκ, analogous to Corollary 1. 
+
+Proof of Theorem 6: Lemmas 4 and 6 are completely independent of κ and thus remain valid. The continuity results in Lemmas 5 and 7 hold analogously for the cost 
+
+JN,κ and J ⋆N,κ due to the assumed Lipschitz continuity of κ (Asm. 6). Thus, the derivation of Inequality (36) is analogous to Theorem 3, taking into account the 
+
+regional nominal stability properties from Theorem 5. The main difference is that the analysis requires that 
+
+J ⋆N,κ (ˆ xk, ˆθk) ≤ ¯J remains valid. This invariance follows from (36) with the assumed bound (35). 
+
+Proof of Lemma 2: We know that xk ∈ R , with 
+
+R = {x| ∃ θ ∈ Θ, v ∈ V, (xs, u s, y s) ∈ ¯S(θ) : (E.2) 
+
+∥x + v − xs∥2 
+
+> Q
+
+≤ ¯J } .
+
+Compactness of the set of steady-states (Asm. 1b)) and Θ , V compact imply that R in (E.2) is compact. Thus, Assumption 4 can be satisfied by choosing Γ as in Lemma 1 with (D.8) using the compact set R in (E.2). 
+
+Proof of Theorem 7: Inequalities (11b) –(11c) and As-sumption 1c) ensure 
+
+∥ ˜wk + ˜ x1|k∥≤ max {Lf , 1}(∥wk∥ + ∥vk∥ + ∥vk+1 ∥ + ∥θk − ˆθk∥),
+
+∥ˆθk+1 − ˆθk∥2 ≤ σmin (Γ −1)∥ ˜wk + ˜ x1|k∥2.
+
+Thus, θk, ˆθk ∈ Θ, wk ∈ W, vk ∈ V with Θ , V, W suf-ficiently small ensure that Inequality (35) holds, which ensures (ˆ xk, ˆθk) ∈ X ¯J , ∀k ∈ I≥0 with Theorem 6. Thus, we can also apply the results from Lemma 2 and Theo-rem 1. The remainder of the proof is analogous to The-orem 4. 
+
+Proof of Corollary 4: For W = {0}, V = {0}, we have ˜wk = 0. Analogous to Inequality (D.13), we obtain 
+
+Vκ(ˆ xk+1 , ˆθk+1 , θ k+1 ) − Vκ(ˆ xk, ˆθk, θ k)
+
+≤ − (1 − ρV)J ⋆N (ˆ xk, ˆθk).
+
+Thus, J ⋆N,κ (ˆ xk, ˆθk) ≤ Vκ(ˆ xk, ˆθk, θ k) ≤ ¯J holds recur-sively. The remainder of the proof is analogous to The-orem 4. Inequality (7) with wk = 0, vk = 0, ∆ θk = 0, and the bounded initial condition directly yields (38). 23 F Uniform boundedness with local Lipschitz continuity under small parameter variations 
+
+In the following, we relax the uniform Lipschitz bound (Asm. 1c)) to a (local) Lipschitz condition. 
+
+Assumption 7 There exist uniform constants Lf,θ , L f ≥
+
+0, such that for all x, ˜x ∈ Rnx , θ, ˜θ ∈ Θ, u, ˜u ∈ U,
+
+w, ˜w ∈ W:
+
+∥f (x, u, θ, w ) − f (˜ x, ˜u, ˜θ, ˜w)∥ ≤ Lf,θ ∥θ − ˜θ∥(1 + ∥x∥)+ Lf [∥x − ˜x∥ + ∥u − ˜u∥ + ∥w − ˜w∥] . (F.1) Compared to Assumption 1c), the Lipschitz constant w.r.t. θ can increase with ∥x∥, which is important as we do not assume a uniform bound on ∥x∥. The following proposition shows that Assumption 7 holds naturally for general linear systems. 
+
+Proposition 5 Let Assumption 2 hold and suppose we have a linear dynamical system (cf. Sec. 6.2). For any compact sets Θ, U, W, there exist uniform constants 
+
+Lf,θ , L f ≥ 0 satisfying (F.1) .
+
+PROOF. Inequality (F.1) follows from the compact sets U, W, Θ: 
+
+∥f (x, u, θ, w ) − f (˜ x, ˜u, ˜θ, ˜w)∥≤∥ G(x, u, w )( θ − ˜θ)∥
+
++ ∥A˜θ (x − ˜x) + B˜θ (u − ˜u) + G˜θ (w − ˜w)∥≤c1(∥x∥ + c2)∥θ − ˜θ∥ + c3 [∥x − ˜x∥ + ∥u − ˜u∥ + ∥w − ˜w∥] ,
+
+where c3 = max θ∈Θ max {∥ Aθ ∥, ∥Bθ ∥, ∥Gθ ∥, ∥eθ ∥} , c2 =max u∈U,w ∈W ∥u∥+∥w∥+1, and c1 is a Lipschitz constant of Aθ , B θ , G θ , e θ .The following result generalizes Lemma 1. 
+
+Lemma 9 Let Assumptions 1b), 5, and 7 hold. Sup-pose we have known compact sets X0, W, V, Θ satisfying 
+
+wk ∈ W, uk ∈ U, vk ∈ V, θk ∈ Θ, k ∈ I≥0, and x0 ∈ X0.Furthermore, suppose there exists a sufficiently small set 
+
+Ω ⊆ Rnθ with 0 ∈ int(Ω) , such that the parameter varia-tion satisfies ∆θk ∈ Ω, ∀k ∈ I≥0. Then, we can compute a gain Γ ≻ 0 that satisfies Assumption 4. 
+
+PROOF. The proof follows the arguments from Lemma 1. Let us denote ¯xk = xuk (k, x, θ ) and ˜xk = x˜uk (k, ˜x, ˜θ), k ∈ I[0 ,M −1] . Compact sets U, Θ and 
+
+gu Lipschitz continuous imply 
+
+∥¯xk∥ ≤ ∥ ¯xk − gu(u, θ )∥ + ∥gu(u, θ )∥ (D.2) 
+
+≤ W (x, θ, u ) + cgu ,
+
+(F.2) with a uniform constant cgu ≥ 0. With some abuse of notation, we abbreviate 
+
+LW := Lf,θ (1 + cgu + W (x, θ, u )) . (F.3) The prediction error satisfies 
+
+∥¯xk+1 − ˜xk+1 ∥
+
+> (F.1)
+
+≤ Lf [∥¯xk − ˜xk∥ + ∥u − ˜u∥] + Lf,θ ∥θ − ˜θ∥(1 + ∥¯xk∥)
+
+> (F.2) ,(F.3)
+
+≤ Lf [∥¯xk − ˜xk∥ + ∥u − ˜u∥] + LW ∥θ − ˜θ∥.
+
+Recursive application yields 
+
+∥¯xk − ˜xk∥≤Lk 
+
+> f
+
+∥x − ˜x∥ +
+
+h
+
+LW ∥θ − ˜θ∥ + Lf ∥u − ˜u∥
+
+i k−1X
+
+> j=1
+
+Lj−1f .
+
+Analogous to Inequality (D.5), we arrive at 
+
+W (x, θ, u ) − W (˜ x, ˜θ, ˜u) (F.4) 
+
+≤cx∥x − ˜x∥ + cu∥u − ˜u∥ + cθ ∥θ − ˜θ∥(1 + W (x, θ, u )) ,
+
+with uniform constants cx, cu, cθ ≥ 0, where the factor 1 + W is due to (F.3). Analogous to (D.6), this yields 
+
+W (xk+1 , θ k+1 , u k+1 ) (F.5) 
+
+> (F.4) ,(D.3)
+
+≤ (λ + cθ ∥∆θk∥)W (xk, θ k, u k)+ cθ ∥∆θk∥ + cu∥uk+1 − uk∥ + cxLf ∥wk∥.
+
+Given the compact sets W, U, Ω, we define ¯c := cθ max  
+
+> ∆θ∈Ω
+
+∥∆θ∥ + cu max  
+
+> u, ˜u∈U
+
+∥u − ˜u∥ + cxLf max  
+
+> w∈W
+
+∥w∥.
+
+Given any ˜λ ∈ (λ, 1), we have λ + cθ ∥∆θk∥ ≤ ˜λ < 1 with Ω = 
+
+(
+
+∆θ ∈ Rnθ | ∥ ∆θ∥ ≤ ˜λ − λcθ
+
+)
+
+, 0 ∈ int(Ω). Thus, we have 
+
+W (xk+1 , θ k+1 , u k+1 ) ≤ ˜λW (xk, θ k, u k) + ¯ c. 
+
+The rest of the proof is analogous to Lemma 1. This result also ensures uniform boundedness of xk.Thus, Inequality (F.1) also yields a uniform Lipschitz 24 bound for the closed-loop system and hence the results from Section 4 can be adapted to this setting. The main difference compared to Section 4 is that the theoretical results hold only for sufficiently small variations in the unknown model parameters ∆ θk.25

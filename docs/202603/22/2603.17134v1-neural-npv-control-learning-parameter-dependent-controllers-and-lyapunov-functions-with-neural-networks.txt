@@ -1,0 +1,745 @@
+Title: Neural-NPV Control: Learning Parameter-Dependent Controllers and Lyapunov Functions with Neural Networks
+
+URL Source: https://arxiv.org/pdf/2603.17134v1
+
+Published Time: Thu, 19 Mar 2026 00:19:32 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# Neural-NPV Control: Learning Parameter-Dependent Controllers and Lyapunov Functions with Neural Networks 
+
+MD AK Niloy 1, Adam Hallmark 1, Yikun Cheng 2, Pan Zhao 1, Member, IEEE 
+
+Abstract — Nonlinear parameter-varying (NPV) systems are a class of nonlinear systems whose dynamics explicitly depend on time-varying external parameters, making them suitable for modeling real-world systems with dynamics variations. Traditional synthesis methods for NPV systems, such as sum-of-squares (SOS) optimization, are only applicable to control-affine systems, face scalability challenges and often lead to con-servative results due to structural restrictions. To address these limitations, we propose Neural-NPV, a two-stage learning-based framework that leverages neural networks to jointly synthesize a PD controller and a PD Lyapunov function for an NPV system under input constraints. In the first stage, we utilize a computationally cheap, gradient-based counterexample-guided procedure to synthesize an approximately valid PD Lyapunov function and a PD controller. In the second stage, a level-set guided refinement is then conducted to obtain a valid Lyapunov function and controller while maximizing the robust region of attraction (R-ROA). We demonstrate the advantages of Neural-NPV in terms of applicability, performance, and scalability compared to SOS-based methods through numerical experiments involving an simple inverted pendulum with one scheduling parameter and a quadrotor system with three scheduling parameters. 
+
+Index Terms — Learning control, gain-scheduled control, neu-ral networks 
+
+I. I NTRODUCTION 
+
+A nonlinear parameter-varying (NPV) system is a nonlin-ear system whose behavior explicitly depends on external time-varying parameters. This concept extends the linear parameter-varying (LPV) framework [1], [2], by allowing for the dynamics to have a nonlinear instead of a linear structure. Many real-world nonlinear time-varying systems can be effectively represented as NPV systems. Examples in-clude rockets with decreasing mass due to fuel consumption, ground vehicles subjected to variable friction coefficients, and aircraft experiencing disturbances that change over time. Similar to the LPV framework [1]–[3], representing a non-linear time-varying system as an NPV system facilitates the design of gain-scheduled nonlinear controllers that adjust the control strategy dynamically based on real-time measure-ments and estimates of the scheduling parameters. Recent studies have explored the synthesis of nonlinear parameter-dependent (PD) controllers for NPV systems using SOS programming [4]–[6]. However, SOS programming is                   
+
+> 1AK Niloy, A. Hallmark and P. Zhao are with the Department of Aerospace Engineering and Mechanics, University of Alabama, Tuscaloosa, AL 35487, USA. Email:
+
+mniloy1@crimson.ua.edu, alhallmark@crimson.ua.edu, pan.zhao@ua.edu .
+
+> 1Y. Cheng is with the Department of Mechanical Science and Engineer-ing, University of Illinois at Urbana-Champaign, IL 61801, USA. Email:
+
+yikun2@illinois.edu .
+
+not scalable to high-dimensional systems. Additionally, SOS-based nonlinear synthesis often imposes a restrictive structure on the Lyapunov functions to avoid a non-convex problem, leading to potentially conservative results. To overcome the limitations of SOS-based NPV synthesis, this paper investi-gates the use of NNs to learn stabilizing control laws for NPV systems and Lyapunov functions for certifying the stability of the closed-loop system. 
+
+A. Related work 
+
+LPV control : In the LPV control approach [1], [2], a non-linear system is approximated by a LPV model. Using this LPV representation, controllers can be developed to achieve stability and performance guarantees for the closed-loop system, often through the use of linear matrix inequalities (LMIs) [2]. However, a key limitation of this methodology is that the LPV model may only be accurate locally when it is derived via Jacobian linearization. Alternatively, when the quasi-LPV modeling technique is applied, the model tends to be a conservative over-approximation of the actual nonlinear dynamics, which can restrict controller performance [2]. 
+
+SOS and its use in NPV synthesis : One of the most widely used methods for nonlinear analysis and synthesis is SOS optimization [7]. It has been applied to jointly synthesize nonlinear parameter-dependent (PD) controllers and PD Lyapunov functions for NPV systems [4]–[6]. However, SOS optimization-based methods suffer from two major limitations: (i) Restricted scalability : The computa-tional complexity grows rapidly with the dimensionality of the system and the degree of the polynomial basis used, rendering them impractical for high-dimensional systems [8]. (ii) Conservative performance due to structural restrictions :SOS-based nonlinear synthesis typically imposes structures on certificate functions to avoid a nonconvex problem, lead-ing to conservative performance. For example, SOS-based Lyapunov synthesis typically requires that the Lyapunov functions do not depend on states whose derivatives are directly affected by control inputs [6], [9]–[12]. 
+
+Learning certified control : There has been an increasing trend for learning a control certificate (alongside a controller) using NNs (NNs) [13]. Such a neural certificate can be a Lyapunov function for certifying the stability of an equi-librium point [14]–[17], a contraction metric for certifying stability about trajectories [18]–[20], or a barrier function for certifying set invariance [21], [22], among others. Com-pared to traditional methods for nonlinear synthesis, e.g., based on sum-of-squares (SOS) programming [7], certified neural control can be applied to general nonlinear systems 1  
+
+> arXiv:2603.17134v1 [eess.SY] 17 Mar 2026 PD Controller NPV System
+> u
+> ROA
+> ROI
+> PGD-based
+> CEGIS
+> PD Lyapunov function
+> )minimize
+> Stage 2
+> Lyapunov loss
+> with level-set
+> Stage 1
+> Lyapunov loss in
+> ROI
+> Certified R-
+> ROA
+
+Fig. 1: Neural-NPV framework. Within Neural-NPV, a PD controller πpx, θ q (to stabilize the NPV system) and a PD Lyapunov function V px, θ q (to certify the stability of the closed-loop system) are jointly trained to minimize the Lya-punov loss via supervised learning. ROI: Region of interest; ROA: Region of attraction (in contrast to polynomial systems for SOS programming-based methods), and is scalable to high-dimensional systems. Nevertheless, existing work typically consider time-invariant 
+
+dynamics [23]. To the best of our knowledge, there is no study on learning-based control for NPV systems. B. Our contribution 
+
+The key contributions of our work are as follows:  
+
+> ‚
+
+We propose Neural-NPV, a novel two-stage framework for jointly synthesizing a PD Lyapunov function and a PD controller using neural networks for general NPV systems, unlike existing SOS-based methods that re-quire a control-affine structure or polynomial parameter-izations for the dynamics. Our framework can also han-dle asymmetric input constraints, which is challenging for SOS-based methods [4], [24]. We verify the learned PD Lyapunov function and PD controller through two empirical verification schemes.  
+
+> ‚
+
+We show the superior performance of our framework in yielding a much larger robust region of attraction (R-ROA) compared to SOS-based methods using numerical experiments. We also demonstrate the scalability of our approach through numerical experiments on a quadrotor system with three scheduling parameters denoting the disturbances. II. P ROBLEM SETTINGS AND PRELIMINARIES 
+
+We consider a nonlinear parameter-varying (NPV) system, 
+
+9x “ f px, u, θ q, (1) where xptq P Rn is the state vector, uptq P Rnu is input vector, θptq P Rnθ denotes the time-varying parameter vector that can be measured online and f : Rn ˆ Rnu ˆ Rnθ Ñ
+
+Rn is locally Lipschitz in x, u and θ. The parameter θptq
+
+characterizes the variation of the dynamics. For instance, it can represent the mass of a rocket, which will be time-varying due to propellant consumption, or describe the external disturbance applied to an aircraft or a drone. The control input is bounded as 
+
+¯
+
+u ď uptq ď ¯u, @t ě 0, (2) where ¯
+
+u P Rm and ¯u P Rm denote the lower and upper bounds on u, respectively. 
+
+Assumption 1. The time-varying parameters θ and their derivatives 9θ satisfy 
+
+θptq P Θ and 9θptq P Ω, @ t ě 0 (3) where Θ is a compact set and Ω is a hyper-rectangular set defined by, 
+
+Ω fi ␣ v P Rnθ : vi ď vi ď vi, i P Znθ
+
+> 1
+
+(. (4) For clarity, we define FΩΘ as the set of all feasible parameter trajectories θptq,
+
+FΩΘ fi 
+
+!
+
+θ : R` Ñ Rnθ
+
+ˇˇθptq P Θ, 9θptq P Ω, @ t ě 0
+
+)
+
+. (5) Given (1) subject to Assumption 1, we are interested in designing a nonlinear PD controller 
+
+u “ πpx, θ q (6) that will stabilize the system (1) under all admissible trajec-tories of θ and a PD Lyapunov function V px, θ q certifying the stability. Under the controller (6), the closed-loop system is given by 
+
+9x “ f px, π px, θ q, θ q fi ¯f px, θ q. (7) Without loss of generality, we assume the x˚ “ 0 is an equilibrium state of the closed-loop system. 
+
+Definition 1. [25, Definition 4.5] The equilibrium point 
+
+x˚ “ 0 of the closed-loop system (7) is exponentially stable if there exists positive constaints c, k , and λ such that 
+
+∥xptq∥ ď k∥xpt0q∥ e´λpt´t0q, @t ě t0 ě 0, @∥xpt0q∥ ă c, (8) for all admissible trajectories of θ satisfying (3). According to Lyapunov stability theory (as demonstrated in the proof of Theorem 1 in [6]), if there exists a PD controller u “ πpx, θ q and a PD continuously differentiable function V px, θ q : Rnx ˆ Rnθ Ñ R such that for all x P X
+
+with X being a domain of interest, 
+
+V p0, θ q “ 0, @θ P Θ, (9a) 
+
+k1}x}2 ď V px, θ q ď k2}x}2, @θ P Θ, (9b) 
+
+9V px, θ, 9θq ď ´ k3}x}2, @θ P Θ, @ 9θ P Ver pΩq, (9c) where 
+
+9V px, θ, 9θq “ BV
+
+Bx ¨ ¯f ` BV
+
+Bθ ¨ 9θ “ BV
+
+Bx ¨f px, π px, θ qq` BV
+
+Bθ ¨ 9θ, 
+
+(10) Ver pΩq denotes the set of vertices of Ω, and k1, k2, and 
+
+k3 are positive constants, then the closed-loop system (7) is exponentially stable. 
+
+Definition 2. A robust region of attraction (R-ROA) for the closed-loop system (6) under the controller u “ πpx, θ q
+
+2is the set of initial states xp0q from which the closed-loop trajectories satisfy lim tÑ8 xptq “ 0 for all admissible trajectories of θ. Formally, an R-ROA is a set defined by, 
+
+A “
+
+"
+
+xp0q P Rn : @θ P FΩΘ , lim  
+
+> tÑ8
+
+xptq “ 0
+
+*
+
+. (11) 
+
+Remark 1. Since (9c) is affine with respect to 9θ, if it holds for all θ P Ver pΩq, then it holds for θ P Ω.III. N EURAL -NPV: L EARNING PD C ONTROLLERS AND 
+
+LYAPUNOV FUNCTIONS 
+
+We now present a method to jointly learn the PD controller and PD Lyapunov functions using NNs that (approximately) satisfy the conditions (9). 
+
+A. Parameterizing the PD Lyapunov function and PD con-troller 
+
+The Lyapunov function should meet all the conditions in (9). To simplify the training process, we parameterize our Lyapunov function in a way that conditions (9a) & (9b) can be automatically satisfied. Inspired by [26], we adopt the following parameterization: 
+
+V px, θ q “ xT
+
+´
+
+ϕNN px, θ qϕT
+
+> NN
+
+px, θ q ` ϵI 
+
+¯
+
+x, (12) where ϵ is a small positive constant, I is an identity matrix, and ϕNN px, θ q is an NN with n ` nθ neurons in the input layer and n neurons in the output layer. ϕNN px, θ q takes both state x and parameters θ as the input. We use tanh 
+
+activation function for ϕNN , which allows the computation of the derivative of V px, θ q defined in (10). With the parameterization in (12), (9a) can be trivially satisfied. Also, ϕNN px, θ qϕT
+
+> NN
+
+px, θ q is positive semi-definite. Letting ¯λ ě 0 and ¯
+
+λ ě 0 denote the largest and smallest eigenvalues of ϕNN px, θ qϕT
+
+> NN
+
+px, θ q for all x P X and θ P Θ,respectively. Then, we have 
+
+p¯
+
+λ`ϵq∥x∥2 ď V px, θ q ď p ¯λ`ϵq∥x∥2 , @x P X , θ P Θ. (13) Setting k1 “ ¯
+
+λ ` ϵ ą 0 and k2 “ ¯λ ` ϵ ą 0, (13) implies that (9b) is satisfied for all x P X .To represent the controller, we use a multi-layer NN 
+
+πNN px, θ q with n ` nθ neurons in the input layer and m
+
+neurons in the output layer. We denote the weight parameters of ϕNN px, θ q and πNN px, θ q as WV and Wπ , respectively. To ensure the controller generates desired input upx˚, θ q at the equilibrium state x˚ which achieves 9x˚ “ ¯f px˚, θ q “ 0 for all θ P Θ, we parameterize the normalized controller as 
+
+˜upx, θ q “ πNN px, θ q ´ πNN px˚, θ q ` ˜upx˚, θ q (14) To enforce the constraint (2), we use tanh in the output layer of the controller πNN to restrict the normalized output within r´ 1, 1s. ˜upx, θ q and ˜upx˚, θ q are normalized value of upx, θ q and upx˚, θ q, respectively. Rather than using projection or clipping, which introduces complications in gradient-based training, we employ a smooth, differentiable activation at the output, which empirically improves the training process. We scale the normalized output to actual physical control input using an affine de-normalization to get the final controller input: 
+
+u “ πpx, θ q “ u ` ˜u ` 12 p¯u ´ uq , (15) which maps ˜u P r´ 1, 1s onto ru, ¯us. Together, the construc-tion (14) and de-normalization (15) ensures physical control input will always be u˚ at x˚ for any θ under the desired input constraints. The effectiveness of this simple strategy for enforcing input constraint is validated in Section IV. 
+
+B. The Neural-NPV algorithm 
+
+Within Neural-NPV, we jointly train the Lyapunov net-work ϕNN and controller network πNN using a two stage procedure. In Stage I , we use counterexample guided syn-thesis to obtain a working controller and a Lyapunov function candidate over the full domain X ˆΘ, where X is the region of interest. In Stage II , we refine the controller and Lyapunov networks using a level-set-guided loss to certify a robust ROA and a surrogate loss that promotes the growth of the robust ROA. The algorithm is summarized in Algorithm 1. 
+
+1) Stage I: Counterexample-guided joint synthesis: Exist-ing work on learning certified control typically first generates samples from the state space, use these samples to evaluate the violation of the Lyapunov functions and optimizes the network parameters to minimize the violation. We follow this idea. However, here, we need to sample from the space of x, and θ, and 9θ i.e., X , Θ, and Ω. At each iteration, we generate N number of x-θ pairs, px1, θ 1q, pxN , θ N q
+
+where xi P X and θi P Θ for i “ 1, . . . , N . We then use CEGIS (Counter-example guided Inductive Synthesis) [27] framework to iteratively generate adversarial samples 
+
+pxi
+
+> adv
+
+, θ i
+
+> adv
+
+q and train the networks. Following [26], [28], we use the projected gradient descent (PGD) method to generate the worst adversarial examples that violate the following objective: 
+
+L 9V “ ÿ
+
+> 9θPVer pΩq
+
+9V pxi
+
+> adv
+
+, θ i
+
+> adv
+
+, 9θq ` k3}xi
+
+> adv
+
+}2, (16) By maximizing (16), we aim to find adversarial samples that have the maximum violation of the condition (9c). Since (9a) and (9b) has already been satisfied by construction as explained in Section III-A, we only need to evaluate (9c). At each pxi
+
+> adv
+
+, θ i
+
+> adv
+
+q, we evaluate the V pxi
+
+> adv
+
+, θ i
+
+> adv
+
+q and 
+
+upxi
+
+> adv
+
+, θ i
+
+> adv
+
+q and thus assess whether the Lyapunov condi-tions in (9) are violated at pxi
+
+> adv
+
+, θ i
+
+> adv
+
+q and if so, the level of violation. These adversarial examples are added to a buffer and then used to optimize the following empirical Lyapunov loss : 
+
+Llya “ 1
+
+N
+
+> N
+
+ÿ
+
+> i“1
+
+ÿ
+
+> 9θPVer pΩq
+
+max 
+
+´
+
+0, 9V pxi
+
+> adv
+
+, θ iadv , 9θq` k3}xi
+
+> adv
+
+}2
+
+¯
+
+,
+
+(17) which characterizes the violation of (9c) using the N sam-ples. We minimize the Lyapunov loss in (17) to jointly learn a working controller and a Lyapunov function candidate over 3the ROI X ˆ Θ. We stop once we see the counterexample violation rate drops below 1% and the counterexample buffer size plateaus for 100 consecutive iterations, indicating that the network satisfies condition (9c) over the vast majority of the sampled state-disturbance space. 
+
+2) Stage II: Level set-guided ROA refinement: In Stage I, we aim to get a working controller and a Lyapunov function candidate for the whole ROI. In Stage II, we introduce a level set 
+
+ΛρV “
+
+"
+
+x P Rn : max  
+
+> θPΘ
+
+V px, θ q ď ρ
+
+*
+
+. (18) in the training process, and refine the Lyapunov function candidate and the controller together, so that the level set represents a robust ROA, and furthermore its size is maxi-mized. In practice, we can fix the constant ρ, e.g., to 1, since we can always update V px, θ q to adjust the level set. For ΛρV to be a valid robust ROA, the Lyapunov conditions defined in (9) must be satisfied for all state inside ΛρV and for all θ P Θ. Given our parameterization, we only need to focus on (9c). Thus, we define the following loss function: 
+
+L 9V ;ρ “ 1
+
+N
+
+> N
+
+ÿ
+
+> i“1
+
+min 
+
+ˆ
+
+L 9V pxi
+
+> adv
+
+, θ i
+
+> adv
+
+, 9θq, ρ ´max  
+
+> θPΘ
+
+V pxi
+
+> adv
+
+, θ i
+
+> adv
+
+q
+
+˙
+
+(19) We still follow the counterexample-guided training process and find adversarial examples in the level-set ΛρV that violates (19). By concentrating at the level-set, we are able to significantly reduce the number of counterexamples and are able to find a robust ROA for a given NPV system. Given level-set value ρ is fixed during the training procedure, the robust ROA found can be very conservative. In order to find a robust ROA that covers a large portion of the state space, we introduce a surrogate loss: 
+
+LΛρV “ 1
+
+N
+
+> N
+
+ÿ
+
+> i“1
+
+max  
+
+> θPΘ
+
+V pxi
+
+> candidate
+
+, θ i
+
+> candidate
+
+q ´ ρ (20) Equation (20) indirectly promotes the growth of the level-set ΛρV . We sample uniformly from the state space to get (xcandidate , θ candidate ) that are used to compute (20). This sur-rogate loss ensures the robust level-set ΛρV does not shrink to a neighborhood of the origin, and cover the region of interest as much as possible. The cost function of this refinement stage consists of both these objective functions. These two objectives plays a complementary role, (19) certifies ΛρV as a valid robust ROA while (20) trying to maximize it’s volume. 
+
+3) Initialization of the control network: Before entring Stage I, we initialize our PD controller to enhance the training process. As mentioned in the neural control literature [15], finding a feasible neural controller from random initial-ization of network parameters is difficult, as the stochastic gradient descent used in training is inherently local. Existing work often used LQR gains computed for a linearized system to initialize the controller network parameters, with the con-troller network selected to be linear (i.e., has no hidden lay-ers) [15]. Inspired by this idea and considering the parameter-dependent dynamics for an NPV system, we warm-start our PD controller by pre-training it to approximate a series of LQR controllers. For each θ P Θ, the NPV system in linearized about the trim points px˚, u ˚pθqq . We then minimize the MSE loss || πNN px, θ q ´ Kpθqx|| 2 over px, θ q
+
+samples so that this PD controller can somewhat capture the behavior of parameter-dependent LQR controllers. 
+
+C. Empirical Verification 
+
+In order to formally verify the Lyapunov conditions for our NPV systems, we would have to check not over only the augmented input px, θ q P p X ˆ Θq but also for all cases 
+
+2nθ P Ω. The computational complexity involved in veri-fying Lyapunov conditions for NPV systems using formal verification tools such as α, β -Crown very difficult. given our system limitations, we therefore adopt two empirical verification schemes to verify the Lyapunov conditions. 
+
+1) PGD-based Verification: We run a strong adversarial PGD attack on our trained model, aiming to find states in the level-set ΛρV that violates the Lyapunov derivative condition (9c) (with a tolerance) for some θ P Θ and at any 9θ P ver Ω.We generate Nadv adversarial samples from this attack and consider our controller and Lyapunov function empirically verified when the violation rate, i.e., the ratio of samples that violate the condition (9c) over all samples, remains below a small number, e.g., 1%, consistently. 
+
+2) Trajectory-based Verification: We sample 10 6 points from the level-set ΛρV and see if the controller can converge all points inside ΛρV under time varying θptq. For each trajectory, we verify that the state converges to x˚ “ 0
+
+and that the Lyapunov function decreases monotonically, confirming that Λρ is a positively invariant set under the learned control law. IV. S IMULATION RESULTS 
+
+In this section, we demonstrate the performance and scalability of our proposed methods through simulation ex-periments using two systems: a simple inverted pendulum and a quadrotor. 
+
+A. Inverted pendulum with varying control effectiveness 
+
+The dynamics of an inverted pendulum are given by 
+
+9xptq “ 
+
+« 9ϕptq 
+
+> gL
+
+sin pϕptqq ´ bmL 2 9ϕptq
+
+ff 
+
+`θptq
+
+«
+
+0
+
+> 1
+> mL 2
+
+ff 
+
+uptq, (21) where x “ r ϕ, 9ϕsT and u “ τ denote the state and control input (torque), respectively, m “ 0.1 L “ 0.5, b “ 0.2,and g “ 9.81 denote the mass, length, damping ratio, and gravitational constant. We impose an input constraint of 
+
+|uptq| ď 3 for all t ě 0. The time-varying parameter θptq
+
+is introduced to characterize the control effectiveness of the actuator. A reduced θptq can represent actuator failure or other uncertain non-linearity of the system that affect the control effectiveness of the system. For instance, θ “ 0.3
+
+implies a loss of 70% control effectiveness compared to full control effectiveness corresponding to θ “ 1. We assumed the following bounds: rϕ, 9ϕs P X “ r´ π, π s ˆ r´ 6, 6s,
+
+θptq P Θ “ r 0.2, 1s and | 9θptq| ď 0.1. The structure of 4Algorithm 1 Neural-NPV, Parameter-dependent Neural Lya-punov Control 
+
+Input: Lyapunov network ϕNN p¨q ; Control network πNN p¨q ;Initial weights & biases for controller network; Learning rate η; Region of interest X ˆΘ; Counterexample (CEX) buffer D; Candidate sample buffer C; Maximum iteration 
+
+Niter ; Maximum epoch Nepoch ; PGD step NPGD ; Max stagnation ns; Samples per iteration S; Exponential rate 
+
+k3; PGD step size β; Loss weights β1 & β2; level-set constant ρ (often selected to be 1)
+
+Stage I: Counterexample-guided joint synthesis  
+
+> 1:
+
+Initialize D Ð ∅ 
+
+> 2:
+
+for iter = 1: Niter do  
+
+> 3:
+
+Sample randomly S points ( xadv , θ adv q P p X ˆ Θ) 
+
+> 4:
+
+for i “ 1 : NPGD do  
+
+> 5:
+
+Maximize violation via gradient ascent:  
+
+> 6:
+
+(xadv , θ adv q Ð Project pX ˆΘq
+
+´
+
+pxadv , θ adv q`β∇xadv ,θ adv L 9V pxadv , θ adv , 9θ, k 3q
+
+¯ 
+
+> 7:
+
+for every sample ( xadv , θ adv q do : 
+
+> 8:
+
+CEX validity check:  
+
+> 9:
+
+if L 9V pxadv , θ adv q ą 0 then : 
+
+> 10:
+
+Buffer D Ð p xadv , θ adv q Y D 
+
+> 11:
+
+for j = 1: Nepoch do  
+
+> 12:
+
+Compute Llya in (17) using all samples in D 
+
+> 13:
+
+WV , W π Ð WV , W π ´ η ∇pWV ,W π qLlya 
+
+Stage II: level-set-guided ROA refinement  
+
+> 14:
+
+Initialize D Ð ∅ 
+
+> 15:
+
+for iter = 1: Niter do  
+
+> 16:
+
+Sample randomly S points ( xadv , θ adv q P p X ˆ Θ) 
+
+> 17:
+
+for i = 1: NPGD do  
+
+> 18:
+
+Maximize violation via gradient ascent in the level-set:  
+
+> 19:
+
+(xadv , θ adv q Ð Project pX ˆΘq
+
+´
+
+pxadv , θ adv q`β∇xadv ,θ adv L 9V ;ρpxadv , θ adv , 9θ, k 3; ρq
+
+¯ 
+
+> 20:
+
+for every sample ( xadv , θ adv q do : 
+
+> 21:
+
+CEX validity check:  
+
+> 22:
+
+if L 9V ;ρpxadv , θ adv q ą 0 then : 
+
+> 23:
+
+Buffer D Ð (xadv , θ adv q Y D 
+
+> 24:
+
+Sample randomly S points (xcandidate , θ candidate q PpX ˆ Θ) 
+
+> 25:
+
+Buffer C Ð (xcandidate , θ candidate q 
+
+> 26:
+
+for j = 1: Nepoch do  
+
+> 27:
+
+Compute L 9V ;ρ in (19) using all samples in D 
+
+> 28:
+
+Compute LΛρV in (20) using all samples in C 
+
+> 29:
+
+WV , W π Ð WV , W π
+
+´η∇pWV ,W π q
+
+´
+
+β1ReLU pL 9V ;ρq ` β2ReLU pLΛρV q
+
+¯ 
+
+> 30:
+
+if CEX violation rate ă 1% and no new CEX added to D for ns iterations then  
+
+> 31:
+
+BREAK 
+
+Output ϕNN & πNN 
+
+TABLE I: Network architectures and training hyperparame-ters.            
+
+> Dynamical System ϕNN dimension πNN dimension η
+> Inverted Pendulum [4, 64, 128, 3] [4, 64, 128, 3] 10 ´5
+> 3D Quadrotor [9, 64, 128, 6] [9, 64, 128, 64, 3] 10 ´5
+
+the Lyapunov and the controller network is shown in table Table I. Notice that the input to these networks are 4 channels rather than 3. In order to handle the discontinuity at ϕ “ ˘ π
+
+and provide a smooth, globally valid state representation for the network, we convert the angular state ϕ to psin ϕ, cos ϕq,which is fed to both control and Lyapunov networks together with 9ϕ and θ.We compared Neural-NPV to the method in [6], referred to as SOS-NPV, which jointly synthesizes a PD controller and a PD Lyapunov function using SOS optimization. The method in [6] was slightly extended to incorporate input constraint following the idea in [24]. From Fig. 2, we can see that Neural-NPV achieves a robust ROA whose volume is markedly larger than that obtained by SOS-NPV, and covers the whole state space along the ϕ axis. In SOS-NPV, the Lyapunov function was parameterized as 
+
+V px, θ q “ xT X´1pϕ, θ qx, where Xpϕ, θ q is a polynomial matrix function. Notice that we intentionally made Xpϕ, θ q
+
+not dependent on 9ϕ (whose derivative is directly affected by u) to have a convex optimization problem [6], [9]–[12]. In comparison, within Neural-NPV, the matrix term in the Lyapunov function (12) has a more general structure (not limited to the inverse of a polynomial function) and can depend on all states. This demonstrates the superiority of our framework com-pared to SOS-based optimization methods. To demonstrate the performance of the learned controller, we used a time-varying disturbance trajectory defined by θptq “ 0.6 `
+
+0.4 cos ptq. The resulting state trajectories and Lyapunov function evolution are shown in Fig. 3. In our PGD-based verification experiments (with procedure detailed in Sec-tion III-C), we generated 10 6 adversarial samples in ΛρV ˆ Θ
+
+and obtained a violation rate of approximately 1% with a tolerance of 10 ´3, empirically validating ΛρV as a robust ROA for the inverted pendulum system. Trajectory-based verification confirmed 100% convergence to the equilibrium across all 10 6 sampled initial conditions. 
+
+B. Quadrotor with varying external disturbance 
+
+To demonstrate the scalability of Neural-NPV to high-dimensional systems, we apply it to a quadro-tor system subject to external disturbances. The quadro-tor model has the state-space representation, x ““px, p y , p z , 9px, 9py , 9pz
+
+‰J P R6, and three scheduling parameters θptq “ “θx, θ y , θ z
+
+‰ P R3, denoting the external disturbance forces applied to the system. We assume that the disturbance is known. In practice, the disturbances can be estimated using an adaptive estimator [29] or a distur-bance estimator [30]. The position & velocities are both expressed in the global inertial frame with a vertical axis 53 2 1 0 1 2 3
+
+> 6
+> 4
+> 2
+> 0
+> 2
+> 4
+> 6
+> SOS-NPV
+> Neural-NPV
+
+Fig. 2: Robust ROA comparison between SOS-NPV and Neural-NPV with the same input constraint for the inverted pendulum system. 
+
+Fig. 3: Trajectories of states from ten random initial points inside X under θptq “ 0.6 ` 0.4 cos ptq (top), the Lyapunov function (middle), control input (bottom). Note that the input constraint |u| ď 3 is respected for all cases. pointing downward (North-East-Down convention). Adopt-ing the NED frame for the quadrotor body, the attitude (roll, pitch, yaw) is parameterized as pϕ, θ p, ψ q, and τ ą 0
+
+denotes the total thrust generated by the four rotors. The control input is defined as u fi “τ, ϕ, θ p
+
+‰J. The outer-loop controller outputs desired thrust τ and attitude angles 
+
+pϕ, θ pq, which serve as references for an inner-loop attitude controller assumed to operate on a much faster timescale. As yaw is not actively controlled; we set ψ “ 0. Given this parameterization, the translational dynamics of the quadrotor subject to the external disturbance θptq “ r θx, θ y , θ z sJ P R3
+
+Fig. 4: 3D slice of the robust ROA ΛρV for the quadrotor in 
+
+x-y-z space 
+
+Fig. 5: Ten random trajectories of the state (top) and the corresponding Lyapunov function (bottom) for the quadrotor are 
+
+»–:px
+
+:py
+
+:pz
+
+fi fl “ ge3 ´ τm Re 3 ` θm “
+
+»—–
+
+´ τm cos ϕ sin θp ` θx 
+
+> mτm
+
+sin ϕ ` θy
+
+> m
+
+g ´ τm cos θp cos ϕ ` θz
+
+> m
+
+fi ffi fl ,
+
+(22) where g is the local gravitational acceleration, e3 “r0, 0, 1sJ, and R is the rotation matrix that transforms thrust from body frame to the inertial frame following a ZYX (yaw-pitch-roll) rotation sequence. The following state and input constraints are imposed to ensure physical feasibility and permit sufficiently aggressive maneuvers: pϕ, θ pq P
+
+62          
+
+> 1
+> 0
+> 1
+> 2
+> Disturbance (N)
+> xyz
+> 0.0
+> 2.5
+> 5.0
+> 7.5
+> 10.0
+> Thrust  (N)
+> 0.0 2.5 5.0 7.5 10.0 12.5 15.0 17.5 20.0
+> Time (s)
+> 100
+> 50
+> 0
+> 50
+> 100
+> Angle (deg)
+> (pitch)
+> (roll)
+
+Fig. 6: The disturbance and the control input trajectories of the quadrotor. All the control inputs respect the input constraints (denoted by black dotted lines) explained in Section IV-B. 
+
+r´ 90 ˝, 90 ˝s ˆ r´ 180 ˝, 180 ˝s, τ P r 0 , 11 .3sN. From (22), we can see that the dynamics are not affine in control. This prevents the direct application of SOS-based methods which are only applicable to control-affine systems [4]–[6]. We consider the following bounds: 
+
+rpx, p y , p z , 9px, 9py , 9pz s P X “ r´ 6, 6s6, θ ptq P Θ “r´ 2, 2s3, 9θptq P Ω “ r´ 0.5, 0.5s3. The details of the Lyapunov network and the controller network can be found in Table I. To test the performance of the controller, we used a time-varying disturbance trajectory defined by 
+
+θptq “ 
+
+”
+
+2 sin pπt q, 2 cos p 34 πt q, 2 cos p π 
+
+> 2
+
+tq
+
+ıT
+
+, which simulates a realistic external disturbance acting on the quadrotor in the inertial frame. The resulting state trajectories and Lyapunov function evolution are shown in Fig. 5. We can observe in Fig. 6 that the control inputs are non-zero even when the states have already converged to the equilibrium in Fig. 5, showcasing the learned PD controller’s capability of handling the external disturbances robustly. To verify our robust ROA empirically via the procedure described in Section III-C, we sampled 10 6 trajectories in 
+
+ΛρV ˆ Θ. The controller converged all sampled trajectories to the equilibrium, demonstrating the empirical robustness of the synthesized controller. For PGD-based verification, we generated 10 6 adversarial samples in ΛρV ˆ Θ and find that the counterexample violation rate obtained is approximately 
+
+1% across all evaluation rounds with a tolerance of 10 ´3.Both of our empirical verification schemes validate ΛρV as a robust ROA for the quadrotor system. V. C ONCLUSIONS 
+
+In this paper, we presented Neural-NPV, a novel learning-based framework to jointly synthesize and verify a parameter-dependent (PD) Lyapunov function and PD con-troller for nonlinear parameter-varying (NPV) systems. Our TABLE II: Empirical verification results under two evalua-tion schemes. 
+
+System Scheme Samples Violation rate Convergence (%) Inv. Pendulum PGD 10 6 1 –Trajectory 10 6 – 100 Quadrotor PGD 10 6 1 –Trajectory 10 6 – 100 
+
+two-stage training framework uses a counterexample-guided training procedure, and promotes the growth of the certified robust region of attraction. The framework is applicable to control-non-affine systems,is scalable to high-dimensional and handles input constraints seamlessly. . It is validated on two platforms, and simulation results as well as our empirical verification schemes demonstrate its advantages over SOS-based methods. One limitation of our current approach is the lack of formal verification of the learned systems through neural network verifiers such as α, β -CROWN. For future work, we intend to formally verify the learned controller and Lyapunov functions, and experimentally validate the proposed approach on a real quadrotor system. REFERENCES [1] J. S. Shamma and M. Athans, “Gain scheduling: Potential hazards and possible remedies,” IEEE Control Systems Magazine , vol. 12, no. 3, pp. 101–107, 1992. [2] W. J. Rugh and J. S. Shamma, “Research on gain scheduling,” 
+
+Automatica , vol. 36, no. 10, pp. 1401–1425, 2000. [3] J. Mohammadpour and C. W. Scherer, Control of Linear Parameter Varying Systems with Applications . Springer Science & Business Media, 2012. [4] R. Fu, J. Zeng, and Z. Duan, “ H8 mixed stabilization of nonlin-ear parameter-varying systems,” International Journal of Robust and Nonlinear Control , vol. 28, no. 17, pp. 5232–5246, 2018. [5] L. Lu, R. Fu, J. Zeng, and Z. Duan, “On the domain of attraction and local stabilization of nonlinear parameter-varying systems,” Int. J. Robust Nonlinear Control , vol. 30, no. 1, pp. 17–32, 2020. [6] P. Zhao, “Parameter-dependent control Lyapunov functions for stabi-lizing nonlinear parameter-varying systems,” IEEE Control Systems Letters , vol. 9, pp. 360–365, 2025. [7] P. A. Parrilo, Structured Semidefinite Programs and Semialgebraic Geometry Methods in Robustness and Optimization . PhD thesis, Massachusetts Institute of Technology, 2000. [8] A. A. Ahmadi and A. Majumdar, “DSOS and SDSOS optimization: more tractable alternatives to sum of squares and semidefinite opti-mization,” SIAM Journal on Applied Algebra and Geometry , vol. 3, no. 2, pp. 193–230, 2019. [9] S. Prajna, A. Papachristodoulou, and F. Wu, “Nonlinear control syn-thesis by sum of squares optimization: A Lyapunov-based approach,” in 5th Asian control conference , vol. 1, pp. 157–165, IEEE, 2004. [10] H.-J. Ma and G.-H. Yang, “Fault-tolerant control synthesis for a class of nonlinear systems: Sum of squares optimization approach,” Int. J. Robust Nonlinear Control , vol. 19, no. 5, pp. 591–610, 2009. [11] D. Zhao and J. Wang, “An improved nonlinear H8 synthesis for parameter-dependent polynomial nonlinear systems using SOS pro-gramming,” in American Control Conference , pp. 796–801, 2009. [12] S. Saat, D. Huang, S. K. Nguang, and A. Hamidon, “Nonlinear state feedback control for a class of polynomial nonlinear discrete-time systems with norm-bounded uncertainties: An integrator approach,” 
+
+Journal of the Franklin Institute , vol. 350, no. 7, pp. 1739–1752, 2013. [13] C. Dawson, S. Gao, and C. Fan, “Safe control with learned certificates: A survey of neural Lyapunov, barrier, and contraction methods for robotics and control,” IEEE Transactions on Robotics , vol. 39, no. 3, pp. 1749–1767, 2023. 
+
+7[14] S. M. Richards, F. Berkenkamp, and A. Krause, “The Lyapunov neural network: Adaptive stability certification for safe learning of dynamical systems,” in Conference on Robot Learning , pp. 466–476, PMLR, 2018. [15] Y.-C. Chang, N. Roohi, and S. Gao, “Neural Lyapunov control,” 
+
+Advances in Neural Information Processing Systems , vol. 32, 2019. [16] S. Chen, M. Fazlyab, M. Morari, G. J. Pappas, and V. M. Preciado, “Learning Lyapunov Functions for Hybrid Systems,” in 2021 55th Annual Conference on Information Sciences and Systems (CISS) ,pp. 1–1, 2021. [17] H. Dai, B. Landry, L. Yang, M. Pavone, and R. Tedrake, “Lyapunov-stable neural-network control,” in Proceedings of Robotics: Science and Systems , (Virtual), July 2021. [18] D. Sun, S. Jha, and C. Fan, “Learning certified control using contrac-tion metric,” in Conference on Robot Learning , 2020. [19] H. Tsukamoto and S.-J. Chung, “Neural contraction metrics for robust estimation and control: A convex optimization approach,” IEEE Control Systems Letters , vol. 5, no. 1, pp. 211–216, 2020. [20] H. Tsukamoto, S.-J. Chung, and J.-J. E. Slotine, “Neural stochastic contraction metrics for learning-based control and estimation,” IEEE Control Systems Letters , vol. 5, no. 5, pp. 1825–1830, 2021. [21] A. Robey, H. Hu, L. Lindemann, H. Zhang, D. V. Dimarogonas, S. Tu, and N. Matni, “Learning control barrier functions from expert demonstrations,” in Proc. CDC , pp. 3717–3724, 2020. [22] C. Dawson, Z. Qin, S. Gao, and C. Fan, “Safe nonlinear control using robust neural Lyapunov-barrier functions,” in Conference on Robot Learning , pp. 1724–1735, PMLR, 2022. [23] C. Dawson, Z. Qin, S. Gao, and C. Fan, “Safe nonlinear control using robust neural Lyapunov-barrier functions,” in Conference on Robot Learning , pp. 1724–1735, PMLR, 2022. [24] P. Zhao, R. Ghabcheloo, Y. Cheng, H. Abdi, and N. Hovakimyan, “Convex synthesis of control barrier functions under input constraints,” 
+
+IEEE Control Systems Letters , vol. 7, pp. 3102–3107, 2023. [25] H. K. Khalil, Nonlinear Systems . Englewood Cliffs, NJ: Prentice Hall, 2002. [26] L. Yang, H. Dai, Z. Shi, C.-J. Hsieh, R. Tedrake, and H. Zhang, “Lyapunov-stable neural control for state and output feedback: A novel formulation for efficient synthesis and verification,” arXiv preprint arXiv:2404.07956 , 2024. [27] A. Abate, C. David, P. Kesseli, D. Kroening, and E. Polgreen, “Counterexample guided inductive synthesis modulo theories,” in 
+
+International Conference on Computer Aided Verification , pp. 270– 288, Springer, 2018. [28] J. Wu, A. Clark, Y. Kantaros, and Y. Vorobeychik, “Neural lyapunov control for discrete-time systems,” Advances in neural information processing systems , vol. 36, pp. 2939–2955, 2023. [29] Z. Wu, S. Cheng, P. Zhao, A. Gahlawat, K. A. Ackerman, A. Laksh-manan, C. Yang, J. Yu, and N. Hovakimyan, “ L1Quad: L1 adaptive augmentation of geometric control for agile quadrotors with perfor-mance guarantees,” IEEE Transactions on Control System Technology ,vol. 33, no. 2, pp. 597–612, 2025. [30] M. Chen, S. Xiong, and Q. Wu, “Tracking flight control of quadrotor based on disturbance observer,” IEEE Transactions on Systems, Man, and Cybernetics: Systems , vol. 51, no. 3, pp. 1414–1423, 2019. 
+
+8

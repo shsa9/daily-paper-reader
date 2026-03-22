@@ -1,0 +1,235 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-03-22T20:04:13.167688+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 6,
+    "quick_skim_target": 11,
+    "quick_selected": 6
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2603.14396v1",
+      "title": "DexterousMag: A Reconfigurable Electromagnetic Actuation System for Miniature Helical Robot",
+      "abstract": "Despite the promise of magnetically actuated miniature helical robots for minimally invasive interventions, state-of-the-art electromagnetic actuation systems are often space-inefficient and geometrically fixed. These constraints hinder clinical translation and, moreover, prevent task-adaptive trade-offs among workspace coverage, energy distribution, and field/gradient capability. We present DexterousMag, a robot-arm-assisted three-coil electromagnetic actuation system that enables continuous geometric reconfiguration of a compact coil group, thereby redistributing magnetic-field and gradient capability for task-adaptive operation. The reconfiguration is realized by a parallel mechanism that exposes a single geometric DOF of the coil group, conveniently parameterized by the polar angle. Using an FEM-based modeling pipeline, we precompute actuation and gradient libraries and quantify the resulting trade-offs under current limits: configurations that favor depth reach expand the feasible region but reduce peak field/gradient, whereas configurations that favor near-surface capability concentrate stronger fields/gradients and support lifting. We validate these trade-offs on representative tasks (deep translation, planar tracking, and 3D lifting) and further demonstrate a proof-of-concept online geometry scheduling scheme for combined tasks, benchmarked against fixed-geometry settings. Overall, DexterousMag establishes continuous geometric reconfiguration as an operational mechanism for enlarging the practical envelope of miniature helical robot actuation while improving energy efficiency and safety.",
+      "authors": [
+        "Jialin Lin",
+        "Dandan Zhang"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-03-15T14:23:04+00:00",
+      "link": "https://arxiv.org/pdf/2603.14396v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Reconfigurable electromagnetic actuation system for magnetic field and gradient control",
+      "llm_evidence_cn": "用于磁场和梯度控制的可重构电磁驱动系统",
+      "llm_evidence": "用于磁场和梯度控制的可重构电磁驱动系统",
+      "canonical_evidence": "用于磁场和梯度控制的可重构电磁驱动系统",
+      "llm_tldr_en": "Presents a reconfigurable electromagnetic system for task-adaptive magnetic field and gradient redistribution.",
+      "llm_tldr_cn": "介绍了一种可重构电磁系统，用于任务自适应的磁场和梯度重新分配。",
+      "llm_tldr": "介绍了一种可重构电磁系统，用于任务自适应的磁场和梯度重新分配。",
+      "llm_tags": [
+        "query:em-force:composite"
+      ],
+      "matched_query_tag": "query:em-force:composite",
+      "matched_query_text": "Papers central to 查找非接触式电磁激振器的力控制方法，特别是精密控制策略, especially work that connects or combines: electromagnetic exciter force control; ddy current magnetic bearing modeling; magnetic bearing flux feedback; non-contact electromagnetic shaker force control; precision force control strategies for electromagnetic actuators; closed-loop force control for electromagnetic shakers; flux feedback linearization zero bias magnetic bearing; non contact electromagnetic exciter precision force control; eddy current effects in electromagnetic actuators dynamic modeling; flux feedback control for magnetic bearing force precision.",
+      "matched_requirement_id": "req-composite-em-force",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.14990v1",
+      "title": "Chattering Reduction for a Second-Order Actuator via Dynamic Sliding Manifolds",
+      "abstract": "We analyze actuator chattering in a scalar integrator system subject to second-order actuator dynamics with an unknown time constant and first-order sliding-mode control, using both a conventional static sliding manifold and a dynamic sliding manifold. Using the harmonic balance method we proof that it is possible to adjust the parameters of the dynamic sliding manifold so as to reduce the amplitude of the chattering in comparison to the static manifold. The proof of concept is illustrated with an example.",
+      "authors": [
+        "Patricia Nöther",
+        "Lars Watermann",
+        "Johann Reger"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY",
+        "math.OC"
+      ],
+      "published": "2026-03-16T08:56:22+00:00",
+      "link": "https://arxiv.org/pdf/2603.14990v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "chattering reduction for second-order actuator via dynamic sliding manifolds",
+      "llm_evidence_cn": "通过动态滑模面减少二阶执行器的抖振",
+      "llm_evidence": "通过动态滑模面减少二阶执行器的抖振",
+      "canonical_evidence": "通过动态滑模面减少二阶执行器的抖振",
+      "llm_tldr_en": "Analyzes chattering reduction in second-order actuators using dynamic sliding manifolds for better control.",
+      "llm_tldr_cn": "分析了利用动态滑模面减少二阶执行器抖振的方法，以优化控制效果。",
+      "llm_tldr": "分析了利用动态滑模面减少二阶执行器抖振的方法，以优化控制效果。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.16040v1",
+      "title": "Compact Optical Single-axis Joint Torque Sensor Using Redundant Photo-Reflectors and Quadratic-Programming Calibration",
+      "abstract": "This study proposes a non-contact photo-reflector-based joint torque sensor for precise joint-level torque control and safe physical interaction. Current-sensor-based torque estimation in many collaborative robots suffers from poor low-torque accuracy due to gearbox stiction/friction and current-torque nonlinearity, especially near static conditions. The proposed sensor optically measures micro-deformation of an elastic structure and employs a redundant array of photo-reflectors arranged in four directions to improve sensitivity and signal-to-noise ratio. We further present a quadratic-programming-based calibration method that exploits redundancy to suppress noise and enhance resolution compared to least-squares calibration. The sensor is implemented in a compact form factor (96 mm diameter, 12 mm thickness). Experiments demonstrate a maximum error of 0.083%FS and an RMS error of 0.0266 Nm for z-axis torque measurement. Calibration tests show that the proposed calibration achieves a 3 sigma resolution of 0.0224 Nm at 1 kHz without filtering, corresponding to a 2.14 times improvement over the least-squares baseline. Temperature chamber characterization and rational fitting based compensation mitigate zero drift induced by MCU self heating and motor heat. Motor-level validation via torque control and admittance control confirms improved low torque tracking and disturbance robustness relative to current-sensor-based control.",
+      "authors": [
+        "Hyun-Bin Kim",
+        "Byeong-Il Ham",
+        "Kyung-Soo Kim"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-03-17T00:56:51+00:00",
+      "link": "https://arxiv.org/pdf/2603.16040v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "non-contact sensor for precise torque control and nonlinearity compensation",
+      "llm_evidence_cn": "用于精确扭矩控制和非线性补偿的非接触式传感器",
+      "llm_evidence": "用于精确扭矩控制和非线性补偿的非接触式传感器",
+      "canonical_evidence": "用于精确扭矩控制和非线性补偿的非接触式传感器",
+      "llm_tldr_en": "Proposes a non-contact optical torque sensor and calibration method to improve precision in robotic joint control.",
+      "llm_tldr_cn": "提出一种非接触式光学扭矩传感器和标定方法，以提高机器人关节控制的精度。",
+      "llm_tldr": "提出一种非接触式光学扭矩传感器和标定方法，以提高机器人关节控制的精度。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.17134v1",
+      "title": "Neural-NPV Control: Learning Parameter-Dependent Controllers and Lyapunov Functions with Neural Networks",
+      "abstract": "Nonlinear parameter-varying (NPV) systems are a class of nonlinear systems whose dynamics explicitly depend on time-varying external parameters, making them suitable for modeling real-world systems with dynamics variations. Traditional synthesis methods for NPV systems, such as sum-of-squares (SOS) optimization, are only applicable to control-affine systems, face scalability challenges and often lead to conservative results due to structural restrictions. To address these limitations, we propose Neural-NPV, a two-stage learning-based framework that leverages neural networks to jointly synthesize a PD controller and a PD Lyapunov function for an NPV system under input constraints. In the first stage, we utilize a computationally cheap, gradient-based counterexample-guided procedure to synthesize an approximately valid PD Lyapunov function and a PD controller. In the second stage, a level-set guided refinement is then conducted to obtain a valid Lyapunov function and controller while maximizing the robust region of attraction (R-ROA). We demonstrate the advantages of Neural-NPV in terms of applicability, performance, and scalability compared to SOS-based methods through numerical experiments involving an simple inverted pendulum with one scheduling parameter and a quadrotor system with three scheduling parameters.",
+      "authors": [
+        "MD Abul Kashem Niloy",
+        "Adam Hallmark",
+        "Yikun Cheng",
+        "Pan Zhao"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY",
+        "math.OC"
+      ],
+      "published": "2026-03-17T20:58:41+00:00",
+      "link": "https://arxiv.org/pdf/2603.17134v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Neural-NPV framework for nonlinear parameter-varying control synthesis",
+      "llm_evidence_cn": "用于非线性参数变化控制综合的Neural-NPV框架",
+      "llm_evidence": "用于非线性参数变化控制综合的Neural-NPV框架",
+      "canonical_evidence": "用于非线性参数变化控制综合的Neural-NPV框架",
+      "llm_tldr_en": "Proposes a neural network framework to synthesize controllers for nonlinear systems with time-varying parameters.",
+      "llm_tldr_cn": "提出一种神经网络框架，用于为具有随时间变化参数的非线性系统综合控制器。",
+      "llm_tldr": "提出一种神经网络框架，用于为具有随时间变化参数的非线性系统综合控制器。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.17843v1",
+      "title": "Certainty-equivalent adaptive MPC for uncertain nonlinear systems",
+      "abstract": "We provide a method to design adaptive controllers for nonlinear systems using model predictive control (MPC). By combining a certainty-equivalent MPC formulation with least-mean-square parameter adaptation, we obtain an adaptive controller with strong robust performance guarantees: The cumulative tracking error and violation of state constraints scale linearly with noise energy, disturbance energy, and path length of parameter variation. A key technical contribution is developing the underlying certainty-equivalent MPC that tracks output references, accounts for actuator limitations and desired state constraints, requires no system-specific offline design, and provides strong inherent robustness properties. This is achieved by leveraging finite-horizon rollouts, artificial references, recent analysis techniques for optimization-based controllers, and soft state constraints. For open-loop stable systems, we derive a semi-global result that applies to arbitrarily large measurement noise, disturbances, and parametric uncertainty. For stabilizable systems, we derive a regional result that is valid within a given region of attraction and for sufficiently small uncertainty. Applicability and benefits are demonstrated with numerical simulations involving systems with large parametric uncertainty: a linear stable chain of mass-spring-dampers and a nonlinear unstable quadrotor navigating obstacles.",
+      "authors": [
+        "Johannes Köhler"
+      ],
+      "primary_category": "math.OC",
+      "categories": [
+        "math.OC",
+        "eess.SY"
+      ],
+      "published": "2026-03-18T15:33:46+00:00",
+      "link": "https://arxiv.org/pdf/2603.17843v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "adaptive MPC for actuator limitations and tracking",
+      "llm_evidence_cn": "针对执行器限制和跟踪的自适应MPC",
+      "llm_evidence": "针对执行器限制和跟踪的自适应MPC",
+      "canonical_evidence": "针对执行器限制和跟踪的自适应MPC",
+      "llm_tldr_en": "Develops an adaptive MPC for nonlinear systems that accounts for actuator limitations and ensures robustness.",
+      "llm_tldr_cn": "为非线性系统开发自适应MPC，考虑执行器限制并确保鲁棒性。",
+      "llm_tldr": "为非线性系统开发自适应MPC，考虑执行器限制并确保鲁棒性。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.18555v1",
+      "title": "Inductance-Based Force Self-Sensing in Fiber-Reinforced Pneumatic Twisted-and-Coiled Actuators",
+      "abstract": "Fiber-reinforced pneumatic twisted-and-coiled actuators (FR-PTCAs) offer high power density and compliance but their strong hysteresis and lack of intrinsic proprioception limit effective closed-loop control. This paper presents a self-sensing FR-PTCA integrated with a conductive nickel wire that enables intrinsic force estimation and indirect displacement inference via inductance feedback. Experimental characterization reveals that the inductance of the actuator exhibits a deterministic, low-hysteresis inductance-force relationship at constant pressures, in contrast to the strongly hysteretic inductance-length behavior. Leveraging this property, this paper develops a parametric self-sensing model and a nonlinear hybrid observer that integrates an Extended Kalman Filter (EKF) with constrained optimization to resolve the ambiguity in the inductance-force mapping and estimate actuator states. Experimental results demonstrate that the proposed approach achieves force estimation accuracy comparable to that of external load cells and maintains robust performance under varying load conditions.",
+      "authors": [
+        "Yunsong Zhang",
+        "Tianlin Li",
+        "Mingyang Yang",
+        "Feitian Zhang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-03-19T07:09:52+00:00",
+      "link": "https://arxiv.org/pdf/2603.18555v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "inductance-based force estimation and closed-loop control for actuators",
+      "llm_evidence_cn": "基于电感的执行器力估算与闭环控制",
+      "llm_evidence": "基于电感的执行器力估算与闭环控制",
+      "canonical_evidence": "基于电感的执行器力估算与闭环控制",
+      "llm_tldr_en": "Develops a self-sensing model for force estimation and closed-loop control in soft actuators using inductance.",
+      "llm_tldr_cn": "利用电感反馈开发了软体执行器的力估算自感知模型和闭环控制方法。",
+      "llm_tldr": "利用电感反馈开发了软体执行器的力估算自感知模型和闭环控制方法。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
