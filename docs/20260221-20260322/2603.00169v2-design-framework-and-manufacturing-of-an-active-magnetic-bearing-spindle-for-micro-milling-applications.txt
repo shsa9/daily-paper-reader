@@ -1,0 +1,565 @@
+Title: Design Framework and Manufacturing of an Active Magnetic Bearing Spindle for Micro-Milling Applications
+
+URL Source: https://arxiv.org/pdf/2603.00169v2
+
+Published Time: Wed, 04 Mar 2026 01:42:28 GMT
+
+Number of Pages: 15
+
+Markdown Content:
+> 1
+
+# Design Framework and Manufacturing of an Active Magnetic Bearing Spindle for Micro-Milling Applications 
+
+Kazi Sher Ahmed and Bekir Bediz 
+
+Abstract —Micro-milling spindles require high rotational speeds where conventional rolling element bearings face limita-tions such as friction and thermal expansion. Active magnetic bearings (AMBs) address these challenges by providing non-contact and lubrication-free operation at ultra-high speeds with the ability to actively regulate spindle dynamics. The existing lit-erature on AMB spindles has mainly reported specific prototype realizations or control system implementations for specific spindle dynamics. Consequently, design knowledge remains fragmented across isolated successful studies. This paper addresses this gap by presenting a systematic and iterative framework to design and manufacture a micro-milling AMB spindle. The process involves a multidisciplinary design flow with a focus on critical practical aspects of manufacturing. The realized spindle is reported as a case study. 
+
+Index Terms —Active magnetic bearing spindle, design frame-work, high-speed micro-milling, electromagnetic levitation, 3D finite-element model. 
+
+I. I NTRODUCTION 
+
+# A primary challenge in mechanical micro-milling is the requirement of relatively high rotational speeds to main-tain optimal cutting speed and efficiency with smaller tool di-ameters when compared with conventional macro-milling [1]. Achieving such high rotational speeds poses significant chal-lenges for conventional rolling-element bearings, primarily due to thermal growth, resulting deformation, and increased frictional losses. Non-contact bearings such as air bearings and active magnetic bearings (AMBs) overcome these challenges by enabling non-contact, lubricant-free, high-speed operation with minimal wear. In addition, AMBs provide the advantage to actively regulate the rotor motion, which can be explored to improve process accuracy [2] and suppress chatter [3]. AMB-based machining spindle implementations have been studied in the literature. Kimman et al. [4] designed and realized a miniaturized milling spindle with a target speed of 150,000 rpm, while Park et al. [5] prototyped a miniature air turbine spindle for tool orbit control. Other implementations focus more intensively on control-oriented challenges; for instance, Knospe [3] demonstrated the active suppression of machining chatter using two AMB test rigs, and Lee and Chen [2] presented a novel magnetic actuator and an adap-tive control strategy for milling applications. Although these studies demonstrate important capabilities of AMB spindles, 
+
+Kazi Sher Ahmed and Bekir Bediz (corresponding author) are with the Faculty of Engineering and Natural Sciences, Mechatronics Engineering Pro-gram, Sabanci University, Istanbul, 34956, Turkiye (email: {kazisherahmed, bbediz }@sabanciuniv.edu). 
+
+they are primarily communicated as application-specific or control-centric implementations rather than a unified design framework encompassing detailed component design and man-ufacturing. The contribution of this study is the development of a systematic, iterative, and multidisciplinary design framework for micro-milling spindles supported by AMBs with an explicit focus on practical aspects of manufacturing and assembly. The proposed framework enables engineers/designers to nav-igate the strongly coupled magnetic, mechanical, and thermal challenges of designing an AMB spindle from scratch in a structured and reproducible manner. This design framework is demonstrated through a detailed case study where a micro-milling AMB spindle is designed and manufactured with a target speed of 110,000 rpm. The case study begins with the identification of application-specific requirements that guide the overall design of the spindle. This is followed by the design, analysis, and realization of the rotational drive, rotor, AMBs, backup bearings, and housings, along with the decisions on instrumentation, control system hardware, and thermal operating limits. Finally, the practical aspects of the spindle assembly are discussed. II. D ESIGN FRAMEWORK 
+
+This section presents an eight-step systematic framework to design and manufacture a miniaturized high-speed AMB spindle for micro-milling applications. The multidisciplinary and iterative workflow begins with requirement definition and feasibility assessment and culminates in the manufacturing and assembly of the final system. The proposed framework is illustrated in a flowchart as shown in Figure 1. 
+
+A. Step 1: Requirements and Feasibility 
+
+The design of a micro-milling AMB spindle starts by defin-ing the application-specific requirements including disturbance loads, (target) rotational speed, dimensional and weight limits, and environmental conditions. A primary task in this step is the evaluation of disturbances (forces and torques) acting on the rotor to size AMB load capacities and spindle rotational drive torque margin. Force disturbances include rotor unbalance and tool cutting forces derived from machining process parameters, while torque loads arise from tangential components of cutting forces and aerodynamic drag on the rotor. A target rotational speed dictated by the required cutting speed and typical micro-milling tool diameters sets the goals for rotordynamical performance and limits the permissible rotor external/outer 
+
+> arXiv:2603.00169v2 [eess.SY] 3 Mar 2026 2Start
+> No No Yes Is design feasible?
+> Step 1: Requirements
+> Disturbance loads/torques, target speed, size/weight limits, operating conditions, AMB negative stiffness
+> Step 2: Drive System Design
+> Rotational drive (Required speed/torque, rotor inertia, acceleration) Feed drive (Motion range, feed velocity, payload, positional accuracy, structural stiffness)
+> Step 3: Rotor Design
+> Segmentation (AMBs, rotational drive, sensors, tool) Laminated versus solid rotor Maximum allowable diameter (stress limits) Rotordynamic analysis
+> Step 4: Design of Electromagnetic Components
+> Configurations: Combined radial-axial AMB versus separate Topologies: Homopolar versus heteropolar Biasing selection, modeling, optimization Instrumentation and control system
+> Step 5: Backup Bearing Design
+> Touchdown speed, clearance, energy calculations Types (rolling-element, plain) Landing surface (high strength/hardness, low friction) Avoid backward whirl during touchdown Compliant mechanism (bearing-housing interface)
+> Step 6: Housing Design
+> Resonance modes, electrical conductivity, unintended flux paths, thermal conductivity, rigidity
+> Step 7: Cooling Design
+> Sources of temperature rise, modeling (lumped thermal network, FE model), cooling methods
+> Step 8: Manufacturing and Assembly
+> Assembly CAD, tolerances, procurement, sub-assemblies, commissioning with verification checks, performance tests
+> Yes Is rotordynamical performance acceptable? Is operation below temperature limits? Yes No
+> Possible iterations based on manufacturing and assembly feedback Revisit initial concept designs and architecture Revise cooling design Reconsider heat flow paths and materials Reduce losses including revisiting coil design Adjust rotor geometry (diameter/length ratio, span, mass) End
+
+Fig. 1. Design flowchart for a micro-milling AMB spindle. 
+
+diameter due to centrifugal stress constraints. In addition, the real-time control system design defines an acceptable range for AMB negative stiffness, which is the open-loop position stiffness induced by bias flux that must be stabilized by the feedback control. Based on these requirements, several initial concepts are developed and evaluated through a feasibility study, which acts as a sanity check on the technical and operational viability of the spindle design before proceeding to detailed develop-ment [6]. For example, electromagnetic analysis (analytical or FE) can evaluate whether the initial AMB concept can deliver sufficient force against disturbance loads at the target rotational speed while staying within weight and size limits. Initial drive sizing or vendor data can reveal whether the concept rotational drive can deliver an acceptable torque margin. Similarly, a simplified rotordynamic finite-element (FE) model, typically based on beam elements, can produce a Campbell diagram and confirm that flexural resonances lie outside the operating speed range. A preliminary thermal analysis is also performed to guide early decisions regarding coil current density and cooling system. If the design fails to satisfy feasibility criteria, the initial architecture and key assumptions are revisited before advancing to subsequent steps. 
+
+B. Step 2: Drive System Design 
+
+The drive system consists of a spindle rotational drive and a machine feed drive. The selection among potential rotational drives such as electric motors and air (pneumatic) turbines depends on required speed and torque range, rotor inertia, and acceleration requirements. The appropriate feed drives for micro-milling machines include direct-drive electromagnetic stages and indirect rotary-servo stages. The selection should be based on the requirements of the motion range, feed velocity, acceleration capability, payload capacity, positional accuracy, and structural stiffness limits [7]. The selection and design of the rotational drive is tightly coupled to the rotor design, necessitating concurrent consideration of these subsystems. 
+
+C. Step 3: Rotor Design 
+
+The rotor of the spindle is segmented to accommodate the rotational drive and provide segments for radial/axial AMBs, sensors, and tool holder. The rotational speed requirement sets the maximum allowable diameter to keep centrifugal stresses within safe limits. While it is preferred to laminate AMB-facing rotor segments with electrical steel to reduce eddy current losses, the maximum rotational speed determines if laminations can withstand centrifugal stresses through me-chanical retention or if a full solid rotor is necessary. Once the preliminary rotor dimensions have been determined, a rotordynamic analysis (via FE method based on Timoshenko beam theory) is conducted to identify critical speeds and verify that flexible resonances are outside of the operating speed range with an adequate separation margin. If rotordynamic requirements are not satisfied, iterative adjustments are made to rotor diameter-to-length ratios, bearing span, and mass distribution until acceptable dynamic performance is achieved. 
+
+D. Step 4: Design of Electromagnetic Components 
+
+Following rotor design, the electromagnetic components of the spindle (radial and axial AMBs) are designed. In 3
+
+cases where both radial and axial rotor motions are con-trolled by AMBs, two design configurations can be explored: 
+
+(i) a combined radial-axial AMB, and (ii) separate radial and axial AMBs. A combined AMB requires a relatively shorter rotor but increases the design complexity in terms of electromagnetic cross-coupling [8]. In parallel, AMB topol-ogy selection is considered. High-speed radial AMB designs commonly employ homopolar AMB topologies due to their reduced hysteresis and eddy current losses in rotor compared to heteropolar topologies. Bias flux generation is another key design choice, with bias current and permanent magnet (PM) biasing representing the two primary approaches. Current-biasing allows tunable bias current levels but leads to con-tinuous copper loss. In contrast, PM-biasing reduces power consumption by eliminating DC bias current requirement but increases mechanical and assembly complexity [9]. These selections in configuration, topology, and biasing depend on application requirements. Equivalent magnetic circuit models are well-suited for initial AMB design and are computationally inexpensive for opti-mization studies [10]. However, an FE model is necessary to determine the correction factors to account for simplifications assumed in the analytical models. The final AMB design must provide sufficient static and dynamic load capacity with appropriate safety margins. Once the AMB topology is finalized, decisions about instru-mentation can be made. Here, the requirements of measure-ment range, sensor bandwidth, resolution, temperature rating, and magnetic field sensitivity are determined. For example, sensor bandwidth puts an upper limit on the frequency up to which an accurate position measurement can be made, as attenuation and phase lag become significant once vibration frequencies approach the frequency response limit. Sensor resolution also puts an upper limit on the final achievable po-sitional accuracy of the spindle [11]. Suitable power amplifiers and real-time hardware are selected as well. 
+
+E. Step 5: Backup (Auxiliary) Bearing Design 
+
+On loss of levitation control due to component failure or overload, the high-speed rotor can cause catastrophic damage to machine components such as stator poles and sensors. Backup (auxiliary or touchdown) bearings as standard sub-systems in AMBs provide a fail-safe approach to catch the rotor before it can strike other components. The design usually starts by defining touchdown conditions such as rotational speed at loss of levitation, touchdown clearance, and energy to be absorbed. Commonly used bearing types include rolling-element and plain bearings. The landing interface must have high strength, high hardness, and low friction. A high-friction contact between rotor and touchdown bearing can develop into a destructive backward whirl and contact forces can become as high as 300 times the rotor weight [12]. For rolling-element bearings, coated or ceramic rolling elements have demon-strated favorable performance, while cageless designs are often employed in high-speed applications to reduce inertial effects during touchdown [13]. In plain bearing types, ceramic or hard and low-friction materials have been used. To mitigate impact forces and suppress undesirable dynamic behavior during touchdown, the interface between the backup bearing and the housing is frequently implemented using a compliant support. Solutions such as elastomer O-rings and ribbon dampers have been shown to provide effective impact attenuation while preserving alignment [14]. 
+
+F. Step 6: Housing Design 
+
+Housings are support structures to ensure the proper ar-rangement of machine components. In AMB spindles, hous-ings support AMBs, backup bearings, air turbine nozzles, and sensors. Housing design and material selection must satisfy the following objectives:  
+
+> •
+
+Structural resonance frequencies of the housing must be outside of the operating speed range and dominant disturbance frequencies.  
+
+> •
+
+Electrically conducting housing regions exposed to time-varying magnetic fields can incur significant eddy current losses. To minimize these losses, materials with low electrical conductivity (high resistivity) should be used and conductive regions near leakage fields should be avoided.  
+
+> •
+
+Unintended magnetic flux paths must be minimized by using non-magnetic (low permeability) material such as austenitic stainless steels for housing regions in proximity to AMB magnetic circuit.  
+
+> •
+
+Thermal conduction from AMB and motor stators must be considered which also relates to the cooling system design.  
+
+> •
+
+Sufficient rigidity and support stiffness are required to maintain tight AMB airgaps. 
+
+G. Step 7: Cooling Design 
+
+In a typical AMB spindle, the primary sources of tempera-ture rise include Joule (copper) losses in AMB and motor coils, core losses (hysteresis and eddy current) in magnetic materials exposed to time-varying fields, and aerodynamic windage losses on rotating surfaces. A lumped thermal network or FE thermal model is generally used to estimate the temperature rise in critical components to verify that temperature limits are not exceeded. While lumped models are computationally efficient for quick iterations, an FE model allows the study of temperature distribution and reveals coil hot spots. Based on these analyses, appropriate cooling methods, such as forced air cooling, liquid cooling jackets, or enhanced conduction paths, are integrated into the design. Restricting coil current densities to safe ranges for particular modes of cooling also limits temperature rise. A computational fluid dynamics analysis further allows the study of effective convection mechanisms [13]. In case the cooling performance is not adequate to keep predicted temperatures within safety limits, the design of the cooling system including coolant choice and flow paths should be revisited. This may involve modifying coolant selection, flow paths, or housing conduction characteristics. Where fea-sible, reducing heat generation at the source, through coil redesign or mitigation of core losses, should be prioritized over increasing cooling capacity. 4
+
+H. Step 8: Manufacturing and Assembly 
+
+The final step involves manufacturing, assembly, and val-idation of the spindle. This process begins by constructing the spindle CAD assembly to verify that all components sit properly relative to each other. Manufacturing tolerances are specified based on functional requirements, recognizing that ultra-tight tolerances increase cost and should be reserved for surfaces critical to performance, such as AMB air gaps and bearing interfaces. Possible iterations and adjustments may be necessary in component design based on manufacturing feedback. The procurement of off-the-shelf components takes place side-by-side with manufacturing. These standard parts include fasteners, conventional bearings, magnet wires, sensors, power electronics (inverters and amplifiers), and raw material for manufacturing processes. For critical materials, particularly metals used in high-stress or magnetic components, certified suppliers and inspection documentation are essential to ensure consistency with design assumptions. The assembly process takes the manufactured and procured components and first constructs sub-assemblies which undergo commissioning steps to verify the final performance of the spindle, for example, short-circuit testing of coils and experi-mental modal testing of rotor and housing [15]. Finally, low-load and full-load tests are performed on the final assembly to verify spindle performance. III. C ASE STUDY 
+
+Based on the proposed multidisciplinary design framework, a high-speed AMB spindle was designed and manufactured for micro-milling applications. The dependence of engineering disciplines on each other and the design flow are thoroughly detailed in this section. 
+
+A. Application-specific requirements 
+
+In accordance with Step 1 of the design framework, high-speed micro-milling dynamics and real-time control system require the spindle design to consider application requirements stated in terms of milling forces, unbalance, rotational speed, and negative stiffness. These requirements also influence the material selection and optimization constraints. 
+
+1) Micro-milling forces and unbalance: Accurate estima-tion of machining forces is essential to dimension the AMBs and ensure sufficient load capacity under both static and dynamic operating conditions. In micro-milling, the cutting forces depend strongly on feed per tooth, depth of cut, tool geometry, and workpiece material properties. In this study, the cutting force model proposed by Dow et al. [16] was employed to estimate the force components acting on the tool and, consequently, on the rotor. The following parameters were selected to represent a typical slot-milling operation, with the axis of the spindle aligned along z direction: two-flute tool diameter (0.2 mm), up-feed (5 μm/flute ), depth of cut (10 
+
+μm), and workpiece (S-7 tool steel with hardness 5.5 GPa). Figure 2 shows the predicted cutting forces in x, y, and zTool rotation angle (Rad)             
+
+> 0123456
+> Force (N)
+> -0.4
+> -0.2
+> 0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1Fx
+> Fy
+> Fz
+> Fig. 2. Predicted cutting forces in x,y, and zdirections for a slot-milling operation using a two-flute tool.
+
+directions with static (mean) components of 0.17, -0.12, and 0.77 N, respectively. In addition to machining forces, the permissible rotor un-balance force Fu in N for a rigid rotor was calculated using the International Standard ISO-1940-1:2003 as 
+
+Fu = Gmn 
+
+1000 (1) where G is the balance quality grade in mm/s, m is the rotor mass in kg, and n is the rotor speed in rad/s. With sufficiently tight balance tolerance, we aim for G = 1.With the mass of rotor (described in section III-C) as 0.22 kg and rotational speed of 1.15 × 10 4 rad/s (110,000 rpm as chosen in section III-A2), we determined Fu = 2.54 N. 
+
+2) Rotational speed: Compared to macro-scale milling, the smaller diameter cutting tools (as small as 50 μm) used in micro-milling result in reduced cutting speeds and hence low material removal rates. To attain acceptable process efficiency (i.e. , to attain high material removal rates), cutting tools in micro-milling process must rotate at substantially higher rotational speeds [1]. In many applications, miniature micro-machining spindles commonly operate above 60,000 rpm [17], [18]. To determine the required rotational speed for the present design, a minimum micro tool diameter of 200 μm was initially considered; assuming a typical cutting speed of 130 m/min, which is sufficient to machine various common materials. This yields a rotational speed of 206,901 rpm in theory. However, the design of the AMB-supported rotor involves a trade-off between rotational speed and axial AMB load capacity. Higher speeds require a reduction in rotor thrust disc diameter to maintain safe centrifugal stress levels. In contrast, axial AMB requires sufficient disc surface area to generate an adequate thrust force. Based on initial feasibility analysis, the target rotational speed was reduced to increase the maximum allowed disc diameter (and hence 5
+
+pole surface area) for sufficient axial AMB load capacity. Therefore, we settled on a lower rotational speed of 110,000 rpm (1833.33 Hz) while also reviewing the target speeds of other AMB spindles [4], [5]. At this rotational speed, the cutting speed is 69.1 m/min with a 200 μm tool, while the cutting speed of 130 m/min is achievable with a 380 μm tool. Acknowledging that rotor design can accommodate a range of tool diameters, the selected rotational speed represents a balanced compromise between machining performance, structural integrity, and axial AMB load capacity. 
+
+3) Negative stiffness: As a guideline, AMB needs to be dimensioned to create a negative stiffness of the same order, or at most one order lower, as the desired controlled (positive) stiffness [19]. The influence of disturbances such as cutting forces on the rotor needs to be analyzed to determine the required controlled stiffness needed to compensate for static cutting forces. This can be achieved by considering AMB as a spring-mass system (where mass refers to the mass of the rotor; stiffness refers to the spring stiffness required to compensate for the disturbances) followed by plotting the power spectral density of the cutting force disturbance. As detailed in [11], a closed-loop controlled stiffness of 1.4 × 10 5
+
+N/m is determined. 
+
+B. Rotational Drive 
+
+High-speed spindles are commonly driven by electric motors or air (pneumatic) turbines. For instance, Park et al. 
+
+[5] utilized an air turbine, while Kimman et al. [4] used a permanent magnet synchronous motor. In the present study, an air turbine was selected following the design methodology of Li et al. [20], [21] due to its structural simplicity, reduced thermal load, and inherent suitability for ultra-high-rotational speeds. In this configuration, compressed air is supplied through nozzles and directed onto turbine buckets machined directly into the rotor. 
+
+1) Aerodynamic Design: As a first design step, turbine pitch diameter dm was verified to keep the Mach number M a 
+
+subsonic to avoid shock-related compressibility effects. Since the Pelton-type impulse turbine buckets were to be directly machined on the rotor, dm was constrained to be slightly less than the suitable rotor segment of 12 mm diameter. The ratio of air flow velocity u to sound velocity c defines M a as 
+
+M a = uc = πn tdm
+
+60 c (2) where nt is turbine rpm. With the target rotational speed of spindle as nt = 110,000 rpm and dm = 10 mm, the resulting 
+
+M a is 0.17, which is well below the typical onset of transonic effects at M a = 0 .8.The second design step ensured that the available supply pressure from air compressor could provide the required rotational speed to the turbine. Considering an isentropic expansion in nozzle from inlet pressure Pin to outlet pressure (backpressure) Pout = 0.1 MPa, the nozzle exit velocity is [20] 
+
+u =
+
+vuut 2κ
+
+(κ − 1) RT o
+
+"
+
+1 −
+
+ Pout 
+
+Pin 
+
+ κ−1
+
+> κ
+
+#
+
+(3) where κ = 1.4 is the specific heat ratio for dry air, R =287 .05 J/(kg K) is the specific gas constant for dry air, and 
+
+To is the absolute temperature of air source. We assumed 
+
+To = 293 .15 K corresponding to a compressor tank that has cooled to ambient. Next, u can be related to ideal turbine speed in rpm N while accounting for airflow loss coefficient ϕ and turbine speed efficiency ξ as 
+
+N = 60 uϕξ πd m
+
+(4) where typical range for ϕ is 0.92-0.98 [20]. Opting for an ultra-conservative design with ϕ = 0.92 and ξ = 0.2, Pin of 0.2 MPa yields N = 114,320 rpm, exceeding the required rotational speed of 110,000 rpm. Note that steady turbine speed under machining loads will be lower than N for the same supply pressure because turbine torque must balance machining and aerodynamic torques. In other words, a higher supply pressure may be needed to sustain the required turbine speed during machining. The selected air compressor (Einhell Silent TE-AC 24) is capable of delivering up to 0.9 MPa absolute pressure, providing sufficient margin. The third design step involved the selection of a nozzle diameter such that the available turbine torque at the operating point exceeded the load torques (windage and machining). The jet power from nozzles Pjet and turbine shaft power Pshaf t 
+
+are given as 
+
+Pjet = 12 ZGu 2 Pshaf t = πM N 
+
+30 (5) where Z is the number of nozzles, G is the air mass flowrate, and M is the turbine output torque. The mass flowrate is given by 
+
+G = ρout uA n = ρout u πd 2
+
+> n
+
+4 (6) where ρout is the air density at nozzle exit, An is the nozzle area, and dn is the nozzle diameter. Using the isentropic density relation and ideal gas law, ρout can be written as 
+
+ρout = Pin 
+
+RT in 
+
+ Pout 
+
+Pin 
+
+ 1
+
+> k
+
+(7) The power equations above are related by power efficiency 
+
+η as: Pshaf t = ηP jet . After all relevant substitutions in this power balance, the turbine output torque is given as 
+
+M = πηZd md2
+
+> n
+
+Pin u2
+
+16 ϕξRT in 
+
+ Pout 
+
+Pin 
+
+ 1
+
+> k
+
+(8) where Tin is the temperature of air source taken as 293.15 K. With Z= 4 and other parameters as mentioned in the discussion above, Figure 3 plots the variation of turbine output torque with nozzle diameter for a range of power efficiencies 0.18-0.48. 6Nozzle diameter (mm)               
+
+> 0.2 0.4 0.6 0.8 11.2 1.4 1.6 1.8
+> Turbine torque (N mm)
+> 0
+> 1
+> 2
+> 3
+> 4
+> 5
+> 6
+> 7
+> 8
+> 9
+> 10 2= 0.18
+> 2= 0.28
+> 2= 0.38
+> 2= 0.48
+> Fig. 3. Turbine torque as a function of nozzle diameter with turbine power efficiency range 0.18-0.48. Selected nozzle diameter 1.5 mm results in 2.65 N mm of torque with conservative power efficiency of 0.18.
+
+Next, the load torques on the rotor from machining and windage were estimated. The machining torque was deter-mined by evaluating tangential forces on cutting tool in a slot milling operation using the force model by Dow et al. [16]. For a conservative design, more demanding machining conditions were selected compared to those in section III-A1. With a tool diameter of 1 mm, an up-feed of 10 μm/flute, depth of cut of 10 μm, and S-7 tool steel with hardness 5.5 GPa, the maximum tangential force on the cutting tool is 1.93 N which resulted in a machining torque of 0.97 N mm. The windage torque on rotor cylindrical surfaces facing radial AMB was determined using the friction coefficients from Bilgin and Boulos [22]. With a windage torque of 0.18 N mm, the total load torque (machining and windage) is 1.15 N mm. From Figure 3, with a conservative power efficiency of 0.18, a nozzle diameter of 1.5 mm was selected to give 2.65 N mm of turbine output torque which comfortably exceeded the total load torque. Pelton-inspired impulse turbine buckets were designed and machined directly into the rotor. As shown in Figure 4(a), a central splitter divides the air jet into two buckets. As with Pelton turbines, this division in the ideal symmetric case reduces axial thrust and hence the disturbance load on axial AMB. The buckets provide the air flow with a continuous curvature to avoid flow separation. A higher bucket number generally reduces torque ripple by increasing overlap of jet-bucket engagement cycles. Within the constraint of the rotor diameter of 12 mm, we maximized the bucket count to 7. This number was also chosen intentionally to avoid it being an integer multiple of the nozzle count ( Z =4). This arrangement prevents the simultaneous impact of all four jets on the buckets for reduced amplitude of torque and force fluctuations. The bucket topology was inspired by the reference design approaches described by Shi and Dong [23], Solemslie and Dahlhaug [24], and Juraeva et al. [25]. While the current profile serves as a functional baseline, optimization Nozzle outlet duct Push-in fitting at nozzle inlet   
+
+> Splitter Bucket face (a) (b)
+> Fig. 4. Air turbine components. (a) Turbine buckets and splitter machined into the rotor. (b) Nozzle plate with push-in pneumatic fittings.
+
+using computational fluid dynamics is left for future work. Major parameters of the air turbine are shown in Table I.               
+
+> TABLE I AIR TURBINE PARAMETERS .Pitch diameter dm10 mm Nozzle diameter dn1.5 mm Number of nozzles Z4Number of buckets Zb7Inlet pressure Pin 0.2 MPa Design operating speed N114,320 rpm Turbine output torque M2.65 N mm
+
+2) Realization and Hardware Procurement: Air turbine buckets were machined into the rotor using standard CNC milling operations. Based on the pressure requirements, an Einhell Silent TE-AC 24 air compressor which has a 24 L tank capacity, maximum operating pressure of 8 bar (gauge) (0.9 MPa absolute), and low noise level of 57 dB(A), was selected. Using polyurethane pipes, the compressor connects to a 1-to-4 pneumatic port which supplies air to 4 nozzles of the air turbine. The nozzle plate is shown in Figure 4(b). Push-in pneumatic fittings were used for connections as these are typically rated up to 1 MPa of pressure. Outlet ducts were drilled into the nozzle plate with open slots to allow some air to escape axially outward within the spindle providing a limited cooling effect on the coils. 
+
+C. Rotor 
+
+To support the functionalities of radial and axial AMBs, displacement sensors, rotational drive, and milling tool, the rotor is divided into several segments. The design and manufacturing of the rotor are discussed in this section. 
+
+1) Mechanical Design: For AMB applications, the rotor material should exhibit high magnetic permeability and low coercivity to minimize hysteresis losses and maximize force capacity while high electrical resistivity and thin laminations are needed to minimize eddy current losses. Electrical steel laminations are commonly employed in rotor segments facing the poles of radial AMB due to their favorable magnetic properties. However, at ultra-high rotational speeds, centrifugal forces may compromise the mechanical integrity and tight fit of laminated stacks. To eliminate this risk, a solid rotor configuration was adopted in the present design. Suitable 7
+
+materials for solid rotor are those that exhibit soft magnetic properties with an intrinsic coercivity below 1000 A/m. Fer-ritic stainless steels satisfy this criterion but generally exhibit limited mechanical strength. To ensure structural robustness at high speeds, martensitic stainless steel AISI 410 was selected. Although its magnetic properties are inferior to those of ferritic grades, they can be improved through annealing. After material selection, the diameter of a high-speed rotor needs to be dimensioned to keep centrifugal stress within safe limits. The maximum attainable rotational speed Ωmax can be related to its radius r as 
+
+Ωmax = 1
+
+r
+
+s
+
+8σo
+
+(3 + ν)ρ (9) where σo is the yield strength, ν is the Poisson’s ratio, and 
+
+ρ is the density of the material [26]. With rotational speed requirement of Ωmax = 110,000 rpm and AISI 410 material properties of σo = 275 MPa, ν = 0.28, and ρ = 7700 kg/m 3,the theoretical maximum diameter is 51.2 mm. Considering material inhomogeneities, a conservative factor of safety was applied, and we set the rotor disc diameter at 30 mm. The rotor segments in radial AMBs have a diameter of 16.4 mm to meet the target diameter requirement of the displacement sensor (PRI04, Sensonics, UK) and to accommodate typical micro-machining tool shank diameters. The rotor segment for the rotational drive (air turbine) is kept at 12 mm in diameter as discussed in section III-B. The overall rotor length is kept at 155 mm, accommodating other spindle components and maintaining adequate separation between aimed closed-loop control bandwidth (300 Hz) and first bending (flexural) mode of rotor. The rotor design also kept the first bending mode out of the operating range (0-110,000 rpm or 0-1833.33 Hz) as seen in the rotor Campbell diagram in Figure 5 computed using the open-source rotordynamic code VibronRotor [27]. Rotor speed (Hz)          
+
+> 0200 400 600 800 1000 1200 1400 1600 1800
+> Damped natural frequency (Hz)
+> 0
+> 200
+> 400
+> 600
+> 800
+> 1000
+> 1200
+> 1400
+> 1600
+> 1800
+> 2000
+> Backward cylindrical
+> Forward cylindrical
+> Backward conical
+> Forward conical
+> Backward bending
+> Forward bending
+> 1X synchronous excitation
+> Fig. 5. Rotor Campbell diagram showing rigid body (cylindrical and conical) and bending modes.
+
+2) Manufacturing: The rotor was machined from AISI 410 bar stock (Ugitech SA, France) and subsequently finished by cylindrical grinding to achieve high roundness and low surface roughness. This minimizes synchronous runout in displacement sensor signals and hence leads to enhanced control performance. In particular, high (superior) cylindric-ity prevents the control system from interpreting geometric imperfections as physical rotor displacements. For improved magnetic softness, annealing is generally recommended but it also degrades the mechanical strength of the material. Heat treatment can introduce distortions on the rotor surface, requir-ing re-grinding. Ideally, the part should be annealed before the finishing process of grinding. Afterwards, in accordance with ISO-1940-1:2003, the rotor will be dynamically balanced with an aimed quality grade of 1. The manufactured rotor is shown in Figure 6.  
+
+> Fig. 6. Machined rotor.
+
+D. Radial AMB 
+
+In accordance with Step 4 of the proposed design framework, a comprehensive AMB design including analytical modeling, FE validation, multi-objective optimization, and hardware realization is presented here. Each radial AMB (see Figure 7) controls the rotor in two translational degrees of freedom (DOFs), namely x and y. Two identical units are mounted at opposite ends of the rotor as shown in Figure 16, which illustrates the assembly of the system, providing 4 (radial) DOFs in total. 
+
+1) Topology and modeling: A permanent magnet (PM)-biased homopolar AMB topology is adopted in this study. Homopolar AMB design maintains a uniform pole polarity in a given rotational plane, reducing hysteresis and eddy current losses in the rotor, compared to heteropolar designs. The use of a solid rotor as mentioned in section III-C further supports the need for a homopolar topology. As shown in Figure 7, this configuration consists of two four-pole stators connected to four PMs using PM-stator connectors. PMs generate a bias flux, while control coils wound around each pole of the stators produce control flux. The control flux remains within the stators and interacts with bias flux to create a difference in magnetic flux densities in opposite radial airgaps to produce radial forces. This way, AMB generates the forces as intended by the control system. In materials, M270-35A electrical steel laminations were selected for stators, Neodymium magnets (NdFeB N35) for PMs, and annealed AISI 430F ferritic stainless steel for PM-stator connectors. Since forced cooling was not included in this design, the coil current density was kept at around 4 A/mm 2,consistent with recommended values of 2-5 A/mm 2 for natu-rally cooled magnetic bearings and electrical machines [28]. 8 
+
+> Fig. 7. Radial AMB cross-section with bias and control flux paths.
+
+The equivalent magnetic circuit model forms the analytical model for the radial forces in this AMB. Under linear material assumptions, the flux leakage and magnetic saturation effects are ignored, and an infinite core permeability is assumed. Using Maxwell’s equations, bias and control flux densities in radial airgap are derived and added due to the superposition principle [11] to determine the radial bearing force on the rotor. This force depends non-linearly on control current and airgap length, hence it is linearized at its equilibrium position (rotor centered and zero control current) for linear control design [19] using first-order Taylor expansion. The linearized radial force is given as 
+
+Fx = Kx x + Kix ix (10) where Kx is the radial force-displacement dependency (also called radial negative stiffness), x is the rotor radial displace-ment, Kix is the force-current dependency, and ix is the control current in radial coils. The dependencies can be written as follows 
+
+Kx = 8μokmAgr A3
+
+> m
+
+B3 
+
+> r
+
+H2 
+
+> c
+
+l2
+
+> m
+
+
+
+2kmAmBr lgr + μoklAgr Hclm
+
+3 (11) 
+
+Kix = 4μ0Agr AmBr Hclmnr
+
+kclgr 
+
+
+
+2kmAmBr lgr + μ0klAgr Hclm
+
+ (12) where μ0 is the magnetic permeability of air, Agr is the radial stator pole area, Am is the PM area, Br is the PM remanent flux density, Hc is the PM coercive force, lm is the PM thickness, lgr is the radial airgap, nr is the radial coil turns per pole. The correction factors km and kc account for the assumption of infinite permeability in bias flux and control flux circuits, respectively, while kl deals with the assumption of no flux leakage. An electromagnetic three-dimensional (3D) FE model, was developed to determine these correction factors. The electromagnetic 3D FE model takes into account the effects neglected in the analytical model such as flux leakage, finite permeability of materials, and magnetic saturation. The comparison of airgap flux densities from analytical and FE models determines the correction factors. We utilized the magnetic fields (mf) interface of the AC/DC module of 
+
+COMSOL Multiphysics software to construct the FE model. This interface solves Maxwell’s equations formulated based on magnetic vector potential and scalar electric potential as dependent variables. For AMB components, Ampere’s Law node was used that defines magnetization models such as magnetic flux density-magnetic field intensity (referred to as B-H) curves and relative permeability. For control coils, coil node with homogenized multi-turn conductor model was used. All AMB components were enclosed in an air region so that flux leakage and fringing effects became part of the analysis. Stationary relative tolerance was set at 
+
+1 × 10 −4. The Coil Geometry Analysis and main Stationary steps were run with direct solvers MUMPS (multifrontal massively parallel sparse direct solver) and PARDISO (parallel sparse direct solver), respectively. We successively refined the mesh to perform a mesh-independence study based on grid convergence index (GCI) [29], [30]. With AMB forces (in x and y directions) showing non-monotonic behavior on refinement, we determined a GCI band based on three plausible orders of convergence (p = 1, 1.5, 2) 
+
+to verify the asymptotic behavior of 3D mesh (tetrahedral) refinement. Comparing finer and extra-fine physics-defined meshes (refinement ratio of 1.309), GCI on extra-fine mesh ranges between 0.24–0.54% for x-forces and 0.03–0.07% for 
+
+y-forces, providing an acceptable discretization uncertainty bound. The tetrahedral elements were limited to minimum and maximum sizes of 0.116 and 2.7 mm, respectively. The model was composed of 691,368 DOFs with a solution time of 6 min 15 s on an eight-core Intel i7-11850H processor and 16 GB RAM. Peak physical and virtual memory usage were 8.91 GB and 20.28 GB, respectively. 
+
+2) Optimization model: The optimization model con-structed here optimizes the AMB performance in relation to micro-milling process requirements as outlined in sec-tion III-A. One important AMB performance metric to max-imize is the specific load capacity which is the ratio of the maximum electromagnetic force the AMB can generate (i.e. the load capacity) and its volume. A lower volume, and hence a lower mass, aids the goal of spindle miniaturization and permits the use of cost-effective linear stages to undergo accel-erations required by machining processes. Therefore, a multi-objective optimization problem was formulated to maximize static radial load capacity while minimizing AMB volume, to improve specific load capacity and enabling spindle miniatur-ization. The design variables, shown in Table II, include the geometrical dimensions of AMB stator and PM as well as the control current. An important requirement for linear control design is to operate the AMB within the linear region of the material B-H curves. For the stator and rotor materials used in this study, the curves are almost linear up to 1 T. Thus, we limited the total airgap flux density to 1 T. To prevent 9
+
+magnetic field reversal in the differential driving AMB mode, we restricted the magnitude of control flux density to be less than the bias flux density in the airgap. Further, the negative stiffness was limited between 1.4 × 10 4–1.4 × 10 5 N/m as detailed in section III-A3.                     
+
+> TABLE II RADIAL AMB DESIGN VARIABLES AT SELECTED DESIGN POINT .Stator inner radius sir 27.1 mm Stator radial thickness srt 9.1 mm Pole length pl8.4 mm Pole width pw4.7 mm Pole radius pr8.6 mm PM thickness pm t1.5 mm PM width pm w8 mm PM length pm l7 mm Control current ic2.98 A
+
+Since heuristic methods such as the genetic algorithm (GA) possess the ability to converge to a global minimum, we utilized GA in MATLAB ( gamultiobj ) for our multi-objective optimization problem to develop a Pareto front. Such a Pareto front provides the designer with freedom to select design points for analysis and production that adhere to different ap-plication requirements. The optimization algorithm terminated based on its spread-based stopping criteria (average change in Pareto solutions spread fell below FunctionTolerance of 
+
+1 × 10 −4) and returned a non-dominating set approximating a Pareto front in 18.5 seconds on an eight-core Intel i7-11850H processor and 16 GB RAM. The options set used for MATLAB’s gamultiobj function are listed in Table III.        
+
+> TABLE III OPTIMIZATION ALGORITHM (GA) SETTINGS .Maximum generations 1800 Population size 200 Maximum stall generations 100 Distance measure function Distance crowding (phenotype) Pareto fraction 0.35
+
+3) Analysis: The resulting Pareto front is depicted in Figure 8 with objective 1 (static radial load capacity) on the x-axis and objective 2 (AMB volume) on the y-axis. These design points cover a range of objectives allowing the designer to choose a suitable design for further analysis and manufacturing. We selected a design point where static load capacity is 13.88 N and AMB volume is 3.06 ×10 −5 m3. Here, we developed force/frequency curves to ensure that AMB load capacities exceed the load demands. We also analyzed the selected design point with a 3D FE model to verify the chosen correction factors. The dynamic load capacity Fd(ω) is limited by the max-imum slew rate of AMB and is a function of disturbance excitation frequency ω. It was evaluated as 
+
+Fd(ω) = Kix Vc
+
+Lω (13) where Kix is the force-current dependency (refer to Eq. 12), Vc
+
+is the voltage applied by the amplifier to coils, and L is the coil inductance. The capacity envelope is defined by the minimum of both the static and dynamic capacities, and their intersection Static radial load capacity (N)          
+
+> 10.5 11 11.5 12 12.5 13 13.5 14 14.5 15
+> 2.6
+> 2.8
+> 3
+> 3.2
+> 3.4
+> 3.6
+> 3.8
+> 4
+> 4.2
+> 4.4
+> AMB volume (m 3)
+> #10 -5
+> selected
+> design
+> Fig. 8. Pareto front with maximization of static radial load capacity and min-imization of AMB volume. A selected design point (13.88 N and 3.06 ×10 −5
+> m3) is also shown for further analysis and manufacturing.
+
+is called the knee point. Next, we evaluated the load demands from machining and unbalance forces to confirm that AMB capacity envelope exceeds them by an appropriate margin. From the machining forces predicted in section III-A1, static radial force demand (resultant of x and y mean forces) was determined as 0.213 N. Dynamic force demand was estimated by treating the in-plane milling forces ( x and y components) as a periodic signal over one tool revolution and expressing them in terms of complex Fourier series. The harmonic magnitudes in this series were taken as dynamic components. For a two-flute tool, the peak magnitude at the tooth-passing frequency (2 × rotor frequency) was noted as machining dynamic force demand at 0.214 N. The dynamic load demand from rotor unbalance was estimated in section III-A1 as 2.54 N syn-chronous to 1 × rotor frequency. Afterwards, safety factors were applied to each load demand to account for uncertainty in the estimated forces and to retain sufficient margins to the available AMB load capacities [31]: 1.5 to the unbalance demand (well-bounded by specified balance grade), 2 to the machining static demand, and 3 to the machining dynamic demand (greater sensitivity to force model inputs and process condition variability). The static and dynamic AMB load capacities and demands have been plotted in Figure 9 after applying the afore-mentioned safety margins to the load demands. The static load capacity of 13.88 N is significantly higher than machining static demand of 0.43 N. The dynamic load demand from rotor unbalance stands at 3.81 N with 1 × rotor frequency while dynamic capacity is 5.43 N at this frequency. Next, machining dynamic demand is 0.64 N at 2 × rotor frequency while dynamic capacity at this frequency is 2.72 N. Hence, all capacities exceed the demands to a good extent. The knee frequency was identified as 717.9 Hz which is the intersec-10 
+
+tion of static and dynamic load capacities. At frequencies higher than the knee frequency, the AMB capacity starts declining approximately proportional to 1/ω . Although this analysis builds confidence in the ability of selected AMB design to meet load requirements, the dynamic load demands at 1 × (rotor frequency) and 2 × (tooth-passing) frequencies occur well beyond the achievable closed-loop bandwidth of AMB, which is limited to only a few hundred Hz as seen in comparable AMB spindles [4]. Therefore, AMB will not actively compensate these high-frequency dynamic forces. However, the force versus frequency plots in Figure 9 verify that dynamic demands stay within the load capacity envelope, ensuring that AMB hardware does not exceed its dynamic (slew-rate limited) capacity at these high frequencies and will not drive the amplifier into saturation. 10 1 10 2 10 3 10 4 
+
+> Frequency (Hz) (log)
+> 10 0
+> 10 1
+> Force (N) (log)
+> fknee =717.9 Hz
+> Static capacity
+> Static demand (machining)
+> Dynamic capacity
+> Capacity envelope
+> 1× demand (unbalance)
+> 2× demand (machining)
+> Fig. 9. AMB load capacities and demands. The AMB capacity envelope is defined by the minimum of both static and dynamic capacities and is shown with a grey thick line. The static and dynamic loads shown are contained within this capacity envelope for proper AMB operation.
+
+As discussed in section III-D1, correction factors for AMB analytical model were determined using 3D FE model which takes into account the effects neglected in construction of the analytical model. To verify and attain increased confidence in selected correction factors, the selected design point from the Pareto front was analyzed using 3D FE model to compare with the analytical model. Following the FE model construction explained in section III-D1, the magnetic flux densities are plotted for two AMB cross-sections (CS) in Figure 10. The airgap magnetic flux densities stayed at 0.664 T (in airgaps where bias and control flux are in the same direction) and at 0.205 T (in airgaps where bias and control flux are in opposite directions). The radial force was determined at 13.72 N. When compared with results from the analytical model, the maximum relative error in airgap flux densities was 3.4% while the relative error in radial forces was 1.17%. Acknowledging that it is challenging to determine correction factors for each combination of AMB geometrical parameters, these errors were considered acceptable to employ corrected analytical models in the optimization model.  
+
+> Fig. 10. Cross-sections (CS) of AMB (geometry shown in Figure 7) with magnetic flux density in T. The white arrows show the direction of the magnetic flux density field. Maximum airgap flux density stayed around 0.664 T. (a) Transverse CS in mid-stator plane normal to rotor axis. (b) Longitudinal CS in plane parallel to rotor axis.
+
+4) Realization: Based on the parameters listed in Table II, radial AMB was realized. For the stator, M270-35A electrical steel was sourced from Somal Sac, Turkiye. Each lamination is 0.35 mm thick. Wire electrical discharge machining was used to cut the lamination stack as it is a burr-free cutting method and minimally impacts the magnetic performance of electrical steel. For AMB coils, we acquired double-coated magnet wire from Emtel, Turkiye. Based on the housing design principles explained in Step 6 of the design framework, radial AMB stators require housing materials with low electrical conductivity to minimize eddy current losses and low mag-netic permeability to inhibit undesired flux paths. Austenitic stainless steels provide both properties and hence AISI 316L was acquired. The PM-stator connectors were machined from AISI 430F stainless steel and Neodymium magnets (NdFeB N35) were purchased from Manyet, Turkiye. Realized radial AMB is shown in Figure 11(a). (b) (a)  
+
+> Fig. 11. Manufactured AMB sub-assemblies (not to scale). (a) Radial AMB. (b) Axial AMB (lower half; see Figure 12). 11
+
+E. Axial AMB 
+
+With the four lateral DOFs controlled by the two radial AMBs, the fifth (axial) DOF was controlled by an axial AMB. Following guidelines from Step 4 of the design framework, the design and analysis are presented in this section, along with details on manufacturing. 
+
+1) Topology and modeling: To levitate the rotor axially and regulate its dynamics, the axial AMB consisting of two circular U-shaped reluctance actuators was used as shown in Figure 12 and assembled in Figure 16. Placed at each side of the rotor disc, the actuators are driven by tangentially wound coils to produce attractive magnetic forces. The control system commands the coil currents to produce the required net force from the difference of attractive forces from both actuators. The force derivation for axial AMB follows the same assumptions from the radial AMB analytical model (section III-D1) that flux leakage and magnetic saturation effects were ignored while an infinite permeability was assumed for the core. The net axial force Fa can be written as [13] 
+
+Fa = μ0n2
+
+> a
+
+Aa
+
+4k2
+
+> ax
+
+ i21
+
+l21
+
+− i22
+
+l22
+
+
+
+(14) where μ0 is the magnetic permeability of air, na is the coil turns per actuator, Aa is the pole area (each actuator has two poles), kax is the correction factor to account for the assumptions taken in the analytical model, i1 and i2 are coil currents in upper and lower actuators, respectively, and l1 and 
+
+l2 are upper and lower airgaps, respectively. The correction factor is determined by constructing a 3D FE model for axial AMB similarly as done for radial AMB in section III-D1. The non-linear (quadratic) dependence of force on coil current creates a challenge as the force-current slope is essentially zero at zero excitation and hence small control currents produce negligible force. Practically, this is addressed by introducing bias flux, provided either by permanent magnets or offset coil current, so that AMB operates at a point with improved force-current gain. This also linearizes the force-current relation at the operating point for linear control design. With this improved force-current gain, a larger force slew-rate is attained with the same current slew-rate, resulting in better AMB dynamic performance. Implementing this approach, the coil currents can be divided into bias current ib and control current 
+
+ic as: i1 = ib + ic and i2 = ib − ic to produce a net force. Similarly, the airgaps can be written in terms of nominal airgap 
+
+lo (at equilibrium position) and rotor axial displacement z:
+
+l1 = lo−z and l2 = lo+z. Substituting these current and airgap relations in Eq. 14 and linearizing the force at the operating point ( ic = 0 , z = 0 ) using the Taylor series yields 
+
+Fa = Kaz + Kia ic (15) where Ka is the axial force-displacement dependency (also called axial negative stiffness) and Kia is the force-current gain which are given as 
+
+Ka = μ0n2
+
+> a
+
+Aai2
+
+> b
+
+l3 
+
+> o
+
+k2
+
+> ax
+
+(16) 
+
+Kia = μ0n2
+
+> a
+
+Aaib
+
+l2 
+
+> o
+
+k2
+
+> ax
+
+(17)  
+
+> Fig. 12. Axial AMB longitudinal cross-section. Two reluctance actuators are placed at either side of the rotor disc for axial levitation control. The dot and cross convention shows the direction of coil currents. Dashed lines show the flux path.
+
+Electrical steel laminations provide low eddy current and hysteresis losses in magnetic actuators. However, the mechanical challenges in laminating axial actuators lead designers to use soft magnetic materials which have high magnetic permeability and low coercivity. Therefore, annealed ferritic stainless steel AISI 430F was selected for axial AMB. 
+
+2) Dimensioning and Analysis: Constrained by spindle geometry, we dimensioned the axial AMB to ensure that load capacities exceed the demands with sufficient margins. The constraints of available coil space dictated by spindle geometry and coil current density for uncooled magnetic actuators were used to fix the maximum coil current. The coil turns per actuator were set at 66 and maximum current was limited to 2.1 A with a bias of 1.6 A. After setting the bias current, a static current offset was added to the upper actuator coils and subtracted from the lower actuator coils to balance the weight of the rotor (2.17 N). The other axial load demand is from the machining forces. From the milling force model in section III-A1 where a two-flute tool was used, the static (mean) axial force demand stood at 0.77 N and the dynamic demand was 0.25 N at 2 × the rotor frequency. The axial dynamic demand was determined using the same method utilized for radial dynamic demand in section III-D3. A safety factor of 2 was applied to the static load and 3 to the dynamic load, consistent with the approach adopted in radial AMB analysis. With the design parameters listed in Table IV, the axial AMB achieved a static load capacity of 5.96 N and a dynamic capacity of 1.47 N at 2 × the rotor frequency (2 ×1833.33 Hz), exceeding the above-mentioned load demands with sufficient margins. However, similar to radial AMB, the axial AMB faces the same challenge of 12 
+
+limited closed-loop bandwidth to actively compensate high-frequency dynamic forces. In addition to aiding the determination of correction factors, the 3D FE model also identifies locally saturated regions in the flux path. With a maximum current of 2.1 A in upper actuator coils, Figure 13 shows that only a limited region underwent relatively elevated flux density which still stayed in the linear range (up to 1 T) of the material (AISI 430F) B-H curve and well below the saturation limit.                 
+
+> TABLE IV PARAMETERS FOR AXIAL AMB. Bias current ib1.6 A Axial airgap lo0.3 mm Stator pole area Aa1.16 ×10 −4m2
+> Coil turns per actuator na66 Force-displacement dependency Ka6.4 ×10 4N/m Force-current dependency Kia 11.9 N/A
+> Fig. 13. Quarter view of longitudinal cross-section of axial AMB showing the magnetic flux density in T (refer to geometry in Figure 12) when upper actuator coils were excited with a current of 2.1 A. White arrows represent the direction of the flux density field.
+
+3) Manufacturing: The axial AMB with parameters men-tioned in Table IV was manufactured using standard milling operations. The stator was machined from annealed AISI 430F (Ugitech, France). The spacer plates (see Figure 16) supporting the stator were machined with low-conductivity and non-magnetic stainless steel AISI 316L to reduce eddy current losses and prevent unintended flux paths. Double-coated magnet wire (AWG 22 with 200 °C thermal class) for coils was sourced from Emtel, Turkiye. Holes were drilled in the stators to accommodate non-magnetic binding wires that would hold the coils. Lower half actuator of the manufactured axial AMB is shown in Figure 11(b). 
+
+F. Instrumentation and Control System Hardware 
+
+In accordance with Step 4 of the design framework, the required sensing specifications are defined first to select ap-propriate sensor types. The radial AMB airgap is 0.4 mm and the touchdown clearance is limited to approximately half of this airgap. Hence, the radial displacement sensor standoff and linear operating range must accommodate ±0.2 mm radial motion. Using the same logic, this value for the axial displacement sensor is ±0.15 mm of axial motion. For a two-fluted tool, the tooth-passing frequency is 2 ×
+
+of the spindle rotational frequency. At our operating speed 110,000 rpm (1833.33 Hz), this corresponds to 3.67 kHz. The sensor frequency response should exceed 3.67 kHz with a good margin to avoid significant attenuation and phase lag near the tooth-passing frequency. Adopting a spindle position error budget of 1.5 μm as done by Kimman et al. [4], displacement sensors must have a resolution of less than 1.5 μm. Based on 3D FE model in section III-D3, the magnetic flux density is only on the order of a few mT at sensor locations between the two radial AMB stators. Based on these requirements, Sensonics PRI04 eddy current probes were selected as radial and axial displacement sensors. This probe has a measurement range of 2.5 mm, a specified frequency response of DC-10 kHz, and a resolution of less than 1 μm. Moreover, the magnetic field effect for this sensor is less than 1% at 110 mT. Based on electromagnetic FE analysis, the flux density experienced by the probe in our design is significantly lower than 110 mT. For speed measurement, we acquired a Monarch ROLS24-W optical laser sensor which has a specified speed range of 1-250,000 rpm. Control system hardware included dSPACE 1104 and switching power ampli-fiers. Sensors and control system components can be seen in Figure 17. 
+
+G. Backup Bearing 
+
+Following Step 5 of the design framework, an auxiliary (backup or touchdown) bearing mechanism was incorporated to protect the rotor in the event of AMB failure or exces-sive displacement. A touchdown clearance of half the AMB airgap was considered appropriate based on common auxiliary bearing design practice [32]. Although ultra-high-speed rolling element bearings are available which can withstand our spindle target speed of 110,000 rpm, a high-speed shock loading requires additional considerations about the stability of internal elements and failure modes. In contrast, plain bearings provide a mechanically simpler and relatively inexpensive solution but a high-friction contact as wear progresses [33]. Measures such as lubricating or coating the contact interfaces must be taken to reduce friction during touchdown. We opted for ceramic plain bearings as backup bearings. To dampen the touchdown impact on assembly and reduce the possibility of critical behavior, elastomer O-rings were used as a compliant support. Viton O-rings with a shore hardness of 80 were acquired from Eksen Makina, Turkiye. The ceramic plain bearing and Viton O-ring are shown in Figure 14 and the placement of the mechanism in the AMB housing is shown in Figure 16. 
+
+H. Spindle Housing 
+
+Referring to Step 6 of the design framework, aluminum was selected as the material for the outer housing for its low mass, high thermal conductivity, and non-magnetic properties. The housing was designed as a stiff protective enclosure to protect AMB components from machining debris. For metals, 13 (b) (a)  
+
+> Fig. 14. Backup bearing components. (a) Ceramic plain bearing. (b) Viton O-ring.
+
+high thermal conductivity generally comes with high electrical conductivity (Wiedemann-Franz law). Therefore, an aluminum housing may incur significant eddy current losses if exposed to time-varying magnetic fields. However, our design limits the exposure of spindle housing to such magnetic fields and separates this housing from active magnetic circuit by AMB housing. Considering the proximity of spindle housing end covers to AMB coils, covers were machined from low-conductivity and non-magnetic AISI 316L in a similar manner as done for AMB housings. The spindle housing is depicted in Figure 15.  
+
+> Fig. 15. Spindle housing (without end covers).
+
+I. Thermal Considerations 
+
+From the heat sources mentioned in Step 7 of the design framework, the dominant heat sources in our design are copper losses in AMB coils and core losses in magnetic circuit. Instead of implementing forced cooling, we controlled the temperature rise by limiting the coil current densities to rec-ommended safe ranges for naturally cooled magnetic bearings and motors [28]. Further, we acquired double-coated 200 °C thermal class magnet wires (compliant with IEC 60317-13) for coils that provide high thermal endurance. Additionally, open slots were machined in the outlet ducts of the nozzle plate as seen in Figure 4(b). These slots enable a fraction of outlet air to flow axially towards the AMB coils and stators resulting in a limited cooling effect. 
+
+J. Assembly 
+
+The manufacturing and realization of spindle components have been addressed in separate sections of this case study. This section deals with the overall spindle assembly. As per standard practice, a full CAD assembly was prepared to identify critical concentric and axial stack-up dimensions for tighter tolerances and non-critical dimensions where standard machine shop tolerances suffice. The CAD assembly also helped to plan the assembly and disassembly sequences and cable routing. To secure the radial AMB laminations as a stack and fasten them to the AMB housing, semi-circular slots were machined into the periphery of the lamination stack (via EDM) and the inner bore of AMB housing. Once aligned, these slots form channels for bolted connections. In line with housing material considerations mentioned in section III-D4, material for nuts and bolts should also have low electrical conductivity and low magnetic permeability. Therefore, austenitic stainless steel (AISI 304) was selected. To avoid forming an unintended con-ductive bridge among laminations and consequently increasing the eddy current losses, insulating sleeves separated the bolt from the lamination stack. Locking washers from Nord-Lock were used to prevent self-loosening under vibration loads on the spindle assembly. A CAD cross-section of the spindle is labeled in Figure 16. The overall assembled system is shown in Figure 17. Spacer plates Spacer rings Nozzl es Axial backup bearing Radial backup bearing with O-rings Permanent magnet Rotor Radial displacement sensor Axial displacement sensor Radial AMB stator PM-stator connector AMB windings Axial AMB Rotor end for tool holder Spindle housing  
+
+> Fig. 16. Labeled cross-section of AMB spindle CAD assembly.
+
+IV. C ONCLUSION 
+
+Although realizations of AMB spindles and control strate-gies targeting various applications have been documented in the literature, comprehensive design methodologies for such spindles have not been published. Our study proposed adesign framework aimed to unify the design knowledge and 14 AMB spindle Sigma profile vertical support Power amplifiers dSPACE 1104 connector board Nozzle manifold Air compressor Power supplies Desktop PC with dSPACE 1104 controller board 
+
+Fig. 17. Assembled AMB spindle system. 
+
+demonstrated the utility of the framework by manufacturing a miniaturized micro-milling AMB spindle with a target speed of 110,000 rpm. The multidisciplinary design flow was implemented by considering the mechanical, electromagnetic, and thermal performance of spindle components. The iterative framework incorporated checks for design feasibility, rotor-dynamic performance, and thermal limits, which may lead to appropriate design iterations. For each component, an explicit focus was applied to its material selection and manufacturing. Future work will focus on control system tuning and micro-milling experiments. ACKNOWLEDGMENT 
+
+This work was supported by the Scientific and Technologi-cal Research Council of Turkey (TUBITAK) under Grant No. 123M121 (PI: Bekir Bediz). REFERENCES [1] J. Chae, S. S. Park, and T. Freiheit, “Investigation of micro-cutting operations,” International Journal of Machine Tools and Manufacture ,vol. 46, no. 3-4, pp. 313–332, Mar. 2006. [2] R.-M. Lee and T.-C. Chen, “Adaptive control of active magnetic bearing against milling dynamics,” Applied Sciences , vol. 6, no. 2, p. 52, Feb. 2016. [3] C. R. Knospe, “Active magnetic bearings for machining applications,” 
+
+Control Engineering Practice , vol. 15, no. 3 SPEC. ISS., pp. 307–313, Mar. 2007. [4] M. H. Kimman, H. H. Langen, and R. H. Munnig Schmidt, “A miniature milling spindle with active magnetic bearings,” Mechatronics , vol. 20, no. 2, pp. 224–235, 2010. [5] J.-K. Park, J.-H. Kyung, W.-C. Shin, and S.-K. Ro, “A magnetically suspended miniature spindle and its application for tool orbit control,” 
+
+International Journal of Precision Engineering and Manufacturing ,vol. 13, no. 9, pp. 1601–1607, Sep. 2012. [6] O. Martola, “From concept to reality: The role of feasibility in magnetic bearing design,” SpinDrive Blog, Oct. 2025. [Online]. Available: https://spindrive.fi/feasibility-study-blog/ [7] D. Huo, K. Cheng, and F. Wardle, “Design of a five-axis ultra-precision micro-milling machine–UltraMill. Part 1: Holistic design approach, design considerations and specifications,” The International Journal of Advanced Manufacturing Technology , vol. 47, pp. 867–877, Apr. 2009. [8] A. Filatov, L. Hawkins, and P. McMullen, “Homopolar permanent-magnet-biased actuators and their application in rotational active mag-netic bearing systems,” Actuators , vol. 5, no. 4, 2016. [9] D. P. Fleming, “Magnetic bearings–state of the art,” NASA Technical Memorandum 104465 , 1991. [10] K. S. Ahmed, G. K. Sendur, and B. Bediz, “Integrated design optimiza-tion of a motorized active magnetic bearing spindle for micro-milling applications,” Journal of Mechanical Science and Technology , vol. 39, no. 4, pp. 2015–2027, Apr. 2025. [11] M. H. Kimman, “Design of a micro milling setup with an active magnetic bearing spindle,” Ph.D. dissertation, TU Delft, 2010. [12] G. Schweitzer, “Safety and reliability aspects for active magnetic bearing applications – a survey,” Proceedings of the Institution of Mechanical Engineers, Part I: Journal of Systems and Control Engineering , vol. 219, no. 6, pp. 383–392, Sep. 2005. [13] G. Schweitzer and E. H. Maslen, Eds., Magnetic Bearings: Theory, Design, and Application to Rotating Machinery . Berlin, Heidelberg: Springer, 2009. [14] C. Jarroux, J. Mahfoud, R. Dufour, F. Legrand, B. Defoy, and T. Alban, “Investigations on the dynamic behaviour of an on-board rotor-AMB system with touchdown bearing contacts: Modelling and experimenta-tion,” Mechanical Systems and Signal Processing , vol. 159, p. 107787, Oct. 2021. [15] E. Kurvinen, C. Di, I. Petrov, J. Nerg, O. Liukkonen, R. P. Jastrzebski, D. Kepsu, P. Jaatinen, L. Aarniovuori, E. Sikanen, J. Pyrh¨ onen, J. Sopa-nen, O. Pyrh¨ onen, M. Niemel¨ a, and T. Kangasm¨ aki, “Design and manu-facturing of a modular low-voltage multimegawatt high-speed solid-rotor induction motor,” IEEE Transactions on Industry Applications , vol. 57, no. 6, pp. 6903–6912, Nov. 2021. [16] T. A. Dow, E. L. Miller, and K. Garrard, “Tool force and deflection compensation for small milling tools,” Precision Engineering , vol. 28, no. 1, pp. 31–45, Jan. 2004. [17] K. F. Ehmann, D. Bourell, M. L. Culpepper, and T. J. Hodgson, “Interna-tional assessment of research and development in micromanufacturing,” World Technology Evaluation Center (WTEC), Inc., Tech. Rep., 2005. [18] B. Bediz, B. Arda Gozen, E. Korkmaz, and O. Burak Ozdoganlar, “Dy-namics of ultra-high-speed (UHS) spindles used for micromachining,” 
+
+International Journal of Machine Tools and Manufacture , vol. 87, pp. 27–38, Dec. 2014. 15 
+
+[19] L. Molenaar, “A novel planar magnetic bearing and motor configuration applied in a positioning stage,” Ph.D. dissertation, TU Delft, 2000. [20] W. Li, M. Liu, Y. H. Ren, and Q. Chen, “A high-speed precision micro-spindle use for mechanical micro-machining,” International Journal of Advanced Manufacturing Technology , vol. 102, no. 9-12, pp. 3197–3211, 2019. [21] W. Li, Z. X. Zhou, H. Xiao, and B. Zhang, “Design and evaluation of a high-speed and precision microspindle,” International Journal of Advanced Manufacturing Technology , vol. 78, no. 5-8, pp. 997–1004, 2015. [22] E. Bilgen and R. Boulos, “Functional dependence of torque coefficient of coaxial cylinders on gap width and Reynolds numbers,” Journal of Fluids Engineering , vol. 95, no. 1, pp. 122–126, Mar. 1973. [23] Z. Y. Shi and T. Dong, “Synthetic optimization of air turbine for dental handpieces,” in 2014 36th Annual International Conference of the IEEE Engineering in Medicine and Biology Society . Chicago, IL: IEEE, Aug. 2014, pp. 4815–4818. [24] B. W. Solemslie and O. G. Dahlhaug, “A reference Pelton turbine– design and efficiency measurements,” in IOP conference series: Earth and environmental science , vol. 22, no. 1. IOP Publishing, 2014, p. 012004. [25] M. Juraeva, B. H. Park, K. J. Ryu, and D. J. Song, “Designing high-speed dental air-turbine handpiece by using a computational approach,” 
+
+International Journal of Precision Engineering and Manufacturing ,vol. 18, no. 10, pp. 1403–1407, 2017. [26] R. Larsonneur, “Design and control of active magnetic bearing systems for high speed rotation,” Ph.D. dissertation, ETH Zurich, 1990. [27] K. S. Ahmed and S. Mushtaq Ahmad, “VibronRotor, an opensource rotordynamic code: Development and benchmarking,” Measurement ,2019. [28] W. K. Khoo, S. D. Garvey, and K. Kalita, “The specific load capacity of radial-flux radial magnetic bearings,” IEEE Transactions on Magnetics ,vol. 43, no. 7, pp. 3293–3300, Jul. 2007. [29] P. J. Roache, “Perspective: A method for uniform reporting of grid refinement studies,” Journal of Fluids Engineering , vol. 116, no. 3, pp. 405–413, Sep. 1994. [30] I. B. Celik, U. Ghia, P. J. Roache, and C. J. Freitas, “Procedure for estimation and reporting of uncertainty due to discretization in CFD applications,” Journal of Fluids Engineering , vol. 130, 2008. [31] E. Swanson, A. Masala, and L. Hawkins, “New active magnetic bearing requirements for compressors in API 617 eighth edition,” in Proceedings of the 43rd Turbomachinery Symposium , Houston, TX, USA, Sep. 2014. [32] C. Yu, C. Jin, X. Yu, and L. Xu, “Dynamic analysis of active magnetic bearing rotor dropping on auto-eliminating clearance auxiliary bearing devices,” Journal of Engineering for Gas Turbines and Power , vol. 137, no. 6, Jun. 2015. [33] A. K¨ arkk¨ ainen, J. Sopanen, and A. Mikkola, “Dynamic simulation of a flexible rotor during drop on retainer bearings,” Journal of Sound and Vibration , vol. 306, no. 3-5, pp. 601–617, Oct. 2007.

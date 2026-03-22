@@ -1,0 +1,346 @@
+Title: A Reduced Magnetic Vector Potential Approach with Higher-Order Splines
+
+URL Source: https://arxiv.org/pdf/2602.22997v1
+
+Published Time: Fri, 27 Feb 2026 01:55:07 GMT
+
+Number of Pages: 6
+
+Markdown Content:
+> This work has been submitted to the IEEE for possible publication. Copyright may be transferred without notice,after which this version may no longer be accessible.
+> A REDUCED MAGNETIC VECTOR POTENTIAL APPROACH WITH HIGHER-ORDER SPLINES 1
+
+# A Reduced Magnetic Vector Potential Approach with Higher-Order Splines 
+
+Merle Backmeyer 1,2 , Laura A. M. D’Angelo 1, Brahim Ramdane 2 and Sebastian Sch¨ ops 11Computational Electromagnetics Group, Technische Universit¨ at Darmstadt, 64289 Darmstadt, Germany  
+
+> 2
+
+Univ. Grenoble Alpes, CNRS, Grenoble INP, G2Elab, 38000 Grenoble, France 
+
+This work presents a high-order isogeometric formulation for magnetoquasistatic eddy-current problems based on a decomposition into Biot–Savart–driven source fields and finite-element reaction fields. Building upon a recently proposed surface-only Biot–Savart evaluation, we generalize the reduced magnetic vector potential framework to the quasistatic regime and introduce a consistent high-order spline discretization. The resulting method avoids coil meshing, supports arbitrary winding paths, and enables high-order field approximation within a reduced computational domain. Beyond establishing optimal convergence rates, the numerical investigation identifies the requirements necessary to recover high-order accuracy in practice, including geometric regularity of the enclosing interface, accurate kernel quadrature, and compatible trace spaces for the source–reaction coupling. 
+
+Index Terms —Higher-order discretization, Biot-Savart law, eddy-current problems, isogeometric Analysis. 
+
+I. I NTRODUCTION 
+
+# WHEN solving eddy current problems, resolving fil-amentary coils in the computational mesh can be computationally inconvenient due to their high-aspect ratio and therefore the demand for very fine mesh resolution in their proximity. It is particularly challenging in isogeometric analysis (IGA), where conforming multi-patch discretizations inherit the tensor-product structure of NURBS and make thin features in the mesh particularly challenging to represent and refine efficiently [1]. To avoid modeling individual turns, ho-mogenization and coil surrogate models (e.g., solid or stranded conductor models) have long been employed and continue to be refined [2]–[4]. These approaches are especially attractive when the coil itself is the region of interest and one needs to compute current distributions within the winding pack. When the coil merely acts as a source, a different strategy is to exclude the coil from the finite-element domain. Instead, the magnetic field is decomposed into a prescribed linear source field and a potentially non-linear reaction field induced in the conducting region. The source field can be computed via a fundamental solution, the Biot-Savart law, while the reaction field is computed on a mesh that resolves only the conductor and air region, not the coil geometry itself. This “non-resolved coil” strategy, known as the reduced magnetic vector potential formulation (RMVP), was originally proposed in [5]. It is worth noting that this field-decomposition viewpoint, in which the source-generated field in a linear subdomain is represented using the fundamental solution, is not unique to RMVP. Closely related ideas appear in volume-integral equations, boundary-integral formulations, and in FEM–BEM coupling, where the exterior (or source) field is represented via the fun-damental solution while only the reaction field is discretized 
+
+> Received xx February 2026; revised yy ; accepted xx . Date of publication xx ; date of current version xx February 2026. Corresponding author: M. Backmeyer (email: merle.backmeyer@univ-grenoble-alpes.fr). Color versions of one or more figures in this article are available at https://doi.org/10.1109/TMAG.xxxx.xxxxxx. Digital Object Identifier 10.1109/TMAG.xxxx.xxxxxx.
+
+numerically [6]–[8]. These connections place RMVP within a broader class of classical electromagnetic formulations that exploit Green’s functions to reduce the computational do-main and improve efficiency. However, this comes with its own challenge: the expensive Biot–Savart integrals have to be evaluated for each quadrature point of each element of the mesh. This can be mitigated by compression, e.g. fast multipole methods (FMM) [9], or reducing the domain over which the fundamental solution is evaluated. A recent idea, proposed in [10] restricts the evaluation of the fundamental solution to a closed surface that separates the linear air domain from the magnetic region which typically features a nonlinear magnetic material behavior. We will refer to it as the interface RMVP. This surface-based representation preserves the correct field in the whole domain while drastically reducing the number of kernel evaluations. It has demonstrated efficiency for magnetostatic problems with low-order discretizations, however the reported convergence remained suboptimal. It is now established that optimal convergence is indeed attainable. Building on this understanding, we address several open questions and generalizations. This work extends these ideas to the magnetoquasistatic (MQS) regime, supports arbitrary winding paths and discretizes the fields with higher-order basis functions. Higher-order discretizations promise reduced error per degree of freedom and better accuracy for field deriva-tives — critical for loss estimation, local flux metrics, and design sensitivities [11]. However, to actually achieve optimal convergence, the entire chain must be high-order consistent: geometry approximation of the enclosing surface, high-order accurate kernel quadrature and compatible trace spaces for coupling that preserve the discretization’s asymptotic rates. This paper makes these requirements explicit and provides a step-by-step pathway to restore optimal convergence in practice. The remainder of this paper is structured as follows: In Section II, the interface RMVP is revisited, higher-order dis-cretization is introduced and the expected optimal convergence rates are discussed. Section III presents numerical results and Section IV concludes the work.  
+
+> arXiv:2602.22997v1 [math.NA] 26 Feb 2026 A REDUCED MAGNETIC VECTOR POTENTIAL APPROACH WITH HIGHER-ORDER SPLINES 2
+
+II. M ETHODOLOGY 
+
+In this chapter, we revisit the methodology originally devel-oped in [10] within the framework of linear finite elements. As an extension of previous work, we place it in the mag-netoquasistatic regime, develop a higher-order isogeometric discretization and provide convergence estimates. In practice, the approach requires (i) robust construction of the enclosing surface; (ii) accurate numerical quadrature for the kernel inter-actions; and (iii) a consistent transfer of the source data onto the reaction problem. These steps become increasingly delicate for higher-order discretizations, where inadequate quadrature or function spaces can compromise the expected benefits of high-order approximations. We will visit them carefully in the following. 
+
+A. Interface Reduced Magnetic Vector Potential Approach 
+
+Let us assume that the computational domain V = Vext ∪
+
+Vint ⊂ R3 is composed of an outer region Vext that contains the coil embedded in a linear homogeneous material and an inner region Vint that contains the active regions (conductive and/or magnetic). The two domains are separated by the surface Γ. This setup is depicted in Fig. 1. We operate in the MQS regime, where displacement currents are disregarded. For clarity of presentation, we restrict our attention to the time-harmonic regime, assuming linear material behavior also in Vint and sinusoidal source current density. This simpli-fication is only introduced for conciseness: nonlinear and time-dependent formulations can be handled using standard time-stepping schemes, single or multistep. The magnetic vector potential ⃗ A is decomposed into ⃗A =
+
+(⃗As +⃗ Am +⃗ Ag in Vext ,⃗ Ag in Vint , (1) where a source field ⃗ As is induced by the coil currents, an image field ⃗ Am that in superposition with the source field gives a fundamental solution in Vext that respects the homogeneous Dirichlet conditions at Γ, and a reaction field ⃗ Ag that satis-fies the eddy current equations in the computational domain with material constitutive laws (possibly nonlinear), driven by a surface current that encodes the source contribution. We compute the source field for any (quadrature) point on the surface Γ (and any point of interest in Vext ) via the Biot–Savart kernel [12, Sec. 5.4], i.e. ⃗As(⃗r) = μ0
+
+4π
+
+Z
+
+> Ωs
+
+⃗Js(⃗r ′)
+
+∥⃗r −⃗r ′∥ d⃗s (2) where μ0 is the permeability in Vext ,⃗ Js is the source current and ⃗r the evaluation point. For coil windings, it is usually justified to model the source regions as one-dimensional lines whose paths may be chosen arbitrarily, reflecting the flexibility of practical winding layouts. Recall that 
+
+γD(⃗u) = ⃗u ×⃗n, γ N(⃗u) = μ −10 (curl ⃗u) ×⃗n, (3) denote the tangential Dirichlet and Neumann traces commonly used in curl-conforming formulations, where ⃗n is the outward unit normal [13]. The image field ⃗ Am is computed as: Find ⃗ Am ∈ {⃗v ∈ H(curl , V ext ) : γD(⃗v) =
+
+−γD(⃗As) on Γ, γ D(⃗v) = 0 on ∂V } such that 
+
+
+
+μ−10 curl ⃗ Am, curl ⃗ A′
+
+> m
+
+
+
+> Vext
+
+= 0 (4) for all ⃗ A′ 
+
+> m
+
+∈ H0(curl , V ext ), where ⃗ A′ 
+
+> m
+
+is a corresponding test function and γD(⃗As) ∈ H−1/2(div , Γ) , the corresponding trace space. The surface restriction of the source field follows from an exterior representation formula together with the asso-ciated jump and continuity conditions that ensure equivalence between the exterior and interior formulations outside the coil region. In this framework, we define the surface current density ⃗Kg = γN(⃗Am +⃗ As) on Γ, which represents the Neumann-type tangential trace of the total field on the interface Γ. To compute 
+
+γN(⃗ As), it is either possible to compute the magnetic field ⃗ B
+
+via Biot-Savart law [12, Sec. 5.2] ⃗Bs(⃗r) = μ0
+
+4π
+
+Z
+
+> Ωs
+
+⃗Js(⃗r ′) ×⃗r
+
+∥⃗r −⃗r ′∥3 d⃗s, (5) and take its tangential components, or to compute the L2-projection of (2) onto the discrete curl-conforming space and then take its Neumann trace, [10]. The reaction field ⃗ Ag
+
+must satisfy the corresponding jump condition across Γ, in particular γ+ 
+
+> N
+
+(⃗ Ag) − γ− 
+
+> N
+
+(⃗ Ag) = ⃗ Kg. The weak formulation to compute the reaction field ⃗ Ag(t) therefore reads: Find ⃗ Ag ∈ H0(curl , V ) subject to 
+
+
+
+μ−1 curl ⃗ Ag, curl ⃗ A′
+
+> g
+
+
+
+> V
+
+− jω
+
+
+
+σ⃗A g,⃗ A ′
+
+> g
+
+
+
+> V
+
+(6) 
+
+= ⟨⃗Kg, γ D(⃗A′
+
+> g
+
+)⟩Γ,
+
+for all ⃗ A′ 
+
+> g
+
+∈ H(curl , V ), where γD(⃗ A′
+
+> g
+
+) ∈ H1/2(curl , Γ) 
+
+denotes the tangential trace on Γ and ⃗ Kg ∈ H−1/2(div , Γ) .The duality term on the boundary is well-defined because 
+
+H−1/2(div , Γ) is the dual of H1/2(curl , Γ) , so the pairing 
+
+⟨⃗Kg, γ D(⃗ A′
+
+> g
+
+)⟩Γ fits naturally within the trace framework of 
+
+H(curl) -conforming spaces. There are several advantages to the proposed surface-reduced formulation. First, the integra-tion surface can be positioned flexibly, allowing the source field to be reused in parametric studies as long as the surface does not intersect the region where geometry changes occur. Second, in the presence of nonlinear materials, the decom-position into linear and nonlinear field components implies that the linear source field remains unchanged throughout the Newton iteration. In both cases, the source field needs to be computed only once on the interface, whereas the reaction field alone is updated for the parametric instances or during the nonlinear solve, respectively. Moreover, because the source field is evaluated exclusively outside the coil region, all singularities inherent to the Biot-Savart kernel are avoided, and only smooth integrals are encountered on the integration sur-face – significantly simplifying numerical quadrature. Finally, the surface-reduced formulation offers a substantial runtime advantage. In the original RMVP, the Biot-Savart kernel must be evaluated at every quadrature point in the 3D finite-element mesh, leading to O(nm 3) work for a tensor-product discretization with m3 quadrature points in the volume and n
+
+quadrature points along the coil. Implementation of the FMM would allow to reduce the cost to at most O(n + m3) [14]. In A REDUCED MAGNETIC VECTOR POTENTIAL APPROACH WITH HIGHER-ORDER SPLINES 3
+
+Γ
+
+Vint Vext  
+
+> (a) Cross-section in the xy -plane
+
+Γ
+
+Vint Vext             
+
+> (b) Cross-section in the xz -plane
+> Fig. 1: Problem setup illustrated through cross-sections in the xy - and xz -planes. The closed surface Γpartitions the computational domain Vd into the outer region Vext and the inner region Vint . The conductor (blue) is fully contained in Vint , while the coil (red), shown here with five turns, carries the source current in Vext . This setup is analyzed in Section III with two different coil configurations.
+
+contrast, the interface RMVP requires Biot-Savart evaluations only on the separating interface, which contains merely O(m2)
+
+quadrature points, yielding a total cost of O(nm 2) without any multi-pole machinery. For n ≈ m, this yields the same runtime complexity as the original approach with FMM. Additional evaluations are required only at points outside the interface, where the solution is sought. The price for this reduction is a single auxiliary magnetostatic solve inside the coil region, the image problem, which is comparatively cheap, especially for coils region with many turns or wires. 
+
+B. IGA Discretization 
+
+Our geometry representation is inspired by CAD. It is given by a map from the reference domain ˆΩ = [0 , 1] 3 to a physical domain Ω ⊂ R3. The standard tools for this representation are B-splines and NURBS. Given a knot vector Ξ ⊂ [0 , 1] , the basis of univariate B-splines ˆBpi of degree p can be defined using the Cox-de-Boor recursion formula. From those one derives the NURBS basis functions ˆN pi [15]. Curves are then described as linear combination of these functions, surfaces and volumes are created using tensor products [15]. This yields a higher-order, smooth representation of the domain, in particular it is able to exactly represent many curved geometries, including all conic section [1]. Note that, in most practical applications, the geometry cannot be parametrized using a single map from the reference to the physical domain. This is also the case for our setup (see. Fig. 1), which features at least two regions with different materials. In such cases, a multi-patch parametrization is used, where the physical domain is decomposed into a collection of subdomains, each with a corresponding map, to be appropriately combined [16]. The surface Γ will be placed exactly at a patch interface and is therefore mesh-aligned, the coil is not resolved in this mesh. It is modeled as a closed one-dimensional spline curve, again allowing for smooth representation of curved paths. For the numerical evaluation of (2), we employ the trapezoidal rule, which exhibits exponential convergence for smooth periodic integrands on closed curves [17]. Since physical coils form current loops, the assumption of closed curves is naturally satisfied. The trapezoidal rule requires equidistant quadrature points in the physical domain. Due to the non-linear mapping from the reference to the physical space, these points must be determined by solving a nonlinear system once at a preprocess-ing stage. Finally, IGA is used to discretize the subproblems 4 and 6. Following the standard Ritz-Galerkin approach the B-splines are used to span the ansatz and test function spaces. The magnetic vector potential is approximated by ⃗A(x) ≈ XNi=1 ⃗ Bpi (x) ui (7) where ui are the unknown coefficients and ⃗ Bpi (x) are the spline basis functions of order p. The discrete function and trace spaces are constructed as in [18]. We denote them as 
+
+S1 
+
+> p
+
+(V ) ⊂ H(curl , V )
+
+γD : S1 
+
+> p
+
+(V ) → S1 
+
+> p
+
+(Γ) 
+
+γN : S1 
+
+> p
+
+(V ) → S1∗ 
+
+> p
+
+(Γ) 
+
+for the volumetric space and the trace space of the Dirich-let and Neumann trace, respectively. Tree-cotree gauging is applied to ensure a uniquely solvable system. 
+
+C. Error estimates 
+
+For the standard convergence theory of isogeometric analy-sis to apply, the underlying exact solution has to be sufficiently regular, as detailed in [19]. In the variational formulation (6), the right-hand side consists of a surface distribution, repre-sented by the Maxwell-Neumann trace. This is a considerably milder singularity structure compared to, for instance, Dirac delta sources. As a consequence, the continuous solution ⃗Ag remains piecewise smooth provided that the interface 
+
+Γ is Lipschitz-continuous. More precisely, although ⃗ Ag ∈
+
+H(curl , V ) globally, it enjoys higher Sobolev regularity within each of the subdomains separated by Γ. In particular, it has local regularity Hk+1 (Vi) for i ∈ { int , ext }, as established in the classical interface-regularity results [20]. Such piecewise smoothness is sufficient to achieve optimal convergence of curl-conforming edge elements on shape regular meshes, be-cause the interpolation operators underlying the error estimates act locally. Under these assumptions, we therefore expect A REDUCED MAGNETIC VECTOR POTENTIAL APPROACH WITH HIGHER-ORDER SPLINES 4
+
+the discrete solution ⃗ Ag,h to satisfy the optimal convergence rates [16, Th. 5.4] 
+
+∥⃗Ag −⃗ Ag,h ∥H(curl ,V ) = O(hp), (8) measured in the H(curl) -norm and, equivalently, in the 
+
+H(curl) -seminorm 
+
+|⃗ Ag −⃗ Ag,h |H(curl ,V ) := ∥ curl( ⃗ Ag −⃗ Ag,h )∥L2(V )
+
+= O(hp). (9) The H(curl) -seminorm is gauge-invariant and therefore pro-vides a robust and physically meaningful measure of the dis-cretization error. For this reason, all numerical results reported in this work focus on |⃗Ag −⃗ Ag,h |H(curl ,V ), which directly reflects the accuracy of the magnetic field ⃗ Bg = curl ⃗ Ag.The convergence rates stated in (8–9) are attainable, as long as the computational mesh is aligned with the interface Γ, a requirement well documented in the theory of elliptic interface problems, [21], [22]. In essence, misalignment would deteri-orate the local approximation properties, whereas alignment ensures that the piecewise smoothness of the solution is prop-erly captured by the discrete space. Furthermore, achieving this convergence rates in practice requires that the auxiliary fields ⃗As and ⃗ Am entering the formulation are computed with suffi-ciently high accuracy. In particular, the kernel evaluation (2) must rely on a fast converging quadrature rule to not deterio-rate the approximation error. Likewise, the discretization used for solving the image problem (4) must employ spline spaces of degree and regularity at least matching those used for ⃗ Ag, so as not to create a bottleneck in the approximation pipeline. A rigorous proof is beyond the scope of this work. Nevertheless, the numerical experiments presented in the next section will confirm the theoretical expectations and illustrate the practical effectiveness of the proposed isogeometric discretization. III. N UMERICAL STUDIES 
+
+First, we verify the implementation of the proposed method against an analytical reference solution and demonstrate the expected convergence rates. We then examine in detail the components required to actually attain these rates, in particular the quadrature strategy for evaluating the kernel and the choice of discrete spaces for computing ⃗ As and ⃗ Am. Finally, we apply the method to a more complex configuration, compare the results with a commercial simulation tool, and confirm the effectiveness of the proposed approach. All computations rely on GeoPDEs [23] and we provide our implementations in [24]. 
+
+A. Verification 
+
+To verify the correctness of the proposed implementation, we first compare numerical results against an existing an-alytical solution for a canonical eddy current configuration described in [25]. The setup consists of a conducting cylinder of radius r = 12 mm and height h = 60 mm , centered at the origin and surrounded by air. The cylinder has an electrical conductivity of σ = 35 × 10 6 S m −1 and is excited by a circular coil of radius rcoil = 25 mm carrying a sinusoidal current with amplitude I = 320 A at frequency f = 200 Hz .                  
+
+> 10 110 1.210 1.410 1.610 1.8
+> 10 −2
+> 10 −1
+> 10 0
+> 3
+> √#dofs
+> |⃗Ag −⃗ Ag,h |H(curl ,V int )
+> p= 1 O(h1)
+> p= 2 O(h2)
+> p= 3 O(h3)
+> Fig. 2: Convergence results for degree p.
+> 020 40 60 80 100 120
+> 10 −12
+> 10 −10
+> 10 −8
+> 10 −6
+> 10 −4
+> 10 −2
+> 10 0
+> nquad
+> |⃗ As,quad  −⃗ As,ana |L2(Vint )
+> Trapezoidal Gauss Fig. 3: Convergence of the error in the source field for the different quadrature rules.
+
+In the convergence study shown in Fig. 2, we can see that the solution converges with the optimal convergence rates up to a threshold, which is the best achieved accuracy with the superposition of Bessel functions in the reference solution. The same rates are also observed if the error is computed in V , where in Vext the three fields ⃗ As,⃗ Am and ⃗ Ag act in superposition, if we exclude the singularity at the source coils from the computation domain. 
+
+B. Quadrature of the source field 
+
+In the previous test case, the coil source was simply a circle. In that case, numerical evaluation of the integral appearing in (2) would not have been necessary, since for such asimple setup there exists a closed-form expression for the magnetic vector potential ⃗ As,ana [12, Sec. 5.5]. We use this analytical formula to assess the quality of our quadrature rule; as stated in subsection II-C it is essential to evaluate the integral with high accuracy. Fig. 3 shows the expected spectral (exponential) convergence of the quadrature error applying the trapezoidal rule to the Biot–Savart integral over a closed curve, and contrasts this with the merely algebraic convergence of Gaussian quadrature when refining the number A REDUCED MAGNETIC VECTOR POTENTIAL APPROACH WITH HIGHER-ORDER SPLINES 5               
+
+> 10 1.210 1.310 1.410 1.510 1.610 1.7
+> 10 −2
+> 10 −1
+> 3
+> √#dofs
+> |⃗Ag −⃗ Ag,h |H(curl ,V int )
+> nquad = 26 nquad = 32
+> nquad = 64 nquad = 128
+> O(h3)
+> Fig. 4: Convergence results for p= 3 for different number of quadrature points used in the trapezoidal rule to compute ⃗As.
+
+of quadrature points. When the kernel is not approximated accurately enough, the resulting quadrature error ultimately limits the achievable solution accuracy, as evident for the number of quadrature points nquad = 26 in Fig. 4. Increasing 
+
+nquad , this error rapidly decreases, consistent with the trends in Fig. 3. This underscores the need for a rapidly converging quadrature rule, for which the trapezoidal rule is well suited In our computations, we set nquad = 64 , which proved sufficient to ensure that the quadrature error does not limit the overall convergence. For practical simulations, one should implement an adaptive procedure, e.g. by measuring the change in ⃗ Kg to determine the number of required quadrature points. 
+
+C. Trace-space requirements for high-order convergence 
+
+A central feature of the proposed method is the interface term arising from the exterior-representation principle. As discussed in subsection II-C, the discrete trace space used for ⃗Kg,h = γN(⃗ As +⃗ Am) must match the trace space of ⃗ Ag,h in both degree and regularity. To demonstrate this numerically, we perform an experiment in which we deliberately reduce the polynomial degree of the trace space used for ⃗ Kg,h by one order, and then study the resulting convergence rates of 
+
+∥⃗Ag −⃗ Ag,h ∥H(curl ,V int ). The results in Fig. 5 compare two cases, both with ⃗ Ag,h represented in S1 
+
+> p
+
+(V ). When the surface current density is approximated in the matching trace space 
+
+S1∗ 
+
+> p
+
+(Γ) (the Neumann trace of S1 
+
+> p
+
+(V )), we recover the optimal rate. In contrast, when ⃗ Kg,h ∈ S1∗
+
+> p−1
+
+(Γ) , the convergence rate degrades accordingly (approximately O(hp−1)). This confirms that the attainable convergence order of the reduced field ⃗ Ag,h 
+
+is directly limited by the approximation order of the trace space used for ⃗ Kg. Note that the error is evaluated only inside 
+
+Vint , where ⃗ Ag,h represents the full field according to (1). As a result, any inaccuracy in approximating the source or image field propagates into Vint via the interface term. Consequently, the overall convergence is restricted by the polynomial degree of the employed trace space.                         
+
+> 10 110 1.210 1.410 1.610 1.8
+> 10 −2
+> 10 −1
+> 10 0
+> 3
+> √#dofs
+> |⃗Ag −⃗ Ag,h |H(curl ,V int )
+> degraded optimal
+> O(h1)O(h2)
+> Fig. 5: Convergence of the reduced field in the H(curl) –seminorm under trace space mismatch. The bulk for ⃗Agis S1
+> p(V)(here: p= 2 ), while the interface current density ⃗Kgis approximated either in the matching trace space S1∗
+> p(Γ)
+> (optimal) or in the degraded space S1∗
+> p−1(Γ) .
+> Fig. 6: Problem setup with helicoidal coil of 200 turns wound around cylindrical conducting specimen.
+
+D. Flexible coil path 
+
+The methodology is subsequently extended to a more complex configuration shown in Fig. 6: a helicoidal coil comprising 200 turns wound around the same conducting cylindrical specimen. The computed results are benchmarked against those obtained using the commercial electromagnetic simulation software Flux 1. In Fig. 7, the magnetic flux density is compared along the horizontal axis. The relative difference of the energy stored inside the conductor computed by the two implementations is below 2 % . This error is to be expected due to different meshes, basis functions and implementations. By applying the interface RMVP to obtain the field solution in Vint , the number of kernel evaluations (KE) reduces by over 85% for a discretization with approx. 18000 degrees of freedom ( 9792 (interface) vs. 65088 (original)). To obtain the field solution in the full computational domain V , it         
+
+> 1https://altair.com/flux A REDUCED MAGNETIC VECTOR POTENTIAL APPROACH WITH HIGHER-ORDER SPLINES 6
+> −60 −40 −20 020 40 60
+> 0
+> 4
+> 8
+> 12
+> 16
+> x[mm]
+> Magnitude of ⃗ B−Field [mT]
+> efficient RMVP
+> Flux
+
+Fig. 7: Magnitude of the magnetic flux density B along a horizontal axis compared against Flux .
+
+still reduces by over 50% . A naive implementation leads to runtimes of 34 s – including 10 s dedicated to the KE – and 
+
+100 s (85 s for KE), for the interface and original RMVP approach respectively. When optimizing the original version by vectorization we can reduce the runtime to 72 s (43 s for KE). A similar optimization has not yet been implemented in the interface method. IV. C ONCLUSION 
+
+In this work, we revisited the RMVP formulation and the proposed update in [10], enhancing its efficiency by reducing the kernel evaluations to an interface. The key novelties of the present contribution include the extension of the approach to the MQS regime, the introduction of higher-order spline based discretizations, and a detailed investigation of the ex-pected convergence. This enables the method to exploit the smoothness and geometric exactness inherent to spline spaces, yielding in higher-order accuracy while simplifying the repre-sentation of complex coil geometries in multipatch geometries. Our theoretical considerations show that the interface RMVP formulation transfers naturally and without complication to MQS problems. Furthermore, we provided a detailed account of how the Biot-Savart kernel can be integrated efficiently us-ing a trapezoidal-rule-based quadrature achieving exponential convergence. A central finding of this study is that optimal convergence is attainable, also for higher-order discretizations. Numerical experiments with spline-based discretizations sup-port this conclusion through validation against an analytical reference solution. The same convergence behavior can be expected for conventional high-order finite element methods. In addition, the results highlight that suitable trace spaces are essential for the accurate approximation of the interface term, and, consequently, for achieving the expected convergence rates. Overall, we have demonstrated that, even in the higher-order setting, the interface RMVP formulation significantly reduces the number of kernel evaluations, while still attaining optimal convergence rates. ACKNOWLEDGMENT 
+
+The authors thank Herbert Egger and Herbert De Gersem for the fruitful discussions. Support of the CRC TRR 361, the Graduate School CE at TU Darmstadt and the IRGA program of Universit´ e Grenoble Alpes is acknowledged. REFERENCES [1] T. J. R. Hughes, J. A. Cottrell, and Y. Bazilevs, “ Isogeometric analysis: CAD, finite elements, NURBS, exact geometry and mesh refinement,” 
+
+Comput. Meth. Appl. Mech. Eng. , vol. 194, pp. 4135–4195, 2005. [2] D. N. Dyck and J. P. Webb, “ Solenoidal current flows for filamentary conductors,” IEEE Trans. Magn. , vol. 40, no. 2, pp. 810–813, 03 2004. [3] R. V. Sabariego and J. Gyselinck, “ Eddy-current-effect homogenization of windings in harmonic-balance finite-element models,” IEEE Trans. Magn. , vol. 53, no. 6, 06 2017. [4] E. Paakkunainen, L. Denis, C. Geuzaine, P. Rasilo, and S. Sch¨ ops, “Foil conductor model for efficient simulation of HTS coils in large scale applications,” IEEE Trans. Appl. Super. , vol. 35, no. 5, 08 2025. [5] O. B´ ır´ o, “Edge element formulations of eddy current problems,” Com-put. Meth. Appl. Mech. Eng. , vol. 169, no. 3–4, pp. 391–405, 1999. [6] R. Kress, Linear integral equations . New York: Springer, 1989. [7] R. Albanese and G. Rubinacci, “ Integral formulation for 3D eddy-current computation using edge elements,” IEE Proc. Sci. Meas. Tech. ,vol. 135, no. 7, pp. 457–462, 09 1988. [8] R. Hiptmair, “ Symmetric coupling for eddy current problems,” SIAM J. Numer. Anal. , vol. 40, no. 1, pp. 41–65, 2003. [9] L. Greengard and V. Rokhlin, “ A fast algorithm for particle simula-tions,” J. Comput. Phys. , vol. 73, no. 2, pp. 325–348, 1987. [10] L. A. M. D’Angelo, D. Moll, A. Vitrano, N. Marsic, E. Schnaubelt, M. Wozniak, H. De Gersem, and B. Auchmann, “Efficient reduced magnetic vector potential formulation for the magnetic field simulation of accelerator magnets,” IEEE Trans. Magn. , vol. 60, no. 3, 01 2024. [11] J. A. Evans, Y. Bazilevs, I. Babuˇ ska, and T. J. R. Hughes, “n-widths, sup–infs, and optimality ratios for the k-version of the isogeometric finite element method,” Comput. Meth. Appl. Mech. Eng. , vol. 198, no. 21-26, pp. 1726–1741, 2009. [12] J. D. Jackson, Classical Electrodynamics , 3rd ed. New York: Wiley & Sons, 1998. [13] P. Monk, Finite Element Methods for Maxwell’s Equations . Oxford: Oxford University Press, 2003. [14] J. Carrier, L. Greengard, and V. Rokhlin, “A fast adaptive multipole algorithm for particle simulations,” SIAM journal on scientific and statistical computing , vol. 9, no. 4, pp. 669–686, 1988. [15] E. Cohen, R. F. Riesenfeld, and G. Elber, Geometric Modeling with Splines: An Introduction . CRC Press, 2001. [16] A. Buffa, R. V´ azquez Hern´ andez, G. Sangalli, and L. Beir˜ ao da Veiga, “ Approximation estimates for isogeometric spaces in multipatch geometries,” Numer. Meth. Part. Differ. Equat. , vol. 31, no. 2, pp. 422– 438, 2015. [17] L. N. Trefethen and J. A. C. Weideman, “The exponentially convergent trapezoidal rule,” SIAM Review , vol. 56, no. 3, pp. 385–458, 2014. [18] A. Buffa, J. D¨ olz, S. Kurz, S. Sch¨ ops, R. V´ azquez, and F. Wolf, “ Multipatch approximation of the de Rham sequence and its traces in isogeometric analysis,” Numer. Math. , vol. 144, no. 1, pp. 201–236, 2019. [19] A. Buffa, G. Sangalli, and R. V´ azquez, “Isogeometric analysis in electromagnetics: B-splines approximation,” Comput. Meth. Appl. Mech. Eng. , vol. 199, pp. 1143–1152, 2010. [20] J. H. Bramble and J. T. King, “A finite element method for interface problems in domains with smooth boundaries and interfaces,” Advances in Computational Mathematics , vol. 6, no. 1, pp. 109–138, 1996. [21] I. Babuˇ ska, “The finite element method for elliptic equations with discontinuous coefficients,” Computing , vol. 5, no. 3, pp. 207–213, 1970. [22] J. W. Barrett and C. M. Elliott, “Fitted and unfitted finite-element methods for elliptic equations with smooth interfaces,” IMA journal of numerical analysis , vol. 7, no. 3, pp. 283–300, 1987. [23] R. V´ azquez, “A new design for the implementation of isogeometric analysis in Octave and Matlab: GeoPDEs 3.0,” Comput. Math. Appl. ,vol. 72, no. 3, pp. 523–554, 08 2016. [24] M. Backmeyer, L. D’Angelo, B. Ramdane, and S. Sch¨ ops, “High-erOrderEfficientRMVP,” Zenodo, 2026. doi: 10.5281/zenodo.18620004. [25] J. R. Bowler and T. P. Theodoulidis, “Eddy currents induced in a conducting rod of finite length by a coaxial encircling coil,” J. Phys. D: Appl Phys. , vol. 38, no. 16, pp. 2861–2868, 08 2005.
