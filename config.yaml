@@ -25,3 +25,45 @@ subscriptions:
     stage: A
     diff_threshold_pct: 15
   keyword_recall_mode: or
+  intent_profiles:
+    - tag: EM-Force
+      description: 查找非接触式电磁激振器的力控制方法，特别是精密控制策略
+      enabled: true
+      keywords:
+        - keyword: flux linkage closed-loop control
+          keyword_cn: 磁链闭环控制
+          query: flux linkage closed-loop control
+        - keyword: electromagnetic exciter force control
+          keyword_cn: 电磁激振器力控制
+          query: electromagnetic exciter force control
+        - keyword: ddy current magnetic bearing modeling
+          keyword_cn: 涡流磁轴承建模
+          query: ddy current magnetic bearing modeling
+        - keyword: Hall sensor magnetic flux measurement
+          keyword_cn: 霍尔传感器磁通测量
+          query: Hall sensor magnetic flux measurement
+        - keyword: magnetic bearing flux feedback
+          keyword_cn: 磁轴承磁通反馈
+          query: magnetic bearing flux feedback
+      intent_queries:
+        - query: flux feedback linearization zero bias magnetic bearing
+          query_cn: 磁通反馈线性化零偏置磁轴承
+          enabled: true
+          source: manual
+          note: ''
+        - query: non contact electromagnetic exciter precision force control
+          query_cn: 非接触电磁激振器精密力控制
+          enabled: true
+          source: manual
+          note: ''
+        - query: eddy current effects in electromagnetic actuators dynamic modeling
+          query_cn: 电磁作动器涡流动态建模
+          enabled: true
+          source: manual
+          note: ''
+        - query: flux feedback control for magnetic bearing force precision
+          query_cn: 磁轴承磁通反馈力控制
+          enabled: true
+          source: manual
+          note: ''
+      updated_at: '2026-03-22T09:27:59.487Z'
