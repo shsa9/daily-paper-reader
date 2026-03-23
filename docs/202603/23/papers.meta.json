@@ -1,0 +1,65 @@
+{
+  "label": "2026-03-23",
+  "date": "2026-03-23",
+  "generated_at": "2026-03-23T20:13:53",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202603/23/2603.19838v1-multi-agent-motion-planning-on-industrial-magnetic-levitation-platforms-a-hybrid-admm-hocbf-approach",
+      "section": "quick",
+      "title_en": "Multi-Agent Motion Planning on Industrial Magnetic Levitation Platforms: A Hybrid ADMM-HOCBF approach",
+      "authors": "Bavo Tistaert, Stan Servaes, Alejandro Gonzalez-Garcia, Ibrahim Ibrahim, Louis Callens, Jan Swevers, Wilm Decré",
+      "date": "2026-03-20",
+      "pdf": "https://arxiv.org/pdf/2603.19838v1",
+      "score": "7.0",
+      "evidence": "工业磁悬浮平台上的运动规划",
+      "tldr": "本研究针对工业磁悬浮平台上的多智能体运动规划问题，提出了一种结合交替方向乘子法（ADMM）与高阶控制屏障函数（HOCBF）的混合分布式模型预测控制（MPC）框架。该方法解决了传统集中式MPC在智能体数量增加时计算不可行的问题，并提供了安全性保障。通过高效的C++实现和在真实工业磁悬浮平台上的实验，验证了该方法在可扩展性和实时性方面的显著优势。",
+      "tags": "query:em-force",
+      "abstract_en": "This paper presents a novel hybrid motion planning method for holonomic multi-agent systems. The proposed decentralised model predictive control (MPC) framework tackles the intractability of classical centralised MPC for a growing number of agents while providing safety guarantees. This is achieved by combining a decentralised version of the alternating direction method of multipliers (ADMM) with a centralised high-order control barrier function (HOCBF) architecture. Simulation results show significant improvement in scalability over classical centralised MPC. We validate the efficacy and real-time capability of the proposed method by developing a highly efficient C++ implementation and deploying the resulting trajectories on a real industrial magnetic levitation platform.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/23/2603.15169v1-forcevla2-unleashing-hybrid-force-position-control-with-force-awareness-for-contact-rich-manipulation",
+      "section": "quick",
+      "title_en": "ForceVLA2: Unleashing Hybrid Force-Position Control with Force Awareness for Contact-Rich Manipulation",
+      "authors": "Yang Li, Zhaxizhuoma, Hongru Jiang, Junjie Xia, Hongquan Zhang, Jinda Du, Yunsong Zhou, Jia Zeng, Ce Hao, Jieji Ren, Qiaojun Yu, Cewu Lu, Yu Qiao, Jiangmiao Pang",
+      "date": "2026-03-16",
+      "pdf": "https://arxiv.org/pdf/2603.15169v1",
+      "score": "6.0",
+      "evidence": "混合力位控制与显式力感知",
+      "tldr": "ForceVLA2是一个端到端的视觉-语言-动作（VLA）框架，旨在解决接触密集型任务中缺乏力感知的问题。它通过引入力感知提示和跨尺度专家混合（MoE）架构，实现了混合力-位控制。该研究还构建了包含1000条轨迹的ForceVLA2数据集，涵盖擦拭、按压和组装等任务。实验证明，该模型在成功率和稳定性上显著优于现有模型，有效减少了机械臂过载和接触不稳定等问题。",
+      "tags": "query:em-force",
+      "abstract_en": "Embodied intelligence for contact-rich manipulation has predominantly relied on position control, while explicit awareness and regulation of interaction forces remain under-explored, limiting stability, precision, and robustness in real-world tasks. We propose ForceVLA2, an end-to-end vision-language-action framework that equips robots with hybrid force-position control and explicit force awareness. ForceVLA2 introduces force-based prompts into the VLM expert to construct force-aware task concepts across stages, and employs a Cross-Scale Mixture-of-Experts (MoE) in the action expert to adaptively fuse these concepts with real-time interaction forces for closed-loop hybrid force-position regulation. To support learning and evaluation, we construct ForceVLA2-Dataset, containing 1,000 trajectories over 5 contact-rich tasks, including wiping, pressing, and assembling, with multi-view images, task prompts, proprioceptive state, and force signals. Extensive experiments show that ForceVLA2 substantially improves success rates and reliability in contact-rich manipulation, outperforming pi0 and pi0.5 by 48.0% and 35.0%, respectively, across the 5 tasks, and mitigating common failure modes such as arm overload and unstable contact, thereby actively advancing force-aware interactive physical intelligence in VLAs. The project page is available at https://sites.google.com/view/force-vla2/home.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/23/2603.17611v1-on-the-validity-limits-of-the-parametrisation-method-for-invariant-manifolds-an-assessment-of-practical-criteria-for-vibrating-systems",
+      "section": "quick",
+      "title_en": "On the validity limits of the parametrisation method for invariant manifolds: an assessment of practical criteria for vibrating systems",
+      "authors": "André de Figueiredo Stabile, Aurélien Grolet, Alessandra Vizzaccaro, Cyril Touzé",
+      "date": "2026-03-18",
+      "pdf": "https://arxiv.org/pdf/2603.17611v1",
+      "score": "6.0",
+      "evidence": "非线性振动系统的降阶模型",
+      "tldr": "本研究探讨了不变流形参数化方法在非线性振动系统降阶建模中的有效性极限。针对该方法依赖局部渐近展开导致适用幅值受限的问题，论文评估了基于不变性方程误差、同调算子奇异性及级数收敛准则的三种实用判定标准。通过对Duffing方程、多自由度系统及有限元梁结构的深入分析，提出了一套在计算过程中估算有效范围的实用方法，为非线性结构动力学降阶模型的安全应用提供了可靠的误差界限。",
+      "tags": "query:em-force",
+      "abstract_en": "The parametrisation method for invariant manifolds is a powerful technique for deriving reduced-order models in the context of nonlinear vibrating systems, allowing accurate computations of nonlinear normal modes. Thanks to arbitrary order asymptotic expansions, converged results are within reach and directly applicable to finite element structures. However, since it relies on a local theory and asymptotic expansions, the results are only valid up to a given amplitude, which defines the convergence radius of the approximation. The aim of this contribution is to investigate the validity limits of the approach and review the existing error estimates, with the concrete objective of proposing a practical approach to estimate the validity range during the computation, thus producing safe bounds within which the reduced-order model can be used. Three different criteria are assessed. The first one uses the error in the invariance equation as the distance to the fixed point increases. The second one is adapted from an upper bound criterion derived for normal form transforms and based on the potential singularities of the homological operator. The third one uses Cauchy and d'Alembert convergence rules for series. The criteria are tested on a number of different examples that are representative of the situations encountered when dealing with nonlinear vibrations. The Duffing equation serves as a first benchmark that allows considering conservative oscillations, forced systems at primary resonance, and superharmonic resonance. The investigations are then extended to a vibrating system with two degrees of freedom. Finally, the different criteria are assessed on a finite element beam structure, and guidelines are formulated to generalise their practical use and produce accurate and easy-to-use error bounds in the context of model order reduction for nonlinear vibrating structures.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/23/2603.19735v1-surrogate-modeling-with-low-rank-function-representation-for-electromagnetic-simulation",
+      "section": "quick",
+      "title_en": "Surrogate Modeling with Low-Rank Function Representation for Electromagnetic Simulation",
+      "authors": "Mingze Sun, Liang Li, Xile Zhao, Zheng Tan, Yulu Hu, Xing Li, Bin Li",
+      "date": "2026-03-20",
+      "pdf": "https://arxiv.org/pdf/2603.19735v1",
+      "score": "6.0",
+      "evidence": "高保真电磁仿真的代理建模",
+      "tldr": "针对高保真电磁（EM）仿真计算成本高且高维参数耦合复杂的问题，本文提出了一种基于低秩张量函数表示的代理建模范式。通过系统研究Tucker、TT和TR等低秩格式，提出了一种名为PLRNet的成对低秩张量网络。该方法利用紧凑的坐标嵌入和可学习的成对交互因子，在有限的仿真预算下实现了高维EM响应的高效建模，在精度、鲁棒性和参数效率之间取得了更优的平衡。",
+      "tags": "query:em-force",
+      "abstract_en": "High-fidelity electromagnetic (EM) simulations are indispensable for the design of microwave and wave devices, yet repeated full-wave evaluations over high-dimensional design spaces are often computationally prohibitive. While neural surrogates can amortize this cost, learning high-dimensional EM response mappings remains difficult under limited simulation budgets due to strong and heterogeneous parameter couplings. In this work, we introduce low-rank tensor function representations as a principled surrogate modeling paradigm for EM problems and provide a systematic study of representative low-rank formats, including Tucker-style low-rank tensor function representation (LRTFR) as well as neural functional tensor-train (TT) and tensor-ring (TR) baselines. Building on these insights, we propose a pairwise low-rank tensor network (PLRNet) that uses learnable pairwise interaction factors over compact coordinate-wise embeddings. Experiments on representative EM surrogate tasks demonstrate that the proposed framework achieves a more favorable overall trade-off between accuracy, robustness, and parameter efficiency, with stable optimization in high-dimensional regimes.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

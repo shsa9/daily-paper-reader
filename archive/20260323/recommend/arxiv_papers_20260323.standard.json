@@ -1,0 +1,182 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-03-23T20:13:23.449517+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2603.19838v1",
+      "title": "Multi-Agent Motion Planning on Industrial Magnetic Levitation Platforms: A Hybrid ADMM-HOCBF approach",
+      "abstract": "This paper presents a novel hybrid motion planning method for holonomic multi-agent systems. The proposed decentralised model predictive control (MPC) framework tackles the intractability of classical centralised MPC for a growing number of agents while providing safety guarantees. This is achieved by combining a decentralised version of the alternating direction method of multipliers (ADMM) with a centralised high-order control barrier function (HOCBF) architecture. Simulation results show significant improvement in scalability over classical centralised MPC. We validate the efficacy and real-time capability of the proposed method by developing a highly efficient C++ implementation and deploying the resulting trajectories on a real industrial magnetic levitation platform.",
+      "authors": [
+        "Bavo Tistaert",
+        "Stan Servaes",
+        "Alejandro Gonzalez-Garcia",
+        "Ibrahim Ibrahim",
+        "Louis Callens",
+        "Jan Swevers",
+        "Wilm Decré"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-03-20T10:28:24+00:00",
+      "link": "https://arxiv.org/pdf/2603.19838v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "motion planning on industrial magnetic levitation platforms",
+      "llm_evidence_cn": "工业磁悬浮平台上的运动规划",
+      "llm_evidence": "工业磁悬浮平台上的运动规划",
+      "canonical_evidence": "工业磁悬浮平台上的运动规划",
+      "llm_tldr_en": "Presents a hybrid motion planning method for multi-agent systems on magnetic levitation platforms.",
+      "llm_tldr_cn": "提出了一种用于磁悬浮平台上多智能体系统的混合运动规划方法。",
+      "llm_tldr": "提出了一种用于磁悬浮平台上多智能体系统的混合运动规划方法。",
+      "llm_tags": [
+        "query:em-force:composite"
+      ],
+      "matched_query_tag": "query:em-force:composite",
+      "matched_query_text": "Papers central to 查找非接触式电磁激振器的力控制方法，特别是精密控制策略, especially work that connects or combines: electromagnetic exciter force control; ddy current magnetic bearing modeling; magnetic bearing flux feedback; non-contact electromagnetic shaker force control; precision force control strategies for electromagnetic actuators; closed-loop force control for electromagnetic shakers; flux feedback linearization zero bias magnetic bearing; non contact electromagnetic exciter precision force control; eddy current effects in electromagnetic actuators dynamic modeling; flux feedback control for magnetic bearing force precision.",
+      "matched_requirement_id": "req-composite-em-force",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.15169v1",
+      "title": "ForceVLA2: Unleashing Hybrid Force-Position Control with Force Awareness for Contact-Rich Manipulation",
+      "abstract": "Embodied intelligence for contact-rich manipulation has predominantly relied on position control, while explicit awareness and regulation of interaction forces remain under-explored, limiting stability, precision, and robustness in real-world tasks. We propose ForceVLA2, an end-to-end vision-language-action framework that equips robots with hybrid force-position control and explicit force awareness. ForceVLA2 introduces force-based prompts into the VLM expert to construct force-aware task concepts across stages, and employs a Cross-Scale Mixture-of-Experts (MoE) in the action expert to adaptively fuse these concepts with real-time interaction forces for closed-loop hybrid force-position regulation. To support learning and evaluation, we construct ForceVLA2-Dataset, containing 1,000 trajectories over 5 contact-rich tasks, including wiping, pressing, and assembling, with multi-view images, task prompts, proprioceptive state, and force signals. Extensive experiments show that ForceVLA2 substantially improves success rates and reliability in contact-rich manipulation, outperforming pi0 and pi0.5 by 48.0% and 35.0%, respectively, across the 5 tasks, and mitigating common failure modes such as arm overload and unstable contact, thereby actively advancing force-aware interactive physical intelligence in VLAs. The project page is available at https://sites.google.com/view/force-vla2/home.",
+      "authors": [
+        "Yang Li",
+        "Zhaxizhuoma",
+        "Hongru Jiang",
+        "Junjie Xia",
+        "Hongquan Zhang",
+        "Jinda Du",
+        "Yunsong Zhou",
+        "Jia Zeng",
+        "Ce Hao",
+        "Jieji Ren",
+        "Qiaojun Yu",
+        "Cewu Lu",
+        "Yu Qiao",
+        "Jiangmiao Pang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-03-16T12:03:58+00:00",
+      "link": "https://arxiv.org/pdf/2603.15169v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "hybrid force-position control and explicit force awareness",
+      "llm_evidence_cn": "混合力位控制与显式力感知",
+      "llm_evidence": "混合力位控制与显式力感知",
+      "canonical_evidence": "混合力位控制与显式力感知",
+      "llm_tldr_en": "Introduces ForceVLA2 for hybrid force-position control to improve precision and robustness in manipulation.",
+      "llm_tldr_cn": "引入ForceVLA2进行混合力位控制，以提高操作的精度和鲁棒性。",
+      "llm_tldr": "引入ForceVLA2进行混合力位控制，以提高操作的精度和鲁棒性。",
+      "llm_tags": [
+        "query:em-force:composite"
+      ],
+      "matched_query_tag": "query:em-force:composite",
+      "matched_query_text": "Papers central to 查找非接触式电磁激振器的力控制方法，特别是精密控制策略, especially work that connects or combines: electromagnetic exciter force control; ddy current magnetic bearing modeling; magnetic bearing flux feedback; non-contact electromagnetic shaker force control; precision force control strategies for electromagnetic actuators; closed-loop force control for electromagnetic shakers; flux feedback linearization zero bias magnetic bearing; non contact electromagnetic exciter precision force control; eddy current effects in electromagnetic actuators dynamic modeling; flux feedback control for magnetic bearing force precision.",
+      "matched_requirement_id": "req-composite-em-force",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.17611v1",
+      "title": "On the validity limits of the parametrisation method for invariant manifolds: an assessment of practical criteria for vibrating systems",
+      "abstract": "The parametrisation method for invariant manifolds is a powerful technique for deriving reduced-order models in the context of nonlinear vibrating systems, allowing accurate computations of nonlinear normal modes. Thanks to arbitrary order asymptotic expansions, converged results are within reach and directly applicable to finite element structures. However, since it relies on a local theory and asymptotic expansions, the results are only valid up to a given amplitude, which defines the convergence radius of the approximation. The aim of this contribution is to investigate the validity limits of the approach and review the existing error estimates, with the concrete objective of proposing a practical approach to estimate the validity range during the computation, thus producing safe bounds within which the reduced-order model can be used. Three different criteria are assessed. The first one uses the error in the invariance equation as the distance to the fixed point increases. The second one is adapted from an upper bound criterion derived for normal form transforms and based on the potential singularities of the homological operator. The third one uses Cauchy and d'Alembert convergence rules for series. The criteria are tested on a number of different examples that are representative of the situations encountered when dealing with nonlinear vibrations. The Duffing equation serves as a first benchmark that allows considering conservative oscillations, forced systems at primary resonance, and superharmonic resonance. The investigations are then extended to a vibrating system with two degrees of freedom. Finally, the different criteria are assessed on a finite element beam structure, and guidelines are formulated to generalise their practical use and produce accurate and easy-to-use error bounds in the context of model order reduction for nonlinear vibrating structures.",
+      "authors": [
+        "André de Figueiredo Stabile",
+        "Aurélien Grolet",
+        "Alessandra Vizzaccaro",
+        "Cyril Touzé"
+      ],
+      "primary_category": "math.NA",
+      "categories": [
+        "math.NA"
+      ],
+      "published": "2026-03-18T11:24:48+00:00",
+      "link": "https://arxiv.org/pdf/2603.17611v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "reduced-order models for nonlinear vibrating systems",
+      "llm_evidence_cn": "非线性振动系统的降阶模型",
+      "llm_evidence": "非线性振动系统的降阶模型",
+      "canonical_evidence": "非线性振动系统的降阶模型",
+      "llm_tldr_en": "Assesses the validity of the parametrisation method for invariant manifolds in nonlinear vibrating systems.",
+      "llm_tldr_cn": "评估了非线性振动系统中不变流形参数化方法的有效性限制。",
+      "llm_tldr": "评估了非线性振动系统中不变流形参数化方法的有效性限制。",
+      "llm_tags": [
+        "query:em-force:composite"
+      ],
+      "matched_query_tag": "query:em-force:composite",
+      "matched_query_text": "Papers central to 查找非接触式电磁激振器的力控制方法，特别是精密控制策略, especially work that connects or combines: electromagnetic exciter force control; ddy current magnetic bearing modeling; magnetic bearing flux feedback; non-contact electromagnetic shaker force control; precision force control strategies for electromagnetic actuators; closed-loop force control for electromagnetic shakers; flux feedback linearization zero bias magnetic bearing; non contact electromagnetic exciter precision force control; eddy current effects in electromagnetic actuators dynamic modeling; flux feedback control for magnetic bearing force precision.",
+      "matched_requirement_id": "req-composite-em-force",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.19735v1",
+      "title": "Surrogate Modeling with Low-Rank Function Representation for Electromagnetic Simulation",
+      "abstract": "High-fidelity electromagnetic (EM) simulations are indispensable for the design of microwave and wave devices, yet repeated full-wave evaluations over high-dimensional design spaces are often computationally prohibitive. While neural surrogates can amortize this cost, learning high-dimensional EM response mappings remains difficult under limited simulation budgets due to strong and heterogeneous parameter couplings. In this work, we introduce low-rank tensor function representations as a principled surrogate modeling paradigm for EM problems and provide a systematic study of representative low-rank formats, including Tucker-style low-rank tensor function representation (LRTFR) as well as neural functional tensor-train (TT) and tensor-ring (TR) baselines. Building on these insights, we propose a pairwise low-rank tensor network (PLRNet) that uses learnable pairwise interaction factors over compact coordinate-wise embeddings. Experiments on representative EM surrogate tasks demonstrate that the proposed framework achieves a more favorable overall trade-off between accuracy, robustness, and parameter efficiency, with stable optimization in high-dimensional regimes.",
+      "authors": [
+        "Mingze Sun",
+        "Liang Li",
+        "Xile Zhao",
+        "Zheng Tan",
+        "Yulu Hu",
+        "Xing Li",
+        "Bin Li"
+      ],
+      "primary_category": "cs.CE",
+      "categories": [
+        "cs.CE",
+        "math.NA"
+      ],
+      "published": "2026-03-20T08:19:57+00:00",
+      "link": "https://arxiv.org/pdf/2603.19735v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "surrogate modeling for high-fidelity electromagnetic simulations",
+      "llm_evidence_cn": "高保真电磁仿真的代理建模",
+      "llm_evidence": "高保真电磁仿真的代理建模",
+      "canonical_evidence": "高保真电磁仿真的代理建模",
+      "llm_tldr_en": "Introduces low-rank tensor function representations to accelerate high-fidelity electromagnetic simulations.",
+      "llm_tldr_cn": "引入低秩张量函数表示法，以加速高保真电磁仿真。",
+      "llm_tldr": "引入低秩张量函数表示法，以加速高保真电磁仿真。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "eddy current effects in electromagnetic actuators dynamic modeling",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

@@ -6,41 +6,35 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-03-22
-- 运行时间：2026-03-22 20:04:53 UTC
+- 最新运行日期：2026-03-23
+- 运行时间：2026-03-23 20:13:44 UTC
 - 运行状态：成功
-- 本次总论文数：6
+- 本次总论文数：4
 - 精读区：0
-- 速读区：6
+- 速读区：4
 
 ### 今日简报（AI）
-今日速览微型机器人电磁驱动、执行器抖振抑制及光学扭矩传感的前沿进展。
-重点推荐 DexterousMag 系统对微型螺旋机器人的灵巧操控，以及基于二次规划校准的高精度光学扭矩传感器。
-建议关注微型医疗机器人硬件设计与精密控制算法的深度结合。
-- 详情：[/202603/22/README](/202603/22/README)
+今日聚焦工业磁悬浮多机协同与具备力感知的具身智能操作前沿。
+重点推荐 ForceVLA2 带来的力位混合控制突破，以及 ADMM-HOCBF 算法在磁悬浮平台运动规划中的高效应用。
+建议关注力反馈技术在复杂接触任务中的演进，这是提升机器人作业精细度的关键。
+- 详情：[/202603/23/README](/202603/23/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [DexterousMag: A Reconfigurable Electromagnetic Actuation System for Miniature Helical Robot](/202603/22/2603.14396v1-dexterousmag-a-reconfigurable-electromagnetic-actuation-system-for-miniature-helical-robot)  
+1. [Multi-Agent Motion Planning on Industrial Magnetic Levitation Platforms: A Hybrid ADMM-HOCBF approach](/202603/23/2603.19838v1-multi-agent-motion-planning-on-industrial-magnetic-levitation-platforms-a-hybrid-admm-hocbf-approach)  
    标签：评分：7.0/10、query:em-force
-   evidence：用于磁场和梯度控制的可重构电磁驱动系统
-2. [Chattering Reduction for a Second-Order Actuator via Dynamic Sliding Manifolds](/202603/22/2603.14990v1-chattering-reduction-for-a-second-order-actuator-via-dynamic-sliding-manifolds)  
+   evidence：工业磁悬浮平台上的运动规划
+2. [ForceVLA2: Unleashing Hybrid Force-Position Control with Force Awareness for Contact-Rich Manipulation](/202603/23/2603.15169v1-forcevla2-unleashing-hybrid-force-position-control-with-force-awareness-for-contact-rich-manipulation)  
    标签：评分：6.0/10、query:em-force
-   evidence：通过动态滑模面减少二阶执行器的抖振
-3. [Compact Optical Single-axis Joint Torque Sensor Using Redundant Photo-Reflectors and Quadratic-Programming Calibration](/202603/22/2603.16040v1-compact-optical-single-axis-joint-torque-sensor-using-redundant-photo-reflectors-and-quadratic-programming-calibration)  
+   evidence：混合力位控制与显式力感知
+3. [On the validity limits of the parametrisation method for invariant manifolds: an assessment of practical criteria for vibrating systems](/202603/23/2603.17611v1-on-the-validity-limits-of-the-parametrisation-method-for-invariant-manifolds-an-assessment-of-practical-criteria-for-vibrating-systems)  
    标签：评分：6.0/10、query:em-force
-   evidence：用于精确扭矩控制和非线性补偿的非接触式传感器
-4. [Neural-NPV Control: Learning Parameter-Dependent Controllers and Lyapunov Functions with Neural Networks](/202603/22/2603.17134v1-neural-npv-control-learning-parameter-dependent-controllers-and-lyapunov-functions-with-neural-networks)  
+   evidence：非线性振动系统的降阶模型
+4. [Surrogate Modeling with Low-Rank Function Representation for Electromagnetic Simulation](/202603/23/2603.19735v1-surrogate-modeling-with-low-rank-function-representation-for-electromagnetic-simulation)  
    标签：评分：6.0/10、query:em-force
-   evidence：用于非线性参数变化控制综合的Neural-NPV框架
-5. [Certainty-equivalent adaptive MPC for uncertain nonlinear systems](/202603/22/2603.17843v1-certainty-equivalent-adaptive-mpc-for-uncertain-nonlinear-systems)  
-   标签：评分：6.0/10、query:em-force
-   evidence：针对执行器限制和跟踪的自适应MPC
-6. [Inductance-Based Force Self-Sensing in Fiber-Reinforced Pneumatic Twisted-and-Coiled Actuators](/202603/22/2603.18555v1-inductance-based-force-self-sensing-in-fiber-reinforced-pneumatic-twisted-and-coiled-actuators)  
-   标签：评分：6.0/10、query:em-force
-   evidence：基于电感的执行器力估算与闭环控制
+   evidence：高保真电磁仿真的代理建模
 
 
 <div class="dpr-home-promo-card">

@@ -1,0 +1,1727 @@
+Title: On the validity limits of the parametrisation method for invariant manifolds: an assessment of practical criteria for vibrating systems
+
+URL Source: https://arxiv.org/pdf/2603.17611v1
+
+Published Time: Thu, 19 Mar 2026 01:10:35 GMT
+
+Number of Pages: 31
+
+Markdown Content:
+# On the validity limits of the parametrisation method for invariant manifolds 
+
+## An assessment of practical criteria for vibrating systems 
+
+A. de Figueiredo Stabile · A. Grolet · A. Vizzaccaro ·
+
+C. Touz´ eAbstract The parametrisation method for invariant manifolds is a powerful technique for deriving reduced-order models in the context of nonlinear vibrating systems, allowing accurate computations of nonlinear normal modes. Thanks to arbitrary order asymptotic expansions, converged results are within reach and directly applicable to finite element structures. However, since it relies on a local theory and asymptotic expansions, the results are only valid up to a given amplitude, which defines the convergence radius of the approximation. The aim of this contribution is to investigate the validity limits of the approach and review the existing error estimates, with the concrete objective of proposing a practical approach to estimate the validity range during the computation, thus producing safe bounds within which the reduced-order model can be used. Three different criteria are assessed. The first one uses the error in the invariance equation as the distance to the fixed point increases. The second one is adapted from an upper bound criterion derived for normal form transforms and based on the potential singularities of the homological operator. The third one uses validity limits of series expansion through Cauchy and d’Alembert rules, which can be tested either on the reduced dynamics coefficients or those of the nonlinear mappings. The criteria are tested on a number of different examples that are representative of the situations encountered when dealing with nonlinear vibrations. The Duffing equation serves as a first benchmark that allows considering conservative oscillations, forced systems at primary resonance, and superharmonic resonance. The investigations are then extended to a vibrating system with two degrees of freedom. Finally, the different criteria are assessed on a finite element beam structure, and guidelines are formulated to generalise their practical use and produce accurate and easy-to-use error bounds in the context of model order reduction for nonlinear vibrating structures. 
+
+Keywords reduced order model · parametrisation method for invariant manifolds · validity limits ·
+
+asymptotic expansions · nonlinear normal modes 
+
+1 Introduction 
+
+The parametrisation method for invariant manifolds is an efficient technique which is used in dynamical systems theory to prove existence and uniqueness of invariant manifolds [4, 5, 6, 21,38, 50], but also as an efficient algorithm that produces high-order approximations which can be employed for simulation-free model order reduction. In particular, it has been used successfully in the field of nonlinear vibrations in recent years, proposing accurate and effective reduced-order models (ROMs) by leveraging the idea of Nonlinear Normal Modes (NNMs) as invariant manifolds of the phase space [37,36, 22, 52, 34,51]. Even though elements of the method were already present at various points in earlier developments, see e.g. [11, 39, 40,8], only the systematic procedure as summarized e.g. in [21] provides a clear understanding of the  
+
+> A. de Figueiredo Stabile Institute of Mechanical Sciences and Industrial Applications (IMSIA), ENSTA - CNRS - EDF, Institut Polytechnique de Paris, Palaiseau, France. E-mail: andre.de-figueiredo-stabile@ensta.fr A. Grolet LISPEN, Arts et Metiers Sciences et Technologies, Lille, France. A. Vizzaccaro College of Engineering, Mathematics and Physical Sciences, University of Exeter, Exeter, United Kingdom. C. Touz´ eInstitute of Mechanical Sciences and Industrial Applications (IMSIA), ENSTA - CNRS - EDF, Institut Polytechnique de Paris, Palaiseau, France.
+> arXiv:2603.17611v1 [math.NA] 18 Mar 2026 22VALIDITY LIMITS OF ASYMPTOTIC EXPANSIONS IN THE CONTEXT OF THE PARAMETRISATION METHOD
+
+existence of an infinite number of parametrisation styles, among which two are of particular significance: the graph style and the normal form style. In the field of nonlinear vibrations, it allows unifying different techniques proposed to compute NNMs for model-order reduction: the center manifold technique [44,45, 43] and the normal form approach [23, 47, 27, 46, 49, 48]. In recent years, an important step forward has been taken by proposing direct versions of the parametrisation method, in the sense that the technique can be directly applied to the physical space, and only the computation of the master eigenmodes is necessary. In the remainder of the article, we will refer to the DPIM as Direct Parametrisation for Invariant Manifolds, for all the methods proposing such a treatment [22, 52]. Thanks to that, applications to industrial-scale models have been reported and importantly extend the applicability range of the method [52, 34,29, 31, 30, 15, 35,14]. Although the parametrisation method is highly versatile and allows for accurate results thanks to high-order asymptotic expansions, it suffers from the same inconvenience as any local approach [21, 19]: once a certain convergence radius, or validity limit, of the expansion is reached, the results diverge. A few strategies have been proposed to deal with this limitation, such as using Pad´ e approximants to patch a global approx-imation to the local one [25], or by combining a restart procedure obtained from the asymptotic-numerical method (ANM) with a harmonic balance normal form parametrisation [16]. Nevertheless, determining the convergence domain of the approximation remains an important point to address. In [21], an a posteriori 
+
+error estimate is proposed in terms of the fulfillment of the invariance equation. Such a criterion allows defining the amplitude limit over which the approximations fail to stick to the true invariant manifold, and has been used in different mathematical contexts [9,2, 1, 18]. In the field of nonlinear vibrations, the use of classical series convergence rules (d’Alembert and Cauchy) has also been proposed to quantify the maximum amplitude up to which convergence of the series can be ensured [17]. When restricting to the normal form parametrisation, the upper bound derived in [26], which is based on the singularity of the homological operator, might also be used, even though asking for an adjustment to handle the more generic case of the parametrisation method. Although the validity limits of the method are a critical issue, recent literature on its applications to vibrating structures seldom addresses them. Even if in the convergence range the asymptotic expansions converge and can thus be safely employed to propose quasi-exact solu-tions, the analyst needs to have an accurate idea of the maximum amplitude limit up to which the method can be safely used. The aim of this contribution is thus to review the existing criteria for determining the validity limit of the parametrisation method, and compare them in the specific framework of nonlinear vibrating systems. Also, an adaptation of the upper bound introduced in [26] is proposed to fit with the DPIM. More specifically, the goal is to assess the behaviour of the different criteria for the cases at hand in nonlinear vibrations. To that purpose, free oscillations of conservative systems will be studied, but also forced oscillations (non-autonomous systems) in primary and secondary resonances scenarios. Only the reduction to a single NNM is considered here, while the case of multiple modes is left for future work. After this assessment, a practical methodology is proposed for the analyst, in order to give the user accurate yet easy-to-use bounds, which can predict beforehand the amplitude range in which ROMs based on the DPIM can be safely used. The text is divided as follows: Section 2 presents the main theoretical developments, with a brief summary of the considered algorithm for the determination of the DPIM, followed by a presentation of the three different criteria and some details on their practical implementation. Next, in Section 3, several different applications are presented. First, the case of the Duffing equation under various circumstances is investigated. In this scenario, no reduction is performed, and some simplifications occur when applying the criteria. Then, a discrete system with two degrees of freedom (DOF) is considered, where the effect of model reduction can be showcased in a small-scale problem. Finally, a beam discretised by finite elements is studied, to exemplify the results on a large-scale model. Once all of the cases have been investigated, a methodology is proposed to obtain effective and rapid computations of the range of convergence from a practical viewpoint, addressing in particular issues pertaining to their use when only low-order computations are available. 
+
+2 Validity limits of asymptotic expansions in the context of the parametrisation method 
+
+The aim of this section is to introduce the different criteria that will be assessed for predicting the validity limit of asymptotic expansions derived in the context of the parametrisation method for invariant manifolds applied to nonlinear vibrating systems. The method is first briefly recalled for self-consistency. 2.1 The parametrisation method for invariant manifolds 3
+
+2.1 The parametrisation method for invariant manifolds 
+
+2.1.1 Autonomous systems 
+
+The direct parametrisation method (DPIM) for autonomous systems is first reviewed, then the case of non-autonomous problems is recalled. Whereas descriptions of the parametrisation method in its general settings can be found e.g. in [21], the focus is here set to its application to nonlinear vibrating systems. The method is also termed as direct as it can be applied directly to the physical space. Different technical adjustments have been proposed to make this possible, using e.g. a norm-minimizing method [22], or a bordering technique [8, 52]. The presentation retained here follows the guidelines given in [52], and subsequently expanded in [51] to include forcing terms of arbitrary order. To make the presentation lighter, the general form of the problem at hand is considered to be written as an autonomous quadratic system of differential algebraic equations (DAEs): 
+
+B ˙y = Ay + Q(y, y). (1) In the above, y ∈ CD is the state vector, A, B ∈ RD×D are matrices, with A non-singular, and Q :
+
+RD × RD → RD is a quadratic operator responsible for the nonlinear forces. 
+
+Remark 1 An important aspect granting flexibility to the DPIM is the fact that the matrix B can be singular. This property endows the method with the ability to treat systems of DAEs automatically, allowing in particular the use of quadratic recast to deal with arbitrary polynomial nonlinearities [20, 17]. This means that the option to consider only the quadratic operator as a source of nonlinear effects is not restrictive, as any type of analytical nonlinearity can be recast into a quadratic form [24, 20,7]. It is merely a choice made in order to allow for an easier and unified treatment of the nonlinearities. When quadratic recast is employed, supplementary algebraic equations, with left-hand side equal to zero, defining auxiliary variables needed for its use, are appended to the original system. If this is the case, in all of the developments presented in this contribution, they will be placed in the last Da entries of the state vector, and the first block of dimension Dp × Dp, with D = Dp + Da, of the matrix B, related to the physical variables, will be supposed non-singular. The method’s main idea is, then, to look for invariant manifolds of a fixed point of the system in Eq. (1). To this end, a coordinate system of so-called normal coordinates z is introduced, and a parametrisation 
+
+W(z) of the manifold representing the physical coordinates is sought in the form of a polynomial expansion in z. The method additionally gives an evolution equation, called the reduced dynamics and denoted f (z), for the normal coordinates on the manifold. The series expansions for these quantities are then written as 
+
+y = W(z) = 
+
+> o
+
+X
+
+> p=1
+> mp
+
+X
+
+> k=1
+
+W(p,k )zα(p,k ), (2a) ˙z = f (z) = 
+
+> o
+
+X
+
+> p=1
+> mp
+
+X
+
+> k=1
+
+f (p,k )zα(p,k ), (2b) with o the maximum order of the parametrisation, mp =
+
+p + d − 1
+
+p
+
+
+
+the number of order p monomials, 
+
+f (p,k ), W(p,k ) the coefficients of the polynomial expansions, z the normal coordinates vector of dimension 
+
+d, and α(p, k ) the k−th multi-index vector of order p, such that α(p, k )i ∈ N, |α(p, k )| = p, and zα(p,k ) =
+
+zα(p,k )1 
+
+> 1
+
+· . . . · zα(p,k )d 
+
+> d
+
+. Note that α(p, k ) is a vector of integers and α(p, k )i denotes the i-th entry. 
+
+Remark 2 It is here assumed that the fixed point of the system is located at the origin of the state space. The case of non-zero fixed points only entails the use of tangent operators, but does not substantially change the analysis procedure. In such a case, a simple shift can be operated to relocate the fixed point at the origin, see e.g. [31, 15, 14, 17]. 
+
+Remark 3 The dimension of the normal variable vector is typically much smaller than that of the state vector, i.e. d ≪ D, which makes the method an efficient reduction technique. The choice of the dimension 
+
+d of the manifold is related to a priori knowledge of the system [49]. In particular, for lightly damped mechanical systems, d is always even, and its precise value is determined by the potential occurrence of 
+
+internal resonances , i.e. commensurability relations between the linear undamped eigenfrequencies of the system. 42 VALIDITY LIMITS OF ASYMPTOTIC EXPANSIONS IN THE CONTEXT OF THE PARAMETRISATION METHOD 
+
+By plugging Eq. (2) into Eq. (1) and using the chain rule, the time dependence of Eq. (1) can be discarded, giving rise to the invariance equation: 
+
+B∇zW(z)f (z) = AW (z) + Q(W(z), W(z)) . (3) By isolating terms of different polynomial orders, the invariance equation can be split into several homologi-cal equations, amenable to an order-by-order solution. In particular, at each order, these equations decouple for the different monomials on the expansions given by Eq. (2), resulting in a series of linear systems to be solved. Using a bordering technique which augments the size of the ill-conditioned systems to be solved by adding an orthogonality condition to the left eigenvectors corresponding to its kernel, the system for the 
+
+k−th monomial of order p finally reads [51]: 
+
+σ(p,k )B − A BY R 0X⋆
+
+> R
+
+B 0 00 0 I
+
+
+
+W(p,k )
+
+f (p,k )
+
+> R
+
+f (p,k )
+
+R
+
+ =
+
+R(p,k )
+
+00
+
+ . (4) In the above equation, X and Y are matrices grouping the left and right master eigenvectors of the system, and R(p,k ) denotes the right-hand side, or residual, vector for the considered monomial, and depends only on previously computed quantities. Its explicit expression can be found in [51], with an extension in [14] allowing to treat non-diagonal reduced dynamics. Additionally, the definition 
+
+σ(p,k ) =
+
+> d
+
+X
+
+> i=1
+
+α(p, k )i · λi (5) holds, with λi the eigenvalues of the system. The subscript R allows to select only certain eigenvalues from the variables in which it appears, and is related to the so-called resonance conditions of the system: if 
+
+s ∈ [1 , . . . , d ] is in R (it is then not in R), the monomial ( p, k ) is not set to zero in the reduced dynamics equation for variable zs. When σ(p,k ) ≈ λs for some s ∈ [1 , . . . , d ], a resonance is said to occur, and the index s is necessarily kept into R. At this point, a few choices can be made regarding different styles of parametrisation. If only the monomials for which σ(p,k ) ≈ λs are kept in the reduced dynamics, then the complex normal form (CNF) style is selected. Instead, if the definition of R is enlarged to its maximum, such that no monomial is set to zero in the reduced dynamics - which corresponds to the set of non-resonant monomials R being empty and the last line of Eq. (4) vanishing - the resulting parametrisation is called the graph style. Other than these two canonical forms, an infinity of other styles is also possible, relating to different choices on how to populate the set R: real normal form, oscillator normal form and mixed styles, see e.g. [21, 52, 34, 48]. 
+
+Remark 4 When Eq. (4) is considered for p = 1, it yields the right eigenvectors as the linear coefficients of the parametrisation, i.e. W(1 ,k ) = Yk, and a diagonal linear reduced dynamics provided that no Jordan blocks are present. This means that the searched invariant manifolds are tangent to the linear eigenspaces corresponding to the master eigenvectors Yk. In particular, the choice of how many (and which) eigenvectors to include in the linear part will dictate which invariant manifold is parametrised. Usually, for a lightly damped mechanical system, a single NNM, associated with a complex conjugate pair of eigenvalues, can be selected, resulting in a two-dimensional invariant manifold. This choice of a single NNM reduction will be retained in the present study, but other choices are possible, e.g. for parameter-dependent systems experiencing bifurcations [14] or the study of internal resonances [33, 34, 51, 29, 28]. 
+
+Remark 5 Although the parametrisation method is most frequently used for model-order reduction, when 
+
+d ≪ D, it can also be used for the case where no reduction takes place, i.e. d = D. In this scenario, if a CNF style is chosen, the method corresponds to the usual normal form technique [21, 23, 33], and allows for a simplification of the problem dynamics, keeping only the resonant monomials. 
+
+2.1.2 Non-autonomous systems 
+
+The case of non-autonomous systems can be seen as an extension of the autonomous case by suitably choosing additional normal coordinates in order to account for the forcing [51]. We consider, in particular, the case of a single harmonic excitation, but an extension for multiple harmonics is readily available. We consider a system of the form ¯B ˙¯y = ¯A¯y + ¯Q(¯ y, ¯y) + Fc cos Ωt + Fs sin Ωt, (6) 2.2 Error in the invariance equation 5
+
+where Fc and Fs are spatial distributions of the forces and the introduction of the barred notation will become clear shortly. The forcing can be written in complex form as 
+
+Fc cos Ωt + Fs sin Ωt = ˜F˜y, (7) with ˜y1,2 = e±iΩt , (8) and the columns of ˜F suitably chosen. Then, by noticing that ˙ ˜y1,2 = ±iΩy 1,2, the vector ˜ y can be seen as composed of new auxiliary coordinates, and the forced system can be recast as an autonomous one: 
+
+ ¯B 0 0 ˜B
+
+| {z }
+
+> B
+
+˙¯y
+
+˜y
+
+|{z} 
+
+> ˙
+
+y
+
+=
+
+ ¯A ˜F0 ˜A
+
+| {z }
+
+> A
+
+¯y
+
+˜y
+
+|{z} 
+
+> y
+
++
+
+ ¯Q(¯ y, ¯y)
+
+0
+
+| {z }
+
+> Q(y,y)
+
+, (9) with y now of dimension D + 2, and matrices ˜A and ˜B defined as ˜B =
+
+1 0 0 1 
+
+
+
+, ˜A =
+
+iΩ 00 −iΩ 
+
+
+
+. (10) The parametrisation method can then be applied to Eq. (9) in the same fashion as described before, with only minor modifications. Now, the vector z = ¯zT ˜zT T has dimension d + 2, and the coordinates ˜ y are assumed to already be in normal form, i.e. ˜y = ˜ z. Therefore, the dynamics for ˜ z is already known, and both the parametrisation and the reduced dynamics will only be searched for the autonomous coordinates, but including monomials also with the non-autonomous ones. For the interested reader, further details on this procedure, as well as a comparison to approaches where the forcing is supposed to be a small perturbation, can be found in [51]. We now turn to the presentations of the three different available criteria which will be assessed. A specific emphasis will be put on the case of the reduction to a single NNM (two-dimensional invariant manifold), since this case will be studied in Section 3. 2.2 Error in the invariance equation The first considered validity criterion is related to the invariance equation, Eq. (3). It has been developed in the mathematical community, and is widely used in all their examples in order to assess the quality of the ROM given by the method, see e.g. [21,2, 1, 38]. It relies on a quantitative measure of the error in the invariance of the manifold itself, obtained by checking how well the invariance property is satisfied by the asymptotic expansion, which may diverge from the exact solution. As the solution to Eq. (3) is found only in an approximate manner, it is possible to consider that the approximation fails once the norm of the difference between the left-hand and right-hand sides of the equation is larger than a certain threshold. Specifically, we take 
+
+∥B∇zW(z)f (z) − AW (z) − Q(W(z), W(z)) ∥
+
+AW (1 ,1) < ε (11) to define the validity limit of the approximation. In the above equation, the factor AW (1 ,1) is introduced to normalise the residual of the invariance equation, which is dimensionally homogeneous to a force in the case of vibrating systems. A drawback of this approach is the need to arbitrarily select a tolerance value. In practice, assuming that reduction to a single NNM is undertaken and that the problem is autonomous, the computed invariant manifold is two-dimensional and described with the normal variables z = [ z1 z2]T ,which are complex conjugate, i.e. z2 = ¯ z1. The computation of the criterion given by Eq. (11) thus needs to be performed in a two-dimensional domain. Since our main objective is to compute a radius of convergence, the use of a polar representation for the complex coordinates is natural. Thus, considering ρ as a measure of their amplitude and the phase θ, one writes 
+
+z1,2 = ρ
+
+2 e±iθ . (12) The calculation then proceeds by discretising the interval [0 , 2π] for θ and applying a root-finding algorithm to determine a validity limit for each of the resulting angles. The global validity limit is then computed in the end as the minimum ρ obtained for the several different sampled angles. This approach is particularly appealing, as it enables the use of single-variable root-finding algorithms, which are far less computationally expensive and considerably easier to implement than their multidimensional counterparts. 62 VALIDITY LIMITS OF ASYMPTOTIC EXPANSIONS IN THE CONTEXT OF THE PARAMETRISATION METHOD 
+
+If we now consider the case of a non-autonomous system, still parametrised by a single master mode, the auxiliary coordinates related to the forcing can be written as 
+
+z3,4 = e±iΩt , (13) with Ω the forcing frequency. In this situation, by further assuming the somewhat general case of an m : n
+
+resonance, the response is periodic, and such that 
+
+Ω = mn ˙θ ⇒ Ωt = mn θ − ϕ, (14) where ϕ is a phase which represents the shift between the forcing and the response. The introduction of the forcing, then, implies considering an additional coordinate in the domain when looking for the convergence radius. The same procedure as for the autonomous case is followed: several different values of θ and ϕ
+
+are computed, and the minimum value of ρ obtained for all of them is taken as the validity limit of the approximation. 
+
+Remark 6 The angles θ and ϕ should be allowed to vary in intervals corresponding to the full periodic behaviour of the solution. This might correspond to the interval [0 , 2π] for both angles or to larger intervals for the angle θ, in the case of secondary resonances ( e.g. for a 1:3 superharmonic resonance the chosen interval must be [0 , 6π]). Interestingly, a more direct version of the criterion can also be employed, by using an idea devised in the context of the asymptotic numerical method (ANM), which consists in assuming that most of the error in asymptotic expansions is contained within the first neglected term: if the asymptotic expansion goes up to a given order o, then the term of order o + 1 contains most of the error as leading-order residual [10]. With such an idea and using polar representation in the single NNM autonomous case, an explicit expression for the maximum amplitude can then be derived, making the calculation of the validity limit straightforward. In this section, only the main result and a brief summary of its derivation are given. The reader is referred to Section A for a detailed description. The calculation of the error can be used in the present context by combining the residual vectors R(p,k )
+
+appearing in Eq. (4), into a single vector for order p, gathering them sequentially. The residual vector R(p)
+
+at order p is then defined as 
+
+R(p) =
+
+h
+
+(R(p,k 1 ))T (R(p,k 2 ))T . . . (R(p,m p −1) )T (R(p,m p ))T iT
+
+. (15) Let us denote as E the error in the invariance equation, given in Eq. (11): 
+
+E = B∇zW(z)f (z) − AW (z) − Q(W(z), W(z)) . (16) As shown in Section A, in the case of a computation led up to order o, a direct relationship exists between 
+
+E, and the residual vector R(o+1) . Consequently, a meaningful approximation consists in simplifying the full calculation of ∥E∥ by the first neglected term in the residual, multiplied by the related power of the normal variable amplitude, as 
+
+∥E∥ ≈ R(o+1)  ρ
+
+2
+
+o+1 
+
+. (17) The above expression yields the following direct relationship between the radius of convergence ρ and the tolerance ε:
+
+ρ = 2 
+
+ AW (1 ,1) 
+
+∥Ro+1 ∥ ε
+
+
+
+> 1
+> o+1
+
+. (18) An analytical expression as such cannot be obtained in the forced case because the presence of the non-autonomous coordinates creates monomials with several different powers of ρ for a fixed polynomial order, thus making it impossible to isolate it straightforwardly. It would be possible, however, to determine a polynomial in ρ that could be solved numerically to yield the desired convergence radius. 2.3 Singularity of the homological operator 7
+
+2.3 Singularity of the homological operator A criterion for determining the validity limit of normal form transforms for autonomous systems has been proposed in [26]. Since the parametrisation method shares common ideas with the normal form technique, especially when a CNF style is chosen, the proposed approach will be adapted here to the present context and to the case of non-autonomous systems. For the moment, we restrict our attention to situations where 
+
+d = D, so that no reduction takes place, in order to introduce the criterion. By inspecting the invariance equation, Eq. (3), we see that to find the reduced dynamics f (z), one needs to be able to, at least in principle, invert the homological operator H, defined as 
+
+H = B∇zW(z). (19) This inversion does not actually take place in practice, as it is too costly, and it is indeed not effectuated due to the order by order solution of the invariance equation, but it suggests that the singularities of the operator H bound the region at which the parametrisation remains valid. In such way, one can look for the singularities of H in order to determine a criterion allowing to estimate the validity limit of the approximation. For the case d = D this corresponds to computing the determinant of H, which is a square matrix, and finding its zeros. In [26], it has been found on numerical examples that this criterion provides an effective upper bound for validity limits. 
+
+Remark 7 When considering DAEs, the operator H is automatically singular for all values of z because of the lines related to the algebraic equations, and this fact hinders the application of the singularity criterion directly. To circumvent this, for the case of DAEs, only the equations of the system related to the physical variables, for which the left-hand side matrix is non-singular, should be considered. Considering the general non-autonomous case, one can then split the coefficients of the nonlinear map-ping W in order to isolate the non-autonomous coordinates ˜ z as 
+
+W(z) = 
+
+ ¯W(z)˜z
+
+
+
+. (20) The homological operator can then be decomposed into several blocks: 
+
+H =
+
+ ¯B∇¯z ¯W(z) ¯B∇˜z ¯W(z)
+
+0 ˜B
+
+
+
+. (21) Using Eq. (10), the determinant of the homological operator then simply reads: det H = det ¯B∇¯z ¯W(z), (22) which shows that only the autonomous part of the mapping plays a role when determining the singularities of H.Also in this case, the same type of procedure employed for the invariance equation criterion is used: discrete values of the angle θ (and possibly ϕ) are chosen, and the radius of convergence is determined as the minimum ρ for all of them, computed each time by a root-finding algorithm. Considering now the case where d < D , the homological operator is represented by a rectangular matrix, and thus a direct computation of its determinant is not possible. A conceivable alternative would be to numerically determine its rank by computing its singular value decomposition (SVD), and find the points at which it becomes smaller than d. This can be done by noting that non-zero singular values are always positive, and thus tracking the smallest one and employing a minimisation algorithm to determine where it vanishes. Another simpler possibility consists of selecting d representative degrees of freedom for the problem at hand and considering the submatrix obtained by extracting their corresponding lines in the homological operator. The resulting matrix is square, and thus its determinant can be easily computed. This was the choice retained in this contribution, as its implementation is straightforward from the case 
+
+d = D. A comparison with the singular values method showed that both approaches yield identical results. The selected test case is presented in Section C. It should be noted that the singular values approach can be seen as more rigorous, and might be particularly interesting when there is no obvious choice of representative degrees of freedom to extract the relevant submatrix. 82 VALIDITY LIMITS OF ASYMPTOTIC EXPANSIONS IN THE CONTEXT OF THE PARAMETRISATION METHOD 
+
+2.4 Series expansions: d’Alembert and Cauchy rules If a single master mode is selected, the primary results of the method, i.e. nonlinear mappings and reduced dynamics, can be expressed as power series on the amplitude of the complex conjugate normal coordinates 
+
+z1 and z2. It is then possible, as proposed in [17], to apply traditional convergence criteria for series to assess the radius of convergence of the approximation. Since only one master mode is chosen for the parametrisation, the two (complex conjugate) normal coordinates have the same modulus, and can be written in polar form as given by Eq. (12), with additionally the forcing being determined by Eq. (13). Replacing these expressions into the polynomial expansions given by Eq. (2), they can be regarded as truncated power series in ρ:
+
+f (z) = 
+
+> o
+
+X
+
+> p=1
+
+fp(θ, Ωt ) ρp, (23a) 
+
+W(z) = 
+
+> o
+
+X
+
+> p=1
+
+Wp(θ, Ωt ) ρp, (23b) in which the coefficients only depend on Ωt for the non-autonomous case. In this situation, by further assuming once again an m : n resonance for the forcing, Eq. (14) is valid, and, by recognizing that in Eq. (2) the exponent of variable zi for the k−th monomial of order p is given by α(p, k )i, the coefficients above can be rewritten as a function of the phase ϕ as 
+
+fp(θ, ϕ ) = X
+
+> k∈K p
+
+f (p,k )
+
+2p ei[α1 −α2 + mn (α3 −α4 )] θ ei(α4 −α3 )ϕ, (24a) 
+
+Wp(θ, ϕ ) = X
+
+> k∈K p
+
+W(p,k )
+
+2p ei[α1 −α2 + mn (α3 −α4 )] θ ei(α4 −α3 )ϕ, (24b) where α(p, k ) has been denoted by α to lighten the notation and the sets Kp are defined, by noting that for a given monomial the power of ρ is given by α1 + α2, as 
+
+Kp = {k ∈ { 1, . . . , m p} : α(p, k )1 + α(p, k )2 = p}. (25) Then, for fixed θ and ϕ values, one can estimate a validity limit for the approximation by considering the radius of convergence of the power series in ρ. In order to do so, d’Alembert’s and Cauchy’s series convergence criteria are considered [41], such that the estimated convergence radii can be computed by choosing a scalar component of either fp(θ, ϕ ) or Wp(θ, ϕ ), denoted hereafter by ap, and computing the limits 
+
+ρC = lim  
+
+> p→∞
+
+a−1/d p , (26) 
+
+ρA = lim 
+
+> p→∞
+
+ap
+
+ap+1 
+
+. (27) Evidently these expressions cannot be exactly evaluated numerically, but provided a high enough order of parametrisation o is chosen, a good approximation should be obtained. The reasoning above is valid for fixed θ and ϕ. In order to account for the dependence on these variables the same procedure described for the other two criteria is employed, and a global radius of convergence can be determined by considering the minimum of the obtained values for all combinations of angles. 
+
+Remark 8 It should be noted that, often times, the series stemming from the parametrisation method only contains even or odd terms. In this case, the expression for d’Alembert’s convergence radius has to be adapted to 
+
+ρ2 
+
+> A
+
+= lim 
+
+> p→∞
+
+a2p
+
+a2p+2 
+
+. (28) 
+
+Remark 9 When computational constraints limit the maximum order of parametrisation, for example in the case of high-dimensional systems discretized by finite elements, extrapolation procedures can be em-ployed in order to determine the convergence radius from low-order computations, as will be exemplified in Sections 3.1.1 and 3.3. 2.5 On the normalisation of the eigenvectors 9
+
+2.5 On the normalisation of the eigenvectors The values of the coefficients produced by the parametrisation method for the nonlinear mappings and the reduced dynamics directly depend on the selected normalisation of the eigenvectors. As mentioned for instance in [2], different normalisations correspond to different radii of convergence in the domain parametrised by the normal coordinates. However, a single validity limit exists in the original physical coordinates. Two equivalent approaches for handling the convergence in both domains are commented on in [2]: either setting a given normalisation for the eigenvectors and determining the domain of convergence of the approximation, or selecting an a priori target domain of convergence and adapting the normalisation of the eigenvectors such that the actual convergence zone corresponds to the prescription. In this contribution, we choose the first approach, as we have deemed it easier to implement for some of the criteria. It should be noted, however, that the image of the manifold that is valid under the parametrisation should be the same, irrespective of which of the two methodologies is adopted. Furthermore, the eigenvectors normalisation is also associated to the decay rate of the parametrisation coefficients, which can impact the numerical conditioning of the method, as pointed out in [21, 2]. In general, choosing a scaling that leads to a validity domain of radius close to one seems to ensure good numerical properties to the scheme [2]. Nevertheless, different normalisations have been tested in some of the numerical examples, and no numerical problems were found, indicating a certain robustness in this sense for the cases related to nonlinear vibrations. 2.6 On an a priori estimation of the maximum forcing amplitude for non-autonomous systems Until this point, all of the presented validity limit criteria are a posteriori in nature, and, in the case of forced systems, depend on the forcing amplitude for which the parametrisation is computed: they allow for the validation of a certain ROM, computed for a specified load. In daily engineering practice, however, it would be useful to have a criterion allowing for an a priori estimation of the maximum loading amplitude to which a given system may be submitted. To this purpose, we propose the following approach: first, the unforced and damped system is considered, and its radius of convergence can be calculated following any of the proposed criteria - the undamped system could also be regarded, specially if damping is small and its validity limits have already been computed, e.g. for a backbone curve calculation. We then suppose that the maximum amplitude for which the normal coordinates defining the parametrisation remain valid is the same for the unforced and the forced systems, and search for a relationship relating the amplitude of the normal coordinates at the peak of the frequency response curves (FRCs) with the loading value in order to deduce the maximum forcing amplitude that the system can be subjected to. Such expressions can be computed using any available analytical approach, such as the parametrisation method itself [13], or the method of multiple scales [32], among many others. Importantly, this relationship shall depend on the type of resonance excited by the forcing (primary or secondary) to be accurate. To this purpose, expressions for the primary and cubic secondary super- and subharmonic resonances of the Duffing oscillator computed symbolically by the parametrisation method are available in [13], and will be directly used in Sections 3.1.2 and 3.1.3. Such solutions, however, are in general not available for high-dimensional systems due to their complexity. We propose then, for a given resonance scenario, to consider a generic form for the reduced dynamics and to employ a semi-analytical approach. For example, considering an arbitrary system in primary resonance reduced to a single master mode using a CNF style, its reduced dynamics is generically written, up to order 3 on the non-autonomous variables and 1 on the autonomous ones, as [13]: ˙z1 = f1z1 + f2z21 z2 + f3z3. (29) In this expression, ( z1, z 2) refers to the master mode coordinates, while ( z3, z 4) refers to the forcing [51, 13]. One has z2 = ¯ z1, such that the second equation is the complex conjugate of the first one and is not shown, and z3 = eiΩt , z4 = ¯ z3. The coefficients fi are complex and will be decomposed into real and imaginary parts as fi = f Ri + if Ii . In particular, the first coefficient is always related to the linear characteristics of the system, and is equal to f1 = −ξω + iδω , with ω the linear frequency of the master mode, ξ its damping ratio and δ = p1 − ξ2. Additionally, the coefficient f3 is always linear with respect to the forcing amplitude κ,and will be written as f3 = ( cR 
+
+> 3
+
++ ic I
+
+> 3
+
+)κ. Stopping the polynomial order of the expansion at these orders is particularly well-suited to the case of small damping and nonlinearities, where the above reduced dynamics terms dominate. Under these conditions, it is possible to show, as we do in Section B, that for cR
+
+> 3
+
+̸ = 0, the forcing amplitude is related to the parametrisation coefficients by 
+
+κ = 2f R 
+
+> 1
+
+ρ + f R 
+
+> 2ρ3
+> 2
+
+4cR
+
+> 3
+
+√1 + α2 , (30) 10 3 NUMERICAL EXAMPLES 
+
+with α = f I 
+
+> 3
+
+/f R 
+
+> 3
+
+, and a similar equation can be found for the case where f I
+
+> 3
+
+̸ = 0, see Section B. This expression can then be used for any system by inserting the values of the coefficients of the reduced dynamics computed numerically. 
+
+3 Numerical examples 
+
+We test the criteria on different examples of increasing complexity in order to exemplify how they can be used in practice to determine a safe validity range for the ROMs. For all of the examples a complex normal form style is chosen, unless stated otherwise. 3.1 The Duffing equation In the first example we consider a Duffing oscillator, whose equation of motion is given by ¨u + 2 ξω ˙u + ω2u + hu 3 = κ cos Ωt. (31) For the numerical examples, h is fixed as 1 and ω is taken to be 1 .5, with units compatible. Since the dimension of the phase space for the Duffing oscillator is two, no reduction actually takes place when the parametrisation method is employed and, if a CNF style of parametrisation is chosen, the technique actually corresponds to the classical normal form approach. Several scenarios will be considered for the analysis: first, the unforced and undamped case is studied. The main output of the method in this case is the backbone curve of the system; in what follows, two classical resonance scenarios are also studied: primary and superharmonic resonances, in which case damping and forcing are introduced. 
+
+3.1.1 Unforced conservative oscillations 
+
+First, we consider the invariance equation criterion. In particular, the choice of the error tolerance level plays an important role in this case. Fig. 1 presents the evolution of the radius of convergence of the approximation as a function of ε for different orders of parametrisation. It is interesting to note that the plots get more linear as the parametrisation order increases. For engineering practice, a level of error of 1%, i.e. ε = 0 .01, is usually acceptable and will be chosen as a reference for further results. The results obtained by applying the simplified formula given by Eq. (18) are also shown, in dashed lines. They present the same qualitative behaviour as the full invariance equation error and serve as a good estimator thereof. 10 −5 10 −4 10 −3 10 −2 10 −1 10 0   
+
+> 0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1
+> 1.2
+> 1.4
+> 1.6
+> 1.8
+> 2
+> ε
+> ρ
+> o= 5
+> o= 10
+> o= 15
+> Full Simplified
+
+Fig. 1: Evolution of the radius of convergence with the tolerance value ε for the unforced and undamped Duffing oscillator using the invariance equation criterion. The continuous lines indicate results obtained by Eq. (11), while the dashed lines represent the simplification introduced in Eq. (18). Parameter values are fixed as ω = 1 .5 and h = 1. Continuing, Fig. 2 shows the evolution of the radius of convergence through the d’Alembert and Cauchy criteria. In order to apply them, it is necessary to select scalar components of the vectors f (z) and W(z)and determine the series radii of convergence for several different values of θ. In particular, the results obtained employing three of them will be depicted: the displacement and velocity, and the first component 3.1 The Duffing equation 11 
+
+of the reduced dynamics, denoted u, v and f in the figure, respectively. From the plot, it can be seen that the maximum amplitude of the normal coordinates estimated by these three different quantities is virtually the same and that only a small variation in the radius of convergence is observed between the two criteria. It should be noted that for the series criteria, high orders of the parametrisation need to be calculated, such that convergence of the power series is attained. This is not always possible in practice for larger models. Therefore, we also present, in dashed line in Fig. 2, results obtained with parametrisations only up to order 15, obtained by extrapolating the data by means of an exponential fit. A good concordance is obtained between the values predicted by extrapolation and those at order 35. Finally, the criterion concerned with the singularity of the homological operator is studied. The points at which det H = 0 on the complex plane are shown in Fig. 3 for three different orders of expansion of the parametrisation. Once these numerical zeros are retrieved, a circle with a radius which is equal to the minimum amplitude among those points is superimposed on the figure for visual guidance. Inside the circle represented with a solid line, the homological operator has no singularities, hence defining the predicted safe amplitude range. For the two presented criteria, convergence with the order of expansion is observed to be monotonic and from above. 5 10 15 20 25 30 35 
+
+> 0
+> 0.5
+> 1
+> 1.5
+> 2
+> o
+> ρ
+> uvf
+> d’Alembert Cauchy
+
+Fig. 2: Validity limit calculated by the series criteria for the unforced and undamped Duffing oscillator as a function of the parametrisation order. For each of the criteria, the displacement u, velocity v, and re-duced dynamics f power series are studied. Results obtained by extrapolation of parametrisations up to order 15 are also presented, in dashed lines. Param-eter values are fixed as ω = 1 .5 and h = 1. −1.25 −1 −0.75 −0.5 −0.25 0 0.25 0.5 0.75 1 1.25       
+
+> −1.25
+> −1
+> −0.75
+> −0.5
+> −0.25
+> 0
+> 0.25
+> 0.5
+> 0.75
+> 1
+> 1.25
+> Re( z1)
+> Im( z1)
+> Sing. of H
+> ρ=ρmin
+> o= 5
+> o= 10
+> o= 15
+
+Fig. 3: Validity limit calculated by the criterion of the singularity of the homological operator for the unforced and undamped Duffing oscillator as a func-tion of the parametrisation order. The lines repre-sent circles of radius equal to the minimum ampli-tude among points of the same order. Parameter values are fixed as ω = 1 .5 and h = 1. While determining the validity limits, several different values of the phase θ are tested, and the lowest value of the convergence radius is kept. In order to illustrate the effect of different phases on the computed validity limits, the z1 coordinate on the complex plane for each pair ( ρ, θ ) is depicted in Fig. 4. It is possible to see that, for the series criteria, the phase has little influence on the convergence radius value. For the invariance and singularity criteria, on the other hand, different θ values have a strong influence on the computed validity limits. This effect is especially pronounced for the singularity criterion, where for a given range of phases, no singularity of the homological operator can be found. Nevertheless, the figure illustrates the converging behaviour of the different criteria in assessing the safe computational region for this particular case. All the different validity limits encountered are gathered in Table 1, both in terms of the amplitude of the normal coordinates, ρ, and the maximum physical displacement of the oscillator: 
+
+umax = max  
+
+> 0≤θ≤2π
+
+W1(z). (32) Furthermore, the limits are shown graphically together with backbone curves for different orders of parametri-sation and a reference analytical solution [42] in Fig. 5. It should be noted that, since the CNF style of parametrisation is employed, the backbone curves can be obtained analytically in a straightforward manner from the reduced dynamics [3]. For the series criteria, the value shown corresponds to the minimum of the two in Table 1. The behaviour of the backbone curves approximated by the CNF parametrisation with increasing orders, shows that marginal gains are obtained from o = 15, which is thus the maximum order represented. Consequently, the validity limits for the singularity and invariance equation criteria are also depicted, both in Table 1 and Fig. 5 at order 15. This is not the case for the series criteria, whose calcu-lation, by nature, presupposes convergence of the power series representation of the quantities of interest. The radii of convergence are thus given at order 35. However, in order to determine the maximum displace-ment associated with them, a parametrisation of order 15 is chosen. This is done because, due to the high 12 3 NUMERICAL EXAMPLES −1 −0.75 −0.5 −0.25 0 0.25 0.5 0.75 1
+
+> −1
+> −0.75
+> −0.5
+> −0.25
+> 0
+> 0.25
+> 0.5
+> 0.75
+> 1
+> Re( z1)
+> Im( z1)
+> Invariance Singularity Cauchy d’Alembert
+
+Fig. 4: Comparison of the radii of convergence calculated by the tested criteria, for different values of θ.The points correspond to the z1 coordinates in the complex plane for each combination of ρ and θ. For the invariance equation and singularity criteria, the expansion order is chosen as 15, while for the series criteria, it goes up to 35. Parameter values are fixed as ω = 1 .5 and h = 1. order of expansion, slight variations in the normal variables amplitude can correspond to large variations of the physical vibrations associated to them. Also, this approach is in line with the idea of applying the extrapolation procedure for high dimensional systems, since in this scenario one does not have access to the high order parametrisation and needs to employ the highest order available. This will be the case for all of the examples presented in the text.                
+
+> Criterion Cauchy d’Alembert Singularity Invariance Invariance simpl.
+> ρ1.361 1.224 1.450 1.143 1.202
+> umax 1.215 1.126 1.240 1.063 1.109
+
+Table 1: Validity limits for the conservative unforced Duffing oscillator. Values are given in both the ampli-tude of the normal coordinates and maximum physical displacement of the oscillator. Orders of expansion are 15 for the singularity and invariance equation criteria and 35 for the series criteria. The tolerance for the invariance equation is chosen as ε = 1%. Parameter values are fixed as ω = 1 .5 and h = 1. As can be seen in Fig. 5, the calculated validity limits, although presenting different values, intuitively give a good indication of the zone at which the backbone curves obtained by the parametrisation method, deviate from the reference solution. Furthermore, by comparing the values of the convergence radii given in Figs. 1 to 3 for different orders, it is possible to note that the series and singularity criteria converge from above, while the invariance equation one converges from below. As such, their values can be interpreted as bounds to the region where the parametrisation loses convergence. In practical engineering analysis, this would be a zone in which results should be taken with caution. 
+
+3.1.2 Primary resonance 
+
+For this case, the damping ratio is fixed at ξ = 0 .02. As proposed, for example, in [34, 51], the ROM for the forced-damped case is derived for a single value of the excitation frequency, and then used to compute the FRC in the vicinity of the selected resonance case. The selected excitation frequency retained to compute the ROM is denoted as the expansion point, which is here set at the undamped natural frequency of the oscillator: Ω = ω. Additionally, three cases regarding forcing amplitude are considered: κ = 0 .1, κ = 0 .175, and κ = 0 .25. A detailed study of each criterion will be made for κ = 0 .175, while only the final results together with the FRCs at different orders will be given for the other two forcing values. Since the forcing is present in this scenario, several values of the phase ϕ should also be considered when sampling values of the normal coordinates. Specifically, the values ϕ ∈ { 0, π 
+
+> 2
+
+, π, 3π 
+
+> 2
+
+} are chosen. Fig. 6 shows the evolution of the convergence radius obtained by the invariance equation criterion with the imposed tolerance value ε. Once again, as the order of parametrisation increases, the curves tend to be more linear. The evolution of the radii of convergence given by the series criteria is depicted in Fig. 7. Note that four different values of the phase ϕ are used in the computation ( ϕ = 0 , π/ 2, π, 3π/ 2) of the validity limit associated with this criterion, but only the case showing ϕ = π/ 2, corresponding to the minimal final value of the validity limit, is displayed in the figure. In this case, d’Alembert’s criterion fails to yield suitable 3.1 The Duffing equation 13 0.9 1 1.1 1.2 1.3 1.4 1.5         
+
+> 0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> 0.6
+> 0.7
+> 0.8
+> 0.9
+> 1
+> 1.1
+> 1.2
+> 1.3
+> 1.4
+> ωN L
+> umax
+> o= 5
+> o= 10
+> o= 15 Series o= 35 Sing. o= 15 Inv. o= 15 Reference
+
+Fig. 5: Backbone curves of the conservative unforced Duffing oscillator: CNF with orders o=5, 10 and 15 and reference solution [42]. Dashed horizontal lines: validity limit criteria obtained by the three methods: series convergence, singularity of the homological operator and error in the invariance equation (Inv.) with 
+
+ε = 0 .01. Parameter values are fixed as ω = 1 .5 and h = 1. 10 −5 10 −4 10 −3 10 −2 10 −1 10 0   
+
+> 0
+> 0.5
+> 1
+> 1.5
+> 2
+> ε
+> ρ
+> o= 5
+> o= 10
+> o= 15
+
+Fig. 6: Evolution of the radius of convergence with the tolerance value for the damped forced Duffing oscillator in primary resonance using the invariance equation criterion. Parameter values are fixed as ω =1.5, h = 1, ξ = 0 .02 and κ = 0 .175. results: the series for displacement and velocity do not converge, whereas the series for the reduced dynamics exhibits an increasing radius of convergence at higher polynomial orders. For the Cauchy rule, the three series yield nearly identical values, with monotonic convergence. Finally, Fig. 8 shows the results for the singularity criterion. Again, the four values of the phase ϕ are used and now displayed, hence giving rise to four sets of vanishing points per order. The circle, used for visual guidance, takes the minimum of the four cases. Qualitatively, the observed evolution is similar to that of the unforced case, with the points at which the homological operator becomes singular being almost the same for the different tested values of ϕ.The amplitudes of the normal variables obtained by each criterion, as well as the associated maximum physical displacements, are given in Table 2 for κ = 0 .175. Additionally, the FRCs for all values of forcing amplitude are depicted in Fig. 9. For κ = 0 .1, displayed in Fig. 9b, all the computed validity limits are well above the peak of the FRCs, ensuring a perfect convergence of the solutions produced by the ROM for that forcing amplitude. For the other two forcing scenarios, the convergence radii show a good agreement with the region at which the ROMs fails to converge. Once again, with the selected tolerance value for the 14 3 NUMERICAL EXAMPLES 5 10 15 20 25 30 35 
+
+> 0
+> 0.5
+> 1
+> 1.5
+> 2
+> o
+> ρ
+> uvf
+> d’Alembert Cauchy
+
+Fig. 7: Validity limit calculated by the series criteria for the damped Duffing oscillator forced in primary resonance as a function of the parametrisation order 
+
+o. For each of the criteria, the displacement, velocity and reduced dynamics power series are studied. Pa-rameter values are set as ω = 1 .5, h = 1, ξ = 0 .02, 
+
+κ = 0 .175 and ϕ = π 
+
+> 2
+
+.−1.5 −1 −0.5 0 0.5 1 1.5      
+
+> −1.5
+> −1
+> −0.5
+> 0
+> 0.5
+> 1
+> 1.5
+> Re( z1)
+> Im( z1)
+> Sing. of H
+> ρ=ρmin
+> o= 5
+> o= 10
+> o= 15
+
+Fig. 8: Validity limit calculated by the criterion of the singularity of the homological operator for the damped Duffing oscillator in primary resonance as a function of the parametrisation order. The lines represent circles of radius equal to the minimum amplitude among points of the same order. Param-eter values are fixed as ω = 1 .5, h = 1, ξ = 0 .02 and 
+
+κ = 0 .175. invariance equation criterion ( ε = 0 .01), it seems to yield a lower bound to the zone at which ROM results deviate from those of the FOM.             
+
+> Criterion Cauchy d’Alembert Singularity Invariance
+> ρ1.427 1.465 1.482 1.142
+> umax 1.251 1.257 1.257 1.071
+
+Table 2: Validity limits for the damped Duffing oscillator in primary resonance condition. Values are given in both the amplitude of the normal coordinates ρ and maximum physical displacement umax of the oscillator. Orders of expansion are 15 for the singularity and invariance equation criteria and 35 for the series criteria. The tolerance for the invariance equation is chosen as ε = 1%. Parameter values are fixed as ω = 1 .5, h = 1, 
+
+ξ = 0 .02 and κ = 0 .175. To conclude with this example, the approach proposed in Section 2.6 is illustrated for this particular case of the primary resonance of the Duffing oscillator. By applying the invariance equation criterion for the unforced and damped Duffing oscillator, the radius of convergence is found to be ρ = 1 .144. For this case, the parametrisation coefficients can be calculated analytically, see [13], and by replacing them into Eq. (56), one finds: 
+
+κ = 2 ω2ξρ. (33) The intuitively expected behaviour is observed: as damping increases, the maximum load the system can sustain also increases, in a linear manner. For the Duffing oscillator in particular, due to the simplicity of the system, it is also possible to consider a form of the reduced dynamics which is more general than that used to derive Eq. (56), while still yielding an analytical expression relating ρ and κ at the peak. This formula, not detailed here for the sake of brevity, can be found in [13], and the more accurate relationship then reads 
+
+κ = 32 ω4ξρ 
+
+3hρ 2 − 16 ω2 . (34) The first of these equations yields κ = 0 .103, while the second gives κ = 0 .116. We see that the values are close, and thus, indeed, the form of the reduced dynamics chosen in Section 2.6 is a good approximation in this example. By inspection of Figs. 9a and 9b, it becomes clear that these values are a good estimation of the maximum loading amplitude that the system can be subjected to. Hence, the validity limit found in the unforced case can be easily used to deduce the maximum forcing amplitude for which convergence is achieved. 3.1 The Duffing equation 15 
+
+3.1.3 Superharmonic resonance 
+
+For this case, the damping ratio is fixed at ξ = 0 .002, and the expansion forcing frequency is chosen to coincide with one third of the undamped natural frequency of the oscillator, Ω = ω 
+
+> 3
+
+. Once again, three cases regarding forcing amplitude are considered: κ = 0 .5, κ = 0 .75 and κ = 1, in order to illustrate what happens for moderate, high and extremely high forcing. The results for the invariance equation, series and singularity criteria are presented in Figs. 10 to 12. By inspecting Fig. 10, one can remark that the choice of the error tolerance value ε has a more important effect than in the previous cases, as evidenced by the high slope of the curves in the figure. It should be noted, again, that in Fig. 11 only the data series corresponding to ϕ = π/ 2 is displayed, although four values of ϕ
+
+are used in the computation of the validity limit. Also, for the singularity criterion, where vanishing points are represented for four different phases ϕ, the influence of the phase difference between the response and the forcing is more significant than in the primary resonance case. 0.6 0.7 0.8 0.9 1 1.1 1.2 1.3 1.4 1.5 1.6
+
+0
+
+0.2
+
+0.4
+
+0.6
+
+0.8
+
+1
+
+1.2
+
+1.4
+
+1.6
+
+1.8
+
+2
+
+Ω/𝜔                                                    
+
+> 𝑢 max
+> O( 𝑧 5, 𝜀 5)O( 𝑧 10 , 𝜀 10 )O( 𝑧 15 , 𝜀 15 )
+> Series 𝑜 =35
+> Sing. 𝑜 =15
+> Inv. 𝑜 =15
+> Reference
+> (a) κ= 0 .175 0.70.80.911.11.21.31.4
+> 0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1
+> 1.2
+> Ω/𝜔
+> 𝑢 max
+> O( 𝑧 5, 𝜀 5)O( 𝑧 10 , 𝜀 10 )O( 𝑧 15 , 𝜀 15 )
+> Series 𝑜 =35
+> Sing. 𝑜 =15
+> Inv. 𝑜 =15
+> Reference
+> (b) κ= 0 .10.60.70.80.911.11.21.31.41.51.6
+> 0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1
+> 1.2
+> 1.4
+> 1.6
+> 1.8
+> 2
+> Ω/𝜔
+> 𝑢 max
+> O( 𝑧 5, 𝜀 5)O( 𝑧 10 , 𝜀 10 )O( 𝑧 15 , 𝜀 15 )
+> Series 𝑜 =35
+> Sing. 𝑜 =15
+> Inv. 𝑜 =15
+> Reference (c) κ= 0 .25
+
+Fig. 9: Frequency response curves for the primary resonance of the Duffing oscillator. Different orders of parametrisation are compared with a reference solution computed by means of numerical continuation, where the matcont package [12], has been used. The validity limits calculated by the different proposed convergence criteria are also shown. Parameter values are fixed as ω = 1 .5, h = 1 and ξ = 0 .02. The values of the validity limits obtained by the various criteria for κ = 0 .75 are detailed in Table 3, and compared to the FRCs for the three forcing values in Fig. 13. In this example, the results indicate perfect convergence for the low forcing value, and the intuitively expected convergence region is retrieved for κ = 0 .75. One can observe that, for the higher forcing with κ = 1, the invariance criterion indicates amplitudes for the loss of convergence that encompass points on the FRC for which convergence would be expected due to the agreement with the continuation solution. This can indicate that the reduced-order model correctly captures steady-state oscillatory behaviour associated with the FRC, but is inadequate for other parts of the manifold, which do not correspond to periodic orbits and thus are not represented on the 16 3 NUMERICAL EXAMPLES 10 −5 10 −4 10 −3 10 −2 10 −1 10 0   
+
+> 0
+> 0.25
+> 0.5
+> 0.75
+> 1
+> ε
+> ρ
+> o= 5
+> o= 10
+> o= 15
+
+Fig. 10: Evolution of the radius of convergence with the tolerance value for the damped Duffing oscillator in superharmonic resonance using the invariance equation criterion. Parameter values are fixed as ω = 1 .5, 
+
+h = 1, ξ = 0 .002 and κ = 0 .75. 2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 
+
+> 0
+> 0.5
+> 1
+> 1.5
+> 2
+> o
+> ρ
+> uvf
+> d’Alembert Cauchy
+
+Fig. 11: Validity limit calculated by the series cri-teria for the damped Duffing oscillator in superhar-monic resonance as a function of the parametrisa-tion order. For each of the criteria, the displace-ment, velocity and reduced dynamics power series are studied. Parameter values are fixed as ω = 1 .5, 
+
+h = 1, ξ = 0 .002, κ = 0 .75 and ϕ = π 
+
+> 2
+
+.−1 −0.5 0 0.5 1      
+
+> −1
+> −0.5
+> 0
+> 0.5
+> 1
+> Re( z1)
+> Im( z1)
+> Sing. of H
+> ρ=ρmin
+> o= 5
+> o= 10
+> o= 15
+
+Fig. 12: Validity limit calculated by the criterion of the singularity of the homological operator for the damped Duffing oscillator in superharmonic reso-nance as a function of the parametrisation order. The lines represent circles of radius equal to the minimum amplitude among points of the same or-der. Parameter values are fixed as ω = 1 .5, h = 1, 
+
+ξ = 0 .002 and κ = 0 .75.             
+
+> Criterion Cauchy d’Alembert Singularity Invariance
+> ρ0.996 0.880 0.762 0.526
+> umax 1.009 0.904 0.830 0.602
+
+Table 3: Validity limits for the damped Duffing oscillator forced at the superharmonic resonance. Values are given in both the amplitude of the normal coordinates ρ and maximum physical displacement umax of the oscillator. Orders of expansion are 15 for the singularity and invariance equation criteria and 35 for the series criteria. The tolerance for the invariance equation is chosen as ε = 1%. Parameter values are fixed as 
+
+ω = 1 .5, h = 1, ξ = 0 .002 and κ = 0 .75. FRC. This result also underlines that the choice of ε is of importance, and that setting ε = 0 .01 generally provides a lower bound, which must be complemented with an upper bound, here provided by the two other criteria. For this resonance scenario, we also estimate the maximum forcing value by using the computed validity limit for the damped backbone curve. The expression relating the forcing amplitude and the peak amplitude of the FRC normal coordinates, in the case of the superharmonic forcing, can be easily derived from the analytical results provided in [13]. Up to the third order, it yields 
+
+κ = 49
+
+> 3
+
+s
+
+ω8 (9 ξ2 + 16) 3/2 δξρ h . (35) 3.2 A 2-DOF system 17 0.3 0.4
+
+0
+
+0.2
+
+0.4
+
+0.6
+
+0.8
+
+1
+
+1.2
+
+1.4
+
+Ω/ω 
+
+> umax
+
+O(z5, ε 5)
+
+O(z10 , ε 10 )
+
+O(z15 , ε 15 )Series o = 35 Sing. o = 15 Inv. o = 15 Reference 
+
+(a) κ = 0 .75 0.25 0.3 0.35 0.4 0.45       
+
+> 0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1
+> Ω/ω
+> umax
+> O(z5, ε 5)
+> O(z10 , ε 10 )
+> O(z15 , ε 15 )Series o= 35 Sing. o= 15 Inv. o= 15 Reference
+
+(b) κ = 0 .50.3 0.4       
+
+> 0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1
+> 1.2
+> 1.4
+> Ω/ω
+> umax
+> O(z5, ε 5)
+> O(z10 , ε 10 )
+> O(z15 , ε 15 )Series o= 35 Sing. o= 15 Inv. o= 15 Reference
+
+(c) κ = 1 
+
+Fig. 13: Frequency response curves for the superharmonic resonance of the Duffing oscillator. Different orders of parametrisation are compared with a reference solution computed by numerical continuation employing package matcont [12]. The validity limits calculated by the different proposed convergence criteria are also shown. Parameter values are fixed as ω = 1 .5, h = 1 and ξ = 0 .002. This relationship gives κ = 0 .691 for ρ = 1 .144, which by inspection of Figs. 13a and 13b is a good estimation of the loading limit for this case. 3.2 A 2-DOF system In this section, we consider a 2-DOF system having as equations of motion: ¨u1 + 2 ξ1ω1 ˙u1 + ω21 u1 + h1111 u31 + 3 h2111 u21u2 = κ cos Ωt, (36) ¨u2 + 2 ξ2ω2 ˙u2 + ω22 u2 + h2111 u31 = 0 . (37) This example is chosen in order to test the proposed validity criteria for a case where the number of degrees of freedom in the model is larger than the number of normal coordinates, but that is still of small size. For the numerical examples, h1111 , h2111 and ω1 are set to 1. The unforced case is first investigated with 
+
+κ = ξ1 = ξ2 = 0. Two values for ω2 are chosen: ω2 = 1 .57, causing the behaviour of the system to initially be of the hardening type, and then switch to the softening, and ω2 = 0 .637, causing hardening for all displacement amplitudes. The tolerance versus radius of convergence curves obtained for the invariance equation criterion are depicted in Fig. 14. An excellent agreement is observed between the simplified and full ways of evaluating the invariance equation, especially when higher orders of asymptotic developments are employed. From the figure, an additional indicator can be identified for assessing the necessity of a higher-order parametrisation: 18 3 NUMERICAL EXAMPLES 10 −5 10 −4 10 −3 10 −2 10 −1 10 0                
+
+> 0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1
+> ε
+> ρ
+> o= 5
+> o= 10
+> o= 15
+> (a) ω2= 1 .57 10 −510 −410 −310 −210 −110 0
+> 0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1
+> ε
+> ρ
+> o= 5
+> o= 10
+> o= 15 (b) ω2= 0 .637
+
+Fig. 14: Evolution of the radius of convergence with the tolerance value for the unforced and undamped 2-DOF oscillator using the invariance equation criterion. The continuous lines indicate results obtained by Eq. (11), while the dashed ones represent the simplification introduced in Eq. (18). Parameter values are fixed as ω1 = h1111 = h2111 = 1. a marked deviation between the full invariance equation and its simplified counterpart signals the need to compute a higher-order expansion. The results for the series criteria are presented in Fig. 15 for both values of the second oscillator’s linear frequency. In this case, the series u and v are associated to the oscillator’s u1 and v1 DOFs. For the case 
+
+ω2 = 0 .637, the d’Alembert criterion completely fails to converge. The Cauchy rule, on the other hand, seems to converge to similar values for all series, but monotonicity is lost. The application of the singularity criterion in this example differs from the other cases. Since the homological operator is represented by a rectangular matrix, a subset of its rows must be selected in order to compute its determinant. In particular, the rows corresponding to the u1 degree of freedom have been selected, as being related to the master coordinate. The results are presented in Fig. 16. Once again, an interesting result can be observed for the case ω2 = 0 .637, depicted in Fig. 16b: between orders 5 and 10 there is almost no change in the radius of convergence predicted by the criterion. However, the expected decreasing behaviour is found when going up to order 15. 5 10 15 20 25 30 35            
+
+> 0
+> 0.5
+> 1
+> 1.5
+> 2
+> o
+> ρ
+> uvf
+> d’Alembert Cauchy
+> (a) ω2= 1 .57 510 15 20 25 30 35
+> 0
+> 0.5
+> 1
+> 1.5
+> 2
+> o
+> ρ
+> uvf
+> d’Alembert Cauchy (b) ω2= 0 .637
+
+Fig. 15: Validity limit calculated by the series criteria for the unforced and undamped 2-DOF oscillator as a function of the parametrisation order. For each of the criteria, the displacement, velocity and reduced dynamics power series are studied. Parameter values are fixed as ω1 = h1111 = h2111 = 1 .0. Summaries with the results from all criteria are given in Tables 4 and 5, and their values are graphically compared with backbone curves and with a reference obtained by numerical continuation in Fig. 17. The same trend as observed before remains: the invariance equation criterion with ε = 0 .01 serves as a lower bound for the zone where graphically the parametrisation seems to stop converging, while the series and singularity criteria give an upper estimate. For Fig. 17b, though, the region indicated by the criteria is quite extensive, and includes zones where the backbone has completely diverged from the reference solution. This behaviour can be understood by looking at the relationship between normal variables amplitude ρ and 3.2 A 2-DOF system 19 −0.6 −0.4 −0.2 0 0.2 0.4 0.6                       
+
+> −0.6
+> −0.4
+> −0.2
+> 0
+> 0.2
+> 0.4
+> 0.6
+> Re( z1)
+> Im( z1)
+> Sing. of H
+> ρ=ρmin
+> o= 5
+> o= 10
+> o= 15
+> (a) ω2= 1 .57 −0.6−0.4−0.200.20.40.6
+> −0.6
+> −0.4
+> −0.2
+> 0
+> 0.2
+> 0.4
+> 0.6
+> Re( z1)
+> Im( z1)
+> Sing. of H
+> ρ=ρmin
+> o= 5
+> o= 10
+> o= 15 (b) ω2= 0 .637
+
+Fig. 16: Validity limit calculated by the singularity of the homological operator for the unforced and undamped 2-DOF oscillator as a function of the parametrisation order. The lines represent circles of radius equal to the minimum amplitude among points of the same order. Parameter values are fixed as ω1 =
+
+h1111 = h2111 = 1 .0. maximum displacement amplitude umax , given in Fig. 18. It can be noted that for the case ω2 = 0 .637, the validity limits obtained by the singularity and invariance equation criteria enter a zone where the relationship ρ − umax becomes excessively steep, whereas this does not happen for the case ω2 = 1 .57. The commented behaviour indicates a certain difficulty of the singularity and series criteria to deal with the excessive growth in the ρ − umax for high degrees of expansions. A large gap between the validity limits indicated by the different criteria should also be a warning indicator for the analyst of such a phenomenon. In order to mitigate this effect, a lower order expansion can be chosen only to compute the maximum physical displacement for a given value of reduced variables amplitude. For instance, if o = 10 is selected, Fig. 18b shows that the region where convergence is lost is much smaller, aligning with qualitative expectations. However, it should be noted that in all conducted analyses, this phenomenon was observed only at high expansion orders, which are rarely used in practice.             
+
+> Criterion Cauchy d’Alembert Singularity Invariance
+> ρ0.730 0.639 0.766 0.630
+> umax 0.696 0.623 0.706 0.614
+
+Table 4: Validity limits for the unforced and undamped 2-DOF oscillator with ω2 = 1 .57. Values are given in both the amplitude of the normal coordinates and maximum physical displacement of the oscillator. Orders of expansion are 15 for the singularity and invariance equation criteria and 35 for the series criteria. The tolerance for the invariance equation is chosen as ε = 1%. Parameter values are fixed as ω1 = h1111 =
+
+h2111 = 1 .0.             
+
+> Criterion Cauchy d’Alembert Singularity Invariance
+> ρ0.517 -0.580 0.456
+> umax 0.501 -0.617 0.439
+
+Table 5: Validity limits for the unforced and undamped 2-DOF oscillator with ω2 = 0 .637. Values are given in both the amplitude of the normal coordinates and maximum physical displacement of the oscillator. Orders of expansion are 15 for the singularity and invariance equation criteria and 35 for the series criteria. The tolerance for the invariance equation is chosen as ε = 1%. Parameter values are fixed as ω1 = h1111 =
+
+h2111 = 1 .0. The forced-damped case is now investigated. The focus is set on the case where ω2 = 1 .57. The damping coefficients are selected as: ξ1 = ξ2 = 0 .05. Primary resonance is studied, and the expansion forcing frequency is chosen as Ω = ω1. For this case, the validity limit obtained by the invariance equation criterion for the unforced and undamped case is ρ = 0 .63. In order to determine the adequate level of forcing for this example, we employ the procedure described in Section 2.6. In this case, by inspecting the reduced dynamics coefficients, we remark that f R 
+
+> 3
+
+= 0 and thus we can not employ Eq. (30). Instead, we apply 20 3 NUMERICAL EXAMPLES 0.9 1 1.1 1.2 1.3 1.4 1.5
+
+0
+
+0.1
+
+0.2
+
+0.3
+
+0.4
+
+0.5
+
+0.6
+
+0.7
+
+0.8
+
+0.9
+
+1
+
+ωN L            
+
+> umax
+> o= 5
+> o= 10
+> o= 15 Series o= 35 Sing. o= 15 Inv. o= 15 Reference
+> (a) ω2= 1 .57
+
+0.9 1 1.1 1.2 1.3 1.4 1.5
+
+0
+
+0.1
+
+0.2
+
+0.3
+
+0.4
+
+0.5
+
+0.6
+
+0.7
+
+0.8
+
+0.9
+
+1
+
+ωN L             
+
+> umax
+> o= 5
+> o= 10
+> o= 15 Series o= 35 Sing. o= 15 Inv. o= 15 Reference (b) ω2= 0 .637
+
+Fig. 17: Backbone curves for the two-DOF system. The reference solution (dashed black line) obtained by numerical continuation (using the package matcont [12]) is compared to ROMs using with a CNF style with increasing orders o. The different validity limits criteria are reported with horizontal dashed colour lines. Parameter values are set as ω1 = h1111 = h2111 = 1 .0. Eq. (56), and find that the maximum forcing amplitude that the system can be subjected to, associated to the radius of convergence obtained by the invariance equation criterion, is κ = 0 .0629. Since the invariance equation usually gives a lower bound, we will instead choose a value of κ = 0 .07, approximately 10% higher than the computed one. 0 0.2 0.4 0.6 0.8 1                            
+
+> 0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1
+> ρ
+> umax
+> o= 5
+> o= 10
+> o= 15 Series o= 35 Sing. o= 15 Inv. o= 15
+> (a) ω2= 1 .57 00.20.40.60.81
+> 0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1
+> ρ
+> umax
+> o= 5
+> o= 10
+> o= 15 Series o= 35 Sing. o= 15 Inv. o= 15 (b) ω2= 0 .637
+
+Fig. 18: Relation between amplitude of the normal variables ρ and maximum physical displacement ampli-tude umax for the unforced and undamped 2-DOF oscillator. The validity limits obtained by the proposed criteria are also presented, in dashed lines. Parameter values are fixed as ω1 = h1111 = h2111 = 1. For this level of forcing, κ = 0 .07 and we present the curves associated with the invariance equation criterion in Fig. 19. Visually, it can be seen that for a tolerance value of ε = 1%, the value of the convergence radius does seem to be around ρ = 0 .63, the value for the unforced system, as we have assumed in order to estimate κ.We continue by examining the singularity criterion. The results obtained for this case are given in Fig. 20. Qualitatively, they are close to the unforced case, but the effect of the excitation is revealed in the asymmetric distribution of singular points. Finally, the series criteria are also presented, in Fig. 21. 3.2 A 2-DOF system 21 
+
+As usual, Cauchy’s rule presents a better convergence than d’Alembert’s. However, the lowest radius of convergence value is the one given by the former criterion. The various radii of convergence are summarised in Table 6, and the FRCs obtained for this case are presented in Fig. 22. It can be seen that the peak of the FRCs coincides almost exactly with the predicted validity limit, which validates the proposed procedure to estimate κ. Also, although an order 15 parametrisation was computed, the ROM and FOM curves start to slightly disagree at the peak of the FRCs, indicating that the validity limit is indeed reached. All of the validity limits present a good predictive behaviour in this case, and the zone indicated by the invariance and series criteria for loss of convergence is quite narrow. 10 −5 10 −4 10 −3 10 −2 10 −1 10 0    
+
+> 0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1
+> ε
+> ρ
+> o= 5
+> o= 10
+> o= 15
+> ε= 1%
+
+Fig. 19: Evolution of the radius of convergence with the tolerance value for the 2-DOF oscillator in primary resonance using the invariance equation criterion. Parameter values are fixed as ω1 = h1111 = h2111 = 1, 
+
+ξ1 = ξ2 = 0 .05 and κ = 0 .07. −0.6 −0.4 −0.2 0 0.2 0.4 0.6      
+
+> −0.6
+> −0.4
+> −0.2
+> 0
+> 0.2
+> 0.4
+> 0.6
+> Re( z1)
+> Im( z1)
+> Sing. of H
+> ρ=ρmin
+> o= 5
+> o= 10
+> o= 15
+
+Fig. 20: Validity limit calculated by the criterion of the singularity of the homological operator for the 2-DOF oscillator in primary resonance as a function of the parametrisation order. The lines represent circles of radius equal to the minimum amplitude among points of the same order. Parameter values are fixed as ω1 = h1111 = h2111 = 1 .0, ξ1 = ξ2 = 0 .05 and κ = 0 .07. 5 10 15 20 25 30 35 
+
+> 0
+> 0.5
+> 1
+> 1.5
+> 2
+> o
+> ρ
+> uvf
+> d’Alembert Cauchy
+
+Fig. 21: Validity limit calculated by the series cri-teria for the 2-DOF oscillator in primary resonance as a function of the parametrisation order. Param-eter values are fixed as ω1 = h1111 = h2111 = 1 .0, 
+
+ξ1 = ξ2 = 0 .05 and κ = 0 .07. The cases studied in this section underline that an effective procedure can be set to derive the validity limits of the forced case from the unforced analysis. The next section considers a large system stemming from the finite element discretisation of a continuous structure, to assess the different criteria and the proposed rules in a more adverse situation. 22 3 NUMERICAL EXAMPLES Criterion Cauchy d’Alembert Singularity Invariance         
+
+> ρ0.748 0.656 0.766 0.623
+> umax 0.720 0.645 0.712 0.613
+
+Table 6: Validity limits for the 2-DOF oscillator in primary resonance. Values are given in both the amplitude of the normal coordinates and maximum physical displacement of the oscillator. Orders of expansion are 15 for the singularity and invariance equation criteria and 35 for the series criteria. The tolerance for the invariance equation is chosen as ε = 1%. Parameter values are fixed as ω1 = h1111 = h2111 = 1 .0, 
+
+ξ1 = ξ2 = 0 .05 and κ = 0 .07 0.6 0.7 0.8 0.9 1 1.1 1.2 1.3 1.4      
+
+> 0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> 0.6
+> 0.7
+> 0.8
+> Ω/ω
+> umax
+> O(z5, ε 5)
+> O(z10 , ε 10 )
+> O(z15 , ε 15 )Series o= 35 Sing. o= 15 Inv. o= 15 Reference
+
+Fig. 22: Frequency response curves for the 2-DOF oscillator in primary resonance. Different orders of parametrisation are compared with a reference solution computed by numerical continuation employing package matcont [12]. The validity limits calculated by the different proposed convergence criteria are also shown. Parameter values are fixed as ω1 = h1111 = h2111 = 1 .0, ξ1 = ξ2 = 0 .05 and κ = 0 .07. 3.3 Continuous systems: a cantilever beam discretised with finite elements In this section, we consider a cantilever beam modelled with 2D quadratic finite elements and a plane stress assumption. The beam has a length of L = 1 m and an in-plane thickness of H = 0 .02 m. Although large displacements are considered, strains are supposed to be small due to the small thickness of the beam, and a material following Saint-Venant Kirchhoff’s law, having Young’s modulus of E = 104 · 10 9 GPa, Poisson’s coefficient of ν = 0 .3 and density of ρ = 4400 kg /m3, is chosen. Such a cantilever beam has already been studied in [52] with three-dimensional elements, as well as in [17] with a beam model. Besides, the 2D model studied here has already been used in [14], and the interested reader is referred to that article for more details on the finite element formulation. The unforced and undamped response of the system is first studied. The invariant manifold correspond-ing to the first bending mode for this example presents a particular feature: a folding point is present for a moderate value of the vibration amplitude [52]. Consequently, only normal form styles of parametrisation are adequate to treat this example. Using a graph style leads to a rapid failure of the computed NNM in that case, because of the impossibility of passing over the fold. This aspect should be reflected by the calculated validity limits, and thus, differently from the previous sections, both the CNF and graph styles are investigated. The results obtained by the series criteria are shown in Fig. 23. In this example, and for structures discretised by finite elements in general, it is generally too costly to expand the parametrisation to such high orders as in the previous cases, and thus the convergence radius of the method must be extrapolated from only a few points corresponding to low-order computations. Specifically, the dashed lines in the figure correspond to curves obtained by doing a least squares fit of the values up to order o = 15, considering functions of exponential decay. Such fits are displayed only for curves for which a convergent trend was observed, mainly the Cauchy criterion ones. Besides, due to the oscillatory behaviour from one order to another, the fit is performed by considering the mean values of successive data points. The curves corresponding to a CNF style visually present an acceptable convergence, with the expo-nential extrapolation yielding sensible values for the convergence radius. For the graph style, however, convergence is much worse. As a matter of fact, for the d’Alembert criterion, the estimated convergence radii oscillate between extremely high values and values close to zero, such that the associated curves were omitted from the figure. The best result for the extrapolation procedure was associated with the reduced dynamics curve for the Cauchy criterion. Nevertheless, even though the convergence radius in ρ is small, it corresponds to large values in umax , indicating that the convergence limit has already been reached. Thus, 3.3 Continuous systems: a cantilever beam discretised with finite elements 23 
+
+the retained value of ρ for the series criteria with the graph style parametrisation was the lowest computed at order 15, corresponding to the Cauchy criterion on velocity. Note that, in that specific case, the extrapo-lation did not provide meaningful values, and the last computed point has thus been used without resorting to an extrapolation. 5 10 15 20 25 30 35        
+
+> 0
+> 0.5
+> 1
+> 1.5
+> 2
+> 2.5
+> o
+> ρ
+> uvf
+> d’Alembert Cauchy
+> (a) CNF style 510 15 20 25 30 35
+> 0
+> 0.5
+> 1
+> 1.5
+> 2
+> 2.5
+> o
+> ρ
+> uvf
+> d’Alembert Cauchy (b) Graph style
+
+Fig. 23: Validity limit calculated by the series criteria for the unforced cantilever beam as a function of the parametrisation order. For each of the criteria, the displacement, velocity and reduced dynamics power series are studied. Results obtained by extrapolation of parametrisations up to order 15 are also presented, in dashed lines. For the singularity criterion, results are presented in Fig. 24 for the CNF style. A key observation is that, unlike in the other examples, this situation yielded only a limited number of singularity points. At first, one might think that this could be an effect of the choice of the submatrix used in the calculation of the determinant of the homological operator. Specifically, vertical displacement and velocity degrees of freedom of the point on the lower side and on the tip of the beam were selected. However, a more general approach based on singular values for this example has been tested in Section C, and although this approach finds more points where the operator’s rank changes, the results in terms of validity limits are the same. This indicates that there are indeed no singularities, and that the submatrix procedure can be safely used. For graph style, it was not possible to find singularities for the homological operator. This seems sensible in some sense, as the relationship between normal coordinates and physical variables is this case is a functional one. Concerning the invariance equation criterion, the evolution of the convergence radius with the tolerance ε is depicted in Fig. 25 for the CNF style of parametrisation, with the simplification brought about by Eq. (18) in dashed line. The simplified computation yields excellent results for odd orders of parametrisations, but higher discrepancies can be verified for even orders. −0.75 −0.5 −0.25 0 0.25 0.5 0.75       
+
+> −0.75
+> −0.5
+> −0.25
+> 0
+> 0.25
+> 0.5
+> 0.75
+> Re( z1)
+> Im( z1)
+> Sing. of H
+> ρ=ρmin
+> o= 5
+> o= 10
+> o= 15
+
+Fig. 24: Validity limit calculated by the criterion of the singularity of the homological operator for the unforced cantilever beam as a function of the parametrisation order. The lines represent circles of radius equal to the minimum amplitude among points of the same order. 10 −5 10 −4 10 −3 10 −2 10 −1 10 0   
+
+> 0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> ε
+> ρ
+> o= 5
+> o= 10
+> o= 15
+
+Fig. 25: Evolution of the radius of convergence with the tolerance value for the unforced cantilever beam using the invariance equation criterion. The con-tinuous lines indicate results obtained by Eq. (11), while the dashed ones represent the simplification introduced in Eq. (18). 24 3 NUMERICAL EXAMPLES 
+
+To conclude, the obtained convergence radii are summarised in Tables 7 and 8 and visually depicted, together with the backbone curves with increasing orders, in Fig. 26. In addition to the calculated backbones, reference solutions taken from [52, 17] are also shown. The solution of [52] was obtained by a high-order parametrisation method with a 3D finite element formulation, while that presented in [17] stems from a harmonic balance calculation on a geometrically exact beam model implementing Timoshenko kinematics. Considering first the CNF style, the zone between the invariance equation and the other two criteria is quite extensive in this case. Yet, it is important to remember that the backbone only summarises information about a single displacement, and thus the relatively low value of the limit obtained by the invariance equation in this situation can indicate that in another part of the manifold the parametrisation starts to fail. Additionally, it is interesting to point out that the way the ROM solutions fail in this example is different from all of the other test cases, with a smooth departure from the full-order solution. This could be a cause for the relatively large zone of divergence predicted by the validity limits. Now, looking at the results for the graph style, the parametrisation almost immediately fails, due to a fold in the manifold of the cantilever beam. This is clearly reflected in the validity limits, which are correspondingly low and accurately indicate the region where the parametrisation breaks down.             
+
+> Criterion Cauchy d’Alembert Singularity Invariance
+> ρ1.102 1.400 0.925 0.453
+> umax 0.951 2.476 0.849 0.473
+
+Table 7: Validity limits for the unforced cantilever beam studied with complex normal form style. Values are given in both the amplitude of the normal coordinates and maximum physical displacement of the oscillator. Orders of expansion are 15 for the singularity and invariance equation criteria, and the values for the series criteria are obtained by extrapolation. The tolerance for the invariance equation is chosen as 
+
+ε = 1%.             
+
+> Criterion Cauchy d’Alembert Singularity Invariance
+> ρ0.228 --0.07
+> umax 0.243 --0.0744
+
+Table 8: Validity limits for the unforced cantilever beam studied with graph style. Values are given in both the amplitude of the normal coordinates and maximum physical displacement of the oscillator. Orders of expansion are 15 for the singularity and invariance equation criteria, and the values for the series criteria are obtained by extrapolation. The tolerance for the invariance equation is chosen as ε = 1%. After studying the system in free vibration, we consider now a case with forcing and damping. Specifi-cally, we choose a forcing that is proportional to the first bending mode, such that 
+
+Fc = κMϕϕϕB1, (38) where M denotes the mass matrix of the system and ϕϕϕB1 the modal shape (consisting of only displacements) of the first bending mode, with a mass normalisation condition. The expansion frequency for the parametri-sation is chosen as the first bending frequency: Ω = 98 .714 rad/s, and the damping is mass proportional, with a proportionality coefficient of 98 .714 /1000, corresponding to a damping ratio of ξ = 0 .0005. Only the CNF style is considered. For this case, the validity limit obtained by the invariance equation criterion for the unforced and undamped case is ρ = 0 .925. The applied forcing level is chosen once again by means of the procedure described in Section 2.6. Employing Eq. (30), we find the corresponding forcing amplitude to be approximately κ = 7 m/s 2. For this example, we only summarise the validity limits obtained by the three different criteria in Table 9. Specifically, we have computed parametrisations only up to order 10, as, due to the inclusion of the forcing and the number of degrees of freedom, going further implies important computation times. The frequency response curves for this case with parametrisation order equal to 10 and κ = 3 , 5, 7 m/s 2
+
+are given in Fig. 27, together with a graphical depiction of the validity limits and the backbone curve of the problem. In this example we do not compute a full order solution, as would be the case in a real-life application of the proposed methodology. It is known, however, from a previous study [34], that the ROM converges up to κ = 5 m/s 2, and thus the predicted value of κ = 7 m/s 2 is in line with the expected order of magnitude for this case. From the figure, it can be seen that, as was the case for the unforced scenario, the validity criteria indicate a large zone of loss of convergence for the reduced order model. Nevertheless, it is a region that does encompass the peak of the FRC for κ = 7 m/s 2.25 1 1.005 1.01 1.015 1.02 1.025 
+
+> 0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> 0.6
+> 0.7
+> 0.8
+> 0.9
+> 1
+
+ωN L          
+
+> umax
+> o= 5
+> o= 10
+> o= 15 Series o= 15 Sing. o= 15 Inv. o= 15 Ref - 3D Ref - Beam
+
+(a) CNF style 0.995 1 1.005 1.01 1.015 1.02 1.025 
+
+> 0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> 0.6
+> 0.7
+> 0.8
+> 0.9
+> 1
+
+ωN L         
+
+> umax
+> o= 5
+> o= 10
+> o= 15 Series o= 15 Inv. o= 15 Ref - 3D Ref - Beam
+
+(b) Graph style 
+
+Fig. 26: Comparison of the backbone curves given by different orders of parametrisation with two reference solutions: one obtained from a high order parametrisation applied to a 3D FE model [52] and another by numerical continuation of a geometrically exact beam model for the cantilever beam [17]. The different proposed validity criteria are shown in dashed colored lines. 
+
+Criterion Cauchy d’Alembert Singularity Invariance 
+
+ρ 0.948 1.420 0.961 0.276 
+
+umax 0.871 1.414 0.876 0.292 
+
+Table 9: Validity limits for the cantilever beam in primary resonance. Values are given in both the amplitude of the normal coordinates and maximum physical displacement of the oscillator. The criteria were calculated at an expansion order equal to 10, with the exponential extrapolation procedure used for the series criteria. The tolerance for the invariance equation is chosen as ε = 1%. 1 1.001 1.002 1.003 1.004 1.005 1.006 1.007 1.008 1.009 1.01          
+
+> 0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> 0.6
+> 0.7
+> 0.8
+> 0.9
+> Ω/ω
+> umax
+> κ= 3 m/s 2
+> κ= 5 m/s 2
+> κ= 7 m/s 2
+> Series o= 10 Sing. o= 10 Inv. o= 10 Backbone
+
+Fig. 27: Frequency response curves for the cantilever beam in primary resonance. Different orders of parametrisation and the validity limits calculated by the different proposed convergence criteria are shown. 
+
+4 Practical assessment of the criteria and guidelines for the analysis 
+
+After illustrating the application of the different validity limit criteria through several examples, this section turns to a practical comparison of their performance and provides guidance on how to employ them in routine analyses. We begin by summarizing the main characteristics observed for each criterion across the examples. The invariance equation criterion appears to be the most effective for estimating the expected conver-gence range of the approximation. It was shown to be robust, requiring no adjustments for its application to large models, while consistently yielding a coherent value for the radius of convergence. However, it was also the most time-consuming criterion to compute, and its main drawback lies in the fact that its results 26 5 CONCLUSION 
+
+depend on the choice of a tolerance value, which is not always straightforward. For the presented examples, the value ε = 10 −2 yielded generally a good approximation of the amplitude for which the approximated results depart from the reference. When a single mode is considered and the system is autonomous, it is possible to apply the simplification given by Eq. (18), which gives precise results when compared to the criterion in its full form and drastically reduces its computation time. Across all the examples presented, this criterion established a lower bound on the validity limit, though this result is contingent upon the tolerance chosen for the invariance equation error. The singularity criterion provides an upper bound for the convergence radius of the approximation and was generally accurate. However, for the case of the forced beam, only a few singularity points were found. As both the strategy of computing the determinant of a submatrix of the homological operator and tracking its singular values were tested, we conclude that this is a feature of the selected example. A more robust approach to perform this calculation may exist, but this remains an open question. The criterion should be tested in other high-dimensional systems to better evaluate its performance in adverse conditions. Considering now the series criteria, an upper bound for the validity limit is also found. For almost all of the examples, Cauchy’s criterion worked better than d’Alembert’s, and as a general rule, we would advise the use of the former. Their computation is in general fast, provided a high enough parametrisation has already been computed. Since they presuppose convergence of the power series stemming from the method, this can be limiting, especially for high-dimensional systems, but the extrapolation procedure proposed seems to yield good results and to make their use possible. Finally, for practical analyses, we suggest that even when a forced system is considered, the underlying unforced and conservative system should also be examined. This enables the computation of the backbone curve and allows one to estimate the maximum admissible forcing value using the procedure described in Section 2.6. Concerning the actual computation of the validity limit, we suggest computing the three criteria: the invariance equation provides a lower bound, while the minimum value between the singularity and series criteria can be taken as an upper bound for the convergence radius. This procedure identifies three distinct amplitude zones. When the vibration amplitude falls below the lower bound of the validity limit, the ROM may be safely applied; when it exceeds the upper bound, the ROM is almost certainly invalid. In the intermediate region, however, the decision must be made by the analyst, with appropriate validation through complementary approaches. 
+
+5 Conclusion 
+
+The direct parametrisation method for invariant manifold is an efficient reduction method for vibrating systems, which relies on a local theory. Thanks to automated arbitrary order expansions, the derived ROMs provide exact results as long as the validity limit of the expansions are not met. In this context, the aim of this contribution is to assess different criteria proposed in the literature, for the specific case of nonlinear vibrating systems. Reduction to a single NNM is also assumed for this investigation, and practical guidelines have been given for determining the convergence zone of the issuing ROMs without the need to compute full-order solutions. Different cases have been showcased with increasing complexity: conservative systems (backbone curves), forced response in primary and superharmonic resonance, from single DOF problem to finite element structures. The main outcomes can be summarised as follows. Throughout the examples, it has been found that the error in the invariance equation with a tolerance ε = 10 −2, provides an accurate lower bound. An alternative, simplified version of this criterion has been proposed, which provides a much faster way to compute the validity limit, but only for single DOF problems without forcing. It has been found that this simplified criteria on the invariance equation also gives an accurate and easy-to-use lower bound. An adaptation of the criterion proposed in [26] has been proposed for application to the DPIM framework. This singularity criterion, together with the series criteria proposed in [17], has been shown to provide an upper bound in practical examples. For the series criteria, numerical results demonstrated that extrapolations can be used quite safely from a small number of low-order computations, to infer the limit value. It has been thus proposed, in practice, to use the three criteria, and use the interval in between the provided bounds as a critical region where care about the approximation should be paid. Finally, it has been shown that the validity limit for the forced case can be derived from an analysis of the unforced problem, by using the maximum amplitude found and a simple rule that predicts the maximum forcing amplitude allowed. Examples showed that this provides a robust and accurate workout for practical analysis. To conclude, it is mentioned that more tests on a larger number of continuous systems should give a better view of the behaviour of the criteria for predicting the validity limits. It is thus advocated to use them in the numerical codes performing the parametrisation method for vibrating systems. Also, extension to the cases where more than one master mode is selected should be further investigated to see if simple and accurate criteria could also be used. 27 
+
+Acknowledgments 
+
+The authors would like to thank Olivier Thomas and Claude-Henri Lamarque, with whom numerous in-depth discussions were held on issues related to the limits of validity, whether in normal form theory or in the parametrisation method for invariant manifolds. They are gratefully acknowledged for the many discussions and ideas that have greatly contributed to our reflections. We also thank Maxime Breden, for the fruitful discussion on the effect of the normalisation of the eigenvectors on the validity limits of the parametrisation method. His aid and the time he has spent with us are greatly appreciated. 
+
+Funding 
+
+The work received no additional funding. 
+
+Conflict of interest 
+
+The authors declare that they have no conflict of interest. 
+
+Data availability statement 
+
+The codes developed and data used for the presented analyses are available upon reasonable request to the authors. 
+
+Author contributions 
+
+Conceptualisation: all authors contributed equally; Methodology: all authors contributed equally; Formal analysis and investigation: Andr´ e de F. Stabile; Software development: Andr´ e de F. Stabile, Aur´ elien Grolet; Writing - original draft preparation: Andr´ e de F. Stabile, Cyril Touz´ e; Writing - review and editing: Andr´ ede F. Stabile, Cyril Touz´ e, Aur´ elien Grolet, Alessandra Vizzaccaro; Supervision: Cyril Touz´ e, Alessandra Vizzaccaro, Aur´ elien Grolet; 
+
+References 
+
+1. van den Berg, J.B., Mireles James, J.D., Reinhardt, C.: Computing (un)stable manifolds with validated error bounds: Non-resonant and resonant spectra. Journal of Nonlinear Science 26 (4), 1055–1095 (2016). DOI 10.1007/s00332-016-9298-5. URL https://doi.org/10.1007/s00332-016-9298-5 
+
+2. Breden, M., Lessard, J.P., Mireles James, J.D.: Computation of maximal local (un)stable manifold patches by the parameterization method. Indagationes Mathematicae 27 (1), 340–367 (2016). DOI https://doi.org/10.1016/j.indag. 2015.11.001. URL https://www.sciencedirect.com/science/article/pii/S0019357715000981 
+
+3. Breunung, T., Haller, G.: Explicit backbone curves from spectral submanifolds of forced-damped nonlinear mechanical systems. Proceedings of the Royal Society A: Mathematical, Physical and Engineering Sciences 474 (2213), 20180083 (2018) 4. Cabr´ e, X., Fontich, E., de la Llave, R.: The parameterization method for invariant manifolds. I. Manifolds associated to non-resonant subspaces. Indiana Univ. Math. J. 52 (2), 283–328 (2003) 5. Cabr´ e, X., Fontich, E., de la Llave, R.: The parameterization method for invariant manifolds. II. Regularity with respect to parameters. Indiana Univ. Math. J. 52 (2), 329–360 (2003) 6. Cabr´ e, X., Fontich, E., de la Llave, R.: The parameterization method for invariant manifolds. III. Overview and applications. J. Differential Equations 218 (2), 444–515 (2005) 7. Cai, Y., Pogudin, G.: Dissipative quadratizations of polynomial ODE systems. In: Tools and Algorithms for the Construction and Analysis of Systems. TACAS 2024. Lecture Notes in Computer Science, vol 14571 (2024) 8. Carini, M., Auteri, F., Giannetti, F.: Centre manifold reduction of bifurcating flows. Journal of Fluid Mechanics 767 ,109–145 (2015) 9. Castelli, R., Lessard, J.P., Mireles James, J.D.: Parameterization of invariant manifolds for periodic orbits, I: Efficient numerics via the Floquet normal form. SIAM Journal on Applied Dynamical Systems 14 (1), 132–167 (2015). DOI 10.1137/140960207 10. Cochelin, B.: A path-following technique via an asymptotic-numerical method. Computers & Structures 53 (5), 1181– 1192 (1994). DOI https://doi.org/10.1016/0045-7949(94)90165-1. URL https://www.sciencedirect.com/science/ article/pii/0045794994901651 
+
+11. Coullet, P.H., Spiegel, E.A.: Amplitude equations for systems with competing instabilities. SIAM Journal on Applied Mathematics 43 (4), 776–821 (1983) 12. Dhooge, A., Govaerts, W., Kuznetsov, Y.A.: Matcont: a matlab package for numerical bifurcation analysis of odes. ACM SIGSAM Bulletin 38 (1), 21–22 (2004) 28 5 CONCLUSION 13. de Figueiredo Stabile, A., Touz´ e, C., Vizzaccaro, A.: Normal form analysis of nonlinear oscillator equations with automated arbitrary order expansions. Journal of Theoretical, Computational and Applied Mechanics (JTCAM) 
+
+13234 (2025). DOI https://doi.org/10.46298/jtcam.13234 14. de Figueiredo Stabile, A., Vizzaccaro, A., Salles, L., Colombo, A., Frangi, A., Touz´ e, C.: Reduced-order modelling of parameter-dependent systems with invariant manifolds: application to Hopf bifurcations in follower force problems. International Journal of Nonlinear Mechanics 177 , 105133 (2025). DOI https://doi.org/10.1016/j.ijnonlinmec.2025. 105133 15. Frangi, A., Colombo, A., Vizzaccaro, A., Touz´ e, C.: Reduced order modelling of fully coupled electro-mechanical systems through invariant manifolds with applications to microstructures. International Journal for Numerical Methods in Engineering 126 , e7641 (2025) 16. Grolet, A., Touz´ e, C., de Figueiredo Stabile, A., Thomas, O.: A harmonic balance normal form parametrisation for single mode reduction of nonlinear vibrating systems. Communications in Nonlinear Science and Numerical Simulation 
+
+submitted (2025) 17. Grolet, A., Vizzaccaro, A., Debeurre, M., Thomas, O.: High order invariant manifold model reduction for systems with non-polynomial non-linearities: geometrically exact finite element structures and validity limit. International Journal of Non-Linear Mechanics 178 , 105138 (2025). DOI 10.1016/j.ijnonlinmec.2025.105138 18. Groothedde, C.M., James, J.D.M.: Parameterization method for unstable manifolds of delay differential equations. Journal of Computational Dynamics 4(1-2), 21–70 (2017). DOI 10.3934/jcd.2017002 19. Guckenheimer, J., Holmes, P.: Nonlinear oscillations, dynamical systems and bifurcations of vector fields. Springer-Verlag, New-York (1983) 20. Guillot, L., Cochelin, B., Vergez, C.: A generic and efficient Taylor series-based continuation method using a quadratic recast of smooth nonlinear systems. International Journal for Numerical Methods in Engineering 119 (4), 261–280 (2019). DOI https://doi.org/10.1002/nme.6049 21. Haro, A., Canadell, M., Figueras, J.L., Luque, A., Mondelo, J.M.: The parameterization method for invariant manifolds. From rigorous results to effective computations. Springer, Switzerland (2016) 22. Jain, S., Haller, G.: How to compute invariant manifolds and their reduced dynamics in high-dimensional finite-element models. Nonlinear Dynamics 107 , 1417–1450 (2022) 23. J´ ez´ equel, L., Lamarque, C.H.: Analysis of non-linear dynamical systems by the normal form theory. Journal of Sound and Vibration 149 (3), 429–459 (1991) 24. Karkar, S., Cochelin, B., Vergez, C.: A high-order, purely frequency based harmonic balance formulation for continua-tion of periodic solutions: The case of non-polynomial nonlinearities. Journal of Sound and Vibration 332 (4), 968–977 (2013). DOI https://doi.org/10.1016/j.jsv.2012.09.033 25. Kasz´ as, B., Haller, G.: Globalizing manifold-based reduced models for equations and data. Nature Communications 
+
+16 , 5722 (2025) 26. Lamarque, C.H., Touz´ e, C., Thomas, O.: An upper bound for validity limits of asymptotic analytical approaches based on normal form theory. Nonlinear Dynamics 70 (3), 1931–1949 (2012) 27. Leung, A., Zhang, Q.: Normal form computation without central manifold reduction. Journal of Sound and Vibration 
+
+266 (2), 261–279 (2003) 28. Li, M., Haller, G.: Nonlinear analysis of forced mechanical systems with internal resonance using spectral submanifolds – part II: Bifurcation and quasi-periodic response. Nonlinear Dynamics 110 , 1045–1080 (2022) 29. Li, M., Jain, S., Haller, G.: Nonlinear analysis of forced mechanical systems with internal resonance using spectral submanifolds – part I: Periodic response and forced response curve. Nonlinear Dynamics 110 , 1005–1043 (2022) 30. Li, M., Wang, L.: Parametric model reduction for a cantilevered pipe conveying fluid via parameter-dependent center and unstable manifolds. International Journal of Non-Linear Mechanics 160 , 104629 (2024). DOI https://doi.org/10. 1016/j.ijnonlinmec.2023.104629 31. Martin, A., Opreni, A., Vizzaccaro, A., Debeurre, M., Salles, L., Frangi, A., Thomas, O., Touz´ e, C.: Reduced order modeling of geometrically nonlinear rotating structures using the direct parametrisation of invariant manifolds. Journal of Theoretical, Computational and Applied Mechanics 10430 (2023). DOI https://dx.doi.org/10.46298/jtcam.10430 32. Nayfeh, A.H., Mook, D.T.: Nonlinear oscillations. John Wiley & Sons, New-York (1979) 33. Opreni, A., Vizzaccaro, A., Frangi, A., Touz´ e, C.: Model order reduction based on direct normal form: application to large finite element MEMS structures featuring internal resonance. Nonlinear Dynamics 105 , 1237–1272 (2021) 34. Opreni, A., Vizzaccaro, A., Touz´ e, C., Frangi, A.: High order direct parametrisation of invariant manifolds for model order reduction of finite element structures: application to generic forcing terms and parametrically excited systems. Nonlinear Dynamics 111 , 5401–5447 (2023) 35. Pinho, F.A.X.C., Amabili, M., Prado, Z.J.G.N.d., da Silva, F.M.A.: Nonlinear forced vibration analysis of doubly curved shells via the parameterization method for invariant manifold. Nonlinear Dynamics 112 , 20677–20701 (2024). DOI 10.1007/s11071-024-10135-7 36. Ponsioen, S., Jain, S., Haller, G.: Model reduction to spectral submanifolds and forced-response calculation in high-dimensional mechanical systems. Journal of Sound and Vibration 488 , 115640 (2020) 37. Ponsioen, S., Pedergnana, T., Haller, G.: Automated computation of autonomous spectral submanifolds for nonlinear modal analysis. Journal of Sound and Vibration 420 , 269 – 295 (2018) 38. Reinhardt, C., Mireles James, J.: Fourier-Taylor parameterization of unstable manifolds for parabolic partial differential equations: Formalism, implementation and rigorous validation. Indagationes Mathematicae 30 (1), 39–80 (2019). DOI https://doi.org/10.1016/j.indag.2018.08.003 39. Roberts, A.J.: The utility of an invariant manifold description of the evolution of a dynamical system. SIAM Journal on Mathematical Analysis 20 (6), 1447–1458 (1989) 40. Roberts, A.J.: The invariant manifold of beam deformations. part 1: the simple circular rod. Journal of Elasticity 30 ,1–54 (1993) 41. Rudin, W.: Principles of mathematical analysis, 3rd edn. McGraw-Hill, United States (1976) 42. Salas, A.H., H., J.E.C.: Exact solution to Duffing equation and the pendulum equation. Applied Mathematical Sciences 
+
+8(176), 8781–8789 (2014) 43. Shaw, S., Pierre, C., Pesheck, E.: Modal analysis-based reduced-order models for nonlinear structures: An invariant manifold approach. The Shock and Vibration Digest 31 (1), 3–16 (1999) 44. Shaw, S.W., Pierre, C.: Non-linear normal modes and invariant manifolds. Journal of Sound and Vibration 150 (1), 170–173 (1991) 29 45. Shaw, S.W., Pierre, C.: Normal modes for non-linear vibratory systems. Journal of Sound and Vibration 164 (1), 85–124 (1993) 46. Touz´ e, C., Amabili, M.: Non-linear normal modes for damped geometrically non-linear systems: application to reduced-order modeling of harmonically forced structures. Journal of Sound and Vibration 298 (4-5), 958–981 (2006) 47. Touz´ e, C., Thomas, O., Chaigne, A.: Hardening/softening behaviour in non-linear oscillations of structural systems using non-linear normal modes. Journal of Sound and Vibration 273 (1-2), 77–101 (2004) 48. Touz´ e, C., Vizzaccaro, A.: Nonlinear normal modes as invariant manifolds for model order reduction. In: C. Touz´ e, A. Frangi (eds.) Model Order Reduction for Design, Analysis and Control of Nonlinear Vibratory Systems, pp. 59–116. Springer Series CISM courses and lectures, vol. 614, New York, NY (2024) 49. Touz´ e, C., Vizzaccaro, A., Thomas, O.: Model order reduction methods for geometrically nonlinear structures: a review of nonlinear techniques. Nonlinear Dynamics 105 , 1141–1190 (2021) 50. van den Berg, J.B., Hetebrij, W., Rink, B.: The parameterization method for center manifolds. Journal of Differential Equations 269 (3), 2132–2184 (2020). DOI https://doi.org/10.1016/j.jde.2020.01.033 51. Vizzaccaro, A., Gobat, G., Frangi, A., Touz´ e, C.: Direct parametrisation of invariant manifolds for non-autonomous forced systems including superharmonic resonances. Nonlinear Dynamics 112 , 6255–6290 (2024) 52. Vizzaccaro, A., Opreni, A., Salles, L., Frangi, A., Touz´ e, C.: High order direct parametrisation of invariant manifolds for model order reduction of finite element structures: application to large amplitude vibrations and uncovering of a folding point. Nonlinear Dynamics 110 , 525–571 (2022) 
+
+A Simplification of the invariance equation criterion 
+
+In this appendix, we give further details on the approximation of the numerator of Eq. (11), which is related to the error in the invariance equation E defined in Eq. (16). This quantity can be generically decomposed into its monomial components by 
+
+E =
+
+> ∞
+
+X
+
+> p=1
+> mp
+
+X
+
+> k=1
+
+E(p,k )zα(p,k ), (39) where no truncation of the power series has been performed. In [51], it is shown that, for a fixed monomial, the term E(p,k )
+
+can be written as 
+
+E(p,k ) =
+
+
+
+σ(p,k )B − A
+
+
+
+W(p,k ) +
+
+> d
+
+X
+
+> s=1
+
+BY sf (p,k ) 
+
+> s
+
+− R(p,k ). (40) This expression also corresponds to Eq. (4), which is rewritten in an augmented formulation to deal with the singular cases corresponding to resonances. Let us now consider a parametrisation that has been computed up to order o. This means that ∀p ≤ o, E(p,k ) = 0,since W(p,k ) and f (p,k ) are obtained as solutions of Eq. (4). Furthermore, in this situation, all of the nonlinear mapping and reduced dynamics coefficients for orders higher than o vanish. In particular, at order o + 1, one simply obtains: 
+
+E(o+1 ,k ) = R(o+1 ,k ). (41) Therefore, by approximating E by its leading-order component, one obtains: 
+
+E ≈
+
+> mo+1
+
+X
+
+> k=1
+
+E(o+1 ,k )zα(o+1 ,k ) =
+
+> mo+1
+
+X
+
+> k=1
+
+R(o+1 ,k )zα(o+1 ,k ). (42) In particular, for the single master mode case, this expression can be simplified by employing the polar representation of the normal variables, yielding for the norm of the invariance error 
+
+∥E∥ ≈ 
+
+> mo+1
+
+X
+
+> k=1
+
+R(o+1 ,k )ei(α(p,k )1−α(p,k )2)θ  ρ
+
+2
+
+(o+1) 
+
+. (43) This equation approximates the numerator of Eq. (11), and requires much fewer computations. It could then already be used to simplify the criterion, instead of Eq. (17). It still depends, however, on the phase θ of the normal coordinates, and does not yield a direct analytic expression for the validity limit. To get rid of the angular dependence on θ, and obtain an easy and rapid formulation, a first possibility is to compute Eq. (43) for θ = 0. Alternatively, it is possible to consider the exponential functions in Eq. (43) as a projection basis for the vector E, with R(o+1 ,k ) its coordinates in this base. Thus, introducing the residual vector R(p) at order p, which gathers the residuals for all of the considered monomials: 
+
+R(p) =
+
+h
+
+(R(p,k 1))T (R(p,k 2))T . . . (R(p,m p−1) )T (R(p,m p))T iT
+
+, (44) one can use this idea to compute an approximation of the norm of the invariance equation error as simply the norm of 
+
+R(o+1) , which reads: 
+
+∥E∥ ≈ R(o+1)  ρ
+
+2
+
+(o+1) 
+
+. (45) This last equation then immediately yields Eq. (18) after substitution into Eq. (11). Note that the idea of using only the first neglected term of the series has already been used in the context of the Asymptotic-Numerical Method (ANM), see 
+
+e.g. [10], leading to simplified formulations for determining the convergence range. Also, using the exponential functions as a projection basis is one of the core concepts of the Harmonic Balance Method, which inspired the proposed approximation. In a context more related to the parametrisation method, the same approach has also been used in [16], where a very similar computation as the one used here with Eq. (18), is also proposed. More specifically, in [16], a direct link between the Harmonic Balance and the use of complex normal form in the parametrisation method, is proposed, hence yielding a different style of parametrisation, which has been named as Harmonic Balance Normal Form (HBNF) style. 30 B COMPUTATION OF THE MAXIMUM VALUE OF THE FORCING AMPLITUDE FOR PRIMARY RESONANCE 
+
+B Computation of the maximum value of the forcing amplitude for primary resonance 
+
+In this appendix, the relation between the amplitude of the forcing and of the normal variables for a primary resonance scenario is compared, in order to estimate a priori the maximum forcing that can be employed for a non-autonomous system. Given a system in primary resonance subjected to the parametrisation method with CNF style and reduced to a single master mode, its reduced dynamics can be written generically as [13] ˙z1 = f1z1 + f2z21 z2 + f3z3, (46) up to order 3 on the autonomous variables and order 1 on the non-autonomous ones, with the equation for z2 being its complex conjugate. We decompose the coefficients into real and imaginary parts as fi = f Ri + if Ii , and in particular, we note that f3 is always linear with respect to the forcing amplitude κ, and we write it as f3 = ( cR 
+
+> 3
+
++ ic I
+
+> 3
+
+)κ. Then, introducing the polar representation of the normal variables, given by Eqs. (12) and (13), separating real and imaginary parts and introducing the phase difference ϕ defined by Eq. (14) in order to render the equations autonomous, we find the following dynamical system: ˙ρ = f R 
+
+> 1
+
+ρ + f R
+
+> 2
+
+ρ3
+
+4 + 2 f R 
+
+> 3
+
+cos ϕ + 2 f I 
+
+> 3
+
+sin ϕ (47a) 
+
+ρ ˙ϕ = ( f I 
+
+> 1
+
+− Ω)ρ + f I
+
+> 2
+
+ρ3
+
+4 + 2 f I 
+
+> 3
+
+cos ϕ − 2f R 
+
+> 3
+
+sin ϕ. (47b) Periodic orbits of the original system correspond to fixed points of Eq. (47b). Then, if we equal the right-hand sides to zero and assume for the moment that f R
+
+> 3
+
+̸ = 0, we can isolate cos ϕ from Eq. (47a): cos ϕ = − f R 
+
+> 1
+
+ρ + f R 
+
+> 2
+> ρ3
+> 4
+
++ 2 f I 
+
+> 3
+
+sin ϕ
+
+2f R
+
+> 3
+
+. (48) Substituting this expression into Eq. (47b) and defining α = f I
+
+> 3
+
+/f R 
+
+> 3
+
+, we obtain, after algebraic manipulations sin ϕ = (f I 
+
+> 1
+
+− αf R 
+
+> 1
+
+− Ω)ρ + ( f I 
+
+> 2
+
+− αf R 
+
+> 2
+
+) ρ3
+
+> 4
+
+2f R 
+
+> 3
+
+(1 + α2) , (49) which can be substituted back into Eq. (48), yielding cos ϕ = − (f R 
+
+> 1
+
++ αf I 
+
+> 1
+
+− αΩ )ρ + ( f R 
+
+> 2
+
++ αf I 
+
+> 2
+
+) ρ3
+
+> 4
+
+2f R 
+
+> 3
+
+(1 + α2) . (50) These two expressions can be substituted into the identity sin 2 ϕ + cos 2 ϕ = 1, we get 
+
+
+
+(f I 
+
+> 1
+
+− αf R 
+
+> 1
+
+− Ω)ρ + ( f I 
+
+> 2
+
+− αf R 
+
+> 2
+
+) ρ3
+
+4
+
+2
+
++
+
+
+
+(f R 
+
+> 1
+
++ αf I 
+
+> 1
+
+− αΩ )ρ + ( f R 
+
+> 2
+
++ αf I 
+
+> 2
+
+) ρ3
+
+4
+
+2
+
+= 4( f R 
+
+> 3
+
+)2(1 + α2)2. (51) By expanding the expressions on the left-hand side and passing the right-hand side to the left, it is possible to get a quadratic equation on Ω of the form 
+
+aΩ 2 + bΩ + c = 0 , (52) with coefficients defined by 
+
+a = ρ2, (53a) 
+
+b = −2f I 
+
+> 1
+
+ρ2 − f I
+
+> 2
+
+ρ4
+
+2 , (53b) 
+
+c = |f1|2ρ2 + ( f I 
+
+> 1
+
+f I 
+
+> 2
+
++ f R 
+
+> 1
+
+f R 
+
+> 2
+
+) ρ4
+
+2 + |f2|2 ρ6
+
+16 − 4( f R 
+
+> 3
+
+)2(1 + α2). (53c) The peak of the FRC is defined when this equation has a single solution, and thus we require its discriminant to be null, 
+
+i.e. b2 − 4ac = 0. This implies, by taking κ out of f3 and manipulating the expression: 16( cR 
+
+> 3
+
+)2(1 + α2)κ2 = 4( f R 
+
+> 1
+
+)2ρ2 + 2 f R 
+
+> 1
+
+f R 
+
+> 2
+
+ρ4 + ( f R 
+
+> 2
+
+)2 ρ6
+
+4 . (54) Therefore, we find the final expression for κ as 
+
+κ = 2f R 
+
+> 1
+
+ρ + f R
+
+> 2
+> ρ3
+> 2
+
+4cR
+
+> 3
+
+√1 + α2 . (55) Although the above expression was deduced for the case f R
+
+> 3
+
+̸ = 0, an analogous one can be computed by considering instead 
+
+f I
+
+> 3
+
+̸ = 0 (and one of these two conditions will always be verified). In this situation, introducing β = α−1 = f R 
+
+> 3
+
+/f I 
+
+> 3
+
+, the final expression for the forcing amplitude is 
+
+κ = 2f R 
+
+> 1
+
+ρ + f R
+
+> 2
+> ρ3
+> 2
+
+4cI
+
+> 3
+
+p1 + β2 . (56) In particular, this expression specializes to the one given for the Duffing oscillator in [13]. 31 
+
+C Comparison of different strategies for the singularity criterion 
+
+When employing the singularity criterion for non-square homological operators, as described in Section 2.3, a strategy needs to be chosen in order to determine the points where the operator’s rank gets smaller. For the examples presented in the main text, we have chosen to calculate the determinant of a relevant submatrix and determine its zeroes by means of a root-finding algorithm. Another approach consists of considering the complete operator’s non-null singular values, and, by means of a minimization approach, find the points where the smallest of them becomes zero. In this appendix, we compare these two approaches for the cantilever beam presented in Section 3.3, both without damping and forcing and in primary resonance. The points where the operator’s rank becomes smaller following the two approaches are presented in Fig. C1. We remark that the points computed following the two approaches are not exactly the same, but are located at the same zones and correspond to the same values of convergence radius. This, thus, validates the submatrix approach for this example. A situation where the SVD strategy could be preferred would be when no representative degrees of freedom (such as the displacement at the tip of the beam for this case) are readily available. −0.75 −0.5 −0.25 0 0.25 0.5 0.75          
+
+> −0.75
+> −0.5
+> −0.25
+> 0
+> 0.25
+> 0.5
+> 0.75
+> Re( z1)
+> Im( z1)
+> Sing. of H- Submatrix Sing. of H- SVD
+> ρ=ρmin
+> o= 5
+> o= 10
+> o= 15
+
+(a) Undamped and unforced −0.75 −0.5 −0.25 0 0.25 0.5 0.75          
+
+> −0.75
+> −0.5
+> −0.25
+> 0
+> 0.25
+> 0.5
+> 0.75
+> Re( z1)
+> Im( z1)
+> Sing. of H- Submatrix Sing. of H- SVD
+> ρ=ρmin
+> o= 5
+> o= 10
+
+(b) Primary resonance - κ = 7 m/s 2
+
+Fig. C1: Validity limits calculated by the criterion of the singularity of the homological operator for the cantilever beam as a function of the parametrisation order. We compare the submatrix and SVD approaches. The lines represent circles of radius equal to the minimum amplitude among points of the same order.
