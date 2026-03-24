@@ -1,0 +1,563 @@
+Title: Koopman Meets Discrete-Time Control Barrier Functions: A Linear Model Predictive Control Framework
+
+URL Source: https://arxiv.org/pdf/2603.21070v1
+
+Published Time: Tue, 24 Mar 2026 01:06:16 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+> 1
+
+# Koopman Meets Discrete-Time Control Barrier Functions: A Linear Model Predictive Control Framework 
+
+Shuo Liu 1,∗, Liang Wu 2,∗, Dawei Zhang 1, Jan Drgona 2 and Calin. A. Belta 3
+
+Abstract —This paper proposes a Koopman-based linear model predictive control (LMPC) framework for safety-critical control of nonlinear discrete-time systems. Existing MPC formulations based on discrete-time control barrier functions (DCBFs) enforce safety through barrier constraints but typically result in compu-tationally demanding nonlinear programming. To address this challenge, we construct a DCBF-augmented dynamical system and employ Koopman operator theory to lift the nonlinear dynamics into a higher-dimensional space where both the system dynamics and the barrier function admit a linear predictor representation. This enables the transformation of the nonlinear safety-constrained MPC problem into a quadratic program (QP). To improve feasibility while preserving safety, a relaxation mechanism with slack variables is introduced for the barrier constraints. The resulting approach combines the modeling capa-bility of Koopman operators with the computational efficiency of QP. Numerical simulations on a navigation task for a robot with nonlinear dynamics demonstrate that the proposed framework achieves safe trajectory generation and efficient real-time control. 
+
+I. I NTRODUCTION 
+
+Ensuring safety is a fundamental requirement in many autonomous systems such as autonomous cars, robots, and aerial vehicles. These systems must operate in complex envi-ronments while satisfying safety requirements such as collision avoidance and input limits. Control Barrier Functions (CBFs) [1], [2] have emerged as an effective tool for enforcing safety requirements in dynamical systems. By constructing a barrier function whose superlevel set defines the safe region, CBFs guarantee forward invariance of the safe set by imposing affine constraints on the control input. Moreover, stabilization and safety can be addressed simultaneously by combining CBFs with Control Lyapunov Functions (CLFs) through quadratic programs (QPs). Extensions of this framework have been de-veloped to handle high-relative-degree constraints and adaptive control scenarios [3]–[7]. For discrete-time systems, discrete-time CBFs (DCBFs) were introduced in [8]. The aforementioned approaches are, in general, shortsighted and aggressive due to the lack of predicting ahead. Model predictive control (MPC) with DCBFs [9] addresses safety in                 
+
+> This work was supported in part by the NSF under grant IIS-2024606 at Boston University and by a Brendan Iribe endowed professorship at the University of Maryland.
+> 1S. Liu and D. Zhang are with the Department of Mechanical Engineering, Boston University, Brookline, MA, USA
+
+{liushuo, dwzhang }@bu.edu  
+
+> 2L. Wu and J. Drgona are with the Department of Civil and Systems En-gineering, Johns Hopkins University, Baltimore, MD, USA
+
+{wliang14, jdrgona1 }@jh.edu  
+
+> 3C. Belta is with the Department of Electrical and Computer Engineering and with the Department of Computer Science, University of Maryland, College Park, MD, USA
+
+cbelta@umd.edu 
+
+> ∗These authors contributed equally to this work.
+
+the discrete-time domain and produces smooth control actions by incorporating future state information over a receding horizon. However, the computational cost grows significantly with the horizon length, as the resulting optimization is typically nonlinear and nonconvex. To improve efficiency and handle high relative-degree constraints, discrete-time high-order CBFs (DHOCBFs) were introduced within an iterative MPC framework [10]. However, the framework still requires successive linearizations of the nonlinear dynamics and CBF constraints, and the convergence of the resulting iterations is not always guaranteed. An alternative approach is provided by the Koopman op-erator framework [11], [12], which represents nonlinear dy-namics as linear systems in a lifted state space. Data-driven methods such as Dynamic Mode Decomposition (DMD) and extended DMD (EDMD) enable efficient finite-dimensional approximations of the Koopman operator [13], [14]. Recently, Koopman-based methods have also been explored in CBF-based safety control. For example, [15] leverages Koopman operators to propagate nonlinear dynamics for efficient safety set computation, [16] learns Koopman-based dynamics and corresponding CBFs for unknown nonlinear systems using neural networks, and [17] develops a Koopman-based identifi-cation scheme with fixed-time convergence for safe control of uncertain nonlinear systems. Despite these advances, existing Koopman-CBF approaches do not incorporate prediction over a receding horizon. Integrating Koopman models with MPC enables such prediction capability [18]. However, to maintain convexity in the resulting optimization problem, the CBF constraints still require additional linearization. In this paper, we propose a Koopman-based MPC-DCBF framework that enables computationally efficient safety-critical control for nonlinear systems. To the best of our knowledge, this work is the first to integrate Koopman-based modeling, MPC prediction, and CBF safety constraints within a unified MPC framework. In particular, the contributions are as follows:  
+
+> •
+
+We propose a Koopman-based MPC-DCBF framework for safety-critical control of nonlinear systems by lifting a DCBF-augmented dynamical system into a higher-dimensional linear predictor representation, leading to a linear MPC formulation that can be efficiently solved as a convex quadratic program.  
+
+> •
+
+We introduce a relaxation mechanism with slack variables for the DCBF constraints, which preserves safety guar-antees while improving feasibility and maintaining the quadratic programming structure of the MPC problem.  
+
+> •
+
+Numerical simulations on a nonlinear mobile robot nav-igation task demonstrate that the proposed approach achieves safe trajectory generation while significantly 
+
+> arXiv:2603.21070v1 [eess.SY] 22 Mar 2026 2
+
+reducing computational cost compared with existing NMPC-DCBF and iterative MPC-DCBF methods. The remainder of the article is organized as follows. In Sec. II, we provide definitions and preliminaries. We formulate the problem and outline our approach in Sec. III. The proposed Koopman-based MPC-DCBF framework is introduced in Sec. IV followed by simulations in Sec. V. We conclude the paper and discuss directions for future work in Sec. VI. II. P RELIMINARIES 
+
+A. Koopman Operator 
+
+The authors of [19], [20] introduced an operator-theoretic framework for nonlinear dynamical systems. In particular, for the uncontrolled discrete-time system xt+1 = f (xt),Koopman showed that the evolution of observable functions 
+
+ψ(x) in a Hilbert space can be described by an infinite-dimensional linear operator K defined as 
+
+Kψ(xt) := ψ(f (xt)) . (1) Since Koopman operator theory was originally developed for autonomous systems, several approaches (see [18], [21], [22]) have been proposed to extend it to controlled systems 
+
+xt+1 = f (xt, ut), (2) where xt ∈ X ⊂ Rn is the system state at time step t ∈ N,
+
+ut ∈ U ⊂ Rq is the control input, and f : Rn × Rq → Rn
+
+denotes the system dynamics. To generalize the Koopman op-erator to (2), we adopt the scheme from [18], which introduces an extended state vector 
+
+ξ =
+
+xu
+
+
+
+, (3) where u := {uk}∞ 
+
+> k=0
+
+∈ ℓ(U), with uk ∈ U denoting the k-th element of the control input sequence, and ℓ(U) representing the space of all control input sequences. The dynamics of the extended state ξ are described as 
+
+fξ(ξ) = 
+
+f (x, u0)
+
+Su
+
+
+
+, (4) where S denotes the left shift operator defined by (Su)k := 
+
+uk+1 . The Koopman operator associated with the dynamics of the extended state can then be defined on the space of observables ϕ(ξ) as 
+
+Kϕ(ξ) := ϕ (fξ(ξ)) . (5) The infinite-dimensional Koopman operator must be approxi-mated in practice by a finite-dimensional representation. Sev-eral approaches have been proposed to obtain such approxima-tions (see, e.g., [14], [18], [21]), among which the data-driven Extended Dynamic Mode Decomposition (EDMD) is widely used. In EDMD, the set of observables is constructed through a “lifted” mapping 
+
+ϕ(x, u) = 
+
+ψ(x)
+
+u0
+
+
+
+, (6) where ψ(x) := ψ1(x), · · · , ψ nψ (x)⊤, nψ is the designed number of observables (with nψ ≫ n), and u0 denotes the first element of the sequence u.
+
+B. Extended Dynamic Mode Decomposition 
+
+In EDMD, the nonlinear observables ϕ(x, u) are expanded using a predefined set of basis functions, such as the Radial Basis Functions used in [18]. The Koopman operator is then identified via an optimization procedure. Specifically, the identification of the approximate Koopman operator reduces to a least-squares problem, assuming that the sampled data 
+
+{(xj , uj ), (xj
+
+> +
+
+, uj
+
+> +
+
+)}Nd 
+
+> j=1
+
+are collected according to the update mapping xj
+
+> +
+
+uj
+
+> +
+
+
+
+=
+
+f (xj , uj
+
+> 0
+
+)
+
+Suj
+
+
+
+, (7) where the subscript + denotes the value at the next time step. The approximate Koopman operator A is then obtained by solving 
+
+J(A) = min 
+
+> A
+> Nd
+
+X
+
+> j=1
+
+∥ϕ(xj
+
+> +
+
+, uj
+
+> +
+
+) − A ϕ(xj , uj )∥2. (8) Since future control inputs do not need to be predicted, the last 
+
+q rows of A can be removed. Let ¯A denote the remaining part of A after removing the rows associated with the future control input. The matrix ¯A can then be decomposed as ¯A = [ A B ],where A ∈ Rnψ ×nψ and B ∈ Rnψ ×q . The problem (8) can be reduced to 
+
+J(A, B ) = min 
+
+> A,B Nd
+
+X
+
+> j=1
+
+∥ψ(xj
+
+> +
+
+) − Aψ (xj ) − Buj
+
+> 0
+
+∥2. (9) We finally obtain the identified linear predictor model in the “lifted” space as 
+
+ψk+1 = Aψ k + Buk, (10) where ψk := ψ(xk) ∈ Rnψ denotes the lifted state. Addition-ally, the output matrix C ∈ Rn×nψ is obtained as the best projection of x onto the span of ψ in a least-squares sense, i.e., as the solution to 
+
+J(C) = min 
+
+> CNd
+
+X
+
+> j=1
+
+∥xj − Cψ (xj )∥2. (11) At the end, a linear model for x can be formulated using 
+
+xk = Cψ k. (12) 
+
+Remark 1. As [18] claims, if the designed lifted mapping 
+
+ψ(x) contains the state x after the re-ordering 
+
+ψ(x) ← [x⊤, ψ (x)] ⊤, (13) 
+
+then the solution to (11) is C = [ I, 0] .C. Discrete-Time Control Barrier Functions (DCBFs) 
+
+We consider a discrete-time control system (2) where func-tion f : Rn × Rq → Rn is assumed to be locally Lipschitz continuous. Safety is defined in terms of forward invariance of a set C. Specifically, system (2) is considered safe if, for any initial condition x0 ∈ C , the state satisfies xt ∈ C for all t ∈ N. We define C as the superlevel set of a continuous function h : Rn → R:
+
+C := {x ∈ Rn : h(x) ≥ 0}. (14) 3
+
+Definition 1 (DCBF [23]) . Let C be defined by (14) . A continuous function h : Rn → R is a Discrete-time Control Barrier Function (DCBF) for system (2) if there exist class κ
+
+function α satisfying α(r) < r for all r > 0 such that 
+
+∆h(xt, ut) ≥ − α(h(xt)) , ∀xt ∈ C . (15) 
+
+where ∆h(xt, ut) = h(xt+1 , ut) − h(xt), and r is the argument of α.
+
+Theorem 1 (Safety Guarantee [23]) . Given a DCBF h(x) from Def. 1 with the corresponding set C defined by (14) , if x0 ∈ C 
+
+then any Lipschitz controller ut that satisfies the constraint in (15) , ∀t ≥ 0 renders C forward invariant for system (2) ,
+
+i.e., xt ∈ C , ∀t ≥ 0.
+
+We can simply define a DCBF h(x) in (15) satisfying 
+
+∆h(xt, ut) ≥ − γh (xt). (16) where α(·) is defined linear and 0 < γ ≤ 1. Rewrite (16), we have h(xt+1 , ut) ≥ (1 − γ)h(xt). This shows the lower bound of h decreases exponentially with the rate 1 − γ, , and the DCBF turns into the discrete-time exponential CBF [8]. III. PROBLEM FORMULATION AND APPROACH Our objective is to design a closed-loop control strategy for system (2) over the time interval [0 , T ] that minimizes the deviation from a reference state while satisfying safety requirements and state and input constraints. 
+
+Safety Requirement: System (2) should always satisfy a safety requirement of the form: 
+
+h(xt) ≥ 0, xt ∈ Rn, 0 ≤ t ≤ T, (17) where h : Rn → R.
+
+Control and State Limitation Requirements: The con-troller ut and state xt must satisfy the state and input constraints xt ∈ X ⊂ Rn, ut ∈ U ⊂ Rq for 0 ≤ t ≤ T. 
+
+Objective: We consider the following cost: 
+
+J(ut+k, xt+k) = 
+
+> N
+
+X
+
+> k=0
+
+(xt+k − xe)⊤(xt+k − xe)+  
+
+> N−1
+
+X
+
+> k=0
+
+u⊤
+
+> t+k
+
+ut+k,
+
+(18) over a receding horizon N < T , where xt+k and ut+k denote the predicted state and input at time t + k generated at the current time t, with 0 ≤ t ≤ T . We define xt+0 = xt and 
+
+ut+0 = ut, and denote the reference state by xe.A control policy is said to be feasible if all constraints enforcing the aforementioned requirements are mutually non-conflicting for all 0 ≤ t ≤ T . In this paper, we consider the following problem: 
+
+Problem 1. Find a feasible control policy for system (2) such that the safety requirement, control and state limitations are satisfied, and the cost (18) is minimized. 
+
+To enforce safety, the authors of [9] incorporated the DCBF constraint 
+
+h(xt+k+1 , ut+k) ≥ ωt+k(1 − γ)h(xt+k), 0 < γ ≤ 1 (19) into the MPC formulation, where ωt+k ≥ 0 is a relaxation variable introduced to improve both feasibility and safety. In addition, the system dynamics in (2) and the state and input constraints are included as constraints in the MPC problem to enforce additional requirements. However, since both (2) and (19) are generally nonlinear, the resulting optimization prob-lem becomes nonconvex. This approach, commonly referred to as NMPC-DCBF, may lead to high computational cost, particularly when long prediction horizons are considered. To transform the optimization problem into a convex one, the authors of [10] linearize both the system dynamics (2) and the DCBF constraint (19) as linear constraints within an MPC framework. The resulting linear MPC problem is solved iteratively at each time step to reduce the linearization error. However, the convergence of this iterative procedure is not guaranteed. To address this issue, we propose a Koopman-based MPC-DCBF framework to construct a linear MPC formulation without requiring iterative linearization. 
+
+Approach: The key idea of this paper is to transform the nonlinear safety-constrained MPC problem into a linear MPC formulation using a Koopman-based lifted representa-tion. First, we augment the original system dynamics with the barrier function to construct a DCBF-augmented dynamical system that explicitly incorporates the safety constraint into the system state. Second, the augmented nonlinear system is lifted into a higher-dimensional space through the Koopman operator framework, where the lifted dynamics can be approximated by a linear predictor identified from data. This lifted representa-tion enables both the system dynamics and the barrier function to admit linear expressions in the lifted state. To improve feasibility while preserving safety guarantees, a relaxation mechanism is introduced for the linearized DCBF constraints. Finally, the resulting lifted linear model is integrated into an MPC formulation together with linearized DCBF constraints, which leads to a linear MPC problem that can be formulated as a convex quadratic program and solved efficiently at each control step. IV. K OOPMAN -BASED MPC-DCBF FRAMEWORK 
+
+In this section, we present the proposed Koopman-based MPC-DCBF framework, which enables the construction of a convex MPC problem for safety-critical systems. The frame-work consists of three main steps: constructing a DCBF-augmented dynamical system, lifting it to a higher-dimensional linear system via Koopman identification, and integrating the resulting lifted model into an MPC formulation. 
+
+A. DCBF-augmented Dynamic System 
+
+If only lifting the system (2) to a higher and linear dimension, the Problem 1 usually can not be transformed into a QP because of the existence of the nonlinear and possibly nonconvex safety constraint (17). Even if h is ℓ2-norm DCBF, applying the DCBF constraint (17) to MPC results in a quadratically constrained QP (QCQP), which is computationally heavier than QP in practice. Moreover, solving a QP not only has the same O(n3) time complexity as solving a linear system of equations in theory [24] but also 4
+
+offers data-independent execution time certificates [25], [26], which is critical for real-time control applications. To handle the general nonconvex DCBF constraint while maintaining computational efficiency, we incorporate the DCBF h(x) as an additional state variable. Consider the discrete-time system (2), where h(x) denotes a DCBF en-coding the safety constraint. The augmented state is defined as 
+
+¯xt := 
+
+ xt
+
+h(xt)
+
+
+
+∈ Rn+1 , (20) which is governed by the following DCBF-augmented dy-namic system 
+
+¯xt+1 = ¯f (¯ xt, ut) := 
+
+ f (xt, ut)
+
+h(f (xt, ut)) 
+
+
+
+. (21) Our idea is to apply the Koopman operator to lift the DCBF-augmented dynamical system (21) into a linear system in a higher-dimensional space. This lifted representation enables both the system dynamics and the DCBF constraint to be expressed linearly in the lifted space, allowing the resulting MPC formulation to be cast as a QP. 
+
+B. Koopman Identification via Least Squares 
+
+To obtain a linear representation of the nonlinear DCBF-augmented system (21), we employ the Koopman operator framework (EDMD in Sec. II-B). The Koopman operator lifts the nonlinear system into a higher-dimensional space of observables where the dynamics can be approximated linearly. Let ψ(¯ x) denote a vector of observable functions of the augmented state ¯x. The lifted state is defined as 
+
+ψt := ψ(¯ xt) ∈ Rnψ , (22) where nψ is the dimension of the lifted space. Under the Koopman framework, the dynamics of the lifted state can be approximated by a linear system 
+
+ψt+1 = Aψ t + But, (23) where A ∈ Rnψ ×nψ and B ∈ Rnψ ×q are constant matrices to be identified. To compute A and B, we collect data samples 
+
+{(¯ xj , uj , ¯xj
+
+> +
+
+)}Nd 
+
+> j=1
+
+from the DCBF-augmented system (21), where ¯xj is the current augmented state and ¯xj 
+
+> +
+
+is the corresponding next-step state. The corresponding lifted data are ψj = ψ(¯ xj ), ψj 
+
+> +
+
+= ψ(¯ xj
+
+> +
+
+). Stacking the data over Nd
+
+samples yields 
+
+Ψ+ = AΨ + BU, (24) where Ψ = [ψ1, . . . , ψ Nd ], Ψ+ = [ψ1+, . . . , ψ Nd 
+
+> +
+
+], U =[u1, . . . , uNd ].The matrices A and B are obtained by solving the following regularized least-squares problem 
+
+min  
+
+> A,B
+
+∥Ψ+ − AΨ − BU ∥2 
+
+> F
+
++ λ∥[A B ]∥2 
+
+> F
+
+, (25) where λ > 0 is a regularization parameter and ∥ · ∥ F denotes the Frobenius norm. This leads to the closed-form solution 
+
+[A B ] = Ψ +V ⊤(V V ⊤ + λI )−1, (26) where V = [Ψ ⊤ U ⊤]⊤. The regularization term improves numerical stability and alleviates potential ill-conditioning of the data matrix. Based on Eqs. (11)–(12), the optimal matrix 
+
+C admits the closed-form solution 
+
+C = ¯XΨ⊤(ΨΨ ⊤)−1, (27) where ¯X = [¯ x1, . . . , ¯xNd ]. The resulting lifted linear model will be used in the next subsection to construct a linear MPC formulation. 
+
+C. Koopman-based Linear MPC Formulation 
+
+From Sec. IV-B, the lifted linear dynamics obtained via the Koopman framework are given by Eq. (23). Since the augmented state is defined by (20), the barrier value h(xt)
+
+corresponds to the last component of ¯xt. Using the identified linear output map (12), (22) and (27), the barrier function can be expressed in the lifted space as 
+
+h(xt) = e⊤ 
+
+> h
+
+¯xt = e⊤ 
+
+> h
+
+Cψ t := ˜h(ψt), (28) where eh is the canonical basis vector selecting the last entry of ¯xt. Therefore, the barrier function is linear in the lifted state. The linear DCBF constraint defined by ˜h(ψt) can be formu-lated as a linear constraint to enforce the safety requirement. Together with the lifted linear dynamics (23) and the state and control bounds xt ∈ X ⊂ Rn and ut ∈ U ⊂ Rq , the resulting optimization problem yields a linear MPC-DCBF formulation. Note that the state and control bounds may conflict with the system dynamics and DCBF constraints, which can lead to infeasibility. The authors of [9] employed slack variables (decision variables) for DCBFs that enhance both feasibility and safety as shown in (19). While this method enables the flexible integration of safety requirements as soft constraints within the control framework, the resulting constraints are nonlinear in the decision variables (see Remark 4). As a result, the optimization problem is generally nonconvex and inherently computationally intensive. To address this issue, we proposed a new relaxation method that can generate linear DCBF constraint. Consider a relaxed DCBF at current step t as 
+
+˜h(ψt+1 ) ≥ ωt(1 − γ)˜h(ψt), (29) where ωt ≥ 0 is a slack variable. Since ˜h(ψt) depends only on the current lifted state ψt, which is known at time t, it is treated as a known constant. We reformulate the DCBF constraint for next step and position a slack variable in front of ˜h(ψt) as: 
+
+˜h(ψt+2 ) ≥ ωt+1 (1 − γ)2˜h(ψt), ω t+1 ≥ 0, (30) which is a linear constraint in terms of ψt+2 and ωt+1 .Having established the linearized DCBF, we proceed to link its construction to open-loop safety via the following theorem. 
+
+Theorem 2. Given a linearized DCBF ˜h(ψ) for sys-tem (23) , if ˜h(ψt) ≥ 0, then any Lipschitz controllers 
+
+ut, ..., ut+N −1 that satisfy the constraints ˜h(ψt+k+1 ) ≥
+
+ωt+k(1 − γ)k+1 ˜h(ψt), 0 < γ ≤ 1, ωt+k ≥ 0, k ∈{0, ..., N − 1} render ˜h(ψt+k+1 ) ≥ 0.5
+
+Proof. Since ˜h(ψt) ≥ 0, 1 − γ ≥ 0, ωt ≥ 0, we have 
+
+˜h(ψt+1 ) ≥ ωt(1 − γ)˜h(ψt) ≥ 0. Since ˜h(ψt+1 ) ≥ 0, (1 −
+
+γ)2 ≥ 0, ωt+1 ≥ 0, we have ˜h(ψt+2 ) ≥ ωt+1 (1 −
+
+γ)2˜h(ψt+1 ) ≥ 0. Repeatedly we have ˜h(ψt+k+1 ) ≥ 0, k ∈{0, ..., N − 1}.From the above proof, we observe that although a slack variable ωt+k is introduced into the constraint, the open-loop safety (i.e., ˜h(ψt+k+1 ) ≥ 0, k ∈ { 0, ..., N − 1}) is still guaranteed. Moreover, when no control input satisfies 
+
+˜h(ψt+k+1 ) ≥ ωt+k(1 − γ)k+1 ˜h(ψt), the slack variable ωt+k
+
+can be reduced to a value in the range ωt+k ∈ [0 , 1) , thereby relaxing the right-hand side of the constraint to improve feasibility. This relaxation method enables us to incorporate DCBF constraints in a linear MPC (LMPC) formulation: 
+
+LMPC-DCBF:                                           
+
+> min
+> Ut,Ψt,Ωt
+> p(ψt+N) +
+> N−1X
+> k=0
+> q(ψt+k,ut+k, ω t+k)(31a) s.t. ψt+k+1 =Aψ t+k+But+k, k = 0 , . . . , N −1,(31b)
+> ExCψ t+k∈ X , k = 1 , . . . , N, (31c)
+> ut+k∈ U , k = 0 , . . . , N −1,(31d)
+> ˜h(ψt+k+1 )≥ωt+k(1 −γ)k+1 ˜h(ψt),0< γ ≤1,(31e)
+> ωt+k≥0, k = 0 , . . . , N −1,(31f)
+
+where Ut = [ut, . . . , ut+N −1], Ψt = [ψt, . . . , ψ t+N ] and 
+
+Ωt = [ ωt, . . . , ω t+N −1]. Ex = [ In 0] is a selection matrix that extracts the original state xt from the augmented state 
+
+¯xt. Thus, ψt+k in the cost function (31a) can be converted to xt+k = ExCψ t+k, enabling the cost to penalize the deviation from the desired state xe in (18). In practice, ωt+k
+
+is treated as an optimization variable that is penalized toward 1—either through a large weight in the cost function or via a lexicographic priority. As a result, when the hard DCBF constraint is feasible, the optimizer yields ω⋆t+k ≈ 1 (i.e., no relaxation). Otherwise, it computes a minimally relaxed solution that still ensures ˜h(ψt+k+1 ) ≥ 0.
+
+Remark 2. Based on [10, Def. 1], if ˜h(ψt) has relative degree 
+
+m and the constraints in an optimal control problem consist solely of DCBF constraints (31e) , then the DCBFs must be formulated up to the mth order to ensure that the control input 
+
+ut appears explicitly, i.e., the control input ut will appears in ˜h(ψt+m, ut). However, if the framework also includes the system dynamics (31b) as constraints—where ut is already explicitly represented—then the order of the DCBFs can be chosen more flexibly to reduce computational complexity. In particular, if m ≤ N , the DCBF order can be set to 1, since the control input will affect the DCBF constraints within the prediction horizon. In our LMPC-DCBF framework (31) , since the barrier function is represented in the lifted space by (28) ,its relative degree with respect to the lifted linear system (31b) 
+
+is determined by the smallest integer m such that 
+
+e⊤ 
+
+> h
+
+CA m−1B̸ = 0, (32) 
+
+while e⊤ 
+
+> h
+
+CA iB = 0, i = 0 , . . . , m −2. Thus, when identifying 
+
+A, B, and C in (26) –(27) , the relative degree m of the barrier function with respect to the lifted system cannot be predetermined while preserving the accuracy of the lifted dynamics. Therefore, the prediction horizon N should be chosen sufficiently large to ensure m ≤ N .
+
+Remark 3. The Koopman-based lifted model in (31b) is obtained from a finite-dimensional approximation of the Koop-man operator using data-driven identification. As a result, the lifted linear dynamics only approximate the original nonlinear system and modeling errors may exist. Therefore, the safety guarantees derived from the linear MPC-DCBF formulation cannot strictly ensure safety of the original nonlinear system in a rigorous sense. In practice, this issue can be mitigated through several conservative design choices. For example, a safety margin can be incorporated into the barrier func-tion, i.e., enforcing ˜h(ψt) ≥ ϵ with ϵ > 0, to compensate for approximation errors. In addition, the class κ function hyperparameter γ in the DCBF constraint can be adjusted. Choosing a smaller γ leads to more conservative constraints and strengthens the safety enforcement. In this paper, we adopt the latter strategy and regulate the safety level by tuning γ,as illustrated in the numerical examples in Sec. V. 
+
+Remark 4. In [9], the relaxation technique places the slack variable ωt+k in front of (1 − γ)h(xt+k), yielding 
+
+h(xt+k+1 , ut+k) ≥ ωt+k(1 − γ)h(xt+k), ω t+k ≥ 0. (33) 
+
+However, ωt+k is a decision variable, and xt+k is also a decision variable for k ≥ 1 in the MPC problem. As a result, the product ωt+kh(xt+k) introduces a nonlinear constraint, which leads to a nonconvex optimization problem. To address this issue, in Theorem 2 we establish a recursive relationship that connects the future barrier values ˜h(ψt+k+1 )
+
+to the known constant ˜h(ψt). By multiplying the slack variable 
+
+ωt+k with this known quantity, we obtain the constraint in 
+
+(31e) , which is linear with respect to the decision variables. D. Complexity Analysis 
+
+All constraints in (31b)–(31e) are affine in the decision variables. As a result, the resulting optimization problem is a convex QP at each time step. The decision variables consist of the predicted control inputs Ut = [ ut, . . . , ut+N −1],lifted states Ψt = [ ψt, . . . , ψ t+N ], and relaxation variables 
+
+Ωt = [ ωt, . . . , ω t+N −1]. Since the lifted state dimension nψ ,the input dimension q, and the prediction horizon N have been defined previously, the number of decision variables in the LMPC-DCBF problem (31) scales on the order of 
+
+O(N (nψ + q)) . Here we omit the contribution of the re-laxation variables ωt+k since each of them is scalar and thus does not affect the asymptotic complexity order. Using standard interior-point methods, the worst-case computational complexity scales as O (N (nψ + q)) 3. In practice, structure-exploiting QP solvers (e.g., OSQP) typically achieve signifi-cantly faster performance. Compared with [9], [10], the proposed Koopman-based LMPC-DCBF framework maintains a convex QP structure and avoids iterative linearization steps within each control update, which substantially reduces the computational burden and facilitates real-time implementation. 6
+
+V. N UMERICAL EXAMPLES 
+
+In this section, we present numerical results to validate our proposed approach using a unicycle model. We compare the performance of the proposed method with the baseline NMPC-DCBF and iMPC-DCBF approaches. For the proposed method, the QP problem were solved using quadprog . For iMPC-DCBF, OSQP [27] was used to solve the convex opti-mization problem at each iteration. NMPC-DCBF was solved using IPOPT [28] with the modeling language YALMIP [29]. All simulations were conducted on a Windows desktop with an Intel® Core™ i7-11750F CPU @ 2.50 GHz. 
+
+A. System Dynamics and DCBF 
+
+Consider a continuous-time unicycle model in the form 
+
+
+
+˙x(t)˙y(t)˙θ(t)˙v(t)
+
+ =
+
+
+
+v(t) cos ( θ(t)) 
+
+v(t) sin ( θ(t)) 00
+
+ +
+
+
+
+0 00 01 00 1
+
+u1(t)
+
+u2(t)
+
+
+
+. (34) where x(t) = [ x(t), y (t), θ (t), v (t)] ⊤ captures the 2-D loca-tion, heading angle, and linear speed; u(t) = [ u1(t), u 2(t)] ⊤
+
+represents angular velocity ( u1) and linear acceleration ( u2), respectively. The discrete-time model used in this paper is obtained by discretizing (34) using a standard fourth-order Runge–Kutta scheme with sampling time ∆t, yielding the discrete-time model in (2). As a candidate DCBF function h(xt), we choose a quadratic distance function for circular obstacle avoidance h(xt) =(xt − x0)2 + ( yt − y0)2 − r2, where (x0, y 0) and r denote the obstacle center location and radius, respectively. In this work, we set x0 = 0 , y0 = 0 , and r = 1 .
+
+B. Koopman Identification 
+
+To identify the lifted linear predictor, we generate state-transition data (xt, ut, xt+1 ) using the discrete-time model. Random initial states and control inputs are sampled within the admissible ranges to construct the dataset used for regression. To handle the periodicity of the heading angle, the lifted state does not directly include θt. Instead, we use the trigonometric coordinates (sin θt, cos θt). The lifted state includes the physi-cal states [xt, y t, v t, sin θt, cos θt]⊤, the dynamics-consistent terms [vt cos θt, v t sin θt]⊤, and the candidate DCBF function 
+
+h(xt). To further improve approximation accuracy, Gaussian radial basis functions (RBFs) [14] are included in the lifted space, resulting in the lifted state ψt.Using the collected dataset and the EDMD formulation introduced in Sec. IV-B, we identify the lifted linear dynamics in (23). The dataset contains Nd = 2 × 10 5 transition samples generated from randomly sampled initial states and inputs within the ranges x, y ∈ [−3, 3] , θ ∈ [−π, π ], v ∈ [−3, 3] , and 
+
+u1, u 2 ∈ [−3, 3] . The physical states are reconstructed from the leading lifted states, while the heading angle is recovered from (sin θt, cos θt) using atan2 .Fig. 1 illustrates the prediction performance of the iden-tified Koopman model. The initial state is set to x0 =[−3, −3, 0, 0.2] ⊤. To distinguish it from the true state xt
+
+generated by the nonlinear dynamics, we denote by ˆxt the state reconstructed from the Koopman predictor. Figs. 1a–1b show the trajectories obtained from the true system and the Koopman model under sampling times ∆t = 0 .1s and 
+
+∆t = 0 .01 s, respectively. Figs. 1c–1d compare the obstacle function values, where h(xt) denotes the true barrier function evaluated at the true state (nonlinear), h(ψt) is computed using the reconstructed Koopman state (nonlinear), and ˜h(ψt) is obtained directly from the lifted state (linear). Fig. 1e shows the prediction error et = ∥xt − ExCψ t∥2. It can be observed that the Koopman predictor closely matches the true system behavior, and the approximation accuracy improves as the sampling time ∆t decreases. 
+
+C. MPC Design 
+
+The cost function of the MPC problem consists of stage cost q(ψt+k, ut+k, ω t+k) = PN −1 
+
+> k=0
+
+(|| ψt+k −ψr || 2 
+
+> Q
+
++|| ut+k −
+
+ur || 2 
+
+> R
+
++|| ωt+k −ωr || 2 
+
+> S
+
+) and terminal cost p(ψt+N ) = || ψt+N −
+
+ψr || 2 
+
+> P
+
+, where Q = P = diag(500 , 500 , 80 , 80 , 10) , R =diag(0 .3, 0.5) and S = 1000 . x0 = [ −2.5, −2, 0.2, 2] ⊤. xe =
+
+ExCψ r = [2 , 2.5, 0, 0.3] ⊤. The other references are ur =[0 , 0] T and ωr = 1 . The system (34) is discretized with ∆t =0.01 and is subject to the following state and input constraints: 
+
+X = {xt ∈ R4 : −3 · I 4×1 ≤ xt ≤ 3 · I 4×1},
+
+U = {ut ∈ R2 : −3 · I 2×1 ≤ ut ≤ 3 · I 2×1}. (35) We incorporate the Koopman model identified in Sec-tion V-B into the MPC framework to solve the optimization problem in (31). The resulting controller is referred to as K-LMPC-DCBF. If the DCBF constraint (31e) is removed from the optimization, the controller reduces to K-LMPC. As benchmarks, we compare with iMPC-DCBF [10], where the maximum iteration number is set to jmax = 1000 , and NMPC-DCBF [9]. To ensure a fair comparison, the parameters of all methods are kept identical. As shown in Fig. 2, without the DCBF constraint, K-LMPC enters the obstacle region and therefore violates safety. In contrast, K-LMPC-DCBF is able to enforce safety during the motion. It can also be observed that as the prediction horizon 
+
+N increases, the trajectory of K-LMPC-DCBF approaches the obstacle boundary. This occurs because a longer prediction horizon allows the optimizer to choose a more path-optimal control strategy. For the case N = 32 and γ = 0 .4, K-LMPC-DCBF slightly penetrates the obstacle region. This is because the controller attempts to optimize the path while the Koopman-lifted dy-namics and DCBF constraints are only approximations of the true system, which introduces modeling errors. However, when 
+
+γ is reduced to 0.2, a more conservative DCBF condition is enforced and the trajectory becomes safe again, which is consistent with the analysis in Remark 3. Both iMPC-DCBF and NMPC-DCBF can guarantee safety for the case N = 32 , γ = 0.4. However, the computa-tional advantage of K-LMPC-DCBF is significant. The average control computation time of K-LMPC-DCBF is about 3–
+
+5 ms per step, while iMPC-DCBF requires approximately 7            
+
+> (a) Trajectory, ∆t= 0 .1s(b) Trajectory, ∆t= 0 .01 s(c) DCBFs, ∆t= 0 .1s(d) DCBFs, ∆t= 0 .01 s(e) Error
+
+Fig. 1: Comparison between the true nonlinear dynamics and the identified Koopman predictor. Left: x–y trajectories generated by the true system and the Koopman model. Middle: evolution of the DCBFs. Right: prediction error et = ∥xt − ˆxt∥2.
+
+Fig. 2: Trajectory comparison in the presence of a circular obstacle. The robot moves from the start (blue diamond) to the goal (red diamond). The black arrow indicates the initial velocity direction of the robot. Trajectories generated by the proposed K-LMPC-DCBF with different prediction horizons N and hyperparameters γ are compared with iMPC-DCBF and NMPC-DCBF. The legend also reports the average computation time per step ts (ms). 
+
+100 –330 ms, which is about 30 –60 times slower. NMPC-DCBF is the slowest, taking about 10500 –16700 ms per step (around 3500 times slower). These results demonstrate the substantial computational efficiency of the proposed K-LMPC-DCBF framework. To better visualize safety, Fig. 3 shows the DCBF value over time for all methods. For K-LMPC-DCBF, when γ is fixed, increasing the prediction horizon N decreases the minimum value of h, bringing the trajectory closer to the obstacle boundary. Conversely, for fixed N , a smaller γ results in a larger minimum value of h, indicating a more conservative and safer behavior. This again demonstrates the safety guarantee 
+
+Fig. 3: Evolution of the DCBFs under different control strate-gies. The red dashed line indicates the safety boundary. provided by K-LMPC-DCBF. Fig. 4 shows the control inputs generated by K-LMPC-DCBF under different hyperparameter settings. The inputs remain within the prescribed bounds throughout the motion, confirming that the control constraints are respected. At the beginning of the maneuver, relatively large control actions are required to steer the robot away from the obstacle. Some nonsmooth variations can be observed during this stage when the safety constraints become active and the inputs approach their bounds, which is typical for constrained MPC-based safety controllers. As the robot moves away from the obstacle and approaches the goal, the control inputs gradually become smoother and converge toward zero. VI. C ONCLUSION 
+
+This paper proposed a Koopman-based MPC-DCBF frame-work for safety-critical control of nonlinear discrete-time sys-tems. By incorporating the barrier function into the lifted state 8
+
+(a) N = 16 , γ = 0 .2 (b) N = 24 , γ = 0 .2
+
+Fig. 4: Control inputs u1 and u2 over time for K-LMPC-DCBF under different hyperparameter settings. and identifying a linear predictor using Koopman operator theory, the nonlinear safety-constrained MPC problem can be transformed into a convex quadratic program. This formulation enables efficient real-time computation while preserving safety guarantees through DCBF constraints. Numerical simulations on a mobile robot navigation task demonstrated that the proposed method achieves safe trajec-tory generation and significantly reduces computational cost compared with NMPC-DCBF and iterative MPC-DCBF ap-proaches. Future work will focus on extending the framework to more complex environments, addressing model uncertainty, and applying the method to hardware experiments and multi-agent systems. REFERENCES [1] A. D. Ames, J. W. Grizzle, and P. Tabuada, “Control barrier function based quadratic programs with application to adaptive cruise control,” in 53rd IEEE conference on decision and control . IEEE, 2014, pp. 6271–6278. [2] A. D. Ames, X. Xu, J. W. Grizzle, and P. Tabuada, “Control barrier function based quadratic programs for safety critical systems,” IEEE Transactions on Automatic Control , vol. 62, no. 8, pp. 3861–3876, 2016. [3] Q. Nguyen and K. Sreenath, “Exponential control barrier functions for enforcing high relative-degree safety-critical constraints,” in 2016 American Control Conference (ACC) , 2016, pp. 322–328. [4] W. Xiao and C. Belta, “High-order control barrier functions,” IEEE Transactions on Automatic Control , vol. 67, no. 7, pp. 3655–3662, 2021. [5] W. Xiao, C. Belta, and C. G. Cassandras, “Adaptive control barrier functions,” IEEE Transactions on Automatic Control , vol. 67, no. 5, pp. 2267–2281, 2021. [6] S. Liu, W. Xiao, and C. A. Belta, “Auxiliary-variable adaptive control barrier functions for safety critical systems,” in 2023 62th IEEE Con-ference on Decision and Control (CDC) , 2023. [7] ——, “Auxiliary-variable adaptive control lyapunov barrier functions for spatio-temporally constrained safety-critical applications,” in 2024 IEEE 63rd Conference on Decision and Control (CDC) , 2024, pp. 8098–8104. [8] A. Agrawal and K. Sreenath, “Discrete control barrier functions for safety-critical control of discrete systems with application to bipedal robot navigation.” in Robotics: Science and Systems , vol. 13. Cam-bridge, MA, USA, 2017, pp. 1–10. [9] J. Zeng, Z. Li, and K. Sreenath, “Enhancing feasibility and safety of nonlinear model predictive control with discrete-time control barrier functions,” in 2021 60th IEEE Conference on Decision and Control (CDC) , 2021, pp. 6137–6144. [10] S. Liu, J. Zeng, K. Sreenath, and C. A. Belta, “Iterative convex optimization for model predictive control with discrete-time high-order control barrier functions,” in 2023 American Control Conference (ACC) ,2023, pp. 3368–3375. [11] C. W. Rowley, I. Mezi´ c, S. Bagheri, P. Schlatter, and D. S. Henningson, “Spectral analysis of nonlinear flows,” Journal of fluid mechanics , vol. 641, pp. 115–127, 2009. [12] M. Budiˇ si´ c, R. Mohr, and I. Mezi´ c, “Applied koopmanism,” Chaos: An Interdisciplinary Journal of Nonlinear Science , vol. 22, no. 4, 2012. [13] P. J. Schmid, “Dynamic mode decomposition of numerical and experi-mental data,” Journal of fluid mechanics , vol. 656, pp. 5–28, 2010. [14] M. Williams, I. Kevrekidis, and C. Rowley, “A data-driven approxima-tion of the Koopman operator: Extending dynamic mode decomposi-tion,” Journal of Nonlinear Science , vol. 25, pp. 1307–1346, 2015. [15] C. Folkestad, Y. Chen, A. D. Ames, and J. W. Burdick, “Data-driven safety-critical control: Synthesizing control barrier functions with koop-man operators,” IEEE Control Systems Letters , vol. 5, no. 6, pp. 2012– 2017, 2020. [16] V. Zinage and E. Bakolas, “Neural Koopman control barrier functions for safety-critical control of unknown nonlinear systems,” in 2023 American Control Conference (ACC) , 2023, pp. 3442–3447. [17] M. Black and D. Panagou, “Safe control design for unknown non-linear systems with Koopman-based fixed-time identification,” IFAC-PapersOnLine , vol. 56, no. 2, pp. 11 369–11 376, 2023. [18] M. Korda and I. Mezi´ c, “Linear predictors for nonlinear dynamical sys-tems: Koopman operator meets model predictive control,” Automatica ,vol. 93, pp. 149–160, 2018. [19] B. Koopman, “Hamiltonian systems and transformation in Hilbert space,” Proceedings of the National Academy of Sciences , vol. 17, no. 5, pp. 315–318, 1931. [20] B. Koopman and J. Neumann, “Dynamical systems of continuous spectra,” Proceedings of the National Academy of Sciences , vol. 18, no. 3, pp. 255–263, 1932. [21] M. Williams, M. Hemati, S. Dawson, I. Kevrekidis, and C. Rowley, “Extending data-driven Koopman analysis to actuated systems,” IFAC-PapersOnLine , vol. 49, no. 18, pp. 704–709, 2016. [22] J. Proctor, S. Brunton, and J. Kutz, “Generalizing Koopman theory to allow for inputs and control,” SIAM Journal on Applied Dynamical Systems , vol. 17, no. 1, pp. 909–930, 2018. [23] Y. Xiong, D.-H. Zhai, M. Tavakoli, and Y. Xia, “Discrete-time control barrier function: High-order case and adaptive case,” IEEE Transactions on Cybernetics , pp. 1–9, 2022. [24] L. Wu and R. D. Braatz, “A Quadratic Programming Algorithm with 
+
+O(n3) Time Complexity,” IEEE Transactions on Automatic Control ,pp. 1–16, 2026. [25] ——, “A Direct Optimization Algorithm for Input-constrained MPC,” 
+
+IEEE Transactions on Automatic Control , vol. 70, no. 2, pp. 1366–1373, 2025. [26] L. Wu, W. Xiao, and R. D. Braatz, “EIQP: Execution-time-certified and Infeasibility-detecting QP Solver,” IEEE Transactions on Automatic Control , pp. 1–16, 2025. [27] B. Stellato, G. Banjac, P. Goulart, A. Bemporad, and S. Boyd, “OSQP: An operator splitting solver for quadratic programs,” Mathematical Programming Computation , vol. 12, no. 4, pp. 637–672, 2020. [28] L. T. Biegler and V. M. Zavala, “Large-scale nonlinear programming using IPOPT: An integrating framework for enterprise-wide dynamic optimization,” Computers & Chemical Engineering , vol. 33, no. 3, pp. 575–582, 2009. [29] J. Lofberg, “YALMIP: A toolbox for modeling and optimization in MATLAB,” in 2004 IEEE international conference on robotics and automation (IEEE Cat. No. 04CH37508) , 2004, pp. 284–289.

@@ -6,35 +6,35 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-03-23
-- 运行时间：2026-03-23 20:13:44 UTC
+- 最新运行日期：2026-03-24
+- 运行时间：2026-03-24 20:22:04 UTC
 - 运行状态：成功
 - 本次总论文数：4
 - 精读区：0
 - 速读区：4
 
 ### 今日简报（AI）
-今日聚焦工业磁悬浮多机协同与具备力感知的具身智能操作前沿。
-重点推荐 ForceVLA2 带来的力位混合控制突破，以及 ADMM-HOCBF 算法在磁悬浮平台运动规划中的高效应用。
-建议关注力反馈技术在复杂接触任务中的演进，这是提升机器人作业精细度的关键。
-- 详情：[/202603/23/README](/202603/23/README)
+今日聚焦数据驱动建模与控制，涵盖非线性系统稳定性保障及超导线圈电磁仿真等前沿进展。
+重点推荐基于 Koopman 嵌入的非线性预测控制稳定性研究，以及机器学习在复杂结构建模中的应用。
+建议深入探索数据驱动方法如何与物理约束结合，以提升复杂物理系统控制的可靠性。
+- 详情：[/202603/24/README](/202603/24/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Multi-Agent Motion Planning on Industrial Magnetic Levitation Platforms: A Hybrid ADMM-HOCBF approach](/202603/23/2603.19838v1-multi-agent-motion-planning-on-industrial-magnetic-levitation-platforms-a-hybrid-admm-hocbf-approach)  
-   标签：评分：7.0/10、query:em-force
-   evidence：工业磁悬浮平台上的运动规划
-2. [ForceVLA2: Unleashing Hybrid Force-Position Control with Force Awareness for Contact-Rich Manipulation](/202603/23/2603.15169v1-forcevla2-unleashing-hybrid-force-position-control-with-force-awareness-for-contact-rich-manipulation)  
+1. [Stability Guarantees for Data-Driven Predictive Control of Nonlinear Systems via Approximate Koopman Embeddings](/202603/24/2603.17089v1-stability-guarantees-for-data-driven-predictive-control-of-nonlinear-systems-via-approximate-koopman-embeddings)  
    标签：评分：6.0/10、query:em-force
-   evidence：混合力位控制与显式力感知
-3. [On the validity limits of the parametrisation method for invariant manifolds: an assessment of practical criteria for vibrating systems](/202603/23/2603.17611v1-on-the-validity-limits-of-the-parametrisation-method-for-invariant-manifolds-an-assessment-of-practical-criteria-for-vibrating-systems)  
+   evidence：非线性系统的数据驱动预测控制
+2. [An Extended T-A Formulation Based on Potential-Chain Recursion for Electromagnetic Modeling of Parallel-Wound No-Insulation HTS Coils](/202603/24/2603.17593v1-an-extended-t-a-formulation-based-on-potential-chain-recursion-for-electromagnetic-modeling-of-parallel-wound-no-insulation-hts-coils)  
    标签：评分：6.0/10、query:em-force
-   evidence：非线性振动系统的降阶模型
-4. [Surrogate Modeling with Low-Rank Function Representation for Electromagnetic Simulation](/202603/23/2603.19735v1-surrogate-modeling-with-low-rank-function-representation-for-electromagnetic-simulation)  
+   evidence：超导线圈的电磁建模与瞬态仿真
+3. [Data-Driven Modeling of a Controlled Orthotropic Plate Using Machine Learning](/202603/24/2603.20931v1-data-driven-modeling-of-a-controlled-orthotropic-plate-using-machine-learning)  
    标签：评分：6.0/10、query:em-force
-   evidence：高保真电磁仿真的代理建模
+   evidence：受控振动板的数据驱动建模
+4. [Koopman Meets Discrete-Time Control Barrier Functions: A Linear Model Predictive Control Framework](/202603/24/2603.21070v1-koopman-meets-discrete-time-control-barrier-functions-a-linear-model-predictive-control-framework)  
+   标签：评分：6.0/10、query:em-force
+   evidence：基于Koopman的非线性系统线性MPC
 
 
 <div class="dpr-home-promo-card">

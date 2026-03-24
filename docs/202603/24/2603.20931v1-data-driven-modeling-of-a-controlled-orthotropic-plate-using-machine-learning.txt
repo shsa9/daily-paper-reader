@@ -1,0 +1,456 @@
+Title: Data-Driven Modeling of a Controlled Orthotropic Plate Using Machine Learning
+
+URL Source: https://arxiv.org/pdf/2603.20931v1
+
+Published Time: Tue, 24 Mar 2026 00:57:27 GMT
+
+Number of Pages: 11
+
+Markdown Content:
+# Data-Driven Modeling of a Controlled Orthotropic Plate Using Machine Learning 
+
+# Y. Kim 1 A. Zuyev 1,3 F. Pellicano 2 A. Zippo 2
+
+> 1
+
+Max Planck Institute for Dynamics of Complex Technical Systems, Magdeburg, Germany 
+
+Email: ykim@mpi-magdeburg.mpg.de , ORCID: 0000-0003-4181-7968 
+
+Email: zuyev@mpi-magdeburg.mpg.de , ORCID: 0000-0002-7610-5621 
+
+> 2
+
+Department of Engineering ”Enzo Ferrari”, University of Modena and Reggio Emilia, Modena, Italy 
+
+Email: francesco.pellicano@unimore.it , ORCID: 0000-0003-2465-6584 
+
+Email: antonio.zippo@unimore.it , ORCID: 0000-0001-6206-2619 
+
+> 3
+
+Institute of Applied Mathematics and Mechanics, National Academy of Sciences of Ukraine 
+
+Abstract: We study the problem of learning the input-output map of a controlled vibrating plate with a composite structure from experimental measurements. Analyt-ical modeling of this control system faces challenges due to the essential orthotropy and unknown damping characteristics of the material. Surrogate models based on lin-ear regression, multilayer perceptrons, and gated recurrent units are constructed from the available sampled data. Through comparative analysis, we show that the multi-layer perceptron model provides an acceptable approximation of this dynamical system, capturing the potentially nonlinear phenomena in its input-output behavior. 
+
+Keywords: orthotropic plate, vibration control, input-output map, machine learning 
+
+AMS subject classifications: 93B15, 68T05 
+
+Novelty statement: 
+
+• Development and experimental comparison of surrogate models for an or-thotropic controlled elastic plate, where anisotropic properties, nonlinear ac-tuation characteristics, and complex boundary conditions play a significant role in the dynamics. 
+
+• The comparison of linear regression models with multilayer perceptrons (MLPs) and gated recurrent unit (GRU) techniques shows that nonlinearity plays a sig-nificant role in the system’s behavior. 
+
+• It is justified that a moderate artificial neural network depth ( h = 4 or 6) is suf-ficient to effectively leverage the experimental input–output behavior, and that the pretrained MLPs have acceptable approximation ability with the suggested time history length of s = 200 samples. 
+
+# 1 Introduction 
+
+Modeling engineering systems from first principles and using surrogate data-driven approaches rep-resent two different paradigms. Purely numerical surrogate methods often fail to provide sufficient insight into the influence of mechanical parameters and the effects of time-varying input actions, since they are typically trained as input–output mappings and therefore lack explicit physical structure or interpretability (see, e.g., [12,14] and references therein). Although analytic modeling based on variational formulations provides valuable insight into the physics of vibrating flexible 
+
+Preprint (Max Planck Institute for Dynamics of Complex Technical Systems, Magdeburg). 2026-03-24 
+
+> arXiv:2603.20931v1 [math.OC] 21 Mar 2026
+
+2structures [2, 13, 16], an accurate representation of damping, structural nonlinearities, and actua-tor–sensor dynamics typically requires additional analysis and often relies on system identification techniques and experimental data [1, 3, 7, 9, 10]. The goal of this paper is to determine the range of applicability of surrogate modelling techniques for a specific flexible structure – controlled orthotropic plate – and to identify machine learning models that achieve efficient performance and have potential for future applications in control design. High-fidelity data obtained from an experimental setup at the Enzo Ferrari Department of Engineering, University of Modena and Reggio Emilia, serve as the basis for a comparative analysis of different machine learning approaches. The experimental setup is shown in Fig. 1 and described in Section 2. To provide further insight into the mechanical characteristics of the vibrating system and to highlight modelling challenges in the context of an analytical input–output description, we present a previously developed linear PDE-based model of the plate in Section 3.  
+
+> Figure 1: Controlled orthotropic plate at the Enzo Ferrari Department of Engineering, University of Modena and Reggio Emilia.
+
+To address possible nonlinearities in the input-output behavior of the considered mechanical sys-tem and to present computationally feasible validation procedures, we summarize the construction of surrogate models for this setup in Section 4. Section 5 presents extensive numerical results com-paring the input–output behavior of the orthotropic plate using different machine-learning-based surrogate models. The principal outcomes of this work are summarized in the Conclusion.  
+
+> Preprint (Max Planck Institute for Dynamics of Complex Technical Systems, Magdeburg). 2026-03-24
+
+3
+
+# 2 Experimental Setup 
+
+The experiments were conducted on a rectangular composite sandwich plate with orthotropic behavior, having in-plane dimensions of 1000 × 500 mm (see Fig. 1). The plate consisted of two outer carbon-fiber/epoxy laminated skins and a 3 mm -thick NOMEX honeycomb polymeric core; the carbon composite was identified as GG285P(T700)-DT120-40, and the fibers were woven in a 0/90 configuration. The specimen was mounted on a dedicated support frame by means of thin nylon wires passing through four holes drilled at the plate corners and connected to elastic bands fixed to the frame members. The suspension geometry and the tensioned lengths of the elastic elements were made as uniform as possible in order to approximate free-boundary conditions and to limit the influence of the supporting structure on the measured dynamics. The plate was excited by an electrodynamic shaker installed behind the specimen and suspended from the supporting structure in order to reduce parasitic mechanical constraints. The shaker was connected to the plate through a slender stinger so as to provide an approximately pointwise transverse excitation while minimizing additional structural constraints. Similar experimental strategies for vibrating plates and flexible structures have been adopted in previous investigations on orthotropic structures and data-driven modeling approaches. In the present study, particular attention was devoted to the calibration of the actuator–sensor chain in order to ensure consistency between the applied input and the measured response. The excitation force generated by the shaker was monitored by a load cell placed along the excitation path, between the shaker rod and the plate surface, allowing the input signal u(t) to be reconstructed from the measured voltage output of the force sensor after appropriate signal conditioning, amplification, scaling, and calibration. The acquisition channels were organized so that the load-cell signal represented the input and the piezoelectric response represented the output. The structural response of the plate was measured through a bonded piezoelectric transducer used as a strain gauge, whose voltage output was taken as the experimental observable. The sensor was installed at a non-collocated location with respect to the actuator, thus providing a sensitive measurement of the local curvature of the plate and enabling the detection of bending vibrations associated with the orthotropic elastic properties of the composite structure. The setup documentation identifies the transducer as a Macro Fiber Composite manufactured by Smart Materials (MFC P1 type, model M8557-P1), with an active area of 85 × 57 mm , overall dimensions of 103 ×64 mm , capacitance of 12 .84 nF , free strain of 1350 ppm , and blocking force of 693 N . Owing to its very small thickness, the transducer could be surface-bonded to the plate using epoxidic resin with negligible modification of the structural properties, while still ensuring sensitive measurement of the local structural deformation. The actuation and measurement chain was integrated with a digital acquisition and control architecture based on sSPACE and MATLAB/Simulink , ensuring accurate synchronization between excitation and response measurements. The sampling frequency was set to 30 kHz in order to capture the relevant dynamic content of the plate vibrations and avoid aliasing effects in the recorded time histories. In the broader setup, the piezoelectric transducer is driven through a TREK PA05039 high-voltage amplifier, which converts an input in the range from −2.5 V to 7 .5 V
+
+into an output from −500 V to 1500 V , with nominal input impedance of 25 kΩ, output impedance below 0 .1 kΩ, and output noise below 50 mV rms. The electromagnetic shaker was powered by a TIRA BAA 60 amplifier, capable of supplying up to 2 .5 A with a maximum 5 V input signal. During the experiments, the structure was excited by short voltage pulses applied to the shaker at regular time intervals. This excitation strategy generated transient responses followed by freely decaying vibrations governed by the intrinsic structural and material damping of the composite plate. Such a procedure provides a rich dataset containing both the forced response and the sub-sequent free-vibration regime, which is particularly suitable for modal characterization, dynamical model identification, and the training of surrogate machine-learning models. The resulting dataset therefore contains high-resolution synchronized time histories of the input force and the measured piezoelectric strain response, forming the basis for the data-driven modeling and validation proce-dures described in the following sections.  
+
+> Preprint (Max Planck Institute for Dynamics of Complex Technical Systems, Magdeburg). 2026-03-24
+
+4
+
+# 3 Governing Equations of the Orthotropic Plate 
+
+In the paper [15], a mathematical model of a controlled orthotropic elastic plate is studied based on the following Kirchhoff-type partial differential equation: 
+
+∂2w(x, t )
+
+∂t 2 + α ∂w (x, t )
+
+∂t + d11 
+
+∂4w(x, t )
+
+∂x 41
+
++ d22 
+
+∂4w(x, t )
+
+∂x 42
+
++ 2( d12 + 2 d66 ) ∂4w(x, t )
+
+∂x 21∂x 22
+
+= δS0 (x)
+
+ρh u(t), x ∈ D, t ≥ 0.
+
+(3.1) The plate is assumed to be rectangular, and its middle surface is parameterized by the spatial coordinates x = ( x1, x 2) ∈ D = [0 , ℓ 1] ∈ [0 , ℓ 2], where ℓ1 and ℓ2 denote the side lengths of the rectangle D. The function w = w(x, t ) describes the transverse displacement of the plate’s middle surface at time t.The plate is controlled by the force u(t) applied by an actuator at the point S0 ∈ D, and its action is represented by the right-hand side of (3.1) through the Dirac delta function concentrated at S0. The state of this plate is measured by a piezoelectric sensor at the point ¯ x ∈ D, which provides the output signal of the form 
+
+y(t) = kw x1x1 (t, ¯x), (3.2) where k > 0 corresponds to the sensor gain. The Kirchhoff equation (3.1) is considered together with the following boundary conditions at 
+
+x1 = 0 and x1 = ℓ1:
+
+wx1x1 + ν2wx2x2 = 0 ,wx1x1x1 +
+
+
+
+ν2 + 4(1 − ν1ν2)GE1
+
+
+
+wx1x2x2 = 0 , (3.3) and the boundary conditions at x2 = 0 and x2 = ℓ2:
+
+ν1wx1x1 + wx2x2 = 0 ,
+
+
+
+ν1 + 4(1 − ν1ν2)GE2
+
+
+
+wx1x1x2 + wx2x2x2 = 0 . (3.4) These conditions correspond to free boundary conditions, i.e., the absence of boundary forces and bending moments. The coefficients of the control system (3.1)–(3.4) are discussed in [15], where mechanically con-sistent values of the parameters, encoding the real material properties of the experimental setup shown in Fig. 1, are reported as follows: 
+
+ℓ1 = 1 m, ℓ 2 = 0 .5 m, h = 3 .6 mm, ρ = 505 .6 kg m3 ,d11 = E1h2
+
+12 ρ(1 − ν1ν2) , d 22 = E2h2
+
+12 ρ(1 − ν1ν2) ,d12 = ν2d11 = ν1d22 , d 66 = Gh 2
+
+12 ρ ,E1 = 23 GP a, E 2 = 14 GP a, G = 2 .2 GP a, ν1 = 0 .25 , ν 2 = ν1E2
+
+E1
+
+,S0 = (0 .17 m, 0.25 m), C 0 = (0 .5 m, 0.21 m).
+
+For the linear PDE-governed control system (3.1)–(3.4), a family of finite-dimensional approx-imations is constructed in [15] using Galerkin’s method. The frequency-response characteristics, represented by the transfer function, are derived in the aforementioned paper, and the basic prop-erties of the transfer functions are compared between the analytical and data-driven models. It should be noted that the damping coefficient α in (3.1), corresponding to a viscous damping model, is not known a priori; therefore, adequately modeling the damping requires further analysis. 
+
+Preprint (Max Planck Institute for Dynamics of Complex Technical Systems, Magdeburg). 2026-03-24 5As can be seen, the control system described by the fourth-order partial differential equa-tion (3.1), boundary conditions involving third-order derivatives (3.3)–(3.4), input dependence through the Dirac delta function, and the output map (3.2) defined in terms of a second-order par-tial derivative already constitutes a mathematically complex model containing multiple parameters. The complexity of the model description remains significant even in the Galerkin approximations, partly due to the presence of damping and gain parameters that must be identified. It should also be noted that the above analytical models are linear and therefore cannot cap-ture nonlinearities if they are present in the measured input–output response. For this reason, in Section 4 we explore an alternative approach based on surrogate models. Such models can poten-tially capture nonlinear behavior and allow us to obtain computationally feasible results for model validation using the available experimental data. 
+
+# 4 Surrogate Modeling 
+
+Within the considered surrogate modelling framework, we assume that the output signal y(t) ∈ R
+
+at time t ≥ 0 is affected not only by the current input u(t) ∈ R, but also by a sequence of preceding inputs, since the plate’s oscillation is governed by the cumulative influence of its input history. To capture this behavior in surrogate modeling, we construct time series surrogate models represented as ˆy(t) = f (u(t), u (t − ∆t), · · · , u (t − (s − 1)∆ t); θ),
+
+where ˆ y(t) ∈ R denotes the predicted system output, ∆ t > 0 is the time step, s ∈ N denotes the sequence length, and the vector θ ∈ Rp comprises all parameters of f to be identified. Equivalently, we express the model as ˆy(t) = f (us(t); θ) (4.1) where 
+
+us(t) = ( u(t), u (t − ∆t), · · · , u (t − (s − 1)∆ t)) ⊤ ∈ Rs (4.2) The function f : Rs × Rp → R and its parameters θ ∈ Rp are to be identified from the available experimental data. As a starting point, we consider linear regression models (LRs) described by ˆy(t) = W us(t) + b, (4.3) where W ∈ R1×s is a weight matrix and b ∈ R is a bias term. This model provides a baseline for capturing input–output dependencies and serves as a foundation for further exploration of nonlinear modeling approaches. Next, we develop multilayer perceptrons (MLPs) consisting of fully connected layers, each fol-lowed by a nonlinear activation function in the hidden layers. An MLP is a fundamental archi-tecture of feedforward neural networks that constructs a nonlinear mapping from the input space to the output space through successive compositions of affine transformations interleaved with nonlinear activation functions [6, 11]. The inclusion of nonlinearity allows the model to effectively capture nonlinear relationships between the model input us(t) and the output ˆ y(t), thus potentially providing higher accuracy than linear approaches. At each t ≥ s∆t, the input-output map modelled by the MLPs is presented as 
+
+x1(t) = ELU( W1us(t) + b1),
+
+x2(t) = ELU( W2x1(t) + b2),
+
+...
+
+xh(t) = ELU( Whxh−1(t) + bh),
+
+ˆy(t) = W xh(t) + b, 
+
+(4.4) where Wi and bi are the weight matrix and bias vector in the i-th hidden layer, respectively, 
+
+i ∈ { 1, 2, ..., h }. The matrix W and the scalar b denote the weight matrix and bias in the output layer. As can be seen from the above formulas, the s-dimensional vectors x1, ..., xh are computed  
+
+> Preprint (Max Planck Institute for Dynamics of Complex Technical Systems, Magdeburg). 2026-03-24
+
+6at each t, whereas the constant parameters Wi, bi, and b are determined during the training of the model. In this paper, we use the Exponential Linear Unit activation function ELU : Rs → Rs
+
+which acts componentwise on a vector x = ( x1, ..., x s)⊤ as [5]: ELU j (x) = 
+
+(
+
+xj , x j > 0,exj − 1, x j ≤ 0.
+
+As an alternative to MLPs, various types of recurrent neural networks designed for sequential data can be considered. In this work, we utilize gated recurrent units (GRUs) [4], where the input sequence is processed sequentially by a stack of h layers. For a given t ≥ s∆t, the state of the zero-th layer is defined as 
+
+x(0)  
+
+> j
+
+(t) = usj (t), j = 1 , ..., s. (4.5) Then, for each layer i ∈ { 1, . . . , h } and time step j ∈ { 1, . . . , s }, the GRU computational scheme is defined as 
+
+v(i) 
+
+> j
+
+= σ(W (i) 
+
+> v
+
+x(i−1)  
+
+> j−1
+
++ V (i) 
+
+> v
+
+x(i−1)  
+
+> j
+
++ b(i) 
+
+> v
+
+),
+
+r(i) 
+
+> j
+
+= σ(W (i) 
+
+> r
+
+x(i−1)  
+
+> j−1
+
++ V (i) 
+
+> r
+
+x(i−1)  
+
+> j
+
++ b(i) 
+
+> r
+
+),
+
+˜x(i) 
+
+> j
+
+= tanh( W (i) 
+
+> x
+
+(x(i−1)  
+
+> j−1
+
+⊙ r(i) 
+
+> j
+
+) + V (i) 
+
+> x
+
+x(i−1)  
+
+> j
+
++ b(i) 
+
+> x
+
+),
+
+x(i) 
+
+> j
+
+= v(i) 
+
+> j
+
+⊙ x(i) 
+
+> j−1
+
++ (1 − v(i) 
+
+> j
+
+) ⊙ ˜x(i) 
+
+> j
+
+,
+
+(4.6) where W (i) 
+
+> v
+
+, V (i) 
+
+> v
+
+, W (i) 
+
+> r
+
+, V (i) 
+
+> r
+
+, W (i) 
+
+> x
+
+, and V (i) 
+
+> x
+
+are weight matrices, and v(i) 
+
+> j
+
+and r(i) 
+
+> j
+
+denote the outputs of the update gate and the reset gate, respectively, and x(i) 
+
+> j
+
+∈ Rni is the hidden state at time step j in the i-th hidden layer, j ∈ { 1, 2, ..., s }, i ∈ { 1, 2, ..., h }. Note that the dimension of the i-th layer is ni ∈ N; so, we emphasize vector quantities using bold notation here and recall that n0 = 1 for the considered SISO system. In the above formulas, ⊙ denotes elementwise multiplication, and σ is the sigmoid function, whose componentwise action is given by 
+
+σ(x) = 11 + e−x for x ∈ R.
+
+After computing the last hidden state x(h) 
+
+> s
+
+in (4.6), the output of the system at time t is represented as ˆy(t) = W x(h) 
+
+> s
+
++ b. (4.7) The above-defined GRU architecture introduces gating mechanisms that regulate the flow of temporal information across finite time steps. The update gate v(i) 
+
+> j
+
+determines the extent to which the previous hidden state x(i) 
+
+> j−1
+
+is retained, thus adjusting long-term dependencies. The reset gate r(i) 
+
+> j
+
+modulates the influence of past information when computing the candidate hidden state ˜ x(i) 
+
+> j
+
+.
+
+# 5 Numerical Experiments 
+
+We apply the surrogate modeling approaches, described in Section 4, to experimental input-output data obtained from the controlled orthotropic plate setup with a non-collocated sensor-actuator pair. In this setup, the plate is actuated by an electromagnetic shaker via a voltage input, which can be physically controlled using sSPACE with digital communication with MATLAB/Simulink .To measure the force of the actuation, a load sensor is placed between the shaker rod and the plate. The voltage output of this sensor provides the control signal u(t) of our force-controlled model. On the opposite side of the plate, a piezoelectric strain gauge is installed such that, with appro-priate amplification in the measurement chain, the strain is measured as the output signal y(t). This measurement scheme is implemented using MATLAB and Simulink with the signals u(t) and 
+
+y(t) (up to scaling constants matching the amplifiers and ADC/DAC characteristics) recorded at a sampling frequency of 30 kHz , corresponding to a sampling interval ∆ t = 0 .03(3) ms .
+
+Preprint (Max Planck Institute for Dynamics of Complex Technical Systems, Magdeburg). 2026-03-24 7         
+
+> Figure 2: Time series dataset with input u(t) and output y(t), sampled over time t. Only the data within the yellow-shaded region ( t∈[0 .64 s, 16 .31 s]) are used for training, validation, and testing models.
+
+In the conducted experiments, the shaker is actuated by short voltage pulses of duration ∆ t, re-peated every 2 s. The overall dataset consists of Ns = 489 , 562 samples of the form ( tk, u (tk), y (tk)) with tk = k∆t for k = 0 , 1, ..., N s − 1. The time plots of the input and output signals are sketched in Fig. 2. We exclude from the analysis the portion of the time series before the first control impulse at T0 ≈ 0.64 s, as shown in Fig. 2. The remaining dataset comprises 470 , 354 samples ( tk, u (tk), y (tk)) in the time domain t ∈
+
+[0 .64 s, 16 .31 s], which are divided into 316 , 078 data points (64%) in t ∈ [0 .64 s, 11 .17 s) for train-ing, 60 , 205 data points (16%) in t ∈ [11 .17 s, 14 .31 s) for validation, and 94 , 071 data points (20%) in t ∈ [14 .31 s, 16 .31 s] for testing. These datasets are mutually exclusive and contain no temporal overlap. As a standard supervised learning approach for training MLPs and GRUs, we employ the mean squared loss function 
+
+L(θ) = 1
+
+|B| 
+
+X   
+
+> (tk,us(tk),y k)∈B
+
+(yk − f (us(tk); θ)) 2 (5.1) where B denotes a batch drawn from the dataset and |B| represents the batch size, i.e., the number of data samples ( tk, us(tk), y k) in B, such that the vector us(tk) of dimension s is constructed from the dataset by the rule (4.2). For each particular LR, MLP, or GRU model, we follow the convention that the parameter vector θ in (5.1) and (4.1) comprises all parameters of the considered model. To avoid overfitting during neural network training, we adopt a batch training strategy using the Adam optimizer [8] combined with early stopping based on the validation loss. In this approach, the training process is terminated if the validation loss does not improve for a predefined number of epochs. The batch size is set to 256 in all experiments. To evaluate model accuracy, we use the R2 score defined as 
+
+R2 = 1 −
+
+PNi=1 (yi − ˆyi)2
+
+PNi=1 (yi − ¯y)2
+
+where N denotes the number of considered samples, yi is the reference output, ˆ yi is the predicted output corresponding to yi, and ¯ y = 1
+
+> N
+
+PNi=1 yi is the mean of the reference outputs y1, y 2, ..., y N . 
+
+> Preprint (Max Planck Institute for Dynamics of Complex Technical Systems, Magdeburg). 2026-03-24
+
+8(a) LR h \ s 10 50 100 200 0 NS / NS 0.016 / 0.011 0.039 / 0.027 0.089 / 0.111 
+
+(b) MLP 
+
+h \ s 10 50 100 200 1 0.017 / 0.006 0.404 / 0.271 0.594 / 0.416 0.774 / 0.533 2 0.042 / 0.023 0.787 / 0.563 0.891 / 0.778 0.941 / 0.829 4 0.058 / 0.039 0.861 / 0.692 0.945 / 0.847 0.975 / 0.909 6 0.061 / 0.007 0.868 / 0.675 0.952 / 0.842 0.977 / 0.908 
+
+(c) GRU 
+
+h \ s 10 50 100 200 1 0.054 / 0.015 0.719 / 0.404 0.778 / 0.571 0.888 / 0.732 2 0.085 / 0.018 0.752 / 0.417 0.813 / 0.548 0.913 / 0.814 
+
+4 0.092 / 0.016 0.502 / 0.204 0.804 / 0.547 0.774 / 0.495 6 0.034 / 0.027 0.260 / 0.168 0.005 / 0.005 0.454 / 0.322         
+
+> Table 1: R2score (training/test): sdenotes the input sequence length, and his the number of hidden layers. The results correspond to the best performance of each model, determined by the highest training R2score across 3 runs.
+
+For convenience of notation, we index these data from 1, as this can always be achieved by an appropriate shift of time without loss of generality. An R2 score of 1 corresponds to a perfect fit where the predicted outputs match the reference values exactly. As the R2 score approaches 0, the prediction accuracy deteriorates. Moreover, an R2 score less than 0 indicates that the model performs worse than a naive predictor that simply outputs the mean of the reference values, signifying poor predictive performance. Table 1 presents the training and test R2 scores for LR (4.3), MLP (4.4), and GRU (4.5)–(4.7) models across various input sequence lengths s ∈ { 10 , 50 , 100 , 200 } and numbers of hidden layers 
+
+h.As we observe, the LR model (4.3) performs poorly overall, indicating limited predictive capa-bility, and achieves its best test score of only 0.111 at s = 200. In contrast, the MLP model (4.4) shows strong performance that improves consistently with both increasing sequence length and network depth. The best overall result is achieved by the MLP with six hidden layers at s = 200, attaining training and test R2 scores of 0.977 and 0.908 respectively. The GRU model (4.5)–(4.7) also shows strong performance even with shorter sequences, out-performing both LR and shallow MLPs for s = 10. However, its performance does not always improve with depth; deeper GRU architectures tend to suffer from degraded generalization. The GRU achieves its highest test R2 score of 0.814 with two hidden layers at s = 200. These results demonstrate that while recurrent models such as GRU are effective at predicting outputs with shallow architectures, their generalization tends to degrade as the depth increases. In contrast, deep feedforward models such as MLP benefit significantly from additional layers when longer input histories are available. Fig. 3 illustrates the effect of varying the input sequence length s and the number of hidden layers h on the predictive performance of pretrained MLPs, evaluated using the R2 score. The top row presents R2 scores as a function of s ∈ { 10 , 50 , 100 , 200 } for fixed hidden layer depths 
+
+h = 2 , 4, 6. Conversely, the bottom row shows performance as a function of the number of hidden layers h ∈ 2, 4, 6 for fixed sequence lengths. In each plot, solid lines represent the mean R2 score 
+
+μ computed over three independent runs, while the shaded regions depict statistical uncertainty, quantified as one standard deviation σ, i.e., the interval μ ± σ. Deeper MLPs generally lead to improved accuracy, particularly at larger s, with the best performance achieved at h = 6 and 
+
+s = 200. However, the marginal benefit of adding layers diminishes beyond a certain point, as shown by the relatively flat curves in the bottom row for higher s values. Furthermore, the results show a consistent increase in both training and test R2 scores as the input sequence length s
+
+increases. In particular, a substantial improvement is observed between s = 10 and s = 50, after which the performance gains begin to plateau.  
+
+> Preprint (Max Planck Institute for Dynamics of Complex Technical Systems, Magdeburg). 2026-03-24
+
+9                     
+
+> Figure 3: R2scores of pretrained MLPs (4.4): Solid lines represent the mean score μ, and the shaded regions indicate the statistical uncertainty measured using the standard deviation σ, i.e., the interval ( μ−σ, μ +σ).
+> (a) LR ( s= 200 , h = 0) (b) MLP ( s= 200 , h = 6) (c) GRU ( s= 200 , h = 2)
+> Figure 4: Scatter plots of predicted versus reference outputs for the LR (4.3), MLP (4.4), and GRU (4.5)– (4.7) models.
+
+Fig. 4 illustrates the performance of each model using its best pretrained model weights. The diagonal black line represents the ideal case where y = ˆ y. The LR model shows a broad and dispersed distribution of prediction errors, with significant deviation from the identity line, resulting in poor predictive accuracy. In contrast, the MLP with six hidden layers yields predictions that align closely with the identity line, indicating high accuracy and low variance for both the training and test data. The GRU model (4.5)–(4.7) with two hidden layers also demonstrates improved prediction quality relative to LR (4.3), although its predictions exhibit slightly greater spread compared to those of the MLP (4.4). 
+
+# 6 Conclusion 
+
+To the best of our knowledge, this paper is the first to address the development and experimental comparison of concrete machine learning surrogate models for orthotropic controlled elastic plates, where anisotropic properties, nonlinear actuation characteristics, and complex boundary conditions play a significant role in the dynamics. Our computational findings indicate that increasing the input sequence length significantly en-hances model accuracy, and that moderate network depth (e.g., h = 4 or 6) is sufficient to leverage this information effectively. Furthermore, the narrow shaded regions in Fig. 3 indicate stable and  
+
+> Preprint (Max Planck Institute for Dynamics of Complex Technical Systems, Magdeburg). 2026-03-24
+
+10 reliable performance for the pretrained MLPs. A clear indication of approximation efficiency for the time history length s = 200 suggests verifiable bounds for possible approximations of the theoret-ically infinite-dimensional control system using finite-dimensional difference equations. Therefore, the contribution of this work is not limited to surrogate modeling alone. Furthermore, the comparison of linear regression models with nonlinear perceptrons and gated recurrent unit techniques shows that nonlinearity plays a significant role in the system’s behav-ior. Consequently, the linear models exhibit limitations, particularly regarding their range of applicability. Physically, these conclusions are underpinned by the properties of the composite ma-terial—which are entirely governed by linear elasticity theory—while the nonlinear characteristics of the actuator-sensor pair are accounted for in the proposed surrogate models. In future work, we plan to apply the developed modeling techniques to control design for active vibration damping and the development of data-driven optimal control methods. 
+
+# Acknowledgments 
+
+Yongho Kim was supported by the German Research Foundation (DFG) through the research training group 2297 “MathCoRe”, Magdeburg. Alexander Zuyev gratefully acknowledges the fund-ing by the European Regional Development Fund (ERDF) within the programme Research and Innovation — Grant Number ZS/2023/12/182138. 
+
+# References 
+
+[1] T. Al-Hababi, M. Cao, B. Saleh, N. F. Alkayem, and H. Xu. A critical review of nonlin-ear damping identification in structural dynamics: Methods, applications, and challenges. 
+
+Sensors , 20(24):7303, 2020. doi:10.3390/s20247303 .[2] V. Berdichevsky. Variational Principles of Continuum Mechanics . Springer, Berlin, Heidel-berg, 2009. doi:10.1007/978-3-540-88467-5 .[3] A. K. Chopra. Dynamics of Structures: Theory and Applications to Earthquake Engineering. 5th Ed. Pearson, 2020. [4] J. Chung, C ¸ . G¨ ul¸ cehre, K. Cho, and Y. Bengio. Empirical evaluation of gated recurrent neural networks on sequence modeling. In NIPS 2014 Workshop on Deep Learning , 2014. 
+
+doi:10.48550/arXiv.1412.3555 .[5] D.-A. Clevert, T. Unterthiner, and S. Hochreiter. Fast and accurate deep network learning by exponential linear units (ELUs). ICLR 2016 (Poster) , 2016. doi:10.48550/arXiv.1511. 07289 .[6] I. Goodfellow, Y. Bengio, and A. Courville. Deep Learning . MIT Press, 2016. http://www. deeplearningbook.org .[7] D. J. Inman. Engineering Vibration. 4th Ed. Pearson, 2013. [8] D. P. Kingma and J. Ba. Adam: A method for stochastic optimization. ICLR 2015, Conference Track Proceedings , 2015. doi:10.48550/arXiv.1412.6980 .[9] C. L´ opez, A. Singh, ´A. Naranjo, and K. J. Moore. A data-driven, energy-based approach for identifying equations of motion in vibrating structures directly from measurements. Mechan-ical Systems and Signal Processing , 225:112341, 2025. doi:10.1016/j.ymssp.2025.112341 .[10] J.-P. No¨ el and J. Schoukens. Grey-box state-space identification of nonlinear mechanical vibrations. International Journal of Control , 91(5):1118–1139, 2018. doi:10.1080/00207179. 2017.1308557 .[11] D. E. Rumelhart and J. L. McClelland. Learning Internal Representations by Error Propaga-tion , pages 318–362. MIT Press, 1987. doi:10.7551/mitpress/4943.003.0128 . 
+
+> Preprint (Max Planck Institute for Dynamics of Complex Technical Systems, Magdeburg). 2026-03-24
+
+11 [12] S. Sch¨ ar, S. Marelli, and B. Sudret. Emulating the dynamics of complex systems using autoregressive models on manifolds (mNARX). Mechanical systems and signal processing ,208:110956, 2024. doi:10.1016/j.ymssp.2023.110956 .[13] A. Zuyev. Partial stabilization and control of distributed parameter systems with elastic ele-ments . Springer, 2015. doi:10.1007/978-3-319-11532-0 .[14] A. Zuyev and I. Gosea. Approximating a flexible beam model in the Loewner framework. In 
+
+2023 European Control Conference (ECC) , pages 1–7, 2023. doi:10.23919/ECC57647.2023. 10178203 .[15] A. Zuyev, F. Pellicano, A. Zippo, and G. Iarriccio. Dynamic modelling of a con-trolled orthotropic plate: Analytic and data-driven approaches in the frequency domain. In ASME International Mechanical Engineering Congress and Exposition , volume 88636, page V005T07A052. American Society of Mechanical Engineers, 2024. doi:10.1115/ IMECE2024-145739 .[16] A. Zuyev and O. Sawodny. Modelling and control of a shell structure based on a finite dimensional variational formulation. Mathematical and Computer Modelling of Dynamical Systems , 21(6):591–612, 2015. doi:10.1080/13873954.2015.1065278 .

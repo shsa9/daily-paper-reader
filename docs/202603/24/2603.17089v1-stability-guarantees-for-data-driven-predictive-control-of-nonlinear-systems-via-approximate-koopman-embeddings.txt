@@ -1,0 +1,1402 @@
+Title: Stability Guarantees for Data-Driven Predictive Control of Nonlinear Systems via Approximate Koopman Embeddings
+
+URL Source: https://arxiv.org/pdf/2603.17089v1
+
+Published Time: Thu, 19 Mar 2026 00:11:56 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# Stability Guarantees for Data-Driven Predictive Control of Nonlinear Systems via Approximate Koopman Embeddings 
+
+Amin Taghieh and SangWoo Park 
+
+Abstract — Data-driven model predictive control based on Willems’ fundamental lemma has proven effective for linear systems, but extending stability guarantees to nonlinear systems remains an open challenge. In this paper, we establish conditions under which data-driven MPC, applied directly to input-output data from a nonlinear system, yields practical exponential stability. The key insight is that the existence of an approximate Koopman linear embedding certifies that the nonlinear data can be interpreted as noisy data from a linear time-invariant system, enabling the application of existing robust stability theories. Crucially, the Koopman embedding serves only as a theoretical certificate; the controller itself operates on raw nonlinear data without knowledge of the lifting functions. We further show that the proportional structure of the embedding residual can be exploited to obtain an ultimate bound that depends only on the irreducible offset, rather than the worst-case embedding error. The framework is demonstrated on a synchronous generator connected to an infinite bus, for which we construct an explicit physics-informed embedding with error bounds. 
+
+I. I NTRODUCTION 
+
+A. Motivation and Background 
+
+Data-driven control methods that bypass explicit system identification have become a central topic in modern control theory, building on Willems’ fundamental lemma [1]. For linear time-invariant (LTI) systems, this lemma provides a complete, non-parametric characterization of the system’s trajectory space using a single persistently exciting input-output trajectory. When combined with model predictive con-trol (MPC), this yields the Data-Enabled Predictive Control (DeePC) algorithm [2] and its variants with rigorous closed-loop stability and robustness guarantees [3]. Beyond MPC, Willems’ fundamental lemma has led to a broad range of data-driven controller designs for LTI systems. These include computing stabilizing feedback controllers and optimal LQR gains directly from data [4], characterizing which control-theoretic properties can be inferred from a given dataset through a “data informativity” framework [5], and unifying direct data-driven and indirect identification-based formulations via regularization [6]. These develop-ments provide a mature theoretical foundation for LTI sys-tems, but all rely fundamentally on the linearity assumption: the data must come from a linear system, possibly corrupted by noise. Several approaches have been proposed to extend data-driven methods to specific classes of nonlinear systems, including LTI embeddings for bilinear systems [7], sum-of-squares programs for polynomial systems [8], coordinate transformations for feedback-linearizable systems [9], and linearization-based tracking MPC [10]. A fundamentally different perspective is offered by Koop-man operator theory [11], which provides a pathway toward applying linear methods to broad classes of nonlinear systems by lifting the dynamics into a higher-dimensional (potentially infinite) functional space where they evolve linearly. This Koopman-based idea has been pursued along two distinct lines. The first is identification-based : one learns a finite-dimensional Koopman model from data via extended dy-namic mode decomposition (EDMD) [12] and then applies standard MPC using the identified model. Recent work has established stability guarantees for this approach under pro-portional approximation error bounds [13]–[15]. The second line is directly data-driven : the extended Willems’ funda-mental lemma of [16] shows that the trajectory space of a nonlinear system admitting an exact Koopman embedding can be represented directly from nonlinear data without knowledge of the lifting functions. However, a critical subtlety is that exact finite-dimensional Koopman embeddings rarely exist for physical systems. For example, systems with trigonometric nonlinearities or bilinear terms generically require infinite-dimensional embeddings to achieve exact closure of the observables. Therefore, a fundamental question remains: under what conditions is the resulting closed loop stable, and how does the stability margin depend on the system’s deviation from linearity? This makes the approximate embedding framework not merely a theoretical convenience, but a practical necessity. In this paper, we establish rigorous conditions under which data-driven MPC, applied directly to input-output data from a nonlinear system, yields practical exponential stability of the closed loop. The key insight is that the existence of an approximate Koopman linear embedding certifies that the nonlinear data can be interpreted as noisy data from a linear time-invariant system, enabling the application of existing robust stability theories. Our contributions are as follows: (i) We formalize the notion of an approximate Koopman linear embedding with proportional-with-offset error bounds 
+
+and construct an explicit physics-informed embedding for the third-order synchronous generator; (ii) We prove that the robust data-driven MPC scheme of [3], applied directly to input-output data from a nonlinear system, yields practical exponential stability whenever the system admits an approx-imate Koopman embedding with sufficiently small error; (iii) We provide a rigorous bridge between the Koopman approximation error and the bounded noise framework of [3], showing how the nonlinearity gap maps to an effective noise level ¯ϵ that determines the stability margin. 
+
+> arXiv:2603.17089v1 [eess.SY] 17 Mar 2026
+
+B. Notation 
+
+For a vector x and positive definite matrix P , a weighted norm is defined as ∥x∥P := √x⊤P x . We write col( ·)
+
+for column stacking and x[a,b ] := col( xa, . . . , x b). For a compact operating region X with equilibrium xs and input constraint set U with equilibrium input us, we de-fine diam z := max x∈X ∥Φ( x) − Φ( xs)∥2 and diam u := max u∈U ∥u − us∥2. Finally, a sequence {xk}N −1 
+
+> k=0
+
+induces the Hankel matrix 
+
+HL(x) := 
+
+
+
+x0 x1 · · · xN −L
+
+x1 x2 · · · xN −L+1 
+
+... . . . ...
+
+xL−1 xL · · · xN −1
+
+ .
+
+II. S YNCHRONOUS GENERATOR MODEL 
+
+In this section, we present a third-order synchronous generator model, which is nonlinear and fails to admit an exact finite-dimensional Koopman embedding. Although the theoretical results of this paper are generally applicable, we will use the generator model as a guiding example. 
+
+A. Continuous-Time Dynamics 
+
+In this paper, we consider the dynamics of a single syn-chronous generator connected to an infinite bus through a transmission line. The generator is modeled by the classical flux-decay model without exciter or governor dynamics. The state is denoted by x = ( δ, ω, E ′ 
+
+> q
+
+)⊤ ∈ R3, where δ is the rotor angle, ω is the rotor angular velocity, and E′ 
+
+> q
+
+is the q-axis transient internal voltage. The control input is u = TM ∈ R
+
+(mechanical torque). 
+
+˙δ = ω − ωs (1a) 
+
+M ˙ω =
+
+h
+
+TM − D(ω − ωs) − E′ 
+
+> q
+
+V∞
+
+XΣ
+
+sin δ
+
+i
+
+(1b) 
+
+T ′ 
+
+> d0
+
+˙E′ 
+
+> q
+
+=
+
+h
+
+Ef d − Xd + Xe
+
+XΣ
+
+E′ 
+
+> q
+
++ (Xd − X′
+
+> d
+
+)V∞
+
+XΣ
+
+cos δ
+
+i
+
+(1c) Here, H is the inertia constant, ωs the synchronous speed, 
+
+M := 2Hωs the normalized inertia, D the damping coefficient, 
+
+T ′ 
+
+> d0
+
+the d-axis open-circuit transient time constant, Xd the synchronous d-axis reactance, and Ef d is the (constant) field voltage. In (1b), the term E′  
+
+> qV∞
+> XΣ
+
+sin δ is the electrical power 
+
+Pe, representing the electromagnetic torque. The symbol V∞
+
+is the infinite bus voltage and XΣ := X′ 
+
+> d
+
++ Xe is the total reactance (transient d-axis reactance X′ 
+
+> d
+
+plus external line reactance Xe). In (1c), the cos δ term arises from the d-axis stator current Id = E′    
+
+> q−V∞cos δXΣ
+
+after substitution into the flux-decay equation. The nonlinearities are: (i) sin δ and cos δ
+
+(trigonometric); (ii) E′ 
+
+> q
+
+sin δ (bilinear). The input u = TM
+
+enters affinely through (1b) only. 
+
+B. Discrete-Time Formulation 
+
+With sampling period ∆t > 0 and Euler discretization, define the discrete-time system: 
+
+xk+1 = f (xk, u k), yk = g(xk, u k) (2) where f : R3 × R → R3 is given component-wise by: 
+
+δk+1 = δk + ∆ t(ωk − ωs) (3) 
+
+ωk+1 = ωk + ∆tM
+
+h
+
+uk − D(ωk − ωs) − E′
+
+> q,k
+
+V∞
+
+XΣ
+
+sin δk
+
+i
+
+(4) 
+
+E′ 
+
+> q,k +1
+
+= E′ 
+
+> q,k
+
++ ∆tT ′
+
+> d0
+
+h
+
+Ef d − Xd + Xe
+
+XΣ
+
+E′
+
+> q,k
+
++ (Xd − X′
+
+> d
+
+)V∞
+
+XΣ
+
+cos δk
+
+i
+
+. (5) The system has n = 3 states, m = 1 input, and p = 2 outputs 
+
+yk = (˜ ωk, P e,k )⊤ ∈ R2, where ˜ωk := ωk − ωs is the speed deviation and Pe,k is the electrical power. 
+
+Assumption 1 (Operating Regime) . The generator operates in a compact domain X := {(δ, ω, E ′ 
+
+> q
+
+) : |δ − δs| ≤
+
+δmax , |ω − ωs| ≤ ωmax , E′ 
+
+> q, min
+
+≤ E′ 
+
+> q
+
+≤ E′
+
+> q, max
+
+} where 
+
+δs is the pre-fault equilibrium angle, δmax < π/ 2 (within the stability boundary), and ωmax ≪ ωs (small speed deviations relative to synchronous speed). The input satisfies u ∈ U := [TM, min , T M, max ].Under Assumption 1, the per-step angle change satisfies 
+
+|∆t(ωk − ωs)| ≤ ∆t ω max ≪ 1 for typical sampling rates (∆t ≤ 0.005 s), which will be exploited in the Koopman embedding analysis. III. A NALYSIS OF APPROXIMATE KOOPMAN EMBEDDING FOR THE GENERATOR MODEL 
+
+A. Koopman Linear Embedding: Definition and Existence 
+
+Definition 1 (Koopman Linear Embedding [16]) . The nonlin-ear system (2) admits a Koopman linear embedding of dimen-sion nz if there exist linearly independent lifting functions 
+
+Φ = (Φ 1, . . . , Φnz )⊤ : Rn → Rnz such that zk := Φ( xk)
+
+satisfies 
+
+zk+1 = Az k + Bu k, yk = Cz k + Du k (6) along all trajectories of (2) within the operating domain X ,with A ∈ Rnz ×nz , B ∈ Rnz ×m, C ∈ Rp×nz , D ∈ Rp×m.
+
+Definition 2 (Approximate Koopman Embedding) . The sys-tem (2) admits an approximate Koopman linear embedding 
+
+centered at an equilibrium (xs, u s) with proportional error bound (ϵA, ϵ B , ϵ C ) and offset c0 ≥ 0 if there exist Φ, A,
+
+B, C, D such that, defining the deviation variables ¯zk := Φ( xk) − Φ( xs) and ¯uk := uk − us, the dynamics satisfy 
+
+¯zk+1 = A¯zk + B ¯uk + ek, ¯yk = C ¯zk + D¯uk + ηk (7) along all trajectories within X , where ¯yk := yk − ys, and the residuals satisfy: 
+
+∥ek∥2 ≤ ϵA ∥¯zk∥2 + ϵB ∥¯uk∥2 + c0 (8) 
+
+∥ηk∥2 ≤ ϵC ∥¯zk∥2 (9) for constants ϵA, ϵ B , ϵ C ≥ 0. When c0 = 0 , the bound is 
+
+purely proportional ; when c0 > 0, it is proportional-with-offset . The constant affine terms arising from the equilibrium (e.g., from constant inputs like Ef d ) cancel exactly by centering at the equilibrium, since Φ( f (xs, u s)) = Φ( xs).The concept of proportional error bounds for data-driven Koopman surrogates originates in the work of [13], which established pointwise error bounds for kernel EDMD that are proportional in the state and input. [14] used the same structure to prove asymptotic stability of Koopman MPC with terminal conditions. The centering at equilibrium in (8) is essential: a purely proportional bound (c0 = 0)guarantees exponential stability (the error vanishes at the setpoint at an exponential rate), while a proportional-with-offset bound ( c0 > 0) yields practical exponential stability 
+
+(exponential convergence to a neighborhood of radius O(c0)). Definition 2 combines the exact embedding concept of [16] with the proportional error framework of [13], [14], extended to include the offset term that arises naturally in finite-dimensional approximations. 
+
+Remark 1 (Interpretation of Approximate Embedding) . In Definition 2, the lifting Φ is an explicitly chosen, exactly computed function; it is not learned or approximated. The matrices A, B, C, D are the best linear description of how 
+
+Φ( xk) evolves under the nonlinear dynamics. The residual 
+
+ek arises because the nonlinear dynamics do not propagate 
+
+Φ in a perfectly linear fashion: Φ( f (xk, u k)) ̸ = AΦ( xk) + 
+
+Bu k exactly. Neither Φ nor A, B are “wrong”; the error is structural, reflecting the fact that the observable algebra does not close in finite dimensions. The LTI system obtained by propagating (A, B, C, D ) without the residuals ( ek = 0 ,
+
+ηk = 0 ) is referred to as the nominal Koopman system . It is neither the true nonlinear dynamics nor a “true” (infinite-dimensional) Koopman operator; it is a finite-dimensional linear model whose deviation from the plant is quantified by (ϵA, ϵ B , ϵ C , c 0). This terminology aligns with the robust control convention used in [3], where the nominal system is the model around which the robust MPC is designed, and the residuals play the role of plant-model mismatch. 
+
+B. Koopman Embedding for the Synchronous Generator 
+
+Theorem 1. Consider the discretized generator (3) –(5) under Assumption 1. Define the lifting: 
+
+Φ( x) = col( δ, ˜ω, E ′ 
+
+> q
+
+, sin δ, cos δ, E ′ 
+
+> q
+
+sin δ, E ′ 
+
+> q
+
+cos δ).
+
+(10) 
+
+Then zk = Φ( xk) satisfies an approximate Koopman linear embedding centered at the equilibrium (xs, u s) with 
+
+ϵA = 2∆ t + c6 + c7 = O(∆ t), ϵB = 0 , ϵC = 0 , (11) 
+
+c0 = (2 + 2 E′
+
+> q, max
+
+) (∆ t ω max )2 = O((∆ t ω max )2), (12) 
+
+where c6, c 7 depend on ∆t/T ′
+
+> d0
+
+, μ, E′
+
+> q, max
+
+, and Ef d (see Appendix I for details). The bound is proportional with offset: 
+
+∥ek∥2 ≤ ϵA ∥Φ( xk) − Φ( xs)∥2 + c0. (13) 
+
+The proportional-with-offset structure of (13) is the form required by the stability analysis in Section IV-B. The offset 
+
+c0 > 0 limits any controller based on this embedding to practical exponential stability. Proof: See Appendix I. As we can see in Appendix I, the proportional constant 
+
+ϵA = O(∆ t) receives contributions from the trigonometric propagation in components 4–5 ( 2∆ t) and the bilinear prod-ucts in components 6–7 ( c6 + c7), with the latter dominating due to the cross-term z3,k +1 · e4,k . The offset c0 = (2 + 2E′
+
+> q, max
+
+)(∆ t ω max )2 arises from the Taylor remainders in the small-angle approximation. For typical parameters ( ∆t =0.0025 s, T ′ 
+
+> d0
+
+≈ 6 s, ωmax = 0 .02 pu): ϵA ≈ 0.015 and 
+
+c0 ≈ 10 −8. The offset is negligible relative to ϵA, with 
+
+c0/ϵ A ≈ 7 × 10 −7 pu. However, as shown in Section IV-B, the dominant source of conservatism in the stability bound is 
+
+ϵA itself, not c0; the proportional error structure is exploited in Theorem 7 to recover meaningful bounds. 
+
+Remark 2 (Non-Controllability and Non-Observability of the Embedding) . The pair (A, B ) in (6) with B =(0 , ∆tM , 0, 0, 0, 0, 0) ⊤ is not controllable: the controllabil-ity matrix [B, AB, . . . , A 6B] has rank 2, spanning only 
+
+{z1, z 2} = {δ, ˜ω}. Components 3–7 are unreachable because their coupling to z1, z 2 (e.g., ˜ω driving sin δ via ∆t ˜ωk cos δk)resides in the residual ek, not in A. Similarly, (C, A ) with 
+
+C ∈ R2×7 is not observable: the observability matrix has rank 2, spanning {z2, z 6} = {˜ω, E ′ 
+
+> q
+
+sin δ}. Consequently, the I/O transfer function G(z) = C(zI − A)−1B + D admits a 
+
+minimal realization of order neff ≤ nz , which is controllable and observable by construction. Neither controllability nor observability of the full nz -dimensional system is required: [16] shows that Tini ≥ nz suffices for the data-driven representation (Theorem 2), and [3] note explicitly that nz
+
+may be used as an “upper bound” on the true system order 
+
+neff , with all stability results remaining valid. IV. S TABILITY OF DATA -D RIVEN MPC U NDER 
+
+APPROXIMATE KOOPMAN EMBEDDINGS 
+
+A. Data-Driven Representation 
+
+We now apply the extended Willems’ fundamental lemma [16] to the generator. 
+
+Definition 3 (Lifted Excitation [16]) . Consider a nonlin-ear system (2) with a Koopman linear embedding (Defini-tion 1). We say l trajectories of length L from (2), denoted 
+
+col( ud,i , y d,i ), i = 1 , . . . , l , with l ≥ mL + nz , provide lifted excitation of order L if the matrix 
+
+HK := 
+
+ ud, 1 · · · ud,l 
+
+Φ( x10) · · · Φ( xl
+
+> 0
+
+)
+
+
+
+∈ R(mL +nz )×l (14) has full row rank, where xi 
+
+> 0
+
+∈ Rn is the initial state of the 
+
+i-th trajectory. 
+
+Theorem 2 (Data-Driven Representation for the Generator (Exact Case)) . Consider the generator (2) with an exact 
+
+Koopman embedding ( ϵA = ϵB = ϵC = 0 ) of dimension 
+
+nz = 7 . Collect a trajectory library of l ≥ L + 7 trajectories, each of length L := Tini + N with Tini ≥ 7, that provide lifted excitation of order L (Definition 3). Arrange these trajectories into the data matrix Hd := U ⊤ 
+
+> P
+
+Y ⊤ 
+
+> P
+
+U ⊤ 
+
+> F
+
+Y ⊤
+
+> F
+
+⊤ ∈ R(m+p)L×l (15) 
+
+where UP , Y P ∈ RmT ini ×l, RpT ini ×l contain the first 
+
+Tini steps (past) of the input and output trajectories, and 
+
+UF , Y F ∈ RmN ×l, RpN ×l contain the remaining N steps (future). At time k, let uini := col( uk−Tini , . . . , u k−1) and 
+
+yini := col( yk−Tini , . . . , y k−1) be the most recent Tini input-output measurements. Then, for any future input uF := col( uk, . . . , u k+N −1), the sequence col( uini , y ini , u F , y F ) is a valid length-L trajectory of the generator if and only if there exists g ∈ Rl such that 
+
+col( UP , Y P , U F , Y F ) g = col( uini , y ini , u F , y F ). (16) 
+
+Proof: This is a direct application of [16, Theorem 3] with nz = 7 . The conditions are verified as follows: (i) the Koopman embedding exists by assumption; (ii) the trajectory library provides lifted excitation by hypothesis; (iii) Tini ≥
+
+nz = 7 ensures uniqueness of the initial lifted state by [16, Theorem 1], even without observability of (C, A ).
+
+B. From Exact to Approximate: Impact of Koopman Error on Data-Driven Control 
+
+The exact case is idealised. In practice, the Koopman em-bedding is approximate (Theorem 1), and we must quantify how the approximation error propagates through the data-driven control framework. The central question is the following. The earlier work [3] proved stability of data-driven MPC for LTI systems with bounded output noise. Our system is nonlinear. Why should their guarantees transfer? The existence of an approximate Koopman embedding provides the answer: it certifies that the nonlinear system’s input-output data can be decomposed as 
+
+yd = yd, nom +ϵd, where yd, nom is what the nominal Koopman system (Remark 1) would produce, and ϵd is bounded by an effective noise level ¯ϵ. The Koopman analysis quantifies ¯ϵ
+
+in terms of the embedding quality (ϵA, ϵ B , ϵ C , c 0), which in turn depends on physical parameters of the system (such as sampling period and operating regime). Thus, Theorem 4 be-low provides a stability guarantee for applying an LTI data-driven controller to a nonlinear system , with the Koopman embedding serving as the theoretical bridge. We employ the robust data-driven MPC of [3, Prob-lem (6), Algorithm 2], which is summarized below. Consider a nonlinear system (2) admitting an approximate Koopman embedding (Definition 2) with parameters (ϵA, ϵ B , ϵ C , c 0)
+
+and lifted dimension nz . Collect a trajectory library as in Theorem 2. The robust MPC solves at each time t:
+
+min  
+
+> α(t), σ (t),
+> ˆu(t),ˆy(t)
+> L−1
+
+X
+
+> k=0
+
+ℓ(ˆ uk(t), ˆyk(t)) + λα ∥α(t)∥22 + λσ ∥σ(t)∥22
+
+(17a) s.t. 
+
+ˆu[−nz ,L −1] (t)ˆy[−nz ,L −1] (t)
+
+
+
+=
+
+HL+nz (ud)
+
+HL+nz (yd)
+
+
+
+α(t) + 
+
+ 0
+
+σ(t)
+
+
+
+(17b) 
+
+ˆu[−nz ,−1] (t) = u[t−nz ,t −1] , ˆy[−nz ,−1] (t) = y[t−nz ,t −1] 
+
+(17c) 
+
+ˆu[L−nz ,L −1] (t) = usnz , ˆy[L−nz ,L −1] (t) = ysnz (17d) 
+
+ˆuk(t) ∈ U , ∥σk(t)∥∞ ≤ ¯ϵ(1 + ∥α(t)∥1) (17e) where ℓ(ˆ u, ˆy) = ∥ˆu − us∥2 
+
+> R
+
++ ∥ˆy − ys∥2 
+
+> Q
+
+with Q, R ≻ 0,and λα, λ σ > 0 are regularization parameters. The Hankel matrices HL+nz (ud) and HL+nz (yd) are built directly from the measured nonlinear data (i.e., no model identification or noise decomposition is needed at the implementation level). The slack variable σ and its constraint (17e) absorb the mismatch between the nonlinear data and any LTI model. The scheme is applied in an nz -step fashion: solve (17), apply 
+
+u[t,t +nz −1] = ˆ u∗ 
+
+> [0 ,n z−1]
+
+(t), then set t ← t + nz and repeat. Note that the MPC scheme (17) operates directly on input-output data from the nonlinear system; the Koopman embed-ding matrices A, B, C, D do not appear in the controller and need not be computed. The role of the Koopman analysis is purely certifying: the existence of an approximate embedding (Definition 2) guarantees that the nonlinear data can be interpreted as noisy data from an LTI system, enabling the stability theory of [3] to be applied. The effective noise level 
+
+¯ϵ, defined precisely in (21), quantifies the degree to which the nonlinear system deviates from LTI behavior. To state the stability result, we require the following quantity from [3, eq. (8)]. Let Hux be the stacked input-state data matrix constructed from the offline data (where the state trajectory corresponds to some minimal realization of (ud, y d)), and let H† 
+
+> ux
+
+:= H⊤
+
+> ux
+
+(Hux H⊤
+
+> ux
+
+)−1 be its right-inverse. Define: 
+
+cpe := H† 
+
+> ux
+> 22
+
+. (18) This is a quantitative measure of the persistence of excitation: smaller cpe indicates better excitation, and cpe decreases with increasing data richness or larger amplitude of the exciting input ud [3]. 
+
+Lemma 3 (Koopman Error as Bounded Output Noise) .
+
+Consider a nonlinear system (2) admitting an approximate Koopman embedding (Definition 2) of dimension nz with parameters (ϵA, ϵ B , ϵ C , c 0), operating within X under inputs 
+
+u ∈ U (Assumption 1). Let (ud,i , y d,i ) be any trajectory of the nonlinear system of length L. Let (A, B, C, D ) be the matrices from Definition 2 and define the nominal Koop-man trajectory (cf. Remark 1): ˆznom ,i  
+
+> 0
+
+= Φ( xi
+
+> 0
+
+), ˆznom ,i k+1 =
+
+Aˆznom ,i k + Bu d,i k , and ynom ,i k = C ˆznom ,i k + Du d,i k . Then the output discrepancy at step k satisfies: 
+
+yd,i k − ynom ,i k 2
+
+≤ ¯ϵk, ∀ k = 0 , . . . , L − 1 (19) 
+
+Defining ¯e := ϵA diam z + ϵB diam u + c0, the per-step bound is: 
+
+¯ϵk := ∥C∥2 ¯e
+
+> k−1
+
+X
+
+> l=0
+
+∥A∥l 
+
+> 2
+
++ ϵC diam z . (20) 
+
+A uniform bound over all k ≤ L, as required by [3, Problem (6)], is: 
+
+¯ϵ := max  
+
+> 0≤k≤L−1
+
+¯ϵk = ∥C∥2 ¯e
+
+> L−2
+
+X
+
+> l=0
+
+∥A∥l 
+
+> 2
+
++ ϵC diam z . (21) 
+
+Proof: The nominal Koopman trajectory (ˆ znom ,i k , y nom ,i k )
+
+is the output of the LTI system (A, B, C, D ) from Defi-nition 2, driven by the same input ud,i and initialized at 
+
+ˆznom ,i  
+
+> 0
+
+= Φ( xi
+
+> 0
+
+), but propagated without the residuals ekand ηk. It represents what the approximate embedding would 
+
+predict if the linear relationship were exact. The actual output satisfies yd,i k = CΦ( xik)+ Du d,i k +ηik with ηik 2 ≤ ϵC ¯zik 2
+
+(Definition 2). The output noise is: 
+
+ϵd,i k := yd,i k − ynom ,i k = C  Φ( xik) − ˆznom ,i k
+
+| {z }
+
+> =: ∆ ik
+
++ηik. (22) We bound ∆ik. The actual lifted state satisfies Φ( xik+1 ) = 
+
+AΦ( xik) + Bu d,i k + eik, while the nominal satisfies ˆznom ,i k+1 =
+
+Aˆznom ,i k + Bu d,i k . Subtracting gives ∆ik+1 = A∆ik + eik with 
+
+∆i 
+
+> 0
+
+= 0 , which unrolls to ∆ik = Pk−1 
+
+> j=0
+
+Ak−1−j eij . Taking norms: 
+
+∆ik 2 ≤
+
+> k−1
+
+X
+
+> j=0
+
+∥A∥k−1−j 
+
+> 2
+
+eij 2 . (23) From Definition 2, eij 2 ≤ ϵA ¯zij 2 + ϵB ¯uij 2 + c0. Since 
+
+xij ∈ X and ud,i j ∈ U by Assumption 1, each residual satisfies eij 2 ≤ ¯e where ¯e := ϵA diam z + ϵB diam u + c0,so ∆ik 2 ≤ ¯e Pk−1 
+
+> l=0
+
+∥A∥l
+
+> 2
+
+. Combining with (22) via the triangle inequality: 
+
+ϵd,i k 2
+
+≤ ∥ C∥2 ¯e
+
+> k−1
+
+X
+
+> l=0
+
+∥A∥l 
+
+> 2
+
++ ϵC diam z = ¯ ϵk. (24) Since the sum increases in k, the maximum is at k = L − 1,giving (21). 
+
+Remark 3. Lemma 3 is the key bridge between the Koopman theory and the data-driven MPC framework. It shows that the offline data (ud, y d) from the nonlinear system can be decomposed as (ud, y d, nom + ϵd) with ϵdk ∞ ≤ ¯ϵ, where 
+
+yd, nom are the outputs of the nominal Koopman system. This decomposition is purely analytical—the controller never computes yd, nom —but it enables the stability machinery of [3] to be applied. The same bound applies to online initial conditions: if (u[t−nz ,t −1] , y [t−nz ,t −1] ) are the most recent 
+
+nz ≤ L measurements from the nonlinear system in closed loop, the discrepancy from the nominal Koopman output also satisfies ∥ϵt∥∞ ≤ ¯ϵ. When ∥A∥2 < 1, the geometric sum in (21) saturates: PL−2 
+
+> l=0
+
+∥A∥l 
+
+> 2
+
+≤ 11−∥ A∥2
+
+, so ¯ϵ is bounded independently of the horizon L.
+
+Theorem 4 (Stability of Data-Driven MPC under Approxi-mate Koopman Embedding) . Consider a nonlinear system (2) 
+
+admitting an approximate Koopman embedding (Definition 2) of dimension nz with parameters (ϵA, ϵ B , ϵ C , c 0), and let ¯ϵ
+
+be the effective noise level from Lemma 3. Suppose: (a) The offline input ud is persistently exciting of order L +2nz ,(b) The prediction horizon satisfies L ≥ 2nz ,(c) The regularization parameters satisfy λα > 0, λσ > 0,(d) The quantity cpe ¯ϵ is sufficiently small. Then the nz -step MPC scheme (17) is practically exponen-tially stable : there exist constants c > 0 and ρ ∈ (0 , 1) such that, for all initial states in a region of attraction that grows as ¯ϵ → 0:
+
+∥xk − xs∥2 ≤ c ρ k ∥x0 − xs∥2 + β(¯ ϵ), ∀ k ≥ 0 (25) 
+
+where β : R≥0 → R≥0 is continuous with β(0) = 0 . The constants c, ρ, and β depend on the cost matrices Q, R, the regularization parameters λα, λσ , and the system dimensions. If ¯ϵ = 0 (exact Koopman embedding), then β(¯ ϵ) = 0 and (25) 
+
+reduces to exponential stability. Proof: By Lemma 3, the nonlinear I/O data decompose as (ud, y d, nom + ϵd) with ϵdk ∞ ≤ ¯ϵ, where yd, nom are trajectories of the nominal Koopman LTI system G defined by 
+
+(A, B, C, D ). As noted in Remark 2, the nz -dimensional re-alization (A, B, C, D ) is neither controllable nor observable; however, the I/O transfer function G(z) = C(zI −A)−1B+D
+
+admits a minimal realization of order neff ≤ nz that is controllable and observable by construction. Since nz is a valid upper bound on neff , all results of [3] hold with n
+
+replaced by nz [3, p. 1703]. Conditions (a)–(d) then imply [3, Assumptions 2 and 4], placing the problem in the exact setting of [3, Theorem 3]. That theorem yields a Lyapunov function Vt := J∗
+
+> L
+
+(t) + γW (ξt) satisfying c1 ∥xt − xs∥22 ≤
+
+Vt ≤ c2 ∥xt − xs∥22 [3, Lemma 1] that converges exponen-tially to Vt ≤ β(¯ ϵ). Converting: ∥xk − xs∥22 ≤ Vk/c 1 ≤
+
+(c2/c 1)ρk ∥x0 − xs∥22 + β(¯ ϵ)/c 1, yielding (25) with c =pc2/c 1 and β rescaled by 1/√c1.
+
+Application to the Synchronous Generator: Theorem 4 applies to the generator (2) with nz = 7 , ϵB = 0 , ϵC = 0 ,
+
+ϵA = O(∆ t), and c0 = O((∆ t ω max )2) from Theorem 1. With ¯e = ϵA diam z + c0, the effective noise level (21) becomes ¯ϵ = ∥C∥2 ¯e PL−2 
+
+> l=0
+
+∥A∥l
+
+> 2
+
+. While each factor is individually moderate, the product can be large. For the minimum horizon L = 14 with typical parameters ( ∆t =0.0025 s, ωmax = 0 .02 pu, diam z ≈ 1): 
+
+¯ϵ ≈ 2.5|{z} 
+
+> ∥C∥2
+
+× 0.015 | {z } 
+
+> ¯e
+
+× 43 |{z} P∥A∥l
+
+> 2
+
+≈ 1.6.
+
+This effective noise level, while O(∆ t) in scaling, has a large proportionality constant ( ∥C∥2
+
+P ∥A∥l 
+
+> 2
+
+≈ 107 ) due to the accumulation of Koopman errors over L steps and the non-normality of A (∥A∥2 = 1 .18 while ρ(A) = 1 ). When 
+
+¯ϵ ≈ 1.6 is substituted into the stability constants from [3, The-orem 3]—which involve the Lyapunov sandwich ratio c2/c 1,the PE constant cpe , and the regularization parameters—the resulting β(¯ ϵ) yields a state bound of O(10 3) pu. This is phys-ically meaningless, despite the theorem being qualitatively correct ( β(¯ ϵ) → 0 as ¯ϵ → 0). The conservatism has two sources. First, the stability proof in [3] is designed for generic LTI systems with worst-case noise; it makes no use of the specific structure of the Koopman approximation error. Second, and more funda-mentally, the uniform bound ¯ϵ replaces the state-dependent 
+
+residual eij 2 ≤ ϵA ¯zij 2 + c0 by its worst-case value 
+
+¯e = ϵA diam z + c0. This discards the proportional structure that is the hallmark of the Koopman embedding: near the equilibrium, the actual residual is O(c0) ≈ 10 −8, not O(¯ e) ≈
+
+10 −2. The following subsection develops tighter bounds that exploit this structure. C. Tighter Bounds via Proportional Error Structure 
+
+The uniform bound ¯ϵ in Lemma 3 is conservative in two ways: (i) it uses ∥A∥l 
+
+> 2
+
+(spectral norm raised to a power) rather than the tighter Al 
+
+> 2
+
+(norm of the matrix power), and (ii) it replaces the state-dependent residual ¯zij 2 by the worst-case 
+
+diam z . We now address both. 
+
+Lemma 5 (Tighter Uniform Bound) . Under the same condi-tions as Lemma 3, the per-step output discrepancy satisfies: 
+
+¯ϵ tight  
+
+> k
+
+:= ¯ e
+
+> k−1
+
+X
+
+> l=0
+
+CA l 
+
+> 2
+
++ ϵC diam z (26) 
+
+with uniform bound ¯ϵ tight := max 0≤k≤L−1 ¯ϵ tight  
+
+> k
+
+=¯e PL−2 
+
+> l=0
+
+CA l 
+
+> 2
+
++ ϵC diam z . This satisfies ¯ϵ tight ≤ ¯ϵ, with strict inequality whenever A is non-normal. Proof: From (23) and (22): 
+
+C∆ik 2 =
+
+> k−1
+
+X
+
+> j=0
+
+CA k−1−j eij
+
+> 2
+
+≤
+
+> k−1
+
+X
+
+> j=0
+
+CA k−1−j 
+
+> 2
+
+eij 2 ≤ ¯e
+
+> k−1
+
+X
+
+> l=0
+
+CA l 
+
+> 2
+
+.
+
+The improvement over Lemma 3 comes from bound-ing CA l 
+
+> 2
+
+directly rather than splitting ∥C∥2 ∥A∥l 
+
+> 2
+
+≥∥C∥2 Al 
+
+> 2
+
+≥ CA l
+
+> 2
+
+.For the generator, A is non-normal ( ∥A∥2 = 1 .18 while 
+
+ρ(A) = 1 ). The actual Ak 
+
+> 2
+
+grows polynomially (linearly in k), not exponentially as ∥A∥k 
+
+> 2
+
+would suggest. For L = 14 ,
+
+∥C∥2
+
+P12  
+
+> l=0
+
+∥A∥l 
+
+> 2
+
+≈ 107 while P12  
+
+> l=0
+
+CA l 
+
+> 2
+
+≈ 49 , a factor of ∼ 2; but for L = 50 , the ratio exceeds 130 ×, making Lemma 5 essential for longer horizons. The more significant improvement comes from preserving the proportional error structure through the entire bound. 
+
+Lemma 6 (State-Dependent Error Bound) . Under the same conditions as Lemma 3, the output discrepancy along the i-th trajectory satisfies the state-dependent bound: 
+
+ϵd,i k 2
+
+≤
+
+> k−1
+
+X
+
+> l=0
+
+CA l
+
+> 2
+
+
+
+ϵA ¯zik−1−l 2 + ϵB ¯uik−1−l 2 + c0
+
+
+
++ ϵC ¯zik 2 . (27) 
+
+In particular, if ϵB = ϵC = 0 (as for the generator), this simplifies to: 
+
+ϵd,i k 2
+
+≤ ϵAk−1X
+
+> l=0
+
+CA l 
+
+> 2
+
+¯zik−1−l 2
+
+| {z }
+
+> proportional: vanishes at equilibrium
+
++c0
+
+> k−1
+
+X
+
+> l=0
+
+CA l
+
+> 2
+
+| {z }
+
+> offset: persists
+
+.
+
+(28) 
+
+The proportional term depends on the actual trajectory deviation ¯zij 2, not the worst-case diam z as in Lemma 3. Near equilibrium ( ¯zij 2 → 0), the effective noise reduces to c0
+
+Pk−1 
+
+> l=0
+
+CA l
+
+> 2
+
+, which is O(c0)—orders of magnitude smaller than the uniform bound ¯ϵ = O(ϵA diam z ).Proof: The proof follows Lemma 3 up to (23), but retains the state-dependent residual bound. From (22): 
+
+ϵd,i k 2
+
+≤ C∆ik 2 + ηik 2
+
+=
+
+> k−1
+
+X
+
+> j=0
+
+CA k−1−j eij
+
+> 2
+
++ ϵC ¯zik 2
+
+≤
+
+> k−1
+
+X
+
+> j=0
+
+CA k−1−j 
+
+> 2
+
+eij 2 + ϵC ¯zik 2 .
+
+Substituting eij 2 ≤ ϵA ¯zij 2 + ϵB ¯uij 2 + c0 from Defi-nition 2 and re-indexing with l = k − 1 − j gives (27). 
+
+Theorem 7 (Tighter Stability via Proportional Error) . Con-sider the setting of Theorem 4, and suppose additionally that 
+
+ϵB = ϵC = 0 (as holds for the generator by Theorem 1). Define: 
+
+SL := 
+
+> L−2
+
+X
+
+> l=0
+
+CA l 
+
+> 2
+
+(29) 
+
+and the offset-only noise level ¯ϵ0 := c0 SL. Then: (a) (Self-consistent bound) For any r > 0, if the closed-loop state satisfies ∥¯zk∥2 ≤ r for all k in the offline and online trajectories, the effective noise level can be tightened from 
+
+¯ϵ to: 
+
+¯ϵ(r) := ϵA SL r + ¯ ϵ0. (30) 
+
+(b) (Fixed-point argument) Provided ϵA SL is sufficiently small, the bound (25) from Theorem 4 holds with ¯ϵ
+
+replaced by ¯ϵ(r∗), where r∗ is the smallest positive solution of the fixed-point equation: 
+
+r = c ∥x0 − xs∥2 + β(¯ ϵ(r)) , (31) 
+
+with c, β from Theorem 4. Since β is continuous with 
+
+β(0) = 0 and ¯ϵ(r) → ¯ϵ0 = O(c0) as r → 0, the fixed-point r∗ satisfies r∗ ≤ c ∥x0 − xs∥2 + β(¯ ϵ0), yielding: 
+
+lim sup 
+
+> k→∞
+
+∥xk − xs∥2 ≤ β c0 SL
+
+ (32) 
+
+which depends on c0 (the offset) rather than ϵA diam z
+
+(the worst-case proportional error). Proof: Part (a). If ¯zij 2 ≤ r for all trajectory steps, Lemma 6 with ϵB = ϵC = 0 gives ϵd,i k 2
+
+≤ ϵA SL r +
+
+c0 SL = ¯ϵ(r). This is a valid uniform noise bound, so Theorem 4 applies with ¯ϵ replaced by ¯ϵ(r).
+
+Part (b). The bound (25) with noise level ¯ϵ(r) gives 
+
+∥xk − xs∥2 ≤ c ρ k ∥x0 − xs∥2 + β(¯ ϵ(r)) . In particular, 
+
+lim sup k→∞ ∥xk − xs∥2 ≤ β(¯ ϵ(r)) . The self-consistency requirement is that r must be large enough to contain the entire trajectory, i.e., r ≥ c ∥x0 − xs∥2 + β(¯ ϵ(r)) . The smallest such r is the fixed point r∗ of (31). Since β(¯ ϵ(r)) is continuous and increasing in r with β(¯ ϵ(0)) = β(¯ ϵ0) finite, and the left side r grows linearly, a fixed point exists provided the slope β′(¯ ϵ(r)) · ϵASL < 1 for large r, which holds when 
+
+ϵASL is sufficiently small. The asymptotic tracking error is 
+
+lim sup ∥xk − xs∥2 ≤ β(¯ ϵ(r∗)) ≤ β(¯ ϵ0) = β(c0 SL).Remark 4 (Improvement over Theorem 4) . Theorem 7gives an asymptotic tracking error of β(c0 SL) compared to 
+
+β(¯ ϵ) from Theorem 4, where ¯ϵ = ∥C∥2 ¯e PL−2 
+
+> l=0
+
+∥A∥l 
+
+> 2
+
+from (21). The improvement has two sources: (i) the sum SL =P CA l 
+
+> 2
+
+is tighter than ∥C∥2
+
+P ∥A∥l 
+
+> 2
+
+(Lemma 5), and (ii) the proportional error structure replaces ¯e = ϵA diam z + c0
+
+by c0 alone. The second effect dominates: for the generator with ϵA ≈ 0.015 , diam z ≈ 1, c0 ≈ 10 −8:
+
+c0
+
+¯e = c0
+
+ϵA diam z + c0
+
+≈ 10 −8
+
+0.015 ≈ 7 × 10 −7.
+
+The effective noise at the equilibrium is six orders of mag-nitude smaller than the worst-case noise. Since β scales as 
+
+O(¯ ϵ2) for small ¯ϵ [3], the tracking error improves by a factor of O(10 −12 ). The proportional error structure effectively eliminates ϵA from the asymptotic bound, leaving only the irreducible offset c0.V. C ONCLUSION 
+
+We have established rigorous conditions under which data-driven MPC, applied directly to input-output data from a nonlinear system, yields practical exponential stability. The key insight is that an approximate Koopman linear embed-ding serves as a purely analytical certificate: the controller itself never uses the Koopman model, but the existence of the embedding guarantees that the nonlinear data can be interpreted as noisy LTI data, enabling the robust stability theory of [3] to be applied. While the uniform noise bound 
+
+¯ϵ can be conservative, the proportional error structure of the Koopman embedding (Theorem 7) recovers an asymptotic tracking error that depends only on the irreducible offset c0,which is negligible for the synchronous generator at practical sampling rates. APPENDIX IPROOF OF THEOREM 1We denote the equilibrium lifted state by zs = Φ( xs)
+
+and the deviation ¯zk := zk − zs, ¯uk := uk − us. We construct a matrix A ∈ R7×7 and vector B ∈ R7×1 such that 
+
+¯zk+1 = A¯zk + B ¯uk + ek, where ek is the residual satisfying the proportional bound. The constant affine terms (such as 
+
+αq Ef d in the flux-decay equation) cancel by subtraction of the equilibrium relation. Define the shorthand θk := ∆ t ˜ωk,
+
+αd := ∆ t/M , αq := ∆ t/T ′
+
+> d0
+
+, γ := V∞/X Σ, κ := ( Xd +
+
+Xe)/X Σ, μ := ( Xd − X′
+
+> d
+
+)V∞/X Σ.
+
+Components 1–3: Exact Linear Propagation. From the Euler discretization (3)–(5), the absolute dynamics are: 
+
+z1,k +1 = z1,k + ∆ t z 2,k (33) 
+
+z2,k +1 = (1 − αdD) z2,k − αdγ z 6,k + αd uk (34) 
+
+z3,k +1 = (1 − αq κ) z3,k + αq μ z 7,k + αq Ef d . (35) At equilibrium, the same equations hold with zk = zs, uk =
+
+us, and zk+1 = zs. Subtracting: 
+
+¯z1,k +1 = ¯ z1,k + ∆ t ¯z2,k (36) 
+
+¯z2,k +1 = (1 − αdD) ¯ z2,k − αdγ ¯z6,k + αd ¯uk (37) 
+
+¯z3,k +1 = (1 − αq κ) ¯ z3,k + αq μ ¯z7,k . (38) Note that the constant αq Ef d in (35) cancels exactly in (38). All three deviation equations are exactly linear in ¯zk and ¯uk
+
+with zero residual: ei,k = 0 for i = 1 , 2, 3.
+
+Component 4 ( sin δ). By the angle addition formula: 
+
+z4,k +1 = sin δk+1 = sin( δk + θk)= z4,k cos θk + z5,k sin θk. (39) Since |θk| ≤ ∆t ω max =: ¯θ ≪ 1 by Assumption 1, we apply Taylor’s theorem with explicit Lagrange remainders: 
+
+cos θk = 1 − θ2 
+
+> k
+> 2
+
+ξc,k , sin θk = θk − θ3 
+
+> k
+> 6
+
+ξs,k (40) where ξc,k , ξ s,k ∈ [0 , 1] . Substituting (40) into (39): 
+
+z4,k +1 = z4,k + ∆ t z 2,k z5,k + r4,k (41) where the higher-order remainder is 
+
+r4,k = − θ2 
+
+> k
+> 2
+
+ξc,k z4,k − θ3 
+
+> k
+> 6
+
+ξs,k z5,k . (42) The bilinear term ∆t z 2,k z5,k is not linear in zk. We absorb it into the residual by writing z4,k +1 = z4,k + e4,k with 
+
+e4,k := ∆ t z 2,k z5,k + r4,k . (43) Bounding each term: since |z5,k | = | cos δk| ≤ 1 and z2,s =˜ωs = 0 ,
+
+|∆t z 2,k z5,k | ≤ ∆t |z2,k − z2,s | ≤ ∆t ∥¯zk∥2 . (44) For the remainder (42), using |θk|2 ≤ ¯θ2 and |z4,k |, |z5,k | ≤ 
+
+1:
+
+|r4,k | ≤ ¯θ2 
+
+> 2
+
++ ¯θ3 
+
+> 6
+
+≤ ¯θ2. (45) Combining (44) and (45): 
+
+|e4,k | ≤ ∆t ∥¯zk∥2 + ¯θ2. (46) 
+
+Component 5 ( cos δ). By the angle addition expansion: 
+
+z5,k +1 = cos( δk + θk) = z5,k cos θk − z4,k sin θk
+
+= z5,k − ∆t z 2,k z4,k + r5,k (47) where r5,k = − θ2 
+
+> k
+> 2
+
+ξc,k z5,k + θ3 
+
+> k
+> 6
+
+ξs,k z4,k . Defining e5,k := 
+
+−∆t z 2,k z4,k +r5,k and bounding identically to component 4: 
+
+|e5,k | ≤ ∆t ∥¯zk∥2 + ¯θ2. (48) 
+
+Component 6 ( E′ 
+
+> q
+
+sin δ). By the product rule: 
+
+z6,k +1 = E′ 
+
+> q,k +1
+
+sin δk+1 = z3,k +1 · z4,k +1 . (49) Substituting z3,k +1 from (35) and z4,k +1 = z4,k + e4,k :
+
+z6,k +1 = (1 −αq κ)z3,k + αq μ z 7,k + αq Ef d 
+
+ × z4,k + e4,k 
+
+
+
+= (1 −αq κ) z6,k + αq μ z 7,k z4,k + αq Ef d z4,k + z3,k +1 e4,k .
+
+(50) The first term (1 −αq κ) z6,k is linear in zk. The remaining terms are nonlinear. For the linear embedding, we assign the linear part to the A-matrix and collect all nonlinear and constant deviations into the residual: 
+
+e6,k := αq μ z7,k z4,k − z7,s z4,s 
+
+
+
++ αq Ef d (z4,k − z4,s ) + z3,k +1 e4,k . (51) To bound the bilinear term, we add and subtract z7,s z4,k :
+
+z7,k z4,k − z7,s z4,s = (z7,k −z7,s ) z4,k + z7,s (z4,k −z4,s )
+
+≤ | z4,k | | ¯z7,k | + |z7,s | | ¯z4,k | ≤ (1 + E′
+
+> q, max
+
+) ∥¯zk∥2 (52) where we used |z4,k | = | sin δk| ≤ 1, |z7,s | = |E′ 
+
+> q,s
+
+cos δs| ≤ 
+
+E′
+
+> q, max
+
+, and |¯zi,k | ≤ ∥¯zk∥2. The remaining terms sat-isfy |αq Ef d ¯z4,k | ≤ αq Ef d ∥¯zk∥2 and |z3,k +1 e4,k | ≤
+
+E′
+
+> q, max
+
+(∆ t ∥¯zk∥2 + ¯θ2), where we bounded |z3,k +1 | ≤
+
+E′
+
+> q, max
+
+. Combining: 
+
+|e6,k | ≤ c6 ∥¯zk∥2 + c′ 
+
+> 6
+
+¯θ2 (53) with c6 := αq μ(1+ E′
+
+> q, max
+
+) + αq Ef d + E′
+
+> q, max
+
+∆t and c′ 
+
+> 6
+
+:= 
+
+E′
+
+> q, max
+
+.
+
+Component 7 ( E′ 
+
+> q
+
+cos δ). By the identical product-rule ar-gument applied to z7,k +1 = z3,k +1 · z5,k +1 , with z5,k +1 =
+
+z5,k + e5,k :
+
+z7,k +1 = (1 −αq κ) z7,k + αq μ z 7,k z5,k 
+
++ αq Ef d z5,k + z3,k +1 e5,k . (54) The residual satisfies the analogous bound: 
+
+|e7,k | ≤ c7 ∥¯zk∥2 + c′ 
+
+> 7
+
+¯θ2 (55) with c7 := αq μ(1+ E′
+
+> q, max
+
+) + αq Ef d + E′
+
+> q, max
+
+∆t and c′ 
+
+> 7
+
+:= 
+
+E′
+
+> q, max
+
+.
+
+System Matrices and Aggregate Error Bound. 
+
+Collecting results, the system matrices in the deviation-coordinate embedding ¯zk+1 = A¯zk + B ¯uk + ek are: 
+
+A =
+
+
+
+1 ∆t 0 0 0 0 00 1−αdD 0 0 0 −αdγ 00 0 1−αq κ 0 0 0 αq μ
+
+0 0 0 1 0 0 00 0 0 0 1 0 00 0 0 0 0 1−αq κ 00 0 0 0 0 0 1−αq κ
+
+
+
+,
+
+(56) 
+
+B = 0 αd 0 0 0 0 0⊤ . (57) Since yk = ( z2,k , γ z 6,k )⊤ = (˜ ωk, P e,k )⊤:
+
+C =
+
+0 1 0 0 0 0 00 0 0 0 0 γ 0
+
+
+
+, D = 0 . (58) Rows 1–3 follow from (36)–(38) (exact, no residual). Rows 4–7 have the identity as their linear part (since the leading term in each is zi,k ), with all remaining terms collected into the residuals e4,k , . . . , e 7,k . The error vector ek =(0 , 0, 0, e 4,k , e 5,k , e 6,k , e 7,k )⊤ satisfies: 
+
+∥ek∥2 ≤
+
+> 7
+
+X
+
+> i=4
+
+|ei,k | ≤ (c4+c5+c6+c7) ∥¯zk∥2
+
++ ( c′
+
+> 4
+
++c′
+
+> 5
+
++c′
+
+> 6
+
++c′
+
+> 7
+
+) ¯θ2 (59) where c4 = c5 = ∆ t, c′ 
+
+> 4
+
+= c′ 
+
+> 5
+
+= 1 , and c6, c 7, c ′
+
+> 6
+
+, c ′ 
+
+> 7
+
+are defined above. Since ¯θ = ∆ t ω max , the aggregate bound is: 
+
+∥ek∥2 ≤ ϵA ∥¯zk∥2 + c0 (60) with 
+
+ϵA := 2∆ t + c6 + c7 = O(∆ t) (61) and offset c0 := (c′ 
+
+> 4
+
++ c′ 
+
+> 5
+
++ c′ 
+
+> 6
+
++ c′
+
+> 7
+
+)¯θ2 = (2 + 2E′
+
+> q, max
+
+)(∆ t ω max )2. This is precisely the proportional-with-offset bound (13) stated in Theorem 1. Since the input enters only in component 2 via (37) and is captured exactly by 
+
+B, we have ϵB = 0 . Since C in (58) extracts exact linear functions of z, we have ϵC = 0 and D = 0 .REFERENCES [1] J. C. Willems, P. Rapisarda, I. Markovsky, and B. L. M. De Moor, “A note on persistency of excitation,” Systems & Control Letters , vol. 54, no. 4, pp. 325–329, 2005. [2] J. Coulson, J. Lygeros, and F. Dörfler, “Data-enabled predictive control: In the shallows of the DeePC,” in Proc. 18th European Control Conference (ECC) , 2019, pp. 307–312. [3] J. Berberich, J. Köhler, M. A. Müller, and F. Allgöwer, “Data-driven model predictive control with stability and robustness guarantees,” 
+
+IEEE Transactions on Automatic Control , vol. 66, no. 4, pp. 1702– 1717, 2021. [4] C. De Persis and P. Tesi, “Formulas for data-driven control: Stabi-lization, optimality, and robustness,” IEEE Transactions on Automatic Control , vol. 65, no. 3, pp. 909–924, 2020. [5] H. J. van Waarde, J. Eising, H. L. Trentelman, and M. K. Camlibel, “Data informativity: A new perspective on data-driven analysis and control,” IEEE Transactions on Automatic Control , vol. 65, no. 11, pp. 4753–4768, 2020. [6] F. Dörfler, J. Coulson, and I. Markovsky, “Bridging direct and indirect data-driven control formulations via regularizations and relaxations,” 
+
+IEEE Transactions on Automatic Control , vol. 68, no. 2, pp. 883–897, 2023. [7] I. Markovsky, “Data-driven simulation of generalized bilinear systems via linear time-invariant embedding,” IEEE Transactions on Automatic Control , vol. 68, no. 2, pp. 1101–1106, 2023. [8] M. Guo, C. De Persis, and P. Tesi, “Data-driven stabilization of nonlinear polynomial systems with noisy data,” IEEE Transactions on Automatic Control , vol. 67, no. 8, pp. 4210–4217, 2022. [9] M. Alsalti, V. G. Lopez, J. Berberich, F. Allgöwer, and M. A. Müller, “Data-based control of feedback linearizable systems,” IEEE Transactions on Automatic Control , vol. 68, no. 11, pp. 7014–7021, 2023. [10] J. Berberich, J. Köhler, M. A. Müller, and F. Allgöwer, “Linear tracking MPC for nonlinear systems—Part II: The data-driven case,” IEEE Transactions on Automatic Control , vol. 67, no. 9, pp. 4406–4421, 2022. [11] B. O. Koopman, “Hamiltonian systems and transformation in Hilbert space,” Proceedings of the National Academy of Sciences , vol. 17, no. 5, pp. 315–318, 1931. [12] M. Korda and I. Mezi´ c, “Linear predictors for nonlinear dynamical sys-tems: Koopman operator meets model predictive control,” Automatica ,vol. 93, pp. 149–160, 2018. [13] L. Bold, M. Schaller, I. Schimperna, and K. Worthmann, “Kernel EDMD for data-driven nonlinear Koopman MPC with stability guar-antees,” IFAC-PapersOnLine , 2025, to appear. [14] I. Schimperna, L. Bold, J. Köhler, K. Worthmann, and L. Magni, “Stability of data-driven Koopman MPC with terminal conditions,” 
+
+arXiv preprint arXiv:2511.21248 , 2025. [15] T. de Jong, V. Breschi, M. Schoukens, and M. Lazar, “Koopman data-driven predictive control with robust stability and recursive feasibility guarantees,” in Proc. 63rd IEEE Conference on Decision and Control (CDC) , 2024, pp. 140–145. [16] X. Shang, J. Cortés, and Y. Zheng, “Willems’ fundamental lemma for nonlinear systems with Koopman linear embedding,” IEEE Control Systems Letters , vol. 8, pp. 3135–3140, 2024.

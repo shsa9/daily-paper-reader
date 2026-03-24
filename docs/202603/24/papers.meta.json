@@ -1,0 +1,65 @@
+{
+  "label": "2026-03-24",
+  "date": "2026-03-24",
+  "generated_at": "2026-03-24T20:22:12",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202603/24/2603.17089v1-stability-guarantees-for-data-driven-predictive-control-of-nonlinear-systems-via-approximate-koopman-embeddings",
+      "section": "quick",
+      "title_en": "Stability Guarantees for Data-Driven Predictive Control of Nonlinear Systems via Approximate Koopman Embeddings",
+      "authors": "Amin Taghieh, SangWoo Park",
+      "date": "2026-03-17",
+      "pdf": "https://arxiv.org/pdf/2603.17089v1",
+      "score": "6.0",
+      "evidence": "非线性系统的数据驱动预测控制",
+      "tldr": "本研究针对非线性系统数据驱动预测控制（MPC）的稳定性保障难题，提出了一种基于近似Koopman嵌入的理论框架。通过将非线性数据视为带有噪声的线性系统数据，利用Koopman线性嵌入作为理论证明工具，在无需已知提升函数的情况下，为直接使用原始非线性数据的MPC提供了实用指数稳定性保证。该方法通过利用嵌入残差结构优化了误差界限，并在同步发电机模型上验证了其有效性。",
+      "tags": "query:em-force",
+      "abstract_en": "Data-driven model predictive control based on Willems' fundamental lemma has proven effective for linear systems, but extending stability guarantees to nonlinear systems remains an open challenge. In this paper, we establish conditions under which data-driven MPC, applied directly to input-output data from a nonlinear system, yields practical exponential stability. The key insight is that the existence of an approximate Koopman linear embedding certifies that the nonlinear data can be interpreted as noisy data from a linear time-invariant system, enabling the application of existing robust stability theories. Crucially, the Koopman embedding serves only as a theoretical certificate; the controller itself operates on raw nonlinear data without knowledge of the lifting functions. We further show that the proportional structure of the embedding residual can be exploited to obtain an ultimate bound that depends only on the irreducible offset, rather than the worst-case embedding error. The framework is demonstrated on a synchronous generator connected to an infinite bus, for which we construct an explicit physics-informed embedding with error bounds.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/24/2603.17593v1-an-extended-t-a-formulation-based-on-potential-chain-recursion-for-electromagnetic-modeling-of-parallel-wound-no-insulation-hts-coils",
+      "section": "quick",
+      "title_en": "An Extended T-A Formulation Based on Potential-Chain Recursion for Electromagnetic Modeling of Parallel-Wound No-Insulation HTS Coils",
+      "authors": "Zhe Pan, Qi Xu, Ruixiang Wang, Zhenghao Jin, Jianzhao Geng",
+      "date": "2026-03-18",
+      "pdf": "https://arxiv.org/pdf/2603.17593v1",
+      "score": "6.0",
+      "evidence": "超导线圈的电磁建模与瞬态仿真",
+      "tldr": "针对并绕无绝缘（PW-NI）高温超导线圈，本文提出了一种基于电势链递归的扩展T-A公式（PCR-TA）。该方法通过将层间分流和径向旁路行为直接嵌入有限元框架，消除了传统场-路耦合模型中频繁的数据交换，显著提升了电磁仿真效率。结合多尺度技术，该方法在保证精度的前提下实现了数倍的计算加速，为大规模超导磁体的瞬态分析和闭环运行提供了高效工具。",
+      "tags": "query:em-force",
+      "abstract_en": "Parallel-wound no-insulation (PW-NI) high-temperature superconducting (HTS) coils significantly reduce charging delay while maintaining excellent self-protection capability, demonstrating great potential for high-field applications. Existing models that couple the T-A formulation with equivalent circuits have demonstrated high accuracy in electromagnetic analysis of PW-NI coils. However, eliminating the computational overhead caused by frequent variable mapping and data exchange between electromagnetic and circuit modules is important for improving computational efficiency, particularly in long-duration transient simulations of large-scale magnets. To address this issue, an extended T-A formulation based on potential-chain recursion, termed PCR-TA, is proposed. By directly embedding inter-tape current sharing and radial current bypass behaviors into the finite-element framework, this method computes the transient electromagnetic response of PW-NI coils without requiring an explicit equivalent circuit model. Building upon it, a multi-scale approach is further developed for large-scale PW-NI coils. The validity of the proposed method and its multi-scale extension is verified through comparisons with experimental measurements and field-circuit coupled modeling results. Comparative analyses demonstrate that the PCR-TA method achieves a speedup of approximately 2.4 over the field-circuit coupled method, whereas its multi-scale extension further increases this speedup to roughly 5.8. Furthermore, the PCR-TA method is extended to model the continuous transition of PW-NI coils from power-supply charging to closed-loop operation. This work provides an efficient method and tool for the electromagnetic modeling of PW-NI coils under both driven and closed-loop operating conditions.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/24/2603.20931v1-data-driven-modeling-of-a-controlled-orthotropic-plate-using-machine-learning",
+      "section": "quick",
+      "title_en": "Data-Driven Modeling of a Controlled Orthotropic Plate Using Machine Learning",
+      "authors": "Yongho Kim, Alexander Zuyev, Francesco Pellicano, Antonio Zippo",
+      "date": "2026-03-21",
+      "pdf": "https://arxiv.org/pdf/2603.20931v1",
+      "score": "6.0",
+      "evidence": "受控振动板的数据驱动建模",
+      "tldr": "本研究针对具有复合结构的受控正交各向异性振动板，探讨了利用实验数据学习其输入输出映射的方法。由于材料的正交各向异性和未知阻尼特性，传统解析建模面临挑战。研究构建了基于线性回归、多层感知器（MLP）和门控循环单元（GRU）的代理模型。对比分析表明，MLP模型能有效捕捉系统中的非线性现象，为该动力系统提供了良好的近似建模方案。",
+      "tags": "query:em-force",
+      "abstract_en": "We study the problem of learning the input-output map of a controlled vibrating plate with a composite structure from experimental measurements. Analytical modeling of this control system faces challenges due to the essential orthotropy and unknown damping characteristics of the material. Surrogate models based on linear regression, multilayer perceptrons, and gated recurrent units are constructed from the available sampled data. Through comparative analysis, we show that the multilayer perceptron model provides an acceptable approximation of this dynamical system, capturing the potentially nonlinear phenomena in its input-output behavior.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/24/2603.21070v1-koopman-meets-discrete-time-control-barrier-functions-a-linear-model-predictive-control-framework",
+      "section": "quick",
+      "title_en": "Koopman Meets Discrete-Time Control Barrier Functions: A Linear Model Predictive Control Framework",
+      "authors": "Shuo Liu, Liang Wu, Dawei Zhang, Jan Drgona, Calin. A. Belta",
+      "date": "2026-03-22",
+      "pdf": "https://arxiv.org/pdf/2603.21070v1",
+      "score": "6.0",
+      "evidence": "基于Koopman的非线性系统线性MPC",
+      "tldr": "本研究针对非线性离散时间系统的安全性控制问题，提出了一种基于Koopman算子的线性模型预测控制（LMPC）框架。针对传统离散时间控制屏障函数（DCBF）在MPC中导致的高计算量非线性规划问题，该方法通过Koopman理论将非线性动力学和屏障函数提升到高维空间，转化为线性预测模型。这使得安全约束下的MPC问题能够转化为高效的二次规划（QP）求解，并通过松弛变量提高可行性，实现了高效且安全的实时控制。",
+      "tags": "query:em-force",
+      "abstract_en": "This paper proposes a Koopman-based linear model predictive control (LMPC) framework for safety-critical control of nonlinear discrete-time systems. Existing MPC formulations based on discrete-time control barrier functions (DCBFs) enforce safety through barrier constraints but typically result in computationally demanding nonlinear programming. To address this challenge, we construct a DCBF-augmented dynamical system and employ Koopman operator theory to lift the nonlinear dynamics into a higher-dimensional space where both the system dynamics and the barrier function admit a linear predictor representation. This enables the transformation of the nonlinear safety-constrained MPC problem into a quadratic program (QP). To improve feasibility while preserving safety, a relaxation mechanism with slack variables is introduced for the barrier constraints. The resulting approach combines the modeling capability of Koopman operators with the computational efficiency of QP. Numerical simulations on a navigation task for a robot with nonlinear dynamics demonstrate that the proposed framework achieves safe trajectory generation and efficient real-time control.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

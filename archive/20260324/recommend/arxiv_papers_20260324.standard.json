@@ -1,0 +1,166 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-03-24T20:21:44.543563+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2603.17089v1",
+      "title": "Stability Guarantees for Data-Driven Predictive Control of Nonlinear Systems via Approximate Koopman Embeddings",
+      "abstract": "Data-driven model predictive control based on Willems' fundamental lemma has proven effective for linear systems, but extending stability guarantees to nonlinear systems remains an open challenge. In this paper, we establish conditions under which data-driven MPC, applied directly to input-output data from a nonlinear system, yields practical exponential stability. The key insight is that the existence of an approximate Koopman linear embedding certifies that the nonlinear data can be interpreted as noisy data from a linear time-invariant system, enabling the application of existing robust stability theories. Crucially, the Koopman embedding serves only as a theoretical certificate; the controller itself operates on raw nonlinear data without knowledge of the lifting functions. We further show that the proportional structure of the embedding residual can be exploited to obtain an ultimate bound that depends only on the irreducible offset, rather than the worst-case embedding error. The framework is demonstrated on a synchronous generator connected to an infinite bus, for which we construct an explicit physics-informed embedding with error bounds.",
+      "authors": [
+        "Amin Taghieh",
+        "SangWoo Park"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-03-17T19:20:50+00:00",
+      "link": "https://arxiv.org/pdf/2603.17089v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "data-driven predictive control for nonlinear systems",
+      "llm_evidence_cn": "非线性系统的数据驱动预测控制",
+      "llm_evidence": "非线性系统的数据驱动预测控制",
+      "canonical_evidence": "非线性系统的数据驱动预测控制",
+      "llm_tldr_en": "Establishes stability guarantees for data-driven MPC of nonlinear systems using Koopman embeddings.",
+      "llm_tldr_cn": "利用Koopman嵌入为非线性系统的数据驱动MPC建立了稳定性保证。",
+      "llm_tldr": "利用Koopman嵌入为非线性系统的数据驱动MPC建立了稳定性保证。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.17593v1",
+      "title": "An Extended T-A Formulation Based on Potential-Chain Recursion for Electromagnetic Modeling of Parallel-Wound No-Insulation HTS Coils",
+      "abstract": "Parallel-wound no-insulation (PW-NI) high-temperature superconducting (HTS) coils significantly reduce charging delay while maintaining excellent self-protection capability, demonstrating great potential for high-field applications. Existing models that couple the T-A formulation with equivalent circuits have demonstrated high accuracy in electromagnetic analysis of PW-NI coils. However, eliminating the computational overhead caused by frequent variable mapping and data exchange between electromagnetic and circuit modules is important for improving computational efficiency, particularly in long-duration transient simulations of large-scale magnets. To address this issue, an extended T-A formulation based on potential-chain recursion, termed PCR-TA, is proposed. By directly embedding inter-tape current sharing and radial current bypass behaviors into the finite-element framework, this method computes the transient electromagnetic response of PW-NI coils without requiring an explicit equivalent circuit model. Building upon it, a multi-scale approach is further developed for large-scale PW-NI coils. The validity of the proposed method and its multi-scale extension is verified through comparisons with experimental measurements and field-circuit coupled modeling results. Comparative analyses demonstrate that the PCR-TA method achieves a speedup of approximately 2.4 over the field-circuit coupled method, whereas its multi-scale extension further increases this speedup to roughly 5.8. Furthermore, the PCR-TA method is extended to model the continuous transition of PW-NI coils from power-supply charging to closed-loop operation. This work provides an efficient method and tool for the electromagnetic modeling of PW-NI coils under both driven and closed-loop operating conditions.",
+      "authors": [
+        "Zhe Pan",
+        "Qi Xu",
+        "Ruixiang Wang",
+        "Zhenghao Jin",
+        "Jianzhao Geng"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY",
+        "physics.acc-ph"
+      ],
+      "published": "2026-03-18T11:07:58+00:00",
+      "link": "https://arxiv.org/pdf/2603.17593v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Electromagnetic modeling and transient simulation of superconducting coils",
+      "llm_evidence_cn": "超导线圈的电磁建模与瞬态仿真",
+      "llm_evidence": "超导线圈的电磁建模与瞬态仿真",
+      "canonical_evidence": "超导线圈的电磁建模与瞬态仿真",
+      "llm_tldr_en": "Introduces an extended T-A formulation for efficient electromagnetic modeling of high-temperature superconducting coils.",
+      "llm_tldr_cn": "引入了一种扩展的T-A公式，用于高温超导线圈的高效电磁建模。",
+      "llm_tldr": "引入了一种扩展的T-A公式，用于高温超导线圈的高效电磁建模。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "eddy current effects in electromagnetic actuators dynamic modeling",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.20931v1",
+      "title": "Data-Driven Modeling of a Controlled Orthotropic Plate Using Machine Learning",
+      "abstract": "We study the problem of learning the input-output map of a controlled vibrating plate with a composite structure from experimental measurements. Analytical modeling of this control system faces challenges due to the essential orthotropy and unknown damping characteristics of the material. Surrogate models based on linear regression, multilayer perceptrons, and gated recurrent units are constructed from the available sampled data. Through comparative analysis, we show that the multilayer perceptron model provides an acceptable approximation of this dynamical system, capturing the potentially nonlinear phenomena in its input-output behavior.",
+      "authors": [
+        "Yongho Kim",
+        "Alexander Zuyev",
+        "Francesco Pellicano",
+        "Antonio Zippo"
+      ],
+      "primary_category": "math.OC",
+      "categories": [
+        "math.OC"
+      ],
+      "published": "2026-03-21T20:16:44+00:00",
+      "link": "https://arxiv.org/pdf/2603.20931v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "data-driven modeling of controlled vibrating plates",
+      "llm_evidence_cn": "受控振动板的数据驱动建模",
+      "llm_evidence": "受控振动板的数据驱动建模",
+      "canonical_evidence": "受控振动板的数据驱动建模",
+      "llm_tldr_en": "Uses machine learning to model the input-output map of controlled vibrating plates with unknown damping.",
+      "llm_tldr_cn": "利用机器学习对具有未知阻尼的受控振动板进行输入输出映射建模。",
+      "llm_tldr": "利用机器学习对具有未知阻尼的受控振动板进行输入输出映射建模。",
+      "llm_tags": [
+        "query:em-force:composite"
+      ],
+      "matched_query_tag": "query:em-force:composite",
+      "matched_query_text": "Papers central to 查找非接触式电磁激振器的力控制方法，特别是精密控制策略, especially work that connects or combines: electromagnetic exciter force control; ddy current magnetic bearing modeling; magnetic bearing flux feedback; non-contact electromagnetic shaker force control; precision force control strategies for electromagnetic actuators; closed-loop force control for electromagnetic shakers; flux feedback linearization zero bias magnetic bearing; non contact electromagnetic exciter precision force control; eddy current effects in electromagnetic actuators dynamic modeling; flux feedback control for magnetic bearing force precision.",
+      "matched_requirement_id": "req-composite-em-force",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.21070v1",
+      "title": "Koopman Meets Discrete-Time Control Barrier Functions: A Linear Model Predictive Control Framework",
+      "abstract": "This paper proposes a Koopman-based linear model predictive control (LMPC) framework for safety-critical control of nonlinear discrete-time systems. Existing MPC formulations based on discrete-time control barrier functions (DCBFs) enforce safety through barrier constraints but typically result in computationally demanding nonlinear programming. To address this challenge, we construct a DCBF-augmented dynamical system and employ Koopman operator theory to lift the nonlinear dynamics into a higher-dimensional space where both the system dynamics and the barrier function admit a linear predictor representation. This enables the transformation of the nonlinear safety-constrained MPC problem into a quadratic program (QP). To improve feasibility while preserving safety, a relaxation mechanism with slack variables is introduced for the barrier constraints. The resulting approach combines the modeling capability of Koopman operators with the computational efficiency of QP. Numerical simulations on a navigation task for a robot with nonlinear dynamics demonstrate that the proposed framework achieves safe trajectory generation and efficient real-time control.",
+      "authors": [
+        "Shuo Liu",
+        "Liang Wu",
+        "Dawei Zhang",
+        "Jan Drgona",
+        "Calin. A. Belta"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-03-22T05:50:50+00:00",
+      "link": "https://arxiv.org/pdf/2603.21070v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Koopman-based linear MPC for nonlinear systems",
+      "llm_evidence_cn": "基于Koopman的非线性系统线性MPC",
+      "llm_evidence": "基于Koopman的非线性系统线性MPC",
+      "canonical_evidence": "基于Koopman的非线性系统线性MPC",
+      "llm_tldr_en": "Develops a Koopman-based LMPC framework for safety-critical control of nonlinear systems using linear predictors.",
+      "llm_tldr_cn": "开发了一个基于Koopman的LMPC框架，利用线性预测器实现非线性系统的安全关键控制。",
+      "llm_tldr": "开发了一个基于Koopman的LMPC框架，利用线性预测器实现非线性系统的安全关键控制。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
