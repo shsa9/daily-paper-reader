@@ -1,0 +1,439 @@
+Title: Reconciling distributed compliance with high-performance control in continuum soft robotics
+
+URL Source: https://arxiv.org/pdf/2603.16630v1
+
+Published Time: Wed, 18 Mar 2026 01:40:25 GMT
+
+Number of Pages: 27
+
+Markdown Content:
+# Reconciling distributed compliance with high-performance control in continuum soft robotics 
+
+## Vito Daniele Perfetta ∗, Daniel Feliu Talegon †,Ebrahim Shahabi †, Cosimo Della Santina 
+
+Cognitive Robotics Department, Faculty of Mechanical Engineering, Delft University of Technology, Delft 2628 CD, The Netherlands. 
+
+> ∗
+
+Corresponding author. Email: V.D.Perfetta@tudelft.nl 
+
+> †
+
+These authors contributed equally to this work. 
+
+High-performance closed-loop control of truly soft continuum manipulators has remained elusive. Experimental demonstrations have largely relied on suf-ficiently stiff, piecewise architectures in which each actuated segment behaves as a distributed yet effectively rigid element, while deformation modes beyond simple bending are suppressed. This strategy simplifies modeling and control, but it sidesteps the intrinsic complexity of a fully compliant body and makes the system behave as a serial kinematic chain—much like a conventional articulated robot. An implicit conclusion has consequently emerged within the community: distributed softness and dynamic precision are incompatible. Here we show that this trade-off is not fundamental. We present a highly com-pliant, fully continuum robotic arm—without hardware discretization or stiffness-based mode suppression—that achieves fast and precise task-space convergence under dynamic conditions. The platform integrates direct-drive actuation, a ten-don routing scheme enabling coupled bending and twisting, and a structured nonlinear control architecture grounded in reduced-order strain modeling of un-
+
+1
+
+> arXiv:2603.16630v1 [cs.RO] 17 Mar 2026
+
+deractuated mechanical systems. Modeling, actuation, and control are co-designed to preserve essential mechanical complexity while enabling high-bandwidth loop closure. Experiments demonstrate accurate and repeatable execution of dynamic Carte-sian tasks, including fast positioning and interaction. The proposed system achieves the fastest reported task execution speed for continuum soft manipulators. At millimetric precision, execution speed increases by nearly fourfold compared with prior approaches—while operating on a fully compliant continuum body. These results demonstrate that distributed compliance and high-performance dynamic control can coexist, opening a path toward truly soft manipulators that approach the operational capabilities of rigid robots without sacrificing morphological rich-ness. 
+
+# INTRODUCTION 
+
+A central motivation fueling the development of the thriving soft robotics field is the ambition to realize systems that exploit distributed compliance to generate rich and adaptive deformation patterns ( 1–4 ). While this vision has profoundly shaped materials and fabrication strategies ( 5–7 ), control has followed a more conservative trajectory. To date, although impressive, experimental demonstrations of high-performance control ( 8–14 ) have largely focused on soft manipulators built as series interconnections of actuated segments that are sufficiently stiff to remain weakly affected by internal dynamic coupling and gravitational loading. Consequently, their deformation is predominantly confined to bending along circular arcs, or to similarly predictable modes. Each segment thus behaves effectively as a rigid element governed by simplified bending coordinates, naturally aligning with control formulations that assume full actuation. This structural bias is not merely a matter of mechanical convenience. Theoretical tractability has long relied on restricting the deformation space and suppressing modes that are difficult to stabilize—or even to represent analytically. Mechanical design and control have therefore co-evolved in a self-reinforcing loop: piecewise architectures make control feasible, and control assumptions legitimize piecewise archi-tectures. As a consequence, experimental demonstrations of soft robotic intelligence remain largely 2confined to systems that closely resemble fully actuated rigid kinematic chains. In doing so, they constrain the expressive mechanics of a genuinely compliant continuum body and fall short of the very original motivations of soft robotics. This tension leads to a central question: Can a general continuum arm achieve high-speed and accurate task-space regulation without relying on structural simplifications? Addressing it requires confronting distributed elasticity, intrinsic underactuation, and configuration-dependent equilibrium constraints simultaneously, rather than abstracting them away. Recent theoretical re-search has increasingly embraced this challenge by engaging explicitly with the high-dimensional nature of continuum morphology. Variable-strain formulations provide finite-dimensional dynamic representations grounded in continuum mechanics ( 15, 16 ). Structured Lagrangian control of un-deractuated systems ( 17, 18 ) and closed-loop inverse kinematics mappings ( 19 ) offer systematic tools for task-space regulation in mechanically coupled settings. Although often investigated in isolation and validated primarily in simulation, these results suggest that the perceived limitation may not be fundamental. Still, an integrated control architecture combining all these elements and capable of handling fully soft robots remains missing; both as a methodological result and, most importantly, as an experimental reality. In this work, we address this gap by showing that, when integrated within a single functioning architecture, recent advances in continuum modeling and underactuated control are not only able to manage complex deformations in fully soft robots, but can also push their performance beyond that reported for segmented soft manipulators. To this end, mechatronic design, modeling, and control are developed jointly to preserve mechanical expressivity while ensuring stable and respon-sive dynamics. We introduce a continuum soft arm explicitly conceived to maintain distributed compliance along its entire body, avoiding segmented construction and stiffness-dominated sim-plifications. A tendon-routing architecture enables coupled bending and twisting deformations, allowing configuration patterns that extend beyond pure curvature modes. The actuation pipeline is engineered for transparent loop closure, enabling operation beyond quasi-static assumptions. Control is achieved through a novel framework grounded in variable-strain continuum modeling of underactuated mechanical systems. A reduced-order Lagrangian formulation captures the essential elastic dynamics while remaining computationally tractable in real time. Task-space regulation is implemented via a closed-loop inverse kinematics mapping that explicitly accounts for equilibrium 3Figure 1 : From Cobots to Soft Robots. Comparison of physical characteristics across collaborative rigid robots, segmented soft robots, and general soft robots. The table highlights key differences in structure, material softness, actuation, and motion capabilities. constraints induced by underactuation. A low-level nonlinear controller ensures rapid convergence toward the shape prescribed by the task-space layer. Experiments validate the proposed architecture across positioning and dynamic tasks. The system achieves the fastest reported task execution speed for continuum soft manipulators. At millimetric steady-state precision, execution speed increases by nearly fourfold compared with prior approaches (Table 1), while operating on a fully compliant continuum body. The proposed structure thus takes a decisive step away from rigid-like morphologies while narrowing the performance gap with them, demonstrating that distributed compliance and high-performance dynamic control can coexist. 
+
+# RESULTS 
+
+The objective of the experimental evaluation is to assess whether explicitly integrating theoretical results that have so far remained largely confined to analytical investigations (reduced-order strain modeling, nonlinear underactuated dynamics, and model-aware control of continuum systems) can enable a purposefully designed fully compliant continuum arm to substantially outperform the segmented architectures commonly studied in the soft robotics literature and to move toward the 4Table 1 : Comparison of the proposed work with the most relevant experimental results on tas k-space dynamic control of soft robots. Results are organized for segmented, non-segmented reduced-compliance bending, and general continuum soft structures, reporting deformation strains, material softness, model and control techniques †, generalizability, preliminary training requirements, stability guarantee (with 
+
+∼ indicating limited validity), task-level feedback, 3D task achievement, and the Root Mean Square of the Task-Space error. Finally, task velocity is given for millimeter-level (errors < 1 cm) and centimeter-level (errors < 3 cm) precision scenarios, where dashed lines indicate unmet performance criteria and (·) ∗ denotes trajectory reference velocity when point-to-point regulation is absent and actual speed values are not reported. Additional details are reported in the Supplementary Material.                                                                                                                               
+
+> Segmented Non-segmented Bending General
+> (13 )(10 )(14 )(9)(11 )(20 )(21 )This Work
+> Robot
+> ↑Material softness ■■□□ ■■□□ ■■□□ ■■■□ ■■■□ ■□□□ ■■□□ ■■■■
+> Deformation strains Torsion ×××××××✓
+> Bending ✓✓✓✓✓✓✓✓
+> Axial ✓✓✓✓×××✓
+> 3D Motions ✓✓××✓✓×✓
+> Model & Control  Model PCC LSTM DNN + R PCC PCC KO KO VS Technique AP TRPO N-I L CS PD+ K-LQR MPC CLIK + PID+
+> ↑Generalizability ■□□ ■■□ ■■■ ■□□ ■□□ ■■□ ■■□ ■■■
+> No Training Required ✓××✓✓××✓
+> Stability Guaranteed ∼×∼∼∼∼∼✓
+> Task-level Feedback ×✓✓✓✓✓×✓
+> Results  ↑cm-task speed [m/s] 0.42 ∗0.05 ∗0.019 0.028 0.060 0.37 0.006 0.384
+> ↑mm-task speed [m/s] −−0.017 −−−0.006 0.063
+> ↓Task-space RMS error [mm] 12 .91 7.47 0.81 11 .24 14 .09 25 .54 2.31 0.67
+> †
+
+VS, Variable Strain; KO, Koopman Operators; PCC, Piecewise Constant Curvature; LSTM, Long-Short Term Memory; DNN+R, Deep Neural-Network and Reptile; CLIK + PID+, Closed Loop Inverse Kinematics and Collocated PID with gravity and elasticity compensation; K-LQR, Koopman–Linear Quadratic Regulator; PD+, PD with acceler-ation potential field; AP, Adaptive Passivity; CS, Cartesian Stiffness; TRPO, Trust Region Policy Optimization; N-I L, Neuron-Inspired Learning; MPC, Model Predictive Control. 
+
+5dynamic performance traditionally associated with rigid manipulators. Industrial collaborative robots routinely achieve Cartesian speed in the order of 0 .2–0 .3 m s −1
+
+in certified safe human–robot interaction modes ( 22 ), with precision in the order of 3–8 mm range ( 23 ). State-of-the-art segmented soft manipulators, by contrast, operate at markedly lower speeds, especially when millimeter accuracy is required - see Table 1. The experiments that follow are designed to precisely position the proposed system within this landscape and quantify what becomes achievable when contemporary continuum modeling and underactuated control tools are instantiated on a truly soft body. The first set of results isolates the mechatronic and control-theoretic contributions. The con-tinuum soft manipulator is actuated via high-performance direct-drive motors and a distributed tendon-routing architecture, enabling coupled bending and twisting along the entire body. Motion is regulated by a nested nonlinear control framework operating in task space. We then move to quantitative results. Task-space regulation is assessed in two- and four-dimensional obstacle-free scenarios. For each target, a fixed time window is defined and pro-gressively reduced, starting from a duration long enough to guarantee convergence to millimetric accuracy (see Materials and Methods). This procedure identifies the minimum time required for consistent task completion as speed demands increase. To enable comparison with prior work, two Cartesian error thresholds are considered (Table 1): a centimetric band (error < 3 cm per relevant dimension) and a millimetric band (error < 1 cm). For each threshold, we report an equivalent task-accomplishment velocity, defined as tip displacement divided by the time required to reach and remain within the band. The error vector is computed as 
+
+𝑒 𝑥 = 𝑥 d − 𝑥 , where 𝑥 and 𝑥 d are defined according to the considered task-dimension. Performance is further validated on representative real-world tasks, including sugar pouring and pendulum striking. Across all experiments, instantaneous tip velocities on the order of meters per second are observed alongside millimetric steady-state accuracy - a regime typically associated with rigid manipulators, here obtained with a fully compliant continuum structure. 6Multi-modal actuation in a fully continuum soft robot 
+
+In this work, we present a highly deformable soft robotic arm capable of achieving a rich, complex workspace through a novel tendon routing strategy that simultaneously enables bending and twisting within a single continuous elastomeric body. The arm is fabricated as a single 38 cm-long elastomeric structure using Ecoflex 00-50 (Smooth-On, USA), shaped into a cone with base radius 𝑅 𝑏 = 1.60 cm and tip radius 𝑅 𝑡 = 0.48 cm. Four tendons are embedded during casting and distributed along the body, occupying approximately half of the arm’s vertical cross-section in two distinct groups (Fig. 2B). Two tendons run straight along the lateral sides at angles of 30 ◦ and 150 ◦ from the cross-sectional horizontal axis (Fig. 2C), extending 32 .5 cm from the base, while the remaining two are positioned in the frontal region at 60 ◦ and 120 ◦ in a crossed configuration over the same length. This mixed straight–crossed tendon layout intentionally breaks axial symmetry, unlocking both decoupled and combined bending and twisting modes within a single soft body, without relying on helical reinforcements, segmented joints, or layered material architectures. Actuating the straight lateral tendons primarily produces bending, whereas actuating the crossed frontal tendons induces twisting about the longitudinal axis. Simultaneous activation of both groups generates coupled bending–twisting motions, and when multiple tendons are engaged, the arm also undergoes limited axial compression due to its inherent softness. The result is a hemispherical workspace that curves onto itself near the tip, enabling configuration patterns that extend well beyond pure curvature modes, as illustrated in Fig. 2D. To define the tendon path and minimize friction during actuation, each tendon was inserted into a thin silicone tube before casting. The tube-tendon assemblies were positioned in the mold using 2 mm guide rings before the elastomer was poured and cured. Despite these measures, residual friction effects persist and are explicitly accounted for in the modeling framework presented in Material and Methods. Detailed fabrication steps are provided in the Supplementary Material. 
+
+## A two-level control architecture for general soft robots 
+
+The architecture leverages and extends the latest advances in configuration-space control and CLIK for Lagrangian underactuated systems to friction-aware Variable Strain models, achieving fast and 7Direct-drive motors 
+
+Motion capture Soft arm Markers Tendons 
+
+A
+
+C
+
+DB
+
+E 
+
+> Collocated Control Motors +Soft Robot Precomputed CLIK Online CLIK Motion Capture
+
+Figure 2 : Experimental Setup and Control Framework. (A) Experimental setup. ( B) Internal view of the soft arm. Different tendon configurations are visually distinguished by straight (green) and crossed (blue) paths, while burgundy circles denote the tiny guiding rings. Transparent render-ings on the sides illustrate examples of achievable shapes. ( C) Top view of the robot illustrating the tendons’ placement at the base. Each tendon–motor pair is identified by a number from 1 to 4, with green circles denoting straight tendon paths and blue crosses denoting the crossed ones. ( D)Soft robot’s workspace attained through combined actuation of the four tendons with pulling forces in [0, −5] N. ( E) Block diagram of the two-level control framework employed, with the inner loop in gray and the outer loop in red. 8millimeter-level task-space accuracy on a highly underactuated soft robotic arm. The architecture consists of a model-based, two-level nested control loop, illustrated in Fig. 2E. The inner loop implements a configuration-space collocated controller that computes the tendon pulling forces 𝑢 ∈ R𝑛 a according to the error in the actuation coordinates   ¯𝜃 a,d − ¯𝜃 a
+
+ ∈ R𝑛 a ,reconstructed from the measured tendon lengths 𝐿 c ∈ R𝑛 a (see Material and Methods). The outer loop maps a desired task-space pose 𝑥 d ∈ R𝑚 to a reference configuration 𝑞 d ∈ R𝑛 via a CLIK algorithm that feeds back the robot’s actual pose. From 𝑞 d, the desired tendon lengths 𝐿 c,d and the actuation coordinates ¯ 𝜃 a,d are then analytically derived. This decomposition allows each level to address a distinct challenge: the inner loop handles the underactuated dynamics, while the outer loop compensates for modeling inaccuracies and small disturbances in task space, where the number of controlled task-space coordinates matches the number of available actuators, i.e. 𝑛 a = 𝑚 .Two variants of the CLIK algorithm are employed. The first is a precomputed approach that relies exclusively on model-based tip position predictions and can therefore be executed offline, enabling fast motions without real-time computational overhead. However, due to unmodeled dynamics and parameter uncertainties, this approach alone yields task-space errors of a few centimeters. The second is an online implementation that incorporates feedback from the robot’s actual pose 𝑥 ,measured via a motion-capture system tracking markers attached to the arm, reducing the task-space error to the millimeter range at the cost of increased computational demand. To exploit the complementary strengths of both variants, the experimental protocol consists of first driving the robot toward the desired pose 𝑥 d using the precomputed CLIK, and subsequently refining convergence by switching to the real-time version, unless stated otherwise. 
+
+## Free-space regulation tasks 
+
+Free-space coiling motion 
+
+The soft manipulator is here regulated to reach predefined tip positions in a variable two-dimensional, obstacle-free task space, inducing a coiling motion that fully leverages the soft structure’s intrinsic deformability, as shown in Fig. 3 and movie S1. To this end, only actuators 3 and 4 (see Fig. 2C) are activated. Four pairs of reference coordinates for the tip position are assigned across the three Cartesian 9planes (see Fig. 3A). The soft manipulator is commanded to sequentially achieve each coordinate pair, with transition times of 15 s during the upward motion. Once a desired point is reached, the corresponding configuration is stored and later provided as reference to the configuration-space controller to assess the manipulator’s achievable speeds and repeatability during the subsequent downward motion, with transition times of 5 s, and again during the final upward motion lasting 1 s per point. From Fig. 3B, it can be observed that steady-state errors always converge in the 5 mm band when the robot operates within the 15 s time window. However, when the transition duration is reduced to both 5 s and 1 s, the oscillations are not fully damped, resulting in slightly larger errors prior to each reference change that nonetheless mostly remain within the 10 mm band. These oscillations are mainly caused by the unactuated state variables, which are not directly controllable through the control inputs (see Material and Methods), whereas the actuated coordinates are accurately tracked by the low-level controller, as illustrated in Fig. 3D. During the entire experiment, the soft arm reaches peak velocities of up to 3 .63 m s −1, which typically occur when a new precomputed configuration-space reference is assigned following a desired pose change. Meanwhile, convergence to the desired configuration within a 3 cm error band along both task-space directions was achieved at an equivalent task velocity of up to 0 .189 m s −1, whereas velocities of approximately 0 .02 m s −1
+
+were required to attain millimetric accuracy. 
+
+Free-space triangle configuration 
+
+In this experiment, the scalability of the proposed control architecture is assessed in an extended four-dimensional obstacle-free workspace. In this setting, the tip must reach three target points arranged in a triangular configuration while progressively increasing its velocity, showcasing fast, precise and repeatable convergence to a configuration, as illustrated in Fig. 4 and movie S2. Specifically, the CLIK algorithm controls four task-space coordinates: three regulate the tip position, while the fourth constrains the 𝑦 -coordinate of the marker immediately preceding the tip in the global frame. The motion sequence proceeds in two phases. First, the robot is commanded to reach each of the three triangle vertices sequentially, with a 25 s time window per target, during which the real-time CLIK converges to the desired pose and the resulting configuration is stored. In the second phase, the stored configurations are replayed to the low-level controller in sequence, 10 0 0.1 0.2 -0.2 -0.1 0-0.3 -0.2 00.1 0.2 0 0.1 0.2 -0.2 -0.1 0-0.1 0 0.1 -0.2 -0.1 0-0.1 0 0.1 -0.2 -0.1 00 0.1 0.2 -0.2 -0.1 0-0.3 -0.2 00.1 0.2 0 0.1 0.2 -0.2 -0.1 00 0.1 0.2 -0.2 -0.1 0-0.3 -0.2 00.1 0.2 0 0.1 0.2 -0.2 -0.1 0-0.1 0 0.1 -0.2 -0.1 015 30 45 60 75 -0.1 -0.05 00.05 0.1 
+
+## A
+
+## B          
+
+> 015 30 45 60 75 0.14 0.16 0.18 0.2 0.22 0.24 0.26
+> 015 30 45 60 75 0.14 0.16 0.18 0.2 0.22 0.24 0.26
+
+## CFigure 3 : Two-dimensional coiling task. (A) (Top) The robot’s final configurations at each refer-ence Cartesian coordinate pair are shown. Reference points are marked with red circles, while the corresponding 3D projections reached by the robot are highlighted with red stars. From right to left, the shapes correspond to time windows of 15 s, 5 s and 1 s, respectively, with a transparency gradient representing progression over time. (Bottom) The projection of the robot’s motion onto the Cartesian plane is shown for each task and time interval. Red circles denote desired target coordinates, while black crosses indicate the robot’s final position before reference change. Motion is reported on a normalized time scale. ( B) Time evolution of the errors in operational space and their convergence within 5 mm and 10 mm bands. To improve readability, the post-processed error obtained through a moving-average filter is highlighted, while the raw error signal is displayed more transparently in the background. Grey dashed vertical bars indicate the switch in time windows. (C) Time evolution of the estimated actuation coordinates (blue) and their tracking of the reference signals (red) under configuration-space collocated control. 11 repeating each transition three times with a time slot of 5 s and then again three times with a time slot of 1 s, to assess convergence speed and repeatability of the proposed framework. Each transition is repeated three times to assess the repeatability of the proposed framework. The time-evolution of the corresponding task-space errors is shown in Fig. 4B. Here, it can be noticed how the robot’s tip accurately converges to each target point with an error norm below 5 mm during the initial phase with a 25 s time window. In the subsequent step, the error remains on the millimetric scale even when the transition time is reduced to 5 s, during which the tip velocity reaches peaks of approximately 2 .52 m s −1. When the time window is further shortened to 1 s, the manipulator completes the transition with an average error still within the 10 mm band at each point, while instantaneous errors continue to oscillate and do not fully decay within the assigned time. In this case, convergence to the desired configuration within a 3 cm error band along all four task-space directions was achieved at an equivalent task velocity of up to 0 .384 m s −1, whereas a speed of approximately 0 .063 m s −1 was required to attain millimetric accuracy. 
+
+## Application-driven tasks 
+
+Dynamic ball interaction task 
+
+To demonstrate the high speeds and precision achievable with the proposed framework, the soft arm is commanded to strike a pendulum mass at the instant of maximum velocity, as shown in Fig. 5 and movie S3. The additional experimental setup consists of a mass of approximately 21 g suspended from the robot cage by a massless cable of length 30 .5 cm, with an initial angular displacement of about 80 ◦ from the vertical. A 3D-printed pierced wall is placed on the side to ensure repeatability of the initial condition. Given the initial position of the pendulum pivot at (0.147 , 0.156 , 0.073 ) m, and the time evolution of the system (provided in the Supplementary Material), the pendulum’s pose at its velocity peak can be estimated. This value is then used as the desired Cartesian target 𝑥 d
+
+for the CLIK algorithm, enabling interception by the soft arm. In this experiment, the CLIK block is fully precomputed to minimize execution delays and synchronize the control action with the pendulum motion. As a result, the manipulator effectively strikes the ball at approximately 𝑡 = 0.35 s (see Fig. 5A), achieving a peak speed of about 4 .37 m s −1.12 0 25 50 75 100 125 0.24 0.26 0.28 0 25 50 75 100 125 0.2 0.22 0.24 20 40 60 80 100 120 -0.1 -0.05 00.05 0.1 0 25 50 75 100 125 0.26 0.28 0.3 0 25 50 75 100 125 0.24 0.26 0.28 00.1 0.2-0.2 0 0.2 -0.4 -0.3 -0.2 00.1 0.2-0.2 0 0.2 -0.4 -0.3 -0.2 00.1 0.2-0.2 0 0.2 -0.4 -0.3 -0.2 0 25 50 75 100 125 -10 -5 0510 
+
+ADB CFigure 4 : Four-dimensional triangular shape task. (A) (Top) The robot’s final configurations upon converging at reference points (red circles) displaced in a triangular shape in the Cartesian space are shown. From right to left, the shapes correspond to time windows of 25 s, 5 s and 1 s, respectively. (Bottom) The reconstructed robot’s motion in the Cartesian space is shown for each time interval. The red circle denotes the desired targets, while the black cross indicates the robot’s last position before the reference change. Motion is reported on a normalized time scale. ( B) Time evolution of the errors in operational space and their convergence within the 5 mm and 10 mm accuracy bands. To improve readability, the post-processed error obtained through a moving-average filter is highlighted, while the raw error signal is displayed more transparently in the background. Grey dashed vertical bars indicate the switch in time windows. ( C) Time evolution of the pulling forces exerted by the tendons. ( D) Time evolution of the estimated actuation coordinates (blue) and their tracking of the reference signals (red) under configuration-space collocated control. 13 The equivalent task velocity, here computed as the ratio of the difference between striking and initial tip poses over the corresponding time interval, reaches up to 1 .48 m s −1. Figure 5B illustrates the resulting trajectory deviation of the marker attached to the pendulum from its nominal path after impact, characterized by a pronounced displacement along the 𝑦 -axis. 
+
+Sugar manipulation task 
+
+In this experiment, six pairs of reference coordinates for the tip position are assigned across the three Cartesian planes to perform a pick-and-pour task, where sugar is delicately grasped from a container and released into an approaching cup of coffee. This complex task showcases the manipulator’s shock-absorption capabilities and its ability to coordinate multiple deformations (i.e., axial, bending and torsion) to perform safe and precise motion, even during compliant interactions with the environment (see Fig. 6 and movie S4), demonstrating the control architecture’s robustness to small unmodeled dynamics and external disturbances thanks to the outer loop closure. The sugar is placed in a 3D-printed container fixed on a support inside the manipulator’s workspace. Two reference points are first defined before and inside the sugar container, allowing the 5 cm 3D-printed spoon attached to the robot’s tip to collect the sugar. Then, three additional via points guide the manipulator along the desired trajectory, with a final point positioning the tip directly above the cup placed in front of the robot’s base. To prevent sugar spillage, the robot moves at a slower speed, maintaining an average transition time of approximately 20 s between reference coordinates. The whole time evolution is illustrated in Fig. 6A. In this experiment, the CLIK algorithm was executed entirely in real time, without any initial feedforward computation during the reference transitions. Only at approximately 102 s is the precomputed version employed to send the final target configuration to the low-level controller, specifically to provide sufficient thrust to release the sugar from the spoon. As shown in Fig. 6B, the control architecture effectively compensates for unmodeled external disturbances. Indeed, the steady-state error remains within the 10 mm and 30 mm bands for the first two reference points even under environmental contacts during sugar collection. Subsequently, although the robot converges more slowly toward the desired Cartesian coordinates due to the unmodeled increased tip weight from the spoon and added sugar, the controller continues to reduce the error toward the millimetric range. As a result, the task is successfully executed, even though steady-state errors remain at the 14 B
+
+## AFigure 5 : Pendulum-like ball striking. (A) The time sequence of shapes attained by the soft manipulator is reported here. The ball is first released at 𝑡 = 0.00 s, and then accurately struck at 𝑡 = 0.35 s by the robot. ( B) The motion of the robot tip together with the trajectory of the marker placed on the external surface of the pendulum is shown. The corresponding normalized time histories are reported on the left (soft robot) and on the right (pendulum). The trajectories include cross markers, shown in the corresponding colors, to identify the impact instant; post-impact trajectories are subsequently displayed with increased transparency. In addition, the desired target position for the robot’s tip is indicated by the gray circle, while the nominal trajectory of the pendulum’s marker in the absence of impact is depicted by the black dashed line. 15 centimetric scale because transitions to the next reference occur before full convergence. 
+
+# DISCUSSION 
+
+This work demonstrates that fully continuum soft robots can achieve high-speed, accurate task-space regulation without any structural segmentation or reduced-compliance body, with performance approaching that of rigid manipulators. Thanks to the novel actuation path, shapes that simultaneously combine bending and twist-ing can now be achieved, thereby enabling the execution of real-world tasks that are difficult or unattainable with existing approaches. Tendon-driven actuation is a practical and versatile choice for soft robotic systems, as it allows the motors to be located away from the deformable structure and the actuation paths to be reconfigured to tailor the robot’s workspace. However, friction ef-fects along the tendon paths introduce configuration-dependent behaviors that must be carefully accounted for in both fabrication and modeling to achieve precise control. In this regard, the pro-posed friction modeling extension to the VS framework (see Material and Methods) significantly enhances accuracy, effectively capturing tendon–structure interactions that would otherwise lead to substantial modeling errors. To model and control the proposed soft robot, we have presented a fully interpretable framework. Here, the combination of precomputed CLIK with configuration-space collocated control enables both high instantaneous velocities and rapid convergence. This dynamic performance is reinforced by a real-time CLIK layer, which enhances robustness against discrepancies between the mathematical model and the physical manipulator, allowing steady-state Cartesian errors on the order of millimeters. Notably, relying on a fully model-based architecture not only provides clear insight into the system dynamics and allows analytical stability guarantees, but also enables a higher level of robustness and generalizability, allowing fast and precise motion across a variety of tasks with different deformations and operating conditions without any training procedure. Given that rigid robots still outperform soft systems in terms of (sub-)millimetric accuracy and task execution speed, the proposed manipulator has nevertheless demonstrated the ability to attain instantaneous velocities on the same order as collaborative robots (up to approximately 4 m s −1)and steady-state errors below 5 mm. In terms of task-achievement speed, our soft arm exceeds 16 B
+
+# A     
+
+> 020 40 60 80 100 0.16 0.18 0.2 0.22 0.24 0.26
+
+# C     
+
+> 020 40 60 80 100 0.16 0.18 0.2 0.22 0.24 0.26
+
+Figure 6 : Sugar pick-and-pour task to sweeten a cup of coffee. (A) The sequence of shapes attained by the soft manipulator is here reported for 𝑡 = 42 , 60 , 98 , 102 s. Specifically, the arm accesses the sugar container at 𝑡 = 42 s, and eventually releases it at 𝑡 = 102 s. The starting configuration of the robot is shown transparently in the top-left picture. ( B) The time evolution of the errors in operational space is shown, together with their convergence within the 10 mm and 30 mm accuracy bands. To improve readability, the post-processed error obtained through a moving-average filter is highlighted, while the raw error signal is displayed more transparently in the background. ( C) The time evolution of the estimated actuation coordinates (blue) and their tracking of the reference signals (red) under configuration-space collocated control is shown. 17 the previous best tracked performance (see Table 1), reaching a task-space error below 3 cm at a velocity of 0 .384 m s −1 and convergence to a millimetric error at a speed approximately four times higher than the current state of the art, registering 0 .063 m s −1 versus the previous 0 .017 m s −1.Notably, these results not only advance beyond prior performance, but are also achieved using a softer and fully continuous manipulator undergoing much more complex deformations. Overall, while the presented results demonstrate the potential of the proposed framework to extend the operational boundaries of soft robots toward real-world applications, several limitations and opportunities remain. First, the experimental results reported in this study focus exclusively on regulation to desired configurations, as this is the operating condition under which the stability of the employed controllers has been formally established in prior works ( 18, 19 ). Extending the framework to Cartesian trajectory tracking constitutes a natural next step and will be addressed in future works. Second, the current implementation relies on a motion capture system to accurately estimate the shape of the soft manipulator. For real-world deployment, it will be necessary to overcome this dependency by integrating alternative sensing modalities. Finally, the proposed approach does not explicitly model interactions with the external environment, which can still influence performance, as observed in the sugar grasp-and-pour experiment. Explicitly accounting for environmental interaction effects within the control framework will be essential to further improve robustness and overall system performance in real-world scenarios. 
+
+# MATERIAL AND METHODS 
+
+Here, we describe the implementation of each block of the control architecture introduced in Fig. 2E. We first present the Variable Strain modeling procedure, with a focus on the representation of friction effects. Next, we describe the configuration-space collocated controller used to regulate the robot to a desired reference shape, detailing the proposed actuation coordinates and their analytical relationship with the tendon lengths. Finally, we present the CLIK algorithm, which maps the desired tip pose to a reference configuration in the configuration space. 18 Dynamic model of the soft arm 
+
+Continuum soft robots are typically characterized by slender geometries, which allow an effective reduced-order description of their dynamics through deformations of the central axis alone, as is the case for elastic rods. By exploiting this property, we model the proposed manipulator using Cosserat rod theory ( 24 ). A Cosserat rod is a soft body capable of undergoing both rotational and translational deforma-tions (i.e., bending, torsion, axial stretching, and shear), expressed by the strain vector 
+
+𝜉 (𝑋, 𝑡 ) : [0, 𝐿 ] × [ 0, +∞) → R6 , (1) where 𝐿 is the length of the rod, 𝑡 indicates the time, and 𝑋 represents the material curvilinear abscissa that parametrizes the distance along the central axis. This infinite-dimensional strain field can be parametrized as 
+
+𝜉 (𝑋, 𝑡 ) ≈ 𝜉 𝑛 (𝑋, 𝑡 ) = 𝜉 0 (𝑋 ) + 
+
+> 𝑛
+
+∑︁ 
+
+> 𝑖 =1
+
+𝑞 𝑖 (𝑡 )𝑏 q,𝑖 (𝑋 ) , (2) where 𝜉 𝑛 (𝑋, 𝑡 ) is the approximated strain field, 𝜉 0 (𝑋 ) is the reference strain field, and with 
+
+𝐵 q (𝑋 ) =
+
+h
+
+𝑏 q,1 (𝑋 ) ... 𝑏 q,𝑛 (𝑋 )
+
+i
+
+∈ R6×𝑛 , (3) 
+
+𝑞 (𝑡 ) =
+
+
+
+𝑞 1 (𝑡 )
+
+... 𝑞 𝑛 (𝑡 )
+
+
+
+∈ R𝑛 , (4) being 𝐵 q (𝑋 ) a matrix function whose columns form the basis for the strain field, 𝑞 (𝑡 ) the generalized coordinates vector in that basis, and 𝑛 the resulting number of degrees of freedom. It is relevant to underline that for 𝑛 → ∞ , Eq. 2 is an exact equality. Since the strain basis can be a generic function of 𝑋 , this approach is referred to as Variable Strain parametrization. This procedure enables to study the dynamics of the soft robot with the well-known second-order differential equation 
+
+𝑀 (𝑞 ) ¥ 𝑞 + ( 𝐶 (𝑞, ¤𝑞 ) + 𝐷 (𝑞 )) ¤ 𝑞 + 𝐾𝑞 + 𝐹 (𝑞 ) = 𝐴 (𝑞 )𝑢 , (5) where 𝑀 ∈ R𝑛 ×𝑛 is the generalized mass matrix, 𝐶 ∈ R𝑛 ×𝑛 the generalized Coriolis matrix, 
+
+𝐷 ∈ R𝑛 ×𝑛 the generalized damping matrix, 𝐾 ∈ R𝑛 ×𝑛 the generalized stiffness matrix, 𝐴 ∈ R𝑛 ×𝑛 a
+
+19 the generalized actuation matrix, 𝐹 ∈ R𝑛 the vector of generalized external forces (e.g. gravity), and 
+
+𝑢 ∈ R𝑛 a the vector of applied actuation forces. The analytical expression of each matrix is detailed in the Supplementary Material and Methods. For thread-actuated systems, the actuation wrench exerted by the internal tendon (or chamber) on the central axis of the rod ( 25 ) is provided by 
+
+Fa,𝑘 =
+
+
+
+𝑑 𝑘 (𝑋 ) × 𝑡 𝑘 (𝑋, 𝑞 )
+
+𝑡 𝑘 (𝑋, 𝑞 )
+
+
+
+𝑢 𝑘 = 𝑏 𝜏,𝑘 (𝑋, 𝑞 )𝑢 𝑘 , (6) where 𝑑 𝑘 (𝑋 ) ∈ R3 represents the distance from the backbone to the 𝑘 -th tendon, and 𝑡 𝑘 (𝑋 ) ∈ R3
+
+is the unit vector tangent to the actuator path. The contributions of all the internal tendons define the actuation basis 
+
+𝐵 𝜏 (𝑋, 𝑞 ) =
+
+h
+
+𝑏 𝜏, 1 (𝑋, 𝑞 ) ... 𝑏 𝜏,𝑛 a (𝑋, 𝑞 )
+
+i
+
+∈ R6×𝑛 a . (7) Friction between the tendons and the manipulator alters how the applied pulling forces are transmit-ted to the system dynamics, thereby modifying the resulting actuation basis. Taking inspiration from the work proposed in ( 26 ), where friction effects are analyzed in case of rigid-body discretization, we aim to identify a friction model that explicitly accounts for the shape of the path followed by the tendons. As the soft arm changes configuration, the embodied tendon geometry deforms accord-ingly, thereby affecting the resulting frictional interactions. Moreover, frictional effects accumulate with increasing distance from the robot base, as more contact points between the tendons and the arm are encountered along the path. To account for both these aspects, friction can be included by considering a new actuation basis whose columns are defined as follows: ¯𝑏 𝜏,𝑘 (𝑋, 𝑞 ) = 𝑏 𝜏,𝑘 (𝑋, 𝑞 )𝑒 −𝜇 S,𝑘 (𝑋,𝑞 ) , (8) with 
+
+𝜇 S,𝑘 (𝑋, 𝑞 ) = ¯𝜇 𝜙,𝑘 
+
+∫ 𝑋 
+
+> 0
+
+𝜙 𝑘 (𝑞, 𝜂 ) 𝑑𝜂 , (9) being ¯ 𝜇 𝜙,𝑘 the friction coefficient for the 𝑘 -th tendon, and 𝜙 𝑘 (𝑞, 𝑋 ) the contribution arising from variations in the normalized cable force direction up to the abscissa 𝑋 . This representation naturally incorporates the actual configuration of the robot, as the cable force direction changes according to 20 𝑞 . Additionally, the minus sign of the exponential term in Eq. 8 ensures higher friction effects (i.e., a reduction of the actuation basis magnitude) for increasing values of 𝑋 .Finally, by projecting the new actuation basis ¯ 𝐵 𝜏 (𝑋, 𝑞 ) onto the space of generalized coordinates and integrating over the length of the soft robot, the system’s actuation matrix is obtained as 
+
+𝐴 (𝑞 ) =
+
+∫ 𝐿 
+
+> 0
+
+𝐵 𝑇  
+
+> q
+
+(𝑋 ) ¯𝐵 𝜏 (𝑋, 𝑞 ) 𝑑𝑋 . (10) The detailed derivation, along with improvements in model accuracy with the new friction model, is further discussed in the Supplementary Materials and Methods. The physical parameters of Eq. 5 as well as the friction coefficient of Eq. 9 can be accurately estimated by suitable optimization problems, as further discussed in Supplementary Materials and Methods. 
+
+## Low-level collocated control for dynamic shape regulation 
+
+Even when analytical reduced-order models are employed, soft robots typically exhibit underactu-ation, as the number of degrees of freedom 𝑛 far exceeds the number of actuators 𝑛 a. To address this challenge, ( 18 ) proposed a modeling strategy that implicitly accounts for underactuation in the control of Lagrangian systems. Adopting a similar approach within the VS modeling frame-work, the control design can be decoupled from the underactuation constraint by recasting the system in its Collocated form . This is accomplished by introducing the coordinate transformation 
+
+𝜃 = 𝜃 𝑇  
+
+> a
+
+, 𝜃 𝑇 
+
+> u
+
+𝑇 = ℎ(𝑞 ) ∈ R𝑛 which ensures that each of the first 𝑛 a equations of motion in Eq. 5 is influenced by one, and only one, independent actuator input: 
+
+
+
+𝑀 𝜃 a,a 𝑀 𝜃 a,u
+
+𝑀 𝜃 u,a 𝑀 𝜃 u,u
+
+| {z }
+
+> 𝑀 𝜃
+
+
+
+¥𝜃 a
+
+¥𝜃 u
+
+
+
++ ©«
+
+𝐶 𝜃 a,a 𝐶 𝜃 a,u
+
+𝐶 𝜃 u,a 𝐶 𝜃 u,u
+
+| {z }
+
+> 𝐶 𝜃
+
++
+
+
+
+𝐷 𝜃 a,a 𝐷 𝜃 a,u
+
+𝐷 𝜃 u,a 𝐷 𝜃 u,u
+
+| {z } 
+
+> 𝐷 𝜃
+
+ª®®¬
+
+¤𝜃 a
+
+¤𝜃 u
+
+
+
++
+
+
+
+𝐾 𝜃 a
+
+𝐾 𝜃 u
+
+|{z} 
+
+> 𝐾 𝜃
+
++
+
+
+
+𝐹 𝜃 a
+
+𝐹 𝜃 u
+
+|{z} 
+
+> 𝐹 𝜃
+
+=
+
+
+
+𝐼 𝑛 a
+
+0(𝑛 −𝑛 a)× 𝑛 a
+
+| {z }
+
+> 𝐴 𝜃
+
+𝑢 ,(11) where 𝜃 u ∈ R𝑛 −𝑛 a and 𝜃 a ∈ R𝑛 a denote the unactuated and actuation coordinates, respectively, with 
+
+𝜃 a satisfying the integrability condition 
+
+¤𝜃 a = 𝐴 𝑇 (𝑞 ) ¤ 𝑞 . (12) 21 The system can now be controlled in this new set of coordinates to achieve a desired configuration 
+
+𝑞 d, with underactuation addressed implicitly by mapping this reference to the corresponding desired actuation coordinates 𝜃 a,d.At this stage, the goal is to find a feedback controller 𝑢 (𝜃, ¤𝜃 ) such that 𝜃 a converges asymptoti-cally to an arbitrary desired value 𝜃 a,d, i.e. lim  
+
+> 𝑡 →∞
+
+𝜃 a,d − 𝜃 a (𝑡 ) = 0𝑛 a . (13) To achieve this, the following P-satI-D+ controller is employed 
+
+𝑢 = Γ P (𝜃 a,d − 𝜃 a) − ΓD ¤𝜃 a + ΓI
+
+∫ 𝑡 
+
+> 0
+
+tanh (𝜃 a,d − 𝜃 a (𝑧 )) 𝑑𝑧 + ( 𝐾 𝜃 a (𝑞 d) − 𝐹 𝜃 a (𝑞 d)) (14) with ΓP > 0, ΓD ≥ 0, ΓI > 0 ∈ R𝑛 a×𝑛 a being the gain matrices. The asymptotic convergence of 𝜃 a to 
+
+𝜃 a,d under this control law has been previously assessed in ( 27 ). For tendon-actuated systems without friction modeling, the actuation coordinates coincide with the tendon lengths, i.e. 
+
+𝜃 a,𝑘 (𝑞 ) = 𝐿 c,𝑘 (𝑞 ) =
+
+∫ 𝐿 
+
+> 0
+
+𝑡 𝑇 𝑘 (𝑋, 𝑞 )  ˆ𝜉 𝑑 𝑘 (𝑋 ) + 𝑑 ′ 
+
+> 𝑘
+
+(𝑋 ) 
+
+> 3
+
+𝑑𝑋 , (15) where ˆ(·) denotes the Lie algebra 𝔰𝔢 (3) mapping and (·) ′ the spatial derivative with respect to 
+
+𝑋 . This equality implies that the PID term depends exclusively on tendon length measurements rather than on the robot configuration 𝑞 , which lacks a direct physical interpretation and therefore cannot be measured directly. Additionally, the feedforward compensation of gravity and elastic terms speeds up convergence while requiring only the assigned desired configuration. However, when friction effects are included, the actuation matrix changes - relying on ¯ 𝐵 𝜏 instead of 𝐵 𝜏 - breaking the equality between actuation coordinates and tendon lengths. Specifically, for the configuration-dependent friction model, the actuation coordinate for the 𝑘 -th tendon is redefined as 
+
+𝜃 a,𝑘 (𝑞 ) =
+
+∫ 𝐿 
+
+> 0
+
+𝑡 𝑇 𝑘 (𝑋, 𝑞 )𝑒 −𝜇 S,𝑘 (𝑋,𝑞 )  ˆ𝜉 𝑑 𝑘 (𝑋 ) + 𝑑 ′ 
+
+> 𝑘
+
+(𝑋 ) 
+
+> 3
+
+𝑑𝑋 , (16) which, under a quasi-static assumption, satisfies the passive output definition in Eq. 12 (see Sup-plementary Materials and Methods). The exact reconstruction of 𝜃 a,𝑘 requires knowledge of both the generalized coordinates 𝑞 and the tendon lengths 𝐿 c,𝑘 . However, 𝑞 cannot be directly measured when adopting Variable Strain 22 models. Simulation results show that, in practice, the actuation coordinates depend primarily on the tendon lengths alone (see Supplementary Materials and Methods). This allows us to approximate 
+
+𝜃 a (𝑞, 𝐿 c) ≈ ¯𝜃 a (𝐿 c), enabling the controller to rely solely on tendon length feedback. 
+
+## Closed-Loop Inverse Kinematics for underactuated systems 
+
+To control the robot in the operational space, it is necessary to establish a relationship between the generalized and task-space coordinates. In fully actuated systems, such as rigid robots, this procedure is typically implemented using a CLIK algorithm that actively compensates for model-ing uncertainties and external disturbances, ensuring error convergence and robustness. However, extending this approach to underactuated soft robots is challenging, as not all configurations can be attained at steady state via control actions. The IK problem for underactuated systems can be formalized as follows: find a mapping 𝑐 IK : R𝑛 × R𝑚 → R𝑛 such that 
+
+¤𝑞 = 𝑐 IK (𝑞, 𝑥 d), s.t. lim  
+
+> 𝑡 →∞
+
+ℎg (𝑞 (𝑡 )) = 𝑥 d ∧ lim  
+
+> 𝑡 →∞
+
+𝑞 (𝑡 ) ∈ 𝜖 (17) where 𝜖 defines the attainable equilibria set 
+
+𝜖 = {𝑞 ∈ R𝑛 |∃ 𝑢 ∈ R𝑛 a s.t. 𝐺 (𝑞 ) = 𝐴 (𝑞 )𝑢 } ⊂ R𝑛 . (18) Here, 𝐺 (𝑞 ) accounts for both elastic and gravitational forces, 𝑥 d ∈ R𝑚 is the desired position, and 
+
+𝑥 = ℎg (𝑞 ) ∈ R𝑚 is the actual one in the operational space ( 𝑚 ≤ 6). To address this challenge, this work adapts the CLIK algorithm with convergence proof for underactuated Lagrangian systems proposed in ( 19 ) within the VS modeling framework. By lever-aging the collocated form of the dynamic system, the algorithm imposes a squared mapping that enables to control as many task-space dimension as the number of actuation coordinates, i.e. 𝑚 = 𝑛 a.In this way, convergence to the desired pose is achieved by closing the following loop: 
+
+¤𝜃 = ¯𝑃 𝜖 (𝜃 a, 𝜃 u)ΓZ (𝑥 d − 𝑥 ) − ¯𝑃 Z (𝜃 𝑎 , 𝜃 𝑢 )Γ𝜖 𝐺 𝜃 u (𝜃 a, 𝜃 u) , (19) where ΓZ ∈ R𝑚 ×𝑚 and Γ𝜖 ∈ R𝑛 −𝑛 a×𝑛 −𝑛 a are two gain matrices, ¯𝑃 𝜖 ∈ R𝑛 ×𝑚 and ¯𝑃 Z ∈ R𝑛 ×𝑛 −𝑛 a
+
+are two projectors used to ensure that the two feedback actions are decoupled and do not disturb each other, and 𝐺 𝜃 u is the contribution of the elastic and gravitational forces on the unactuated 23 coordinates 𝜃 𝑢 . As can be observed, this equation consists of two terms: the first implements a standard kinematic inversion driven by the convergence of the task-space error 𝑒 = 𝑥 d − 𝑥 , while the second enforces convergence toward a static equilibrium, which is achieved when the following condition is satisfied: 
+
+𝐺 𝜃 u = 𝐾 𝜃 u + 𝐹 𝜃 u = 0𝑛 −𝑛 a , (20) in accordance with Eq. 11. Once the generalized velocity in the collocated form ¤𝜃 is obtained, the corresponding velocity in the original form ¤𝑞 is retrieved by inverting the Jacobian between the two representations: 
+
+¤𝑞 = 𝐽 −1 
+
+> ℎ
+
+¤𝜃 , (21) with 
+
+𝐽 ℎ =
+
+
+
+𝐴 𝑇 
+
+0(𝑛 −𝑛 a)× 𝑛 a 𝐼 𝑛 −𝑛 a
+
+
+
+. (22) The desired configuration 𝑞 d is then obtained by integrating ¤𝑞 over time. It is worth emphasizing that this mapping is exact and introduces no approximation, since the inversion of 𝐽 ℎ is well-defined throughout the motion and all quantities involved correspond to known desired reference values. Notably, for the precomputed CLIK algorithm, the robot pose 𝑥 is directly retrieved from the prediction of the model, whereas in the online version it is measured by the motion capture system. 24 References 
+
+1. D. Rus, M. T. Tolley, Design, fabrication and control of soft robots. Nature 521 , 467–475 (2015). 2. G. M. Whitesides, Soft robotics. Angewandte Chemie International Edition 57 , 4258–4273 (2018). 3. Z. Xie, et al. , Octopus-inspired sensorized soft arm for environmental interaction. Science Robotics 8 (2023). 4. T. Yue, et al. , Embodying soft robots with octopus-inspired hierarchical suction intelligence. 
+
+Science Robotics 10 (2025). 5. C. Laschi, B. Mazzolai, M. Cianchetti, Soft robotics: Technologies and systems pushing the boundaries of robot abilities. Science robotics 1 (2016). 6. P. Wang, et al. , Sensing expectation enables simultaneous proprioception and contact detection in an intelligent soft continuum robot. Nature Communications 15 (2024). 7. J. Bang, et al. , Bioinspired electronics for intelligent soft robots. Nature Reviews Electrical Engineering 1, 597–613 (2024). 8. T. G. Thuruthel, E. Falotico, F. Renda, C. Laschi, Model-based reinforcement learning for closed-loop dynamic control of soft robotic manipulators. IEEE Transactions on Robotics 35 ,124–134 (2018). 9. C. Della Santina, R. K. Katzschmann, A. Bicchi, D. Rus, Model-based dynamic feedback control of a planar soft robot: trajectory tracking and interaction with the environment. The International Journal of Robotics Research 39 , 490–513 (2020). 10. A. Centurelli, et al. , Closed-Loop Dynamic Control of a Soft Manipulator Using Deep Rein-forcement Learning. IEEE Robotics and Automation Letters 7, 4741–4748 (2022). 11. O. Fischer, Y. Toshimitsu, A. Kazemipour, R. K. Katzschmann, Dynamic Task Space Control Enables Soft Manipulators to Perform Real-World Tasks. Advanced Intelligent Systems 5 (2023). 25 12. D. Bruder, D. Bombara, R. J. Wood, A Koopman-based residual modeling approach for the control of a soft robot arm. The International journal of robotics research 44 , 388–406 (2025). 13. M. Azizkhani, S. Kousik, Y. Chen, Dynamic Task Space Control of Redundant Pneumatically Actuated Soft Robot. IEEE Robotics and Automation Letters (2025). 14. Z. Tang, et al. , A general soft robotic controller inspired by neuronal structural and plastic synapses that adapts to diverse arms, tasks, and perturbations. Science Advances 12 (2026). 15. H. Li, L. Xun, G. Zheng, Piecewise linear strain Cosserat model for soft slender manipulator. 
+
+IEEE transactions on robotics 39 , 2342–2359 (2023). 16. A. T. Mathew, D. Feliu-Talegon, A. Y. Alkayas, F. Boyer, F. Renda, Reduced order modeling of hybrid soft-rigid robots using global, local, and state-dependent strain parameterization. The International Journal of Robotics Research 44 , 129–154 (2025). 17. C. Della Santina, C. Duriez, D. Rus, Model-based control of soft robots: A survey of the state of the art and open challenges. IEEE Control Systems Magazine 43 , 30–65 (2023). 18. P. Pustina, C. D. Santina, F. Boyer, A. De Luca, F. Renda, Input Decoupling of Lagrangian Systems via Coordinate Transformation: General Characterization and Its Application to Soft Robotics. IEEE Transactions on Robotics 40 , 2098–2110 (2024). 19. C. Della Santina, Pushing the boundaries of actuators-to-task kinematic inversion: from fully actuated to underactuated (soft) robots. Authorea Preprints (2025). 20. D. A. Haggerty, et al. , Control of soft robots with inertial dynamics. Science robotics 8 (2023). 21. D. Bruder, X. Fu, R. B. Gillespie, C. D. Remy, R. Vasudevan, Data-driven control of soft robots using Koopman operator theory. IEEE transactions on robotics 37 , 948–961 (2020). 22. Franka Robotics GmbH, Franka Research 3 Datasheet, Document R02212, Version 2.4 , Tech. rep. (2025), https://franka.de/hubfs/Datasheet_FrankaResearch3_R02212_2.4. pdf .23. G. Franzese, M. Spahn, J. Kober, C. D. Santina, MUKCa: Accurate and Affordable Cobot Calibration Without External Measurement Devices (2025). 26 24. C. Armanini, F. Boyer, A. T. Mathew, C. Duriez, F. Renda, Soft robots modeling: A structured overview. IEEE Transactions on Robotics 39 , 1728–1748 (2023). 25. F. Renda, C. Armanini, V. Lebastard, F. Candelier, F. Boyer, A Geometric Variable-Strain Approach for Static Modeling of Soft Manipulators With Tendon and Fluidic Actuation. IEEE Robotics and Automation Letters 5, 4006–4013 (2020). 26. W. S. Rone, P. Ben-Tzvi, Continuum robot dynamics utilizing the principle of virtual power. 
+
+IEEE Transactions on Robotics 30 , 275–287 (2013). 27. P. Pustina, P. Borja, C. D. Santina, A. De Luca, P-satI-D Shape Regulation of Soft Robots. 
+
+IEEE Robotics and Automation Letters 8, 1–8 (2023). 27

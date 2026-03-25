@@ -1,0 +1,280 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-03-25T19:34:34.152241+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 7,
+    "quick_skim_target": 11,
+    "quick_selected": 7
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2603.23296v1",
+      "title": "Nonlinear Dynamics and Performance Optimization Based on Primary Resonance of an Electromechanically Coupled Magnetic Levitation Energy Harvester",
+      "abstract": "This research paper explores the potential of nonlinear magnetic levitation systems for energy harvesting by developing a modified system that incorporates a more realistic energy harvesting circuit, enabling a better representation of practical operating conditions. Methodologically, approximate solutions for the system dynamics were obtained using the method of multiple scales, complemented by numerical simulations to capture parameter variations visualized through phase planes and parameter variation plots. The results demonstrate that by adjusting capacitance to induce internal and primary resonances, an extended detuning formulation (utilizing parameters sigma3 and sigma4) is innovatively introduced to capture the coupled dynamic interaction between the harvesting circuit and the mechanical system under diverse conditions. Periodic variations in circuit charge and intermediate magnet dis placement were thoroughly analyzed. Comparisons with legacy models demonstrate that the proposed coupling mechanism effectively suppresses undesirable nonlinear behaviors, such as chaos and multi-stability, resulting in a more stable and predictable energy harvesting process. Ultimately, a critical trade-off between energy harvesting efficiency and dynamical stability is identified, providing a valuable new design perspective for practical energy harvesting systems.",
+      "authors": [
+        "Jinhao Xie",
+        "Chengkai Yuan"
+      ],
+      "primary_category": "math.AP",
+      "categories": [
+        "math.AP",
+        "nlin.CD"
+      ],
+      "published": "2026-03-24T14:56:42+00:00",
+      "link": "https://arxiv.org/pdf/2603.23296v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "nonlinear magnetic levitation systems and electromechanical coupling",
+      "llm_evidence_cn": "非线性磁悬浮系统与机电耦合",
+      "llm_evidence": "非线性磁悬浮系统与机电耦合",
+      "canonical_evidence": "非线性磁悬浮系统与机电耦合",
+      "llm_tldr_en": "Analyzes nonlinear dynamics of electromechanically coupled magnetic levitation for energy harvesting.",
+      "llm_tldr_cn": "分析了用于能量采集的机电耦合磁悬浮系统的非线性动力学。",
+      "llm_tldr": "分析了用于能量采集的机电耦合磁悬浮系统的非线性动力学。",
+      "llm_tags": [
+        "query:em-force:composite"
+      ],
+      "matched_query_tag": "query:em-force:composite",
+      "matched_query_text": "Papers central to 查找非接触式电磁激振器的力控制方法，特别是精密控制策略, especially work that connects or combines: electromagnetic exciter force control; ddy current magnetic bearing modeling; magnetic bearing flux feedback; non-contact electromagnetic shaker force control; precision force control strategies for electromagnetic actuators; closed-loop force control for electromagnetic shakers; flux feedback linearization zero bias magnetic bearing; non contact electromagnetic exciter precision force control; eddy current effects in electromagnetic actuators dynamic modeling; flux feedback control for magnetic bearing force precision.",
+      "matched_requirement_id": "req-composite-em-force",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.16630v1",
+      "title": "Reconciling distributed compliance with high-performance control in continuum soft robotics",
+      "abstract": "High-performance closed-loop control of truly soft continuum manipulators has remained elusive. Experimental demonstrations have largely relied on sufficiently stiff, piecewise architectures in which each actuated segment behaves as a distributed yet effectively rigid element, while deformation modes beyond simple bending are suppressed. This strategy simplifies modeling and control, but sidesteps the intrinsic complexity of a fully compliant body and makes the system behave as a serial kinematic chain, much like a conventional articulated robot. An implicit conclusion has consequently emerged within the community: distributed softness and dynamic precision are incompatible. Here we show this trade-off is not fundamental. We present a highly compliant, fully continuum robotic arm - without hardware discretization or stiffness-based mode suppression - that achieves fast, precise task-space convergence under dynamic conditions. The platform integrates direct-drive actuation, a tendon routing scheme enabling coupled bending and twisting, and a structured nonlinear control architecture grounded in reduced-order strain modeling of underactuated systems. Modeling, actuation, and control are co-designed to preserve essential mechanical complexity while enabling high-bandwidth loop closure. Experiments demonstrate accurate, repeatable execution of dynamic Cartesian tasks, including fast positioning and interaction. The proposed system achieves the fastest reported task-execution speed among soft robots. At millimetric precision, execution speed increases nearly fourfold compared with prior approaches, while operating on a fully compliant continuum body. These results show that distributed compliance and high-performance dynamic control can coexist, opening a path toward truly soft manipulators approaching the operational capabilities of rigid robots without sacrificing morphological richness.",
+      "authors": [
+        "Vito Daniele Perfetta",
+        "Daniel Feliu Talegon",
+        "Ebrahim Shahabi",
+        "Cosimo Della Santina"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-03-17T15:01:04+00:00",
+      "link": "https://arxiv.org/pdf/2603.16630v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "high-performance closed-loop control and dynamic precision",
+      "llm_evidence_cn": "高性能闭环控制与动态精度",
+      "llm_evidence": "高性能闭环控制与动态精度",
+      "canonical_evidence": "高性能闭环控制与动态精度",
+      "llm_tldr_en": "Demonstrates high-performance closed-loop control in soft robotics, challenging the softness-precision trade-off.",
+      "llm_tldr_cn": "展示了软体机器人中的高性能闭环控制，挑战了柔软度与精度之间的权衡。",
+      "llm_tldr": "展示了软体机器人中的高性能闭环控制，挑战了柔软度与精度之间的权衡。",
+      "llm_tags": [
+        "query:em-force:composite"
+      ],
+      "matched_query_tag": "query:em-force:composite",
+      "matched_query_text": "Papers central to 查找非接触式电磁激振器的力控制方法，特别是精密控制策略, especially work that connects or combines: electromagnetic exciter force control; ddy current magnetic bearing modeling; magnetic bearing flux feedback; non-contact electromagnetic shaker force control; precision force control strategies for electromagnetic actuators; closed-loop force control for electromagnetic shakers; flux feedback linearization zero bias magnetic bearing; non contact electromagnetic exciter precision force control; eddy current effects in electromagnetic actuators dynamic modeling; flux feedback control for magnetic bearing force precision.",
+      "matched_requirement_id": "req-composite-em-force",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.16746v1",
+      "title": "Data-driven forced response analysis with min-max representations of nonlinear restoring forces",
+      "abstract": "This paper discusses a novel data-driven nonlinearity identification method for mechanical systems with nonlinear restoring forces such as polynomial, piecewise-linear, and general displacement-dependent nonlinearities. The proposed method is built upon the universal approximation theorem that states that a nonlinear function can be approximated by a linear combination of activation functions in artificial neural network framework. The proposed approach utilizes piecewise linear springs with initial gaps to act as the activation functions of the neurons of artificial neural networks. A library of piecewise linear springs with initial gaps are constructed, and the contributions of the springs on the nonlinear restoring force are determined by solving the linear regression problems. The piecewise linear springs are realized by combinations of min and max functions with biases. The proposed method is applied to a Duffing oscillator with cubic stiffness, and a piecewise linear oscillator with a gap and their nonlinearities are successfully determined from their free responses. The obtained models are then used for conducting forced response analysis and the results match well with those of the original system. The method is then applied to experimentally-obtained free response data of a cantilevered plate that is subjected to magnetic restoring force, and successfully finds the piecewise linear representation of the magnetic force. It is also shown that the obtained model is capable of accurately capturing the steady-state response of the system subject to harmonic base excitation.",
+      "authors": [
+        "Akira Saito",
+        "Hiromu Fujita"
+      ],
+      "primary_category": "math.DS",
+      "categories": [
+        "math.DS",
+        "cs.LG",
+        "nlin.CD"
+      ],
+      "published": "2026-03-17T16:23:33+00:00",
+      "link": "https://arxiv.org/pdf/2603.16746v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "data-driven forced response analysis for nonlinear mechanical systems",
+      "llm_evidence_cn": "非线性机械系统的数据驱动受迫响应分析",
+      "llm_evidence": "非线性机械系统的数据驱动受迫响应分析",
+      "canonical_evidence": "非线性机械系统的数据驱动受迫响应分析",
+      "llm_tldr_en": "Proposes a data-driven method to identify nonlinear restoring forces in mechanical systems.",
+      "llm_tldr_cn": "提出了一种识别机械系统非线性恢复力的数据驱动方法。",
+      "llm_tldr": "提出了一种识别机械系统非线性恢复力的数据驱动方法。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "electromagnetic exciter force control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.17589v1",
+      "title": "Non-contact mechanics of soft and liquid interfaces by hydrodynamic confinement using a frequency-modulated AFM",
+      "abstract": "Measuring the mechanical properties of liquid interfaces without direct contact remains a major experimental challenge, particularly for liquid liquid systems. Here we propose a frequency modulated atomic force microscopy method that probes interfaces through hydrodynamic confinement of a viscous liquid film between an oscillating probe and the interface. The method is first quantitatively validated on a model liquid solid interface, where the measured imepdance and confinement thickness agree with theory over a decade of elastic moduli. It is the aplied to a liquid liquid interface which exhibits a purely viscous response. As a result of the absence of elastic restoring force, the confinement thickness increases to micrometric values. These original measurements demonstrate that hydrodynaic confinement provides a quantitative non-contact probe of liquid interfaces and opens new perspectives for invetigating complex and highly deformable systems.",
+      "authors": [
+        "Lucie Corral",
+        "Christian Curtil",
+        "Medhi Lagaize",
+        "Marc Leonetti",
+        "Hubert R. Klein"
+      ],
+      "primary_category": "cond-mat.soft",
+      "categories": [
+        "cond-mat.soft",
+        "physics.flu-dyn"
+      ],
+      "published": "2026-03-18T10:55:12+00:00",
+      "link": "https://arxiv.org/pdf/2603.17589v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "non-contact probing of interfaces using frequency-modulated AFM",
+      "llm_evidence_cn": "使用调频AFM对界面进行非接触式探测",
+      "llm_evidence": "使用调频AFM对界面进行非接触式探测",
+      "canonical_evidence": "使用调频AFM对界面进行非接触式探测",
+      "llm_tldr_en": "Proposes a non-contact method to measure mechanical properties via hydrodynamic confinement.",
+      "llm_tldr_cn": "提出了一种通过流体动力约束测量机械性能的非接触式方法。",
+      "llm_tldr": "提出了一种通过流体动力约束测量机械性能的非接触式方法。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "non contact electromagnetic exciter precision force control",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.18947v1",
+      "title": "On the Minimum Number of Control Laws for Nonlinear Systems with Input-Output Linearisation Singularities",
+      "abstract": "This paper addresses the fundamental question of determining the minimum number of distinct control laws required for global controllability of nonlinear systems that exhibit singularities in their feedback linearising controllers. We introduce and rigorously prove the (k+1)-Controller Lemma, which establishes that for an nth order single-input single-output nonlinear system with a singularity manifold parameterised by k algebraically independent conditions, exactly k+1 distinct control laws are necessary and sufficient for complete state-space coverage. The sufficiency proof is constructive, employing the approximate linearisation methodology together with transversality arguments from differential topology. The necessity proof proceeds by contradiction, using the Implicit Function Theorem, a dimension-counting argument and structural constraints inherent to the approximate linearisation framework. The result is validated through exhaustive analysis of the ball-and-beam system, a fourth-order mechanical system that exhibits a two-parameter singularity at the third output derivative.",
+      "authors": [
+        "Nikolaos D. Tantaroudas"
+      ],
+      "primary_category": "cs.CE",
+      "categories": [
+        "cs.CE",
+        "eess.SY"
+      ],
+      "published": "2026-03-19T14:22:24+00:00",
+      "link": "https://arxiv.org/pdf/2603.18947v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "feedback linearisation for nonlinear systems with singularities",
+      "llm_evidence_cn": "具有奇异性的非线性系统的反馈线性化",
+      "llm_evidence": "具有奇异性的非线性系统的反馈线性化",
+      "canonical_evidence": "具有奇异性的非线性系统的反馈线性化",
+      "llm_tldr_en": "Determines the minimum control laws for global controllability of systems with linearisation singularities.",
+      "llm_tldr_cn": "确定具有线性化奇异性的系统实现全局可控性所需的最少控制律。",
+      "llm_tldr": "确定具有线性化奇异性的系统实现全局可控性所需的最少控制律。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "flux feedback linearization zero bias magnetic bearing",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.20614v1",
+      "title": "Sparse stability diagrams of LSCF method via strategic pole destabilization using orthogonal matching pursuit",
+      "abstract": "In various engineering fields including mechanical, aerospace, and civil engineering, the identification of modal parameters, including natural frequencies, damping ratios, and mode shapes, is crucial for determining the vibration characteristics of engineered structures. A common method for identifying the modal parameters of structures involves experimental modal analysis using frequency response functions (FRFs) obtained from forced vibration tests. The least squares complex frequency (LSCF) domain method is a widely-used frequency-domain curve-fitting method for the FRFs using the polynomials of high order, which can extract modal parameters with high accuracy. However, increasing the polynomial order tends to result in the generation of non-physical spurious poles that need to be eliminated from the stability diagrams. To overcome this issue, we propose a method that strategically destabilize the stable yet spurious poles of the characteristic polynomials by making their coefficients as sparse as possible, via orthogonal matching pursuit (OMP). This results in sparse stability diagrams because unstable poles can be eliminated from the diagrams. In this paper, the proposed method is first applied to a numerically-obtained FRFs of a rectangular plate using finite element model, and its validity is discussed. Then, the method is applied to experimentally-obtained FRFs of rectangular plates with low-damping and with high-damping. Furthermore, to confirm its applicability to industrial applications with realistic complexity, it has also been applied to the FRFs of the electric machine's stator core used for electric vehicles. Based on the results, we have confirmed that the spurious roots can be eliminated from the stability diagrams without compromising accuracy for the cases considered.",
+      "authors": [
+        "Shogo Shimada",
+        "Akira Saito"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP",
+        "math.NA",
+        "physics.app-ph"
+      ],
+      "published": "2026-03-21T03:19:05+00:00",
+      "link": "https://arxiv.org/pdf/2603.20614v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "modal parameter identification from forced vibration tests",
+      "llm_evidence_cn": "通过强迫振动试验进行模态参数识别",
+      "llm_evidence": "通过强迫振动试验进行模态参数识别",
+      "canonical_evidence": "通过强迫振动试验进行模态参数识别",
+      "llm_tldr_en": "Improves modal parameter identification in forced vibration, relevant to characterizing electromagnetic exciters.",
+      "llm_tldr_cn": "改进了强迫振动中的模态参数识别，与电磁激振器的特性表征相关。",
+      "llm_tldr": "改进了强迫振动中的模态参数识别，与电磁激振器的特性表征相关。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "non contact electromagnetic exciter precision force control",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.23044v1",
+      "title": "Learning Actuator-Aware Spectral Submanifolds for Precise Control of Continuum Robots",
+      "abstract": "Continuum robots exhibit high-dimensional, nonlinear dynamics which are often coupled with their actuation mechanism. Spectral submanifold (SSM) reduction has emerged as a leading method for reducing high-dimensional nonlinear dynamical systems to low-dimensional invariant manifolds. Our proposed control-augmented SSMs (caSSMs) extend this methodology by explicitly incorporating control inputs into the state representation, enabling these models to capture nonlinear state-input couplings. Training these models relies solely on controlled decay trajectories of the actuator-augmented state, thereby removing the additional actuation-calibration step commonly needed by prior SSM-for-control methods. We learn a compact caSSM model for a tendon-driven trunk robot, enabling real-time control and reducing open-loop prediction error by 40% compared to existing methods. In closed-loop experiments with model predictive control (MPC), caSSM reduces tracking error by 52%, demonstrating improved performance against Koopman and SSM based MPC and practical deployability on hardware continuum robots.",
+      "authors": [
+        "Paul Leonard Wolff",
+        "Hugo Buurmeijer",
+        "Luis Pabon",
+        "John Irvin Alora",
+        "Mark Leone",
+        "Roshan S. Kaundinya",
+        "Amirhossein Kazemipour",
+        "Robert K. Katzschmann",
+        "Marco Pavone"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-03-24T10:30:29+00:00",
+      "link": "https://arxiv.org/pdf/2603.23044v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "precise control of nonlinear actuator dynamics",
+      "llm_evidence_cn": "非线性执行器动力学的精确控制",
+      "llm_evidence": "非线性执行器动力学的精确控制",
+      "canonical_evidence": "非线性执行器动力学的精确控制",
+      "llm_tldr_en": "Learns spectral submanifolds to capture nonlinear state-input couplings for precise robot control.",
+      "llm_tldr_cn": "学习谱子流形以捕捉非线性状态-输入耦合，实现机器人精确控制。",
+      "llm_tldr": "学习谱子流形以捕捉非线性状态-输入耦合，实现机器人精确控制。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

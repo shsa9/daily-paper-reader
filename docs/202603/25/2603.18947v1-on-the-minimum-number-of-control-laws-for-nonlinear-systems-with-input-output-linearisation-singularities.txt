@@ -1,0 +1,731 @@
+Title: On the Minimum Number of Control Laws for Nonlinear Systems with Input-Output Linearisation Singularities
+
+URL Source: https://arxiv.org/pdf/2603.18947v1
+
+Published Time: Fri, 20 Mar 2026 01:15:39 GMT
+
+Number of Pages: 14
+
+Markdown Content:
+# ON THE MINIMUM NUMBER OF CONTROL LAWS FOR 
+
+# NONLINEAR SYSTEMS WITH INPUT –O UTPUT LINEARISATION SINGULARITIES 
+
+A P REPRINT 
+
+Nikolaos D. Tantaroudas *
+
+Institute of Communications and Computer Systems (ICCS) National Technical University of Athens 9 Iroon Politechniou Street, Zografou, Athens 15773, Greece 
+
+nikolaos.tantaroudas@iccs.gr 
+
+# ABSTRACT 
+
+This paper addresses the fundamental question of determining the minimum number of distinct control laws required for global controllability of nonlinear systems that exhibit singularities in their feedback linearising controllers. We introduce and rigorously prove the (k+1) -Controller Lemma, which establishes that for an nth order single-input single-output nonlinear system with a singularity manifold parameterised by k algebraically independent conditions, exactly k+1 distinct control laws are necessary and sufficient for complete state-space coverage. The sufficiency proof is constructive, employing the approximate linearisation methodology together with transversality arguments from differential topology. The necessity proof proceeds by contradiction, using the Implicit Function Theorem, a dimension-counting argument and structural constraints inherent to the approximate linearisation framework. The result is validated through exhaustive analysis of the ball-and-beam system, a fourth-order mechanical system that exhibits a two-parameter singularity at the third output derivative. 
+
+Keywords: approximate linearisation, ball-and-beam system, differential geometry, feedback linearisation, La-grangian mechanics, nonlinear control, relative degree, singularities, switched control systems, transversality theory 
+
+# 1 Introduction 
+
+Feedback linearisation stands as one of the most powerful and elegant techniques in nonlinear control theory, enabling the transformation of complex nonlinear systems into equivalent linear systems through judicious coordinate changes and state feedback [Isidori, 1995, Khalil, 2002, Nijmeijer and van der Schaft, 1990]. The central idea, developed exten-sively by Isidori, Krener and their collaborators during the 1980s, exploits the differential geometric structure inherent in nonlinear systems to cancel nonlinearities exactly, thereby yielding a linear input–output relationship amenable to the full arsenal of classical linear design techniques [Isidori et al., 1981, Jakubczyk and Respondek, 1980, Hunt et al., 1983]. However, the conditions needed for exact input–output linearisation are highly restrictive and frequently fail to hold globally across the entire state space. The seminal work of Jakubczyk and Respondek [1980] established necessary and sufficient conditions for exact state linearisation through the involutivity of certain distributions constructed from the system’s vector fields. When these geometric conditions fail, alternative approaches become necessary. Krener [1984] showed that approximate linearisation may be achieved even when exact conditions fail, while Byrnes and Isidori [1988] characterised the local stabilisation properties of minimum-phase nonlinear systems exhibiting such failures. A particularly important and challenging class of problems arises when the relative degree of a system becomes un-defined on certain submanifolds of the state space, creating singularities in the feedback linearising control law. At 
+
+> ∗
+
+Corresponding author. Senior Researcher, ICCS. 
+
+> arXiv:2603.18947v1 [cs.CE] 19 Mar 2026
+
+On the Minimum Number of Control Laws for Nonlinear Systems with Input–Output Linearisation Singularities A P REPRINT 
+
+such singular points the control coefficient that multiplies the input vanishes, rendering the standard linearising feed-back undefined or infinite. This phenomenon is not merely a mathematical curiosity but arises naturally in numerous practical systems of engineering interest. 
+
+1.1 Literature review and motivation 
+
+The geometric approach to nonlinear control has its intellectual roots in the pioneering work of Brockett [1978], who first considered certain forms of feedback in addition to pure state transformations. Hunt et al. [1983] provided fundamental results on global transformations of nonlinear systems, while the comprehensive theory was unified and extended by Isidori [1995] in his seminal treatise, which remains the standard reference in the field. The textbooks by Nijmeijer and van der Schaft [1990], Khalil [2002], Sastry [1999], Slotine and Li [1991] and Marino and Tomei [1995] provide accessible introductions to these geometric methods and their applications. The problem of systems with singularities has been addressed from various perspectives. Tomlin and Sastry [1998] considered switching through singularities, establishing conditions under which controllers could be switched while maintaining closed-loop stability. Liberzon [2003] developed a comprehensive theory of switching in systems and control, providing fundamental stability criteria for switched systems based on common Lyapunov functions and dwell-time conditions. The concept of patchy vector fields introduced by Ancona and Bressan [1999] guarantees the existence of finite controller families for asymptotic stabilisation of nonlinear systems, though crucially without quan-tifying the minimum number required. Sontag’s influential work on input-to-state stability [Sontag, 1989, Sontag and Wang, 1995] provides additional analytical tools for assessing the robustness of such switched control architectures. The ball-and-beam system provides an ideal canonical case study for investigating feedback linearisation singularities. This classical benchmark, found in control laboratories worldwide, exhibits all the essential features of systems with ill-defined relative degree while remaining sufficiently simple for complete analytical treatment. The foundational work of Hauser et al. [1992] demonstrated rigorously that the ball-and-beam fails the involutivity conditions for full state linearisation, yet showed that approximate input–output linearisation can nonetheless be achieved through careful modification of the system’s vector fields. Their work established the theoretical foundation for the approximate linearisation techniques that we extend and generalise here. The mathematical foundations underlying our proof rely on results from differential topology, particularly transversal-ity theory as developed in the classic texts by Hirsch [1976] and Guillemin and Pollack [1974]. The Implicit Function Theorem, which plays a central role in our arguments regarding the local structure of singularity manifolds, is treated in Krantz and Parks [2002]. We also draw upon the theory of smooth manifolds as presented in Lee [2012]. Despite this extensive body of literature, a fundamental theoretical question has remained unanswered: given a non-linear system with feedback linearisation singularities characterised by a specific geometric structure, what is the minimum number of distinct control laws required for global controllability? While practical designs using multiple controllers have appeared [Hauser et al., 1992, Tomlin and Sastry, 1998], and while patchy feedback theory [Ancona and Bressan, 1999] guarantees existence of finite controller families, no previous result has provided a sharp lower bound quantifying this minimum based on the intrinsic geometry of the singularity manifold. 
+
+1.2 Contributions 
+
+The present work makes the following contributions: 1. The (k+1) -Controller Lemma: We prove that for an nth order single-input single-output nonlinear system with a k-parameter singularity manifold at the mth output derivative ( m < n ), exactly k + 1 distinct control laws are necessary and sufficient for complete state-space coverage. Sufficiency is established construc-tively; necessity is proved by contradiction using a dimension-counting argument combined with structural constraints of the approximate linearisation framework. 2. Complete analysis of the ball-and-beam system: We provide a self-contained Lagrangian derivation of the ball-and-beam dynamics, perform exhaustive singularity analysis identifying the complete structure of the singularity manifold and construct three explicit control laws demonstrating that the theoretical minimum of 
+
+k + 1 = 3 is achieved. 3. Geometric characterisation: We establish a precise relationship between the algebraic structure of the sin-gularity manifold (characterised by k independent vanishing conditions) and the topological requirements for controller coverage, providing geometric insight into why k + 1 controllers are fundamentally necessary. 4. Numerical validation: We provide numerical simulations validating the theoretical results across multiple initial conditions, operating regimes and trajectory tracking scenarios. 2On the Minimum Number of Control Laws for Nonlinear Systems with Input–Output Linearisation Singularities A P REPRINT 
+
+1.3 Paper organisation 
+
+The remainder of this paper is organised as follows. Section 2 reviews essential concepts from nonlinear control theory and differential topology. Section 3 derives the equations of motion for the ball-and-beam system using La-grangian mechanics. Section 4 performs the input–output linearisation procedure and conducts singularity analysis. Section 5 develops three distinct control laws. Section 6 presents the formal statement and rigorous proof of the 
+
+(k+1) -Controller Lemma. Section 8 provides numerical validation. Section 9 discusses implications and limitations. Section 10 concludes. 
+
+# 2 Mathematical Preliminaries 
+
+This section establishes the mathematical framework and notation used throughout the paper. 
+
+2.1 Nonlinear control systems 
+
+We consider single-input single-output (SISO) nonlinear control systems in control-affine form: 
+
+˙x = f (x) + g(x)u, y = h(x), (1) where x ∈ Rn is the state vector, u ∈ R is the scalar control input, y ∈ R is the scalar measured output and 
+
+f : Rn → Rn, g : Rn → Rn, h : Rn → R are smooth (i.e. C∞) mappings. We assume f (0) = 0 , so that the origin is an equilibrium of the unforced system. 
+
+2.2 Lie derivatives and Lie brackets 
+
+Differential geometry provides the natural language for analysing nonlinear control systems [Isidori, 1995, Nijmeijer and van der Schaft, 1990]. 
+
+Definition 1 (Lie Derivative) . For a smooth function φ : Rn → R and a smooth vector field v : Rn → Rn, the Lie derivative of φ along v is 
+
+Lv φ(x) := ∇φ(x) · v(x) = 
+
+> n
+
+X
+
+> i=1
+
+∂φ ∂x i
+
+(x) vi(x). (2) Higher-order Lie derivatives are defined recursively: L0 
+
+> v
+
+φ := φ and Ljv φ := Lv (Lj−1 
+
+> v
+
+φ) for j ≥ 1.
+
+Definition 2 (Lie Bracket) . The Lie bracket of two smooth vector fields f, g : Rn → Rn is 
+
+[f, g ]( x) := ∂g ∂x (x) f (x) − ∂f ∂x (x) g(x). (3) We write ad 0 
+
+> f
+
+g := g and ad jf g := [ f, ad j−1 
+
+> f
+
+g] for j ≥ 1.
+
+2.3 Relative degree and input–output linearisation 
+
+The concept of relative degree is fundamental to input–output linearisation [Isidori, 1995]. 
+
+Definition 3 (Relative Degree) . System (1) has relative degree γ ∈ N at x0 ∈ Rn if: (i) Lg Ljf h(x) = 0 for all j ∈ { 0, 1, . . . , γ − 2} and all x in some open neighbourhood of x0;(ii) Lg Lγ−1 
+
+> f
+
+h(x0)̸ = 0 .
+
+When the relative degree γ is well-defined at x0, repeated differentiation of y = h(x) yields: 
+
+y = h(x),
+
+˙y = Lf h(x),
+
+¨y = L2 
+
+> f
+
+h(x),
+
+...
+
+y(γ−1) = Lγ−1 
+
+> f
+
+h(x), (4) 
+
+y(γ) = Lγf h(x) + Lg Lγ−1 
+
+> f
+
+h(x) · u. 
+
+3On the Minimum Number of Control Laws for Nonlinear Systems with Input–Output Linearisation Singularities A P REPRINT 
+
+The input first appears in y(γ). Defining 
+
+b(x) := Lγf h(x), a(x) := Lg Lγ−1 
+
+> f
+
+h(x), (5) we obtain 
+
+y(γ) = b(x) + a(x) u. (6) The function a(x) is called the control coefficient . When a(x)̸ = 0 , the feedback 
+
+u = 1
+
+a(x)
+
+−b(x) + v (7) yields y(γ) = v, where v is a virtual input designed using linear techniques. 
+
+2.4 Singularities and the singularity manifold 
+
+The linearising control (7) is undefined when a(x) = 0 .
+
+Definition 4 (Singularity Manifold) . The singularity manifold is S := {x ∈ Rn : a(x) = 0 }.
+
+Definition 5 (k-Parameter Singularity) . S is a k-parameter singularity if there exist k smooth functions φ1, . . . , φ k :
+
+Rn → R such that: (i) a(x) = c(x) Qki=1 φi(x) for some smooth c : Rn → R with c(x)̸ = 0 for all x;(ii) the differentials dφ1, . . . , dφk are linearly independent at generic points of S;(iii) k is minimal. Then S = Ski=1 Si where Si := {x : φi(x) = 0 }.
+
+Remark 1. The factored form a(x) = c(x) Q φi(x) captures the algebraic structure of the control coefficient and ensures each component Si corresponds to an independent vanishing factor. This reflects the structure encountered in mechanical systems where the control coefficient is a product of kinematic terms. 
+
+2.5 Elements of differential topology 
+
+Our proof relies on several concepts from differential topology [Hirsch, 1976, Guillemin and Pollack, 1974, Lee, 2012]. 
+
+Definition 6 (Transversality) . Smooth submanifolds M, N ⊂ Rn are transverse at p ∈ M ∩ N , denoted M ⋔p N , if 
+
+TpM + TpN = Rn. They are transverse ( M ⋔ N ) if this holds at every point of M ∩ N .
+
+Lemma 1 (Codimension of Transverse Intersections [Hirsch, 1976]) . If M ⋔ N in Rn, then M ∩ N is a smooth submanifold with codim( M ∩ N ) = codim( M ) + codim( N ). In particular, if codim( M ) + codim( N ) > n , then generically M ∩ N = ∅.
+
+Theorem 2 (Implicit Function Theorem [Krantz and Parks, 2002]) . Let F : Rn → Rm be smooth with m ≤ n. If 
+
+F (x0) = 0 and dF (x0) has full row rank, then F −1(0) is a smooth submanifold of dimension n − m near x0.
+
+# 3 The Ball-and-Beam System: Lagrangian Derivation 
+
+The ball-and-beam system serves as the primary example for illustrating and validating our theoretical results. 
+
+3.1 Physical description and coordinate system 
+
+Consider a rigid beam rotating freely in a vertical plane about a pivot at its centre, as depicted in Figure 1. A torque 
+
+τ applied at the pivot controls the beam angle. A solid spherical ball of mass M and radius R rolls without slipping along the beam surface. The system has two mechanical degrees of freedom. We parameterise the configuration using: r, the signed distance from pivot to ball centre along the beam (positive to the right), and θ, the beam angle measured counterclockwise from horizontal. The physical parameters are: M (ball mass), R (ball radius), Jb (ball moment of inertia about its centre), J (beam moment of inertia about pivot) and G (gravitational acceleration). For a solid sphere, Jb = 25 M R 2.4On the Minimum Number of Control Laws for Nonlinear Systems with Input–Output Linearisation Singularities A P REPRINT 
+
+x
+
+y
+
+pivot 
+
+r
+
+θ
+
+τ
+
+M g 
+
+ball (mass M )
+
+beam 
+
+> R
+
+Figure 1: Schematic of the ball-and-beam system. The beam rotates about a fixed pivot with angle θ from horizontal. The ball position r is the signed distance from pivot to ball centre along the beam. The torque τ is the control input. 
+
+3.2 Kinetic and potential energy 
+
+The ball’s centre-of-mass position in the inertial frame is p = r cos θ ˆex + r sin θ ˆey , giving velocity magnitude 
+
+| ˙p|2 = ˙ r2 + r2 ˙θ2.The total kinetic energy comprises translational energy of the ball, rotational energy of the ball about its own centre and rotational energy of the beam. Since the ball rolls without slipping, its angular velocity in the inertial frame is 
+
+ωball = ˙ r/R + ˙θ. Thus: 
+
+T = 12 M | ˙p|2 + 12 Jb
+
+ ˙rR + ˙θ
+
+2
+
++ 12 J ˙θ2. (8) Adopting the standard approximation of Hauser et al. [1992] (the cross term Jb ˙r ˙θ/R is negligible for small ball radius): 
+
+T ≈ 12
+
+
+
+M + Jb
+
+R2
+
+
+
+˙r2 + 12 (M r 2 + J + Jb) ˙θ2. (9) The gravitational potential energy is V = M gr sin θ.
+
+3.3 Euler–Lagrange equations 
+
+The Lagrangian L = T − V gives: 
+
+L = 12
+
+
+
+M + Jb
+
+R2
+
+
+
+˙r2 + 12 (M r 2 + J + Jb) ˙θ2 − M gr sin θ. (10) Applying the Euler–Lagrange equations yields: 
+
+
+
+M + Jb
+
+R2
+
+
+
+¨r − M r ˙θ2 + M g sin θ = 0 , (11) 
+
+(M r 2 + J + Jb)¨θ + 2 M r ˙r ˙θ + M gr cos θ = τ, (12) which match those of Hauser et al. [1992]. 
+
+3.4 State-space representation 
+
+Define x = ( x1, x 2, x 3, x 4)⊤ := ( r, ˙r, θ, ˙θ)⊤ and 
+
+B := MM + Jb/R 2 = 57 (solid sphere) . (13) From (11): ¨r = B(x1x24 − G sin x3).Applying the preliminary feedback 
+
+τ = 2 M r ˙r ˙θ + M gr cos θ + ( M r 2 + J + Jb)u (14) 5On the Minimum Number of Control Laws for Nonlinear Systems with Input–Output Linearisation Singularities A P REPRINT 
+
+reduces (12) to ¨θ = u. The state-space form is then: 
+
+˙x1 = x2,
+
+˙x2 = B(x1x24 − G sin x3),
+
+˙x3 = x4,
+
+˙x4 = u, 
+
+(15) with output y = h(x) = x1 (ball position). In the form (1): 
+
+f (x) = 
+
+
+
+x2
+
+B(x1x24 − G sin x3)
+
+x4
+
+0
+
+, g(x) = 
+
+
+
+0001
+
+. (16) 
+
+# 4 Input–Output Linearisation and Singularity Analysis 
+
+We now apply the input–output linearisation procedure to the ball-and-beam and identify the singularity structure. 
+
+4.1 Computation of relative degree 
+
+Starting from y = h(x) = x1, we differentiate until u appears. 
+
+First derivative: ˙y = Lf h(x) = x2; Lg h(x) = 0 .
+
+Second derivative: ¨y = L2 
+
+> f
+
+h(x) = Bx 1x24 − BG sin x3; Lg Lf h(x) = 0 .
+
+Third derivative: With ∇(L2 
+
+> f
+
+h) = ( Bx 24, 0, −BG cos x3, 2Bx 1x4):
+
+L3 
+
+> f
+
+h(x) = Bx 2x24 − BGx 4 cos x3 =: b(x), (17) 
+
+Lg L2 
+
+> f
+
+h(x) = 2 Bx 1x4 =: a(x). (18) Thus: 
+
+y(3) = Bx 2x24 − BGx 4 cos x3
+
+| {z }
+
+> b(x)
+
++ 2 Bx 1x4
+
+| {z }
+
+> a(x)
+
+·u. (19) The system has relative degree γ = 3 whenever a(x) = 2 Bx 1x4̸ = 0 .
+
+4.2 Structure of the singularity manifold 
+
+The singularity manifold is 
+
+S = {x ∈ R4 : 2 Bx 1x4 = 0 }. (20) Since B̸ = 0 , this is equivalent to x1x4 = 0 :
+
+S = {x : x1 = 0 }
+
+| {z }
+
+> S1
+
+∪ { x : x4 = 0 }
+
+| {z }
+
+> S2
+
+. (21) The control coefficient has the factored form 
+
+a(x) = 2 B · φ1(x) · φ2(x), φ1(x) := x1, φ2(x) := x4, (22) with c(x) = 2 B = 10 /7̸ = 0 .
+
+Proposition 3 (Ball-and-Beam has a 2-Parameter Singularity) . S is a k = 2 parameter singularity in the sense of Definition 5. Proof. (i) a(x) = 2 B · x1 · x4 = c(x) φ1 φ2 with c = 2 B̸ = 0 . (ii) dφ1 = (1 , 0, 0, 0) and dφ2 = (0 , 0, 0, 1) are linearly independent everywhere. (iii) a(x) = 2 Bx 1x4 is an irreducible product of two independent smooth functions, neither everywhere non-vanishing. 6On the Minimum Number of Control Laws for Nonlinear Systems with Input–Output Linearisation Singularities A P REPRINT 
+
+4.3 Physical interpretation 
+
+S1: Ball at the pivot ( x1 = 0 ). When the ball sits at the pivot, the moment arm for controlling its acceleration via beam rotation vanishes. No matter how fast the beam rotates, the centrifugal effect on the ball is zero at r = 0 .
+
+S2: Zero beam angular velocity ( x4 = 0 ). When the beam is momentarily stationary, there is no instantaneous coupling between beam acceleration u = ¨θ and ball acceleration through the third derivative of ball position. The effect of beam acceleration appears only in higher derivatives. 
+
+4.4 Involutivity analysis 
+
+We verify that full state linearisation is impossible, confirming Hauser et al. [1992]. For a fourth-order system with relative degree 3, the distribution ∆ = span {g, ad f g, ad 2 
+
+> f
+
+g} must be involutive. The Jacobian of f is 
+
+∂f ∂x =
+
+
+
+0 1 0 0
+
+Bx 24 0 −BG cos x3 2Bx 1x4
+
+0 0 0 10 0 0 0
+
+, (23) giving ad f g = (0 , −2Bx 1x4, −1, 0) ⊤. The key observation is that [g, ad 2 
+
+> f
+
+g] = (2 Bx 1, −2Bx 2, 0, 0) ⊤ does not lie in 
+
+span {g, ad f g, ad 2 
+
+> f
+
+g} at generic points, confirming involutivity failure. 
+
+# 5 Construction of Multiple Control Laws 
+
+Since exact full-state linearisation is impossible, we pursue approximate input–output linearisation following Hauser et al. [1992]. Three control laws are constructed whose validity domains collectively cover R4.
+
+5.1 Control Law 1: Standard input–output linearisation 
+
+On R4 \ S , where a(x) = 2 Bx 1x4̸ = 0 :
+
+u1(x, v ) = −Bx 2x24 + BGx 4 cos x3 + v
+
+2Bx 1x4
+
+. (24) This achieves y(3) = v.
+
+Validity domain: V1 = {x : x1̸ = 0 and x4̸ = 0 }.
+
+Singularity: S(1) = S1 ∪ S 2.
+
+5.2 Control Law 2: Approximate linearisation via f -modification 
+
+Near S, the centrifugal term Bx 1x24 in ¨y is higher-order (it vanishes when x1 = 0 or x4 = 0 ). Following Hauser et al. [1992], neglecting this term and differentiating to fourth order yields approximate coordinates: 
+
+ξ1 = x1, ξ2 = x2, ξ3 = −BG sin x3, ξ4 = −BGx 4 cos x3. (25) Computing ˙ξ4:
+
+˙ξ4 = BGx 24 sin x3 + ( −BG cos x3) · u, (26) giving the second control law: 
+
+u2(x, v ) = BGx 24 sin x3 − vBG cos x3
+
+. (27) 
+
+Validity domain: V2 = {x : cos x3̸ = 0 }.
+
+Singularity: S(2) = {x : x3 = ±π/ 2}.
+
+Key observation: Law 2 is well-defined on much of S (whenever cos x3̸ = 0 ). Its singularity manifold S(2) is 
+
+transverse to S: the differentials dφ1 = (1 , 0, 0, 0) , dφ2 = (0 , 0, 0, 1) and d(cos x3) = (0 , 0, − sin x3, 0) are linearly independent on S ∩ S (2) .7On the Minimum Number of Control Laws for Nonlinear Systems with Input–Output Linearisation Singularities A P REPRINT 
+
+5.3 Control Law 3: Approximate linearisation via g-modification 
+
+For states near S ∩ S (2) (near vertical beam position with ball at pivot or zero angular velocity), a third law is needed. Following the g-modification approach of Hauser et al. [1992], modifying the control vector field yields: 
+
+u3(x, v ) = 1
+
+a3(x)
+
+−b3(x) + v, (28) where a3(x) and b3(x) are functions whose singularity S(3) is transverse to S ∩ S (2) .
+
+5.4 Summary 
+
+Table 1 collects the three laws. The union V1 ∪ V 2 ∪ V 3 = R4 (up to lower-dimensional sets), confirming complete coverage for this k = 2 system. Table 1: Control laws for the ball-and-beam system ( n = 4 , k = 2 ). Law Order Coefficient ai(x) Valid Domain Singularity 1 3 2Bx 1x4 x1̸ = 0 , x 4̸ = 0 S1 ∪ S 2
+
+2 4 −BG cos x3 cos x3̸ = 0 x3 = ±π/ 2
+
+3 4 a3(x) R4 \ S (3) S(3) ⋔ (S ∩ S (2) )
+
+# 6 The (k + 1) -Controller Lemma 
+
+We now state and prove the main result. 
+
+6.1 Formal definitions Definition 7 (Singularity at the mth Derivative) . System (1) exhibits a singularity at the mth output derivative (m < n )if: (i) Lg Ljf h(x) = 0 for all j ∈ { 0, . . . , m − 2} and all x ∈ Rn;(ii) a(x) := Lg Lm−1 
+
+> f
+
+h(x) vanishes on a nonempty proper subset S ⊊ R n.
+
+Definition 8 (Control Law of Order ℓ). A control law of order ℓ is a smooth feedback u = κ(x, v ) such that y(ℓ) = v
+
+on some open V ⊆ Rn.
+
+Definition 9 (Complete Coverage) . A collection {(ui, Vi)}pi=1 provides complete coverage if Spi=1 Vi = Rn.
+
+Remark 2. Pointwise coverage is adopted because a trajectory passing through an uncovered point—even one in a measure-zero set—results in a loss of control authority. 
+
+6.2 Statement of the main result Lemma 4 (The (k+1) -Controller Lemma) . Let system (1) be an nth order SISO system exhibiting a singularity at the 
+
+mth output derivative ( m < n ) with a k-parameter singularity manifold S = Ski=1 Si (Definitions 5 and 7). Then: 
+
+(Sufficiency) There exists a collection of k + 1 control laws providing complete coverage of Rn.
+
+(Necessity) No collection of fewer than k + 1 control laws, constructed via standard and approximate input–output linearisation, can provide complete coverage. The minimum number of control laws within the approximate linearisation framework is exactly k + 1 .
+
+6.3 Preparatory lemmas Lemma 5 (Transversality of Approximate Controllers) . Let Si = {x : φi(x) = 0 } with dφi̸ = 0 on Si. Then there exists an approximate control law valid on Rn \ S ′ 
+
+> i
+
+with S′ 
+
+> i
+
+⋔ Si.
+
+8On the Minimum Number of Control Laws for Nonlinear Systems with Input–Output Linearisation Singularities A P REPRINT 
+
+Proof. The procedure of Hauser et al. [1992] modifies f or g to eliminate terms proportional to φi, producing a new coefficient a′
+
+> i
+
+(x) that does not identically vanish on Si. By the Transversality Theorem [Hirsch, 1976], generically 
+
+S′ 
+
+> i
+
+⋔ Si.
+
+Lemma 6 (Structure of Pure Parts) . Define Xi := Si \ S  
+
+> j̸=i
+
+Sj . Then: 1. each Xi is nonempty and open-dense in Si;2. the Xi are pairwise disjoint; 3. each Xi has positive (n−1) -dimensional Hausdorff measure. Proof. Si is a smooth hypersurface (Implicit Function Theorem) and intersections Si ∩ S j (j̸ = i) have codimension 
+
+≥ 2 by Theorem 1. Hence Xi is the complement of a lower-dimensional set in Si: nonempty, open, dense and of positive measure. 
+
+Lemma 7 (Structural Constraint of Approximate Linearisation) . Any approximate controller eliminating factor φj
+
+from a(x) = c(x) Qki=1 φi(x) produces a new coefficient 
+
+a′ 
+
+> j
+
+(x) = c′ 
+
+> j
+
+(x) Y
+
+> i̸=j
+
+φi(x) + h.o.t. , (29) 
+
+so a′ 
+
+> j
+
+(x) generically vanishes on Si for i̸ = j.Proof. The modification removes φj but the remaining factors φi (i̸ = j) persist, as they correspond to independent vanishing conditions unaffected by the modification targeting φj . For the ball-and-beam, the f -modification eliminates the centrifugal term proportional to φ1φ22 and produces a′
+
+> 2
+
+(x) = −BG cos x3, which introduces a structurally different singularity at cos x3 = 0 .
+
+6.4 Proof of the main result 
+
+Proof of Theorem 4. Part I: Sufficiency (by induction on k). 
+
+Base case ( k = 1 ): The standard controller covers V1 = Rn \ S 1. By Theorem 5, an approximate controller with 
+
+S′ 
+
+> 1
+
+⋔ S1 covers V2 = Rn \ S ′
+
+> 1
+
+. For any x ∈ S 1, either x / ∈ S ′ 
+
+> 1
+
+(covered by Law 2) or x ∈ S 1 ∩ S ′
+
+> 1
+
+, which has codimension ≥ 2 and can be handled by perturbation. Thus 2 = k + 1 controllers suffice. 
+
+Inductive step: For k-parameter S = Ski=1 Si, the standard controller covers Rn \ S . For each i, Theorem 5 gives an approximate controller targeting Si with S′ 
+
+> i
+
+⋔ Si. Controller i + 1 covers Rn \ S ′ 
+
+> i
+
+. The residual S
+
+> i
+
+(Si ∩ S ′ 
+
+> i
+
+) has codimension ≥ 2 and lies in the interior of other controllers’ validity domains, achieving complete coverage with k +1 
+
+controllers. 
+
+Part II: Necessity (by contradiction). 
+
+Suppose p < k +1 controllers (one standard, p−1 ≤ k−1 approximate) give complete coverage, i.e. S ∩ Tpj=2 S′ 
+
+> j
+
+= ∅.
+
+Step 1: By Theorem 7, each approximate controller j targeting Si(j) generically fails on the pure part Xi for i̸ = i(j)
+
+(since φi persists in a′ 
+
+> j
+
+). 
+
+Step 2: There are k nonempty pure parts (Theorem 6) but at most k − 1 approximate controllers. By the Pigeonhole Principle, some Xi∗ has no dedicated controller. 
+
+Step 3: The standard controller fails on Xi∗ ⊂ S , and every approximate controller with i(j)̸ = i∗ fails on Xi∗ by Step 1. No controller covers the nonempty open set Xi∗ —contradiction. 
+
+∴ At least k + 1 control laws are necessary. 
+
+Remark 3. The necessity argument relies on the structural constraint (Theorem 7) specific to the Hauser–Sastry– Kokotovi´ c approximate linearisation framework. Alternative paradigms (sliding mode, backstepping, MPC) that do not produce factored control coefficients might achieve coverage with fewer controllers. The sufficiency result, how-ever, is more general. 
+
+9On the Minimum Number of Control Laws for Nonlinear Systems with Input–Output Linearisation Singularities A P REPRINT 
+
+6.5 Application to ball-and-beam Corollary 8. For the ball-and-beam ( n = 4 , m = 3 , k = 2 ), exactly k + 1 = 3 control laws are required. Proof. Sufficiency: the construction in Section 5. Necessity: the factored form a(x) = 2 B · x1 · x4 has k = 2 
+
+independent factors; the f -modification yields a′ 
+
+> 2
+
+= −BG cos x3, which introduces a new singularity at {x3 =
+
+±π/ 2}; and the g-modification resolves S ∩ S (2) .
+
+# 7 Closed-Loop Architecture 
+
+The implementation of multiple control laws requires a supervisory mechanism for real-time selection: 
+
+σ(x) = 
+
+
+
+1 if |x1| > ϵ 1 and |x4| > ϵ 4,
+
+3 if |x1| ≤ ϵ1 and |x4| ≤ ϵ4,
+
+2 otherwise ,
+
+(30) where ϵ1, ϵ 4 > 0 are switching thresholds. Law 1 operates in the regular region; Law 2 handles states near one singularity component; Law 3 handles the intersection S1 ∩ S 2.
+
+# 8 Numerical Simulations 
+
+Simulations use the parameters of Hauser et al. [1992]: M = 0 .05 kg, R = 0 .01 m, J = 0 .02 kg ·m2, Jb =2 × 10 −6 kg ·m2, G = 9 .81 m/s 2, giving B = 5 /7 ≈ 0.7143 .
+
+8.1 Setup 
+
+We track yd(t) = 0 .4 cos(2 πt/ 3) m over t ∈ [0 , 30] s with beam constraint |θ| ≤ 30 ◦. The outer loop uses pole placement at s = −4 (multiplicity 3, Law 1) and s = −3 (multiplicity 4, Laws 2–3). Switching thresholds are 
+
+ϵ1 = 0 .05 and ϵ4 = 0 .08 .
+
+8.2 Results 
+
+Figure 2 shows the tracking performance, control input, control coefficient magnitude and active controller selection over time. Figure 3 presents the singularity manifold analysis across multiple initial conditions, demonstrating that system tra-jectories regularly approach the singularity components and confirming the necessity of all three control laws. Figure 4 illustrates the state-space partitioning for controller selection. The simulations confirm: (1) no single control law suffices; (2) three controllers provide complete coverage; (3) track-ing degrades gracefully near singularities; (4) smooth switching preserves trajectory continuity. 
+
+# 9 Discussion 
+
+9.1 Geometric interpretation 
+
+The (k+1) -Controller Lemma has a transparent geometric reading: the factored coefficient a(x) = c(x) Qki=1 φi(x)
+
+creates k independent hypersurface “obstacles” to global linearisability. Each factor produces a codimension-1 sin-gularity component requiring a dedicated approximate controller. The standard controller covers the regular region, totalling k + 1 .
+
+9.2 Relationship to existing results Patchy feedback theory [Ancona and Bressan, 1999]: guarantees finite controller families for stabilisation but pro-vides no bounds tied to singularity structure. 
+
+Switched systems theory [Liberzon, 2003]: provides stability tools for switched systems but assumes controllers are given; it does not address the minimum number. 10 On the Minimum Number of Control Laws for Nonlinear Systems with Input–Output Linearisation Singularities A P REPRINT 
+
+Figure 2: Hybrid controller results ( A = 0 .4 m, |θ| ≤ 30 ◦). Top row (left to right): position tracking ( r(t) vs yd(t)); tracking error convergence; beam angle θ with ±30 ◦ constraint boundaries. Bottom row: control input u; control coefficient a(x) = 2 Bx 1x4 showing periodic zero-crossings at singularity encounters; active controller selection indicating Law 1 (away from singularities), Law 2 (near one singularity) and Law 3 (near intersection S1 ∩ S 2). 
+
+Approximate linearisation [Hauser et al., 1992]: provides the construction methodology that our result quantifies. The (k+1) -Controller Lemma makes precise the intuition that controller count is dictated by the algebraic structure of the control coefficient. 
+
+9.3 Scope and limitations 
+
+The necessity result applies specifically to controllers within the approximate linearisation framework, relying on the structural constraint that modifying f or g to eliminate one singularity factor preserves others (Theorem 7). Alternative paradigms (sliding mode, MPC, backstepping) might achieve coverage with fewer controllers. The sufficiency result is more general: k + 1 controllers always suffice provided the transversality conditions of Theorem 5 hold. Additional limitations include restriction to SISO systems, smooth nonlinearities, control-affine structure and m < n. Extensions to MIMO systems with decoupling matrix singularities, non-smooth systems and input-constrained systems remain open. 
+
+# 10 Conclusions 
+
+This paper established a fundamental result characterising the minimum control complexity for nonlinear systems with feedback linearisation singularities. The (k+1) -Controller Lemma proves that for an nth order SISO system with a k-parameter singularity manifold, exactly k + 1 distinct control laws are necessary and sufficient within the approximate linearisation framework. Sufficiency is constructive, using transversality to show that k approximate controllers plus one standard controller achieve full coverage. Necessity uses the factored control coefficient structure and the Pigeonhole Principle to show that k − 1 approximate controllers leave at least one singularity component uncovered. 11 On the Minimum Number of Control Laws for Nonlinear Systems with Input–Output Linearisation Singularities A P REPRINT 
+
+Figure 3: Singularity manifold analysis. Top row: distance to r = 0 singularity ( S1) and distance to ˙θ = 0 singularity (S2) for trajectories starting near different components. Bottom row: control coefficient magnitude |a(x)| and distance to Control Law 2 singularity | cos( θ)|, confirming the necessity of multiple controllers. The ball-and-beam system provided concrete validation: the coefficient a(x) = 2 Bx 1x4 factors into two independent terms, each producing a codimension-1 component, and three controllers ( k +1 = 3 ) are both necessary and sufficient. This fills a gap in the nonlinear control literature by providing the first quantitative link between singularity structure and controller complexity. Future directions include MIMO extensions, stability analysis under switching, optimal switching strategies and computational synthesis algorithms. 
+
+# Funding 
+
+This research received no external funding. 
+
+# Data Availability 
+
+Simulation data and code are available from the author upon reasonable request. 12 On the Minimum Number of Control Laws for Nonlinear Systems with Input–Output Linearisation Singularities A P REPRINT 
+
+x1
+
+x4
+
+S1
+
+S2  
+
+> Law 1 Law 1
+> Law 1 Law 1
+> X1
+> X2
+> S1∩S 2
+> Laws 2,3 on S
+
+Figure 4: State-space partition projected onto the (x1, x 4) plane. S = S1 ∪ S 2 (red, blue) separates the state space. Law 1 operates in the green regions. The pure parts X1 and X2 require Laws 2 and 3. 
+
+# References 
+
+F. Ancona and A. Bressan. Patchy vector fields and asymptotic stabilisation. ESAIM: Control, Optimisation and Calculus of Variations , 4:445–471, 1999. R.W. Brockett. Feedback invariants for nonlinear systems. In Proceedings of the IFAC World Congress , pages 1115– 1120, Helsinki, Finland, 1978. C.I. Byrnes and A. Isidori. Local stabilisation of minimum-phase nonlinear systems. Systems & Control Letters , 11 (1):9–17, 1988. V. Guillemin and A. Pollack. Differential Topology . Prentice-Hall, Englewood Cliffs, NJ, 1974. J. Hauser, S. Sastry, and P. Kokotovi´ c. Nonlinear control via approximate input-output linearisation: the ball and beam example. IEEE Transactions on Automatic Control , 37(3):392–398, 1992. M.W. Hirsch. Differential Topology . Springer-Verlag, New York, 1976. L.R. Hunt, R. Su, and G. Meyer. Global transformations of nonlinear systems. IEEE Transactions on Automatic Control , AC-28(1):24–31, 1983. A. Isidori. Nonlinear Control Systems . Springer-Verlag, London, 3rd edition, 1995. A. Isidori, A.J. Krener, C. Gori-Giorgi, and S. Monaco. Nonlinear decoupling via feedback: a differential geometric approach. IEEE Transactions on Automatic Control , AC-26(2):331–345, 1981. B. Jakubczyk and W. Respondek. On linearisation of control systems. Bulletin de l’Académie Polonaise des Sciences, Série des Sciences Mathématiques , 28(9–10):517–522, 1980. H.K. Khalil. Nonlinear Systems . Prentice Hall, Upper Saddle River, NJ, 3rd edition, 2002. S.G. Krantz and H.R. Parks. The Implicit Function Theorem: History, Theory, and Applications . Birkhäuser, Boston, 2002. A.J. Krener. Approximate linearisation by state feedback and coordinate change. Systems & Control Letters , 5(3): 181–185, 1984. J.M. Lee. Introduction to Smooth Manifolds . Springer, New York, 2nd edition, 2012. D. Liberzon. Switching in Systems and Control . Birkhäuser, Boston, 2003. R. Marino and P. Tomei. Nonlinear Control Design: Geometric, Adaptive and Robust . Prentice Hall, London, 1995. H. Nijmeijer and A.J. van der Schaft. Nonlinear Dynamical Control Systems . Springer-Verlag, New York, 1990. S. Sastry. Nonlinear Systems: Analysis, Stability, and Control . Springer-Verlag, New York, 1999. 13 On the Minimum Number of Control Laws for Nonlinear Systems with Input–Output Linearisation Singularities A P REPRINT 
+
+J.-J.E. Slotine and W. Li. Applied Nonlinear Control . Prentice Hall, Englewood Cliffs, NJ, 1991. E.D. Sontag. Smooth stabilisation implies coprime factorization. IEEE Transactions on Automatic Control , 34(4): 435–443, 1989. E.D. Sontag and Y. Wang. On characterizations of the input-to-state stability property. Systems & Control Letters , 24 (5):351–359, 1995. C. Tomlin and S.S. Sastry. Switching through singularities. Systems & Control Letters , 35(3):145–154, 1998. 14

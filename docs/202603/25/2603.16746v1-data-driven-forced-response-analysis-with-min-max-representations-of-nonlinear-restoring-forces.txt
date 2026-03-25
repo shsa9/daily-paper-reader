@@ -1,0 +1,413 @@
+Title: Data-driven forced response analysis with min-max representations of nonlinear restoring forces
+
+URL Source: https://arxiv.org/pdf/2603.16746v1
+
+Published Time: Wed, 18 Mar 2026 01:34:31 GMT
+
+Number of Pages: 23
+
+Markdown Content:
+# Data-driven forced response analysis with min-max representations of nonlinear restoring forces ∗
+
+Akira Saito † Hiromu Fujita ‡
+
+Abstract 
+
+This paper discusses a novel data-driven nonlinearity identification method for mechanical systems with nonlinear restoring forces such as polynomial, piecewise-linear, and general displacement-dependent nonlinearities. The proposed method is built upon the universal approximation theorem that states that a nonlinear function can be approximated by a linear combination of activation functions in artificial neural network framework. The proposed approach utilizes piecewise linear springs with initial gaps to act as the activation functions of the neurons of artificial neural networks. A library of piecewise linear springs with initial gaps are constructed, and the contributions of the springs on the nonlinear restoring force are determined by solving the linear regression problems. The piecewise linear springs are realized by combinations of min and max functions with biases. The proposed method is applied to a Duffing oscillator with cubic stiffness, and a piecewise linear oscillator with a gap and their nonlinearities are successfully determined from their free responses. The obtained models are then used for conducting forced response analysis and the results match well with those of the original system. The method is then applied to experimentally-obtained free response data of a cantilevered plate that is subjected to magnetic restoring force, and successfully finds the piecewise linear representation of the magnetic force. It is also shown that the obtained model is capable of accurately capturing the steady-state response of the system subject to harmonic base excitation . 
+
+Keywords: Nonlinear system, Piecewise linear system, Universal Approximation Theorem, ReLU neural network 
+
+## 1 Introduction 
+
+In recent years, data-driven analysis methods have been widely applied in linear and nonlinear mechanical systems for predicting, designing and controlling their dynamics [1]. Koopman-operator based methods, such as the extended dynamic mode decomposition (DMD) has been applied to nonlinear oscillators [ 2 ]. Various data-driven DMD-based methods have also been developed to date to predict the dynamics of nonlinear systems. For instance, Galerkin projection method [ 3, 4 ] has been applied to successfully construct reduced order models of nonlinear equations of motion. DMD with control [5] has also been applied to predict forced response of the nonlinear oscillator [6]. A growing number of attempts have been made to represent nonlinear dynamics using artificial neural networks (ANNs). For instance, Kuptsov et al. [ 7 ] investigated the equivalence of a network model consisting of a single hidden layer of perceptron with sigmoid functions and nonlinear functions in dynamical systems. They examined a couple of nonlinear ODEs including Lorenz system, and showed that the network models exhibit almost equivalent dynamical behavior including bifurcation diagrams and Fourier spectra. They also successfully applied ANN to the dynamics of a stiff system [ 8]. Moukhliss 
+
+et al. proposed an ANN-based surrogate modeling framework for predicting the frequency of nonlinear oscillations of functionally graded materials [ 9 ]. Luo et al. proposed a hybrid physics-data-driven method 
+
+> ∗This manuscript is a preprint and has been submitted to a journal for possible publication.
+> †Department of Mechanical Engineering, Meiji University, Kawasaki, Kanagawa 214-8571, Japan. E-mail: asaito@meiji.ac.jp
+> ‡Department of Mechanical Engineering, Meiji University, Kawasaki, Kanagawa 214-8571, Japan.
+
+1
+
+> arXiv:2603.16746v1 [math.DS] 17 Mar 2026
+
+to identify unknown structural nonlinear boundary condition of systems by using both finite element models and multi-layer perceptron (MLP) model [ 10 ]. It has been successfully applied to systems with various nonlinearity types including hardening spring, anisotropic spring, and hysteretic nonlinearity. These ANN-based nonlinear identification methods are promising because they are versatile and capable of representing a broad class of nonlinear systems. However, the identified model tends to become a black-box and hence it is hard to interpret its physical meanings. Raissi et al. developed a hybrid data-driven and model-based method that achieves system identification and prediction of its dynamics for nonlinear partial differential equations called physics-informed neural networks [ 11 ]. This class of methods enable the solution of nonlinear partial differential equations (PDEs) by minimizing a cost function that is a combination of the PDE constraint and data errors with respect to the ANN’s parameters, which result in the ANNs capable of not only solving the PDEs but also achieving their consistency with the measurement data. This method, however, still result in the black-box nonlinear dynamics model based on the ANNs. Brunton et al. developed a sparse identification of nonlinear dynamical systems (SINDy)[ 12 ], which utilizes sequential thresholded linear least squares of nonlinear terms by a library of nonlinear functions. This gives relatively clear symbolic representation of the nonlinear terms, which tends to provide interpretable nonlinear dynamics models. To obtain interpretable nonlinear dynamics model with ANNs, Gonzalez and Lara proposed a nonlinear system identification method for second-order nonlinear ordinary differential equations (ODEs) based on the concept of characteristic curves where the system dynamics are represented in terms of the nonlinear elements in the ODEs [ 13 ]. They combined the concept with SINDy or ANN, and the characteristic curve method has been successfully applied to van der Pol equation and mechanical systems with dry-friction. Building upon these studies, this paper attempts to propose a simple data-driven system identification and forecasting method for mechanical systems with nonlinear restoring forces with ANN-like system representation combined with a SINDy-like linear regression, which gives us interpretable network model of nonlinear restoring forces as a network of piecewise linear springs . The proposed approach does not require explicit expressions of the nonlinear forces as in [ 13 ]. Fundamentally, the proposed method is based on a piecewise linear approximation of nonlinear functions applied to nonlinear dynamics. Piecewise linear approximation of nonlinear forces in the dynamics has long been studied by many researchers for various purposes. For instance, Garg proposed a piecewise linear approximation of a certain class of nonlinear functions to simplify the numerical integration involved in obtaining the aerodynamic forces and moments from the nonlinear functions [ 14 ]. Cao et al. [ 15 ] proposed a piecewise linear approximation of a smooth discontinuous nonlinear force generated by a linked pair of inclined springs that are pinned to rigid supports. They derived an analytical expression of a trilinear approximation for the nonlinear force using two piecewise linear functions. Xie and Shih [16 ] also proposed a method to solve for the response of a single degree of freedom (DOF) system with nonlinear stiffness, by utilizing the piecewise linear approximation of nonlinear force and finding the exact closed form solution at each time step. More recently, Li et al [ 17 ] developed a method for designing a piecewise linear oscillator to mimic nonlinear restoring forces by selecting the breakpoints and slopes of the piecewise linear oscillators. It was shown that the designed piecewise linear oscillator successfully approximates the behavior of a nonlinear system. As it will be shown, the principle behind their method is shared with the proposed approach in this paper. Inspired by these studies, the proposed approach in this paper integrates such piecewise linear approximations of nonlinear forces into a single-layer perceptron (SLP)-like ANN model, where the contributions of the springs are determined from data through SINDy-like linear regression. This paper is organized as follows. In Section 2, mathematical foundation of the proposed approach is presented. Numerical examples that show the validity of the proposed method are presented in Section 3 including a Duffing oscillator and a single DOF system with a piecewise linear stiffness. In Section 4, the proposed method is applied to experimentally-obtained nonlinear vibration data where a plate with a permanent magnet at its tip is subject to nonlinear magnetic force. Conclusions of the paper are 2Figure 1: Schematic diagram of a single layer perceptron summarized in Section 5. 
+
+## 2 Mathematical foundation 
+
+2.1 Min-max representation of nonlinear restoring forces 
+
+Let us consider the dynamics of a single mass-spring-damper system of the form, 
+
+m¨x + c ˙x + kx + f (x) = 0 (1) where m is the mass, c is the damping coefficient, k is the spring constant, x is the displacement. Also, let 
+
+f (x) be a nonlinear function that represents an arbitrary nonlinear force that is a function of x. Based on the universal approximation theorem [ 18 , 19 , 20 ], which is the foundation of the ANN, assuming that f (x)belongs to a class of tempered distributions, its functional approximation can be found 
+
+f (x) ≈
+
+> Z
+
+X
+
+> j=1
+
+η(aj x + bj ) (2) where η are activation functions, aj are the weights, and bj are the biases, and Z is the number of neurons in the perceptron. The schematic diagram of the SLP is shown in Fig. 1. The activation function can be simple functions, such as sigmoid function, hyperbolic tangent, and max function (or so called rectifier linear unit (ReLU) in ANN). The definition of the max function is max (0 , x ) = x for x > 0 or 0 for x ⩽ 0. Also, the min function can be an activation function where min (0 , x ) = x for x < 0 or 0 for x ⩾ 0. Note that since min(0 , x ) = −max(0 , −x), they can be related by a linear transformation. If the min and max functions are chosen as the activation function, η(aj x + bj ) = max (0 , a j x + bj ) = 
+
+aj max (0 , x + bj /a j ) = aj η(x + dj ) where dj ≜ bj /a j . Similarly, η(aj x + bj ) = min (0 , a j x + bj ) = 
+
+aj min (0 , x + bj /a j ) = aj η(x + dj ) where dj ≜ bj /a j . Defining a ≜ [a1, a 2, . . . , a Z ]T, d ≜ [d1, d 2, . . . , d Z ]T,and η(x, d) ≜ [η(x + d1), η (x + d2), . . . , η (x + dZ )] T, then Eq (2) is rewritten as f (x) ≈ aT η(x, d). With these notations, Eq (1) becomes 
+
+m¨x + c ˙x + kx + aTη(x, d) = 0 . (3) If both min and max functions are chosen as the activation functions, Eq. (2) can be interpreted as a linear combination of forces exerted by piecewise linear springs with initial gaps, i.e., 
+
+f (x) ≈
+
+> M
+
+X
+
+> j=1
+
+¯kj min (0 , x − ¯gj ) + 
+
+> N
+
+X
+
+> j=1
+
+kj max (0 , x − gj ) (4) where ¯kj and kj are the equivalent spring constants of the piecewise linear springs that correspond to aj of Eq. (2) for min and max functions respectively, ¯gj and gj are the equivalent initial gaps that correspond to 3(a) Original nonlinear system  (b) Equivalent system representation using a network of piece-wise linear springs 
+
+Figure 2: Schematic diagram of multiple piecewise springs acting on the mass ¯kj and kj and bj = −¯gj or bj = −gj . It is noted that both the spring constants and the initial gaps can be negative. Theoretically, either max or min function can approximate any nonlinear function. However, to achieve better convergence performance for both increasing and decreasing functions in x, both min and max functions are used in the approximation. The schematic of this concept is shown in Fig. 2. Namely, the nonlinear force exerted by the nonlinear stiffness in the original system is replaced by a set of piecewise linear springs with different initial gaps and spring constants. This means that any nonlinear force that is dependent only on x can be modeled as a sum of piecewise linear stiffnesses whose spring constants are ¯kj ’s and kj ’s with the corresponding initial gaps ¯gj ’s and gj . Namely, the following is equivalent to Eq. (1) for sufficiently large M and N ,
+
+m¨x + c ˙x + kx +
+
+> M
+
+X
+
+> j=1
+
+¯kj min (0 , x − ¯gj ) + 
+
+> N
+
+X
+
+> j=1
+
+kj max (0 , x − gj ) = 0 . (5) More compactly, 
+
+m¨x + c ˙x + kx + ¯kT ¯ξ(x, ¯g) + kTξ(x, g) = 0 , (6) where ¯ξ(x, ¯g) ≜ [ min (0 , x −¯g1), · · · , min (0 , x −¯gM )] T, ¯k = [ ¯k1, · · · , ¯kM ]T, ξ(x, g) ≜ [ max (0 , x −g1), · · · , max (0 , x −
+
+gN )] T, and k = [ k1, · · · , k N ]T.The authors have shown that Eq. (5) holds for a piecewise linear system with an initial gap [ 21 ], and the spring constants k for the max functions can be successfully obtained from measurement data by using SINDy. Namely, a piecewise linear system with an initial gap can be approximated by a sum of piecewise linear systems with initial gaps. This paper further explores this concept by examining the equivalence of the system behavior of nonlinear systems with that of the approximated nonlinear system with Eq. (6). 
+
+2.2 Determination of equivalent spring constants and gaps 
+
+In general ANN formation, the weights and biases of the activation functions are determined based on the minimization of a loss function that is typically defined as a squared error between the values of the functions and those of the approximations by optimization solvers such as stochastic gradient methods. Since the proposed method uses a linear combination of nonlinear functions of a single layer, simple linear regression of the nonlinear force with a list of nonlinear functions, or a library can be applied as in SINDy. Two scenarios are considered. One is the case where the data of the nonlinear function of interest is available and direct fit of the nonlinear function is possible. Such cases are discussed in 2.2.1 and referred to as direct method. The other scenario is where the data of the nonlinear function of interest is not available but measurements data of x is available. This case is discussed in 2.2.2 and referred to as indirect method. 42.2.1 Direct method 
+
+Assuming that the oscillator moves within a certain range, e.g., xL ⩽ x ⩽ xR, and the nonlinear restoring force f (x) is measured at finite and discrete measurement points ˜x = [ x1, · · · , x n]T, i.e., f ( ˜x) = [f (x1), · · · , f (xn)] T where xL = x1 and xR = xn and x1 < · · · < x n. Then, the equivalent spring constants of min and max functions in Eq. (4) can be obtained simply by solving the following linear least squares problem. Namely, we seek ˜k and k such that minimize  
+
+> κ
+
+: ∥L(˜ x, ¯g, g)κ − f (˜ x)∥2, (7) where κ = [ ¯kT, kT]T contains a list of unknown equivalent spring constants to be determined. ¯g and g
+
+contain lists of M and N possible gap values that need to be set a priori. L( ˜x, ¯g, g) contains a library of min and max functions evaluated at x1, · · · , x n, i.e., L(˜ x, ¯g, g) = [ ¯L(˜ x, ¯g), L(˜ x, g)], where ¯L(˜ x, ¯g) = 
+
+
+
+min(0 , x 1 − ¯g1), · · · , min(0 , x 1 − ¯gM )...min(0 , x n − ¯g1), · · · , min(0 , x n − ¯gM )
+
+ (8) and 
+
+L(˜ x, g) = 
+
+
+
+max(0 , x 1 − g1), · · · , max(0 , x 1 − gN )...max(0 , x n − g1), · · · , max(0 , x n − gM )
+
+ . (9) The minimizer of Eq. (7) can be obtained as 
+
+κ = [ L(˜ x, ¯g, g)] † f (˜ x), (10) where † denotes the Moore-Penrose pseudo-inverse of a rectangular matrix. Obviously, this process of obtaining the contributions from the min and max functions does not require sophisticated gradient-based optimization methods such as stochastic gradient descent or Adam [ 22 ] that are used in the construction of modern ANNs. This comes at the expense of forming a list of possible gaps ( ¯gi’s and gi’s) that correspond to the biases of the neurons in ANNs, which are typically obtained by the optimization solvers. Instead, the contributions from the piecewise linear springs that are in the list ( ¯L and L) are obtained as the spring constants ( κ), which correspond to the weights of the activation functions of the neurons, by the regression Eq. (10) . As long as the moving range of the oscillator can be estimated a priori, the list of gaps can be created relatively easily from the moving range. Unnecessary gap values are then naturally eliminated in the process of linear regression. 
+
+2.2.2 Indirect method 
+
+This case also assumes that the oscillator moves within a certain range xL ⩽ x ⩽ xR. This time, it is assumed that the direct measurement of nonlinear force is not feasible and hence its data is unavailable. Instead, displacement, velocity, and acceleration of the nonlinear system are measured at discrete time instants t = [ t1, t 2, · · · tn], and they are used to indirectly identify the nonlinear restoring force. For this purpose, regression of time series of the available data is conducted as follows. Rearranging the terms in Eq. (6), we obtain, ¨x + 2 ζω n ˙x + ω2nx = −¯k′T ¯ξ(x, ¯g) − k′Tξ(x, g), (11) where ζ = c/ 2√mk , ωn = pk/m , ¯k′ = ¯k/m , and k′ = k/m . Note that ωn is the natural frequency and ζ
+
+is the damping ratio with the absence of the nonlinear terms on the right hand side of Eq. (11). Let ˜a = [¨ x(t1), · · · , ¨x(tn)] T = [ a1, · · · , a n]T,
+
+˜v = [ ˙ x(t1), · · · , ˙x(tn)] T = [ v1, · · · , v n]T,
+
+˜x = [ x(t1), · · · , x (tn)] T = [ x1, · · · , x n]T.
+
+5Figure 3: Convergence of the approximated function with respect to the number of functions. p2 = 10. The regression was conducted for data in the filled region ( −5 ⩽ x ⩽ 5). We then seek ¯k and k such that minimize  
+
+> κ′
+
+: ∥L (˜ x, ¯g, g)κ′ − ˜aℓ∥2, (12) where κ′ = [ ¯k′T, k′T]T, and ˜aℓ corresponds to the linear portion of the equation of motion evaluated with the responses of the nonlinear system, or ˜aℓ ≜ ˜a + 2 ζω n ˜v + ω2n ˜x. Therefore, the minimizer of Eq. (12) is obtained as, 
+
+κ′ = [ L(˜ x, ¯g, g)] † ¯aℓ. (13) With the obtained κ′, the right hand side of Eq. (11) can be evaluated for any x.
+
+## 3 Numerical examples 
+
+3.1 Duffing oscillator 
+
+The proposed method is applied to a single DOF system with a cubic restoring force, or a Duffing oscillator of the form: 
+
+m¨x + c ˙x + p1x + p2x3 = 0 . (14) where p1 and p2 are arbitrarily chosen stiffness parameters. First, the equivalent form of the nonlinear term p2x3 represented by Eq. (4) needs to be found. Namely, the spring constants kj need to be computed, or they need to be trained using known data of f (x). In this case, the spring constants can be obtained by simple regression using the direct method as described in 2.2.1. 
+
+3.1.1 Piecewise linear approximation of the cubic term 
+
+Figure 3 shows the results of the approximations using the min-max functions for ( M, N ) = (8 , 8) , (32 , 32), and (128 , 128) where p2 = 10. The spring constants ¯k and k were obtained for the values in −5 ⩽ x ⩽ 5. As can be seen, the approximation is poor for ( M, N ) = (8 , 8). However, as M and N increase, the approximation becomes more accurate. Indeed, when ( M, N ) = (128 , 128), as can be seen, the original function is quite well represented by the piecewise linear functions especially within −5 ⩽ x ⩽ 5. The approximation quality is degraded outside the range of −5 ⩽ x ⩽ 5, but it is expected because the spring constants ¯k and k were trained by the dataset in −5 ⩽ x ⩽ 5 and the capability of the approximation to extrapolate the function outside the range is not guaranteed. 6(a) ( M, N ) = (8 , 8) (b) ( M, N ) = (32 , 32)   
+
+> (c) ( M, N ) = (128 ,128)
+
+Figure 4: Spring constants versus the initial gap values 
+
+Figure 5: Time history of the oscillator with the original cubic nonlinearity and with the min-max representations In addition, Fig. 4 shows the obtained equivalent spring constants versus the gap values for different values of M and N . As seen in Fig. 4(a), the springs constants are large for large initial gaps near the lower and upper bound of the range. This makes sense because the cubic nonlinearity produces the largest values at the bounds and hence the springs with large spring constants with large initial gaps need to be added to represent such a nonlinear force. 
+
+3.1.2 Free response 
+
+The original equation of motion Eq. (14) , and the ones with the nonlinear term replaced with the min-max representations with the trained ¯k and k have been solved by time integration for the initial condition of 
+
+x(0) = −4.0, and ˙x(0) = 0. The time histories are shown in Fig. 5. As can be seen, the predicted time history of x(t) with all approximation cases match well with the original data until approximately t = 5s. However, prediction accuracy gradually decreases, and the delay from the original data becomes visible, especially for ( M, N ) = (8 , 8). On the other hand, the one with ( M, N ) = (32 , 32) does not show significant delay until around t = 25s. The approximation with ( M, N ) = (128 , 128) shows almost negligible delay 7(a) With original cubic stiffness (b) With ( M, N ) = (8 , 8)   
+
+> (c) With ( M, N ) = (128 ,128)
+
+Figure 6: Comparison of the time-frequency relationships using scalogram of the response Table 1: RMSE values for the approximations (M, N ) (8 , 8) (32 , 32) (128 , 128) RMSE (m) 2.38 0.497 0.215 before t = 30s. Table. 1 shows the root mean square error (RMSE) values between the approximations and the original response. The RMSE value decreases as ( M, N ) increases. This also supports the convergence of the proposed approach with respect to M and N .To see the frequency contents in the response more clearly, wavelet transform has been applied to the original response, the ones with ( M, N ) = (8 , 8), and ( M, N ) = (128 , 128). The obtained scalograms are shown in Fig. 6. Overall, the trend of the response of the original system can be well captured by the approximations. However, for the case with ( M, N ) = (8 , 8), the dominant frequency components near t = 30s become different from those of the original system. On the other hand, we can see that the frequency contents can be well captured by the approximation with ( M, N ) = (128 , 128). 
+
+3.1.3 Forced response 
+
+To examine the applicability of the proposed approach to forced response problems, a forcing term has been added to Eq. (14), i.e., 
+
+m¨x + c ˙x + p1x + p2x3 = F sin(2 πf t ), (15) where F is the amplitude of forcing, f is the excitation frequency. Also, the same forcing term is added to the equivalent equation of motion with the cubic term replaced by its equivalent min-max representation, i.e., 
+
+m¨x + c ˙x + p1x + ¯kT ¯ξ(x, ¯g) + kTξ(x, g) = F sin(2 πf t ). (16) The steady-state solutions of the equations Eqs. (15) and (16) have been sought for various frequencies over 0 ⩽ f ⩽ 5 Hz by using time integration for 200 cycles of a period of excitation. The results are shown 8Backbone curve Cubic stiffness Approximate solution (M,N)=(128,128) (M,N)=(32,32) (M,N)=(8,8) Figure 7: Comparison of the forced response results with single cubic stiffness and multiple PWL springs, along with classical approximate solutions and backbone curve in Fig. 7 for the steady-state responses of Eqs. (15) and (16) for ( M, N ) = (8 , 8), (32 , 32), and (128 , 128). When solving the equations for the steady-state, the excitation frequency f was swept upward or downward to obtain solutions of multiple stable branches. Backbone curve for the undamped system ( c = 0) and the approximate solutions by a classical perturbation method [ 23 ] have also been plotted in Fig. 7. Note that f is normalized with respect to the linear natural frequency fn = pk/m/ (2 π), and the amplitude of oscillation is normalized with respect to the static equilibrium Xst that satisfies p1Xst + p2X3 
+
+> st
+
+− F = 0. Note that it was numerically obtained as Xst = 0 .3930. As can be seen, the response curve of the original system with the cubic stiffness shows a typical stiffening effect where the response curve is bent toward high frequency and shows the primary resonance. Also, there are secondary resonances below f /f n = 1 including 3:2 superharmonic resonance. We can now see that these characteristics are well captured by the approximate system with ( M, N ) = (128 , 128), including the primary and the secondary resonances. On the other hand, for the case with ( M, N ) = (32 , 32), the values tend to be slightly off from those of the original system or the approximate system with ( M, N ) = (128 , 128). Furthermore, if the numbers of min-max functions are further reduced down to ( M, N ) = (8 , 8), the system fails to predict the accurate steady-state response for almost the entire frequency range considered. Interestingly, it shows a strongly nonlinear yet typical response curve of piecewise linear systems (see, e.g., [ 24 ]) at around X/X st = 3 .2, i.e., 
+
+X ≈ 1.25. This approximately corresponds to the smallest gap value of the active min and max functions, i.e., the system acts almost as a piecewise linear system with the smallest gap value, which does not well represent the Duffing oscillator. 
+
+3.2 Piecewise linear system 
+
+Next, a single DOF system with a piecewise linear stiffness subjected to harmonic forcing is considered. Such a piecewise linear system has been studied extensively due to its simple yet strong nonlinearity [ 25 ]. The schematic diagram of the system is shown in Fig. 8. The piecewise linear spring is fixed at the right end and the initial gap between the spring and the mass is L. The equation of motion of the system is written as, 
+
+m¨x + c ˙x + p1x + p2max(0 , x − L) = F sin(2 πf et), (17) where p2 is the spring constant of the piecewise linear stiffness. The piecewise linear spring with gap L is approximated using the min and max functions with different gap values (without L) using the procedure 9<latexit sha1_base64="AGFCLzkDmDvAXDBGqLjIEejE1+o=">AAACoHichVG7SgNBFD1Z3/EVtRHShARFmzAromIVEMROoyaKRsLuOomD+2J3EojBwtYfsLBSEBEbrfwAG3/AIp8glgo2Ft5sFkRFvcPMnDlzz505XN01hS8Za0SUtvaOzq7unmhvX//AYGxoOO87Fc/gOcMxHW9T13xuCpvnpJAm33Q9rlm6yTf0/YXm/UaVe75w7HVZc/mOpZVtURKGJokqxuKLBV/YE1MFVyRKCTlZ2PNdzeB1lVuHxViKpVkQiZ9ADUEKYaw4sTsUsAsHBiqwwGFDEjahwaexDRUMLnE7qBPnERLBPcchoqStUBanDI3YfVrLdNoOWZvOzZp+oDboFZOmR8oExtgju2Iv7IFdsyf2/mutelCj+Zca7XpLy93i4PHo2tu/Kot2ib1P1R8KnbL/9iRRwlzgRZA3N2CaLo1W/erBycva/OpYfZyds2fyd8Ya7J4c2tVX4yLLV08RpQap39vxE+Sn0upMWs1OpzLJsFXdiCOJCerHLDJYwgpy9O4RLnGDWyWpLCnLSraVqkRCzQi+hLL1AdWSmhs=</latexit> 
+
+F sin(2 ωf t )Figure 8: Schematic diagram of the piecewise linear system -10 -5 0 5 10 
+
+x
+
+-20 020 40 60 80 100 
+
+> f( x)
+
+p2 max(0, x- L)(M,N)=(256,256) (M,N)=(32,32) (M,N)=(8,8) 
+
+Figure 9: Convergence of the approximated function with respect to the number of functions. p2 = 10. The regression was conducted for data in the filled region ( −5 ⩽ x ⩽ 5). described in 2.2. Note that the equivalence of a single max function with a gap and multiple max functions with different gap lengths was considered in Ref. [ 21 ] both numerically and experimentally, and free response was well captured by the max functions. With the assumption that the data of nonlinear force is available, direct method described in 2.2.1 can be applied. For this numerical experiment, L = 0 .5 is assumed. The linear regression was conducted using data taken within −5 ⩽ x ⩽ 5 for ( M, N ) = (8 , 8), (32 , 32), and (256 , 256). The approximated functions as well as the original piecewise linear stiffness are shown in Fig. 9. As can be seen, the approximation is poor for ( M, N ) = (8 , 8) even within −5 ⩽ x ⩽ 5. On the other hand, for ( M, N ) = (32 , 32), the min and max functions well represent the original function. With ( M, N ) = (256 , 256), the difference is negligible for −5 ⩽ x ⩽ 5. The obtained spring constants for the corresponding gap values are plotted in Fig. 10. As can be seen, even though the original function consists only of the max function, both min and max functions contribute to the representation of a single max function. As the number of min and max functions increases, we can see that the contributions of the min and max functions whose gap values are close to the gap value of the original max function ( L) become dominant. This appears as a spike in the plot as shown in Fig. 10(c). This characteristics can be exploited to identify unknown L, as it has already been discussed in Ref. [ 21 ]. 
+
+3.3 Free response 
+
+Free response analyses have been conducted for the original piecewise linear system and the system with the multiple min and max functions for x(0) = −2 and ˙x(0) = 0. Namely, F = 0 in Eq. (17) . Other parameter values are set to m = 1, c = 0 .1, and k = 1. The results are shown in Fig. 11 as phase portrait format to clearly visualize the changes in the dynamics as the system stiffness changes. The vertical dashed 10 (a) ( M, N ) = (8 , 8) (b) ( M, N ) = (32 , 32)   
+
+> (c) ( M, N ) = (256 ,256)
+
+Figure 10: Spring constants versus the initial gap values for the piecewise linear stiffness ( L = 0 .5) Table 2: RMSE values for the approximations (M, N ) (8 , 8) (32 , 32) (256 , 256) RMSE (m) 0.554 0.229 0.028 line designates L = 0 .5 where the mass collides with the piecewise linear stiffness. The phase portrait with (M, N ) = (8 , 8) poorly predicts the correct trajectory. The one with ( M, N ) = (32 , 32) predicts that of the original piecewise linear system well, but there are noticeable differences especially near the gap. On the other hand, ( M, N ) = (256 , 256) predicts quite well the one with the original system even near the gap region. Table 2 shows the RMSE values for the approximations, where the reduction in RMSE can be observed for increasing M and N . This indicates the high accuracy of the proposed system representation of the nonlinear function even when the nonlinearity is piecewise linear. 
+
+3.4 Forced response 
+
+Forced response analyses have been conducted for 0 ⩽ fe ⩽ 0.5, or 0 ⩽ fe/f n ⩽ π where fn = 1 /2π. At each frequency, the equation of motions were solved numerically for x(0) = 0 and ˙x(0) = 0 until they reach the steady-state solutions. The amplitude of the response was computed and normalized with respect to the static displacement. It is plotted for the normalized excitation frequency and shown as Fig. 12 for the original piecewise linear system, the approximate systems with ( M, N ) = (8 , 8), (32 , 32), and (256 , 256). As can be seen, there is a primary resonance at fe/f n = 1 .47, whereas the largest secondary resonance can be seen at fe/f n = 0 .622. The proposed model with ( M, N ) = (8 , 8) fails to predict both primary and secondary resonances. The proposed model with ( M, N ) = (32 , 32) succeeded in predicting the primary resonance, however, it failed to capture the secondary resonance and responses at higher frequency range than the primary resonance. The proposed model with ( M, N ) = (256 , 256) captures both the primary and the secondary resonances. In addition to the forced response results, backbone curve is shown in Fig. 12. The backbone curve was extracted from the instantaneous frequency and amplitude of the free response of the system with the identified multiple PWL stiffnesses using the initial condition of x(0) = 2 .0and ˙x(0) = 0. The instantaneous amplitude of the response was defined as the mean value of the upper and lower envelope of the response. The instantaneous frequency of the response was computed from the 11 Figure 11: Comparison of the free response results with a single piecewise linear stiffness and multiple PWL stiffnesses. time instants at which the displacement crossed the instantaneous center of oscillation. The instantaneous center of oscillation was defined as the midpoint between the instantaneous upper and lower envelopes. As seen, the backbone curve of the obtained system captures the amplitude dependence of the resonant frequency quite well. To further explore the validity of the proposed approach, trajectory of the solutions as well as their Fourier spectra were examined. Figure 13 shows the phase portraits and the Fourier spectra computed by Fast Fourier Transform (FFT). The horizontal axis of the phase portrait is normalized with respect to the static displacement xst and the vertical axis is normalized with respect to vn = ωnxst where 
+
+ωn = pk/m = 1. The horizontal axes of the FFT spectra are normalized with respect to the frequency of the external forcing fe, whereas the vertical axes are normalized with respect to xst . At the primary resonance shown in Fig. 13(a), the response is dominated by the harmonic component of the excitation frequency. Other frequency components that are integer multiples of the excitation frequency are much smaller than the one with f /f e = 1. On the other hand, at the secondary resonance, the frequency component with twice the excitation frequency is as large as that with the excitation frequency, as can be seen in Fig. 13(b). This indicates the existence of the superharmonic motion. Indeed, the loop in the phase portrait has a knot, indicating the superharmonic motion at twice the excitation frequency. This arises because the excitation frequency approximately equals to twice the natural frequency of the system, resulting in 2:1 superharmonic resonance. 
+
+## 4 Experimental validation 
+
+In this section, the proposed approach is applied to a cantilevered plate with magnetic-force induced nonlinearity from experimentally obtained dataset and its applicability to real measurement data is discussed. First, the nonlinear restoring force acting on the system is identified by the proposed approach from free response data. Second, forced response of the system under base excitation is predicted by adding the excitation term in the obtained equation of motion and its validity is discussed by comparing it with the measurement. 12 Original Figure 12: Comparison of the forced response results with a single piecewise linear stiffness and multiple PWL springs      
+
+> (a) Primary resonance: fe/f n= 1 .470 (b) Secondary resonance: fe/f n= 0 .622
+
+Figure 13: Phase portraits and Fourier spectra at primary and secondary resonances 
+
+4.1 Experimental setup 
+
+The system studied in this section is shown in Fig. 14. A cantilevered plate with a permanent magnet at its tip is clamped and fixed to a surface plate. The plate is made from Titanium Alloy and its dimension is 175 mm × 50 mm × 0.5mm . There is another permanent magnet that is fixed to an aluminum block rigidly attached to the surface plate, and is placed near the tip of the cantilevered plate. The distance between the magnet attached to the cantilevered plate and the other magnet was set to 12 mm. The directions of the polarity of the magnets are both in the direction perpendicular to the surface of the plate, but in the opposite directions with each other. The magnet attached to the cantilevered plate experiences repulsive magnetic force if its position is not aligned with the fixed magnet, as shown in Fig. 14(b). Since the plate also experiences the restoring force due to the elasticity of the plate, there is a stable equilibrium position where the restoring elastic force balances the repulsive force. The same applies to the situation when the plate is bent toward the opposite side. Therefore, this oscillator has two stable equilibria and hence becomes a bistable oscillator. This class of oscillator has been used as a type of energy harvesting devices [26] and nonlinear energy sinks [27]. The expected single DOF approximation of the equation of motion of the system is given as ¨x + 2 ζω n ˙x + ω2nx = ft(x) (18) 13 Cantilevered beam  
+
+> Magnet
+> (fixed)
+> Magnet
+> Clamped
+> Magnet (fixed)
+> Clamped
+> (a) Side view (b) Overhead view
+
+Figure 14: Test equipment for free vibration test. The plate is in equilibrium state. where x is the displacement of the plate at the tip, ft(x) is the nonlinear restoring force that stem from the magnetic repulsive force generated between the fixed magnet and the magnet at the tip of the plate. Note that the equivalent stiffness coefficient k mainly represents the linear restoring force that comes from the elasticity of the plate. We consider the identification of such nonlinear restoring force exerted by the magnets, and aim to develop mathematical model that can well represent the dynamics of the system from measured data. In this case, the magnetic nonlinear force is not directly measured. Instead, displacement is measured by laser displacement sensor (LDS), and the indirect method introduced in Section 2.2.2 is applied. 
+
+4.2 Potential constraints on the basis functions 
+
+For the identification of the magnetic force, the following constraints on the min and max functions are considered. The magnetic force acting between the magnets is dependent on the angle, alignment, and the relative distance of the magnets. In the present setup, the amplitude of vibration is sufficiently small so that the changes in the angle and the alignment are negligible. Therefore, it is reasonable to assume that the magnetic force is dependent solely on the relative distance of the magnets. Since one of the magnets is fixed to the base, the relative distance between the magnets is dependent only on the displacement of the magnet that is attached to the tip of the cantilever plate. As a consequence, the magnetic force can be regarded as a conservative force, and associated potential function can be defined. Namely, we hypothesize that the potential can be approximated as a linear combination of a linear function, quadratic function, and piecewise quadratic functions of the form: 
+
+Vt(x, g) = Vc(x) + Vℓ(x) + Vp(x, g) (19) where Vc(x) = q1x, Vℓ(x) = 12 q2x2, Vp(x, g) = κTϕ(x, g), κ = [ κ1, . . . , κ N ]T, ϕ(x, g) = [ ϕ(x, g 1), . . . , ϕ (x, g N )], and 
+
+ϕ(x, g i) ≜ 12 x2 + 12 min(0 , x + gi)2 + 12 max(0 , x − gi)2. (20) 
+
+q1, q2, and κ′
+
+> i
+
+s are the contributions from these terms determined by the regression. The nonlinear force is then obtained as: 
+
+ft(x, g) = − dVt
+
+dx (x, g)= fc(x) + fℓ(x) + fp(x, g) (21) 14 (a) Free response of the plate tip (b) Backbone curve obtained from the free response 
+
+Figure 15: Time response of the displacement of the plate tip and backbone curve obtained from the free response where fc(x) = −q1, fℓ(x) = −q2x, fp = −κTf (x, g), f (x, g) = [ f (x, g 1), . . . , f (x, g N )] T, and 
+
+fi(x, g i) = − ddx ϕ(x, g i)= − { x + min(0 , x + gi) + max(0 , x − gi)} . (22) The expression on the right hand side is defined as, 
+
+ψ(x, g i) ≜ ddx ϕ(x, g i) = x + min(0 , x + gi) + max(0 , x − gi) (23) and ψ is herein referred to as basis functions and used for the formation of the library. With these assumptions, the physics behind the data can be enforced as constraints on the regression, i.e., potential function associated with the identified force can be defined, otherwise the min-max functions do not respect the physics and hence may produce models that do not follow physical laws. 
+
+4.3 Free response 
+
+With the system shown in Fig. 14, free response experiment has been conducted. The procedure of the experiment is stated as follows. The tip of the plate was displaced along transverse direction. The tip was then released with zero initial velocity. The displacement of the plate tip where the magnet is attached was measured by an LDS (IL-100, KEYENCE, Japan). The sampling rate was 1kHz. To obtain the velocity, derivative of the obtained discrete time history of the displacement was taken numerically. The derivative of the velocity was then taken to obtain the acceleration. Note that a low-pass filter with cut-off frequency of 100Hz has been applied to the measured displacement to eliminate excessive noise in the derivatives of the displacement. Result of the free response measurement is shown in Fig. 15(a). The plate tip vibrates with approxi-mately 13Hz. The amplitude of the displacement gradually decrease due to damping. As a result, the frequency of oscillation slightly deviates as the amplitude of oscillation decreases. To further examine this, the backbone curve was extracted from the data of Fig. 15(a) by the instantaneous frequency and amplitude, and is shown in Fig. 15(b). As can be seen, clear softening effect can be observed. Namely, the backbone curve is bent toward left, which means that the resonant frequency decreases as the amplitude of oscillation increases, or the resonant frequency increases as the amplitude of oscillation decreases. This makes sense because if the tip displacement amplitude increases, the magnetic repulsive force weakens because the distance between the pole of the magnet at the tip and that of the other magnet fixed at the base increases. 15 (a) Potential (b) Magnetic force 
+
+Figure 16: Identified potential and its associated magnetic force With the free response shown in Fig. 15, the proposed method has been applied. First, the damping ratio ζ and the natural frequency ωn corresponding to m, c and k in Eq. (18) were identified from a free response of the same plate without the magnetic force, i.e., fixed magnet was removed from the fixture. The identified values were ωn = 65 .2rad /s, which correspond to 10.4Hz, and ζ = 0 .0054. Second, the indirect method has been applied on the free response of the system with the magnetic force. The library used for the regression of the nonlinear force consists of a constant term and the piecewise linear forces defined in Eq. (21), i.e., 
+
+L(˜ x, g) = 
+
+
+
+1, ψ(x1, g 1), . . . , ψ(x1, g M )...1, ψ(xn, g 1), . . . , ψ(xn, g M )
+
+ . (24) where g1, . . . , g M were equally sampled M points within −0.02 ⩽ x ⩽ 0.02. The identified potential function and the associated magnetic force are shown in Fig. 16. In Fig. 16(a), the obtained total potential energy Vt(x) is shown along with the constituent potential energies with respect to displacement x, where 
+
+Vc(x) is the potential corresponding to the constant force, Vℓ(x) is the potential corresponding to linear force, ϕi(x)’s are the piecewise quadratic potential defined as Eq. (19) . As seen in Fig. 16, Vt(x) is a convex function with two inflection points that are almost symmetric with respect to the vertical axis. In Fig. 16(b), the obtained total magnetic force ft(x) is shown with the constant term fc(x), linear term fℓ(x), and piecewise linear terms fi(x). As can be seen in the figure, the magnetic force is almost symmetric with respect to the origin. The slope of ft is slightly steeper than the linear portion of the force fℓ due to the contributions from quadratic and piecewise quadratic terms. At the inflection points of the potential 
+
+Vt(x), ft(x) takes its extrema. Figure 17 shows the identified spring constants, or the contributions of the basis functions ψ(x, g ) with respect to gi for M = 20, 32, and 40. As M increases, the positive contribution near gi = 0 .005 tends to become the largest whereas the negative contribution near gi = −0.005 tends to become the smallest. This generally implies that the effects of the piecewise linear springs tend to become larger as the distance from the origin increases. The springs with positive gaps tend to have positive spring constants whereas those with negative gaps tend to have negative spring constants. The combined effect of these springs represent the observed softening nature of the nonlinearity. The time histories of the measured displacement, which is the same data as Fig. 15(a), velocity, and 16 gi      
+
+> -0.02 -0.01 00.01 0.02
+> ki
+> 0
+> 2000
+> 4000 (a) M= 20
+
+gi       
+
+> -0.02 -0.01 00.01 0.02
+> ki
+> 0
+> 2000
+> 4000 (b) M= 32
+
+gi      
+
+> -0.02 -0.01 00.01 0.02
+> ki
+> 0
+> 2000
+> 4000
+> (c) M= 40
+
+Figure 17: Spring constants versus the initial gap values for the min-max functions acceleration are shown in Fig. 18 for 0s ⩽ t ⩽ 5s. The data for 0s ⩽ t ⩽ 3s was used for obtaining magnetic restoring force shown in Fig. 16(b) by the regression, and the resulting nonlinear governing equations were solved by numerical time integration to forecast the time histories of displacement, velocity, and acceleration for 3s ⩽ t ⩽ 5s. As seen, the forecasted displacement, velocity, and acceleration agree very well with the measurements. To further examine the characteristics of the obtained model, convergence study with respect to the number of ϕ(x, g i), or M , has been conducted. The RMSE value between the measured acceleration and the fit result was computed for 0 ⩽ t ⩽ 3. Also, the RMSE between the measured and the predicted values for 3 ⩽ t ⩽ 5 was computed. This means that the data 0 ⩽ t ⩽ 3 was used for training the model, and that for 3 ⩽ t ⩽ 5 was used for validation. The results are shown in Fig. 19. The RMSE value for the fit decreases monotonically with respect to M . On the other hand, the RMSE for the prediction decreases as 
+
+M increases up to around 30. For M ⩾ 30, the RMSE for the prediction increases. Considering that the RMSE for the fit decreases for M ⩾ 30, this clearly shows the consequence of overfitting. This shows that convergence study needs to be conducted with respect to M , or cross-validation needs to be conducted to find the optimal M .Furthermore, convergence study with respect to the duration of the fit to the total time has also been conducted. Fit duration was varied from 0.5s to 4.5s while the total time was fixed to 5.0s. Namely, the fit duration was varied from 9.98% to 90.0%. M was fixed to 32. The prediction RMSE decreases as fit duration increases up to 70%. It then slightly increases for fit duration larger than 70%. This trend implies that even though the prediction accuracy increases as fit duration increases for moderately small fit duration, if the fit duration exceeds 70%, it suffers from overfitting. This also shows that the convergence study with respect to the prediction accuracy should also be conducted to obtain the optimal fit duration. 17 Figure 18: Results of free response ( M = 32). The regression was conducted for data in the filled region (0 ⩽ t ⩽ 3). 
+
+4.4 Forced response 
+
+Next, forced response of the oscillator is examined. Namely, the prediction capability of the model obtained in the previous section is examined under harmonic excitation. The obtained results are compared with measurements. The forced response test was conducted by using an electrodynamic shaker. The test setup is shown in Fig. 21. The oscillator was fixed at the moving head of the electrodynamic shaker (K2004E01, The Modal shop, USA). A sinusoidal signal was supplied from a function generator (WF1947, NF Corporation, Japan) to the electrodynamic shaker to generate the base excitation to the oscillator. The displacement was measured at the moving head of the electrodynamic shaker where the plate is attached (herein referred to as base) and at the tip of the plate (herein referred to as tip) using two of the LDSs. With this setup, forced response tests have been conducted. The sinusoidal excitation with a fixed frequency has been applied to the plate, and its vibration response was measured at the tip and the base until it reaches the steady-state. The measurement was repeated for different frequencies from 5Hz to 30Hz with 1Hz increment. To examine the amplitude-dependence of the system, the shaker was operated with two vibration amplitude levels, i.e., 0.27mm and 0.83mm, which approximately correspond to the input DC voltages to the shaker of 0.1V and 0.3V, respectively. As a representative result, Fig. 22(a) shows the results of forced response at the steady-state for the sinusoidal excitation with its frequency of 15Hz. The displacements measured at the tip and the base are shown. The response was extracted from the measurements for an arbitrary time window of 0.6s in the steady-state. As can be seen, the sinusoidal motion of the base induces almost sinusoidal motion of the tip with phase shift. The phase shift between the base and the tip motions were computed to be 178.20deg. Forced response calculation has been conducted with the model identified from the free response. The 18 M    
+
+> 010 20 30 40
+> RMSE (m/s 2)
+> 2
+> 3
+> 4
+> 5
+> 6
+> 7
+> 8
+> 9
+> Fit
+> Prediction
+
+Figure 19: Convergence study with respect to the number of ϕ(x, g i) (Fit duration=50%) Fit duration (% of total)     
+
+> 020 40 60 80 100
+> Prediction RMSE (m/s 2)
+> 2
+> 4
+> 6
+> 8
+> 10
+> 12
+> 14
+> 16
+
+Figure 20: Convergence study with respect to the fit duration to total duration ( M = 32) equation of motion Eq. (18), which is unforced, was converted to that with the base excitation, i.e., ¨x + 2 ζω n ˙y + ω2ny = ft(y, g) (25) with y ≜ x − Xb sin(2 πf et) (26) where y is the relative displacement of the oscillator measured from the base, Xb is the amplitude of the base excitation, fe is the excitation frequency of the base. For the evaluation of the nonlinear force ft(y, g), the parameters q1, q2, and κ in Eq (21) obtained from the free response analysis were used. Figure 22(b) shows the steady-state response predicted by the model generated based on the free-response. The response was extracted from the results of numerical integration for an arbitrary time window of 0.6s in the steady-state. As can be seen, the tip displacement prediction shown in Fig. 22(b) agree well with the measurement shown in Fig. 22(a), in terms of the amplitude of oscillation and the phase shift from the base displacement. The phase shift was computed to be 175.86deg, which is 1.3% error from the measurement. Figure 23 shows the results of forced response near the resonance in terms of transmissibility and frequency for both experiments and simulations. The transmissibility was defined as the ratio of the steady-state amplitude of oscillation of the tip to that of the base ( Xb). The plots clearly show that the system has softening nonlinearity, i.e., the resonant peak bends toward lower frequency. The graph shows that the resonant frequency is lower for Xb = 0 .83mm than that for Xb = 0 .27mm. On the other hand, resonant peak amplitude is higher for Xb = 0 .83mm than that for Xb = 0 .27mm. These trends are well captured by the model obtained by the proposed approach. 19 Magnet    
+
+> (fixed)
+> Cantilever beam
+> Magnet
+> LDS to measure base
+> displacement
+> LDS to measure
+> tip displacement
+> Electrodynamic shaker
+
+Figure 21: Test equipment for forced vibration test 
+
+## 5 Conclusions 
+
+In this paper, a novel data-driven nonlinear identification method for mechanical systems under nonlinear restoring forces has been proposed. The method is based upon the network of piecewise linear springs represented by min and max functions. The contributions from the springs on the nonlinear restoring forces are obtained by solving a regression problem of the nonlinear forces with a library of min-max functions. The method has been applied to a Duffing oscillator and a piecewise linear oscillator. It was shown that the resulting models can capture the free and forced response under harmonic excitations. The method was also applied to identify the magnetic restoring forces exerted on a cantilevered plate. To exploit the conservative nature of the magnetic forces, potential constraints are applied to the min-max representation of the nonlinear force such that they represent conservative forces. The proposed method successfully identified the nonlinear restoring forces exerted by the permanent magnet on the cantilevered plate and the associated potential function and produced a model that can accurately predict free and steady-state forced response of the system under harmonic excitation. 
+
+## References 
+
+[1] S. L. Brunton and J. N. Kutz. Data-driven science and engineering . Cambridge University Press, 2019. [2] Qianxiao Li, Felix Dietrich, Erik M. Bollt, and Ioannis G. Kevrekidis. Extended dynamic mode decomposition with dictionary learning: A data-driven adaptive spectral decomposition of the Koopman operator. Chaos: An Interdisciplinary Journal of Nonlinear Science , 27(10):103111, 10 2017. [3] Alessandro Alla and J. Nathan Kutz. Nonlinear model order reduction via dynamic mode decomposi-tion. SIAM Journal on Scientific Computing , 39(5):B778–B796, 2017. [4] Akira Saito and Masato Tanaka. Data-driven model order reduction for structures with piecewise linear nonlinearity using dynamic mode decomposition. Nonlinear Dynamics , 111(22):20597–20616, 2023. [5] Joshua L. Proctor, Steven L. Brunton, and J. Nathan Kutz. Dynamic mode decomposition with control. SIAM Journal on Applied Dynamical Systems , 15(1):142–161, 2016. 20 Time (s)                          
+
+> 00.1 0.2 0.3 0.4 0.5 0.6
+> -2
+> 0
+> 2
+> Displacement (m)
+> #10 -3
+> Tip
+> Time (s)
+> 00.1 0.2 0.3 0.4 0.5 0.6
+> -4
+> -2
+> 0
+> 2
+> 4
+> Displacement (m)
+> #10 -4
+> Base (a) Experiment (phase shift: 178.20deg Time (s)
+> 00.1 0.2 0.3 0.4 0.5 0.6
+> -2
+> 0
+> 2
+> Displacement (m)
+> #10 -3
+> Tip
+> Time (s)
+> 00.1 0.2 0.3 0.4 0.5 0.6
+> -4
+> -2
+> 0
+> 2
+> 4
+> Displacement (m)
+> #10 -4
+> Base (b) Simulation (phase shift: 175.86deg)
+
+Figure 22: Comparison of the measured forced response time histories and those computed with the proposed approach at 15Hz. [6] Hideaki Namiki and Akira Saito. Short-time dynamic mode decomposition: a data-driven forced response analysis of nonlinear systems under swept-sine excitation. Nonlinear Dynamics , 113(24):33109– 33126, 2025. [7] P. V. Kuptsov, A. V. Kuptsova, and N. V. Stankevich. Artificial neural network as a universal model of nonlinear dynamical systems. Russian Journal of Nonlinear Dynamics , 17(1):5–21, 2021. [8] Pavel V. Kuptsov, Nataliya V. Stankevich, and Elmira R. Bagautdinova. Discovering dynamical features of Hodgkin–Huxley-type model of physiological neuron using artificial neural network. Chaos, Solitons & Fractals , 167:113027, 2023. [9] Anass Moukhliss, Elmahdi Ezzoubaidi, Nassima Ayoub, abdellah Amouch, ihsane tikonab, Mohcine Chajdi, Abdellatif Rahmouni, and Rhali Benamar. Deep neural network-based surrogate modeling for nonlinear vibrations of functionally graded stepped beams informed by a discrete model. Discover Mechanical Engineering , 5(1):8, 2026. [10] Lanxin Luo, Limin Sun, Yixian Li, and Yong Xia. Structural nonlinear boundary condition iden-tification using a hybrid physics data-driven approach. Nonlinear Dynamics , 113(9):9605–9623, 2025. [11] M. Raissi, P. Perdikaris, and G. E. Karniadakis. Physics-informed neural networks: A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations. 
+
+Journal of Computational Physics , 378:686–707, 2019. [12] Steven L. Brunton, Joshua L. Proctor, and J. Nathan Kutz. Discovering governing equations from data by sparse identification of nonlinear dynamical systems. Proceedings of the National Academy of Sciences , 113(15):3932–3937, 2016. 21 Figure 23: Comparison of the measured forced response results and those computed with the proposed approach [13] Federico J. Gonzalez and Luis P. Lara. Interpretable neural network system identification method for two families of second-order systems based on characteristic curves. Nonlinear Dynamics ,113(24):33063–33086, 2025. [14] D. P. Garg. Piecewise linear approximation of nonlinear forces and moments resulting from crosswind gusts applied to magnetically levitated vehicles. Advances in Aerospace Structures and Materials ,pages 181–188, 1981. [15] Qingjie Cao, Marian Wiercigroch, Ekaterina E Pavlovskaia, J. Michael T Thompson, and Celso Grebogi. Piecewise linear approach to an archetypal oscillator for smooth and discontinuous dynamics. 
+
+Philosophical Transactions of the Royal Society A: Mathematical, Physical and Engineering Sciences ,366(1865):635–652, August 2008. [16] P.-S. Xie and P.-J. Shih. A unique formulation of piecewise exact method to analyze a nonlinear spring system under harmonic excitation. Journal of Mechanics , 31(3):337–344, 2014. [17] Haining Li, Kefu Liu, and Jian Deng. Using a piecewise linear spring to approximate an essentially nonlinear spring: design and validation. Transactions of the Canadian Society for Mechanical Engineering , 49(2):192–206, 2024. [18] H.N Mhaskar and Charles A Micchelli. Approximation by superposition of sigmoidal and radial basis functions. Advances in Applied Mathematics , 13(3):350–373, 1992. [19] Kurt Hornik, Maxwell Stinchcombe, and Halbert White. Multilayer feedforward networks are universal approximators. Neural Networks , 2(5):359–366, 1989. [20] G. Cybenko. Approximation by superpositions of a sigmoidal function. Mathematics of Control, Signals and Systems , 2(4):303–314, 1989. [21] Ryosuke Kanki and Akira Saito. Data-driven initial gap identification of piecewise-linear systems using sparse regression and universal approximation theorem. Journal of Computational and Nonlinear Dynamics , 19(6):061003, 05 2024. 22 [22] Diederik Kingma and Jimmy Ba. Adam: A method for stochastic optimization. International Conference on Learning Representations , 2014. [23] Leonard Meirovitch. Fundamentals of Vibrations . McGraw-Hill, 2001. [24] Meng-Hsuan Tien, Keng-Yen Lee, and Shih-Chun Huang. Analyzing the backbone curve of piecewise-linear non-smooth systems using a generalized bilinear frequency approximation method. Mechanical Systems and Signal Processing , 204:110765, 2023. [25] S. W. Shaw and P. J. Holmes. A periodically forced piecewise linear oscillator. Journal of Sound and Vibration , 90(1):129–155, 1983. [26] Huaxia Deng, Yu Du, Zhemin Wang, Jingchang Ye, Jin Zhang, Mengchao Ma, and Xiang Zhong. Poly-stable energy harvesting based on synergetic multistable vibration. Communications Physics ,2(21), 2019. [27] Haining Li, Kefu Liu, and Jian Deng. A magnetically enhanced piecewise-linear nonlinear energy sink: Transient responses. Journal of Sound and Vibration , 626:119622, 2026. 
+
+## Statements and Declarations 
+
+Competing interests The authors have no relevant financial or non-financial interest to disclose. 
+
+Author contributions A. Saito: Conceptualization, Methodology, Formal analysis, Investigation (nu-merical), Writing – original draft, Writing – review & editing. H. Fujita: Resources, Investigation (experimental), Data curation, Validation, Writing – review & editing. All authors approved the final manuscript. 
+
+Data availability The dataset generated during and/or analyzed during the current study are available from the corresponding author upon reasonable request. 23
