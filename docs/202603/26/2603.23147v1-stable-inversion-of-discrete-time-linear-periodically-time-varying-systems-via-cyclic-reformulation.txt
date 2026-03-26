@@ -1,0 +1,875 @@
+Title: Stable Inversion of Discrete-Time Linear Periodically Time-Varying Systems via Cyclic Reformulation
+
+URL Source: https://arxiv.org/pdf/2603.23147v1
+
+Published Time: Wed, 25 Mar 2026 01:09:51 GMT
+
+Number of Pages: 24
+
+Markdown Content:
+# Stable Inversion of Discrete-Time Linear Periodically Time-Varying Systems via Cyclic Reformulation ∗
+
+Hiroshi Okajima 
+
+Faculty of Advanced Science and Technology, Kumamoto University, Japan 
+
+Keywords: Inverse systems; Periodically time-varying systems; Cyclic re-formulation; Stable inversion; Multirate systems. 
+
+Abstract 
+
+Stable inverse systems for periodically time-varying plants are es-sential for feedforward control and iterative learning control of mul-tirate and periodic systems, yet existing approaches either require complex-valued Floquet factors and noncausal processing or operate on a block time scale via lifting. This paper proposes a systematic method for constructing stable inverse systems for discrete-time lin-ear periodically time-varying (LPTV) systems that avoids these lim-itations. The proposed approach proceeds in three steps: (i) cyclic reformulation transforms the LPTV system into an equivalent LTI rep-resentation; (ii) the inverse of the resulting LTI system is constructed using standard LTI inversion theory; and (iii) the periodically time-varying inverse matrices are recovered from the block structure of the cycled inverse through parameter extraction. For the fundamental case of relative degree zero, where the output depends directly on the cur-rent input, the inverse system is obtained as an explicit closed-form time-varying matrix expression. For systems with periodic relative de-gree r ≥ 1, the r-step-delayed inverse is similarly obtained in explicit closed form via the periodic Markov parameters. The stability of the resulting inverse system is characterized by the transmission zeros of the cycled plant, generalizing the minimum phase condition from the LTI case. Numerical examples for both relative degree zero and higher relative degree systems confirm the validity of the stability conditions and demonstrate the effectiveness of the proposed framework, includ-ing exact input reconstruction via causal real-valued inverse systems. 
+
+# 1 Introduction 
+
+The inverse of a dynamical system plays a fundamental role in a wide range of control and signal processing applications: feedforward control and output 
+
+> ∗
+
+Corresponding author: H. Okajima. Email: okajima@cs.kumamoto-u.ac.jp 
+
+1
+
+> arXiv:2603.23147v1 [eess.SY] 24 Mar 2026
+
+tracking [1, 5], iterative learning control (ILC) [6], and invertibility analy-sis of nonlinear systems [2]. For linear time-invariant (LTI) systems, stable inversion theory is well developed: if all transmission zeros lie strictly in-side the unit disk (the minimum phase condition), a causal stable inverse exists and can be constructed explicitly in state-space form [3, 4]. When nonminimum phase zeros are present, a bounded noncausal inverse can be obtained via exponential dichotomy [11, 9], at the cost of requiring future output information (preview). Many practical systems, however, exhibit periodically time-varying dy-namics that cannot be captured by an LTI model. Linear periodically time-varying (LPTV) systems arise naturally in multirate sampled-data control [22], position-dependent and non-equidistantly sampled systems [8, 9], and high-precision positioning stages [10]. Because the system matrices vary periodically, the transfer function framework underlying LTI inversion the-ory is no longer available, making the construction of stable inverse systems considerably more involved. Existing work on LPTV inversion falls into three main categories; a com-prehensive comparison of inversion-based approaches for feedforward and ILC, including extensions to time-varying systems, is given in [12]. The first is the stable inversion approach of van Zundert and Oomen [8, 9], developed for discrete-time LPTV systems. This approach adapts the exponential dichotomy framework of Devasia and Paden [11], originally developed for continuous-time nonlinear systems, to the discrete-time periodic setting via a Floquet-type factorization of the monodromy matrix. The resulting in-verse operator is defined on the doubly-infinite time axis and is exact in the infinite-horizon sense. However, it requires complex-valued Floquet fac-tors and noncausal processing, and does not yield a closed-form state-space realization suitable for direct causal implementation. The second category consists of lifting-based approaches for discrete-time LPTV systems. Zhu et al. [13] apply the standard lifting technique to transform a periodic system into an equivalent LTI system, then construct the stable inverse of the lifted system by combining stable inversion with optimal state transitions. More recently, Zhu et al. [14] propose a double lifting approach that handles non-minimum phase multivariate LPTV systems by formulating the inversion as a finite-dimensional matrix equation and applying the Moore–Penrose pseu-doinverse, guaranteeing L2-bounded inputs for finite-time tracking. How-ever, since both approaches are based on lifting, the resulting inverse op-erates on the N -step block time scale and produces a finite-time input se-quence rather than a step-by-step periodic state-space realization in the orig-inal time domain. The third category consists of signal-processing-oriented methods for discrete-time LPTV filters [16, 15, 17], which focus on FIR/IIR filter inversion using polyphase or modulator representations, or on sta-ble/unstable decompositions of LPTV digital filters. These methods are not formulated in a state-space control framework and typically assume the 2direct feedthrough term is nonzero (relative degree zero). Invertibility of linear time-varying discrete-time systems was studied in a foundational paper by Kono [7], which provides existence conditions for left and right inverses of general LTV systems in terms of rank conditions on structured matrices. This provides the theoretical underpinning for the inversion problem but does not give a constructive algorithm specialized to the LPTV case. A closely related line of work concerns the model matching problem for periodic systems. Colaneri and Kuˇ cera [18] showed that, via cyclic reformu-lation, a periodic state-feedback law can be designed so that the closed-loop input–output map matches a prescribed target transfer function. The zero-matching conditions in their framework are expressed through the cyclic transfer function and are thus closely related to the periodic transmission zero conditions that govern the stability of the inverse system in the present work. Tange and Tsumura [19] extended this perspective by formulating periodically weighted model matching problems using dual lifted forms for causal LPTV controllers, and showed that LPTV controllers can outper-form LTI ones in rejecting periodic disturbances. The inversion problem studied here can be viewed as a special case of model matching in which the target is the identity map; the key difference is that the present work derives an explicit periodic state-space realization of the inverse rather than a state-feedback gain. The present paper proposes a fundamentally different approach based on cyclic reformulation [20, 21]. Cyclic reformulation transforms an N -periodic LPTV system into an equivalent LTI system by a state, input, and output coordinate transformation that exploits the periodic structure. The key advantage over lifting [22] is that cyclic reformulation operates at the original sampling rate (rather than N -step block time) and preserves the step-by-step input-output relationship, while still enabling the direct application of LTI tools. This capability has been exploited to extend LTI design methods to the periodic setting without conservatism, including LMI-based controller design for multirate systems [23], multirate Kalman filter design with semidefinite noise covariances [24], and system identification of periodic plants [25]. The proposed inversion procedure consists of three steps: (i) cyclic reformulation transforms the LPTV plant into a cycled LTI system ˇP ;(ii) the inverse ˇP −1 is constructed using standard LTI inversion theory; and (iii) the periodically time-varying inverse matrices are extracted from the block structure of ˇP −1 through parameter extraction. This procedure yields explicit closed-form inverse systems for both the relative degree zero case (nonsingular Dk) and the higher relative degree case ( Dk = 0, periodic relative degree r ≥ 1), with the stability of the inverse characterized by the transmission zeros of the cycled plant. The contributions of this paper are as follows: 31. An inversion framework based on cyclic reformulation is proposed that reduces the LPTV inversion problem exactly to an LTI inversion prob-lem, avoiding complex-valued arithmetic and noncausal processing. 2. Explicit closed-form periodic inverse systems are derived for both rela-tive degree zero (Theorem 1) and periodic relative degree r ≥ 1 (Theo-rem 3), yielding causal state-space realizations at the original sampling rate. 3. The stability of the inverse system is characterized by the transmis-sion zeros of the cycled LTI plant, linking the periodic minimum phase condition to the Schur stability of the inverse monodromy matrix (The-orem 2 and Corollary 2). This paper is organized as follows. Section 2 presents mathematical preliminaries on cyclic reformulation and reviews the relevant LTI inverse system theory. Section 3 presents the main results: the three-step inversion framework for relative degree zero systems, stability analysis, and extensions to higher relative degree. Section 4 demonstrates the approach through numerical examples. Section 5 discusses the relationship to existing methods and limitations, and Section 6 concludes the paper. 
+
+Notation: Let R, Z, Z+, and N denote the real numbers, integers, non-negative integers, and positive integers, respectively. For a square matrix 
+
+M , M −1 denotes the matrix inverse, and ρ(M ) denotes the spectral radius. A matrix is called Schur stable if all its eigenvalues satisfy |λ| < 1. For a matrix polynomial (transfer matrix) G(z), the transmission zeros are the values z0 ∈ C at which the normal rank of G(z) drops. Throughout, all subscripts of N -periodic matrices (such as Ak, Bk, Ck, Dk) are interpreted modulo N ; that is, Ak = Ak mod N . For brevity, the state transition product is defined as Φ( j, i ) := Aj−1Aj−2 · · · Ai for j > i and Φ( i, i ) := I.
+
+# 2 Preliminaries 
+
+2.1 Cyclic Reformulation of Periodically Time-Varying Sys-tems 
+
+Consider a discrete-time LPTV system with period N (N ∈ N): 
+
+x(k + 1) = Akx(k) + Bku(k), (1) 
+
+y(k) = Ckx(k) + Dku(k), (2) where x ∈ Rn, u ∈ Rm, y ∈ Rp, and Ak+N = Ak, Bk+N = Bk, Ck+N = Ck,
+
+Dk+N = Dk for all k ∈ Z+. This system is denoted by ( Ak , B k, C k, D k). Note that the direct feedthrough term Dk is retained here, since it plays a central role in the relative degree zero case. 4The cyclic reformulation [20, 21] transforms the LPTV system into an equivalent LTI system. Letting i := k mod N ∈ { 0, 1, . . . , N − 1} denote the time phase, the cycled input signal ˇ u(k) ∈ RN m is defined by ˇu(k) = ei ⊗ u(k), i := k mod N, (3) where ei ∈ RN is the ( i + 1)-th standard unit vector. The cycled state ˇx(k) ∈ RN n and output ˇ y(k) ∈ RN p are defined analogously. The cycled system is the following LTI system: ˇx(k + 1) = ˇAˇx(k) + ˇB ˇu(k), (4) ˇy(k) = ˇC ˇx(k) + ˇDˇu(k), (5) where ˇA =
+
+
+
+0 · · · · · · 0 AN −1
+
+A0 0 00 A1
+
+. . . ...... . . . 0 00 · · · 0 AN −2 0
+
+
+
+, (6) ˇB =
+
+
+
+0 · · · · · · 0 BN −1
+
+B0 0 00 B1
+
+. . . ...... . . . 0 00 · · · 0 BN −2 0
+
+
+
+, (7) where ˇA ∈ RN n ×N n , ˇB ∈ RN n ×N m , and ˇC = diag( C0, C 1, . . . , C N −1), (8) ˇD = diag( D0, D 1, . . . , D N −1), (9) where ˇC ∈ RN p ×N n and ˇD ∈ RN p ×N m .The following lemma states the fundamental equivalence between the original LPTV system and the cycled LTI system, which is used throughout this paper. 
+
+Lemma 1 ([21, Chap. 6]) Let (x(k), u (k), y (k)) and (ˇ x(k), ˇu(k), ˇy(k)) be the trajectories of the LPTV system (1)–(2) and the cycled system (4)–(5), respectively, with the same initial condition and corresponding cycled inputs. Then: (i) At each time k with i = k mod N , the i-th block of ˇy(k) is the only nonzero block and equals y(k).
+
+5(ii) Each eigenvalue λ of the monodromy matrix Φ := AN −1 · · · A0 gener-ates N eigenvalues of ˇA, given by λ1/N ej2πl/N for l = 0 , . . . , N − 1; in particular, ρ( ˇA) = ρ(Φ) 1/N .(iii) More generally, let ¯Ak (k = 0 , . . . , N − 1) be any sequence of n × n
+
+matrices, and let ˇ¯A denote the N n × N n matrix obtained by replacing 
+
+Ak with ¯Ak in the 1-shift block-circulant structure (6). Then ρ( ˇ¯A) = 
+
+ρ( ¯AN −1 · · · ¯A0)1/N .
+
+Remark 1 Cyclic reformulation differs from the standard lifting technique [22] in the following sense. Both the cycled and lifted representations have expanded state dimension N n . However, lifting is a block-time equivalence over one full period (i.e., the lifted system operates at the N -step time scale), whereas cyclic reformulation is a pointwise (step-by-step) equivalence that preserves the original sampling rate. As a consequence, cyclic reformulation preserves step-by-step input-output relationships, which is essential for the parameter extraction step of the proposed inversion algorithm. 
+
+2.2 Inverse Systems for LTI Plants 
+
+This subsection briefly recalls the relevant LTI inverse system theory. Con-sider the LTI system 
+
+G : x(k + 1) = Ax (k) + Bu (k),y(k) = Cx (k) + Du (k). (10) The system G is invertible if the transfer matrix G(z) = C(zI − A)−1B + D
+
+is square and has full rank for almost all z. An inverse G−1 is a system such that G−1G = I; for the square systems considered in this paper ( m = p), this also implies GG −1 = I.
+
+Lemma 2 (LTI inverse, relative degree zero [3, 4]) Suppose D is square and nonsingular ( m = p). Then G is invertible and a causal inverse is given by 
+
+G−1 : ζ(k + 1) = (A − BD −1C) ζ(k) + BD −1y(k),u(k) = −D−1C ζ (k) + D−1y(k). (11) 
+
+The poles of G−1 are the transmission zeros of G. Consequently, G−1 is stable if and only if G is minimum phase (all transmission zeros satisfy 
+
+|λ| < 1). 
+
+Proof. Substituting u(k) = −D−1Cζ (k)+ D−1y(k) into y(k) = Cx (k)+ 
+
+Du (k) yields u(k) as a function of y(k) and the state difference x(k) −
+
+ζ(k). With ζ(0) = x(0), the state difference satisfies ( x − ζ)( k + 1) = 6(A − BD −1C)( x − ζ)( k). Hence ζ(k) → x(k) exponentially iff A − BD −1C
+
+is Schur stable. The eigenvalues of A − BD −1C are the transmission zeros of G (this follows from the Schur complement identity applied to the system matrix 
+
+[zI − A −BC D
+
+]
+
+). 
+
+The transmission zeros of G are the values z0 ∈ C such that det 
+
+[z0I − A −BC D
+
+]
+
+= 0 . (12) For higher relative degree ( D = 0 or D singular), the construction of a stable inverse requires a more elaborate procedure involving the zero dynamics of 
+
+G; the reader is referred to [3, 7] for the general theory. 
+
+Lemma 3 (LTI inverse, relative degree r [1, 7]) Suppose D = 0 , m =
+
+p, and CA j B = 0 for j = 0 , . . . , r − 2, while CA r−1B is nonsingular. Then the system G has relative degree r and an r-step-delayed inverse is given by 
+
+G−1 
+
+> r
+
+: ζ(k + 1) = (A − B(CA r−1B)−1CA r) ζ(k)+ B(CA r−1B)−1y(k + r), (13) 
+
+u(k) = −(CA r−1B)−1CA r ζ(k)+ ( CA r−1B)−1y(k + r). (14) 
+
+The poles of G−1 
+
+> r
+
+are the transmission zeros of G, and G−1 
+
+> r
+
+is stable if and only if G is minimum phase. 
+
+Proof. From the relative degree r assumption, the output satisfies y(k +
+
+r) = CA rx(k) + CA r−1Bu (k) (the condition CA j B = 0 for j = 0 , . . . , r − 2eliminates the contributions of u(k + 1) , . . . , u (k + r − 1)). Solving for u(k)gives (14), and the state dynamics follow by substituting into the state equation. The error dynamics ǫ(k + 1) = ( A − B(CA r−1B)−1CA r)ǫ(k)determine stability. 
+
+# 3 Main Results 
+
+3.1 Problem Formulation 
+
+Consider the LPTV system (1)–(2) with m = p (square system). The inverse system problem for LPTV systems is to find a system 
+
+P −1 : ζ(k + 1) = Γkζ(k) + Λ ky(k + r),u(k) = Ωkζ(k) + Π ky(k + r), (15) with N -periodic matrices Γ k, Λ k, Ω k, Π k and nonnegative integer r, such that P −1 recovers the input: when y is the output of P driven by some input 
+
+uref , the output of P −1 reconstructs uref exactly (with r-step delay). 7Definition 1 (Stable inverse system) The inverse system P −1 in (15) is stable if the monodromy matrix Φinv := Γ N −1 · · · Γ0 is Schur stable. 
+
+The following assumption is imposed throughout this section. 
+
+Assumption 1 The matrix Dk is square ( m = p) and nonsingular for every 
+
+k ∈ { 0, 1, . . . , N − 1}.
+
+Assumption 1 is the periodic counterpart of the nonsingular direct feedthrough condition in the LTI case and corresponds to the LPTV system having rela-tive degree zero at every time phase. When Assumption 1 does not hold, the system may have higher relative degree; this case is discussed in Section 3.3. The main algorithm for constructing the stable inverse of an LPTV sys-tem under Assumption 1 is now presented. 
+
+Step 1: Cyclic reformulation. Apply cyclic reformulation to the LPTV plant (1)–(2) to obtain the cycled LTI system ˇP : ( ˇA, ˇB, ˇC, ˇD) as in (4)–(5). Under Assumption 1, ˇD = diag( D0, . . . , D N −1) is nonsingular. 
+
+Step 2: LTI inverse construction. Apply Lemma 2 to the cycled system ˇP to obtain the LTI inverse ˇP −1 : ( ˇAinv , ˇBinv , ˇCinv , ˇDinv ), where ˇAinv = ˇA − ˇB ˇD−1 ˇC, (16) ˇBinv = ˇB ˇD−1, (17) ˇCinv = − ˇD−1 ˇC, (18) ˇDinv = ˇD−1. (19) 
+
+Step 3: Parameter extraction. Recover the N -periodic matrices of the original inverse system from the block structure of ˇP −1. The goal is to verify that ˇP −1 retains the cycled LTI structure, so that the periodic inverse matrices can be read off block-by-block. Since ˇD−1 = diag( D−10 , . . . , D −1 
+
+> N−1
+
+)is block-diagonal, the product ˇB ˇD−1 ˇC retains the 1-shift block-circulant structure of ˇB, with the (( i + 1) mod N, i )-th block equal to BiD−1 
+
+> i
+
+Ci.Hence ˇAinv = ˇA − ˇB ˇD−1 ˇC is also 1-shift block-circulant, with the corre-sponding block Ai − BiD−1 
+
+> i
+
+Ci. By the same reasoning, ˇBinv is 1-shift block-circulant with blocks BiD−1 
+
+> i
+
+, while ˇCinv and ˇDinv are block-diagonal with blocks −D−1 
+
+> i
+
+Ci and D−1 
+
+> i
+
+, respectively. Thus ˇP −1 possesses the cycled LTI structure, and the periodic inverse matrices are read off as follows. 
+
+Theorem 1 Under Assumption 1, the inverse system of the LPTV plant (1)– (2) is given by 
+
+P −1 : ζ(k + 1) = Γkζ(k) + Λ ky(k),u(k) = Ωkζ(k) + Π ky(k), (20) 8where 
+
+Γk = Ak − BkD−1 
+
+> k
+
+Ck, (21) Λk = BkD−1 
+
+> k
+
+, (22) Ωk = −D−1 
+
+> k
+
+Ck, (23) Πk = D−1 
+
+> k
+
+. (24) 
+
+The inverse system is causal and satisfies P −1P = I.
+
+Proof. Let y(k) = Ckx(k)+ Dku(k) where x follows (1), and let ˆ u(k) denote the output of P −1 driven by y. The state error ǫ(k) := x(k) − ζ(k) satisfies 
+
+ǫ(k + 1) = Akx(k) + Bku(k) − Γkζ(k) − Λky(k)= ( Ak − BkD−1 
+
+> k
+
+Ck)( x(k) − ζ(k)) = Γ kǫ(k), (25) and the reconstructed input is ˆ u(k) = u(k) + D−1 
+
+> k
+
+Ck ǫ(k). With ζ(0) = x(0), one has ǫ(k) = 0 for all k ≥ 0, so ˆ u(k) = u(k), which proves P −1P = I.Conversely, given an arbitrary signal y, let ˆ u := P −1y and feed ˆ u into P with initial state ξ(0) = ζ(0). Then δ(k) := ξ(k)−ζ(k) satisfies δ(k+1) = Ak δ(k), so δ(k) = 0 for all k ≥ 0, and the output of P becomes Ckζ(k) + Dk ˆu(k) = 
+
+Ckζ(k) + Dk(−D−1 
+
+> k
+
+Ckζ(k) + D−1 
+
+> k
+
+y(k)) = y(k), which proves P P −1 = I. 
+
+Remark 2 The result (21)–(24) could in principle be derived by direct time-domain arguments, as the formulas are a natural periodic extension of the LTI case (Lemma 2). However, the primary value of the cyclic reformu-lation framework lies not in the relative degree zero case itself, but in its systematic generalizability: the same three-step procedure applies uniformly to higher relative degree systems (Section 3.3), where the periodic Markov parameters and block-circulant algebra are essential for deriving the inverse. The relative degree zero case serves as a concrete validation that the frame-work is exact and lossless. 
+
+3.2 Stability Analysis 
+
+The stability of the inverse system P −1 depends on whether the state error dynamics ǫ(k + 1) = Γ kǫ(k) are asymptotically stable, i.e., whether the monodromy matrix Φinv := Γ N −1 · · · Γ1Γ0, Γk = Ak − BkD−1 
+
+> k
+
+Ck (26) is Schur stable. This stability condition is naturally connected to the transmission zeros of the LPTV system via the cycled plant. 
+
+Theorem 2 Under Assumption 1, the following statements are equivalent: 
+
+9(i) The inverse system P −1 in Theorem 1 is stable, i.e., ρ(Φ inv ) < 1.(ii) The cycled plant ˇP is minimum phase: all transmission zeros z0 of ˇP
+
+satisfy |z0| < 1.(iii) The matrix ˇAinv = ˇA − ˇB ˇD−1 ˇC is Schur stable. 
+
+Proof. The equivalence of (i) and (iii) follows from Lemma 1(iii): as established in the parameter extraction step of Theorem 1, ˇAinv has the 1-shift block-circulant structure (6) with Γ k in the (( k+1) mod N, k )-th block, so ρ( ˇAinv ) = ρ(Φ inv )1/N where Φ inv = Γ N −1 · · · Γ0. The equivalence of (ii) and (iii) follows from the LTI result (Lemma 2) applied to ˇP : the poles of ˇP −1 are the transmission zeros of ˇP , which are the eigenvalues of ˇAinv . 
+
+Definition 2 (Periodic minimum phase) The LPTV system (1)–(2) is called periodically minimum phase if the cycled plant ˇP is minimum phase, i.e., all transmission zeros of ˇP (z) satisfy |z0| < 1.
+
+Corollary 1 The LPTV system is periodically minimum phase if and only if ρ(Φ inv ) < 1, i.e., the stable inverse P −1 exists. 
+
+Remark 3 The transmission zeros of the cycled plant ˇP are the periodic invariant zeros of the LPTV system, as defined in the periodic systems theory [21]. Under the standing assumption m = p, the normal rank of the system matrix pencil is N n + N m , and the periodic invariant zeros correspond to values z0 ∈ C such that 
+
+rank 
+
+[z0I − ˇA − ˇB
+
+ˇC ˇD
+
+]
+
+< N n + N m. (27) 
+
+These zeros coincide with the transmission zeros of the N -lifted LTI repre-sentation of the LPTV system (see [9, 21]). Theorem 2 therefore provides a characterization of stable inversion in terms of a standard structural prop-erty of the periodic system. 
+
+3.3 Extension to Higher Relative Degree Systems 
+
+When Assumption 1 fails (i.e., Dk = 0 for all k), the LPTV system has higher relative degree, and the direct formula (21)–(24) is not applicable. Nevertheless, the cyclic reformulation step remains valid: the cycled plant ˇP
+
+is still a well-defined LTI system with ˇD = 0. The key observation is that the Markov parameters of the cycled system directly encode the periodic Markov parameters of the LPTV system. To exploit this structure for parameter extraction, a shift operator on cycled signals is first introduced. 10 Definition 3 (Cycled shift matrix) For a positive integer q, the cycled shift matrix ˇSq ∈ RN q ×N q is the 1-shift block-permutation matrix with q × q
+
+identity blocks: the (( k + 1) mod N, k )-th block of ˇSq equals Iq and all other blocks are zero. That is, ˇSq has the same structure as ˇA in (6) with every 
+
+Ak replaced by Iq. Its r-th power ˇSrq is the r-shift block-permutation matrix with (( k + r) mod N, k )-th block equal to Iq. Since ˇSNq = IN q , one has 
+
+ˇS−1 
+
+> q
+
+= ˇSN −1 
+
+> q
+
+= ˇS⊤ 
+
+> q
+
+. When the block size is clear from context, the subscript is omitted. 
+
+Definition 4 (Periodic relative degree) The periodic Markov parame-ter of order r at time phase k is defined as 
+
+M (r) 
+
+> k
+
+:= Ck+rΦ( k + r, k + 1) Bk
+
+= Ck+rAk+r−1 · · · Ak+1 Bk, r ≥ 1, (28) 
+
+where all indices are interpreted modulo N . The LPTV system has periodic relative degree r if M (j) 
+
+> k
+
+= 0 for all k and j = 1 , . . . , r − 1, and M (r)
+
+> k
+
+is nonsingular for all k ∈ { 0, 1, . . . , N − 1}. By convention, relative degree 
+
+r = 0 corresponds to Assumption 1 (nonsingular Dk for all k); see Remark 6. 
+
+Assumption 2 The LPTV system has periodic relative degree r ≥ 1; that is, Dk = 0 for all k, M (j) 
+
+> k
+
+= 0 for all k and j = 1 , . . . , r − 1, and M (r) 
+
+> k
+
+is nonsingular for all k.
+
+Note that Assumption 2 requires Dk = 0 for all k. The case where 
+
+Dk is nonzero but singular at some time phases is not covered by either Assumption 1 or Assumption 2, and is addressed in Remark 7. 
+
+Remark 4 For r = 1 , Assumption 2 reduces to Ck+1 Bk being nonsingular for all k.
+
+The following lemma establishes the connection between the periodic Markov parameters and the Markov parameters of the cycled LTI system, using the cycled shift matrix to factor out the permutation structure. 
+
+Lemma 4 Under Assumption 2, the j-th Markov parameter of the cycled system satisfies: (i) ˇC ˇAj−1 ˇB = 0 for j = 1 , . . . , r − 1.(ii) ˇC ˇAr−1 ˇB admits the factorization 
+
+ˇC ˇAr−1 ˇB = ˇS rp diag (M (r)0 , M (r)1 , . . . , M (r) 
+
+> N−1
+
+), (29) 
+
+where ˇSp ∈ RN p ×N p is the cycled shift matrix with p×p identity blocks. 
+
+11 In particular, ˇC ˇAr−1 ˇB is nonsingular, and the cycled system ˇP has relative degree r in the LTI sense. 
+
+Proof. From the definition of ˇA in (6), the matrix ˇAj−1 is a block-circulant matrix with ( j − 1)-shift, whose (( i + j − 1) mod N, i )-th block equals Φ( i+j−1, i ) (this follows by induction on j from the shift-additivity of block-circulant products; see [25, Lemma 1]). The product ˇAj−1 ˇB is there-fore a block-circulant with j-shift, whose (( k+j) mod N, k )-th block is Φ( k+
+
+j, k + 1) Bk. Left-multiplying by the block-diagonal ˇC preserves the shift structure and gives the (( k+j) mod N, k )-th block equal to Ck+j Φ( k+j, k +1) Bk = M (j) 
+
+> k
+
+. Under Assumption 2, M (j) 
+
+> k
+
+= 0 for j < r , which proves (i). For j = r, the matrix ˇC ˇAr−1 ˇB is an r-shift block-permutation matrix whose (( k+r) mod N, k )-th block is M (r) 
+
+> k
+
+. This is precisely ˇS rp diag( M (r)0 , . . . , M (r) 
+
+> N−1
+
+), since ˇS rp contributes the r-shift permutation and the block-diagonal factor supplies the blocks M (r) 
+
+> k
+
+. Since each M (r) 
+
+> k
+
+is nonsingular by Assumption 2, the product is nonsingular. 
+
+The factorization (29) separates the Markov parameter into a pure shift ( ˇS rp ) and a block-diagonal factor containing the periodic Markov parame-ters. This decomposition is the key to recovering the cycled structure of the inverse system, as shown next. The main result for higher relative degree is now stated. The proof exploits the shift factorization from Lemma 4 together with a change of input variable on the cycled inverse system to restore the full cycled LTI structure. 
+
+Theorem 3 Under Assumption 2, the r-step-delayed inverse system of the LPTV plant (1)–(2) is given by 
+
+P −1 
+
+> r
+
+: ζ(k + 1) = Γkζ(k) + Λ ky(k + r),u(k) = Ωkζ(k) + Π ky(k + r), (30) 
+
+where 
+
+Γk = Ak − Bk
+
+[M (r)
+
+> k
+
+]−1Ck+rΦ( k + r, k ), (31) Λk = Bk
+
+[M (r)
+
+> k
+
+]−1, (32) Ωk = −[M (r)
+
+> k
+
+]−1Ck+rΦ( k + r, k ), (33) Πk = [M (r)
+
+> k
+
+]−1, (34) 
+
+and all indices are modulo N . Here Φ( k + r, k ) = Ak+r−1 · · · Ak+1 Ak. The inverse system reconstructs u(k) from y(k + r), i.e., with an r-step delay. 
+
+Proof. Step 1 (Cyclic reformulation). The cycled system ˇP has ˇD = 0 and, by Lemma 4, relative degree r with nonsingular Markov parameter ˇC ˇAr−1 ˇB.12 Step 2 (LTI inverse construction). Applying Lemma 3 to ˇP gives the LTI inverse ˇP −1 with state matrix ˇAinv = ˇA − ˇB( ˇC ˇAr−1 ˇB)−1 ˇC ˇAr and in-put/output matrices ˇBinv = ˇB( ˇ C ˇAr−1 ˇB)−1, (35) ˇCinv = −( ˇC ˇAr−1 ˇB)−1 ˇC ˇAr, (36) ˇDinv = ( ˇC ˇAr−1 ˇB)−1. (37) The cycled inverse ˇP −1 takes ˇ y(k + r) as input and produces ˇ u(k) as output. 
+
+Step 3 (Parameter extraction via shift absorption). From the cycled signal definition (3), the cycled output satisfies ˇ y(k + r) = ei′ ⊗ y(k + r)where i′ = ( k + r) mod N . Introducing the shifted cycled output 
+
+ˇyr(k) := ˇS−rp ˇy(k + r), (38) one verifies that ˇ yr(k) = ei ⊗ y(k + r) with i = k mod N , so ˇ yr(k) is a standard cycled signal indexed by the current time phase k. Substituting ˇy(k + r) = ˇS rp ˇyr(k) into the cycled inverse system ˇP −1 yields ˇζ(k + 1) = ˇAinv ˇζ(k) + ˇ Binv ˇS rp ˇyr(k), (39) ˇu(k) = ˇCinv ˇζ(k) + ˇDinv ˇS rp ˇyr(k). (40) It is now shown that all four system matrices in (39)–(40) have the cycled LTI structure. Using the factorization ˇC ˇAr−1 ˇB = ˇS rp ˇM from (29), where ˇM := diag( M (r)0 , . . . , M (r) 
+
+> N−1
+
+), its inverse is ( ˇC ˇAr−1 ˇB)−1 = ˇM −1 ˇS−rp .
+
+Feed-through matrix : ˇDinv ˇS rp = ˇM −1 ˇS−rp ˇS rp = ˇM −1 = diag([ M (r)0 ]−1, . . . , [M (r) 
+
+> N−1
+
+]−1), which is block-diagonal. 
+
+Input matrix : ˇBinv ˇS rp = ˇB ˇM −1 ˇS−rp ˇS rp = ˇB ˇM −1. Since ˇB is 1-shift block-circulant and ˇM −1 is block-diagonal, the product ˇB ˇM −1 is 1-shift block-circulant with (( k + 1) mod N, k )-th block Bk[M (r) 
+
+> k
+
+]−1.
+
+Output matrix : ˇCinv = − ˇM −1 ˇS−rp ˇC ˇAr . Since ˇC is block-diagonal (i.e., 0-shift) and ˇAr is r-shift, the product ˇS−rp ˇC ˇAr has shift ( −r) + 0 + r = 0, i.e., it is block-diagonal. Hence ˇCinv = − ˇM −1 ˇS−rp ˇC ˇAr is block-diagonal. 
+
+State matrix : ˇAinv = ˇA − ˇB ˇM −1 ˇS−rp ˇC ˇAr. Since ˇS−rp ˇC ˇAr is block-diagonal (as shown above) and ˇB ˇM −1 is 1-shift block-circulant (as shown above), the product ˇB ˇM −1 ˇS−rp ˇC ˇAr is 1-shift block-circulant. Therefore ˇAinv retains the 1-shift block-circulant structure. In summary, with ˇ yr(k) as input, the system (39)–(40) has the standard cycled LTI structure: ˇAinv and ˇBinv ˇS rp are 1-shift block-circulant, while ˇCinv 
+
+and ˇDinv ˇS rp are block-diagonal. The periodic inverse matrices are therefore read off block-by-block. The (( k + 1) mod N, k )-th block of ˇB ˇM −1 ˇS−rp ˇC ˇAr
+
+evaluates to Bk[M (r) 
+
+> k
+
+]−1Ck+rΦ( k + r, k ), giving Γ k as in (31). The remaining blocks yield Λ k, Ω k, Π k as in (32)–(34). 13 Verification. From the state equation, x(k + r) = Φ( k + r, k )x(k) + ∑r−1 
+
+> j=0
+
+Φ( k + r, k + j + 1) Bk+j u(k + j). Since Dk = 0 for all k, the output at time k+r is y(k+r) = Ck+rx(k+r), and the coefficient of u(k+j) in y(k+r)is Ck+rΦ( k + r, k + j + 1) Bk+j = M (r−j) 
+
+> k+j
+
+(where all indices are interpreted modulo N as stated in Definition 4), which vanishes for j = 1 , . . . , r − 1because 1 ≤ r − j ≤ r − 1 for these values of j, so M (r−j) 
+
+> k+j
+
+= 0 under Assumption 2. Hence y(k + r) = Ck+rΦ( k + r, k )x(k) + M (r) 
+
+> k
+
+u(k). The error dynamics are ǫ(k + 1) = Γ kǫ(k), which vanishes for ǫ(0) = 0. 
+
+Remark 5 The shifted cycled output ˇyr(k) = ˇS−rp ˇy(k + r) plays the role of realigning the time-phase index of ˇy(k + r) to that of the current time 
+
+k. Without this shift absorption, the matrices ˇBinv and ˇDinv of the cycled inverse do not have the standard cycled structure (they carry residual (N −
+
+r + 1) -shift and (N − r)-shift, respectively). By absorbing ˇS rp into the input, all four matrices recover the cycled form, and the same parameter extraction procedure as in the relative degree zero case (Theorem 1) applies directly. 
+
+Remark 6 Theorem 3 unifies all cases. If one extends Definition 4 by setting M (0)  
+
+> k
+
+:= Dk and using the convention Φ( k, k ) = I from Section 1 (Notation), then the formulas (31)–(34) reduce to (21)–(24) of Theorem 1 for r = 0 . For r = 1 , they give Γk = Ak − Bk(Ck+1 Bk)−1Ck+1 Ak.
+
+The stability analysis of Section 3.2 extends to the higher relative degree case as follows. 
+
+Corollary 2 Under Assumption 2, the r-step-delayed inverse P −1 
+
+> r
+
+is stable if and only if the cycled plant ˇP is minimum phase, or equivalently, ρ(Φ inv ) <
+
+1 where Φinv = Γ N −1 · · · Γ0 with Γk given by (31). 
+
+Proof. By the proof of Theorem 3 (Step 3), ˇAinv = ˇA − ˇB ˇM −1 ˇS−rp ˇC ˇAr
+
+retains the 1-shift block-circulant structure with the (( k + 1) mod N, k )-th block equal to Γ k. Hence ˇAinv is the ˇA-matrix of the cycled system corresponding to the LPTV system with state matrix Γ k, and Lemma 1(iii) yields ρ( ˇAinv ) = ρ(Φ inv )1/N . The equivalence with the minimum phase property of ˇP then follows from Lemma 3, since the eigenvalues of ˇAinv are the transmission zeros of ˇP . 
+
+Remark 7 For a general LPTV system where the periodic relative degree is not uniform (e.g., Dk is nonsingular at some phases and zero at others), neither Assumption 1 nor Assumption 2 applies directly. Such non-uniform relative degree structures arise naturally in multirate sampled-data systems, where the I/O matrices have structural zeros at specific time phases due to the sampling pattern. In this case, the cycled feedthrough matrix ˇD is singu-lar (despite some diagonal blocks being nonsingular), so the relative degree 
+
+14 zero inversion of Theorem 1 cannot be applied. The cycled system ˇP may also have a non-uniform column degree structure in its transfer matrix, and its invertibility must be analyzed through the Smith normal form of ˇP (z) [7], which requires polynomial matrix computations whose complexity grows with both the period N and the state dimension n. Extending the parameter ex-traction step to this setting is nontrivial because the block-circulant structure of the cycled inverse may not be preserved in a simple form. This case is left for future work. 
+
+# 4 Numerical Examples 
+
+4.1 Relative Degree Zero: Scalar LPTV System 
+
+Consider a scalar ( m = p = 1) LPTV system with period N = 2 designed to be periodically minimum phase: 
+
+A0 = 0 .3, B0 = 1 , C0 = 1 , D0 = 2 , (41) 
+
+A1 = −0.2, B1 = 0 .5, C1 = 1 , D1 = −3. (42) Assumption 1 is satisfied since D0 = 2 6 = 0 and D1 = −3 6 = 0. 
+
+Step 1 (Cyclic reformulation): The cycled system has ˇA =
+
+[ 0 A1
+
+A0 0
+
+]
+
+=
+
+[ 0 −0.20.3 0
+
+]
+
+, (43) ˇB =
+
+[ 0 B1
+
+B0 0
+
+]
+
+=
+
+[0 0.51 0
+
+]
+
+, (44) ˇC =
+
+[C0 00 C1
+
+]
+
+= I2, ˇD =
+
+[D0 00 D1
+
+]
+
+=
+
+[2 00 −3
+
+]
+
+. (45) 
+
+Step 2 (LTI inverse): 
+
+ˇAinv = ˇA − ˇB ˇD−1 ˇC
+
+=
+
+[ 0 −0.20.3 0
+
+]
+
+−
+
+[0 − 1 
+
+> 61
+> 2
+
+0
+
+]
+
+=
+
+[ 0 − 1
+
+> 30
+
+−0.2 0
+
+]
+
+. (46) 
+
+Step 3 (Parameter extraction): Reading off the sub-diagonal blocks of ˇAinv gives Γ 0 = −0.2 and Γ 1 = − 1 
+
+> 30
+
+, which coincide with Γ0 = A0 − B0D−10 C0 = 0 .3 − 1 · 1 
+
+> 2
+
+· 1 = −0.2, (47) Γ1 = A1 − B1D−11 C1 = −0.2 − 0.5 · (− 1 
+
+> 3
+
+) · 1 = − 1 
+
+> 30
+
+. (48) The remaining inverse system parameters are Λ 0 = B0D−10 = 1 
+
+> 2
+
+, Ω 0 =
+
+−D−10 C0 = − 1 
+
+> 2
+
+, Π 0 = D−10 = 1 
+
+> 2
+
+, and Λ 1 = B1D−11 = − 1 
+
+> 6
+
+, Ω 1 = −D−11 C1 = 
+
+> 1
+> 3
+
+, Π 1 = D−11 = − 1 
+
+> 3
+
+.15 Figure 1: Input reconstruction for the scalar stable inverse (Example 4.1). Reference input uref (k) = sin(0 .1πk ) (dashed) and reconstructed input ˆ u(k)(solid) with mismatched initial condition ζ(0) = 0 6 = x(0) = 1. The recon-struction error vanishes rapidly due to ρ(Φ inv ) ≈ 0.0067. 
+
+Stability check: The monodromy matrix is Φ inv = Γ 1Γ0 = ( − 1 
+
+> 30
+
+)( −0.2) =  
+
+> 1
+> 150
+
+≈ 0.0067, which satisfies |Φinv | < 1, so the inverse is stable. This is con-sistent with Theorem 2: the transmission zeros of ˇP are the eigenvalues of ˇAinv , which are z1,2 = ±√1/150 ≈ ± 0.0816, both satisfying |z| < 1. 
+
+Simulation : The inverse system P −1 is applied to the output of P driven by a sinusoidal input uref (k) = sin(0 .1πk ) with a mismatched initial condi-tion ζ(0) = 0 6 = x(0) = 1. Fig. 1 shows that the reconstructed input ˆ u(k)converges to uref (k) after a brief transient. The convergence is rapid since 
+
+ρ(Φ inv ) ≈ 0.0067, consistent with the small monodromy matrix eigenvalue. 
+
+4.2 Relative Degree Zero: Non-Scalar LPTV System 
+
+To illustrate the proposed method on a non-scalar system and to compare with the Floquet-based approach [9], consider an LPTV system with m =
+
+p = 1, n = 2, and period N = 3. The system matrices are 
+
+A0 =
+
+[ 0.3 0.2
+
+−0.1 0.4
+
+]
+
+, B 0 =
+
+[ 10.5
+
+]
+
+, C 0 = [1 0.5] , D 0 = 2 , (49) 
+
+A1 =
+
+[ 0.2 0.3
+
+−0.2 0.1
+
+]
+
+, B 1 =
+
+[0.51
+
+]
+
+, C 1 = [0.5 1] , D 1 = 1 .5, (50) 
+
+A2 =
+
+[0.1 0.20.1 0.3
+
+]
+
+, B 2 =
+
+[0.80.6
+
+]
+
+, C 2 = [0.6 0.8] , D 2 = 2 .5. (51) 16 Assumption 1 is satisfied since Dk 6 = 0 for all k.Applying Theorem 1, the inverse system matrices are Γ0 = A0 − B0D−10 C0 =
+
+[−0.200 −0.050 
+
+−0.350 0.275 
+
+]
+
+, (52) Γ1 = A1 − B1D−11 C1 ≈
+
+[ 0.033 −0.033 
+
+−0.533 −0.567 
+
+]
+
+, (53) Γ2 = A2 − B2D−12 C2 =
+
+[−0.092 −0.056 
+
+−0.044 0.108 
+
+]
+
+, (54) with Λ k = BkD−1 
+
+> k
+
+, Ω k = −D−1 
+
+> k
+
+Ck, and Π k = D−1 
+
+> k
+
+for each phase. 
+
+Stability check: The monodromy matrix Φ inv = Γ 2Γ1Γ0 has eigenval-ues λ1 ≈ − 0.032 and λ2 ≈ 0.001, both satisfying |λ| < 1. Hence the inverse system is stable with spectral radius ρ(Φ inv ) ≈ 0.032. 
+
+Comparison with [9]: In the Floquet-based approach of [9], the stable inversion of an LPTV system requires computing the complex-valued matrix root Ψ 1/N of the monodromy matrix and a state transformation Tk that yields complex-valued state-space matrices, even when the original system is real-valued. In contrast, the proposed inverse system matrices Γ k, Λ k,Ωk, Π k are all real-valued, explicitly given in closed form, and the resulting inverse system is causal. Furthermore, the Floquet-based approach produces a noncausal operator on the doubly-infinite time axis for nonminimum phase systems, whereas the proposed method yields a finite-dimensional causal state-space realization whenever the system is periodically minimum phase. 
+
+Simulation : The plant is driven by a reference input uref (k) = sin(0 .2πk )from initial condition x(0) = [1 , 0] ⊤. The inverse system is initialized with 
+
+ζ(0) = [0 , 0] ⊤ (mismatched initial condition). Fig. 2 shows the reference and reconstructed inputs. Despite the initial mismatch, ˆ u(k) converges to uref (k)within a few steps, reflecting the small spectral radius ρ(Φ inv ) ≈ 0.032. 
+
+4.3 Periodic Relative Degree r = 1 
+
+Consider a scalar I/O ( m = p = 1), n = 2 state LPTV system with N = 3 and Dk = 0 for all k. The matrices are chosen as 
+
+A0 =
+
+[ 0 1
+
+−0.5 0.8
+
+]
+
+, B0 =
+
+[01
+
+]
+
+, C0 = [−0.5 1.3] , (55) 
+
+A1 =
+
+[ 0.3 0.5
+
+−0.4 0.6
+
+]
+
+, B1 =
+
+[0.51
+
+]
+
+, C1 = [0.1 0.8] , (56) 
+
+A2 =
+
+[ 0.2 0.4
+
+−0.3 0.5
+
+]
+
+, B2 =
+
+[0.51
+
+]
+
+, C2 = [0.4 0.8] . (57) 17 Figure 2: Input reconstruction for the non-scalar stable inverse (Exam-ple 4.2, N = 3, n = 2). Top: reference input uref (k) (dashed) and re-constructed input ˆ u(k) (solid). Bottom: reconstruction error ˆ u(k) − uref (k). The error vanishes rapidly due to ρ(Φ inv ) ≈ 0.032. Assumption 2 is verified with r = 1: the periodic Markov parameters are 
+
+M (1) 0 = C1B0 = 0 .8, M (1) 1 = C2B1 = 1 .0,M (1) 2 = C0B2 = 1 .05 , (58) all of which are nonsingular. Applying Theorem 3 with r = 1, the inverse system matrices are com-puted as follows. For phase k = 0: Γ0 = A0 − B0(C1B0)−1C1A0 =
+
+[0 10 −0.125 
+
+]
+
+, (59) Π0 = ( C1B0)−1 = 1 .25 . (60) For phase k = 1: Γ1 = A1 − B1(C2B1)−1C2A1 =
+
+[ 0.4 0.16 
+
+−0.2 −0.08 
+
+]
+
+, (61) Π1 = ( C2B1)−1 = 1 .0. (62) For phase k = 2: Γ2 = A2 − B2(C0B2)−1C0A2 ≈
+
+[0.433 0.186 0.167 0.071 
+
+]
+
+, (63) Π2 = ( C0B2)−1 ≈ 0.952 . (64) 18 Figure 3: Input reconstruction for periodic relative degree r = 1 (Ex-ample 4.3, N = 3, n = 2). Top: reference input uref (k) = sin(0 .15 πk )(dashed) and reconstructed input ˆ u(k) (solid). Bottom: reconstruction er-ror ˆ u(k) − uref (k). The reconstruction is exact (error at machine precision) since ζ(0) = x(0). 
+
+Stability check: The monodromy matrix is Φ inv = Γ 2Γ1Γ0, whose eigenvalues are λ1 = 0 and λ2 ≈ 0.0498. Since both satisfy |λ| < 1, the 1-step-delayed inverse is stable . This is consistent with the minimum phase property of ˇP : the eigenvalues of ˇAinv are approximately {0, 0, 0, 0.368 , −0.184 ±
+
+0.319 j}, all with modulus less than 1. 
+
+Simulation : The plant is driven by a reference input uref (k) = sin(0 .15 πk )from initial condition x(0) = [1 , 0] ⊤. The 1-step-delayed inverse system 
+
+P −11 (which requires y(k + 1) at each step) is initialized with ζ(0) = x(0) (matched initial condition). Fig. 3 shows the reference and reconstructed inputs. The inverse system reconstructs uref (k) exactly (up to numerical pre-cision), confirming that P −11 P = I when the initial conditions are matched. The reconstruction is exact from k = 0, in contrast to the mismatched initial condition cases in Examples 4.1 and 4.2. 
+
+# 5 Discussion 
+
+The proposed framework based on cyclic reformulation provides a unifying perspective on LPTV inversion that complements existing approaches. 
+
+Comparison with van Zundert & Oomen [9] . The stable inversion ap-proach of [9] employs exponential dichotomy via Floquet theory to construct a bounded noncausal inverse on the doubly-infinite time axis. This approach 19 handles nonminimum phase LPTV systems at the cost of noncausality and requires complex-valued Floquet factors (Ψ 1/N in the notation of [9]). In contrast, the proposed method constructs a causal (or r-step-delayed) in-verse in the minimum phase case, uses only real arithmetic (all matrices Γk, Λ k, etc., are real-valued), and produces a finite-dimensional state-space realization immediately suitable for implementation. For minimum phase LPTV systems, the proposed approach is therefore preferable in practical applications. 
+
+Comparison with lifting-based approaches [22, 13, 14] . Lifting the LPTV system over one period yields an equivalent LTI system of expanded state dimension N n , and an inverse of this lifted system can be constructed via standard LTI theory. Zhu et al. [13] combine lifting-based stable inversion with optimal state transitions for periodic systems. The more recent work [14] extends this framework to nonminimum phase multivariate LPTV sys-tems: a Smith–McMillan-based decomposition separates the system into maximum phase and minimum phase subsystems, and the Moore–Penrose pseudoinverse of the lifted maximum phase part yields an L2-bounded input sequence that achieves exact tracking after an initial preparation window of 
+
+T n o steps (where no is the number of nonminimum phase zeros). The re-sulting inversion is neither unstable nor approximate; it is a bounded, exact finite-time feedforward signal computed offline. The proposed method and these lifting-based approaches therefore differ in their scope of applicability and implementation characteristics. The lifting-based methods can handle nonminimum phase LPTV systems at the cost of sacrificing the initial tran-sient steps and requiring offline batch computation over a finite horizon. In contrast, the proposed cyclic reformulation approach is restricted to the minimum phase case but produces a periodic state-space system that op-erates at the original sampling rate and can be implemented as an online causal filter running indefinitely. The parameter extraction step (Step 3) is the key enabling step that recovers the time-phase-indexed matrices from the block structure of the cycled inverse. 
+
+Relationship to Kono [7] . Kono’s invertibility conditions for LTV discrete-time systems provide necessary and sufficient conditions for the existence of left/right inverses in terms of rank conditions on time-indexed observabil-ity/controllability matrices. Theorems 1 and 3 and Corollary 1 provide, for the periodic case, explicit constructive formulas that are equivalent to the zero conditions of the cycled LTI plant, which are more directly computable than the time-indexed rank conditions of [7]. 
+
+Connection to periodic model matching [18, 19] . The model matching problem solved in [18] seeks a periodic state-feedback law that assigns a target input–output map, subject to zero-matching conditions expressed in terms of the cyclic transfer function. The present inversion problem can be interpreted as a special instance of model matching in which the target is the identity transfer function; however, the solution form is fundamentally 20 different, as the present method produces a stand-alone periodic state-space system (observer-type realization) rather than a state-feedback gain acting on the plant. Nevertheless, the role of the periodic transmission zeros is common to both frameworks: in [18] the zeros constrain the achievable target models, while in the present work they determine the stability of the inverse system (Theorem 2). 
+
+Role of the block-circulant structure and shift absorption . The key struc-tural insight underlying the parameter extraction step is that the cycled inverse system can always be brought into the standard cycled LTI form by absorbing the shift matrix ˇS rp into the input signal. For the cycled inverse ˇP −1 obtained from the LTI inversion of ˇP , the matrices ˇBinv and ˇDinv do not directly possess the cycled structure when r ≥ 1. However, the factoriza-tion ˇC ˇAr−1 ˇB = ˇS rp ˇM (Lemma 4) shows that the shift is entirely due to the phase mismatch between y(k + r) and the current time index k. Introducing ˇyr(k) = ˇS−rp ˇy(k + r) absorbs this mismatch, yielding ˇDinv ˇS rp = ˇM −1 (block-diagonal) and ˇBinv ˇS rp = ˇB ˇM −1 (1-shift block-circulant). This restores the full cycled LTI structure and enables the same block-by-block parameter extraction as in the relative degree zero case. 
+
+Application to feedforward control and ILC . The proposed inverse sys-tem P −1 can be used directly as a feedforward controller or as the inversion model in iterative learning control [6, 12]. In the ILC context, I − P −1P
+
+is identically zero when the exact inverse is used with matching initial con-ditions ( ζ(0) = x(0)). When initial conditions do not match, the tracking error decays geometrically, governed by the monodromy matrix Φ inv .
+
+Extension to nonminimum phase systems . The present framework is restricted to the minimum phase case, where a causal stable inverse exists. When the cycled plant ˇP has transmission zeros outside the unit disk, the cycled inverse ˇP −1 is unstable, and a direct causal realization is not feasible. A possible approach is to apply the stable/unstable spectral decomposition to the cycled LTI system ˇP and construct a bounded noncausal inverse via the standard dichotomy approach [11], then recover the periodic inverse matrices through parameter extraction. 
+
+# 6 Conclusion 
+
+This paper has presented a systematic method for constructing stable inverse systems for discrete-time LPTV systems via cyclic reformulation. The pro-posed three-step procedure—cyclic reformulation, LTI inverse construction, and parameter extraction—reduces the LPTV inversion problem exactly to the well-studied LTI case; the reduction itself introduces no conservatism or approximation, though the resulting causal inverse is restricted to the periodically minimum phase case. For relative degree zero systems (Assumption 1), the inverse is given by 21 the explicit formulas (21)–(24), and stability is equivalent to the cycled plant being minimum phase, or equivalently, to the periodic transmission zeros ly-ing strictly inside the unit disk (Theorem 2 and Corollary 1). This stability characterization links the transmission zeros of the cycled LTI plant to the Schur stability of the inverse monodromy matrix Φ inv , providing a directly verifiable condition. For systems with periodic relative degree r ≥ 1 (As-sumption 2), the r-step-delayed inverse is obtained in explicit closed form via the periodic Markov parameters M (r) 
+
+> k
+
+(Theorem 3). The block-circulant structure of the cycled system is shown to be preserved under inversion, which is the key algebraic property enabling the parameter extraction. Since the resulting inverse system is a finite-dimensional periodic state-space sys-tem using only real-valued matrices, it can be implemented as an online filter at the original sampling rate (causal for r = 0, requiring r-step output preview for r ≥ 1), making it directly applicable to feedforward control and iterative learning control of multirate and periodic systems. Future work includes extending the framework to nonminimum phase LPTV systems via noncausal inversion of the cycled plant, treating systems with non-uniform relative degree across time phases, integrating the inverse system with feedback controller design for periodic systems [21], and ap-plying the method to multirate sampled-data systems where Assumption 2 may fail due to the structural zero pattern of multirate I/O matrices. 
+
+# 7 Declaration of Generative AI and AI-assisted technologies in the writing process 
+
+During the preparation of this work the authors used Claude (Anthropic) in order to refine English expressions and improve readability throughout the manuscript. After using this tool, the author reviewed and edited the content as needed and takes full responsibility for the content of the publi-cation. 
+
+# Funding 
+
+This research did not receive any specific grant from funding agencies in the public, commercial, or not-for-profit sectors. 
+
+# References 
+
+[1] L. M. Silverman, “Inversion of multivariable linear systems,” IEEE Transactions on Automatic Control, Vol. 14, No. 3, pp. 270–276, 1969. 22 [2] R. M. Hirschorn, “Invertibility of multivariable nonlinear control sys-tems,” IEEE Transactions on Automatic Control, Vol. 24, No. 6, pp. 855–865, 1979. [3] P. J. Moylan, “Stable inversion of linear systems,” IEEE Transactions on Automatic Control, Vol. 22, No. 1, pp. 74–78, 1977. [4] C.-T. Chen, Linear System Theory and Design , Holt, Rinehart and Winston, New York, 1984. [5] S. Devasia, D. Chen, and B. Paden, “Nonlinear inversion-based output tracking,” IEEE Transactions on Automatic Control, Vol. 41, No. 7, pp. 930–942, 1996. [6] D. A. Bristow, M. Tharayil, and A. G. Alleyne, “A survey of iterative learning control,” IEEE Control Systems Magazine, Vol. 26, No. 3, pp. 96–114, 2006. [7] M. Kono, “Invertibility of linear time-varying discrete-time systems,” International Journal of Control, Vol. 34, No. 6, pp. 1055–1071, 1981. [8] J.-W. van Zundert and T. A. E. Oomen, “An approach to stable inver-sion of LPTV systems with application to a position-dependent motion system,” in Proc. 2017 American Control Conference , pp. 4042–4047, 2017. [9] J.-W. van Zundert and T. A. E. Oomen, “Stable inversion of LPTV systems with application in position-dependent and non-equidistantly sampled systems,” International Journal of Control, Vol. 92, No. 5, pp. 1022–1032, 2019. [10] J. van Zundert, W. Ohnishi, H. Fujimoto, and T. A. E. Oomen, “Im-proving intersample behavior in discrete-time system inversion: With application to LTI and LPTV systems,” IEEE/ASME Transactions on Mechatronics, Vol. 25, No. 1, pp. 55–65, 2020. [11] S. Devasia and B. Paden, “Stable inversion for nonlinear nonminimum-phase time-varying systems,” IEEE Transactions on Automatic Con-trol, Vol. 43, No. 2, pp. 283–288, 1998. [12] J.-W. van Zundert and T. A. E. Oomen, “On inversion-based ap-proaches for feedforward and ILC,” Mechatronics, Vol. 50, pp. 282–291, 2018. [13] Q. Zhu, Y. Zhang, and R. Xiong, “Stable inversion based precise track-ing for periodic systems,” Asian Journal of Control, Vol. 22, No. 1, pp. 217–227, 2020. 23 [14] S. Zhu, X. Ji, R. W. Longman, and Y. Xu, “Precision tracking for nonminimum phase LPTV systems via a lifted time stable inversion,” IEEE Transactions on Automatic Control, Vol. 70, No. 9, pp. 6096– 6103, 2025. [15] T. Bose, M.-Q. Chen, and T. Ratchaneekorn, “Decomposition and noncausal realization of unstable LPTV system,” in Proc. IEEE In-ternational Conference on Acoustics, Speech and Signal Processing (ICASSP) , pp. III-1349–III-1352, 2007. [16] T. Bose and T. Ratchaneekorn, “A state space approach to the inverse of LPTV filters,” in Proc. IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) , pp. III-433–III-436, 2006. [17] W. Chauvet, B. Lacaze, D. Roviras, and A. Duverdier, “Characteri-zation of a set of invertible LPTV filters using circulant matrices,” in 
+
+Proc. IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) , pp. IV-197–IV-200, 2003. [18] P. Colaneri and V. Kuˇ cera, “The model matching problem for peri-odic discrete-time systems,” IEEE Transactions on Automatic Control, Vol. 42, No. 10, pp. 1472–1476, 1997. [19] Y. Tange and K. Tsumura, “Periodically weighted model-matching problems by LPTV controllers formulated in dual lifted forms,” in Proc. 2004 American Control Conference , pp. 3502–3507, 2004. [20] S. Bittanti and P. Colaneri, “Invariant representations of discrete-time periodic systems,” Automatica, Vol. 36, No. 12, pp. 1777–1793, 2000. [21] S. Bittanti and P. Colaneri, Periodic Systems: Filtering and Control ,Springer-Verlag, London, 2009. [22] T. Chen and B. A. Francis, Optimal Sampled-Data Control Systems ,Springer-Verlag, London, 1995. [23] H. Okajima, K. Arinaga, and A. Hayashida, “Design of observer-based feedback controller for multi-rate systems with various sampling periods using cyclic reformulation,” IEEE Access, Vol. 11, pp. 121956–121965, 2023. [24] H. Okajima, “LMI optimization based multirate steady-state Kalman filter design,” arXiv preprint arXiv:2602.01537, 2026. [25] H. Okajima, Y. Fujimoto, H. Oku, and H. Kondo, “Cyclic reformula-tion based system identification for periodically time-varying systems,” IEEE Access, Vol. 13, pp. 26483–26493, 2025. 24

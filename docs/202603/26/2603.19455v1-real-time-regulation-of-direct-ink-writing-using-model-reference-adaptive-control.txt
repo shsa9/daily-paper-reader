@@ -1,0 +1,328 @@
+Title: Real-Time Regulation of Direct Ink Writing Using Model Reference Adaptive Control
+
+URL Source: https://arxiv.org/pdf/2603.19455v1
+
+Published Time: Mon, 23 Mar 2026 00:11:16 GMT
+
+Number of Pages: 10
+
+Markdown Content:
+# REAL -T IME REGULATION OF DIRECT INK WRITING USING 
+
+# MODEL REFERENCE ADAPTIVE CONTROL 
+
+Mandana Mohammadi Looey, Amrita Basak, and Satadru Dey ∗†
+
+March 23, 2026 
+
+# ABSTRACT 
+
+Direct Ink Writing (DIW) has gained attention for its potential to reduce printing time and mate-rial waste. However, maintaining precise geometry and consistent print quality remains challenging under dynamically varying operating conditions. This paper presents a control-focused approach using a model reference adaptive control (MRAC) strategy based on a reduced-order model (ROM) of extrusion-based 3D printing for a candidate cementitious material system. The proposed con-troller actively compensates for uncertainties and disturbances by adjusting process parameters in real time, with the objective of minimizing reference-tracking errors. Stability and convergence are rigorously verified via Lyapunov analysis, demonstrating that tracking errors asymptotically ap-proach zero. Performance evaluation under realistic simulation scenarios confirms the effectiveness of the adaptive control framework in maintaining accurate and robust extrusion behavior. 
+
+# 1 Introduction 
+
+Direct Ink Writing (DIW) is an extrusion-based 3D printing technique in which a viscoelastic ink is extruded through a nozzle along a programmed tool path onto a build plate. Experimental and numerical studies have shown that printing parameters, including nozzle speed, extrusion rate, and the gap between the nozzle and the build plate, strongly influence buildability and the geometric accuracy of printed features [1], [2], [3] and are critical for process monitoring and control in concrete 3D printing [4]. Achieving stable and consistent ink deposition, as well as the desired geometry and print quality, therefore requires real-time closed-loop control of these parameters [5]. In this context, model-based adaptive control strategies can compensate for uncertainties and disturbances, enabling in-situ adjustment of process parameters to maintain accurate reference tracking and robust print performance. Several efforts in the literature have addressed the design of closed-loop controllers and control strategies for extrusion processes. Zomorodi et al. proposed a hierarchical control structure with an explicit model predictive controller that accounts for both extrusion force and ram velocity [6]. To mitigate under-extrusion and over-extrusion, which lead to inconsistent ink deposition in DIW, Li et al. developed a data-driven reinforcement learning (RL) controller [7]. Kajzr et al. emphasized the need for a dedicated control strategy for 3D concrete printing by implementing an open PLC-based control system [8]. Adaptive control approaches have also been explored in extrusion processes. Early work by Guo et al. introduced a fuzzy control scheme with self-adaptation capability to maintain desired product dimensions through real-time monitoring and regulation of polymer extrusion [9]. Perera et al. developed an adaptive controller based on extremum-seeking control to regulate melt pressure via screw rotational speed adjustment [10], while Zhao et al. designed a low-order adaptive control scheme to manage extrusion force in the Freeze-form extrusion process [11]. Although these studies demonstrate various strategies for achieving target geometries in extrusion-based additive manufacturing, real-time model adaptation and closed-loop control specifically for cementitious extrusion remain largely unexplored. 
+
+> ∗
+
+The authors are with the Department of Mechanical Engineering, The Pennsylvania State University, University Park, Penn-sylvania 16802, USA. (e-mails: mfm6970@psu.edu, aub1526@psu.edu, skd5685@psu.edu). 
+
+> †
+
+This work was supported by National Science Foundation under Grants No. 2346650. The opinions, findings, and conclusions or recommendations expressed are those of the author(s) and do not necessarily reflect the views of the National Science Foundation. 
+
+> arXiv:2603.19455v1 [eess.SY] 19 Mar 2026
+
+# A PREPRINT - M ARCH 23, 2026 
+
+Motivated by this research gap, this study introduces a generalized adaptive control framework for DIW, demon-strated using cementitious materials as a representative candidate material to account for the inherent uncertainty and trajectory-dependent dynamics of extrusion. The approach is formulated as a model reference adaptive control (MRAC) scheme [12] and follows a mathematical framework similar to that in [13]. The proposed control architecture leverages a coupled mathematical model of the extrusion nozzle and build plate motion to represent system dynamics accurately. Thereafter, it employs a parameter adaptation law that updates the feedback-based closed-loop control effort in real time to compensate for fluctuations in build plate speed and inlet mass flow, with the goal of maintaining the desired strand geometry. Stability of the overall control architecture is established via Lyapunov-based analysis and Barbalat’s lemma, providing theoretical conditions for control and adaptation gains to ensure convergence and robustness. Simulation studies under realistic operating scenarios further demonstrate the effectiveness of the proposed framework in maintaining accurate geometry and consistent extrusion performance. Consequently, this study advances process control in extrusion-based 3D printing of cementitious materials and provides a foundation for the integration of more advanced adaptive and model-based control strategies in large-scale cement printing applications. The structure of the paper is as follows: Section 2 presents the system model and formalizes the control problem. Section 3 details the adaptive control framework and the control design methodology. Section 4 provides model validation, simulation results, and their analysis. Finally, Section 5 concludes the study and highlights future research directions. 
+
+# 2 Problem Statement: Control of Extrusion-based 3D Printing Processes 
+
+In this section, we present the basic control architecture, the control-oriented modeling approach, and the formulation of the adaptive control strategy for extrusion-based 3D printing processes. 
+
+2.1 Basic Architecture 
+
+The extrusion-based 3D printing system considered in this study consists of three main sub-systems, as depicted in Fig. 1. Sub-system 1 represents the material feeding mechanism that extrudes the build material. The input to this sub-system is the inlet flow rate, ˙m, introduced to the nozzle by an external force, and the output is the average flow velocity across the nozzle cross-section at its outlet. Sub-system 2 captures the bending and swelling behavior of the extruded material. Its input is the output of Sub-system 1. This sub-system connects the dynamics of the nozzle flow with the post-deposition dynamics of the strand on the build plate. Sub-system 3 represents the post-deposition behavior of the strand on a build plate moving at velocity Us. Its inputs are the build plate velocity Us and the output of Sub-system 2. The output is the average flow velocity of the deposited strand on the moving plate. 
+
+Figure 1: Schematic of the extrusion-based 3D printing process including three sub-systems. 
+
+# 2A PREPRINT - M ARCH 23, 2026 
+
+2.2 Control-Oriented Model of Extrusion-Based Printing 
+
+We adopt a control-oriented model of the extrusion-based 3D printing system developed in our prior work [14]. The model captures the coupled dynamics of material feed, film bending and swelling, and material deposition on the moving build plate. The model is given by: 
+
+˙¯v1 = ¯β1 pd1 + ¯β2 ¯v1 + ¯β3 ˙m, (1) 
+
+¯u2 = ¯β4 ¯v1, (2) 
+
+˙¯u3 = ¯β5 ¯u2 + ¯β6 ¯u3 + ¯β7 Us, (3) where ¯v1 is the average flow velocity in the nozzle or sub-system 1, pd1 is the pressure gradient inside the nozzle, ¯u2
+
+is the average flow velocity at the outlet of sub-system 2, ¯u3 is the output average flow velocity of sub-system 3. Here, the model parameters, ¯β’s are given as functions of the feed rate ˙m and plate velocity Us [14]. 
+
+¯β1 = ¯ γ1 ˙m, ¯β2 = ¯ γ2 ˙m, ¯β3 = ¯ γ3 ˙m, (4) 
+
+¯β5 = ¯ γ5Us, ¯β6 = ¯ γ6Us, ¯β7 = ¯ γ7Us. (5) Next, we apply the following reformulation to the model (1)-(3): (i) we incorporate algebraic form of sub-system 2 into the dynamics of sub-system 3, and (ii) instead of input-dependent model parameters, we incorporate constant model parameters and additive uncertainty terms which capture the input-dependence characteristics. Accordingly, the reformulated model becomes: 
+
+˙¯v1 = β1 pd1 + β2 ¯v1 + β3 ( ˙ m + ∆ 1), (6) 
+
+˙¯u3 = β5β4 ¯v1 + β6 ¯u3 + β7 (Us + ∆ 3), (7) where ¯v1 and ¯u3 are now the dynamic states representing the printing system, ˙m and Us are the inputs, and ∆1 and 
+
+∆3 are the uncertainties. 
+
+Remark 1. The uncertainty terms ∆1 and ∆3 in (6) -(7) mainly account for the input dependent nature of the model parameters. This reformulation essentially converts a linear time-varying model into a linear time-invariant model with additive uncertainty, ultimately enabling us to apply linear time-invariant adaptive control design techniques. We also note that ∆1 and ∆3 in (6) -(7) can potentially capture the effects of other unmodeled dynamics and parametric uncertainties arising from model reduction, modeling assumptions, numerical approximations, neglected higher-order dynamics, and variations in operating conditions [15]. 
+
+2.3 Adaptive Control Problem in Extrusion-Based Printing 
+
+While formulating the adaptive control problem, we first make the following assumptions: 
+
+Assumption 1. The mass flow rate ˙m and the plate velocity Us both serve as control inputs which can be manipulated to achieve the control objective. 
+
+Assumption 2. The velocities ¯v1 and ¯u3 both are available to be used as feedback signals. This can be achieved either by using on-board sensors or by using real-time state estimators [16]. 
+
+Under this setting, the adaptive control objective can be written as: Using sensor feedback (Assumption 2), actuation capabilities (Assumption 1), and the control-oriented model (6) -(7) – design a controller that adapts to uncertainties 
+
+∆1 and ∆3, and ensures that the dynamical states of the extrusion-based 3D printing system follow the desired velocity trajectories – ultimately enabling the following physically essential regulations: 
+
+1. Material flow regulation: Ensure that the actual material flow rate, which results in the flow velocity ¯v1
+
+in the nozzle, tracks the desired flow rate and the consequent desired flow velocity vr1 generated from a reference model, with minimal error, despite the uncertainties in inlet mass flow rate. 2. Filament velocity regulation: Maintain the flow velocity on the moving plate ( ¯u3) close to the desired flow velocity ur3 generated from a reference model, despite the uncertainties in plate movement. 3. Coupled sub-system coordination: Compensate for interactions between the inlet mass flow rate and the plate velocity through a unified control law that combines nominal and adaptive components. 
+
+# 3 Adaptive Control Framework for Extrusion-based 3D Printing Processes 
+
+In this section, we discuss the detailed control architecture and the theoretical design of adaptive control algorithm. 
+
+# 3A PREPRINT - M ARCH 23, 2026 
+
+3.1 Adaptive Control Architecture 
+
+Here, we adopt an MRAC approach [12] and the corresponding schematic for the extrusion-based process is given in Fig. 2. The architecture consists of an inner loop and an outer loop. In the inner loop, the error signals between the 3D printer outputs ( ¯v1, ¯u3) and the model reference signals ( vr 1, u r 3) are computed, which in turn are used by the controller to generate control signals ( ˙m, U s) to be sent to the 3D printer. In the outer loop, reference signals are generated using a reference model, and an adjustment mechanism system (in the form of parameter adaptation law) dynamically updates the control law. 
+
+Figure 2: A schematic of model reference adaptive control of extrusion-based 3D printing process. 
+
+3.2 Model Reference Adaptive Control Design and Analysis 
+
+The design of MRAC includes designing a feedback control law, a parameter adaptation law, and analyzing the con-vergence of the closed-loop system under these laws. To this end, we choose the following laws: Control Law 
+
+( ˙m = −k1 ¯v1 + r1 − (β2/β 3)pd1 − ˆ∆1,Us = −k3 ¯u3 + r3 − (β4β6/β 7)¯ v1 − ˆ∆3, (8) where k1 and k3 are feedback control gains to be designed, r1 and r3 are reference signals, and ˆ∆1 and ˆ∆3 are adaptive parameter estimates from adaptation law given by: Adaptation Law 
+
+
+
+˙ˆ∆1 = γ1 p1 β3 (¯ v1 − vr 1),
+
+˙ˆ∆3 = γ3 p3 β7 (¯ u3 − ur 3),
+
+(9) where γ1, γ 3 > 0 are learning rates to be designed, p1, p 3 > 0 are weight constants to be used later in analysis, and 
+
+vr 1, u r 3 are model reference signals. Next, the reference model for MRAC is chosen as: Reference Model 
+
+ ˙vr1 = ( β2 − β3k1)vr1 + β3r1,
+
+˙ur3 = ( β6 − β7k3)ur3 + β7r3. (10) In the next proposition, we derive the conditions for achieving the control objectives in terms of bounded error. 
+
+Proposition 1 (Boundedness of reference model tracking and parameter estimation error signals) . Consider the extrusion-based 3D printing system described by (6) -(7) , the state feedback control law (8) , the parameter adap-tation law (9) , and the reference model (10) . Then, the reference model tracking error signals e1 ≜ ¯v1 − vr 1 and 
+
+# 4A PREPRINT - M ARCH 23, 2026 
+
+e3 ≜ ¯u3 − ur 3, and the parameter estimation error signals ˜∆1 ≜ ∆1 − ˆ∆1 and ˜∆3 ≜ ∆3 − ˆ∆3 will remain bounded for all time t ⩾ 0, if the following conditions are satisfied: 
+
+(β2 − β3k1) < 0, (β6 − β7k3) < 0. (11) 
+
+Proof. Following the definitions of the tracking error signals e1 ≜ ¯v1 − vr 1 and e3 ≜ ¯u3 − ur 3, we calculate the dynamics of these error signals as: 
+
+˙e1 = ˙ ¯v1 − ˙vr1 = ( β1 − β3k1)e1
+
++ β3
+
+
+
+˙m + ∆ 1 + k1 ¯v1 − r1 + β2
+
+β3
+
+pd1
+
+
+
+. (12) and 
+
+˙e3 = ˙ ¯u3 − ˙ur3 = ( β5 − β7k3)e3
+
++ β7
+
+
+
+Us + ∆ 3 + k3 ¯u3 − r3 + β6β4
+
+β7
+
+¯v1
+
+
+
+(13) Next, we also compute the expressions for parameter estimation error dynamics as: 
+
+˙˜∆1 = ˙∆1 − ˙ˆ∆1 = −γ1p1β3e1, (14) 
+
+˙˜∆3 = ˙∆3 − ˙ˆ∆3 = −γ3p3β7e3. (15) Now, we choose a quadratic (hence, positive definite) Lyapunov function candidate ( V ) as: 
+
+V = p1
+
+2 e21 + p3
+
+2 e23 + 12γ1
+
+˜∆21 + 12γ3
+
+˜∆23. (16) where we have by design p1, p 3, γ 1, γ 3 > 0. Next, we compute the derivative of the Lyapunov function candidate along the error trajectories: 
+
+˙V = p1e1 ˙e1 + p3e3 ˙e3 + 1
+
+γ1
+
+˜∆1 ˙˜∆1 + 1
+
+γ3
+
+˜∆3 ˙˜∆3. (17) Substituting (12)-(15) in (17), we get: 
+
+˙V = p1e1
+
+n
+
+(β1 − β3k1)e1
+
++ β3( ˙ m + ∆ 1 + k1 ¯v1 − r1 + β2
+
+β3
+
+pd1)
+
+o
+
++ p3e3
+
+n
+
+(β5 − β7k3)e3
+
++ β7(Us + ∆ 3 + k3 ¯u3 − r3 + β6β4
+
+β7
+
+¯v1)
+
+o
+
++ 1
+
+γ1
+
+˜∆1 (−γ1p1β3e1) + 1
+
+γ3
+
+˜∆3 (−γ3p3β7e3) . (18) Now applying the control laws (8) in (18), we get 
+
+˙V = p1e1
+
+n
+
+(β1 − β3k1)e1 + β3 ˜∆1
+
+o
+
+− p1β3 ˜∆1e1
+
++ p3e3
+
+n
+
+(β5 − β7k3)e3 + β7 ˜∆3
+
+o
+
+− p3β7 ˜∆3e3. (19) After canceling the ˜∆ terms in (19), we have: 
+
+˙V = p1(β1 − β3k1)e21 + p3(β5 − β7k3)e23. (20) If the conditions (11) are satisfied, we have ˙V ⩽ 0, which implies e1, e 3, ˜∆1, ˜∆3 remain bounded for t ⩾ 0 [17]. Note that Proposition 1 only proves the boundedness of the error signals. For the asymptotic stability of the error signals, we need further analysis as presented in the next proposition. 
+
+# 5A PREPRINT - M ARCH 23, 2026 
+
+Proposition 2 (Asymptotic stability of reference model tracking and parameter estimation error signals) . Consider the extrusion-based 3D printing system described by (6) -(7) , the state feedback control law (8) , the parameter adaptation law (9) , and the reference model (10) . Then, the conditions (11) will also ensure that the tracking and error signals will be asymptotically stable, that is, e1, e 3, ˜∆1, ˜∆3 → 0 as t → ∞ .Proof. Consider the same Lyapunov function (16). By construction, V has a finite lower bound. Furthermore, Propo-sition 1 has already established ˙V ⩽ 0. This indicates the existence of the limiting value lim t→∞ V .Next, we focus on the expression of ¨V , given as: 
+
+¨V = p1(β1 − β3k1)e1 ˙e1 + p3(β5 − β7k3)e3 ˙e3. (21) From the expressions of ˙e1 and ˙e3:
+
+˙e1 = ( β1 − β3k1)e1 + β3 ˜∆1, (22) 
+
+˙e3 = ( β5 − β7k3)e3 + β7 ˜∆3, (23) we can conclude that ˙e1 and ˙e3 are upper bounded since all the variables on the right hand sides of (22)-(23) are bounded (as proven in Proposition 1 ). Consequently, all the right hand side terms of (21) are also upper bounded, ultimately making ¨V upper bounded. Hence, using Barbalat’s lemma [18], we can conclude that lim t→∞ ˙V → 0.Now, following the expression of ˙V in (20), we can conclude that e1, e 3 → 0 as t → ∞ since lim t→∞ ˙V → 0.Now, we know that the limits lim t→∞ ˙e1 = −e1(0) and lim t→∞ ˙e3 = −e3(0) exist. Furthermore, we consider the expressions of the signals ¨e1, ¨e3:
+
+¨e1 = ( β1 − β3k1)(( β1 − β3k1)e1 + β3 ˜∆1) − β3(γ1p1β3e1), (24) 
+
+¨e3 = ( β5 − β7k3)(( β5 − β7k3)e3 + β7 ˜∆3) − β7(γ3p3β7e3), (25) Since all the right hand side terms are bounded in the above expressions, we can conclude the boundedness of ¨e1, ¨e3.Hence, using Barbalat’s lemma [18], we can conclude that lim t→∞ ˙e1, ˙e3 → 0. Now, consider the expressions (22)-(23) where e1, e 3, ˙e1, ˙e3 → 0 as t → ∞ . Hence, we can conclude that ˜∆1, ˜∆3 → 0 as t → ∞ .
+
+Remark 2. In the control design, there are four parameters to be determined: feedback control gains k1, k 3 and parameter adaptation gains γ1, γ 3. The conditions on the feedback gains are given in (11) while the parameter adaptation gains γ1, γ 3 are chosen to be positive. It is observed that higher the learning rates, faster the convergence of the adaptation. However, such faster convergence is typically associated with high magnitude oscillations in the transient phase. Hence, the parameter adaptation gains are chosen to balance these two factors: faster convergence and acceptable transient oscillations. Similarly, higher values of feedback control gains will also lead faster tracking convergence, but at the cost of amplifying noise. These are chosen to ensure acceptable tracking convergence without significant amplification of noise. 
+
+# 4 Results and Discussion 
+
+This section evaluates the performance of the proposed adaptive controller in Section 3. In order to carry out realistic simulations, we utilize a comprehensive plant model incorporating input-dependent parameterization (eq. (4)-(5)) as well as additive model uncertainties informed by computational fluid dynamics studies (as performed in [14]) of 3D printing scenario under consideration. The model uncertainties are generated from the ensemble probability distribution shown in Fig. 3, from data collected in [14]. Based on the aforementioned setup, we now perform a few representative case studies to evaluate the adaptive controller’s performance. 
+
+Case Study 1 – Uncertain plate velocity: 
+
+In order to evaluate the adaptive controller’s performance under varying build plate velocity, we assume that plate velocity drops abruptly by a step input disturbance with the size of 40% of the plate velocity obtained from simulation results, and then increased by the same step size after 30 seconds, which directly affects the flow velocity of sub-system 3. Fig. 4 shows model reference tracking uncertainty and its estimation. The top right sub-figure illustrates the effect of injecting a disturbance on fluctuations in ¯u3 and that sub-system 3 is tracking reference model trajectories with small tracking error ( e3). Following disturbance injection, after t = 30 s, the disturbance causes a temporary fluctuation of ¯u3. However, fluctuations decrease along time, leading to a perfect overlap of the plant state and the reference state before t = 60 s. The bottom right plot shows the piecewise-constant disturbance profile after injecting a step disturbance input to the system and the estimation of the disturbance. The estimation ( ˆ∆3) responds to the 
+
+# 6A PREPRINT - M ARCH 23, 2026 
+
+disturbance injection abruptly with fluctuations oscillating within a range less than the magnitude of the disturbance and approaches the actual value of the disturbance until another disturbance injection at t = 60 s. The degree of fluctuations and the speed of adaptation depend on the size of the adaptation rate. The top and bottom left plots show that disturbance input does not have any significant effect on the sub-system 1 dynamics compared to the case without disturbance injection. 
+
+Figure 3: Probability distribution of modeling error. 
+
+Figure 4: Responses from Case Study 1: Tracking performance under plate velocity disturbance. 
+
+Case Study 2 – Uncertain mass flow rate: 
+
+In this case, a ramp input disturbance with negative slope is applied to sub-system 1 to simulate an undesired decrease of input mass flow rate. Top and bottom left plots in Fig. 5, demonstrate the effect of the applied disturbance on sub-system 1, while top and bottom right plots indicate the effect of the ramp input disturbance on sub-system 3. The top left plot demonstrates the robustness of adaptive control algorithm to disturbance injection to sub-system 1 by showing perfect tracking of reference trajectories. At the beginning of the ramp, disturbance induces a small and abrupt deviation in the plant state, followed by a more rapid recovery compared to the case, where the disturbance is injected to sub-system 3, driven by the adaptation law and a higher adaptation gain. Similar to Case 1, the injection of a disturbance into sub-system 1 does not affect the dynamics of sub-system 3, as shown in the top and bottom right plots. 
+
+Case Study 3 – Comparison with non-adaptive controller: 
+
+Here, we compare the adaptive control performance with a non-adaptive controller. The non-adaptive controller is assumed to have knowledge of the disturbances in the beginning of time but does not adapt to the changing nature of the disturbance (that is, the adaptation gains are set to zero, γ1, γ 3 = 0 in (9)). For both of these controllers, disturbances are introduced by variations in plate velocity or changes in the mass flow rate. Fig. 6 shows the responses for the plate-velocity disturbance case by comparing the adaptive controller with the non-adaptive controller for sub-system 1 and sub-system 3. In both sub-systems, the adaptive controller maintains accurate tracking of the reference model even after the disturbance is introduced. In contrast, when adaptation is disabled, the plant response deviates from the reference model. 
+
+# 7A PREPRINT - M ARCH 23, 2026 
+
+Figure 5: Responses from Case Study 2: Tracking performance under inlet mass flow disturbance. 
+
+Figure 6: Comparison of adaptive (AC) and non-adaptive (NAC) controllers for a reference (R) under a plate-velocity disturbance. 
+
+Figure 7: Comparison of adaptive (AC) and non-adaptive (NAC) controllers for a reference (R) under a inlet mass flow disturbance. Similarly, Fig. 7 shows the responses for the case with disturbance to ˙m, comparing the adaptive controller with the non-adaptive controller for both sub-systems. Similar to the previous case with plate-velocity disturbance, in this case the adaptive controller shows perfect tracking of the reference model throughout the time, while non-adaptive controller deviates from the reference after disturbance injection. It can be seen in both disturbance cases that the system with the non-adaptive controller stabilizes after a while and remains constant.This behavior demonstrates that the system with a fixed-gain controller is stable and error is bounded; however, there is no adaptation and the system cannot recover after a disturbance injection. 
+
+Adaptive control performance under various conditions: 
+
+Here, we summarize the adaptive control performance under varying magnitudes of disturbances: Cases 1-5 consider a step-like disturbance in the inlet mass flow rate at t = 40 s with various step magnitudes δm, while Cases 6-10 consider a step-like disturbance in the plate velocity at t = 40 s with various step magnitudes δp. The performance is evaluated by two metrics: (i) reference tracking convergence time ( tcr ) and (ii) parameter adaptation convergence time ( tcp ). These results are tabulated in Table 1. The numbers show a shorter reference tracking convergence time for sub-system 1 compared to sub-system 3, suggesting that the tuned adaptation gains lead to an uniform learning speed and the controller performs faster on the nozzle-side. In contrast, the longer parameter adaptation time for sub-system 3 suggests that the controller stabilizes reference tracking quickly, but the uncertainty estimation converges more slowly, which is because of more complex dynamics of this sub-system. 
+
+# 8A PREPRINT - M ARCH 23, 2026 
+
+Table 1: Adaptive control performance under mass-flow and plate-velocity disturbances. 
+
+Case δm [kg/s] tcp [s] tcr [s] 
+
+Case 1 +0 .0025 7.97 4.87 Case 2 −0.0025 8.64 4.77 Case 3 −0.0050 8.51 5.60 Case 4 −0.0075 8.80 5.51 Case 5 −0.0100 8.90 5.67 
+
+Case δp [m/s] tcp [s] tcr [s] 
+
+Case 6 −20 30.97 2.11 Case 7 −10 31.00 1.80 Case 8 −30 27.50 2.34 Case 9 −40 31.00 15.40 Case 10 +10 31.00 2.43 
+
+# 5 Conclusions 
+
+This paper presents a model-reference adaptive control (MRAC) framework that can robustly regulate nozzle-side flow velocity ( ¯v1), as well as the flow velocity on the build plate ( ¯u3) in direct ink writing of cement-based materials under uncertainties and disturbances. The boundedness and asymptotic convergence of reference tracking and parameter estimation errors are guaranteed by a Lyapunov-based design. The realistic disturbances were applied to the inlet mass flow rate and the build plate velocity and a close reference tracking and recovery after disturbance injection proved the high performance of the controller. Comparisons with the non-adaptive controller highlight that although a fixed-gain controller’s tracking error is bounded, the controller responses do not follow the reference signal after the disturbance injection due to the lack of adaptation mechanism. Finally, the comparison of the convergence times demonstrated that the parameter adaptation requires longer convergence time due to more complex coupled dynamics of sub-system 3. 
+
+# References 
+
+[1] A. K. Apsari, A. Tambusay, P. Suprobo, and B. Suryanto, “Influence of printing speed and nozzle size on build-ability of 3d printed concrete walls: A nonlinear finite element study,” 2025. [2] R. Imran, A. Al Rashid, S. A. Khan, H. Ilcan, O. Sahin, M. Sahmaran, and M. Koc ¸, “Buildability analy-sis on squared profile structure in 3d concrete printing (3dcp),” European Journal of Materials , vol. 3, no. 1, p. 2276443, 2023. [3] M. L. Scalise, S. Dey, and A. Basak, “Multiphase computational modeling of gravitational asymmetry in direct ink writing of cementitious materials,” The International Journal of Advanced Manufacturing Technology , pp. 1– 19, 2026. [4] T. K. N. Quah, Y. W. D. Tay, J. H. Lim, M. J. Tan, T. N. Wong, and K. H. H. Li, “Concrete 3d printing: Process parameters for process control, monitoring and diagnosis in automation and construction,” Mathematics , vol. 11, no. 6, 2023. [5] Q. Wang, J. Li, A. R. Nassar, E. W. Reutzel, and W. F. Mitchell, “Model-based feedforward control of part height in directed energy deposition,” Materials , vol. 14, no. 2, 2021. [6] H. Zomorodi and R. G. Landers, “Extrusion based additive manufacturing using explicit model predictive con-trol,” in 2016 American Control Conference (ACC) , pp. 1747–1752, IEEE, 2016. [7] Z. Li, W. Chen, Z. Guo, C. Zhou, and H. Sun, “Process control for direct ink writing of composite materials via reinforcement learning,” Journal of Manufacturing Science and Engineering , vol. 147, no. 9, p. 091009, 2025. [8] D. Kajzr, T. Myslivec, and J. Cernohorsky, “An open plc-based robot control system for 3d concrete printing,” 
+
+Robotics , vol. 12, no. 4, 2023. [9] P. Guo, X. Z. Ni, and J. Zheng, “Polymer extrusion production control using active recognition and adaptive control system,” in Second IEEE International Conference on Fuzzy Systems , pp. 779–784, IEEE, 1993. 
+
+# 9A PREPRINT - M ARCH 23, 2026 
+
+[10] Y. S. Perera, J. Li, and C. Abeykoon, “Adaptive control of melt pressure in polymer extrusion processes us-ing extremum-seeking control,” in 2024 10th International Conference on Control, Decision and Information Technologies (CoDIT) , pp. 371–376, IEEE, 2024. [11] X. Zhao, R. G. Landers, and M. C. Leu, “Adaptive extrusion force control of freeze-form extrusion fabrication processes,” 2010. [12] K. S. Narendra and A. M. Annaswamy, Stable adaptive systems . Courier Corporation, 2012. [13] S. Dey, B. Ayalew, and P. Pisu, “Nonlinear adaptive observer for a lithium-ion battery cell based on coupled electrochemical–thermal model,” Journal of Dynamic Systems, Measurement, and Control , vol. 137, no. 11, p. 111005, 2015. [14] M. M. Looey, M. L. Scalise, A. Basak, and S. Dey, “Physics informed dynamical modeling of extrusion based 3d printing processes,” arXiv preprint arXiv:2512.11048 , 2025. [15] F. Lopez, P. Witherell, and B. Lane, “Identifying uncertainty in laser powder bed fusion additive manufacturing models,” Journal of Mechanical Design , vol. 138, no. 11, p. 114502, 2016. [16] G. P. Greeff and M. Schilling, “Closed loop control of slippage during filament transport in molten material extrusion,” Additive Manufacturing , vol. 14, pp. 31–38, 2017. [17] H. K. Khalil, Nonlinear systems . Upper Saddle River, N.J.: Prentice Hall, 2002. [18] J.-J. E. Slotine, W. Li, et al. , Applied nonlinear control , vol. 199. Prentice hall Englewood Cliffs, NJ, 1991. 
+
+# 10

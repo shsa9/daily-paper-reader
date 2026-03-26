@@ -1,0 +1,201 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-03-26T20:10:06.695381+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [
+    {
+      "id": "2603.24052v1",
+      "title": "Data-driven synthesis of high-fidelity triaxial magnetic waveforms for quantum control",
+      "abstract": "We present a system for generating arbitrary, triaxial magnetic waveforms with a spectral content spanning from DC to tens of kHz, a critical capability for quantum control and spin manipulation. To compensate for amplifier-coil dynamics, we implement a data-driven approach to identify a numerical compensation model. The method parametrizes the system response using a Finite Impulse Response (FIR) filter calibrated on the specific waveform to be generated. The application of a driving signal designed via frequency-domain inversion of the identified model enables the synthesis of complex field sequences with sharp transitions between static and single- or multi-frequency temporal segments. The work is validated with experimental results demonstrating waveform fidelity and transient performance, thereby showcasing the precision and feasibility of the method.",
+      "authors": [
+        "Giuseppe Bevilacqua",
+        "Valerio Biancalana",
+        "Roberto Cecchi"
+      ],
+      "primary_category": "physics.ins-det",
+      "categories": [
+        "physics.ins-det",
+        "physics.app-ph",
+        "quant-ph"
+      ],
+      "published": "2026-03-25T08:00:46+00:00",
+      "link": "https://arxiv.org/pdf/2603.24052v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "High-fidelity triaxial magnetic waveform synthesis and amplifier-coil compensation",
+      "llm_evidence_cn": "高保真三轴磁波形合成与放大器线圈补偿",
+      "llm_evidence": "高保真三轴磁波形合成与放大器线圈补偿",
+      "canonical_evidence": "高保真三轴磁波形合成与放大器线圈补偿",
+      "llm_tldr_en": "Synthesizes precise magnetic waveforms by compensating for amplifier-coil dynamics using data-driven models.",
+      "llm_tldr_cn": "通过数据驱动模型补偿放大器线圈动力学，实现精确的磁波形合成。",
+      "llm_tldr": "通过数据驱动模型补偿放大器线圈动力学，实现精确的磁波形合成。",
+      "llm_tags": [
+        "query:em-force:composite"
+      ],
+      "matched_query_tag": "query:em-force:composite",
+      "matched_query_text": "Papers central to 查找非接触式电磁激振器的力控制方法，特别是精密控制策略, especially work that connects or combines: electromagnetic exciter force control; ddy current magnetic bearing modeling; magnetic bearing flux feedback; non-contact electromagnetic shaker force control; precision force control strategies for electromagnetic actuators; closed-loop force control for electromagnetic shakers; flux feedback linearization zero bias magnetic bearing; non contact electromagnetic exciter precision force control; eddy current effects in electromagnetic actuators dynamic modeling; flux feedback control for magnetic bearing force precision.",
+      "matched_requirement_id": "req-composite-em-force",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2603.18584v1",
+      "title": "Model Reference Adaptive Control For Gust Load Allevation of Nonlinear Aeroelastic",
+      "abstract": "Model Reference Adaptive Control based on Lyapunov stability theory is developed for gust load alleviation of nonlinear aeroelastic systems. The controller operates on a nonlinear reduced-order model derived from Taylor series expansion and eigenvector projection of the coupled fluid-structure-flight dynamic equations. The complete MRAC formulation is presented, including the reference model design that encodes desired closed-loop damping characteristics, the adaptive control law with real-time gain adjustment, and the Lyapunov derivation of the adaptation law that guarantees asymptotic tracking in the linear case and bounded tracking under a Lipschitz condition on the nonlinear residual. The adaptation rate matrix is identified as the single most important design parameter, governing the trade-off between convergence speed, peak load reduction, and actuator demand. Two test cases are considered, a 3DOF aerofoil with cubic stiffness nonlinearities, and a Global Hawk type unmanned aerial vehicle. For the UAV under a discrete gusts, MRAC achieves significant wing-tip deflection reductions, outperforming the H infinity robust control benchmark with comparable control effort. Under Von Karman stochastic turbulence, meaningful reductions are also obtained, with performance scaling with the adaptation rate. The results demonstrate that MRAC provides an effective framework for GLA of flexible aircraft operating in both deterministic and stochastic disturbance environments.",
+      "authors": [
+        "Nikolaos D. Tantaroudas",
+        "Andrea Da Ronch",
+        "Guanqun Gai",
+        "Ilias Karachalios",
+        "Kenneth J. Badcock",
+        "Rafael Palacios"
+      ],
+      "primary_category": "cs.CE",
+      "categories": [
+        "cs.CE"
+      ],
+      "published": "2026-03-19T07:46:43+00:00",
+      "link": "https://arxiv.org/pdf/2603.18584v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Model Reference Adaptive Control for nonlinear systems",
+      "llm_evidence_cn": "非线性系统的模型参考自适应控制",
+      "llm_evidence": "非线性系统的模型参考自适应控制",
+      "canonical_evidence": "非线性系统的模型参考自适应控制",
+      "llm_tldr_en": "Develops MRAC for nonlinear aeroelastic systems to achieve closed-loop damping and tracking.",
+      "llm_tldr_cn": "为非线性气动弹性系统开发模型参考自适应控制，以实现闭环阻尼和跟踪。",
+      "llm_tldr": "为非线性气动弹性系统开发模型参考自适应控制，以实现闭环阻尼和跟踪。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.19455v1",
+      "title": "Real-Time Regulation of Direct Ink Writing Using Model Reference Adaptive Control",
+      "abstract": "Direct Ink Writing (DIW) has gained attention for its potential to reduce printing time and material waste. However, maintaining precise geometry and consistent print quality remains challenging under dynamically varying operating conditions. This paper presents a control-focused approach using a model reference adaptive control (MRAC) strategy based on a reduced-order model (ROM) of extrusion-based 3D printing for a candidate cementitious material system. The proposed controller actively compensates for uncertainties and disturbances by adjusting process parameters in real time, with the objective of minimizing reference-tracking errors. Stability and convergence are rigorously verified via Lyapunov analysis, demonstrating that tracking errors asymptotically approach zero. Performance evaluation under realistic simulation scenarios confirms the effectiveness of the adaptive control framework in maintaining accurate and robust extrusion behavior.",
+      "authors": [
+        "Mandana Mohammadi Looey",
+        "Amrita Basak",
+        "Satadru Dey"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-03-19T20:28:37+00:00",
+      "link": "https://arxiv.org/pdf/2603.19455v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Model Reference Adaptive Control for real-time regulation",
+      "llm_evidence_cn": "实时调节的模型参考自适应控制",
+      "llm_evidence": "实时调节的模型参考自适应控制",
+      "canonical_evidence": "实时调节的模型参考自适应控制",
+      "llm_tldr_en": "Applies MRAC to compensate for uncertainties and disturbances in real-time precision control.",
+      "llm_tldr_cn": "应用模型参考自适应控制来补偿实时精密控制中的不确定性和干扰。",
+      "llm_tldr": "应用模型参考自适应控制来补偿实时精密控制中的不确定性和干扰。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.23147v1",
+      "title": "Stable Inversion of Discrete-Time Linear Periodically Time-Varying Systems via Cyclic Reformulation",
+      "abstract": "Stable inverse systems for periodically time-varying plants are essential for feedforward control and iterative learning control of multirate and periodic systems, yet existing approaches either require complex-valued Floquet factors and noncausal processing or operate on a block time scale via lifting. This paper proposes a systematic method for constructing stable inverse systems for discrete-time linear periodically time-varying (LPTV) systems that avoids these limitations. The proposed approach proceeds in three steps: (i) cyclic reformulation transforms the LPTV system into an equivalent LTI representation; (ii) the inverse of the resulting LTI system is constructed using standard LTI inversion theory; and (iii) the periodically time-varying inverse matrices are recovered from the block structure of the cycled inverse through parameter extraction. For the fundamental case of relative degree zero, where the output depends directly on the current input, the inverse system is obtained as an explicit closed-form time-varying matrix expression. For systems with periodic relative degree r >= 1, the r-step-delayed inverse is similarly obtained in explicit closed form via the periodic Markov parameters. The stability of the resulting inverse system is characterized by the transmission zeros of the cycled plant, generalizing the minimum phase condition from the LTI case. Numerical examples for both relative degree zero and higher relative degree systems confirm the validity of the stability conditions and demonstrate the effectiveness of the proposed framework, including exact input reconstruction via causal real-valued inverse systems.",
+      "authors": [
+        "Hiroshi Okajima"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-03-24T12:48:38+00:00",
+      "link": "https://arxiv.org/pdf/2603.23147v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "stable inversion for feedforward and iterative learning control of periodic systems",
+      "llm_evidence_cn": "周期系统前馈与迭代学习控制的稳定求逆方法",
+      "llm_evidence": "周期系统前馈与迭代学习控制的稳定求逆方法",
+      "canonical_evidence": "周期系统前馈与迭代学习控制的稳定求逆方法",
+      "llm_tldr_en": "Develops a cyclic reformulation method for stable inversion of discrete-time linear periodically time-varying systems.",
+      "llm_tldr_cn": "开发了一种循环重构方法，用于离散线性周期时变系统的稳定求逆。",
+      "llm_tldr": "开发了一种循环重构方法，用于离散线性周期时变系统的稳定求逆。",
+      "llm_tags": [
+        "query:em-force:composite"
+      ],
+      "matched_query_tag": "query:em-force:composite",
+      "matched_query_text": "Papers central to 查找非接触式电磁激振器的力控制方法，特别是精密控制策略, especially work that connects or combines: electromagnetic exciter force control; ddy current magnetic bearing modeling; magnetic bearing flux feedback; non-contact electromagnetic shaker force control; precision force control strategies for electromagnetic actuators; closed-loop force control for electromagnetic shakers; flux feedback linearization zero bias magnetic bearing; non contact electromagnetic exciter precision force control; eddy current effects in electromagnetic actuators dynamic modeling; flux feedback control for magnetic bearing force precision.",
+      "matched_requirement_id": "req-composite-em-force",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.23843v1",
+      "title": "DMR effect on drag reduction of a streamlined body measured by Magnetic Suspension and Balance System",
+      "abstract": "This study experimentally investigates the aerodynamic drag reduction capabilities of distributed micro-roughness (DMR) coatings on a streamlined model, utilising the 1-m magnetic suspension and balance system (MSBS) at Tohoku University. Previous direct numerical simulations (DNS) indicated that DMR can mitigate turbulent-energy growth by suppressing Tollmien--Schlichting (TS) waves and influencing the breakdown of streamwise vortices. The present work provides the first experimental validation of these effects using an interference-free MSBS, which is essential for accurate measurement in the laminar and transitional regimes. A streamlined model was tested with two rows of artificial tripping tape to induce transition; the DMR height was approximately 1% of the local boundary layer thickness, significantly smaller than typical roughness elements. Direct aerodynamic drag measurements using the MSBS revealed a substantial reduction of up to 43.6% within the transitional flow regime. Crucially, integrated analysis using wall-resolved large-eddy simulations (LES) and dynamic oil-flow visualisation confirmed that this benefit does not mainly originate from the suppression of flow separation. The LES drag decomposition established that the total pressure-drag budget is subordinate to skin friction, a finding complemented by oil-flow observations, which revealed qualitatively similar flow patterns regardless of the surface condition. Consequently, the observed drag reduction is primarily ascribed to friction drag reduction achieved through the modification of the boundary layer state. These findings provide compelling experimental evidence for the efficacy of DMR and offer valuable insights for optimising surface designs for passive flow control.",
+      "authors": [
+        "Aiko Yakeno",
+        "Hiroyuki Okuizumi",
+        "Kento Inokuma",
+        "Yoshiyuki Watanabe"
+      ],
+      "primary_category": "physics.flu-dyn",
+      "categories": [
+        "physics.flu-dyn"
+      ],
+      "published": "2026-03-25T01:58:13+00:00",
+      "link": "https://arxiv.org/pdf/2603.23843v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Magnetic suspension and balance system for aerodynamic measurement",
+      "llm_evidence_cn": "用于气动力测量的磁悬浮平衡系统",
+      "llm_evidence": "用于气动力测量的磁悬浮平衡系统",
+      "canonical_evidence": "用于气动力测量的磁悬浮平衡系统",
+      "llm_tldr_en": "Uses a magnetic suspension system to measure drag reduction without mechanical interference.",
+      "llm_tldr_cn": "利用磁悬浮平衡系统在无机械干扰的情况下测量减阻效果。",
+      "llm_tldr": "利用磁悬浮平衡系统在无机械干扰的情况下测量减阻效果。",
+      "llm_tags": [
+        "query:em-force:composite"
+      ],
+      "matched_query_tag": "query:em-force:composite",
+      "matched_query_text": "Papers central to 查找非接触式电磁激振器的力控制方法，特别是精密控制策略, especially work that connects or combines: electromagnetic exciter force control; ddy current magnetic bearing modeling; magnetic bearing flux feedback; non-contact electromagnetic shaker force control; precision force control strategies for electromagnetic actuators; closed-loop force control for electromagnetic shakers; flux feedback linearization zero bias magnetic bearing; non contact electromagnetic exciter precision force control; eddy current effects in electromagnetic actuators dynamic modeling; flux feedback control for magnetic bearing force precision.",
+      "matched_requirement_id": "req-composite-em-force",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

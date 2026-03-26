@@ -1,0 +1,79 @@
+{
+  "label": "2026-03-26",
+  "date": "2026-03-26",
+  "generated_at": "2026-03-26T20:11:10",
+  "count": 5,
+  "papers": [
+    {
+      "paper_id": "202603/26/2603.24052v1-data-driven-synthesis-of-high-fidelity-triaxial-magnetic-waveforms-for-quantum-control",
+      "section": "deep",
+      "title_en": "Data-driven synthesis of high-fidelity triaxial magnetic waveforms for quantum control",
+      "authors": "Giuseppe Bevilacqua, Valerio Biancalana, Roberto Cecchi",
+      "date": "2026-03-25",
+      "pdf": "https://arxiv.org/pdf/2603.24052v1",
+      "score": "8.0",
+      "evidence": "高保真三轴磁波形合成与放大器线圈补偿",
+      "tldr": "本研究针对量子控制和自旋操控中对高精度三轴磁场波形的需求，提出了一种数据驱动的合成系统。该系统覆盖从直流到数十kHz的频谱，通过有限脉冲响应（FIR）滤波器对放大器-线圈动力学进行建模补偿。利用频域反转技术设计驱动信号，实现了复杂场序列的高保真合成，在静态与多频段切换中表现出极佳的瞬态性能，为精密量子实验提供了关键技术支持。",
+      "tags": "query:em-force",
+      "abstract_en": "We present a system for generating arbitrary, triaxial magnetic waveforms with a spectral content spanning from DC to tens of kHz, a critical capability for quantum control and spin manipulation. To compensate for amplifier-coil dynamics, we implement a data-driven approach to identify a numerical compensation model. The method parametrizes the system response using a Finite Impulse Response (FIR) filter calibrated on the specific waveform to be generated. The application of a driving signal designed via frequency-domain inversion of the identified model enables the synthesis of complex field sequences with sharp transitions between static and single- or multi-frequency temporal segments. The work is validated with experimental results demonstrating waveform fidelity and transient performance, thereby showcasing the precision and feasibility of the method.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/26/2603.18584v1-model-reference-adaptive-control-for-gust-load-allevation-of-nonlinear-aeroelastic",
+      "section": "quick",
+      "title_en": "Model Reference Adaptive Control For Gust Load Allevation of Nonlinear Aeroelastic",
+      "authors": "Nikolaos D. Tantaroudas, Andrea Da Ronch, Guanqun Gai, Ilias Karachalios, Kenneth J. Badcock, Rafael Palacios",
+      "date": "2026-03-19",
+      "pdf": "https://arxiv.org/pdf/2603.18584v1",
+      "score": "6.0",
+      "evidence": "非线性系统的模型参考自适应控制",
+      "tldr": "本研究针对非线性气动弹性系统的阵风减载问题，提出了一种基于Lyapunov稳定性理论的模型参考自适应控制（MRAC）方法。该方法利用非线性降阶模型，通过实时调整控制增益实现对理想参考模型的跟踪。在3自由度翼型和全球鹰无人机上的仿真结果表明，MRAC在处理离散阵风和随机湍流方面均优于传统的H-infinity鲁棒控制，能显著降低翼尖变形并保证系统稳定性，为柔性飞机的阵风减载提供了有效方案。",
+      "tags": "query:em-force",
+      "abstract_en": "Model Reference Adaptive Control based on Lyapunov stability theory is developed for gust load alleviation of nonlinear aeroelastic systems. The controller operates on a nonlinear reduced-order model derived from Taylor series expansion and eigenvector projection of the coupled fluid-structure-flight dynamic equations. The complete MRAC formulation is presented, including the reference model design that encodes desired closed-loop damping characteristics, the adaptive control law with real-time gain adjustment, and the Lyapunov derivation of the adaptation law that guarantees asymptotic tracking in the linear case and bounded tracking under a Lipschitz condition on the nonlinear residual. The adaptation rate matrix is identified as the single most important design parameter, governing the trade-off between convergence speed, peak load reduction, and actuator demand. Two test cases are considered, a 3DOF aerofoil with cubic stiffness nonlinearities, and a Global Hawk type unmanned aerial vehicle. For the UAV under a discrete gusts, MRAC achieves significant wing-tip deflection reductions, outperforming the H infinity robust control benchmark with comparable control effort. Under Von Karman stochastic turbulence, meaningful reductions are also obtained, with performance scaling with the adaptation rate. The results demonstrate that MRAC provides an effective framework for GLA of flexible aircraft operating in both deterministic and stochastic disturbance environments.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/26/2603.19455v1-real-time-regulation-of-direct-ink-writing-using-model-reference-adaptive-control",
+      "section": "quick",
+      "title_en": "Real-Time Regulation of Direct Ink Writing Using Model Reference Adaptive Control",
+      "authors": "Mandana Mohammadi Looey, Amrita Basak, Satadru Dey",
+      "date": "2026-03-19",
+      "pdf": "https://arxiv.org/pdf/2603.19455v1",
+      "score": "6.0",
+      "evidence": "实时调节的模型参考自适应控制",
+      "tldr": "针对直写成型（DIW）技术在动态环境下难以保持打印精度和质量一致性的挑战，本文提出了一种基于降阶模型（ROM）的模型参考自适应控制（MRAC）策略。该方法针对水泥基材料系统，通过实时调整工艺参数来主动补偿系统不确定性和外部干扰，旨在最小化参考跟踪误差。研究通过Lyapunov分析严谨验证了系统的稳定性和收敛性，仿真结果表明该框架能显著提升挤出过程的准确性与鲁棒性。",
+      "tags": "query:em-force",
+      "abstract_en": "Direct Ink Writing (DIW) has gained attention for its potential to reduce printing time and material waste. However, maintaining precise geometry and consistent print quality remains challenging under dynamically varying operating conditions. This paper presents a control-focused approach using a model reference adaptive control (MRAC) strategy based on a reduced-order model (ROM) of extrusion-based 3D printing for a candidate cementitious material system. The proposed controller actively compensates for uncertainties and disturbances by adjusting process parameters in real time, with the objective of minimizing reference-tracking errors. Stability and convergence are rigorously verified via Lyapunov analysis, demonstrating that tracking errors asymptotically approach zero. Performance evaluation under realistic simulation scenarios confirms the effectiveness of the adaptive control framework in maintaining accurate and robust extrusion behavior.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/26/2603.23147v1-stable-inversion-of-discrete-time-linear-periodically-time-varying-systems-via-cyclic-reformulation",
+      "section": "quick",
+      "title_en": "Stable Inversion of Discrete-Time Linear Periodically Time-Varying Systems via Cyclic Reformulation",
+      "authors": "Hiroshi Okajima",
+      "date": "2026-03-24",
+      "pdf": "https://arxiv.org/pdf/2603.23147v1",
+      "score": "6.0",
+      "evidence": "周期系统前馈与迭代学习控制的稳定求逆方法",
+      "tldr": "本文针对离散时间线性周期时变（LPTV）系统，提出了一种基于循环重构的稳定逆系统构建方法。该方法通过将LPTV系统转化为等效的LTI表示，利用标准LTI逆系统理论推导出周期时变矩阵的显式闭式解，避免了传统方法中复杂的Floquet分解或非因果处理。研究涵盖了零相对度和高阶相对度系统，并利用循环系统的传输零点定义了稳定性条件，实现了实值因果的精确输入重构。",
+      "tags": "query:em-force",
+      "abstract_en": "Stable inverse systems for periodically time-varying plants are essential for feedforward control and iterative learning control of multirate and periodic systems, yet existing approaches either require complex-valued Floquet factors and noncausal processing or operate on a block time scale via lifting. This paper proposes a systematic method for constructing stable inverse systems for discrete-time linear periodically time-varying (LPTV) systems that avoids these limitations. The proposed approach proceeds in three steps: (i) cyclic reformulation transforms the LPTV system into an equivalent LTI representation; (ii) the inverse of the resulting LTI system is constructed using standard LTI inversion theory; and (iii) the periodically time-varying inverse matrices are recovered from the block structure of the cycled inverse through parameter extraction. For the fundamental case of relative degree zero, where the output depends directly on the current input, the inverse system is obtained as an explicit closed-form time-varying matrix expression. For systems with periodic relative degree r >= 1, the r-step-delayed inverse is similarly obtained in explicit closed form via the periodic Markov parameters. The stability of the resulting inverse system is characterized by the transmission zeros of the cycled plant, generalizing the minimum phase condition from the LTI case. Numerical examples for both relative degree zero and higher relative degree systems confirm the validity of the stability conditions and demonstrate the effectiveness of the proposed framework, including exact input reconstruction via causal real-valued inverse systems.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/26/2603.23843v1-dmr-effect-on-drag-reduction-of-a-streamlined-body-measured-by-magnetic-suspension-and-balance-system",
+      "section": "quick",
+      "title_en": "DMR effect on drag reduction of a streamlined body measured by Magnetic Suspension and Balance System",
+      "authors": "Aiko Yakeno, Hiroyuki Okuizumi, Kento Inokuma, Yoshiyuki Watanabe",
+      "date": "2026-03-25",
+      "pdf": "https://arxiv.org/pdf/2603.23843v1",
+      "score": "6.0",
+      "evidence": "用于气动力测量的磁悬浮平衡系统",
+      "tldr": "本研究利用东北大学的1米磁悬浮平衡系统（MSBS），首次实验验证了分布式微粗糙度（DMR）涂层在流线型模型上的减阻效果。研究发现，在过渡流区域，高度仅为边界层厚度1%的DMR能显著降低高达43.6%的空气动力阻力。结合大涡模拟（LES）和油流可视化分析，证实减阻主要源于边界层状态改变导致的摩擦阻力降低，而非抑制流动分离，为被动流动控制的表面设计提供了重要实验依据。",
+      "tags": "query:em-force",
+      "abstract_en": "This study experimentally investigates the aerodynamic drag reduction capabilities of distributed micro-roughness (DMR) coatings on a streamlined model, utilising the 1-m magnetic suspension and balance system (MSBS) at Tohoku University. Previous direct numerical simulations (DNS) indicated that DMR can mitigate turbulent-energy growth by suppressing Tollmien--Schlichting (TS) waves and influencing the breakdown of streamwise vortices. The present work provides the first experimental validation of these effects using an interference-free MSBS, which is essential for accurate measurement in the laminar and transitional regimes. A streamlined model was tested with two rows of artificial tripping tape to induce transition; the DMR height was approximately 1% of the local boundary layer thickness, significantly smaller than typical roughness elements. Direct aerodynamic drag measurements using the MSBS revealed a substantial reduction of up to 43.6% within the transitional flow regime. Crucially, integrated analysis using wall-resolved large-eddy simulations (LES) and dynamic oil-flow visualisation confirmed that this benefit does not mainly originate from the suppression of flow separation. The LES drag decomposition established that the total pressure-drag budget is subordinate to skin friction, a finding complemented by oil-flow observations, which revealed qualitatively similar flow patterns regardless of the surface condition. Consequently, the observed drag reduction is primarily ascribed to friction drag reduction achieved through the modification of the boundary layer state. These findings provide compelling experimental evidence for the efficacy of DMR and offer valuable insights for optimising surface designs for passive flow control.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

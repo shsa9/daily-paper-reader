@@ -6,44 +6,37 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-03-25
-- 运行时间：2026-03-25 19:35:11 UTC
+- 最新运行日期：2026-03-26
+- 运行时间：2026-03-26 20:11:01 UTC
 - 运行状态：成功
-- 本次总论文数：7
-- 精读区：0
-- 速读区：7
+- 本次总论文数：5
+- 精读区：1
+- 速读区：4
 
 ### 今日简报（AI）
-今日速读 7 篇前沿论文，深度探索非线性动力学优化与软体机器人高性能控制。
-重点关注磁悬浮能量采集器的非线性共振性能提升，以及软体机器人分布式柔顺性与高精度控制的协同方案。
-建议关注非线性动力学在能源采集与柔性自动化领域的交叉应用，寻找提升系统效率的新路径。
-- 详情：[/202603/25/README](/202603/25/README)
+今日聚焦量子控制与自适应调节，深入探讨高保真磁场波形合成及非线性系统优化。
+重点推荐数据驱动的量子控制波形合成技术，以及模型参考自适应控制在航空减载与 3D 打印中的实时应用。
+建议关注控制算法如何跨界提升精密物理实验与工业制造的动态响应精度。
+- 详情：[/202603/26/README](/202603/26/README)
 
 ### 精读区论文标签
-- 本次无精读推荐。
+1. [Data-driven synthesis of high-fidelity triaxial magnetic waveforms for quantum control](/202603/26/2603.24052v1-data-driven-synthesis-of-high-fidelity-triaxial-magnetic-waveforms-for-quantum-control)  
+   标签：评分：8.0/10、query:em-force
+   evidence：高保真三轴磁波形合成与放大器线圈补偿
 
 ### 速读区论文标签
-1. [Nonlinear Dynamics and Performance Optimization Based on Primary Resonance of an Electromechanically Coupled Magnetic Levitation Energy Harvester](/202603/25/2603.23296v1-nonlinear-dynamics-and-performance-optimization-based-on-primary-resonance-of-an-electromechanically-coupled-magnetic-levitation-energy-harvester)  
-   标签：评分：7.0/10、query:em-force
-   evidence：非线性磁悬浮系统与机电耦合
-2. [Reconciling distributed compliance with high-performance control in continuum soft robotics](/202603/25/2603.16630v1-reconciling-distributed-compliance-with-high-performance-control-in-continuum-soft-robotics)  
+1. [Model Reference Adaptive Control For Gust Load Allevation of Nonlinear Aeroelastic](/202603/26/2603.18584v1-model-reference-adaptive-control-for-gust-load-allevation-of-nonlinear-aeroelastic)  
    标签：评分：6.0/10、query:em-force
-   evidence：高性能闭环控制与动态精度
-3. [Data-driven forced response analysis with min-max representations of nonlinear restoring forces](/202603/25/2603.16746v1-data-driven-forced-response-analysis-with-min-max-representations-of-nonlinear-restoring-forces)  
+   evidence：非线性系统的模型参考自适应控制
+2. [Real-Time Regulation of Direct Ink Writing Using Model Reference Adaptive Control](/202603/26/2603.19455v1-real-time-regulation-of-direct-ink-writing-using-model-reference-adaptive-control)  
    标签：评分：6.0/10、query:em-force
-   evidence：非线性机械系统的数据驱动受迫响应分析
-4. [Non-contact mechanics of soft and liquid interfaces by hydrodynamic confinement using a frequency-modulated AFM](/202603/25/2603.17589v1-non-contact-mechanics-of-soft-and-liquid-interfaces-by-hydrodynamic-confinement-using-a-frequency-modulated-afm)  
+   evidence：实时调节的模型参考自适应控制
+3. [Stable Inversion of Discrete-Time Linear Periodically Time-Varying Systems via Cyclic Reformulation](/202603/26/2603.23147v1-stable-inversion-of-discrete-time-linear-periodically-time-varying-systems-via-cyclic-reformulation)  
    标签：评分：6.0/10、query:em-force
-   evidence：使用调频AFM对界面进行非接触式探测
-5. [On the Minimum Number of Control Laws for Nonlinear Systems with Input-Output Linearisation Singularities](/202603/25/2603.18947v1-on-the-minimum-number-of-control-laws-for-nonlinear-systems-with-input-output-linearisation-singularities)  
+   evidence：周期系统前馈与迭代学习控制的稳定求逆方法
+4. [DMR effect on drag reduction of a streamlined body measured by Magnetic Suspension and Balance System](/202603/26/2603.23843v1-dmr-effect-on-drag-reduction-of-a-streamlined-body-measured-by-magnetic-suspension-and-balance-system)  
    标签：评分：6.0/10、query:em-force
-   evidence：具有奇异性的非线性系统的反馈线性化
-6. [Sparse stability diagrams of LSCF method via strategic pole destabilization using orthogonal matching pursuit](/202603/25/2603.20614v1-sparse-stability-diagrams-of-lscf-method-via-strategic-pole-destabilization-using-orthogonal-matching-pursuit)  
-   标签：评分：6.0/10、query:em-force
-   evidence：通过强迫振动试验进行模态参数识别
-7. [Learning Actuator-Aware Spectral Submanifolds for Precise Control of Continuum Robots](/202603/25/2603.23044v1-learning-actuator-aware-spectral-submanifolds-for-precise-control-of-continuum-robots)  
-   标签：评分：6.0/10、query:em-force
-   evidence：非线性执行器动力学的精确控制
+   evidence：用于气动力测量的磁悬浮平衡系统
 
 
 <div class="dpr-home-promo-card">
