@@ -1,0 +1,90 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-03-27T20:07:05.643805+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2603.24811v1",
+      "title": "A Nonvolatile Switchable-polarity EPM Valve",
+      "abstract": "Scalable control of pneumatic and fluidic networks remains fundamentally constrained by architectures that require continuous power input, dense external control hardware, and fixed routing topologies. Current valve arrays rely on such continuous actuation and mechanically fixed routing, imposing substantial thermal and architectural overhead. Here, we introduce the Switchable-polarity ElectroPermanent Magnet (S-EPM), a fundamentally new bistable magnetic architecture that deterministically reverses its external magnetic polarity through transient electrical excitation. By reconfiguring internal flux pathways within a composite magnet assembly, the S-EPM establishes two stable, opposing magnetic configurations without requiring sustained power. We integrate this architecture into a compact pinch-valve to robustly control pneumatic and liquid media. This state-encoded magnetic control enables logic-embedded fluidic networks, including decoders, hierarchical distribution modules, and a nonvolatile six-port routing array. These systems provide address-based routing and programmable compositional control, offering features like individual port isolation that are impossible with standard mechanically coupled rotary valves. By embedding functionality in persistent magnetic states rather than continuous power or static plumbing, this work establishes a scalable foundation for digital fluidics and autonomous laboratory platforms.",
+      "authors": [
+        "Bingchao Wang",
+        "Jonah Mack",
+        "Francesco Giorgio-Serchi",
+        "Adam A. Stokes"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-03-25T20:47:13+00:00",
+      "link": "https://arxiv.org/pdf/2603.24811v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "reconfiguring internal flux pathways in magnetic architecture",
+      "llm_evidence_cn": "磁性结构中内部磁通路径的重构",
+      "llm_evidence": "磁性结构中内部磁通路径的重构",
+      "canonical_evidence": "磁性结构中内部磁通路径的重构",
+      "llm_tldr_en": "Introduces a bistable magnetic architecture that reverses polarity through transient electrical excitation.",
+      "llm_tldr_cn": "介绍了一种通过瞬态电激励反转极性的双稳态磁性架构。",
+      "llm_tldr": "介绍了一种通过瞬态电激励反转极性的双稳态磁性架构。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "flux feedback linearization zero bias magnetic bearing",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.25211v1",
+      "title": "On Port-Hamiltonian Formulation of HystereticEnergy Storage Elements: The Backlash Case",
+      "abstract": "This paper presents a port-Hamiltonian formulation of hysteretic energy storage elements. First, we revisit the passivity property of backlash-driven storage elements by presenting a family of storage functions associated to the dissipativity property of such elements. We explicitly derive the corresponding available storage and required supply functions `a la Willems [1], and show the interlacing property of the aforementioned family of storage functions sandwiched between the available storage and required supply functions. Second, using the proposed family of storage functions, we present a port-Hamiltonian formulation of hysteretic inductors as prototypical storage elements in port-Hamiltonian systems. In particular, we show how a Hamiltonian function can be chosen from the family of storage functions and how the hysteretic elements can be expressed as port-Hamiltonian system with feedthrough term, where the feedthrough term represents energy dissipation. Correspondingly, we illustrate its applicability in describing an RLC circuit (in parallel and in series) containing a hysteretic inductor element.",
+      "authors": [
+        "Jurrien Keulen",
+        "Bayu Jayawardhana",
+        "Arjan van der Schaft"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-03-26T09:13:54+00:00",
+      "link": "https://arxiv.org/pdf/2603.25211v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "port-Hamiltonian formulation of hysteretic inductors",
+      "llm_evidence_cn": "滞后电感器的端口哈密顿公式",
+      "llm_evidence": "滞后电感器的端口哈密顿公式",
+      "canonical_evidence": "滞后电感器的端口哈密顿公式",
+      "llm_tldr_en": "Provides a port-Hamiltonian framework for modeling hysteretic energy storage elements like inductors.",
+      "llm_tldr_cn": "为电感器等滞后储能元件的建模提供了端口哈密顿框架。",
+      "llm_tldr": "为电感器等滞后储能元件的建模提供了端口哈密顿框架。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "eddy current effects in electromagnetic actuators dynamic modeling",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

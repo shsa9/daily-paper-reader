@@ -1,0 +1,37 @@
+{
+  "label": "2026-03-27",
+  "date": "2026-03-27",
+  "generated_at": "2026-03-27T20:07:38",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202603/27/2603.24811v1-a-nonvolatile-switchable-polarity-epm-valve",
+      "section": "quick",
+      "title_en": "A Nonvolatile Switchable-polarity EPM Valve",
+      "authors": "Bingchao Wang, Jonah Mack, Francesco Giorgio-Serchi, Adam A. Stokes",
+      "date": "2026-03-25",
+      "pdf": "https://arxiv.org/pdf/2603.24811v1",
+      "score": "7.0",
+      "evidence": "磁性结构中内部磁通路径的重构",
+      "tldr": "针对气动和流体网络中持续功耗和固定路由的局限，本文提出了一种可切换极性的电永磁（S-EPM）架构。该架构通过瞬态电激励改变内部磁通路径，实现双稳态磁极反转，无需持续供电即可维持状态。基于此开发的紧凑型夹紧阀可构建逻辑嵌入式流体网络，实现可编程路由和独立端口隔离，为数字流体和自动化实验室平台提供了可扩展的非易失性控制方案。",
+      "tags": "query:em-force",
+      "abstract_en": "Scalable control of pneumatic and fluidic networks remains fundamentally constrained by architectures that require continuous power input, dense external control hardware, and fixed routing topologies. Current valve arrays rely on such continuous actuation and mechanically fixed routing, imposing substantial thermal and architectural overhead. Here, we introduce the Switchable-polarity ElectroPermanent Magnet (S-EPM), a fundamentally new bistable magnetic architecture that deterministically reverses its external magnetic polarity through transient electrical excitation. By reconfiguring internal flux pathways within a composite magnet assembly, the S-EPM establishes two stable, opposing magnetic configurations without requiring sustained power. We integrate this architecture into a compact pinch-valve to robustly control pneumatic and liquid media. This state-encoded magnetic control enables logic-embedded fluidic networks, including decoders, hierarchical distribution modules, and a nonvolatile six-port routing array. These systems provide address-based routing and programmable compositional control, offering features like individual port isolation that are impossible with standard mechanically coupled rotary valves. By embedding functionality in persistent magnetic states rather than continuous power or static plumbing, this work establishes a scalable foundation for digital fluidics and autonomous laboratory platforms.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/27/2603.25211v1-on-port-hamiltonian-formulation-of-hystereticenergy-storage-elements-the-backlash-case",
+      "section": "quick",
+      "title_en": "On Port-Hamiltonian Formulation of HystereticEnergy Storage Elements: The Backlash Case",
+      "authors": "Jurrien Keulen, Bayu Jayawardhana, Arjan van der Schaft",
+      "date": "2026-03-26",
+      "pdf": "https://arxiv.org/pdf/2603.25211v1",
+      "score": "6.0",
+      "evidence": "滞后电感器的端口哈密顿公式",
+      "tldr": "本文研究了具有迟滞特性的能量存储元件（以回差模型为例）的端口哈密顿（pH）建模方法。研究首先通过定义一系列存储函数重新审视了回差驱动元件的无源性，并明确推导了可用存储与所需供给函数。随后，利用这些存储函数构建了迟滞电感的pH模型，其中能量耗散通过直通项体现。最后，通过RLC电路实例验证了该模型在描述包含迟滞元件系统中的有效性。",
+      "tags": "query:em-force",
+      "abstract_en": "This paper presents a port-Hamiltonian formulation of hysteretic energy storage elements. First, we revisit the passivity property of backlash-driven storage elements by presenting a family of storage functions associated to the dissipativity property of such elements. We explicitly derive the corresponding available storage and required supply functions `a la Willems [1], and show the interlacing property of the aforementioned family of storage functions sandwiched between the available storage and required supply functions. Second, using the proposed family of storage functions, we present a port-Hamiltonian formulation of hysteretic inductors as prototypical storage elements in port-Hamiltonian systems. In particular, we show how a Hamiltonian function can be chosen from the family of storage functions and how the hysteretic elements can be expressed as port-Hamiltonian system with feedthrough term, where the feedthrough term represents energy dissipation. Correspondingly, we illustrate its applicability in describing an RLC circuit (in parallel and in series) containing a hysteretic inductor element.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
