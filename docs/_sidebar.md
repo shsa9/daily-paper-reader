@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-03-28 <!--dpr-date:20260328-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202603/28/2603.23944v1-ultrawide-bandwidth-optomechanical-magnetometry-using-flux-concentration" data-sidebar-item="{&quot;title&quot;: &quot;Ultrawide Bandwidth Optomechanical Magnetometry Using Flux Concentration&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2603.23944v1-ultrawide-bandwidth-optomechanical-magnetometry-using-flux-concentration&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;em-force&quot;}], &quot;evidence&quot;: &quot;用于低频磁场灵敏度增强的磁通集中技术&quot;}">Ultrawide Bandwidth Optomechanical Magnetometry Using Flux Concentration</a>
   * 2026-03-27 <!--dpr-date:20260327-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202603/27/2603.24811v1-a-nonvolatile-switchable-polarity-epm-valve" data-sidebar-item="{&quot;title&quot;: &quot;A Nonvolatile Switchable-polarity EPM Valve&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2603.24811v1-a-nonvolatile-switchable-polarity-epm-valve&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;em-force&quot;}], &quot;evidence&quot;: &quot;磁性结构中内部磁通路径的重构&quot;}">A Nonvolatile Switchable-polarity EPM Valve</a>

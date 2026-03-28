@@ -1,0 +1,58 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-03-28T20:07:10.648718+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2603.23944v1",
+      "title": "Ultrawide Bandwidth Optomechanical Magnetometry Using Flux Concentration",
+      "abstract": "Low-frequency magnetic fields carry vital information for neuroscience, navigation, and Earth science. However, they are generally weak, making it challenging to measure them with compact, room-temperature magnetometers. To overcome this challenge, we combine an on-chip optomechanical magnetometer with a high-permeability flux concentrator. Beyond boosting sensitivity and bandwidth, exploiting the concentrator's nonlinear response converts low-frequency magnetic fluctuations into higher-frequency signals where the sensor is intrinsically most responsive. This sidesteps the technical noise that has long constrained the application of optomechanical magnetometry at low frequencies. Our measurements show order-of-magnitude improvements in sensitivity and extend performance into the sub-hertz regime, achieving below 20 nT Hz$^{-1/2}$ down to 3 Hz and less than 100 nT Hz$^{-1/2}$ at 0.1 Hz. Because this approach requires no redesign of the underlying architecture, it can be readily applied across magnetometer technologies, opening the way to practical low-frequency sensing for applications from brain activity mapping to undersea navigation and biomedical diagnostics.",
+      "authors": [
+        "Benjamin J. Carey",
+        "Nathaniel Bawden",
+        "Fernando Gottardo",
+        "James S. Bennett",
+        "Douglas Bulla",
+        "Scott Foster",
+        "Warwick P. Bowen"
+      ],
+      "primary_category": "physics.optics",
+      "categories": [
+        "physics.optics",
+        "physics.app-ph"
+      ],
+      "published": "2026-03-25T05:06:04+00:00",
+      "link": "https://arxiv.org/pdf/2603.23944v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "flux concentration for low-frequency magnetic field sensitivity enhancement",
+      "llm_evidence_cn": "用于低频磁场灵敏度增强的磁通集中技术",
+      "llm_evidence": "用于低频磁场灵敏度增强的磁通集中技术",
+      "canonical_evidence": "用于低频磁场灵敏度增强的磁通集中技术",
+      "llm_tldr_en": "Uses flux concentration to improve magnetic sensing, relevant to high-precision flux feedback.",
+      "llm_tldr_cn": "利用磁通集中提高磁传感性能，与高精度磁通反馈相关。",
+      "llm_tldr": "利用磁通集中提高磁传感性能，与高精度磁通反馈相关。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "flux feedback control for magnetic bearing force precision",
+      "matched_requirement_id": "req-10",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

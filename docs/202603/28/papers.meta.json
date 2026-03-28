@@ -1,0 +1,23 @@
+{
+  "label": "2026-03-28",
+  "date": "2026-03-28",
+  "generated_at": "2026-03-28T20:07:36",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202603/28/2603.23944v1-ultrawide-bandwidth-optomechanical-magnetometry-using-flux-concentration",
+      "section": "quick",
+      "title_en": "Ultrawide Bandwidth Optomechanical Magnetometry Using Flux Concentration",
+      "authors": "Benjamin J. Carey, Nathaniel Bawden, Fernando Gottardo, James S. Bennett, Douglas Bulla, Scott Foster, Warwick P. Bowen",
+      "date": "2026-03-25",
+      "pdf": "https://arxiv.org/pdf/2603.23944v1",
+      "score": "6.0",
+      "evidence": "用于低频磁场灵敏度增强的磁通集中技术",
+      "tldr": "针对低频磁场测量中灵敏度受限和技术噪声大的难题，本研究将片上光力磁力计与高导磁率磁通集中器相结合。通过利用集中器的非线性响应，将低频磁信号转换为传感器响应最灵敏的高频信号，有效规避了低频噪声。该方法在不改变底层架构的情况下，显著提升了灵敏度并扩展了带宽，实现了亚赫兹量级的探测，为脑活动成像和水下导航等应用提供了新方案。",
+      "tags": "query:em-force",
+      "abstract_en": "Low-frequency magnetic fields carry vital information for neuroscience, navigation, and Earth science. However, they are generally weak, making it challenging to measure them with compact, room-temperature magnetometers. To overcome this challenge, we combine an on-chip optomechanical magnetometer with a high-permeability flux concentrator. Beyond boosting sensitivity and bandwidth, exploiting the concentrator's nonlinear response converts low-frequency magnetic fluctuations into higher-frequency signals where the sensor is intrinsically most responsive. This sidesteps the technical noise that has long constrained the application of optomechanical magnetometry at low frequencies. Our measurements show order-of-magnitude improvements in sensitivity and extend performance into the sub-hertz regime, achieving below 20 nT Hz$^{-1/2}$ down to 3 Hz and less than 100 nT Hz$^{-1/2}$ at 0.1 Hz. Because this approach requires no redesign of the underlying architecture, it can be readily applied across magnetometer technologies, opening the way to practical low-frequency sensing for applications from brain activity mapping to undersea navigation and biomedical diagnostics.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
