@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-03-29 <!--dpr-date:20260329-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202603/29/2603.24007v1-universal-scaling-laws-for-dynamical-thermal-hysteresis" data-sidebar-item="{&quot;title&quot;: &quot;Universal scaling laws for dynamical-thermal hysteresis&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2603.24007v1-universal-scaling-laws-for-dynamical-thermal-hysteresis&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;em-force&quot;}], &quot;evidence&quot;: &quot;磁性材料中的动态磁滞标度律&quot;}">Universal scaling laws for dynamical-thermal hysteresis</a>
   * 2026-03-28 <!--dpr-date:20260328-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202603/28/2603.23944v1-ultrawide-bandwidth-optomechanical-magnetometry-using-flux-concentration" data-sidebar-item="{&quot;title&quot;: &quot;Ultrawide Bandwidth Optomechanical Magnetometry Using Flux Concentration&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2603.23944v1-ultrawide-bandwidth-optomechanical-magnetometry-using-flux-concentration&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;em-force&quot;}], &quot;evidence&quot;: &quot;用于低频磁场灵敏度增强的磁通集中技术&quot;}">Ultrawide Bandwidth Optomechanical Magnetometry Using Flux Concentration</a>

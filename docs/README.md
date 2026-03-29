@@ -6,26 +6,26 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-03-28
-- 运行时间：2026-03-28 20:07:29 UTC
+- 最新运行日期：2026-03-29
+- 运行时间：2026-03-29 19:31:39 UTC
 - 运行状态：成功
 - 本次总论文数：1
 - 精读区：0
 - 速读区：1
 
 ### 今日简报（AI）
-今日聚焦利用磁通集中技术实现超宽频带光力磁力计的性能突破。
-该研究通过磁通集中器显著提升了光力传感器的探测带宽，为高灵敏磁场测量提供了新方案。
-推荐关注精密测量与量子传感的读者了解这种结合磁通增强与光力学的新型传感技术。
-- 详情：[/202603/28/README](/202603/28/README)
+今日聚焦物理系统中的滞后现象，深入探索动力学与热力学交织的普适规律。
+研究揭示了动力学-热滞后效应遵循统一的标度律，为理解复杂系统的非平衡态演化提供了通用数学框架。
+建议对非线性动力学或相变感兴趣的读者快速浏览，掌握这一描述系统迟滞行为的新视角。
+- 详情：[/202603/29/README](/202603/29/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Ultrawide Bandwidth Optomechanical Magnetometry Using Flux Concentration](/202603/28/2603.23944v1-ultrawide-bandwidth-optomechanical-magnetometry-using-flux-concentration)  
+1. [Universal scaling laws for dynamical-thermal hysteresis](/202603/29/2603.24007v1-universal-scaling-laws-for-dynamical-thermal-hysteresis)  
    标签：评分：6.0/10、query:em-force
-   evidence：用于低频磁场灵敏度增强的磁通集中技术
+   evidence：磁性材料中的动态磁滞标度律
 
 
 <div class="dpr-home-promo-card">

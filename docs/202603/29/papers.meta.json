@@ -1,0 +1,23 @@
+{
+  "label": "2026-03-29",
+  "date": "2026-03-29",
+  "generated_at": "2026-03-29T19:31:51",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202603/29/2603.24007v1-universal-scaling-laws-for-dynamical-thermal-hysteresis",
+      "section": "quick",
+      "title_en": "Universal scaling laws for dynamical-thermal hysteresis",
+      "authors": "Yachao Sun, Xuesong Li, Yanting Wang, Jing Zhou, Haiyang Bai, Yuliang Jin",
+      "date": "2026-03-25",
+      "pdf": "https://arxiv.org/pdf/2603.24007v1",
+      "score": "6.0",
+      "evidence": "磁性材料中的动态磁滞标度律",
+      "tldr": "动态滞后现象在能源和材料领域至关重要，但其回线面积与扫描速率的标度关系长期存在争议。本研究通过实验、模拟和理论推导，揭示了动态-热滞后的通用标度律：在不同速率下存在 R^{1/3} 到 R^{2/3} 的转变，且转变点受温度影响。该成果统一了以往研究中不一致的标度指数，为动态滞后材料的设计提供了理论指导。",
+      "tags": "query:em-force",
+      "abstract_en": "Dynamic hysteresis, the rate-dependent lagged response of materials to external fields, underpins applications from energy-efficient transformers to gas storage systems. A fundamental yet unresolved question is how the hysteresis loop area $A$ scales with the field sweep rate $R$. Here, we reveal that a competition between the field sweep and thermal fluctuations governs a universal crossover between two scaling regimes: $A - A_0 \\propto R^{1/3}$ for $R < R^*$ and $A - A_0 \\propto R^{2/3}$ for $R > R^*$, where $A_0$ is the quasi-static area and the crossover rate $R^* \\propto T/T_c$ depends on the temperature $T$ and the material's critical temperature $T_c$. We demonstrate these scaling laws universally across experiments of magnetic materials, simulations of Ising and metal-organic framework models, and analytical solutions of a stochastic Langevin equation. This framework not only resolves the long-standing non-universality of reported scaling exponents but also provides a direct design principle for the application of dynamic hysteresis.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

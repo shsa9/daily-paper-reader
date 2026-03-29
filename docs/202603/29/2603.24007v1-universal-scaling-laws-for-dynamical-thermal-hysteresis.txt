@@ -1,0 +1,1630 @@
+Title: Universal scaling laws for dynamical-thermal hysteresis
+
+URL Source: https://arxiv.org/pdf/2603.24007v1
+
+Published Time: Thu, 26 Mar 2026 00:41:00 GMT
+
+Number of Pages: 22
+
+Markdown Content:
+## Universal scaling laws for dynamical-thermal hysteresis 
+
+Yachao Sun, 1, ∗ Xuesong Li, 2, 3, ∗ Yanting Wang, 1, 4, 5 Jing Zhou, 2, 3, † Haiyang Bai, 3, 6, ‡ and Yuliang Jin 1, 4, 5, §
+
+> 1
+
+Institute of Theoretical Physics, Chinese Academy of Sciences, Beijing 100190, China 
+
+> 2
+
+Dongguan Institute of Materials Science and Technology, Chinese Academy of Sciences, Dongguan 523808, China 
+
+> 3
+
+Songshan Lake Materials Laboratory, Dongguan 523808, China 
+
+> 4
+
+School of Physical Sciences, University of Chinese Academy of Sciences, Beijing 100049, China 
+
+> 5
+
+Center for Theoretical Interdisciplinary Sciences, Wenzhou Institute, University of Chinese Academy of Sciences, Wenzhou, Zhejiang 325001, China 
+
+> 6
+
+Institute of Physics, Chinese Academy of Sciences, Beijing 100190, China 
+
+Dynamic hysteresis, the rate-dependent lagged response of materials to external fields, underpins applications from energy-efficient transformers to gas storage systems. A fundamental yet unresolved question is how the hysteresis loop area A scales with the field sweep rate R. Here, we reveal that a competition between the field sweep and thermal fluctuations governs a universal crossover between two scaling regimes: A − A0 ∝ R1/3 for R < R ∗ and A − A0 ∝ R2/3 for R > R ∗, where A0
+
+is the quasi-static area and the crossover rate R∗ ∝ T /T c depends on the temperature T and the material’s critical temperature Tc. We demonstrate these scaling laws universally across experiments of magnetic materials, simulations of Ising and metal-organic framework models, and analytical solutions of a stochastic Langevin equation. This framework not only resolves the long-standing non-universality of reported scaling exponents but also provides a direct design principle for the application of dynamic hysteresis. 
+
+Introduction. Hysteresis refers to the ubiquitous history-dependent response to an externally applied driv-ing field in systems with an underlying first-order phase transition (FOPT) [1–3]. In most cases, hysteresis is in-herently both dynamical and thermal : the delay in the response ϕ depends on the rate R of change of the driving field H and the temperature T of the system [4]. The de-pendence of the area A of the hysteresis ( ϕ-H) loop on R
+
+is known as hysteresis dispersion . For dynamical-thermal hysteresis , this relationship A(R) is itself a function of T .Hysteresis dispersion is a critical property in a vast range of applications. For example, in electric transform-ers, hysteresis loss (proportional to A) must be minimized to reduce energy wasted as heat in magnetic cores [5, 6]. In contrast, maximizing A is desirable in other contexts, such as for gas storage in porous materials like metal-organic frameworks (MOFs), where a large, rate-sensitive hysteresis can enhance working capacity [7, 8]. Despite its importance, a unified understanding of the behavior of A(R) has remained elusive. A power-law scal-ing of the form A − A0 ∝ Rα, where A0 is the quasi-static ( R → 0) hysteresis area, has been reported in nu-merous experiments and simulations across diverse sys-tems, including magnetic materials [9–11], electric mate-rial [12], optical devices [13, 14], strong correlation elec-tronic systems [15, 16], cold atomic system [17], Ising models [4, 18], and Langevin dynamics [19, 20]. While     
+
+> ∗These two authors contributed equally
+> †zhoujing@dimst.ac.cn
+> ‡hybai@iphy.ac.cn
+> §yuliangjin@mail.itp.ac.cn
+
+the data convincingly exhibit scaling over several or-ders of magnitude, the exponent α is found to be non-universal. A survey of the literature (see Supporting In-formation (SI) Table I) reveals that α typically falls be-tween 0 and 1, with its distribution showing two promi-nent peaks centered near α1 = 1 /3 and α0 = 2 /3 (see SI Fig. 5). The scaling of A(R) is well understood theoretically in the athermal limit ( T → 0). In this regime, the exponent α0 = 2/3 is successfully obtained from the mean-field (MF) solution of an athermal Langevin equa-tion [13] and from the driven dynamics of the Curie-Weiss model [21]. What remains poorly understood is how T
+
+alters the scaling of A(R). The framework of complete universal scaling (CUS) proposes collapsing hysteresis loops ϕ(H, R, T, a 2, a 4) by rescaling all relevant parame-ters with appropriate powers of R [22, 23]: ( ϕ−ϕs)R− 13 =Ψ
+
+h
+
+a2R− 13 , a 4R 13 , (H − Hs)R− 23 , T R −1
+
+i
+
+, where ( Hs, ϕ s)is the spinodal point of Ψ( H) with T = R = 0, and Ψ is a scaling function. This method requires rescaling parameters a2 and a4 appearing in the MF Landau free-energy. However, the system’s free energy is generally non-adjustable and often unknown in experiments and simulations. Moreover, it does not explicitly give the T -dependence of A(R). Here, we propose a two-piece scaling form that incor-porates both α1 = 1 /3 and α0 = 2 /3 exponents: 
+
+A − A0 ∝
+
+(
+
+R1/3, R < R ∗,R2/3, R > R ∗, (1) 
+
+> arXiv:2603.24007v1 [cond-mat.stat-mech] 25 Mar 2026
+
+2where, 
+
+R∗ = R0
+
+TTc
+
+, (2) with Tc denoting the critical temperature at which the FOPT (coexistence) line terminates, and R0 being a con-stant. This scaling behavior is observed experimentally in five magnetic materials and supported by simulations of Ising and MOF models. We further derive these scal-ing laws by combining the theories of Langevin dynamics and complete universal scaling. Although the exponents are derived by MF theories, they agree fairly well with experimental data. Physically, Eqs. (1) and (2) result from the intrinsic competition between field sweep and thermal fluctua-tions. The condition R/R 0 < T /T c facilitates thermal fluctuations relative to the driving field - the thermal activation from a metastable state thereby reduces dis-sipative losses compared to a counterpart athermal sys-tem ( T = 0) driven by the same rate R. Conversely, if 
+
+R/R 0 > T /T c, thermal fluctuations do not occur within the time scale ∼ 1/R and the system becomes effectively athermal. The universal scaling described by Eqs. (1) and (2) leads to a useful principle for material design. Despite extensive research, the nonlinear behavior of A(R) often relies on empirical descriptions [24, 25], making design a process of trial and error. The above scaling establishes a straightforward guideline: to minimize (maximize) the hysteresis loss in a system, one should optimize the com-bination of R and T to reach the thermal scaling regime 
+
+R < R ∗ = R0(T /T c) (athermal scaling regime, R > R ∗). 
+
+Experiments and simulations. We study hysteresis curves in the following systems. 
+
+(i) Experiments of magnetic materials. Ferromag-netic materials exhibit dynamic magnetic induction ( B)responses under alternating magnetic field ( H) excita-tion, characterized by typical hysteresis behavior [26, 27]. Here, five representative ferromagnetic alloys, namely Ni 80 Fe 15 Mo 5 permalloy, Fe 73 .5Si 15 .5B7Cu 1Nb 3 nanocrys-talline alloy, Fe 48 Co 50 V2 alloy, Fe-3wt%Si alloy and MnZn ferrite, are selected and fabricated into toroidal cores. Regulated by the synergistic effects of chemical compositions and microstructures, these materials ex-hibit a wide range of Curie temperatures Tc (see SI Ta-ble II). Hysteresis loop measurements of the samples are per-formed using an AC B-H analyzer, with the AC fre-quency R ranging from 50 Hz to 3000 Hz. Prior to the tests, copper wire windings with appropriate turns are wound on both sides of the toroidal core (see Fig. 1(a)). The primary winding is connected to an excitation source to apply alternating magnetic fields with different fre-quencies, thereby regulating the intensity of the exter-nally applied magnetic field ( H = Hinput ). The sec-ondary winding is dedicated to the real-time acquisition of signals reflecting the dynamic variation of the mag-netic induction intensity ( B = Boutput ) inside the core (see Methods Sec. A for further experimental details). To ensure consistency, all samples are magnetized to reach saturation under the same maximum value Hmax of the applied field intensity. Typical hysteresis loops are pre-sented in Fig. 1(b) (see SI Sec. III for additional data). The area A of the hysteresis loop is obtained by integrat-ing the B-H curve. 
+
+(ii) Simulations of Ising models. We perform Monte Carlo (MC) simulations of standard Ising models with nearest-neighbor (NN) interactions in two and three di-mensions (2D and 3D), as well as a generalized Ising model. In the generalized model, the spins si interact pairwise within an l × l square (containing l × l spins) (see Fig. 1(c) and Methods Sec. B). When l > l ∗ ≈ 10, this model is effectively MF; see SI Sec. IV. At T < T c,a thermodynamic FOPT occurs when the sign of H is reversed. In our simulations, the magnetic field varies linearly with time t (measured in MC steps), dH/dt = R,and its direction is reversed ( R → − R) when |H| reaches a large preset threshold Hmax . The response, quantified by the magnetization m = 1
+
+> N
+
+PNi=1 si, exhibits standard hysteresis behavior (see Fig. 1(d) for the MF Ising model with l = 13), from which the hysteresis area A(R) is determined (additional data are provided in SI Sec. IV). 
+
+(iii) Simulations of a MOF model. MOFs are soft porous crystals built from metal nodes connected by or-ganic linkers [7, 8]. They exhibit promising capabilities of molecular adsorption, which have wide industrial applica-tions, including gas separation, storage, and release [7]. We employ the 2D coarse-grained square lattice model incorporating elastic heterogeneity [28] to simulate the adsorption-desorption hysteresis in MOFs using the MC method (see Fig. 1(e) and Methods Sec. C for details). The fraction of adsorbed molecules Nads /N shows hys-teresis when the chemical potential μ of the guest par-ticle changes alternately (see Fig. 1(f)). The hysteresis area A(R) is estimated from the Nads /N -μ curve for the given linear rate R (see SI Sec. V for additional results). The above systems universally obey the scaling Eqs. (1) and (2), as shown in Fig. 2. In simulations, the quasi-static area A0 is estimated by the plateau value of 
+
+A(R) in the small-R limit. In experiments, the quasi-static limit is inaccessible, and A0 is extrapolated from the finite-R data (see SI Sec. VI). Once A0 determined, the A(R) data exhibit A − A0 ∝ R1/3 for R < R ∗, and exhibit A − A0 ∝ R2/3 for R > R ∗, where R∗ is the crossover rate separating the two behaviors. The data obtained from different systems all collapse, if they are rescaled by the crossover values ( A∗, R ∗) (see Fig. 2(a)). Furthermore, R∗ obeys Eq. (2), as shown by Fig. 2(b). The constant R0 is universal within each category: (i) 
+
+R0 ≈ 1550 Hz for experimental magnetic materials, (ii) 
+
+R0 ≈ 0.056 for Ising models, and (iii) R0 ≈ 0.001 for the MOF model. In fact, 1 /R 0 can be simply understood as the unit of time. 
+
+Langevin dynamics. A standard theoretical descrip-tion of hysteresis is based on the Langevin equation of the 3Permalloy Hmax  
+
+> Hinput
+> t
+> 1/ R
+> Bmax
+> Boutput
+> t
+> 1/ R
+> Hinput Boutput
+
+(a)  Primary  
+
+> Secondary
+> 00
+
+(c)  (e) −1,400 −700 0 700 1,400 
+
+−1
+
+−0.5
+
+0
+
+0.5
+
+1
+
+H
+
+> B
+> 100 Hz
+> 500 Hz
+> 800 Hz
+> 1700 Hz
+> 2900 Hz
+
+−0.3 −0.15 0 0.15 0.3
+
+−1
+
+−0.5
+
+0
+
+0.5
+
+1
+
+H
+
+> m
+> 10 −6
+> 10 −5
+> 10 −4
+> 10 −3
+> 10 −2
+
+1.6 1.8 2 2.2 2.4 2.6
+
+0
+
+0.2
+
+0.4
+
+0.6
+
+0.8
+
+1
+
+μ
+
+> Nads /N
+> 10 −7
+> 10 −5
+> 10 −4
+> 0.002
+> 0.001
+
+(b) (d) (f ) 
+
+T =300 K T =125 T =0.45 
+
+FIG. 1. Systems and their hysteresis curves. (a) Illustration of the experimental setup. (b) Magnetic induction -magnetic field ( B-H) curves measured in experiments. (c) Illustration of the generalized Ising model with l = 3 (dashed square). (d) Magnetization - magnetic field ( m-H) curves measured in simulations of the generalized Ising model ( l = 13). (e) Illustration of the MOF model. (f) Fraction of guest particles adsorbed in the host MOF, Nads /N , as a function of their chemical potential μ. In (b,d,f), R values are indicated in the figure legend. 
+
+order parameter ϕ [29, 30]: 
+
+dϕ dt = −λ dF(ϕ)
+
+dϕ + ξ, (3) in which λ is a kinetic constant and ξ is a Gaussian white noise, i.e., ⟨ξ(t)⟩ = 0 and ⟨ξ(t)ξ(t′)⟩ = 2 λT δ (t − t′) (the Boltzmann constant kB = 1). Here we consider the MF Landau free energy with a time-dependent external field 
+
+H = Rt ,
+
+F(ϕ) = 12 a2ϕ2 + 14 a4ϕ4 − Hϕ, (4) where a2 and a4 are constants, and in general one sets 
+
+a4 > 0. It is well known that a continuous transition oc-curs at a2 = 0, while a2 < 0 corresponds to a field-driven FOPT. Substituting Eq. (4) into Eq. (3), we obtain, 
+
+dϕ dt = −λ(a2ϕ + a4ϕ3 − H) + ξ. (5) With the noise term ( T = 0) ignored in Eq. (5), pre-vious studies have established, both analytically [13, 16] and numerically [13, 31], a scaling law, A − A0 ∝ R 23 .This can be seen from the following analysis. First, the stationary ( R → 0) solution H = a2ϕ + a4ϕ3 of Eq. (5) is obtained by setting dϕ dt = 0 (the black line in Fig. 3(a)). This solution is unstable between the two spinodal points, (Hs, ϕ s) = ( 2a2
+
+> 3
+
+q −a2 
+
+> 3a4
+
+,
+
+q −a2 
+
+> 3a4
+
+) and ( −Hs, −ϕs), deter-mined by dH dϕ = 0. With an increasing R, the hysteresis loop becomes lager, as shown by the numerical solutions in Fig. 3(a). In this case, the change in A scales with R,following A − A0 ∝ R 23 (see Fig. 3(b)), where A0 is the area of the stationary loop. If T > 0, thermal fluctuations can activate the system and drive it to overcome the free energy barrier. Numeri-cal solutions of Eq. (5) show that the jump of ϕ can occur before the spinodal point (see Fig. 3(c)). The data of the hysteresis area reveals a new scaling, A − A0 ∼ R1/3, for 
+
+R < R ∗ (see Fig. 3(d)), consistent with the experimental and simulation observations in Fig. 2(a). Varying T , we find that R∗ ∼ T , consistent with Eq. (2), as shown in Fig. 2(b), where R0/T c is a fitting parameter. 
+
+Scaling theory. To explain the above results, we de-velop a scaling theory. It can be shown that the hysteresis area is described by a scaling form, 
+
+A − A0 ∝ R 23
+
+"
+
+1 + c0
+
+ TR
+
+ 13
+
+#
+
+, (6) where c0 is a T -independent constant. This form fits 410 −3 10 −2 10 −1 10 0 10 1 10 2
+
+# 10 −2
+
+# 10 −1
+
+# 10 0
+
+# 10 1 (R/R ∗)1/3
+
+# (R/R ∗)2/3
+
+# Eq.(6) 
+
+# R/R ∗
+
+> A − A0/(A∗ − A0)
+
+FeCoV nanocrystal 
+
+2D Ising 3D Ising 
+
+MF Ising MOF 
+
+Langevin 
+
+# 0 0.25 0.5 0.75 1
+
+# 0
+
+# 0.2
+
+# 0.4
+
+# 0.6
+
+# 0.8
+
+# 1
+
+# T /T c
+
+# T /T c
+
+> R∗/R 0
+
+magnetic materials 
+
+2D Ising 
+
+3D Ising 
+
+MF Ising 
+
+MOF 
+
+Langevin 
+
+# (a) 
+
+# (b) 
+
+FIG. 2. Universal scaling of hysteresis dispersion in experiments and simulations. (a) ( A − A0)/(A∗ − A0) as a function of R/R ∗, where A∗ ≡ A(R∗). We include results from the Langevin equation, MOF models, Ising models and two experimental magnetic materials (nanocrystalline and Fe-CoV alloy). (b) R∗/R 0 as a function of T /T c (see SI Table II for the list of T , Tc and other model parameters). 
+
+our experimental and simulated data well (see Fig. 2(a)). When R → ∞ , the second term tends to zero and Eq. (6) reduces to the athermal result, A − A0 ∝ R2/3, whereas when R → 0, the second term dominates and Eq. (6) be-comes A − A0 ∝ R1/3. The separation of the two scalings occurs at R∗ ∼ T . To make the variables dimensionless, we rescale T by the natural reference temperature Tc,and R by a characteristic rate R0, which is a fitting pa-rameter. Thus Eq. (6) is consistent with Eqs. (1) and (2). Eq. (6) suggests a scaling function for the order pa-−4 −2 0 2 4
+
+−1
+
+−0.5
+
+0
+
+0.5
+
+1
+
+> spinodal
+> H/H s
+> ϕ
+> 0.2
+> 0.5
+> 1
+> 2
+> 5
+> 10
+
+−4 −2 0 2 4
+
+> H/H s
+> 0.01
+> 0.1
+> 1
+> 2
+> 5
+> 10
+
+10 −2 10 −1 10 0 10 1 10 2 10 3
+
+10 1
+
+10 2
+
+10 3
+
+10 4
+
+> R2/3
+> R
+> A − A0
+
+10 −2 10 −1 10 0 10 1 10 2 10 3
+
+10 2
+
+10 3
+
+10 4
+
+> R2/3
+> R1/3
+> R
+
+(a) 
+
+(b) 
+
+(c) 
+
+(d)  
+
+> RR
+
+FIG. 3. Langevin dynamics. (a) Dynamical hysteresis by solving Eq. (5) with T = 0. The solid (dashed) black curve is the quasi-static equation H = a2ϕ + a4ϕ3, and the two solid circles denote the spinodal points. (b) Hysteresis area A − A0
+
+versus R with T = 0. (c) Dynamical-thermal hysteresis for Eq. (5) with T = 2 and its corresponding scaling (d). We set 
+
+a2 = −400, a4 = 948 and λ = 0 .0005. 
+
+rameter (see SI Sec. VII for the derivation), 
+
+ϕ − ϕ0 = Φ( ˜heff ) = Φ 
+
+" ˜h
+
+1 + c0 ˜T 13
+
+#
+
+, (7) where ˜h ≡ (H − H0)R− 23 , ˜T ≡ T R −1 and ˜heff = ˜h  
+
+> 1+ c0˜T13
+
+.We can show that Eq. (7) is equivalent to Eq. (6). In-deed, because the height (along the ϕ-axis) of the hys-teresis loop is independent of R (see Fig. 3(a), (c)), we only need to consider the R-dependence of H. Then, 
+
+A − A0 ∝ H − H0 ∝ R 23
+
+h˜heff (1 + c0 ˜T 13 )
+
+i
+
+. This is equiv-alent to Eq. (6), considering that ˜heff is a constant for a given ϕ according to Eq. (7). Eq. (7) is validated by the numerical solutions of the Langevin equation in Fig. 4, through the data collapse in the transition regime where 
+
+A is determined. It is interesting to compare Eq. (7) with the CUS proposed in Refs. [22, 23], ˜ϕ = Ψ(˜ a2, ˜a4, ˜h, ˜T ), where ˜ϕ ≡ (ϕ − ϕ0)R− 13 , ˜ a2 ≡ a2R− 13 and ˜ a4 ≡ a4R 13 . While Eq. (7) and CUS rescale T and H in the same way, there are three essential differences. (i) The CUS requires to rescale all relevant parameters to collapse the hysteresis curves, including the potential energy parameters a2 and 
+
+a4 in Eq. (4), which are fixed in our experiments and simulations. (ii) Eq. (7) shows that ˜h and ˜T are not in-dependent as in the CUS; they should be combined into a single variable, ˜heff - this results in the crossover between 5−300 −200 −100 0 100 200 300 
+
+# −1
+
+# 0
+
+# 1
+
+# 2
+
+T =0.8 
+
+T =2 
+
+T =8 
+
+T =0.08 
+
+T =0.2 
+
+T =0.8 
+
+T =2 
+
+T =8 
+
+# ˜h/ (1 + c0 ˜T 1/3)
+
+> ϕ − ϕ0
+
+T =0.08 
+
+T =0.2 
+
+T =0.8 
+
+T =2 
+
+T =8 
+
+T =0.08 
+
+T =0.2                   
+
+> FIG. 4. Scaling collapse according to Eq. (7). Data are obtained by numerically solving the Langevin equation Eq. (5), with a2=−400, a4= 948 and λ= 0 .0005. The fitting parameter c0= 4. Solid lines, dashed lines and dotted lines correspond to R= 0 .01, R= 1 and R= 100, respec-tively.
+
+1/3 and 2 /3 scalings. (iii) While the CUS collapses entire hysteresis loops, Eq. (7) only collapses them in the tran-sition regime, 0 ≤ ϕ − ϕ0 ≤ 2( ϕI − ϕ0), where ( HI , ϕ I )is the inflection point at the maximum dϕ/dH . Indeed, a similar scaling is observed for HI : HI − H0 ∝ R1/3
+
+for R < R ∗, and HI − H0 ∝ R2/3 for R > R ∗ (see SI Sec. VII). Because A − A0 ∝ HI − H0 (the height of 
+
+A is R-independent), this scaling is fully consistent with Eq. (1). The above scaling functions, Eqs. (6) and (7), reveal the origin of the universal scaling of dynamical-thermal hysteresis, Eqs. (1) and (2). First, in the athermal limit 
+
+T → 0, the exponent α0 = 2 /3 is solely determined by the R-dependent scaling of the field, ˜h = ( H − H0)R− 23 ,which is a dynamical effect. Second, in the high temper-ature regime, the scaling invariable becomes, ˜h/ ˜T 1/3 =(H − H0)( RT )−1/3, giving the 1 /3 scaling. Third, the crossover frequency R∗ is T -dependent because of the invariance ˜T ≡ T R −1. If R > R ∗, the dynamics are ef-fectively athermal - it means that the external field is varied so fast such that activations do not have sufficient time to occur. Our results thus unveil coupled dynamical and thermal effects on hysteresis. 
+
+Discussion. Our study reveals a fundamental compe-tition between the rate of the applied sweeping field and thermal fluctuations in determining hysteresis behavior. These results lead to a practical design principle: one can tune the hysteresis loss through effectively switch on or off the thermal fluctuations, by setting R/R 0 < T /T c or 
+
+R/R 0 > T /T c respectively. The theoretical analyses presented above are based on the MF Langevin equation. The MF exponents ( α0 =2/3 and α1 = 1 /3) show good agreement with data from non-MF systems, including the 2D and 3D Ising models and experimental magnetic materials. This agreement suggests that spatial fluctuations do not play a significant role in determining the scaling behavior of hysteresis. In contrast to typical critical phenomena, finite-size effects on the hysteresis loop are negligible (see SI Sec. IV), im-plying that spatial correlations are irrelevant. Neverthe-less, we cannot exclude the possibility of non-MF correc-tions to the scaling exponents [22], as such corrections may be too small to detect given the resolution of our simulations and experiments. The established universal scaling serves as a solid start-ing point for more complete descriptions of hysteresis. For instance, eddy currents - induced in conductive mag-netic materials according to Faraday’s law of induction -lead to energy losses that scale with the rate as A(R) ∼
+
+R2 in the high-frequency regime [32]. Such effects, how-ever, are highly system-specific and lie beyond the scope of the present analysis. A promising direction for future research involves investigating how structural disorder in-fluences hysteresis dispersion in amorphous systems, such as metallic glasses. In these materials, the absence of long-range atomic order can significantly alter domain-wall dynamics and dissipation mechanisms, leading to more complex behavior such as scale-free avalanches [33]. 
+
+Acknowledgments. This work was supported by the National Natural Science Foundation of China (Grant Nos. 52192601, 52192602, 12447101) and Wenzhou Insti-tute (Grant No. WIUCASICTP2022). YJ acknowledges funding from the National Key R&D Program of China (Grant No. 2025YFF0512000) and Project supported by the Space Application System of China Manned Space Program. YS acknowledges funding from National Nat-ural Science Foundation of China (Grant No. 12447118). The authors acknowledge the use of the High Perfor-mance Cluster at Institute of Theoretical Physics, Chi-nese Academy of Sciences, and the computer clusters at the Hefei advanced computing center. 
+
+# Methods 
+
+A. Experimental setup and samples. Commer-cial Ni 80 Fe 15 Mo 5 permalloy ribbon (100 μm in thick-ness, 15 mm in width) is ultrasonically cleaned in an-hydrous ethanol for 15 minutes to eliminate surface oils and contaminants. A specialized automatic winding ma-chine is then employed to fabricate toroidal cores with a standard geometry (outer diameter: 30 mm, inner di-ameter: 20 mm). Using identical cleaning and winding protocols, commercial Fe 48 Co 50 V alloy ribbon (100 μmin thickness, 15 mm in width) are wound into toroidal cores (outer diameter: 30 mm, inner diameter: 20 mm), whereas Fe-3wt%Si alloy ribbon (0.4 mm in thickness, 20 mm in width) forms toroidal cores with an outer diam-eter of 38 mm and an inner diameter of 22 mm. The 6commercial Mn-Zn ferrite is fabricated via the conven-tional sintering process, with the resulting sample hav-ing dimensional parameters of 36.5 mm × 15.5 mm ×
+
+23 mm (outer diameter × inner diameter × height). For the Fe 73 .5Si 15 .5B7Cu 1Nb 3 nanocrystalline alloy, a thin-ner and narrower ribbon (15 μm in thickness, 10 mm in width) is wound into toroidal cores matching the aforementioned geometry, followed by transverse mag-netic field crystallization annealing to optimize soft mag-netic properties. Specifically, the nanocrystalline core is isothermally annealed at 833 K for 120 minutes under a constant transverse magnetic field of 1000 Gs throughout the annealing process. The hysteresis loops of all samples are measured us-ing a SY-8258 AC B-H analyzer (Iwasaki Tsushinki Co., Ltd., Japan). Prior to the measurements, the instrument is calibrated with a standard sample to ensure the accu-racy of the test results. Subsequently, primary and sec-ondary windings with an appropriate number of turns are wound on each toroidal core, which are then connected to the corresponding interfaces of the analyzer. After in-putting the core dimensional parameters and preset test conditions (including the AC frequency and maximum applied field intensity), the hysteresis loops of the ma-terials under diverse frequencies and applied magnetic fields are automatically recorded by the analyzer. All measurements are carried out at the room temperature (about 300 K). 
+
+B. Simulation method of Ising models. In the standard Ising model, spins are placed on 2D and 3D square lattices, and interact with their nearest neighbors. In addition, we consider a generalized Ising model on a 
+
+L × L = 140 × 140 square lattice in 2D, whose interaction range is within a l × l square, as shown in Fig. 1(c). The Hamiltonian of this model is given by 
+
+HIsing = −J X
+
+> i∀,j ∈l2
+
+sisj − H(t) X
+
+> i
+
+si, (8) where l2 = 3 × 3, 5 × 5, 7 × 7 . . . denotes the l × l square centered around i; l = 3 is equivalent to the next nearest-neighbor (NNN) Ising model. Here J ≡ J0/k BT is the coupling strength of interactions and H(t) ≡ H0(t)/k BT
+
+(they are both dimensionless), and J0 and the Boltzmann constant kB are both set to unity hereafter. Thus J is the control parameter of the ratio between potential and thermal energies, and the other control parameter is the driving rate R. In MC simulations, the magnetic field varies linearly with time t (MC steps), dH/dt = R, with its direction reversed ( R → − R) when |H| reaches a large preset threshold ±Hmax , to ensure that the hysteresis loop is saturated (see Fig. 1 (d)). Before the hystere-sis measurement, an equilibrium state is prepared by 10 4
+
+steps under H = −Hmax and T < T c, starting from an all-spin-down initial configuration. The order parameter, the magnetization m = 1
+
+> N
+
+PNi si, and the corresponding susceptibility χ, are averaged over 320 independent sam-ples. Periodic boundary conditions are applied in both directions. 
+
+C. Simulation method of the MOF model. The MOF model [28] is a coarse-grained 2D lattice with 
+
+N = L×L host particles, where guest particles can be ad-sorbed/desorbed by the host matrix formed by the host particles, see Fig. 1(e). Each plaquette (unit cell) can accommodate only one guest particle, and the plaquette expands/contracts isotropically by adsorbing/desorbing the guest particles. There are N plaquettes, which can adsorb up to N guest particles. Periodic boundary condi-tions are applied. The Hamiltonian comprises the lattice site positions ri (i = 1 , 2, 3, ..., N ) and the variables on the plaquettes σj (j = 1 , 2, 3, ..., N ) taking 1 (presence of a guest particle) or 0 (absence), 
+
+HMOF =
+
+> N
+
+X
+
+> j=1
+
+
+
+V1({ri∈j }) + σj [V2({ri∈j }) − μ]
+
+
+
+, (9) where i ∈ j denotes all particles at the vertices of the 
+
+j-th plaquette and μ is the chemical potential of the ad-sorption of guest particles. Here, 
+
+V1({ri∈j }) = 14
+
+X
+
+> NN
+
+(1 − rij )2 + 12
+
+X
+
+> NNN
+
+(√2 − rij )2 (10) represents the potential energy of a plaquette, where rij 
+
+is the distance between two host particles. The second term, 
+
+V2({ri∈j }) = 
+
+k
+
+"
+
+14
+
+X
+
+> NN
+
+(1 + a − rij )2 + 12
+
+X
+
+> NNN
+
+(√2(1 + a) − rij )2
+
+#
+
+,
+
+(11) is the effective interaction between the host and guest particles, where k is the relative energy scale of the host-guest interaction, and a is a deformation coefficient of the plaquette. Here the elastic constant and natural length of the square plaquette are both set to unity, and thus all quantities are nondimensionalized. When ka > 0, the adsorption gives rise to lattice expansion; whereas when 
+
+ka < 0, it induces contraction. We only focus on the case of ka > 0. We set L = 24, and have examined that the finite size effects are negligible. Since we consider isotropic swelling in the adsorption process, the osmotic ensemble [34] is appropriate. The control thermodynamic parameters are the hydrostatic pressure P , temperature T and chemical potential of guest particles μ. Here we set P = 0 without losing generality, and fix T below Tc to study the adsorption-desorption hysteresis caused by changing μ. We use two sets of parameters, k = 5, a = 0 .6 and k = 3, a = 2 /3, with critical temperatures Tc = 0 .7 and 0.53, respec-tively. The corresponding phase diagrams are presented in Ref. [28]. MC simulations are performed to investigate the hys-teresis behavior of the adsorption-desorption transition. Firstly, in the initial configuration, all plaquettes are un-occupied ( {σi = 0 }). Next we equilibrate the system by 7
+
+t = 10 4 MC steps under the chemical potential μ = μmin .Then μ = Rt varies linearly (similar to the Ising MC sim-ulations in Methods Sec. B). Each MC step consists of three parts: one Metropolis sweep for the occupied pla-quettes {σi}, L iterations of sweeps for the lattice posi-tions ri, and L iterations for the affine volume V . The average swelling ratio is b ≡ pV /V 0, where V0 = N .The MC step sizes are limited such that |ri| < 0.1 and 
+
+|b| < 0.01, and the bond overlaps are prohibited to pre-serve the square lattice configuration. The order param-eter is the fraction of guest particles, Nads /N , which is averaged over 320 independent samples. 
+
+[1] M. Brokate and J. Sprekels, Hysteresis and phase tran-sitions , Vol. 121 (Springer Science & Business Media, 2012). [2] M. A. Krasnosel’skii and A. V. Pokrovskii, Systems with hysteresis (Springer Science & Business Media, 2012). [3] D. Jiles and D. Atherton, Theory of ferromagnetic hys-teresis, J. Magn. Magn. Mater. 61 , 48 (1986). [4] B. K. Chakrabarti and M. Acharyya, Dynamic transi-tions and hysteresis, Rev. Mod. Phys. 71 , 847 (1999). [5] J. M. Silveyra, E. Ferrara, D. L. Huber, and T. C. Mon-son, Soft magnetic materials for a sustainable and elec-trified world, Science 362 , eaao0195 (2018). [6] Y. Yoshizawa, S. Oguma, and K. Yamauchi, New fe-based soft magnetic alloys composed of ultrafine grain struc-ture, J. Appl. Phys. 64 , 6044 (1988). [7] S. Horike, S. Shimomura, and S. Kitagawa, Soft porous crystals, Nat. Chem. 1, 695 (2009). [8] H. Furukawa, K. E. Cordova, M. O’Keeffe, and O. M. Yaghi, The chemistry and applications of metal-organic frameworks, Science 341 , 1230444 (2013). [9] Q. Jiang, H.-N. Yang, and G.-C. Wang, Scaling and dy-namics of low-frequency hysteresis loops in ultrathin co films on a cu(001) surface, Phys. Rev. B 52 , 14911 (1995). [10] J.-S. Suen and J. L. Erskine, Magnetic hysteresis dynam-ics: Thin p(1 × 1) fe films on flat and stepped w(110), Phys. Rev. Lett. 78 , 3567 (1997). [11] Y.-L. He and G.-C. Wang, Observation of dynamic scal-ing of magnetic hysteresis in ultrathin ferromagnetic fe/au(001) films, Phys. Rev. Lett. 70 , 2336 (1993). [12] Y.-H. Kim and J.-J. Kim, Scaling behavior of an anti-ferroelectric hysteresis loop, Phys. Rev. B 55 , R11933 (1997). [13] P. Jung, G. Gray, R. Roy, and P. Mandel, Scaling law for dynamical hysteresis, Phys. Rev. Lett. 65 , 1873 (1990). [14] A. Hohl, H. J. C. van der Linden, R. Roy, G. Goldsztein, F. Broner, and S. H. Strogatz, Scaling laws for dynamical hysteresis in a multidimensional laser system, Phys. Rev. Lett. 74 , 2220 (1995). [15] T. Bar, S. K. Choudhary, M. A. Ashraf, K. S. Sujith, S. Puri, S. Raj, and B. Bansal, Kinetic spinodal insta-bilities in the mott transition in v 2o3: Evidence from hysteresis scaling and dissipative phase ordering, Phys. Rev. Lett. 121 , 045701 (2018). [16] S. Kundu, R. K. Patel, S. Middey, and B. Bansal, Dy-namic hysteresis at a noisy saddle node shows power-law scaling but nonuniversal exponent, Phys. Rev. E 108 ,024101 (2023). [17] W. Lee, J.-H. Kim, J. G. Hwang, H.-R. Noh, and W. Jhe, Scaling of thermal hysteretic behavior in a parametrically modulated cold atomic system, Phys. Rev. E 94 , 032141 (2016). [18] W. S. Lo and R. A. Pelcovits, Ising model in a time-dependent magnetic field, Phys. Rev. A 42 , 7471 (1990). [19] M. Rao, H. R. Krishnamurthy, and R. Pandit, Magnetic hysteresis in two model spin systems, Phys. Rev. B 42 ,856 (1990). [20] Z. Fan and Z. Jinxiu, Scaling of thermal hysteresis with temperature scanning rate, Phys. Rev. E 51 , 2898 (1995). [21] Y.-X. Wu, J.-F. Chen, and H. T. Quan, Ergodicity break-ing and scaling relations for finite-time first-order phase transition, Phys. Rev. Lett. 134 , 177101 (2025). [22] F. Zhong and Q. Chen, Theory of the dynamics of first-order phase transitions: Unstable fixed points, ex-ponents, and dynamical scaling, Phys. Rev. Lett. 95 ,175701 (2005). [23] F. Zhong, Complete universal scaling in first-order phase transitions, Chin. Phys. Lett. 41 , 100502 (2024). [24] Y. Tomita, T. Ogasawara, H. Takabayashi, and T. Iriyama, Analysis of iron loss and complex per-meability spectra for transverse-field-annealed fe-based nanocrystalline core, AIP Adv. 15 , 035115 (2025). [25] A. Magni, F. Fiorillo, A. Caprile, E. Ferrara, and L. Mar-tino, Fluxmetric-magnetooptical approach to broadband energy losses in amorphous ribbons, J. Appl. Phys. 109 ,07A322 (2011). [26] E. A. P´ erigo, B. Weidenfeller, P. Koll´ ar, and J. F¨ uzer, Past, present, and future of soft magnetic composites, Appl. Phys. Rev. 5, 031301 (2018). [27] O. Gutfleisch, M. A. Willard, E. Br¨ uck, C. H. Chen, S. G. Sankar, and J. P. Liu, Magnetic materials and devices for the 21st century: Stronger, lighter, and more energy efficient, Adv. Mater. 23 , 821 (2011). [28] K. Mitsumoto and K. Takae, Elastic heterogeneity gov-erns asymmetric adsorption-desorption in a soft porous crystal, Proc. Natl. Acad. Sci. U.S.A. 120 , e2302561120 (2023). [29] P. C. Hohenberg and B. I. Halperin, Theory of dynamic critical phenomena, Rev. Mod. Phys. 49 , 435 (1977). [30] N. Goldenfeld, Lectures on phase transitions and the renormalization group (CRC Press, 2018). [31] C. N. Luse and A. Zangwill, Discontinuous scaling of hys-teresis losses, Phys. Rev. E 50 , 224 (1994). [32] B. D. Cullity and C. D. Graham, Introduction to mag-netic materials (John Wiley & Sons, 2011). [33] J. P. Sethna, K. A. Dahmen, and C. R. Myers, Crackling noise, Nature 410 , 242 (2001). [34] F.-X. Coudert, M. Jeffroy, A. H. Fuchs, A. Boutin, and C. Mellot-Draznieks, Thermodynamics of guest-induced structural transitions in hybrid organic–inorganic frame-works, J. Am. Chem. Soc. 130 , 14294 (2008). [35] J.-M. Liu, H. P. Li, C. K. Ong, and L. C. Lim, Fre-quency response and scaling of hysteresis for ferroelectric pr(zr0.52ti0.48)o3 thin films deposited by laser ablation, J. Appl. Phys. 86 , 5198 (1999). [36] J.-M. Liu, H. Chan, and C. Choy, Scaling behavior of dynamic hysteresis in multi-domain spin systems, Mater. 8
+
+Lett. 52 , 213 (2002). [37] B. Pan, H. Yu, D. Wu, X. H. Zhou, and J.-M. Liu, Dy-namic response and hysteresis dispersion scaling of ferro-electric srbi2ta2o9 thin films, Appl. Phys. Lett. 83 , 1406 (2003). [38] B. Pan, Y. Yang, L.-C. Yu, J.-M. Liu, K. Li, Z. Liu, and H. Chan, Low frequency dispersion of ferroelectric hysteresis in 1–3 pb0.95la0.05tio3/polymer ferroelectric composites, Mater. Sci. Eng. B 99 , 179 (2003). [39] J. Zhang, F. Zhong, and G. Siu, The scanning-rate depen-dence of energy dissipation in first-order phase transition of solids, Solid State Commun. 97 , 847 (1996). [40] Z. Kuang, J. Zhang, X. Zhang, K. Liang, and P. Fung, Scaling behaviours in the thermoelastic martensitic transformation of co, Solid State Commun. 114 , 231 (2000). [41] S. Yıld ız, O. Pekcan, A. N. Berker, and H. ¨Ozbek, Scaling of thermal hysteresis at nematic-smectic-a phase transition in a binary mixture, Phys. Rev. E 69 , 031705 (2004). [42] Z. Geng, K. J. H. Peters, A. A. P. Trichet, K. Malmir, R. Kolkowski, J. M. Smith, and S. R. K. Rodriguez, Universal scaling in the dynamic hysteresis, and non-markovian dynamics, of a tunable optical cavity, Phys. Rev. Lett. 124 , 153603 (2020). [43] S. R. K. Rodriguez, W. Casteels, F. Storme, N. Car-lon Zambon, I. Sagnes, L. Le Gratiet, E. Galopin, A. Lemaˆ ıtre, A. Amo, C. Ciuti, and J. Bloch, Probing a dissipative phase transition via dynamical optical hys-teresis, Phys. Rev. Lett. 118 , 247402 (2017). [44] W. Casteels, F. Storme, A. Le Boite, and C. Ciuti, Power laws in the dynamic hysteresis of quantum nonlinear pho-tonic resonators, Phys. Rev. A 93 , 033824 (2016). [45] M. Acharyya and B. K. Chakrabarti, Response of ising systems to oscillating and pulsed fields: Hysteresis, ac, and pulse susceptibility, Phys. Rev. B 52 , 6550 (1995). [46] G. P. Zheng and J. X. Zhang, Thermal hysteresis scal-ing for first-order phase transitions, J. Phys.: Condensed Matter 10 , 275 (1998). [47] J.-M. Liu, H. L. W. Chan, C. L. Choy, and C. K. Ong, Scaling of hysteresis dispersion in a model spin system, Phys. Rev. B 65 , 014416 (2001). [48] F. Zhong, J. X. Zhang, and G. G. Siu, Dynamic scaling of hysteresis in a linearly driven system, J. Phys.: Con-densed Matter 6, 7785 (1994). [49] D. Dhar and P. B. Thomas, Hysteresis and self-organized criticality in the O(N) model in the limit N → infinity, J. Phys. A 25 , 4967 (1992). [50] A. M. Somoza and R. C. Desai, Kinetics of systems with continuous symmetry under the effect of an external field, Phys. Rev. Lett. 70 , 3279 (1993). [51] M. Rao and R. Pandit, Magnetic and thermal hysteresis in the o(n)-symmetric (Φ 2)3 model, Phys. Rev. B 43 ,3373 (1991). [52] P. L. Krapivsky, S. Redner, and E. Ben-Naim, A kinetic view of statistical physics (Cambridge University Press, 2010). [53] M. H. Holmes, Introduction to perturbation methods ,Vol. 20 (Springer Science & Business Media, 2012). 9
+
+I. SUMMARY OF THE COEFFICIENT α REPORTED IN THE LITERATURE. 
+
+The exponent α in the scaling A − A0 ∝ Rα has been extensively studied. Table I provides a list of α reported in the literature. In Fig. 5, the histogram of these reported values is plotted. 
+
+TABLE I. Coefficient α reported in the literature. 
+
+Category System Method Scaling exponent 
+
+magnetic materials Co/Cu film [9] experimental 2/3 Fe/W film [10] 0.02 Fe/Cu film [11] 0.31 electric materials PZT thin film [35, 36] 1/3 BPA bulk [12] 0.4 SBT thin film [37] 2/3 PLT [38] 1/3 Mott transition VO 2 [39] 0.42 V2O3 [15] 0.62(heat) 0.64(cool) NdNiO 3 thin film [16] 0.36(heat) 0.31(cool) Martensitic transition Co [40] 0.39(heat) 0.49(cool) FeMn alloy [39] 0.699 structure transition RbNO 3 [39] 0.28 liquid crystal [41] 0.692 cold atomic system Rb atom [17] 0.64 optical device bistable semiconductor laser diode [13] 2/3 bistable semiconductor laser [14] 2/3 optical cavity [42] 0.25 bistable semiconductor laser [43] 1.0 photonic resonators [44] numerical 2/3 bistable semiconductor laser [14] 0.6 Ising model 2D Ising [18, 45] 0.36 2D Ising [4] 0.3 3D Ising [45] 0.45 3D Four-spin Ising (SC) [46] 0.47 3D Four-spin Ising (FCC) [46] 0.7 mean-field Ising [31] 2/3 Heisenberg model 3D mean-field Heisenberg [47] 0.25 2D mean-field Heisenberg [47] 0.25 Langevin equation (Φ 2)2 model [19] 1/3 (Φ 2)2 model [48] 0.5 (Φ 2)3 model [48] 0.7 (Φ 2)3 model [20] 2/3 mean field [13, 16] analytical 2/3 (Φ 2)2 model [49, 50] 0.5 10 0 0.2 0.4 0.6 0.8 1
+
+# 0
+
+# 2
+
+# 4
+
+# 6
+
+# 8
+
+# 10 
+
+# 1/32/3
+
+# α
+
+> count
+
+FIG. 5. Histogram of the exponent α reported in the literature (see Table I for the list). 11 
+
+II. LIST OF T AND Tc FOR STUDIED SYSTEMS 
+
+Table II provides a summary of T and Tc values, for all experimental and numerical systems investigated in Fig. 2. 
+
+TABLE II. List of T and Tc for studied systems. System T Tc
+
+MnZn ferrite 300 K 493 K permalloy 300 K 683 K nanocrystalline alloy 300 K 823 K Fe-3wt%Si alloy 300 K 1023 K FeCoV alloy 300 K 1253 K 2D Ising model 1.588 2.269 1.815 2.269 2.08 2.269 3D Ising model 2.703 4.51 3.378 4.51 4.065 4.51 MF Ising model 125 159.5 ( l = 13) 250 349 ( l = 19) 333.3 597 ( l = 25) 500 597 ( l = 25) MOF model 0.1 0.53 ( k = 3 , a = 2 /3) 0.2 0.53 ( k = 3 , a = 2 /3) 0.1 0.7 ( k = 5 , a = 0 .6) 0.2 0.7 ( k = 5 , a = 0 .6) 0.45 0.7 ( k = 5 , a = 0 .6) 12 
+
+III. ADDITIONAL EXPERIMENTAL RESULTS 
+
+Detailed data are presented in Figs. 6-10 for the five magnetic materials, nanocrystalline alloy, permalloy, FeCoV alloy, MnZn ferrite and Fe-3wt%Si alloy studied in our experiments. The quasi-static area A0 is determined using the strategy described in Sec. VI. −20 −10 0 10 20 
+
+−1
+
+−0.5
+
+0
+
+0.5
+
+1
+
+H
+
+> B
+> 100 Hz
+> 500 Hz
+> 800 Hz
+> 1600 Hz
+> 2800 Hz
+
+10 0 10 1 10 2 10 3
+
+10 0
+
+10 1
+
+A0 = 0 .6
+
+R
+
+> A
+
+10 2 10 310 0
+
+10 1 R1/3
+
+R2/3
+
+R
+
+> A − A0
+
+(a) (b) (c) 
+
+FIG. 6. Experimental results for the nanocrystalline alloy. (a) Magnetic induction - magnetic field ( B-H) curves measured in experiments of nanocrystalline alloy, for different R (indicated in the figure legend). (b) A as a function of R with 
+
+A0 = 0 .6. (c) Corresponding excess hysteresis area A − A0 versus R.−300 −200 −100 0 100 200 300 
+
+−0.4
+
+−0.2
+
+0
+
+0.2
+
+0.4
+
+H
+
+> B
+> 400 Hz
+> 600 Hz
+> 800 Hz
+> 1700 Hz
+> 2900 Hz
+
+10 0 10 1 10 2 10 3
+
+0
+
+20 
+
+40 
+
+60 
+
+80 
+
+100 
+
+A0 = 1 .0
+
+R
+
+> A
+
+10 2 10 310 1
+
+10 2 R1/3
+
+R2/3
+
+R
+
+> A − A0
+
+(a) (b) (c) 
+
+FIG. 7. Experimental results for the permalloy. (a) B-H curves measured in experiments of permalloy. (b) A as a function of R with A0 = 1 .0. (c) Corresponding excess hysteresis area A − A0 versus R.13 −1,400 −700 0 700 1,400 
+
+−1
+
+−0.5
+
+0
+
+0.5
+
+1
+
+H
+
+> B
+> 100 Hz
+> 500 Hz
+> 800 Hz
+> 1700 Hz
+> 2900 Hz
+
+10 0 10 1 10 2 10 3
+
+400 
+
+600 
+
+800 
+
+1,000 
+
+A0 = 460 
+
+R
+
+> A
+
+10 2 10 310 1
+
+10 2
+
+10 3
+
+R1/3
+
+R2/3
+
+R
+
+> A − A0
+
+(a) (b) (c) 
+
+FIG. 8. Experimental results for the FeCoV alloy. (a) B-H curves measured in experiments of FeCoV alloy. (b) A as a function of R with A0 = 460. (c) Corresponding excess hysteresis area A − A0 versus R.−40 −20 0 20 40 
+
+−0.2
+
+−0.1
+
+0
+
+0.1
+
+0.2
+
+H
+
+> B
+> 1000 Hz
+> 1300 Hz
+> 1700 Hz
+> 2200 Hz
+> 2900 Hz
+
+10 0 10 1 10 2 10 3
+
+3.5
+
+4
+
+4.5
+
+5
+
+A0 = 3 .4
+
+R
+
+> A
+
+500 700 1000 2000 
+
+0.5 
+
+1
+
+2
+
+R1/3
+
+R2/3
+
+R
+
+> A − A0
+
+(a) (b) (c) 
+
+FIG. 9. Experimental results for the MnZn ferrite. (a) B-H curves measured in experiments of MnZn Ferrite. Inset: enlarged B − H curves. (b) A as a function of R with A0 = 3 .4. (c) Corresponding excess hysteresis area A − A0 versus R.−600 −300 0 300 600 
+
+−1
+
+0
+
+1
+
+H
+
+> B
+> 50 Hz
+> 100 Hz
+> 160 Hz
+> 220 Hz
+> 280 Hz
+
+10 0 10 1 10 2
+
+0
+
+200 
+
+400 
+
+600 
+
+800 
+
+1,000 
+
+A0 = 80 
+
+R
+
+> A
+
+10 2
+
+10 3
+
+R1/3
+
+R2/3
+
+R
+
+> A − A0
+
+(a) (b) (c) 
+
+2 × 10 2
+
+4 × 10 2
+
+FIG. 10. Experimental results for the Fe-3wt%Si alloy. (a) B-H curves measured in experiments of Fe-3wt%Si. (b) A
+
+as a function of R with A0 = 80. (c) Corresponding excess hysteresis area A − A0 versus R.14 
+
+IV. ADDITIONAL RESULTS FOR ISING MODELS A. Determination of mean-field and non-mean-field regimes in the generalized Ising model 
+
+For the generalized Ising model, we define the coordination number z ≡ l2 − 1, which denotes the number of interacting neighbors for any central spin. The interaction range is controlled by l (or z). We expect that this model is mean-field (MF) when l is sufficiently large, while non-MF effects should emerge for small l. To examine such effects, we analyze the behavior of the critical temperature Tc and the characteristic time tF for global spin slip. In MF Ising models, the critical temperature T MF  
+
+> c
+
+is proportional to z, T MF  
+
+> c
+
+= zJ 0/k B, where J0 and kB are set to unity. It is found that the critical temperature Tc, which is numerically obtained from Fig. 11(a), satisfies the MF relation, T MF  
+
+> c
+
+= zJ 0/k B, when z > z ∗ ≈ 100 (see Fig. 11(b)). Here the crossover coordination number z∗ ≈ 100 separates MF and non-MF regimes. The flip time tF is measured by the time for all spins to flip from down to up in the fixed T /T c = 0 .5 and H = 0 .6. Fig. 11(c) shows the change of tF with z, from which we can see that tF firstly decreases with z and then remains unchanged. The region that z keeps constant corresponds to the MF regime and the crossover point is at z∗ ≈ 100, which is consistent with the result in Fig. 11(b). Based on the above analyses, we define the generalized Ising model with z > z ∗ ≈ 100 as the MF Ising model. Figure 12 shows that the MF Ising models with different z all satisfy the scaling Eq. (1). 0 100 200 300 400 
+
+0
+
+0.2
+
+0.4
+
+0.6
+
+0.8
+
+1
+
+> T
+> |m|
+
+10 0 10 1 10 2 10 310 0
+
+10 1
+
+10 2
+
+10 3       
+
+> TMF
+> c=zJ 0
+> kB
+> 2D NN Ising
+> z=l2−1
+> Tc
+
+0 200 400 600 800 
+
+50 
+
+100 
+
+150 
+
+200 z−0.5           
+
+> NN
+> z=l2−1
+> tF
+> 200 250 300 350 400
+> 0
+> 20
+> 40
+> 60
+> 80
+> T
+> χ
+> 10 010 110 210 3
+> 10 1
+> 10 2
+
+(a) (b) (c) 
+
+FIG. 11. Non-MF effects on the critical temperature Tc and global spin flip time tF. (a) The absolute value of magnetization m versus T for the Ising model. Here N = 140 and l = 19. Inset: The corresponding susceptibility χ versus 
+
+T . We can find that the critical temperature Tc is about 349, defined by the maximum of the χ(T ) curve. (b) Tc versus the coordination number z = l2 − 1. The dashed line denotes the MF relation, T MF  
+
+> c
+
+= zJ 0/k B. The red solid circle denotes the analytical Tc of the 2D nearest-neighbor (NN) Ising model. (c) The flip time tF versus z. A line of tF = 300 z−0.5 is drawn for reference. Inset: A log-log plot of the data. The red solid circle represents the simulation result for the NN Ising model. 
+
+B. Examples of hysteresis curves and scaling of hysteresis dispersion 
+
+The simulation results of hysteresis curves for the MF Ising model with l = 13 are presented in Fig. 13. The simulation data of the 3D Ising model with the NN interaction are presented in Fig. 14, with A0 = 0 .145. In Ref. [45], 
+
+A0 is considered to be 0 and the dynamic scaling is A ∝ R0.45 . However, we find clear deviation from A ∝ R0.45 (see Fig. 14 (b)-inset). Instead, setting A0 = 0 .145 gives a consistent result with Eq. (1). 
+
+C. Examination of the finite-size effect 
+
+We examine the finite-size effect for the MF Ising model with l = 13 at T = 125 (Fig. 15) and for the 2D NN Ising model at T = 2 .08 (Fig. 16). The hysteresis curves and the corresponding dynamic scaling between A − A0 and R are found to be independent of the size L, consistent with the conventional wisdom that the finite-size effect is generally negligible for first-order phase transitions. This independence stands in sharp contrast to the strong finite-size effects near a critical point, where long-range spatial correlations are cut off by the finite system size. It suggests that the scaling in Eq. (1) does not originate from long-range correlations or critical fluctuations. Moreover, since spatial 15 10 −3 10 −2 10 −1 10 0 10 1 10 2 10 3
+
+# 10 −1
+
+# 10 0
+
+# 10 1
+
+# 10 2
+
+# (R/R ∗)1/3
+
+# (R/R ∗)2/3
+
+# R/R ∗
+
+> A − A0/(A∗ − A0)
+
+# 80 
+
+# 120 
+
+# 168 
+
+# 360 
+
+FIG. 12. (A − A0)/(A∗ − A0) as a function of R/R ∗ for Ising models with different z (see the legend). −4 −2 0 2 4
+
+−1
+
+−0.5
+
+0
+
+0.5
+
+1
+
+H
+
+> m
+> 10 −6
+> 10 −4
+> 10 −2
+> 0.1
+> 1
+
+10 −6 10 −4 10 −2 10 0
+
+0
+
+10 
+
+20 
+
+30 
+
+A0 = 0 .253 
+
+R
+
+> A
+
+10 −5 10 −4 10 −3 10 −2 10 −1 10 0 10 1
+
+10 −2
+
+10 −1
+
+10 0
+
+10 1
+
+R1/3
+
+R2/3
+
+R
+
+> A − A0
+
+(a) (b) (c) 
+
+T =125 
+
+FIG. 13. Simulation results for the MF Ising model with l = 13 . (a) Magnetization - magnetic field ( m-H) curves measured in simulations of the generalized Ising model, with a few different R as indicated in the legend. (b) A as a function of R. (c) Corresponding hysteresis area A − A0 versus R.−4 −2 0 2 4
+
+−1
+
+−0.5
+
+0
+
+0.5
+
+1
+
+H
+
+> m
+> 10 −6
+> 10 −4
+> 10 −2
+> 0.1
+> 1
+
+10 −6 10 −4 10 −2 10 0
+
+0
+
+10 
+
+20 
+
+30 A0 = 0 .145 
+
+R
+
+> A
+
+10 −5 10 −4 10 −3 10 −2 10 −1 10 0 10 110 −2
+
+10 −1
+
+10 0
+
+10 1 R1/3
+
+R2/3
+
+R   
+
+> A − A0
+> 10 −710 −310 1
+> 10 −1
+> 10 1
+
+R0.45 
+
+(a) (b) (c) 
+
+T =4 
+
+FIG. 14. Simulation results for the 3D Ising model with the NN interaction. (a) m-H curves measured for the 3D NN Ising model, with a few different R as indicated in the legend. (b) A versus R as a dynamic scaling. Inset: Log-log plot of 
+
+A(R), compared to A ∝ R0.45 [45]. (c) Corresponding hysteresis area A − A0 versus R.16 correlations are not crucial, this also explains our observation that MF and non-MF systems display similar scaling behavior. −0.2 −0.1 0 0.1 0.2
+
+−1
+
+−0.5
+
+0
+
+0.5
+
+1
+
+H    
+
+> m
+> L= 30
+> L= 50
+> L= 100
+> L= 140
+
+10 −6 10 −4 10 −2 10 0
+
+0
+
+10 
+
+20 
+
+30 
+
+R    
+
+> A
+> L= 30
+> L= 50
+> L= 100
+> L= 140
+
+10 −610 −510 −410 −310 −210 −1 10 0 10 1
+
+10 −2
+
+10 −1
+
+10 0
+
+10 1
+
+R1/3
+
+R2/3
+
+R    
+
+> A − A0
+> L= 30
+> L= 50
+> L= 100
+> L= 140
+
+(a) (b) (c) 
+
+FIG. 15. Size dependence of hysteresis for the MF Ising model with l = 13 . (a) m-H curves for different sizes of L,with the fixed R = 10 −6. (b) A versus R. (c) Corresponding dynamic scaling A − A0 versus R.−0.2 −0.1 0 0.1 0.2
+
+−1
+
+−0.5
+
+0
+
+0.5
+
+1
+
+H    
+
+> m
+> L= 30
+> L= 50
+> L= 100
+> L= 140
+
+10 −4 10 −2 10 0
+
+0
+
+10 
+
+20 
+
+30 
+
+R    
+
+> A
+> L= 30
+> L= 50
+> L= 100
+> L= 140
+
+10 −5 10 −4 10 −3 10 −2 10 −1 10 0 10 110 −2
+
+10 −1
+
+10 0
+
+10 1
+
+R1/3
+
+R2/3
+
+R    
+
+> A − A0
+> L= 30
+> L= 50
+> L= 100
+> L= 140
+
+(a) (b) (c) 
+
+FIG. 16. Size dependence of hysteresis for the 2D NN Ising model. (a) m-H curves for different sizes of L, with the fixed R = 10 −4. (b) A versus R. (c) Corresponding dynamic scaling A − A0 versus R.17 
+
+V. ADDITIONAL RESULTS FOR THE MOF MODEL 
+
+For the MOF model, we use two sets of parameters, k = 5, a = 0 .6 and k = 3, a = 2 /3, with critical temperatures 
+
+Tc = 0 .7 and 0.53, respectively. As an explicit example, the detailed results for the MOF model with k = 5, a = 0 .6, and a fixed temperature T = 0 .45 are shown in Fig. 17. 1.6 1.8 2 2.2 2.4 2.6
+
+0
+
+0.2
+
+0.4
+
+0.6
+
+0.8
+
+1
+
+μ
+
+> Nads /N
+> 10 −7
+> 10 −5
+> 10 −4
+> 0.002
+> 0.001
+
+10 −810 −710 −610 −510 −410 −310 −2
+
+0
+
+1
+
+2
+
+3
+
+A0 = 0 .146 
+
+R
+
+> A
+
+10 −6 10 −5 10 −4 10 −3 10 −210 −2
+
+10 −1
+
+10 0
+
+R1/3
+
+R2/3
+
+R
+
+> A − A0
+
+(a) (b) (c) 
+
+T =0.45 
+
+FIG. 17. Simulation results for the MOF model with k = 5 and a = 0 .6. (a) Fraction of guest particles adsorbed in the host MOF, Nads /N , as a function of the chemical potential μ, for a few different R (see the legend). (b) A as a function of 
+
+R, with A0 = 0 .146. (c) Corresponding hysteresis area A − A0 versus R.18 
+
+VI. DETERMINATION OF THE QUASI-STATIC HYSTERESIS AREA A0
+
+For the given data of A(R), by definition A0 = A(R → 0). In our simulations, this quasi-static limit is accessible. Thus A0 can be estimated by the plateau value of the A(R) data in the small-R regime (see Fig. 18(a)). We have also examined the dependence of the exponent α on the value of A′
+
+> 0
+
+. As shown in Fig. 18(b), a series of A′ 
+
+> 0
+
+are used in the scaling plot A − A′ 
+
+> 0
+
+versus R. We find that the exponent (i.e., α1) depends on A′ 
+
+> 0
+
+only for R < R ∗. This dependence is demonstrated in Fig. 19: the exponent α1, obtained from fitting the data for R < R ∗, decreases with a smaller A′
+
+> 0
+
+and approaches a constant α1 ≈ 1/3. In our experiments, the quasi-static regime cannot be accessed. As shown in Fig. 18(c), the quasi-static plateau of A(R) is not strictly reached. In this case, A0 is obtained as an adjustable parameter. As shown in Fig. 18(d), we adjust A′ 
+
+> 0
+
+and choose A0 = A′ 
+
+> 0
+
+such that the small-R exponent α1 becomes the desired value 1 /3. Increasing A′ 
+
+> 0
+
+from the minimum value A0, the small-R exponent α1 increases, reaching the athermal value 2 /3 at B0 = A′
+
+> 0
+
+. Thus, with the parameter A′ 
+
+> 0
+
+increasing from the minimum value A0 to the maximum value B0, the measured small-R exponent 
+
+α1 increases from 1 /3 to 2 /3 (Fig. 19). This approach gives an estimate of the quasi-static value A0 when this limit cannot be accessed. The data in Fig. 19 shows that, the rescaled data of α1 versus ( A′ 
+
+> 0
+
+− A0)/(B0 − A0) collapse for different systems, suggesting that the determined parameter A0 gives a robust estimate of the small-R exponent α1.The above method gives a systematic approach to estimate A0 in different systems. It has been noticed previously that A0 is system-dependent. In the athermal limit ( T = 0), A0 is determined by the stationary solution H =
+
+a2ϕ + a4ϕ3 of the Langevin equation (see Fig. 3(a)). In this case, A0 is non-zero and the corresponding exponent 
+
+α0 = 2 /3. With thermal noises, it is found in many works that A0 → 0 when the rate R is small, including the 2D nearest-neighbor Ising model [18], Langevin dynamics of (Φ 2)2 [19] and (Φ 2)3 models [51], with a corresponding exponent α1 ≈ 1/3. 10 −810 −710 −610 −510 −410 −310 −2
+
+0
+
+1
+
+2
+
+3
+
+A0 = 0 .146 
+
+R
+
+> A
+
+10 −6 10 −5 10 −4 10 −3 10 −210 −3
+
+10 −2
+
+10 −1
+
+10 0 R1/3
+
+R2/3
+
+R
+
+> A − A′
+> 0
+
+10 0 10 1 10 2 10 3
+
+0
+
+5
+
+10 
+
+15 A0 = 0 .6
+
+R
+
+> A
+
+10 2 10 3
+
+10 0
+
+10 1 R1/3
+
+R2/3
+
+R
+
+> A − A′
+> 0
+
+(a) 
+
+(c) 
+
+(b) 
+
+(d) 
+
+FIG. 18. Determination of A0 in simulations and experiments. (a) A as a function of R in simulations of the MOF model; A0 is indicated by the horizontal line. (b) A − A′ 
+
+> 0
+
+as a function of R using different A′
+
+> 0
+
+, for the simulation data of the MOF model, with A′ 
+
+> 0
+
+= 0.146, 0.148, 0.154, 0.160, 0.164, 0.172, 0.179, and 0.186 from top to bottom. (c) A as a function of R
+
+in experiments of the nanocrystalline alloy. (d) A − A′ 
+
+> 0
+
+as a function of R using different A′
+
+> 0
+
+, for the experimental data of the nanocrystalline alloy, with A′ 
+
+> 0
+
+= 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, and 2.0 from top to bottom. 19 10 −3 10 −2 10 −1 10 0
+
+# 0.4
+
+# 0.5
+
+# 0.6
+
+# 0.7
+
+# (A′
+
+0 − A0)/(B0 − A0)
+
+> α1
+
+## Langevin equation 
+
+## MOF model 
+
+## Ising model 
+
+## nanocrystal 
+
+## FeCoV alloy 
+
+FIG. 19. Dependence of the small-R exponent α1 on A′
+
+> 0
+
+. The exponent α1 is obtained from fitting the A(R) data to A − A′ 
+
+> 0
+
+∼ Rα1 , for R < R ∗, with the given A′ 
+
+> 0
+
+(see Fig. 18). To collapse the data for different systems, A′ 
+
+> 0
+
+is shifted and rescaled as ( A′ 
+
+> 0
+
+− A0)/(B0 − A0), where A0 is the value of A′ 
+
+> 0
+
+when α1 = 1 /3, while B0 is the value of A′ 
+
+> 0
+
+when α1 = 2 /3. 20 
+
+VII. DERIVATION OF THE SCALING FUNCTION EQ. (6) A. Perturbation theory for the Langevin equation 
+
+To derive Eq. (6) in the main text, we generalize the perturbation theory [52, 53]. This theory is initially developed to derive the scaling exponents for the athermal Langevin equation ( ξ = 0) [16]. Here we extend the method to higher-order perturbation terms to include the effects of thermal noise ( ξ > 0). Consider the Langevin equation Eq. (5) in the main text, 
+
+dϕ dt = −(a2ϕ + a4ϕ3 − H) + ξ, (12) where λ has been set to unity. Let H = Rt , we obtain, 
+
+R dϕ dH = −a2ϕ − a4ϕ3 + H + ξ. (13) Considering the rate R as a small parameter near the quasi-static limit R → 0, we can expand ϕ with R as, 
+
+ϕ = R0ϕ0 + R1ϕ1 + R2ϕ2 + ... (14) Matching terms at different orders then gives the scaling exponents. 
+
+1. Athermal case 
+
+When ξ = 0 ( T = 0), the stationary solution ( dϕ/dH = 0) of Eq. (13) is given by, to the lowest order R0,
+
+a2ϕ0 + a4ϕ30 = H. (15) This equation gives the spinodal points, ( Hs, ϕs)=( 2a2
+
+> 3
+
+q −a2 
+
+> 3a4
+
+,
+
+q −a2 
+
+> 3a4
+
+). Shifting the variables by the spinodal values, one proposes the following ansatz, 
+
+H = Hs + Rα ˜H1 + . . . , ϕ = ϕs + Rβ ˜ϕ1 + R2β ˜ϕ2 + . . . , (16) where the two exponents α and β will be determined by scaling matching. Substituting Eq. (16) into Eq. (13) and setting ξ = 0, we get the first-order equation, 
+
+R1+ β−α d ˜ϕ1
+
+d ˜H1
+
+= −3a4R2β ϕs ˜ϕ21 + ˜H1Rα. (17) Because the powers of R in different terms should match, we have 1 + β − α = 2 β = α, (18) and therefore, β = 13 and α = 23 . This derivation gives the athermal exponent (large-R) exponent α0 = 2 /3 in Eq. (1). 
+
+2. Thermal case 
+
+When T > 0, the zero-th order stationary equation of the Langevin dynamics is 
+
+a2ϕ0 + a4ϕ30 = H + ξ. (19) The solution of dH/dϕ 0 = 0 gives the effective spinodal point ( H0(T ), ϕ0(T )), whose explicit expression is unknown. In the athermal limit, ( H0(T → 0) , ϕ 0(T → 0)) = ( Hs, ϕs)=( 2a2
+
+> 3
+
+q −a2 
+
+> 3a4
+
+,
+
+q −a2 
+
+> 3a4
+
+). 21 The expansion of ( H, ϕ ) around ( H0, ϕ 0) is assumed to have the following ansatz, 
+
+H = H0 + Rα ˜H1 + Rα+δ ˜H2 + . . . ϕ = ϕ0 + Rβ ˜ϕ1 + R2β ˜ϕ2 + . . . (20) By substituting Eq. (20) into Eq. (13), we get 
+
+R1+ β−α d ˜ϕ1
+
+d ˜H1
+
+= −a2Rβ ˜ϕ1 − 3a4Rβ ϕ20 ˜ϕ1 − 3a4R2β ϕ0 ˜ϕ21 + Rα ˜H1 + Rα+δ ˜H2. (21) To the first-order, ˜ϕ1 satisfies a similar equation as Eq. (17), 
+
+R1+ β−α d ˜ϕ1
+
+d ˜H1
+
+= −3a4R2β ϕ0 ˜ϕ21 + ˜H1Rα. (22) The remaining terms in Eq. (21) are, 0 = −a2Rβ ˜ϕ1 − 3a4Rβ ϕ20 ˜ϕ1 + ˜H2Rα+δ . (23) Match powers of R again and note that α = 23 , β = 13 , we have 13 = β = α + δ, (24) and δ = − 13 .The above analysis shows that the first line in Eq. (20) can be expressed as 
+
+H − H0 ∼ R2/3[1 + c(T )R−1/3], (25) where we let ˜H2(T ) = c(T ) ˜H1 (note that ˜H2 depends on T ). Since the area of the hysteresis loop A is proportional to H, it satisfies 
+
+A − A0 ∼ R2/3[1 + c(T )R−1/3], (26) where A0 denotes the hysteresis area of the quasi-static state. The small-R exponent α1 = 1 /3 (see Eq. (1))) arises in Eq. (26). 
+
+B. Scaling of c(T )
+
+Next we consider c(T ) in Eqs. (25) and (26). The complete universal scaling (CUS) [22, 23], (ϕ − ϕs)R− 13 = Φ[ a2R− 13 , (H − Hs)R− 23 , T R −1, a 4R 13 ], (27) suggests that the scale invariant form for the temperature is, T R −1, i.e., c(T ) = c0T 1/3. Thus Eqs. (25) and (26) can be written as, 
+
+H − H0 ∼ R2/3
+
+"
+
+1 + c0
+
+ TR
+
+1/3#
+
+, (28) and 
+
+A − A0 ∼ R2/3
+
+"
+
+1 + c0
+
+ TR
+
+1/3#
+
+. (29) Equation (28) gives a scaling of H, which is similar to Eq. (1): 
+
+H − H0 ∝
+
+(
+
+R1/3, R < R ∗,R2/3, R > R ∗, (30) where R∗ ∝ T . This scaling is explicitly verified for the inflection point ( HI , ϕ I ), which is the location of the maximum slope dϕ/dH of the hysteresis curve (see Fig. 20). 22 10 −3 10 −2 10 −1 10 0 10 1 10 2 10 310 0
+
+10 1
+
+10 2
+
+10 3
+
+R1/3
+
+R2/3
+
+R
+
+> HI − H0
+
+10 −1 10 0 10 110 −1
+
+10 0
+
+10 1
+
+10 2
+
+T
+
+T
+
+> R∗
+
+(a) (b) 
+
+FIG. 20. Validation of Eq.(30). (a) HI − H0 versus R at T = 0 .2. (b) R∗ versus T . Data are obtained from the Langevin equation with λ = 0 .0005. The values of H0 are estimated at the jump point of the hysteresis curve corresponding to a very small rate, R = 0 .0001.
