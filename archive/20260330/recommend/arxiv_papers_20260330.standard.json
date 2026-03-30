@@ -1,0 +1,127 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-03-30T20:23:09.262545+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2603.25211v2",
+      "title": "On Port-Hamiltonian Formulation of Hysteretic Energy Storage Elements: The Backlash Case",
+      "abstract": "This paper presents a port-Hamiltonian formulation of hysteretic energy storage elements. First, we revisit the passivity property of backlash-driven storage elements by presenting a family of storage functions associated to the dissipativity property of such elements. We explicitly derive the corresponding available storage and required supply functions `a la Willems [1], and show the interlacing property of the aforementioned family of storage functions sandwiched between the available storage and required supply functions. Second, using the proposed family of storage functions, we present a port-Hamiltonian formulation of hysteretic inductors as prototypical storage elements in port-Hamiltonian systems. In particular, we show how a Hamiltonian function can be chosen from the family of storage functions and how the hysteretic elements can be expressed as port-Hamiltonian system with feedthrough term, where the feedthrough term represents energy dissipation. Correspondingly, we illustrate its applicability in describing an RLC circuit (in parallel and in series) containing a hysteretic inductor element.",
+      "authors": [
+        "Jurrien Keulen",
+        "Bayu Jayawardhana",
+        "Arjan van der Schaft"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-03-26T09:13:54+00:00",
+      "link": "https://arxiv.org/pdf/2603.25211v2",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "port-Hamiltonian formulation of hysteretic inductors",
+      "llm_evidence_cn": "磁滞电感器的端口哈密顿公式",
+      "llm_evidence": "磁滞电感器的端口哈密顿公式",
+      "canonical_evidence": "磁滞电感器的端口哈密顿公式",
+      "llm_tldr_en": "Develops a port-Hamiltonian model for hysteretic energy storage, relevant to electromagnetic modeling.",
+      "llm_tldr_cn": "开发了磁滞储能的端口哈密顿模型，与电磁建模相关。",
+      "llm_tldr": "开发了磁滞储能的端口哈密顿模型，与电磁建模相关。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "eddy current effects in electromagnetic actuators dynamic modeling",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.25404v1",
+      "title": "Physics-Informed Neural Operator for Electromagnetic Inverse Scattering Problems",
+      "abstract": "This paper proposes a physics-informed neural operator (PINO) framework for solving inverse scattering problems, enabling rapid and accurate reconstructions under diverse measurement conditions. In the proposed approach, the dielectric property is represented as a learnable tensor, while a neural operator is employed to predict the induced current distribution. A hybrid loss function, consisting of the state loss, data loss and total-variation (TV) regularization, is constructed to establish a fully differentiable formulation for a joint optimization of network parameters and dielectric property. To demonstrate the framework's generality and flexibility, PINO is implemented using three representative neural operators, i.e., the Fourier Neural Operator (FNO), the enhanced Fourier Neural Operator (U-FNO) and the Factorized Fourier Neural Operator (F-FNO). Compared with conventional approaches, the proposed framework offers a simpler formulation and universal modeling capability, making it readily applicable to various measurement scenarios, including multi-frequency and phaseless inversion. Numerical simulations demonstrate that the proposed PINO achieves high accuracy and robust reconstruction across samples with and without phase information, under single-frequency and multi-frequency settings in the presence of noise. The results demonstrate that PINO consistently outperforms conventional contrast-source inversion (CSI) methods and provides an efficient, unified solution to complex electromagnetic inverse-scattering problems.",
+      "authors": [
+        "Q. C. Dong",
+        "Zi-Xuan Su",
+        "Qing Huo Liu",
+        "Wen Chen",
+        "Zhizhang",
+        "Chen"
+      ],
+      "primary_category": "physics.comp-ph",
+      "categories": [
+        "physics.comp-ph"
+      ],
+      "published": "2026-03-26T12:53:54+00:00",
+      "link": "https://arxiv.org/pdf/2603.25404v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "physics-informed neural operator for electromagnetic current distribution",
+      "llm_evidence_cn": "用于电磁电流分布的物理信息神经网络算子",
+      "llm_evidence": "用于电磁电流分布的物理信息神经网络算子",
+      "canonical_evidence": "用于电磁电流分布的物理信息神经网络算子",
+      "llm_tldr_en": "Uses physics-informed neural operators to solve electromagnetic inverse scattering and predict current distribution.",
+      "llm_tldr_cn": "使用物理信息神经网络算子解决电磁逆散射问题并预测感应电流分布。",
+      "llm_tldr": "使用物理信息神经网络算子解决电磁逆散射问题并预测感应电流分布。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "eddy current effects in electromagnetic actuators dynamic modeling",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.26080v1",
+      "title": "LQR for Systems with Probabilistic Parametric Uncertainties: A Gradient Method",
+      "abstract": "A gradient-based method is proposed for solving the linear quadratic regulator (LQR) problem for linear systems with nonlinear dependence on time-invariant probabilistic parametric uncertainties. The approach explicitly accounts for model uncertainty and ensures robust performance. By leveraging polynomial chaos theory (PCT) in conjunction with policy optimization techniques, the original stochastic system is lifted into a high-dimensional linear time-invariant (LTI) system with structured state-feedback control. A first-order gradient descent algorithm is then developed to directly optimize the structured feedback gain and iteratively minimize the LQR cost. We rigorously establish linear convergence of the gradient descent algorithm and show that the PCT-based approximation error decays algebraically at a rate $O(N^{-p})$ for any positive integer $p$, where $N$ denotes the order of the polynomials. Numerical examples demonstrate that the proposed method achieves significantly higher computational efficiency than conventional bilinear matrix inequality (BMI)-based approaches.",
+      "authors": [
+        "Leilei Cui",
+        "Richard D. Braatz"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-03-27T05:18:41+00:00",
+      "link": "https://arxiv.org/pdf/2603.26080v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "LQR for systems with parametric uncertainties",
+      "llm_evidence_cn": "具有参数不确定性系统的LQR控制",
+      "llm_evidence": "具有参数不确定性系统的LQR控制",
+      "canonical_evidence": "具有参数不确定性系统的LQR控制",
+      "llm_tldr_en": "A gradient-based LQR method for robust control of uncertain linear systems, applicable to precision actuator control.",
+      "llm_tldr_cn": "一种用于不确定线性系统鲁棒控制的梯度LQR方法，可应用于执行器精密控制。",
+      "llm_tldr": "一种用于不确定线性系统鲁棒控制的梯度LQR方法，可应用于执行器精密控制。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "label": "2026-03-30",
+  "date": "2026-03-30",
+  "generated_at": "2026-03-30T20:23:38",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202603/30/2603.25211v2-on-port-hamiltonian-formulation-of-hysteretic-energy-storage-elements-the-backlash-case",
+      "section": "quick",
+      "title_en": "On Port-Hamiltonian Formulation of Hysteretic Energy Storage Elements: The Backlash Case",
+      "authors": "Jurrien Keulen, Bayu Jayawardhana, Arjan van der Schaft",
+      "date": "2026-03-26",
+      "pdf": "https://arxiv.org/pdf/2603.25211v2",
+      "score": "6.0",
+      "evidence": "磁滞电感器的端口哈密顿公式",
+      "tldr": "本文研究了具有迟滞特性的能量存储元件（以回差模型为例）的端口哈密顿（pH）建模方法。研究首先重新审视了回差驱动存储元件的无源性，推导出一系列与耗散性相关的存储函数，并证明了其在可用存储与所需供给函数间的交错特性。随后，利用这些存储函数提出了迟滞电感的pH表述形式，通过引入代表能量耗散的直通项，实现了对含迟滞元件RLC电路的精确描述，为非线性迟滞系统的物理建模提供了理论支撑。",
+      "tags": "query:em-force",
+      "abstract_en": "This paper presents a port-Hamiltonian formulation of hysteretic energy storage elements. First, we revisit the passivity property of backlash-driven storage elements by presenting a family of storage functions associated to the dissipativity property of such elements. We explicitly derive the corresponding available storage and required supply functions `a la Willems [1], and show the interlacing property of the aforementioned family of storage functions sandwiched between the available storage and required supply functions. Second, using the proposed family of storage functions, we present a port-Hamiltonian formulation of hysteretic inductors as prototypical storage elements in port-Hamiltonian systems. In particular, we show how a Hamiltonian function can be chosen from the family of storage functions and how the hysteretic elements can be expressed as port-Hamiltonian system with feedthrough term, where the feedthrough term represents energy dissipation. Correspondingly, we illustrate its applicability in describing an RLC circuit (in parallel and in series) containing a hysteretic inductor element.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/30/2603.25404v1-physics-informed-neural-operator-for-electromagnetic-inverse-scattering-problems",
+      "section": "quick",
+      "title_en": "Physics-Informed Neural Operator for Electromagnetic Inverse Scattering Problems",
+      "authors": "Q. C. Dong, Zi-Xuan Su, Qing Huo Liu, Wen Chen, Zhizhang, Chen",
+      "date": "2026-03-26",
+      "pdf": "https://arxiv.org/pdf/2603.25404v1",
+      "score": "6.0",
+      "evidence": "用于电磁电流分布的物理信息神经网络算子",
+      "tldr": "本研究提出了一种物理信息神经算子（PINO）框架，用于解决电磁逆散射问题。该框架将介电特性表示为可学习张量，利用神经算子预测感应电流，并通过结合状态损失、数据损失和全变分正则化的混合损失函数进行联合优化。PINO 具有通用性和灵活性，支持多频率和无相位反演，在噪声环境下表现出比传统对比源反演（CSI）方法更高的精度和鲁棒性，为复杂电磁逆散射提供了高效统一的解决方案。",
+      "tags": "query:em-force",
+      "abstract_en": "This paper proposes a physics-informed neural operator (PINO) framework for solving inverse scattering problems, enabling rapid and accurate reconstructions under diverse measurement conditions. In the proposed approach, the dielectric property is represented as a learnable tensor, while a neural operator is employed to predict the induced current distribution. A hybrid loss function, consisting of the state loss, data loss and total-variation (TV) regularization, is constructed to establish a fully differentiable formulation for a joint optimization of network parameters and dielectric property. To demonstrate the framework's generality and flexibility, PINO is implemented using three representative neural operators, i.e., the Fourier Neural Operator (FNO), the enhanced Fourier Neural Operator (U-FNO) and the Factorized Fourier Neural Operator (F-FNO). Compared with conventional approaches, the proposed framework offers a simpler formulation and universal modeling capability, making it readily applicable to various measurement scenarios, including multi-frequency and phaseless inversion. Numerical simulations demonstrate that the proposed PINO achieves high accuracy and robust reconstruction across samples with and without phase information, under single-frequency and multi-frequency settings in the presence of noise. The results demonstrate that PINO consistently outperforms conventional contrast-source inversion (CSI) methods and provides an efficient, unified solution to complex electromagnetic inverse-scattering problems.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202603/30/2603.26080v1-lqr-for-systems-with-probabilistic-parametric-uncertainties-a-gradient-method",
+      "section": "quick",
+      "title_en": "LQR for Systems with Probabilistic Parametric Uncertainties: A Gradient Method",
+      "authors": "Leilei Cui, Richard D. Braatz",
+      "date": "2026-03-27",
+      "pdf": "https://arxiv.org/pdf/2603.26080v1",
+      "score": "6.0",
+      "evidence": "具有参数不确定性系统的LQR控制",
+      "tldr": "针对具有概率参数不确定性的线性系统，本文提出了一种基于梯度的LQR求解方法。该方法结合多项式混沌理论（PCT）与策略优化技术，将随机系统转化为高维线性时不变系统，并利用一阶梯度下降算法直接优化结构化反馈增益。研究证明了算法的线性收敛性及近似误差的代数衰减率，相比传统BMI方法显著提升了计算效率。",
+      "tags": "query:em-force",
+      "abstract_en": "A gradient-based method is proposed for solving the linear quadratic regulator (LQR) problem for linear systems with nonlinear dependence on time-invariant probabilistic parametric uncertainties. The approach explicitly accounts for model uncertainty and ensures robust performance. By leveraging polynomial chaos theory (PCT) in conjunction with policy optimization techniques, the original stochastic system is lifted into a high-dimensional linear time-invariant (LTI) system with structured state-feedback control. A first-order gradient descent algorithm is then developed to directly optimize the structured feedback gain and iteratively minimize the LQR cost. We rigorously establish linear convergence of the gradient descent algorithm and show that the PCT-based approximation error decays algebraically at a rate $O(N^{-p})$ for any positive integer $p$, where $N$ denotes the order of the polynomials. Numerical examples demonstrate that the proposed method achieves significantly higher computational efficiency than conventional bilinear matrix inequality (BMI)-based approaches.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
