@@ -1,0 +1,572 @@
+Title: Adaptive differentiating filter: case study of PID feedback control
+
+URL Source: https://arxiv.org/pdf/2603.27615v1
+
+Published Time: Tue, 31 Mar 2026 01:07:07 GMT
+
+Number of Pages: 6
+
+Markdown Content:
+# Adaptive differentiating filter: case study of PID feedback control 
+
+Alexey Pavlov, Michael Ruderman 
+
+Abstract — This paper presents an adaptive causal discrete-time filter for derivative estimation, exemplified by its use in estimating relative velocity in a mechatronic application. The filter is based on a constrained least-squares estimator with window adaptation. It demonstrates low sensitivity to low-amplitude measurement noise, while preserving a wide bandwidth for large-amplitude changes in the process signal. Favorable performance properties of the filter are discussed and demonstrated in a practical case study of PID feedback controller and compared experimentally to a standard linear low-pass filter-based differentiator and a robust sliding-mode based homogeneous differentiator. 
+
+I. I NTRODUCTION 
+
+Obtaining trustful (thus useful) derivative of a measured signal belongs to the central practical problems in the sys-tems and control theory and engineering. The so-called fixed structure (or fixed size) filters share the same fundamental problem, in other words trade-off between a noise reduction and phase lag (or corresponding delay) in the output signal and its time derivative(s). Possessing the required noise filtering properties and, at the same time, preserving faster transients of the process signal are the key and demanding characteristics, for which the advanced real-time adaptive and implementable methods are required. Especially causal differentiators (these vital for real-time monitoring and con-trol tasks) face performance limitations with respect to the estimate accuracy, computational and memory consumption, and difficulties with tuning of free design parameter(s). In this communication, we introduce a causal adaptive differentiating filter, particularly suitable for control appli-cations, and demonstrate a detailed case study of applying it in the standard PID feedback loop, where only a noisy output signal is available from sensing. In an experimental real-time setting, the filter demonstrated very low sensitivity to measurement noise while, same time, preserving large bandwidth of the process signal. Without any claim on ample overview of the otherwise existing techniques and due to the space limits, we solely refer to few related works (with references therein) which are providing deeper insight into developments of causal (and also adaptive) differentiation algorithms for noisy and less smooth signals. An overview of numerical differentiation in noisy environment by using algebraic approaches and implementation in terms of aclassical finite impulse response (FIR) digital filter can be found e.g. in [1]. A lecture note on Savitzky-Golay filter of  
+
+> A. Pavlov is with Norwegian University of Science and Technology (NTNU), Trondheim, Norway. Email:
+
+alexey.pavlov@ntnu.no 
+
+> M. Ruderman is with University of Agder, Grimstad, Norway. Email:
+
+michael.ruderman@uia.no 
+
+> ———————–
+> IFAC authors manuscript, 2025
+
+smoothing the data without distorting the signal tendency, by principle of local least-squares approximation(s) which is also in core of our proposed approach, can be found in [2]. Also the robust sliding-mode based (see [3] for basics) dif-ferentiators, to one from which established methods we make also comparison in this work, are the objective of intensive theoretical and practical studies in the last decade, cf. e.g. survey with experiments in [4]. Another remarkable practical approach, which uses a time adaptive windowing and least-squares fitting, and, thus, provides certain motivation for our developed solution, can be found in [5]. Compared to [5], our approach separates window adaptation from the calculation of the signal derivative estimate, which leads to an optimal window adaptation and higher computational efficiency. The rest of the paper is as follows. The adaptive differ-entiating filter is introduced in Section II by providing the concept, algorithms, implementation steps, and properties. The second piece of the main results is given in Section III, presenting a detailed case study of using the proposed filter in a real-time PID control application with experiments. Omitted detailed discussion (which is up to our future works) is justified by the main conclusions in Section IV. II. A DAPTIVE DIFFERENTIATING FILTER (ADF) Consider a signal ¯x(t) sampled at time instances tl = l·Ts,
+
+l = 0 , 1, . . . , with sampling period Ts ≥ 0:
+
+xl = ¯ x(tl ) + wl, (1) where wl is the measurement noise. It is assumed that the noise satisfies 
+
+|wl| ≤ d, ∀ l ≥ 0, (2) where d > 0 is the upper bound on the noise magnitude. The upper bound d is assumed to be known, e.g., from a sensor specification or can be estimated from prior tests. 
+
+A. ADF concept 
+
+At time instant tl, the outputs of the filter are calculated from the past measurements with indices from the window 
+
+Wl(R) = {l − R, . . . l }, (3) for some R ≥ 1, which will be specified later, using the constrained least squares method: 
+
+(k∗ 
+
+> l
+
+, b ∗ 
+
+> l
+
+) = arg min (k, b ) ∈ R2,
+
+|x(tl) − b| ≤ δ
+
+∑ 
+
+> i∈Wl(R)
+
+|x(ti) − k(ti − tl) − b|2,
+
+(4) where k∗ 
+
+> l
+
+is the filter output providing an estimate of 
+
+d¯x(tl)/dt and b∗ 
+
+> l
+
+is the estimate of ¯x(tl). The constraint is 
+
+|x(tl) − b| ≤ δ, (5) 
+
+> arXiv:2603.27615v1 [eess.SY] 29 Mar 2026
+
+where δ ≥ d is a filter parameter introduced to take into account |xl − ¯x(tl)| ≤ d, that follows from (1), (2). While fitting a linear function to the time series using the least-squares method is a standard approach, the main challenge is selecting the window Wl(R). A small window size R will result in accurate following the signal deriva-tive, yet at the cost of high sensitivity of the derivative estimate to measurement noise. Large R will reduce noise sensitivity. At the same time, for large R, the filter (4) will smooth out large/fast peaks in the signal and, thus, lead to an underestimation of the corresponding changes in the signal derivative. The latter situation occurs when the signal derivative experiences large changes over Wl(R).To resolve this trade-off, we propose automatically adapt-ing the window size R based on the measurements. The window size R is selected to be the largest positive number such that the time series (1) can be approximated over Wl(R)
+
+by a linear function x = k(t − tl) + b for some k and b with a given absolute accuracy δ:
+
+|x(ti) − k(ti − tl) − b| ≤ δ, ∀i ∈ Wl(R), (6) 
+
+1 ≤ R ≤ Rmax .
+
+Here, δ > 0 is the same filter parameter as in (4) and Rmax 
+
+is maximal window size introduced for a practical imple-mentation. Selecting R in this way, we avoid windows over which the signal is highly dynamic and, thus, avoid filtering out large peaks in the useful signal. At the same time, we keep the window size maximal possible to ensure the lowest possible noise sensitivity of the derivative estimate. Note that the problem of verifying the feasibility of (6) does not require an explicit calculation of the particular 
+
+(k, b ). This makes the window size adaptation independent of the particular method of solving (6) and fully decoupled from solving the least squares problem (4), as opposed to [5]. A dedicated tool for verifying the feasibility of (6) without 
+
+finding (k, b ) will be presented later in this section. To summarize, at each instant l ≥ 1, the ADF filter solves the following two optimization subproblems:  
+
+> •
+
+Window optimization: find R∗ = R∗(l) – the largest 
+
+R ≤ Rmax such that (6) is feasible for some (k, b ). 
+
+> •
+
+Estimates calculation: for the window Wl(R∗), find the estimates of the signal and its derivative by solving the constrained least squares problem (4). The set of R satisfying (6), is always non-empty: for R = 1 ,the window Wl(R) consists only of two points and one can fit a linear function to these two points exactly. For the optimal 
+
+R = R∗, the solution of (4) exists and is uniquely defined. Thus, the filter is well-defined for all l ≥ 1.
+
+B. ADF algorithm 
+
+Several features of the ADF filter allow its efficient implementation. Firstly, due to the linearity of (6), if that set of inequalities is feasible for some R, it is also feasible for all windows with a smaller R. In the same way, if (6) is not feasible for some R, it will not be feasible for all windows with larger R. Therefore, the largest window size R∗ can be found from an initial guess by increasing its value while (6) remains feasible, or reducing its value until (6) turns unfeasible. This is reflected in the following algorithm: 
+
+Algorithm 1: 
+
+1) l ← 0, R ← 1 // initialization read x(t0); return ˆdx  
+
+> dt
+
+(t0) = ∅, ˆx(t0) = x(t0)
+
+2) while true // main loop 3) l ← l + 1 ; R ← min {R + 1 , R max }
+
+4) read x(tl)
+
+5) while (6) is not feasible for Wl(R)
+
+R ← R − 1
+
+end 
+
+6) R∗ ← R // optimal R 7) calculate k∗ 
+
+> l
+
+, b ∗ 
+
+> l
+
+from (4) for Wl(R∗)
+
+8) return ˆdx  
+
+> dt
+
+(tl) = k∗ 
+
+> l
+
+, ˆx(tl) = b∗
+
+> l
+
+9) end 
+
+Checking the feasibility of (6) in step 5) and solving the least squares fit problem in step 7) may seem to be computation-ally critical for real-time applications. Below, we present the efficient methods for real-time ADF implementation. 
+
+C. Tools for efficient ADF implementation 
+
+The following theorem allows one to check the feasibility of (6) without calculating the linear approximation. 
+
+Theorem 1: Inequality (6) is feasible if and only if 
+
+m ≤ M, where (7) 
+
+m = max   
+
+> i,j ∈W|ti>t j
+
+x(ti) − x(tj )
+
+ti − tj
+
+− 2δ
+
+ti − tj
+
+, (8) 
+
+M = min   
+
+> i,j ∈W|ti>t j
+
+x(ti) − x(tj )
+
+ti − tj
+
++ 2δ
+
+ti − tj
+
+. (9) 
+
+Proof: The proof is omitted due to space limits and will be provided in future works. Calculation (8) and (9) can be made efficient by reusing the corresponding calculations of m and M from the previ-ous iteration. Notice, that all windows Wl(R) in Algorithm 1 are obtained from the windows from previous iterations by one or more of the following elementary operations: adding a new measurement point to an already existing window 
+
+W = Wl(R) from the right (step 3, W = Wl(R) → W + := 
+
+Wl+1 (R + 1) ), and removing one point from the left (step 5, 
+
+Wl(R) → W − := Wl(R − 1) ). Below, we will demonstrate how m and M evolve under these elementary operations. Consider a window W := Wl(R). Define the vectors 
+
+¯m(W ) = [ m1, m 2, . . . m R], ¯M (W ) = [ M1, M 2, . . . M R] of 
+
+mk(W ) = max 
+
+j = l − ki = j, . . . l 
+
+( xi − xj − 2δ
+
+ti − tj
+
+)
+
+, (10) 
+
+Mk(W ) = min 
+
+j = l − ki = j, . . . l 
+
+( xi − xj + 2 δ
+
+ti − tj
+
+)
+
+, (11) for k = 1 , . . . , R . If the vectors ¯m(W ) and ¯M (W ) are known, then the numbers m and M defined in (8) and (9) for window W can be obtained from 
+
+m(W ) = max[ m1, . . . m R], (12) 
+
+M (W ) = min[ M1, . . . M R]. (13) Suppose that window vectors ¯m(W ) and ¯M (W ) are known for W = Wl(R). Let us derive how they can be calcu-lated for two new additional windows: W + = Wl+1 (R + 1) 
+
+and W − = Wl(R − 1) .
+
+1) Adding a point to the right: W → W +: As follows from (10) and the definition of Wl+1 (R + 1) , we have 
+
+mk(W +) = max 
+
+j = l + 1 − ki = j, . . . l + 1 
+
+( xi − xj − 2δ
+
+ti − tj
+
+)
+
+= max 
+
+ max 
+
+j = l + 1 − ki = j, . . . l 
+
+( xi − xj − 2δ
+
+ti − tj
+
+)
+
+, (14) 
+
+xl+1 − xl+1 −k − 2δ
+
+tl+1 − tl+1 −k
+
+]
+
+, k = 1 , . . . R + 1 .
+
+Since the first element under the max function in (14) equals 
+
+mk−1(W ), we obtain 
+
+m1(W +) = xl+1 − xl − 2δ
+
+tl+1 − tl
+
+(15) 
+
+mk(W +) = max 
+
+[
+
+mk−1(W ), xl+1 − xl+1 −k − 2δ
+
+tl+1 − tl+1 −k
+
+]
+
+,k = 2 , . . . R + 1 .
+
+Repeating the same steps for Mk(W +), we obtain 
+
+M1(W +) = xl+1 − xl + 2 δ
+
+tl+1 − tl
+
+(16) 
+
+Mk(W +) = min 
+
+[
+
+Mk−1(W ), xl+1 − xl+1 −k + 2 δ
+
+tl+1 − tl+1 −k
+
+]
+
+,k = 2 , . . . R + 1 .
+
+Eqs. (15) and (16) allow one to efficiently calculate ¯m(W +)
+
+and ¯M (W +) from ¯m(W ) and ¯M (W ). Together with (12), (13) it leads to efficient calculation of m(W +), M (W +).
+
+2) Removing a point from the left: W → W −: This case 
+
+mk(W −) = max 
+
+j = l − ki = j, . . . l 
+
+( xi − xj − 2δ
+
+ti − tj
+
+)
+
+, (17) for k = 1 , . . . R − 1 Hence, 
+
+mk(W −) = mk(W ), k = 1 , . . . R − 1. (18) In the same way, 
+
+Mk(W −) = Mk(W ), k = 1 , . . . R − 1. (19) Eqs. (18) and (19) allow one to efficiently calculate ¯m(W −)
+
+and ¯M (W −) from ¯m(W ) and ¯M (W ). Together with (12), (13) it leads to efficient calculation of m(W −), M (W −).
+
+3) Calculation of least squares fit: One can solve the constrained least-squares problem (4) using existing algo-rithms, e.g., available in MATLAB. However, they may not be suitable for a real-time implementation on a dedicated hardware. Since (4) is a special case of the generic least squares fit problem, it allows an analytic solution presented below, which can be implemented in a real-time setting. Consider window W = Wl(R). Let T := (tl−R −
+
+tl, . . . , t l−1 − tl, 0) ⊤, X := (xl−R, . . . , x l−1, x l)⊤, τ =∑Ri=0 tl−i, χ = ∑Ri=0 xl−i I := (1 , . . . , 1) ⊤ Then the solution of the unconstrained problem (4) is given by 
+
+k∗ 
+
+> l
+
+= X⊤Φ, b∗ 
+
+> l
+
+= X⊤Ψ, where (20) 
+
+Φ = T − τ 
+
+> R+1
+
+I
+
+T ⊤(T − τ 
+
+> R+1
+
+I) , Ψ = I
+
+R + 1 − Φτ. (21) For the constrained least squares problem, if |b∗ 
+
+> l
+
+− xl| > δ ,then the solution to the constrained problem (4) is given by 
+
+˜b∗ 
+
+> l
+
+= xl + sign( b∗ 
+
+> l
+
+− xl)δ, (22) 
+
+˜k∗ 
+
+> l
+
+= X⊤T − ˜b∗ 
+
+> l
+
+(( R + 1) tl − τ ) − tlχ
+
+T ⊤T + ( R + 1) t2 
+
+> l
+
+− 2tlτ . (23) For applications with a fixed sampling rate, the vectors Φ
+
+and Ψ will only depend on the size of the window R, and will not depend on l. This allows one to pre-compute them upfront, which makes the calculation more efficient. 
+
+D. Properties of ADF filter 1) Tuning and performance: ADF has two parameters: 
+
+Rmax and δ. One can choose Rmax sufficiently large and control the filter performance by the main parameter δ. The estimate ˆxl of the signal provided by ADF satisfies, cf. (4), 
+
+|xl − ˆxl| ≤ δ. (24) Thus, for δ smaller than the noise amplitude d, the output and its estimated derivative will reflect noise. Very large δ
+
+leads to filtering through (4) over the largest moving window of the size Rmax . The optimal tuning is with δ right above the noise amplitude d. With such tuning, the filter has a wide pass-band for signals of sufficiently high amplitudes relative to δ and low sensitivity to measurement noise with amplitudes below δ, that is often required in applications. 
+
+2) Memory requirements: Given parameter Rmax , ADF requires two arrays of size 1 × Rmax for storing the buffer with the last Rmax measurements and samples times, two arrays ¯m and ¯M of the size 1 × Rmax , as well as several scalar variables for real-time calculations. III. PID CONTROL CASE STUDY 
+
+A standard PID control, see e.g. [6] for basics and ad-vanced discussions, is taken as a case study for evaluating the properties and practical applicability of the above intro-duced adaptive differentiating filter. Recall that any PID-type feedback regulator assumes a first-order time derivative of the output value, which is (more than often) not available through sensor measurements. For an across domains exam-ple, any motion control system with PID feedback control would require measurement of the relative velocity, i.e. ˙x(t),for which there is hardly any sensor technology suitable for feedback. Thus, a practical differentiating filter, in terms of unavoidable phase-lag characteristics and a subsequently achievable signal-to-noise ratio (SNR), appears crucial for effectiveness of the PID control in countless applications. A. PID feedback with symmetrical optimum 
+
+PID feedback regulator, parameterized by the overall con-trol gain Kp and two time constants – of the integrator and differentiator Ti and Td respectively – can be written in Laplace s-domain in a parallel form as, cf. e.g. [7], 
+
+v(s) = Kp
+
+(
+
+1 + 1
+
+Tis + Tds
+
+)
+
+e(s). (25) The control error is e = r − x, where x is the measured system output and r is the control reference value. In the following, it is assumed that the latter is at least once differentiable, while | ˙r| < R and the upper bound 0 < R < 
+
+∞ is the matter of an application’s specification. We also note that the transfer function C(s) = v(s)/e (s) of the PID control (25) is strictly speaking improper, but the application of an (arbitrary) differentiating filter to determine e(s)s will provide additional low-pass properties. Thus and, moreover, due to a parallel connection of the PID control (25) there are no issues with an improper transfer function C(s).             
+
+> 10 010 110 210 3
+> -20 020 40
+> c
+> 10 010 110 210 3
+> -720 -630 -540 -450 -360 -270 -180 -90
+> Fig. 1. Shaped loop transfer function C(jω )G(jω )with identified system plant G(jω )and PID control C(jω )designed by symmetrical optimum.
+
+For determining the control parameters Kp, T i, T d > 0,we proceed with loop-shaping by following the principles of so-called symmetrical optimum [8]. The symmetrical optimum, in frequency domain, is achieved by shaping a −20 
+
+dB/decade slope around the cross-over frequency ωc, while both corner frequencies left- and right-hand-side from ωc are shaped to be approximately equidistant on the logarithmic scale, see Fig. 1. Worth noting is also that the corresponding system plant transfer function G(s), cf. the present system in section III-D, is equally crucial when shaping the loop by a symmetrical optimum principle. The determined control parameters thus determined are Kp = 420 , Ti = 0.07 ,and Td = 0 .03 , while it is explicitly emphasized that one and the same designed PID controller (25) is experimentally evaluated below with three different differentiators, each one delivering an ˙x(t) approximation. Further we notice that a constant gravity compensating term γ is also used, though without affecting the design and analysis, so that the overall control signal is u(t) = v(t) + γ.
+
+B. Linear filtered differentiation 
+
+Direct discrete time differentiation of the measured output value x(t) is considered the first and most intuitive (and also simplest) differentiation approach for comparison. For the given sampling time Ts, it leads to a finite differences 
+
+˙x ≈ (x(t) − x(t − Ts))/T s. (26) Since the measured x(t) contains also some unavoidable (parasitic) noise w(t), and the signal-to-noise ratio (SNR) has usually some finite value ≪ ∞ , the finite difference method (26) becomes more noise-sensitive when Ts de-creases. Therefore, an auxiliary low-pass filter (LPF) is required to let the net signal ˙x(t) through and, correspond-ingly, to attenuate the noise related ˙w(t) with frequencies higher than some cutoff frequency ω0, which is the design parameter. In a most simple case, the LPF can be assumed as a 2nd order critically-damped system with unity gain, parameterized by its natural frequency ω0. Following the lines of designing the control system in continuous time, cf. section III-A, while assuming a sufficiently low Ts for an afterwards discrete-time implementation, the linear filtered differentiator (further denoted as LDF) is given by LDF (s) = s ω 20
+
+(s2 + 2 ω0s + ω20
+
+)−1. (27) 
+
+C. Robust finite-time differentiator 
+
+One of the most widespread robust (and moreover finite-time) differentiators is the sliding-mode based one proposed by Levant [9], [10] and relying, in its simplest form, on the so-called super-twisting based algorithm (STA). Its re-markable feature is insensitivity to a bounded noise and the finite-time convergence to n-th time-derivative of the input signal x(t), provided the Lipschitz constant of its 
+
+n-th time-derivative is available. While intensive research on this class of differentiators was driven in the last two decades, we will solely denote it as robust exact differentiator (shortly RED), and use its well established parameterization approach developed to a toolbox [11]. The latter has an intuitive and straightforward non-recursive structure and is implementing the homogeneous discrete-time differentiator, as this was proposed in [12], while requiring the single scaling factor κ > 0 as design parameter. Worth noting is that κn+1 corresponds to the Lipschitz constant of the highest derivative x(n). The second-order RED is given, cf. [11], 
+
+˙z0 = z1 + 3 .1 κ ∣∣x − z0
+
+∣∣ 2 
+
+> 3
+
+sign( x − z0), (28a) 
+
+˙z1 = z2 + 3 .2 κ2 ∣∣x − z0
+
+∣∣ 1 
+
+> 3
+
+sign( x − z0), (28b) 
+
+˙z2 = 1 .1 κ3 sign( x − z0), (28c) and it provides z0(t) = x(t), z1(t) = ˙ x(t), z2(t) = ¨ x(t) for all t > t c, where tc is a finite convergence time. We explicitly notice that the second-order RED (and not the first-order one) is purposefully used in our study, in order to obtain a smoother estimate z1(t) of the output derivative ˙x(t).D. Experimental actuator system 1) Hardware setup: The used actuator system in a labo-ratory setting is shown in Fig. 2. The translational relative motion with a mechanically limited displacement range about 
+
+x ∈ [0 , . . . , 0.018) m is actuated by a voice-coil-motor. The real-time control and data acquisition Speedgoat I/O board is running at 2 kHz sampling frequency fs = 1 /T s. The controller output is the terminal voltage u(t) ∈ [0 , . . . , 10] Vof the voice-coil-motor, while its nominal electro-magnetic time constant (given by the manufacturer data-sheet) is μ =0.0012 sec. The system output relative displacement x(t) is   
+
+> Fig. 2. Actuator system in laboratory setting with translational motion x.
+
+measured contactless by a down placed inductive distance sensor with a nominal repeat accuracy of ±12 micrometers. Such sensing location and overall hardware configuration result in a relatively high level of the measurement noise, cf. below in section III-E. Further details on the experimental system in use and identification can be found in [13], [14]. 
+
+2) FRF identified model: The input-output system model (29) was accurately identified from the point-wise measured FRF (frequency response function) as shown in Fig. 3. Note        
+
+> 10 010 110 210 3
+> -140 -120 -100 -80 -60 -40 -20
+> 10 010 110 210 3
+> -720 -540 -360 -180 0
+> Fig. 3. Measured and identified FRF of the system.
+
+that the total moving mass parameter m is weighed on the electronic scales and thus known, equally as the given electro-magnetic time constant μ, cf. subsection above. Also, the nominal value of the overall actuator gain Km is known from the technical data-sheets of the voice-coil-motor. 
+
+G = Km exp( −τ s )
+
+s(ms + ν)( μs + 1) = 3.28 exp( −0.011 s)
+
+0.00064 s3 + 0 .634 s2 + 80 s .
+
+(29) The derived G(s) = x(s)/u (s) model (29) constitutes, this way, the best linear fit in frequency domain. The uncertain and thus experimentally estimated parameters are the linear damping ν and the time delay factor τ . More details on the accomplished FRF based identification of the system can be found in [14]. Note that the time delay appears largely as not negligible, cf. phase diagram in Fig. 3, and can be seen as the one lumped delay value accumulated from all converters, hardware channels of data processing, and amplifiers in the loop. Further recall that the transfer function (29) serves as a basis for symmetrical optimum tuning of the PID controller under examination, cf. section III-A. 
+
+E. Comparison of three differentiators 
+
+The ADF is parameterized by taking into account the CPU capacities of the control board with hard real-time constraints and an estimate of the upper bound on the measurement noise 
+
+d, cf. section II. An example of the measured x(t) at zero control value is shown in Fig. 4 (a), including its distribution histogram. Allowing for the single impulse-shape outliers, the set parameter is δ = 0 .0001 m, while Rmax = 140 
+
+for keeping the real-time data processing manageable and, therefore, to avoid a CPU overrun during the execution. The LDF is parameterized by ω0 = 600 rad/sec. Note that             
+
+> 0123t (s)
+> -1.5 -1 -0.5 00.5 1
+> x (m)  10 -4
+> (a)
+> time series
+> -0.0001 00.0001 x (m)
+> 0
+> distribution
+> 0.8 11.2 1.4 t (s)
+> 00.2 0.4 0.6
+> dx/dt (m/sec)
+> (b)
+> LDF
+> ADF
+> Fig. 4. Measured noisy output and its distribution at the idle state ( u= 0 )in (a), and exemplary ˙x(t)estimate by means of LDF and ADF in (b).
+
+with respect to the designed PID controller, cf. section III-A, such low-pass filter (applied for obtaining ˙x(t) estimate only) does not significantly change the shaped loop transfer characteristics. Solely the otherwise sufficient phase margin is reduced by less than 5 deg, cf. Fig. 1. An exemplary estimate of the output velocity, obtained by means of the designed LDF and ADF, are shown opposite to each other in Fig. 4 (b) for the measured x(t) during the controlled step response, cf. below. Finally, the RED is parameterized by setting κ = 8 , that is experimentally tuned as provided in [14] on an up-chirp signal excitation response within one decade (e.g. between 8 rad/sec and 80 rad/sec). For the sake of a better traceability, the numerically determined FRFs of all three differentiators are shown for two and a half decades in Fig. 5, opposed to each other and to an exact differentiation, i.e. |jω |. Note that waves in the shape at lower frequencies are associated with chirp-signal used for a smooth input. Therefore, it allows for an only quasi-steady-state frequency consideration, especially in the fist decade. Apart from that, one can recognize that all three differentiators provide an expected 20 dB/dec increase over the total frequency range of interest. To notice is that the RED breaks down around ω = 100 rad/sec, – a bandwidth for which it was designed by assigning the scaling factor κ.   
+
+> 10 010 110 2
+> (rad/sec)
+> 010 20 30 40 50
+> | output / input | (dB)
+> |j | exact
+> RED
+> LDF
+> ADF
+
+Fig. 5. Numerically determined FRF of three differentiators. 
+
+The designed PID control (cf. section III-A) is experimen-tally evaluated with three different differentiators, LPF, ADF, and RED, once on a step and once on a slope reference, as shown in Fig. 6. All three differentiation schemes lead to      
+
+> 11.2 1.4 1.6 1.8 2t (s)
+> 00.005 0.01 0.015
+> x (m)
+
+(a)      
+
+> LDF
+> ADF
+> RED
+> reference
+> 11.2 1.4 1.6 1.8 2t (s)
+> 0246
+> u (V)
+
+(b)      
+
+> LDF
+> ADF
+> RED
+> 123456t (s)
+> 00.005 0.01 0.015
+> x (m)
+
+(c)      
+
+> LDF
+> ADF
+> RED
+> reference
+> 123456t (s)
+> 123
+> u (V)
+
+(d) 
+
+> LDF
+> RED
+> ADF
+
+Fig. 6. Measured PID response (with LDF, ADF, RED) of output and control values: (a), (b) to step reference and (c), (d) to slope reference. 
+
+a relatively similar control response, while ADF provides a slightly lower overshoot in case of the step response. Also to notice is a time delay, cf. τ in section III-D.2, and a slow settling of the optimal PID control, cf. Fig. 6 (a), due to the nonlinear Coulomb-type friction, see [15] for details. An essential advantage of using ADF differentiator becomes evident by inspecting u(t) control values, cf. Fig. 6 (b) and (d). While being in principle uniform, the higher oscillatory control patterns (and so energy consumption and system loading) are clearly with LDF and RED due to richer frequency components of ˙x(t) estimate, cf. also Fig. 4 (b). IV. C ONCLUDING STATEMENTS 
+
+A novel causal discrete-time filter based on a constrained least-squares estimator with window adaptation was pro-posed for differentiating noisy process measurements. It shows low sensitivity to the measurement noise while pre-serving large amplitude and high-dynamic changes in the process signal. The filter is real-time capable and shows excellent performance in differential feedback control action, evaluated and compared on a real physical motion control application. More detailed analysis of the filter sensitivity and convergence properties, transfer characteristics, and optimal tuning are subject of our upcoming works in progress. REFERENCES [1] M. Mboup, C. Join, and M. Fliess, “Numerical differentiation with annihilators in noisy environment,” Numerical algorithms , vol. 50, no. 4, pp. 439–467, 2009. [2] R. W. Schafer, “What is a Savitzky-Golay filter? [lecture notes],” IEEE Signal Processing Magazine , vol. 28, no. 4, pp. 111–117, 2011. [3] V. Utkin, Sliding modes in control and optimization . Springer, 1992. [4] M. R. Mojallizadeh, B. Brogliato, A. Polyakov, S. Selvarajan, L. Michel, F. Plestan, M. Ghanes, J.-P. Barbot, and Y. Aoustin, “A sur-vey on the discrete-time differentiators in closed-loop control systems: Experiments on an electro-pneumatic system,” Control Engineering Practice , vol. 136, p. 105546, 2023. [5] F. Janabi-Sharifi, V. Hayward, and C.-S. Chen, “Discrete-time adaptive windowing for velocity estimation,” IEEE Transactions on control systems technology , vol. 8, no. 6, pp. 1003–1009, 2000. [6] K. Astr¨ om and T. H¨ agglund, Advanced PID Control , ser. International Society of Automation. Wiley, 2005. [7] G. Franklin, J. Powell, and A. Emami-Naeini, Feedback Control of Dynamic Systems , eight ed. Pearson, 2019. [8] C. Kessler, “Das symmetrische Optimum, Teile I und II,” at-Automatisierungstechnik , vol. 6, pp. 395–400, 432–436, 1958. [9] A. Levant, “Robust exact differentiation via sliding mode technique,” 
+
+Automatica , vol. 34, no. 3, pp. 379–384, 1998. [10] A. Levant, “Higher-order sliding modes, differentiation and output-feedback control,” Int. J. of Con. , vol. 76, pp. 924–941, 2003. [11] M. Reichhartinger, S. Spurgeon, M. Forstinger, and M. Wipfler, “A robust exact differentiator toolbox for Matlab®/Simulink®,” IFAC-PapersOnLine , vol. 50, no. 1, pp. 1711–1716, 2017. [12] M. Livne and A. Levant, “Proper discretization of homogeneous differentiators,” Automatica , vol. 50, no. 8, pp. 2007–2014, 2014. [13] M. Ruderman, “Motion control with optimal nonlinear damping: from theory to experiment,” Con. Eng. Prac. , vol. 127, 2022. [14] M. Ruderman, J. Reger, B. Calmbach, and L. Fridman, “Sensitivity analysis and experimental evaluation of PID-like continuous sliding mode control,” Int. J. of Rob. and Nonlin. Con. , vol. appearing, 2026. [15] M. Ruderman, “On convergence analysis of feedback control with integral action and discontinuous relay perturbation,” Communications in Nonlin. Science and Num. Simulation , vol. 145, 2025.

@@ -1,0 +1,311 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-03-31T20:19:11.310250+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 8,
+    "quick_skim_target": 11,
+    "quick_selected": 8
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2603.27279v1",
+      "title": "Bonded-particle model for magneto-elastic rods",
+      "abstract": "We develop a bonded-particle model for magneto-elastic rods that unifies large deformations, contact, and long-range magnetic interactions within a single discrete-element framework. The rod is discretized into orientable particles connected by co-rotational bonds that capture stretching, shearing, bending, and twisting through a symmetric decomposition of relative displacement and rotation. Magnetic coupling is introduced at the particle level: each particle carries a dipole moment that rotates with it, enabling both external-field actuation and long-range dipole--dipole interactions without modifying the structural formulation. We implement the model in LAMMPS to take advantage of its parallel efficiency, long-range electrostatic solvers, and multiphysics capabilities. We validate the framework against three benchmark problems: writhing instabilities of straight and curved rods under extreme twisting, large deflections of magnetized beams in uniform and constant-gradient fields, and mechanical hysteresis of helical rods with dipole--dipole interactions. To demonstrate multiphysics capability, we couple the model with a lattice Boltzmann fluid solver via the immersed boundary method and simulate filaments in oscillatory channel flow and fluid pumping by magnetically actuated cilia arrays. Across all examples, the model shows good agreement with experimental, analytical, and numerical reference results.",
+      "authors": [
+        "Gabriel Alkuino",
+        "Joel T. Clemmer",
+        "Christian D. Santangelo",
+        "Teng Zhang"
+      ],
+      "primary_category": "cond-mat.soft",
+      "categories": [
+        "cond-mat.soft"
+      ],
+      "published": "2026-03-28T14:21:20+00:00",
+      "link": "https://arxiv.org/pdf/2603.27279v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Modeling of long-range magnetic interactions and external-field actuation in elastic structures",
+      "llm_evidence_cn": "弹性结构中远程磁相互作用和外场驱动的建模",
+      "llm_evidence": "弹性结构中远程磁相互作用和外场驱动的建模",
+      "canonical_evidence": "弹性结构中远程磁相互作用和外场驱动的建模",
+      "llm_tldr_en": "Develops a bonded-particle model for magneto-elastic rods to simulate magnetic actuation and interactions.",
+      "llm_tldr_cn": "开发了磁弹性杆的键合颗粒模型，用于模拟磁驱动和相互作用。",
+      "llm_tldr": "开发了磁弹性杆的键合颗粒模型，用于模拟磁驱动和相互作用。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "eddy current effects in electromagnetic actuators dynamic modeling",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.23753v1",
+      "title": "Task-Space Singularity Avoidance for Control Affine Systems Using Control Barrier Functions",
+      "abstract": "Singularities in robotic and dynamical systems arise when the mapping from control inputs to task-space motion loses rank, leading to an inability to determine inputs. This limits the system's ability to generate forces and torques in desired directions and prevents accurate trajectory tracking. This paper presents a control barrier function (CBF) framework for avoiding such singularities in control-affine systems. Singular configurations are identified through the eigenvalues of a state-dependent input-output mapping matrix, and barrier functions are constructed to maintain a safety margin from rank-deficient regions. Conditions for theoretical guarantees on safety are provided as a function of actuator dynamics. Simulations on a planar 2-link manipulator and a magnetically actuated needle demonstrate smooth trajectory tracking while avoiding singular configurations and reducing control input spikes by up to 100x compared to the nominal controller.",
+      "authors": [
+        "Kimia Forghani",
+        "Suraj Raval",
+        "Lamar Mair",
+        "Axel Krieger",
+        "Yancy Diaz-Mercado"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-03-24T22:25:28+00:00",
+      "link": "https://arxiv.org/pdf/2603.23753v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "guarantees on force generation as a function of actuator dynamics",
+      "llm_evidence_cn": "作为执行器动力学函数的力生成保证",
+      "llm_evidence": "作为执行器动力学函数的力生成保证",
+      "canonical_evidence": "作为执行器动力学函数的力生成保证",
+      "llm_tldr_en": "A CBF framework to avoid singularities and maintain force generation capabilities in control-affine systems.",
+      "llm_tldr_cn": "一种用于避免奇异性并保持控制仿射系统力生成能力的控制障碍函数框架。",
+      "llm_tldr": "一种用于避免奇异性并保持控制仿射系统力生成能力的控制障碍函数框架。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.28647v1",
+      "title": "Notes from the Physics Teaching Lab: A Magneto-Mechanical Harmonic Oscillator",
+      "abstract": "We describe a magnetically driven torsional oscillator that is well suited for teaching the physics of simple harmonic motion using a collection of hands-on, quantitative experiments. The mechanical Q of the system can be tuned using eddy-current damping, while optical read-outs provide electronic signals than can be recorded using nothing more than a basic digital oscilloscope. The 40-Hz oscillator is described by simple harmonic motion to high accuracy, providing many satisfying comparisons between theory and experiment.",
+      "authors": [
+        "Kenneth G. Libbrecht"
+      ],
+      "primary_category": "physics.ed-ph",
+      "categories": [
+        "physics.ed-ph"
+      ],
+      "published": "2026-03-30T16:32:47+00:00",
+      "link": "https://arxiv.org/pdf/2603.28647v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "magnetically driven oscillator with eddy-current damping",
+      "llm_evidence_cn": "具有涡流阻尼的磁驱动振荡器",
+      "llm_evidence": "具有涡流阻尼的磁驱动振荡器",
+      "canonical_evidence": "具有涡流阻尼的磁驱动振荡器",
+      "llm_tldr_en": "Describes a magnetically driven torsional oscillator where damping can be tuned using eddy currents.",
+      "llm_tldr_cn": "描述了一种磁驱动扭转振荡器，其阻尼可以通过涡流进行调节。",
+      "llm_tldr": "描述了一种磁驱动扭转振荡器，其阻尼可以通过涡流进行调节。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "eddy current effects in electromagnetic actuators dynamic modeling",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2603.25965v1",
+      "title": "A Monolithic Computational Homogenization Framework for Nearly Incompressible Magnetoelastic Composites",
+      "abstract": "Magneto-active elastomers exhibit large, nonlinear deformations under combined mechanical loading and magnetic fields, and their effective behavior is strongly governed by microstructural heterogeneity. Predictive modeling of these materials is challenging because their response involves strong magneto-mechanical coupling, large deformations, and the nearly incompressible behavior of elastomeric matrices. Existing multiscale approaches often rely on staggered strategies or formulations that do not robustly treat near-incompressibility in strongly coupled settings. This work presents a fully coupled computational homogenization framework for nearly incompressible magnetoelastic composites in which the mechanical deformation and magnetostatic fields are solved monolithically on a representative volume element (RVE). The microscale problem uses a mixed finite-element discretization with Lagrangian displacement degrees of freedom and a N'ed'elec-based magnetic vector potential, enabling a curl-conforming representation of magnetic induction together with periodic boundary constraints for both mechanical and magnetic fields. Near-incompressibility is treated using J-bar stabilization, in which the volumetric response is controlled by the cell-averaged dilatation while the isochoric response is evaluated using a scaled deformation gradient. The constitutive behavior is derived from an additive free-energy decomposition with hyperelastic, vacuum magnetic, and saturation-type magnetization contributions. The resulting formulation enables robust three-dimensional RVE simulations of heterogeneous magneto-elastic composites with complex particle distributions under large deformations and strong coupling. Numerical examples show how particle interactions, microstructural arrangement, and inclusion compressibility influence deformation patterns and the effective magneto-mechanical response.",
+      "authors": [
+        "L. River Spencer",
+        "Manuel K. Rausch",
+        "Chad M. Landis",
+        "Jan N. Fuhg"
+      ],
+      "primary_category": "cs.CE",
+      "categories": [
+        "cs.CE"
+      ],
+      "published": "2026-03-26T23:11:03+00:00",
+      "link": "https://arxiv.org/pdf/2603.25965v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "modeling of magnetoelastic composites with strong magneto-mechanical coupling",
+      "llm_evidence_cn": "具有强磁机耦合特性的磁弹性复合材料建模",
+      "llm_evidence": "具有强磁机耦合特性的磁弹性复合材料建模",
+      "canonical_evidence": "具有强磁机耦合特性的磁弹性复合材料建模",
+      "llm_tldr_en": "A framework for modeling magneto-mechanical coupling, relevant to electromagnetic actuator dynamics.",
+      "llm_tldr_cn": "一种磁机耦合建模框架，与电磁执行器动力学相关。",
+      "llm_tldr": "一种磁机耦合建模框架，与电磁执行器动力学相关。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "eddy current effects in electromagnetic actuators dynamic modeling",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.27024v1",
+      "title": "Data-driven discovery and control of multistable nonlinear systems and hysteresis via structured Neural ODEs",
+      "abstract": "Many engineered physical processes exhibit nonlinear but asymptotically stable dynamics that converge to a finite set of equilibria determined by control inputs. Identifying such systems from data is challenging: stable dynamics provide limited excitation and model discovery is often non-unique. We propose a minimally structured Neural Ordinary Differential Equation (NODE) architecture that enforces trajectory stability and provides a tractable parameterization for multistable systems, by learning a vector field in the form $F(x,u) = f(x)\\,(x - g(x,u))$, where $f(x) < 0$ elementwise ensures contraction and $g(x,u)$ determines the multi-attractor locations. Across several nonlinear benchmarks, the proposed structure is efficient on short time horizon training, captures multiple basins of attraction, and enables efficient gradient-based feedback control through the implicit equilibrium map $g$.",
+      "authors": [
+        "Ike Griss Salas",
+        "Ethan King"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY",
+        "math-ph",
+        "math.DS"
+      ],
+      "published": "2026-03-27T22:25:02+00:00",
+      "link": "https://arxiv.org/pdf/2603.27024v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "data-driven discovery and control of nonlinear systems with hysteresis",
+      "llm_evidence_cn": "具有磁滞特性的非线性系统数据驱动发现与控制",
+      "llm_evidence": "具有磁滞特性的非线性系统数据驱动发现与控制",
+      "canonical_evidence": "具有磁滞特性的非线性系统数据驱动发现与控制",
+      "llm_tldr_en": "Proposes structured Neural ODEs to identify and control multistable nonlinear systems and hysteresis.",
+      "llm_tldr_cn": "提出结构化神经ODE，用于识别和控制多稳态非线性系统及磁滞现象。",
+      "llm_tldr": "提出结构化神经ODE，用于识别和控制多稳态非线性系统及磁滞现象。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "eddy current effects in electromagnetic actuators dynamic modeling",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.27313v1",
+      "title": "MetaTune: Adjoint-based Meta-tuning via Robotic Differentiable Dynamics",
+      "abstract": "Disturbance observer-based control has shown promise in robustifying robotic systems against uncertainties. However, tuning such systems remains challenging due to the strong coupling between controller gains and observer parameters. In this work, we propose MetaTune, a unified framework for joint auto-tuning of feedback controllers and disturbance observers through differentiable closed-loop meta-learning. MetaTune integrates a portable neural policy with physics-informed gradients derived from differentiable system dynamics, enabling adaptive gain across tasks and operating conditions. We develop an adjoint method that efficiently computes the meta-gradients with respect to adaptive gains backward in time to directly minimize the cost-to-go. Compared to existing forward methods, our approach reduces the computational complexity to be linear in the data horizon. Experimental results on quadrotor control show that MetaTune achieves consistent improvements over state-of-the-art differentiable tuning methods while reducing gradient computation time by more than 50 percent. In high-fidelity PX4-Gazebo hardware-in-the-loop simulation, the learned adaptive policy yields 15-20 percent average tracking error reduction at aggressive flight speeds and up to 40 percent improvement under strong disturbances, while demonstrating zero-shot sim-to-sim transfer without fine-tuning.",
+      "authors": [
+        "Xiexin Peng",
+        "Bingheng Wang",
+        "Tao Zhang",
+        "Ying Zheng"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-03-28T15:37:39+00:00",
+      "link": "https://arxiv.org/pdf/2603.27313v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "joint auto-tuning of feedback controllers and disturbance observers",
+      "llm_evidence_cn": "反馈控制器与扰动观测器的联合自动调优",
+      "llm_evidence": "反馈控制器与扰动观测器的联合自动调优",
+      "canonical_evidence": "反馈控制器与扰动观测器的联合自动调优",
+      "llm_tldr_en": "A meta-learning framework for tuning feedback controllers and disturbance observers in robotic systems.",
+      "llm_tldr_cn": "一种用于机器人系统中反馈控制器和扰动观测器调优的元学习框架。",
+      "llm_tldr": "一种用于机器人系统中反馈控制器和扰动观测器调优的元学习框架。",
+      "llm_tags": [
+        "query:em-force:composite"
+      ],
+      "matched_query_tag": "query:em-force:composite",
+      "matched_query_text": "Papers central to 查找非接触式电磁激振器的力控制方法，特别是精密控制策略, especially work that connects or combines: electromagnetic exciter force control; ddy current magnetic bearing modeling; magnetic bearing flux feedback; non-contact electromagnetic shaker force control; precision force control strategies for electromagnetic actuators; closed-loop force control for electromagnetic shakers; flux feedback linearization zero bias magnetic bearing; non contact electromagnetic exciter precision force control; eddy current effects in electromagnetic actuators dynamic modeling; flux feedback control for magnetic bearing force precision.",
+      "matched_requirement_id": "req-composite-em-force",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.27615v1",
+      "title": "Adaptive differentiating filter: case study of PID feedback control",
+      "abstract": "This paper presents an adaptive causal discrete-time filter for derivative estimation, exemplified by its use in estimating relative velocity in a mechatronic application. The filter is based on a constrained least squares estimator with window adaptation. It demonstrates low sensitivity to low-amplitude measurement noise, while preserving a wide bandwidth for large-amplitude changes in the process signal. Favorable performance properties of the filter are discussed and demonstrated in a practical case study of PID feedback controller and compared experimentally to a standard linear low-pass filter-based differentiator and a robust sliding-mode based homogeneous differentiator.",
+      "authors": [
+        "Alexey Pavlov",
+        "Michael Ruderman"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-03-29T10:17:35+00:00",
+      "link": "https://arxiv.org/pdf/2603.27615v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "adaptive differentiating filter for PID feedback in mechatronics",
+      "llm_evidence_cn": "机电应用中用于PID反馈的自适应微分滤波器",
+      "llm_evidence": "机电应用中用于PID反馈的自适应微分滤波器",
+      "canonical_evidence": "机电应用中用于PID反馈的自适应微分滤波器",
+      "llm_tldr_en": "Proposes an adaptive filter for derivative estimation to improve PID feedback control in mechatronic systems.",
+      "llm_tldr_cn": "提出一种用于导数估计的自适应滤波器，以改进机电系统中的PID反馈控制。",
+      "llm_tldr": "提出一种用于导数估计的自适应滤波器，以改进机电系统中的PID反馈控制。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.28411v1",
+      "title": "Monolithic piezo-magnonic-MEMS for efficient modulation of RF signals",
+      "abstract": "Compact, low-power analog RF components are essential for next-generation microwave electronics and wireless systems. We demonstrate an all-electric integrated piezo-magnonic microelectromechanical system that enables efficient voltage control of GHz spin-wave signals via magnetoelastic coupling. Exploiting the large strain in a CoFeB magnonic waveguide integrated on a silicon bridge with piezoelectric actuation, very large values of the magnetoelectric field (up to $30\\,\\mathrm{mT}$ at $30\\,\\mathrm{V}$) are obtained, thus achieving reversible phase and amplitude control of propagating spin waves. In the static regime, we achieve either up to $4π$ phase modulation or $\\approx 50\\,\\mathrm{dB}$ amplitude attenuation with drive voltages below $20\\,\\mathrm{V}$ at $7\\,\\mathrm{GHz}$. Leveraging the bridge's first bending resonance ($\\approx 17\\,\\mathrm{kHz}$) yields resonant enhancement of the phase modulation efficiency. This allows us to achieve a $2π$ phase swing with just $2.2\\,\\mathrm{V}$ drive and power consumption of $\\approx 6\\,μ\\mathrm{W}$. Our results highlight piezo-magnonic MEMS as a promising new class of devices for reconfigurable RF front ends and analog signal processors.",
+      "authors": [
+        "M. Cocconcelli",
+        "A. Angotti",
+        "P. Florio",
+        "N. Pellizzi",
+        "F. Maspero",
+        "R. Bertacco"
+      ],
+      "primary_category": "physics.app-ph",
+      "categories": [
+        "physics.app-ph"
+      ],
+      "published": "2026-03-30T13:19:10+00:00",
+      "link": "https://arxiv.org/pdf/2603.28411v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Voltage control of magnetic fields via magnetoelastic coupling in MEMS",
+      "llm_evidence_cn": "通过MEMS中的磁弹性耦合进行磁场的电压控制",
+      "llm_evidence": "通过MEMS中的磁弹性耦合进行磁场的电压控制",
+      "canonical_evidence": "通过MEMS中的磁弹性耦合进行磁场的电压控制",
+      "llm_tldr_en": "Demonstrates efficient voltage control of spin waves using magnetoelastic coupling in a MEMS device.",
+      "llm_tldr_cn": "演示了利用MEMS器件中的磁弹性耦合对自旋波进行高效电压控制。",
+      "llm_tldr": "演示了利用MEMS器件中的磁弹性耦合对自旋波进行高效电压控制。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

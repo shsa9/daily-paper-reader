@@ -1,0 +1,2208 @@
+Title: A Monolithic Computational Homogenization Framework for Nearly Incompressible Magnetoelastic Composites
+
+URL Source: https://arxiv.org/pdf/2603.25965v1
+
+Published Time: Mon, 30 Mar 2026 00:16:50 GMT
+
+Number of Pages: 34
+
+Markdown Content:
+# A M ONOLITHIC COMPUTATIONAL HOMOGENIZATION 
+
+# FRAMEWORK FOR NEARLY INCOMPRESSIBLE MAGNETOELASTIC 
+
+# COMPOSITES 
+
+L. River Spencer 
+
+Department of Aerospace Engineering & Engineering Mechanics, The University of Texas at Austin, Austin, TX 78712 
+
+Manuel K. Rausch 
+
+Department of Aerospace Engineering & Engineering Mechanics, The Oden Institute of Computational Science and Engineering, Department of Biomedical Engineering, Department of Mechanical Engineering, The University of Texas at Austin, Austin, TX 78712 
+
+Chad M. Landis 
+
+Department of Aerospace Engineering & Engineering Mechanics, The Oden Institute of Computational Science and Engineering, The University of Texas at Austin, Austin, TX 78712 
+
+Jan N. Fuhg 
+
+Department of Aerospace Engineering & Engineering Mechanics, The Oden Institute of Computational Science and Engineering, The University of Texas at Austin, Austin, TX 78712 March 30, 2026 
+
+ABSTRACT 
+
+Magneto-active elastomers exhibit large, nonlinear deformations under combined mechanical loading and magnetic fields, and their effective behavior is strongly governed by microstructural heterogeneity. Predictive modeling of these materials is challenging because their response involves strong magneto-mechanical coupling, large deformations, and the nearly incompressible behavior of elastomeric matrices. Existing multiscale approaches often rely on staggered solution strategies or formulations that struggle to robustly treat near-incompressibility in strongly coupled settings. This work presents a fully coupled computational homogenization framework for nearly incompressible magnetoelastic composites in which the mechanical deformation and magnetostatic fields are solved monolithically on a representative volume element (RVE). The microscale problem employs a mixed finite-element discretization with Lagrangian displacement degrees of freedom and a Nédélec-based magnetic vector potential, enabling a curl-conforming representation of the magnetic induction together with periodic boundary constraints for both mechanical and magnetic fields. Near-incompressibility is treated using a J-bar stabilization in which the volumetric response is controlled by the cell-averaged dilatation, while the isochoric response is evaluated using a scaled deformation gradient. The constitutive behav-ior is derived from an additive free-energy decomposition consisting of a hyperelastic contribution, 
+
+> arXiv:2603.25965v1 [cs.CE] 26 Mar 2026
+
+A PREPRINT - M ARCH 30, 2026 a vacuum magnetic energy term, and a saturation-type magnetization potential that is active within the particle phase. The resulting formulation enables robust three-dimensional RVE simulations of heterogeneous magneto-elastic composites containing complex particle distributions under large deformations and strong magneto-mechanical coupling. Numerical examples demonstrate how parti-cle interactions, microstructural arrangement, and inclusion compressibility influence deformation patterns and the effective magneto-mechanical response. In particular, the simulations highlight the role of particle compressibility in governing local deformation modes and the resulting homogenized response under magnetic loading. 
+
+1 Introduction 
+
+Magneto-active elastomers (MAEs) and related magneto-responsive soft composites combine a compliant non-magnetic polymer matrix with magnetic inclusions, enabling field-controlled actuation, tunable stiffness, and programmable shape change [ 1, 2 ]. These materials are attractive for applications such as soft robotics, adaptive vibration isolation, reconfigurable metamaterials, and sensing/energy harvesting devices [ 1, 3, 4]. The macroscopic response of MAEs is governed by strongly nonlinear, coupled magneto–mechanical physics and by the underlying microstructure (e.g., parti-cle volume fraction, distribution, and anisotropy) [ 5]. Large strains, geometric nonlinearity, and near-incompressibility of elastomeric matrices challenge standard displacement-based finite elements, while magnetic saturation and material property contrast between phases can introduce additional nonlinearity and strong field localization. As a result, predictive modeling requires constitutive descriptions that are both thermodynamically consistent and capable of resolving microstructure-induced interactions between the mechanical and magnetic fields, including field-driven particle reorientation and rotation under finite deformation. [6, 7]. Computational homogenization offers a systematic route to bridge the microscale physics to effective macroscopic behavior by solving a representative volume element (RVE) boundary-value problem and extracting homogenized mechanical and magnetic quantities for use at the macroscale [ 8]. In this setting, periodic boundary conditions are commonly adopted to reduce boundary artifacts and to represent an infinite periodic medium [ 9], while consistent linearization of the coupled residual is essential for robust Newton-type solvers in multiscale contexts [ 10 ]. Apersistent practical difficulty in RVE simulations of elastomeric composites is enforcing (near-)incompressibility without sacrificing numerical stability. Mixed formulations with additional pressure-like fields can be effective [ 11 ], but they increase complexity and saddle-point structure, particularly when combined with additional electromagnetic unknowns [ 12 ]. An alternative is J-bar type stabilization [ 13 ], where the volumetric response is driven by a cell-averaged dilatation while the isochoric response is evaluated using a scaled deformation gradient, mitigating volumetric locking while retaining a displacement-based representation [ 13 ]. On the magnetic side, vector-potential formulations provide a convenient framework for magnetostatics by enforcing ∇ · B = 0 identically and enabling curl-conforming discretizations [ 14 ]. In a finite element setting, Nédélec elements are a natural choice for representing the vector potential and its curl [ 15 ], and they integrate well with periodic constraints and gauge-fixing strategies needed to remove null modes [16]. Despite substantial progress, existing coupled magneto-elastic RVE formulations often (i) adopt staggered or weakly coupled solution strategies that can become fragile for strong coupling, large strain, or near-saturation regimes [ 17 ], (ii) use magnetic scalar-potential approaches that complicate periodic enforcement and/or the representation of discontinuous material coefficients at phase boundaries [ 18 ], or (iii) rely on discretizations and incompressibility treatments that can suffer from locking or deteriorated Newton convergence in nearly incompressible settings [ 19 ]. These limitations motivate a monolithic, energy-based formulation with a curl-conforming magnetic discretization, robust near-incompressibility stabilization, and a consistent coupled tangent tailored for use in computational homogenization. In addition, many microstructure-resolved studies are restricted to idealized lattice geometries, two-dimensional settings, small numbers of inclusions, or moderate deformation regimes. Robust three-dimensional RVE simulations of random particle distributions at large strain and near-incompressible matrix response remain comparatively limited, particularly under strong magneto–mechanical coupling [20]. This work develops a fully coupled, energy-based computational homogenization framework for nearly incompressible magnetoelastic composites in which the mechanical displacement field and magnetic vector potential are solved monolithically on three-dimensional RVEs. The formulation enables large-deformation simulations of random particle distributions containing O(10 2) inclusions under periodic boundary conditions. Field-induced particle reorientation emerges naturally from the coupled solution without imposing prescribed particle motions, allowing the study of rotation-driven anisotropy evolution in strongly nonlinear regimes. The framework employs (i) periodic boundary constraints for both mechanical and magnetic fields, (ii) a J-bar stabilization to robustly treat near-incompressibility at finite strain, and (iii) automatic differentiation of the free energy to obtain a consistent coupled tangent operator including magneto–mechanical coupling terms. The constitutive model is defined through an additive free-energy decomposition 2A PREPRINT - M ARCH 30, 2026 comprising a hyperelastic contribution, a vacuum magnetic energy term, and a saturation-type magnetization potential active in the particle phase. The remainder of the paper is organized as follows. Section 2 introduces the governing equations, energetic setting, and homogenization framework. Section 2 also details the near-incompressibility treatment and magnetic vector-potential formulation. Section 3 describes the finite element discretization, periodic constraints, and the consistent tangent construction. Section 4 presents representative numerical examples, and Section 5 concludes with a discussion of limitations and future directions. 
+
+2 Theoretical Background 
+
+2.1 Kinematics 
+
+Consider the motion of a body whose reference configuration at time t0 ∈ R≥0 is given by B0 ⊂ Rd with the spatial dimension d. The current configuration of the body at time t ∈ I := { t ∈ R | t ≥ t0 } is defined as 
+
+B ⊂ Rd3. To describe the motion of this body, a smooth bijective mapping φ : B0 × I → B, which links material points X ∈ B0 7 → x = φ(X, t ) ∈ B, is introduced. The displacement u of each material point is given by 
+
+u(X, t ) := φ(X, t ) − X. The deformation gradient and its determinate are defined as F := 
+
+ ∂φ
+
+> ∂X
+
+T
+
+and J := det F.
+
+We further define the right Cauchy–Green tensor C := FT F. For more details on kinematics, refer to Ref. [21]. 
+
+2.2 Volumetric–isochoric split 
+
+To robustly enforce near-incompressibility, we employ an element-wise volumetric projection (the J-bar method) within a mixed formulation following [ 13 ]. This choice is motivated by the periodic boundary conditions of the RVE problem and by the need to represent a nearly incompressible matrix response without introducing additional volumetric unknowns. In a full mixed incompressible formulation, such extra fields would also need to satisfy admissible microscale constraints, which considerably complicates the periodic homogenization setting. By contrast, the J-bar approach replaces the pointwise volumetric response with an averaged measure, which is consistent with the present homogenization framework and also provides a practical basis for studying cases in which different phases exhibit different degrees of compressibility. For each element domain Ωe with volume Ve, we define the element-averaged Jacobian 
+
+J(e) := 1
+
+Ve
+
+Z
+
+> Ωe
+
+J dV . Ve := 
+
+Z
+
+> Ωe
+
+1 d V, (1) Using J(e), we introduce a volumetric–isochoric split by defining the scaling factor 
+
+s := J(e)
+
+J
+
+!1/d 
+
+, F := s F, (2) where d denotes the number of spatial dimensions. By construction, the modified deformation gradient satisfies 
+
+det F = J(e), so the volumetric deformation is assumed to be constant over each element. We then define the modified right Cauchy–Green tensor and its first invariant as 
+
+C := FT F, I1 := tr( C). (3) 
+
+2.3 Magnetostatic formulation 
+
+We consider quasi-stationary magnetostatics in the absence of free current densities. In the current configuration, Maxwell’s equations reduce to [22] 
+
+∇ · b = 0 , ∇ × h = 0, (4) supplemented by the standard interface conditions JbK · n = 0 and JhK × n = 0.For constitutive modeling and coupling to deformation, we employ a Lagrangian description in which the spatial fields are related by b = μ0(h + m) and pulled back to the reference configuration via 
+
+B := ( cof F) b = JF−1b, H := FT h, (5) so that the magnetostatic equations become ∇X · B = 0 and ∇X × H = 0 in the reference configuration [23]. 3A PREPRINT - M ARCH 30, 2026 To enforce ∇X · B = 0 identically, we introduce a (fluctuation) magnetic vector potential A and decompose the induction as 
+
+B = BM + ∇X × A, (6) where BM denotes a prescribed macroscopic induction. The uniqueness of the discrete magnetic vector potential A
+
+is ensured by removing the remaining gauge freedom, for example, by fixing a single degree of freedom [ 24 ] and weakly enforcing the Coulomb gauge condition ∇ · A = 0 . In the present formulation, this weak gauge enforcement is provided through the boundary conditions described in Section 3.2. 
+
+2.4 Free energy density 
+
+We assume an additive decomposition of the Helmholtz free energy density into mechanical and magnetic parts, 
+
+ψ(F, B) = ψmech (F, J (e)) + ψvac (F, B) + ψmag (F, B), (7) where F and J(e) are the element-wise J-bar projected measures defined in Section 2.2. The J-bar projection is applied only to the mechanical volumetric response to alleviate locking; magnetic terms are evaluated using the physical deformation gradient F to preserve the exact referential–spatial transformation of the induction. 
+
+2.4.1 Mechanical contribution 
+
+The mechanical response is modeled using a Yeoh-type potential written in terms of the averaged dilatation J(e) and the first invariant I1 of the modified right Cauchy–Green tensor, 
+
+ψmech = K
+
+2
+
+ J(e) − 12 + C1
+
+ I1 − 3 + C2
+
+ I1 − 32 + C3
+
+ I1 − 33, (8) where K is the bulk modulus and C1, C2, and C3 are Yeoh material parameters [25]. 
+
+2.4.2 Vacuum-field contribution 
+
+The vacuum-field contribution accounts for the magnetic energy stored in free space and is expressed in referential form as 
+
+ψvac = 12μ0
+
+J b · b = 12μ0J (FB ) · (FB ), (9) where μ0 is the permeability of free space, and the spatial magnetic induction b = J−1FB .
+
+2.4.3 Particle magnetization contribution 
+
+To model the additional energetic contribution associated with particle magnetization, we adopt a Legendre-based magnetic free energy depending on the spatial induction magnitude. Assuming the magnetic field is aligned with b, we write h = h n with n := b/b where b = ∥b∥ , and determine the field magnitude h implicitly from 
+
+μ0
+
+
+
+h + mleg  
+
+> s
+
+L(αleg h)
+
+
+
+= b, L(x) := coth( x) − 1
+
+x , (10) where μ0 is the permeability of free space, mleg  
+
+> s
+
+is the (Legendre-model) saturation magnetization, and αleg is the Langevin parameter [26]. The magnetization energy density per current volume is then defined as 
+
+wmag (b) = b h − μ0
+
+2 h2 − W ⋆(h), W ⋆(h) = μ0 mleg 
+
+> s
+
+αleg ln 
+
+ sinh( αleg h)
+
+αleg h
+
+
+
+. (11) Finally, the corresponding referential contribution is 
+
+ψmag (F, B) = η J w mag (b), η =
+
+0, matrix ,
+
+1, particle . (12) The parameters (mleg  
+
+> s
+
+, α leg ) are prescribed material constants for the particle magnetization model. 4A PREPRINT - M ARCH 30, 2026 
+
+2.5 Derived quantities 
+
+The constitutive responses follow from the free energy density ψ(F, B) by energetic conjugacy. In the reference configuration, the first Piola–Kirchhoff stress tensor and the Lagrangian magnetic field are defined as 
+
+P = ∂ψ ∂F , H = ∂ψ ∂B . (13) In the present setting, ψ depends on F both explicitly and implicitly through the volumetric–isochoric split, since 
+
+F = F(F, J (e)) with J(e) treated as an element-wise constant. Consequently, the consistent linearization required for Newton iterations involves the mixed tangent blocks 
+
+A := ∂P
+
+∂F , C := ∂P
+
+∂B , D := ∂H
+
+∂F , E := ∂H
+
+∂B . (14) All first- and second-order derivatives are evaluated algorithmically via automatic differentiation [ 27 ] of ψ with respect to the independent components of (F, B), yielding a monolithic magneto-mechanical tangent consistent with the chosen energy density [7]. 
+
+2.6 Homogenization 
+
+Let Ω ⊂ Rd denote the macroscopic body and let Ωm ⊂ Rd be a representative volume element (RVE) associated with a macroscopic material point X ∈ Ω. At the macroscale, the prescribed loading measures are the macroscopic deformation gradient F(X) and the macroscopic Lagrangian magnetic induction B(X). The objective of computational homogenization is to define an effective response such that the macroscopic constitutive quantities are consistent with the underlying heterogeneous microscale fields on Ωm.
+
+Kinematic and magnetic scale transition. The microscale motion is decomposed into an affine part and a periodic fluctuation, 
+
+xm(Xm) = F X m + eum(Xm), eum periodic on ∂Ωm, (15) together with an anchoring condition to eliminate rigid body modes. The corresponding deformation gradient reads 
+
+Fm = ∇mxm = F + ∇m eum. (16) The macroscopic deformation gradient is identified with the RVE volume average, 
+
+F = ⟨Fm⟩ := 1
+
+|Ωm|
+
+Z
+
+> Ωm
+
+Fm dV. (17) For the magnetic problem, we introduce a vector potential Am such that the microscale Lagrangian magnetic induction is divergence-free by construction, i.e., 
+
+B′ 
+
+> m
+
+= ∇m × Am. (18) Accordingly, we decompose the total induction into a prescribed macroscopic part and a fluctuation field, 
+
+Bm = B + B′ 
+
+> m
+
+= B + ∇m × Am, (19) together with periodic boundary conditions on Am (up to gauge) and a gauge-fixing constraint to ensure uniqueness. The macroscopic induction is defined as the RVE volume average [28], 
+
+B = ⟨Bm⟩ := 1
+
+|Ωm|
+
+Z
+
+> Ωm
+
+Bm dV. (20) 
+
+Energetic consistency (Hill–Mandel condition). The multiscale coupling is enforced through the Hill–Mandel macro-homogeneity condition, which requires equality of macroscopic and volume-averaged microscopic power expenditures. In the present setting with work-conjugate pairs (P, F) and (H, B), the condition is stated as [29] 
+
+P : ˙F + H · ˙B =
+
+D
+
+Pm : ˙Fm + Hm · ˙Bm
+
+E
+
+, (21) where ⟨•⟩ := |Ωm|−1 R 
+
+> Ωm
+
+(•) d V denotes volume averaging. Under the assumed periodicity of the fluctuation fields and the corresponding anti-periodicity of microscopic tractions and magnetic flux terms on ∂Ωm, Eq. (21) holds and implies the standard averaging relations for the macroscopic constitutive quantities, 
+
+P = ⟨Pm⟩ = 1
+
+|Ωm|
+
+Z
+
+> Ωm
+
+Pm dV, H = ⟨Hm⟩ = 1
+
+|Ωm|
+
+Z
+
+> Ωm
+
+Hm dV. (22) 5A PREPRINT - M ARCH 30, 2026 
+
+Effective energy density and macroscopic response. With the microscale free energy density ψm(Fm, Bm) and the derived quantities Pm = ∂ψ m/∂ Fm and Hm = ∂ψ m/∂ Bm, the effective stored energy density is defined by volume averaging, 
+
+ψ(F, B) := ⟨ψm(Fm, Bm)⟩ = 1
+
+|Ωm|
+
+Z
+
+> Ωm
+
+ψm(Fm, Bm) d V. (23) The macroscopic work-conjugate quantities then follow as [30] 
+
+P = ∂ψ ∂F , H = ∂ψ ∂B , (24) and the consistent macroscopic tangents are obtained by linearization of the RVE equilibrium with respect to (F, B).
+
+3 Numerical Methods 
+
+This section summarizes the numerical formulation used to solve the fully coupled magneto–mechanical RVE problem and to extract homogenized quantities. The numerical scheme was implemented in deal.II [ 31 ]. The microscale boundary-value problem is posed in the reference configuration Ωm 
+
+> 0
+
+and is discretized with a conforming finite element method. The primary unknowns are the microscale displacement field um and the magnetic vector potential Am, from which the deformation gradient Fm and magnetic induction Bm are obtained as [32] 
+
+Fm = I + ∇Xm um, Bm = BM + ∇Xm × Am . (25) Here, BM denotes the prescribed macroscopic (uniform) magnetic induction applied to the RVE. The constitutive response follows from a Helmholtz-type free energy density ψm(Fm, Bm), yielding the work-conjugate relations [ 30 ]
+
+Pm = ∂ψ m
+
+∂Fm
+
+, Hm = ∂ψ m
+
+∂Bm
+
+. (26) Accordingly, the residual statements correspond to mechanical equilibrium and magnetostatic balance (in the absence of free currents) and are solved using a monolithic Newton scheme. 
+
+3.1 Finite element discretization 
+
+To balance accuracy and meshing flexibility, we consider two complementary discretization pipelines. Hexahedral meshes enable a standard H1–H(curl) pairing with tensor-product Lagrange elements for mechanics and Nédélec elements for the magnetic vector potential, which is particularly convenient for enforcing curl conformity. However, resolving complex particle geometries and performing local refinement is often more straightforward with unstructured tetrahedral meshes. For this reason, we also implement a simplex-based discretization on tetrahedra, allowing robust local refinement near inclusions while maintaining the same monolithic coupling strategy and averaging procedures used in the hexahedral setting. 
+
+3.1.1 Hex Mesh 
+
+The weak form is discretized using a mixed finite element space consisting of H1-conforming Lagrange shape functions for the displacement field and H(curl) -conforming Nédélec elements for the vector potential [ 33 , 34 ]. Let Th denote a conforming partition of Ωm 
+
+> 0
+
+into hexahedral cells. The discrete trial and test spaces are chosen as 
+
+uhm ∈ [Qp]d, Ahm ∈ N p−1, (27) where Qp denotes tensor-product Lagrange polynomials of degree p (with d ∈ { 2, 3} the spatial dimension) and Np−1
+
+denotes the first-family Nédélec space of degree p − 1. This choice ensures conformity of the displacement gradient and a curl-conforming representation for Am, such that ∇Xm × Ahm is well-defined element-wise and ∇Xm · Bm = 0 
+
+is weakly enforced. The coupled discrete unknown vector collects both fields in a monolithic form, 
+
+x =
+
+ uhm
+
+Ahm
+
+
+
+, (28) leading to a block-structured nonlinear system 
+
+R(x) = 
+
+Ru(uhm, Ahm)
+
+RA(uhm, Ahm)
+
+
+
+= 0, (29) 6A PREPRINT - M ARCH 30, 2026 with a consistent tangent operator K = ∂R/∂ x assembled from the algorithmic moduli ∂Pm/∂ Fm, ∂Pm/∂ Bm,
+
+∂Hm/∂ Fm, and ∂Hm/∂ Bm.Numerical integration is performed on each cell using Gauss quadrature of order q, and all macroscopic averages reported in this work are computed as volume averages over Ωm 
+
+> 0
+
+using the same quadrature rule [35]. 
+
+3.1.2 Tet Mesh 
+
+To enable unstructured meshing and local refinement around particle geometries, we also discretize the microscale domain Ωm 
+
+> 0
+
+using a tetrahedral partition. Let T ∆ 
+
+> h
+
+denote a conforming triangulation of Ωm 
+
+> 0
+
+into simplex (tetrahedral) cells. On T ∆ 
+
+> h
+
+we employ simplex polynomial finite elements for both the mechanical and magnetic unknowns [ 36 ]. The discrete trial and test spaces are chosen as 
+
+uhm ∈ [Pp]d, Ahm ∈ [PpA ]d, (30) where Pp denotes the space of complete polynomials of degree p on tetrahedra (implemented with H1-conforming simplex Lagrange elements). In all computations reported here, we take pA = p unless stated otherwise. Compared to the hexahedral discretization, the key difference is the approximation of the magnetic vector potential. While Nédélec elements are a natural choice for H(curl) -conforming discretizations on general meshes, we adopt an H1-conforming approximation for Am on simplices to maintain a uniform simplex pipeline and to simplify the imposition of periodic constraints (which are enforced at nodal support points). Since H1(Ω) ⊂ H(curl; Ω) , the quantity ∇Xm × Ahm remains well-defined and can be evaluated elementwise for constructing the magnetic induction 
+
+Bhm.As in the hexahedral case, the coupled discrete unknown vector is collected in monolithic form, 
+
+x =
+
+ uhm
+
+Ahm
+
+
+
+, (31) yielding the same block-structured nonlinear residual R(x) = 0 and consistent tangent K = ∂R/∂ x. The algorithmic moduli ∂Pm/∂ Fm, ∂Pm/∂ Bm, ∂Hm/∂ Fm, and ∂Hm/∂ Bm are assembled identically, with the only modification being the shape-function gradients/curls associated with the simplex basis. Numerical integration on T ∆ 
+
+> h
+
+is performed using simplex Gauss quadrature of order q, and all macroscopic averages are computed as volume averages over Ωm 
+
+> 0
+
+using the same quadrature rule [ 35 ]. Periodic boundary conditions are applied component-wise for both uhm and Ahm by enforcing equality of nodal fluctuation values on paired periodic faces, resulting in a consistent periodicity of the discrete fields on the tetrahedral mesh. 
+
+3.2 Periodic constraints and removal of null modes 
+
+To represent an infinite periodic medium and to suppress boundary artifacts, periodic boundary constraints are enforced directly at the discrete degree-of-freedom level. Let ∂Ωm 
+
+> 0
+
+be decomposed into three pairs of opposing faces Γ− 
+
+> i
+
+and Γ+
+
+> i
+
+(i ∈ { 1, 2, 3}) with outward normals N− 
+
+> i
+
+= −N+ 
+
+> i
+
+. A one-to-one mapping Mi : Γ − 
+
+> i
+
+→ Γ+ 
+
+> i
+
+is introduced such that 
+
+X+ 
+
+> m
+
+= Mi(X−
+
+> m
+
+) and X+ 
+
+> m
+
+− X− 
+
+> m
+
+= Li, where Li denotes the RVE period vector in direction i [32]. 
+
+Mechanical periodicity. The microscopic displacement is decomposed into an affine part consistent with the prescribed macroscopic deformation gradient and a periodic fluctuation. In discrete form, the periodicity condition can be imposed as 
+
+uhm(X+
+
+> m
+
+) − uhm(X−
+
+> m
+
+) =  F − I  X+ 
+
+> m
+
+− X−
+
+> m
+
+ =  F − ILi, X− 
+
+> m
+
+∈ Γ− 
+
+> i
+
+, (32) which enforces periodic fluctuations while admitting the macroscopic strain through the known jump on opposite faces. In practice, (32) is implemented by selecting one side of each face pair as leader and the opposing side as follower , and constraining each follower displacement DOF as an affine function of the corresponding leader DOF plus the prescribed offset implied by F [7]. 
+
+J-bar in periodic boundary conditions. The J-bar formulation is adopted in this work instead of a full mixed incompressible formulation, such as a u–p–J approach, because it is much more straightforward to combine with periodic boundary conditions at the RVE level. In a mixed formulation, additional volumetric fields such as pressure and dilatation must also satisfy admissible microscale constraints, which complicates their treatment under periodic boundary conditions and the associated scale transition. By contrast, the J-bar approach replaces the pointwise volumetric response with an averaged volumetric measure, allowing the RVE problem to be formulated in terms of 7A PREPRINT - M ARCH 30, 2026 the displacement field alone. This makes the enforcement of periodicity substantially simpler while still providing a practical treatment of near-incompressibility. The tradeoff is that the volumetric response is represented in an averaged sense rather than enforced pointwise, which may smear local volume changes but greatly simplifies the periodic homogenization setting. In addition, retaining a displacement-based mechanical formulation is advantageous for the present coupled magneto-mechanical setting, since it avoids introducing extra volumetric unknowns alongside the magnetic field variables. This choice is also consistent with reduced mixed formulations in the literature, where replacing the pointwise dilatation by an averaged measure is used specifically to alleviate volumetric locking while retaining a formulation based on the modified deformation gradient alone, thereby avoiding static condensation and improving computational efficiency [ 13 ]. This choice is also advantageous for the present class of heterogeneous RVEs, where the matrix is treated as nearly incompressible while the particle phase may be assigned a different, and potentially compressible, volumetric response. In such settings, the J-bar treatment provides a practical way to stabilize the nearly incompressible matrix without requiring a fully mixed incompressible formulation for all phases, thereby making it easier to study how inclusion compressibility influences the local and homogenized magneto-mechanical response. 
+
+Magnetic periodicity for the vector potential. The magnetic induction is represented as Bm = B + ∇Xm × Ahm,where B is prescribed and uniform. Therefore, only the fluctuation field generated by ∇ × Ahm must be periodic [ 7 ]. This is achieved by enforcing periodicity of the vector potential in the H(curl) -conforming space, 
+
+Ahm(X+
+
+> m
+
+) = Ahm(X−
+
+> m
+
+), X− 
+
+> m
+
+∈ Γ− 
+
+> i
+
+, (33) so that the tangential trace is periodic and the resulting curl field is compatible across opposite boundaries. Because Nédélec basis functions are associated with oriented edges, periodic identification must respect the edge orientation induced by the face mapping Mi. Specifically, if an edge on Γ− 
+
+> i
+
+is mapped to an edge on Γ+ 
+
+> i
+
+with the same geometric support but opposite orientation, the associated DOFs must be related by a sign change. Denoting by 
+
+αe ∈ { +1 , −1} the orientation factor for a periodic edge pairing, the discrete constraint for each paired edge DOF takes the form 
+
+a+ 
+
+> e
+
+= αe a− 
+
+> e
+
+, (34) where a± 
+
+> e
+
+are the scalar Nédélec DOFs on the paired edges. This preserves the conformity of the H(curl) space under periodic identification [37]. 
+
+Elimination of rigid body and gauge modes. The periodic mechanical constraints admit rigid translations of the RVE. To ensure uniqueness of the displacement field, a minimal anchoring constraint is applied, e.g., 
+
+uhm(Xref ) = 0, (35) at a chosen reference point Xref (or, equivalently, by fixing a minimal set of displacement DOFs). This removes the null space associated with rigid body motion without affecting the periodic fluctuations [38]. Similarly, the magnetic vector potential is defined up to a gradient field (gauge freedom), which manifests as a near-null mode in the discrete system. Uniqueness is enforced by fixing one component of Ahm at a single node/edge location, 
+
+ek · Ahm(Xg) = 0 , (36) for a selected component k ∈ { 1, 2, 3} and point Xg ∈ Ωm 
+
+> 0
+
+. This constraint removes the gauge null mode while leaving the physically relevant quantity ∇ × Ahm [39]. 
+
+3.3 Stress Relaxed Boundary Conditions 
+
+A limitation of the boundary conditions described above is that they may artificially restrict rigid translations of magnetically interacting particles in addition to the prescribed macroscopic deformation. In particular, when the macroscopic deformation is imposed strictly, magnetically induced tractions can be “locked” into the RVE response, suppressing the particle rearrangements that would otherwise occur under the same magnetic loading. To mitigate this effect, we introduce a stress-relaxed boundary condition that adjusts the macroscopic deformation to compensate for the magnetically induced stresses, thereby permitting particle translations while preserving the applied magnetic excitation. In classical computational homogenization, stress relaxation is often realized by selecting a macroscopic deformation gradient such that one or more components of the homogenized stress vanish (e.g., traction-free or stress-free conditions along selected directions) [ 40 ]. In the present setting, however, nonlocal magnetic interactions and strong magneto-mechanical coupling preclude a reliable closed-form determination of such a macroscopic deformation. We therefore employ an iterative stress-minimization procedure in which the macroscopic deformation gradient is treated as an optimization variable and updated until the targeted homogenized stress components satisfy a prescribed tolerance [ 41 ]. 8A PREPRINT - M ARCH 30, 2026 The prescribed stress tolerance was set to 10 −3. Further reduction of this tolerance led to negligible changes in the resulting macroscopic deformation gradient and the observed deformation patterns, while significantly increasing the computational cost. 
+
+4 Numerical Examples 
+
+This section presents a set of numerical examples designed to verify the proposed formulation and to illustrate key features of the fully coupled magneto–mechanical response in the nearly incompressible regime. We begin with a single-particle inclusion problem, which serves as a controlled benchmark for assessing solution quality and consistency between the hexahedral (Nédélec-based) and tetrahedral (simplex-based) discretizations. We then consider a short chain of particles to highlight particle–particle interactions and the resulting localization of deformation and magnetic fields. Finally, we study RVEs containing a large number of randomly distributed particles to demonstrate robustness and scalability for realistic microstructures. 
+
+4.1 Material properties 
+
+Both the matrix and particle phases are modeled as nearly incompressible. Near-incompressibility is enforced through the J-bar projection in the mechanical energy, with the bulk modulus K acting as a volumetric penalty parameter. The remaining mechanical response is governed by the Yeoh coefficients (C1, C 2, C 3). Magnetic behavior is described using the vacuum permeability μ0 and the Legendre-model parameters (mleg  
+
+> s
+
+, α leg ) used in the particle magnetization contribution. The parameters employed in all simulations are summarized in Table 1. Table 1: Strain-energy function (SEF) parameters used in the simulations. Parameter (units) Matrix Particle Bulk modulus K (Pa) 1.25 × 10 6 2.5 × 10 8
+
+Yeoh C1 (Pa) 1.2595 × 10 4 1.0 × 10 7
+
+Yeoh C2 (Pa) 7.0244 × 10 1 0.0
+
+Yeoh C3 (Pa) 9.8177 0.0
+
+Vacuum permeability μ0 (H m −1) 1.2564 × 10 −6
+
+Legendre mleg  
+
+> s
+
+(A m −1) 8.41 × 10 5
+
+Legendre αleg (m A −1) 2.18 × 10 −5
+
+For reference, the permeability of free space is μ0 = 4 π × 10 −7 H m −1 (equivalently N A −2), which is consistent with the numerical value reported in Table 1. The material parameters used in this work are chosen to reflect experimentally calibrated constituent behavior following the multiscale strategy of Kalina et al. [42 ]. In their work, the microscopic constitutive response of each phase is identified separately from experimental data and then used as input for computational homogenization. In particular, the magnetic response of magnetically soft carbonyl-iron particles is represented by a saturation-type law based on the Langevin function, where the saturation magnetization Ms and the scaling factor α are obtained by fitting the model to measured magnetization curves. The fitted values reported are 
+
+Ms = 841 kA m −1 and α = 2 .18 × 10 −5 m A −1, which directly motivate the Legendre-model parameters adopted here. For the polymer matrix, Kalina et al. emphasize that a nearly incompressible mechanical response is essential for stable finite-element simulations and recommend enforcing it through a large volumetric penalty (equivalently, a high bulk/compression modulus), consistent with selecting a Poisson ratio close to ν = 0 .5 (they use ν = 0 .49 ) to obtain a nearly incompressible response. Accordingly, the bulk moduli K and Yeoh coefficients (C1, C 2, C 3) in Table 1 are selected to (i) ensure near-incompressibility through the volumetric penalty and (ii) match the desired nonlinear deviatoric stiffness response of the matrix and particle phases within the strain range considered. Table 2 summarizes the representative volume element (RVE) configurations used in the numerical examples. 
+
+4.2 Applied loading 
+
+The numerical experiments consider purely mechanical loading, purely magnetic loading, and combined magneto-mechanical loading. Table 3 summarizes the prescribed macroscopic deformation gradients and macroscopic Lagrangian magnetic inductions. Magnetic loading is prescribed in terms of the macroscopic Lagrangian induction BM in the reference configuration; we denote its z-component by BM,z . For purely mechanical runs, we set BM = 0 so that the magnetic fields arise only from the coupled solution when applicable. The prescribed deformation magnitudes are 9A PREPRINT - M ARCH 30, 2026 Table 2: RVE microstructure configurations used in the numerical examples. Property Single particle Particle chain Random particles Number of particles 1 6 100 Particle radius r 0.2 0.1 0.2 RVE size Lx × Ly × Lz 1 × 1 × 1 1 × 1 × 1 6 × 6 × 6
+
+Particle volume fraction ϕ (%) 2.86 2.46 2.41 selected to (i) activate the nonlinear hyperelastic response and (ii) remain close to isochoric deformation, consistent with the nearly incompressible setting. Table 3: Prescribed macroscopic loading cases. Case FM BM
+
+Mechanical loading diag  1.1, 0.9, 11.1·0.9
+
+ 0
+
+Magnetic loading I 250 mT ez
+
+Combined loading diag  1.1, 0.9, 11.1·0.9
+
+ 250 mT ez
+
+All loads are applied quasi-statically through a linear ramp in pseudo-time t ∈ [0 , 1] . For the deformation gradient, we prescribe 
+
+FM (t) = I + t Ffinal  
+
+> M
+
+− I, (37) with the out-of-plane component chosen to enforce an isochoric macroscopic deformation, 
+
+FM,zz (t) = 1
+
+FM,xx (t) FM,yy (t) . (38) The magnetic induction is ramped as 
+
+BM (t) = t Bfinal  
+
+> M
+
+, with Bfinal  
+
+> M
+
+= Bfinal  
+
+> M,z
+
+ez . (39) Figure 1 illustrates the applied loading paths.      
+
+> (a) Prescribed components of FM(t).(b) Prescribed BM,z (t).
+
+Figure 1: Applied loading paths used in the simulations. For stress-relaxed boundary conditions, the macroscopic deformation FM is not prescribed directly but is solved for iteratively to satisfy the chosen macroscopic stress constraint, while the magnetic loading continues to follow Eq. (39) .
+
+4.3 Simple Inclusion 4.3.1 Meshes 
+
+We first consider a baseline RVE consisting of a single spherical inclusion embedded in an incompressible matrix. This example is intentionally simple so that differences between discretizations can be attributed primarily to the finite 10 A PREPRINT - M ARCH 30, 2026 element spaces and mesh topology rather than microstructural complexity. Two geometrically equivalent meshes are generated: a structured hexahedral mesh and an unstructured tetrahedral mesh. The inclusion occupies approximately 
+
+10% of the RVE volume, and the tetrahedral mesh employs local refinement in the vicinity of the inclusion–matrix interface to better resolve steep gradients in deformation and magnetic fields. Figure 2 shows the two discretizations used for the comparison. The hexahedral mesh provides a tensor-product representation that is well-suited for the H1–H(curl) pairing used in Section 3.1.1, while the tetrahedral mesh enables flexible refinement and serves as a representative unstructured setting for complex particle geometries. Unless otherwise stated, both meshes use the same polynomial degree and comparable quadrature order, and periodic boundary conditions are enforced on all faces for both the mechanical displacement and magnetic vector potential.  
+
+> (a) Hex Element Mesh (b) Tet Element Mesh
+
+Figure 2: Simple Inclusion Meshes 
+
+4.3.2 Homogenized Responses 
+
+This benchmark is used as a controlled verification case for the homogenized response obtained from the coupled RVE problem. For both discretizations, identical macroscopic loading paths are prescribed through (F, B) as depicted in Table 3 and the resulting homogenized quantities (σ, H) are extracted using the averaging relations introduced in Section 2.6. The objective is twofold: (i) to confirm that the tetrahedral simplex implementation reproduces the same effective response as the reference hexahedral formulation, and (ii) to verify that the near-incompressible stabilization remains effective under coupled magneto–mechanical loading. We consider three classes of loading depicted in Section 4.2. For each case, the macroscopic response is reported in terms of selected components of σ and H as functions of the applied loading parameter. In addition, the volumetric behavior is monitored via the RVE-averaged dilatation to confirm that the response remains essentially incompressible throughout the loading history. Agreement between the hexahedral and tetrahedral results across these paths provides a direct consistency check of the simplex-based discretization and its periodic constraints. Any residual discrepancies are attributable primarily to discretization error and the different refinement patterns near the inclusion interface. 
+
+Purely mechanical loading: A purely mechanical loading path is prescribed via the macroscopic deformation gradient F(t) while the macroscopic magnetic flux density is set to B = 0. The homogenized response is reported in terms of selected components of the macroscopic Cauchy stress σ as a function of the loading parameter (e.g., stretch, shear magnitude, or time). Figure 3 shows that the volume-averaged deformation matches the prescribed macroscopic deformation to machine precision. Moreover, the Jacobian remains unity up to machine precision, confirming that the RVE maintains (near-)incompressibility throughout the loading path. The corresponding initial and final configurations of the spherical inclusion are shown in Figure 4. 
+
+Purely magnetic loading: A purely magnetic loading path is prescribed through B(t) while the macroscopic deformation is held fixed ( F = I). The homogenized magnetic response is reported as selected components of H versus the applied induction. Figure 5 shows that under magnetic loading, the RVE outputs the expected average magnetic induction as it is the same as the input quantity. It also shows how it maintains a constrained average strain. The stress caused by the magnetic loading is of similar magnitude to that caused by strain loading. The magnitude of the magnetic potential and the stress in the direction of magnetic induction ( σzz ) is shown in Figure 6. 11 A PREPRINT - M ARCH 30, 2026 0.0 0.2 0.4 0.6 0.8 1.0 
+
+Time t
+
+0.90 
+
+0.95 
+
+1.00 
+
+1.05 
+
+1.10 
+
+> Diagonal components
+
+Applied vs. average deformations       
+
+> Applied Fxx
+> Average Fxx
+> Applied Fyy
+> Average Fyy
+> Applied Fzz
+> Average Fzz
+
+(a) Homogenized deformation (average vs. applied) 0.0 0.2 0.4 0.6 0.8 1.0 
+
+Time t
+
+10000 
+
+5000 
+
+0
+
+5000 
+
+10000 
+
+> Stress  (Pa)
+
+Average stress vs. time 
+
+> xx
+> xy
+> xz
+> yx
+> yy
+> yz
+> zx
+> zy
+> zz
+
+(b) Homogenized stress response 0.0 0.2 0.4 0.6 0.8 1.0 
+
+Time t
+
+0.980 
+
+0.985 
+
+0.990 
+
+0.995 
+
+1.000 
+
+1.005 
+
+1.010 
+
+1.015 
+
+1.020 
+
+> J
+
+J vs. time   
+
+> J= det( F)
+
+(c) Homogenized Jacobian J (volume change) 
+
+Figure 3: Homogenized quantities for the single inclusion under strain loading. 
+
+(a) Initial state. (b) Final state. 
+
+Figure 4: Spherical inclusion (tet mesh): initial and final configurations under the prescribed deformation. 0.0 0.2 0.4 0.6 0.8 1.0 
+
+Time t
+
+20000 
+
+10000 
+
+0
+
+10000 
+
+20000 
+
+> Stress  (Pa)
+
+Average stress vs. time 
+
+> xx
+> xy
+> xz
+> yx
+> yy
+> yz
+> zx
+> zy
+> zz
+
+(a) Homogenized stress response 0.0 0.2 0.4 0.6 0.8 1.0 
+
+Time t
+
+0.00 
+
+0.05 
+
+0.10 
+
+0.15 
+
+0.20 
+
+0.25 
+
+> B (T)
+
+Magnetic flux density vs. time     
+
+> Bx
+> Bexp
+> x
+> By
+> Bexp
+> y
+> Bz
+> Bexp
+> z
+
+(b) Homogenized magnetic induction ¯B
+
+vs. time 0.0 0.2 0.4 0.6 0.8 1.0 
+
+Time t
+
+0
+
+25000 
+
+50000 
+
+75000 
+
+100000 
+
+125000 
+
+150000 
+
+175000 
+
+200000 
+
+> H (A/m)
+
+Average magnetic field intensity vs. time 
+
+> Hx
+> Hy
+> Hz
+
+(c) Homogenized magnetic field ¯H vs. time 
+
+Figure 5: Homogenized quantities for the spherical-inclusion RVE under magnetic loading. 12 A PREPRINT - M ARCH 30, 2026   
+
+> (a) Magnetic Potential Magnitude. (b) σzz
+
+Figure 6: Spherical inclusion (tet mesh): Magnetic Potential Magnitude and σzz .Additionally, using the stress-relaxed boundary conditions described in Section 3.3, we can observe the deformation of the inclusion and surrounding matrix induced by the applied magnetic loading, as shown in Figure 7. The corresponding homogenized deformation response is shown in Figure 9. In the deformed configuration, the inclusion exhibits a predominantly symmetric motion, with the upper and lower portions moving toward one another along the direction of the applied magnetic induction. This indicates a contraction in the z-direction, while the surrounding matrix deforms compatibly to accommodate the inclusion response under the stress-relaxed setting. The resulting motion is therefore characterized primarily by field-direction compression rather than rigid translation, with only minor shear-driven distortion visible in the final configuration. This interpretation is also consistent with the effective magnetostrictive response discussed in Section 4.6, in the sense that the local inclusion kinematics and the homogenized deformation both reflect a field-induced contraction along the loading direction. Owing to the periodic boundary conditions, however, this motion should be understood as the local response of a repeating microstructure rather than the behavior of an isolated particle in free space. In that sense, if additional inclusions were present in neighboring periodic images of the cell, the same deformation pattern could also be interpreted on a larger scale as relative approach or rigid-body-like translation between particles along the field direction, as illustrated in Figure 8.  
+
+> (a) Initial state. (b) Final state.
+
+Figure 7: Spherical inclusion with a tetrahedral mesh in the initial and final configurations under the prescribed magnetic induction. 
+
+Coupled magneto–mechanical loading: Finally, a coupled loading path is applied by prescribing (F(t), B(t)) 
+
+simultaneously. The coupled response is summarized by reporting both σ and H along the loading history, and comparing against the corresponding purely mechanical and purely magnetic responses to highlight the magneto– mechanical interaction. The combined influence of the strain loading and magnetic loading is most clearly observed in Figure 10c. For σxx , the response is initially dominated by the mechanically induced stress, as evidenced by the positive stress contribution up to approximately t ≈ 0.2. As loading progresses, the magnetic contribution becomes increasingly significant and eventually overtakes the mechanical contribution. This transition is reflected in the reversal of the stress direction at approximately t ≈ 0.45 , indicating that the magnetic loading not only counteracts the mechanically induced stress 13 A PREPRINT - M ARCH 30, 2026 
+
+(a) Initial periodic configuration. (b) Final periodic configuration. 
+
+Figure 8: Initial and final periodic configurations for the spherical-inclusion RVE under stress-relaxed boundary conditions. 0.0 0.2 0.4 0.6 0.8 1.0 
+
+Time t
+
+0.8 
+
+0.9 
+
+1.0 
+
+1.1 
+
+1.2 
+
+> Fxx
+
+Fxx 
+
+0.0 0.2 0.4 0.6 0.8 1.0 
+
+Time t
+
+0.8 
+
+0.9 
+
+1.0 
+
+1.1 
+
+1.2 
+
+> Fyy
+
+Fyy 
+
+0.0 0.2 0.4 0.6 0.8 1.0 
+
+Time t
+
+0.8 
+
+1.0 
+
+1.2 
+
+> Fzz
+
+Fzz 
+
+Figure 9: Homogenized deformation response under stress-relaxed boundary conditions, with the residual stress tolerance set to 10 −3.0.0 0.2 0.4 0.6 0.8 1.0 
+
+Time t
+
+> 0.90
+> 0.95
+> 1.00
+> 1.05
+> 1.10
+> Diagonal components
+
+Applied vs. average deformations       
+
+> Applied Fxx
+> Average Fxx
+> Applied Fyy
+> Average Fyy
+> Applied Fzz
+> Average Fzz
+
+(a) Homogenized deformation (average vs. applied) 0.0 0.2 0.4 0.6 0.8 1.0 
+
+Time t  
+
+> 0
+> 1
+> 2
+> 3
+> 4
+> 5
+> 6
+> Absolute error
+> 1e 14
+
+Error: applied vs. average    
+
+> |Fxx Fxx |
+> |Fyy Fyy |
+> |Fzz Fzz |
+
+(b) Deformation mismatch (average − ap-plied) 0.0 0.2 0.4 0.6 0.8 1.0 
+
+Time t
+
+> 30000
+> 20000
+> 10000
+> 0
+> 10000
+> 20000
+> Stress  (Pa)
+
+Average stress vs. time 
+
+> xx
+> xy
+> xz
+> yx
+> yy
+> yz
+> zx
+> zy
+> zz
+
+(c) Homogenized stress response 0.0 0.2 0.4 0.6 0.8 1.0 
+
+Time t
+
+> 0.980
+> 0.985
+> 0.990
+> 0.995
+> 1.000
+> 1.005
+> 1.010
+> 1.015
+> 1.020
+> J
+
+J vs. time  
+
+> J= det( F)
+
+(d) Homogenized Jacobian J (volume change) 0.0 0.2 0.4 0.6 0.8 1.0 
+
+Time t
+
+> 0.00
+> 0.05
+> 0.10
+> 0.15
+> 0.20
+> 0.25
+> B (T)
+
+Magnetic flux density vs. time    
+
+> Bx
+> Bexp
+> x
+> By
+> Bexp
+> y
+> Bz
+> Bexp
+> z
+
+(e) Homogenized magnetic induction ¯B vs. time 0.0 0.2 0.4 0.6 0.8 1.0 
+
+Time t
+
+> 0
+> 50000
+> 100000
+> 150000
+> 200000
+> H (A/m)
+
+Average magnetic field intensity vs. time 
+
+> Hx
+> Hy
+> Hz
+
+(f) Homogenized magnetic field ¯H vs. time 
+
+Figure 10: Homogenized quantities for the tet spherical inclusion RVE under the prescribed magneto-mechanical loading. 14 A PREPRINT - M ARCH 30, 2026 but ultimately governs the overall response. This behavior highlights the strongly nonlinear competition between the mechanical and magnetic effects in the coupled loading case. 
+
+(a) Combined Displacement Magnitude (b) Combined Magnetic Potential (c) Final σzz 
+
+Figure 11: Spherical inclusion (tet mesh): displacement magnitude, magnetic potential, and σzz under the prescribed magneto-mechanical loading. 
+
+4.3.3 Hexahedral Response 
+
+To demonstrate the behavior of the hexahedral discretization, the hexahedral spherical-inclusion mesh was subjected to the same coupled magneto–mechanical loading conditions described above. The resulting homogenized response is shown in Figure 12. 0.0 0.2 0.4 0.6 0.8 1.0        
+
+> Time t
+> 0.90
+> 0.95
+> 1.00
+> 1.05
+> 1.10
+> Diagonal components
+> Applied vs. average deformations
+> Applied Fxx
+> Average Fxx
+> Applied Fyy
+> Average Fyy
+> Applied Fzz
+> Average Fzz
+
+(a) Homogenized deformation (average vs. applied) 0.0 0.2 0.4 0.6 0.8 1.0       
+
+> Time t
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> Absolute error
+> 1e 12 Error: applied vs. average
+> |Fxx Fxx |
+> |Fyy Fyy |
+> |Fzz Fzz |
+
+(b) Deformation mismatch (average − ap-plied) 0.0 0.2 0.4 0.6 0.8 1.0  
+
+> Time t
+> 30000
+> 20000
+> 10000
+> 0
+> 10000
+> 20000
+> Stress  (Pa)
+> Average stress vs. time
+> xx
+> xy
+> xz
+> yx
+> yy
+> yz
+> zx
+> zy
+> zz
+
+(c) Homogenized stress response 0.0 0.2 0.4 0.6 0.8 1.0    
+
+> Time t
+> 0.980
+> 0.985
+> 0.990
+> 0.995
+> 1.000
+> 1.005
+> 1.010
+> 1.015
+> 1.020
+> J
+> Jvs. time
+> J= det( F)
+
+(d) Homogenized Jacobian J0.0 0.2 0.4 0.6 0.8 1.0      
+
+> Time t
+> 0.00
+> 0.05
+> 0.10
+> 0.15
+> 0.20
+> 0.25
+> B (T)
+> Magnetic flux density vs. time
+> Bx
+> Bexp
+> x
+> By
+> Bexp
+> y
+> Bz
+> Bexp
+> z
+
+(e) Homogenized magnetic induction ¯B0.0 0.2 0.4 0.6 0.8 1.0   
+
+> Time t
+> 0
+> 25000
+> 50000
+> 75000
+> 100000
+> 125000
+> 150000
+> 175000
+> 200000
+> H (A/m)
+> Average magnetic field intensity vs. time
+> Hx
+> Hy
+> Hz
+
+(f) Homogenized magnetic field ¯H
+
+Figure 12: Homogenized deformation, stress, volumetric, and magnetic responses for the hex single-inclusion RVE under the prescribed magneto-mechanical loading. Additionally, Figure 13 shows the displacement magnitude, magnetic potential, and final σzz field for the hexahedral spherical-inclusion simulation. This example is included to illustrate the response obtained with the hexahedral discretization rather than to provide a direct comparison with the tetrahedral results. In the present three-dimensional setting, achieving comparable conver-gence with the hexahedral formulation would require substantially greater mesh refinement, which is computationally very expensive. Accordingly, the hexahedral results are presented here as a qualitative demonstration of the formulation and its behavior under coupled loading. 15 A PREPRINT - M ARCH 30, 2026    
+
+> (a) Displacement magnitude (b) Magnetic potential (c) Final σzz
+
+Figure 13: Spherical inclusion (hex mesh): displacement magnitude, magnetic potential, and final σzz under the prescribed magneto-mechanical loading. 
+
+4.4 Particle Chains 
+
+To highlight microstructure-induced interactions beyond a single inclusion, we next consider RVEs containing short chains of spherical particles embedded in the elastomeric matrix. This configuration introduces strong particle–particle coupling and field localization in the inter-particle ligaments, providing a sensitive test of the fully coupled formulation under heterogeneous loading. In contrast to the simple inclusion benchmark, all particle-chain examples are discretized exclusively with unstructured tetrahedral meshes to accommodate the narrow gaps between neighboring particles and to enable targeted local refinement in regions of high deformation and magnetic-field gradients. Periodic boundary conditions are enforced on all faces for both the displacement fluctuation and the magnetic vector potential, and a minimal anchoring/gauge constraint is applied to remove the rigid-body and magnetic null modes. Homogenized quantities (σ, H) are extracted using the same volume-averaging procedure described in Section 2.6. The particle-chain cases are used to (i) demonstrate the emergence of anisotropic effective behavior due to chain alignment, (ii) visualize localization of mechanical and magnetic fields near particle contacts, and (iii) assess the robustness of the tetrahedral simplex implementation for geometries that are difficult to represent with structured hexahedral meshes. 
+
+4.4.1 Mesh 
+
+The particle chain consists of six particles, each with radius r = 0 .1. The chain is generated centered about the Z-axis, with each successive particle positioned such that the line connecting neighboring particle centers rotates by 60 ◦ relative to its predecessor, producing a helical chain morphology. The tetrahedral mesh used for this example is shown in Figure 14.  
+
+> (a) Particle Chain Corner View (b) Particle Chain Side View
+
+Figure 14: Particle Chain Mesh 
+
+4.4.2 Homogenized Responses Mechanical loading: The particle-chain RVE is first subjected to the same purely mechanical loading path introduced in Paragraph 4.3.2. In this case, the macroscopic deformation gradient F(t) is prescribed while the macroscopic 16 A PREPRINT - M ARCH 30, 2026 magnetic induction is set to B = 0. The resulting response is therefore driven entirely by the imposed mechanical deformation, and the homogenized behavior is characterized primarily through the macroscopic Cauchy stress σ.Relative to the single-inclusion case, the chain morphology introduces stronger microstructural anisotropy and particle– particle interactions, which lead to more localized deformation within the ligaments between neighboring particles and alter the effective stress response. 0.0 0.2 0.4 0.6 0.8 1.0        
+
+> Time t
+> 0.90
+> 0.95
+> 1.00
+> 1.05
+> 1.10
+> Diagonal components
+> Applied vs. average deformations
+> Applied Fxx
+> Average Fxx
+> Applied Fyy
+> Average Fyy
+> Applied Fzz
+> Average Fzz
+
+(a) Homogenized deformation (average vs. applied) 0.0 0.2 0.4 0.6 0.8 1.0  
+
+> Time t
+> 10000
+> 5000
+> 0
+> 5000
+> 10000
+> Stress  (Pa)
+> Average stress vs. time
+> xx
+> xy
+> xz
+> yx
+> yy
+> yz
+> zx
+> zy
+> zz
+
+(b) Homogenized stress response 0.0 0.2 0.4 0.6 0.8 1.0     
+
+> Time t
+> 0.980
+> 0.985
+> 0.990
+> 0.995
+> 1.000
+> 1.005
+> 1.010
+> 1.015
+> 1.020
+> J
+> Jvs. time
+> J= det( F)
+
+(c) Homogenized Jacobian J (volume change) 
+
+Figure 15: Homogenized quantities for the particle chain under strain loading. The particle-chain RVE exhibits a macroscopic strain response that is very similar to that of the single spherical-inclusion case. This similarity is consistent with the fact that both configurations have the same constituent material properties and approximately the same particle volume fraction, which largely control the overall effective stiffness. However, while the averaged response remains similar, the chain morphology is still expected to modify the local deformation patterns and stress localization, particularly in the narrow ligaments between neighboring particles. This effect is clearly observed in Figure 16. 
+
+(a) Initial state. (b) Final state. 
+
+Figure 16: Particle Chain: initial and final configurations under the prescribed deformation. 
+
+Magnetic loading: The same purely magnetic loading path used for the single-inclusion case is applied to the particle-chain RVE. Specifically, the macroscopic magnetic induction B(t) is prescribed while the macroscopic deformation is held fixed at F = I. The homogenized response is reported in terms of the macroscopic magnetic field H and the induced macroscopic stress σ. Compared with the single-inclusion benchmark, the chain geometry is expected to enhance particle–particle interactions and to produce more localized magnetic and mechanical fields within the RVE. Like the strain response, the macroscopic magnetic response of the particle-chain RVE is very similar to that of the spherical-inclusion case. This similarity is expected because both configurations share the same constituent material properties and nearly the same particle volume fraction. However, the microscopic response differs substantially. In particular, the chain geometry produces a markedly different spatial distribution of magnetic potential and stress, as shown in Figure 18. The microscopic response remains more complex when particle motion is permitted through the stress-relaxed boundary conditions, although the corrected physical displacement field indicates a more structured and cooperative response than initially suggested. In contrast to the earlier interpretation based on the uncorrected displacement field, the particles do 17 A PREPRINT - M ARCH 30, 2026 0.0 0.2 0.4 0.6 0.8 1.0  
+
+> Time t
+> 20000
+> 10000
+> 0
+> 10000
+> 20000
+> Stress  (Pa)
+> Average stress vs. time
+> xx
+> xy
+> xz
+> yx
+> yy
+> yz
+> zx
+> zy
+> zz
+
+(a) Homogenized stress response 0.0 0.2 0.4 0.6 0.8 1.0      
+
+> Time t
+> 0.00
+> 0.05
+> 0.10
+> 0.15
+> 0.20
+> 0.25
+> B (T)
+> Magnetic flux density vs. time
+> Bx
+> Bexp
+> x
+> By
+> Bexp
+> y
+> Bz
+> Bexp
+> z
+
+(b) Homogenized magnetic induction ¯B
+
+vs. time 0.0 0.2 0.4 0.6 0.8 1.0  
+
+> Time t
+> 0
+> 25000
+> 50000
+> 75000
+> 100000
+> 125000
+> 150000
+> 175000
+> 200000
+> H (A/m)
+> Average magnetic field intensity vs. time
+> Hx
+> Hy
+> Hz
+
+(c) Homogenized magnetic field ¯H vs. time 
+
+Figure 17: Homogenized quantities for the particle chain under magnetic loading. 
+
+(a) Magnetic Potential (b) σzz 
+
+Figure 18: Particle Chain: Magnetic potential and σzz under magnetic loading. not primarily exhibit pronounced elongation, large rigid-body rotation, or substantial translation toward one another. Instead, the periodic particle assembly undergoes a predominantly symmetric rearrangement along the direction of the applied magnetic flux. In particular, the particle centroids move toward the central plane of the chain in the z-direction, with the magnitude of this motion increasing with distance from the chain midpoint. Thus, the dominant effect is a cooperative field-aligned approach of the periodic particle structure, while the surrounding matrix deforms compatibly to accommodate this motion. Small accompanying x- and y-components are also present, but these remain secondary and are best interpreted as local compatibility-driven adjustments of the periodic microstructure rather than the primary mode of particle rearrangement. This behavior is illustrated in Figure 19. Because the RVE is periodic, this motion should not be interpreted as the behavior of isolated particles in free space. Rather, it represents the local kinematics of a repeating chain-like microstructure, in which the boundary particles are continuations of neighboring periodic images. In that sense, the observed response may be interpreted on a larger scale as a relative approach of neighboring particles along the loading direction, rather than as a simple local shape change confined to a single cell. To better highlight the role of the surrounding inclusions, Figure 20 shows the displacement fluctuation field. Since this quantity removes the affine macroscopic contribution, it more clearly exposes the spatial variation induced by particle–particle interaction and periodic compatibility. In particular, it reveals how the local motion departs from the average homogenized deformation and how neighboring inclusions perturb one another within the chain. This interpretation is also consistent with the homogenized deformation response shown later in Figure 21, which reflects the same field-direction contraction at the macroscale. Additionally, the homogenized deformation gradient obtained from the stress-relaxed simulations is shown in Figure 21. Owing to the computational cost of these simulations, the loading was applied only up to approximately 60% of the full prescribed value. The homogenized response is consistent with the local kinematics observed in the RVE, namely a predominantly contractive deformation with the strongest compression aligned with the magnetic loading direction. 
+
+Coupled magneto–mechanical loading: The particle-chain RVE is finally subjected to a coupled loading path in which the macroscopic deformation gradient F(t) and the macroscopic magnetic induction B(t) are prescribed simultaneously. Under these conditions, the homogenized response is reported in terms of both the macroscopic Cauchy 18 A PREPRINT - M ARCH 30, 2026 
+
+(a) Initial configuration. (b) Final configuration. 
+
+Figure 19: Initial and final particle-chain configurations under stress-relaxed boundary conditions. 
+
+Figure 20: Displacement fluctuation field for the particle-chain RVE under stress-relaxed boundary conditions. stress σ and the macroscopic magnetic field H. Relative to the purely mechanical and purely magnetic cases, this loading path highlights the nonlinear interaction between deformation and magnetic effects. In particular, the chain morphology is expected to promote stronger anisotropy and more localized coupled fields due to the combined influence of particle alignment, inter-particle interactions, and magnetic-field-induced stress development. Below are representative visualizations from the particle-chain simulation, including the full-field distributions and planar cut views of the deformation and magnetic quantities. 
+
+4.5 Random Particles 
+
+As a final demonstration, we consider RVEs containing a large number of randomly distributed spherical particles. In contrast to the single-inclusion and particle-chain benchmarks, this setting is intended to represent a more realistic heterogeneous microstructure and to test the robustness of the coupled solver in the presence of strong phase contrast, complex particle arrangements, and localized interactions across many inclusion–matrix interfaces. All simulations in 0.0 0.1 0.2 0.3 0.4 0.5 0.6                
+
+> Time t
+> 0.90
+> 0.95
+> 1.00
+> 1.05
+> 1.10
+> Fxx
+> Fxx
+> 0.0 0.1 0.2 0.3 0.4 0.5 0.6
+> Time t
+> 0.90
+> 0.95
+> 1.00
+> 1.05
+> 1.10
+> Fyy
+> Fyy
+> 0.0 0.1 0.2 0.3 0.4 0.5 0.6
+> Time t
+> 0.8
+> 0.9
+> 1.0
+> 1.1
+> 1.2
+> Fzz
+> Fzz
+
+Figure 21: Homogenized deformation response under stress-relaxed boundary conditions, with the residual stress tolerance set to 10 −3 and the loading applied up to approximately 60% of the full prescribed value. 19 A PREPRINT - M ARCH 30, 2026 0.0 0.2 0.4 0.6 0.8 1.0        
+
+> Time t
+> 0.90
+> 0.95
+> 1.00
+> 1.05
+> 1.10
+> Diagonal components
+> Applied vs. average deformations
+> Applied Fxx
+> Average Fxx
+> Applied Fyy
+> Average Fyy
+> Applied Fzz
+> Average Fzz
+
+(a) Homogenized deformation (average vs. applied) 0.0 0.2 0.4 0.6 0.8 1.0       
+
+> Time t
+> 0
+> 1
+> 2
+> 3
+> 4
+> 5
+> 6
+> 7
+> 8
+> Absolute error
+> 1e 14 Error: applied vs. average
+> |Fxx Fxx |
+> |Fyy Fyy |
+> |Fzz Fzz |
+
+(b) Deformation mismatch (average − ap-plied) 0.0 0.2 0.4 0.6 0.8 1.0  
+
+> Time t
+> 40000
+> 30000
+> 20000
+> 10000
+> 0
+> 10000
+> 20000
+> 30000
+> Stress  (Pa)
+> Average stress vs. time
+> xx
+> xy
+> xz
+> yx
+> yy
+> yz
+> zx
+> zy
+> zz
+
+(c) Homogenized stress response 0.0 0.2 0.4 0.6 0.8 1.0    
+
+> Time t
+> 0.980
+> 0.985
+> 0.990
+> 0.995
+> 1.000
+> 1.005
+> 1.010
+> 1.015
+> 1.020
+> J
+> Jvs. time
+> J= det( F)
+
+(d) Homogenized Jacobian J (volume change) 0.0 0.2 0.4 0.6 0.8 1.0     
+
+> Time t
+> 0.00
+> 0.05
+> 0.10
+> 0.15
+> 0.20
+> 0.25
+> B (T)
+> Magnetic flux density vs. time
+> Bx
+> Bexp
+> x
+> By
+> Bexp
+> y
+> Bz
+> Bexp
+> z
+
+(e) Homogenized magnetic induction ¯B vs. time 0.0 0.2 0.4 0.6 0.8 1.0  
+
+> Time t
+> 0
+> 50000
+> 100000
+> 150000
+> 200000
+> H (A/m)
+> Average magnetic field intensity vs. time
+> Hx
+> Hy
+> Hz
+
+(f) Homogenized magnetic field ¯H vs. time 
+
+Figure 22: Homogenized quantities for the particle-chain RVE under the prescribed magneto-mechanical loading. 
+
+(a) Combined displacement magnitude (b) Combined magnetic potential (c) Final σzz 
+
+Figure 23: Particle-chain RVE (tet mesh): displacement magnitude, magnetic potential, and final σzz under the prescribed magneto-mechanical loading. this section are performed on unstructured tetrahedral meshes to accommodate the geometric complexity and to enable local refinement near particle surfaces and within narrow inter-particle gaps. The particle distributions are generated using a periodic placement strategy to avoid boundary artifacts and to ensure compatibility with the periodic boundary constraints imposed on the RVE faces. The particle volume fraction is controlled by the prescribed number of inclusions and their radii, and multiple random realizations (seeds) can be considered to assess the variability of the homogenized response for a fixed volume fraction. Periodic boundary conditions are enforced for both the displacement fluctuation field and the magnetic vector potential, and the resulting homogenized quantities (σ, H) are extracted via the averaging procedure described in Section 2.6. 
+
+4.5.1 Meshes and microstructure generation 
+
+The mesh containing random particles was generated by placing 100 particles with radius 0.2 randomly inside a 6x6x6 cell. The mesh uses tetrahedral elements and is periodic, similar to the previous meshes. Despite the larger unit cell, homogenized quantities are independent of volume and have no effect on the outcome. 20 A PREPRINT - M ARCH 30, 2026 
+
+Figure 24: Particle Mesh 
+
+4.5.2 Homogenized Responses Mechanical loading: The random-particle RVE is first subjected to the same purely mechanical loading path introduced in Paragraph 4.3.2; however, due to the associated computational expense, the loading is applied only up to 37% of the maximum prescribed deformation. In this case, the macroscopic deformation gradient F(t) is prescribed, while the macroscopic magnetic induction is set to B = 0. The resulting response is therefore driven entirely by the imposed mechanical deformation, and the homogenized behavior is characterized primarily through the macroscopic Cauchy stress σ. Relative to the single-inclusion and particle-chain cases, the random particle distribution introduces a more heterogeneous microstructure, leading to a more spatially dispersed pattern of local deformation and stress concentrations throughout the RVE. 0.0 0.2 0.4 0.6 0.8 1.0        
+
+> Time t
+> 0.96
+> 0.98
+> 1.00
+> 1.02
+> 1.04
+> Diagonal components
+> Applied vs. average deformations
+> Applied Fxx
+> Average Fxx
+> Applied Fyy
+> Average Fyy
+> Applied Fzz
+> Average Fzz
+
+(a) Homogenized deformation (average vs. applied) 0.0 0.2 0.4 0.6 0.8 1.0  
+
+> Time t
+> 4000
+> 3000
+> 2000
+> 1000
+> 0
+> 1000
+> 2000
+> 3000
+> 4000
+> Stress  (Pa)
+> Average stress vs. time
+> xx
+> xy
+> xz
+> yx
+> yy
+> yz
+> zx
+> zy
+> zz
+
+(b) Homogenized stress response 0.0 0.2 0.4 0.6 0.8 1.0     
+
+> Time t
+> 0.980
+> 0.985
+> 0.990
+> 0.995
+> 1.000
+> 1.005
+> 1.010
+> 1.015
+> 1.020
+> J
+> Jvs. time
+> J= det( F)
+
+(c) Homogenized Jacobian J (volume change) 
+
+Figure 25: Homogenized quantities for the random particle under strain loading. The random-particle RVE exhibits a macroscopic strain response that is very similar to that of the single spherical-inclusion case. This similarity is consistent with the fact that both configurations share the same constituent material properties and approximately the same particle volume fraction, which largely governs the overall effective stiffness. However, although the averaged response remains similar, the random particle morphology produces a more spatially heterogeneous local response, with deformation and stress concentrations distributed across many inclusion–matrix interfaces. This behavior is clearly observed in Figure 26. 
+
+Magnetic loading: The same purely magnetic loading path used for the single-inclusion case is applied to the random-particle RVE. Specifically, the macroscopic magnetic induction B(t) is prescribed while the macroscopic deformation is held fixed at F = I. The homogenized response is reported in terms of the macroscopic magnetic field H
+
+and the induced macroscopic stress σ. Compared with the single-inclusion benchmark, the random particle morphology is expected to generate a more heterogeneous microscopic response, with localized magnetic and mechanical fields arising throughout the RVE rather than being concentrated around a single inclusion. Like the strain response, the macroscopic magnetic response of the random-particle RVE is very similar to that of the spherical-inclusion case. This similarity is expected because both configurations share the same constituent material properties and nearly the same particle volume fraction. However, the microscopic response differs substantially. In particular, the random particle arrangement produces a more heterogeneous spatial distribution of magnetic potential and stress throughout the RVE, as shown in Figure 28. 21 A PREPRINT - M ARCH 30, 2026 
+
+(a) Initial state. (b) Final state. 
+
+Figure 26: Random Particles: initial and final configurations under the prescribed deformation. 0.0 0.2 0.4 0.6 0.8 1.0  
+
+> Time t
+> 20000
+> 10000
+> 0
+> 10000
+> 20000
+> Stress  (Pa)
+
+Average stress vs. time 
+
+> xx
+> xy
+> xz
+> yx
+> yy
+> yz
+> zx
+> zy
+> zz
+
+(a) Homogenized stress response 0.0 0.2 0.4 0.6 0.8 1.0  
+
+> Time t
+> 0.00
+> 0.05
+> 0.10
+> 0.15
+> 0.20
+> 0.25
+> B (T)
+
+Magnetic flux density vs. time     
+
+> Bx
+> Bexp
+> x
+> By
+> Bexp
+> y
+> Bz
+> Bexp
+> z
+
+(b) Homogenized magnetic induction ¯B
+
+vs. time 0.0 0.2 0.4 0.6 0.8 1.0  
+
+> Time t
+> 0
+> 25000
+> 50000
+> 75000
+> 100000
+> 125000
+> 150000
+> 175000
+> 200000
+> H (A/m)
+
+Average magnetic field intensity vs. time 
+
+> Hx
+> Hy
+> Hz
+
+(c) Homogenized magnetic field ¯H vs. time 
+
+Figure 27: Homogenized quantities for the random particle under magnetic loading. 
+
+(a) Magnetic Potential (b) σzz 
+
+Figure 28: Random Particles: Magnetic Potential and σzz under magnetic loading. 22 A PREPRINT - M ARCH 30, 2026 The microscopic response becomes even more pronounced when particle motion is permitted through the stress-relaxed boundary conditions. The random particle assembly undergoes a collective but spatially heterogeneous rearrangement under the applied magnetic loading. The dominant motion is aligned with the direction of the applied magnetic induction, with particles above and below the mid-plane of the cell moving toward one another in the z-direction. This produces an overall contraction toward the central plane of the microstructure, while small accompanying motions in the x- and y-directions remain secondary and are best interpreted as compatibility-driven transverse adjustments caused by the irregular local particle neighborhood. Thus, the dominant response is a cooperative z-directed rearrangement of the random particle assembly, modulated locally by the disordered microstructure. This behavior is illustrated in Figure 29. As in the previous cases, the corresponding homogenized deformation response is reported in Figure 31. Similar to the particle-chain case, these simulations were performed only up to approximately 18% of the full prescribed loading owing to their computational cost. Because the RVE is periodic, this motion should not be interpreted as the behavior of isolated particles in free space. Rather, it represents the local kinematics of a repeating disordered microstructure, in which particles near the cell boundaries interact with neighboring periodic images. In that sense, the observed response may be interpreted on a larger scale as a relative approach of neighboring inclusions along the loading direction, while the random arrangement of the particles introduces the additional local variability visible in the deformation field. To better highlight the role of the surrounding inclusions, Figure 30 shows the displacement fluctuation field. This quantity more clearly exposes the spatial variation induced by particle–particle interaction and periodic compatibility. In particular, it reveals how the local motion varies throughout the microstructure and how the disordered neighborhood of each inclusion perturbs the surrounding response. This interpretation is also consistent with the homogenized deformation response shown later in Figure 31, which reflects the same field-direction contraction at the macroscale.  
+
+> (a) Initial configuration. (b) Final configuration.
+
+Figure 29: Initial and final random-particle configurations under stress-relaxed boundary conditions. The particle assembly undergoes a cooperative but spatially heterogeneous rearrangement toward the central plane of the cell. 
+
+Figure 30: Displacement fluctuation field for the random-particle RVE under stress-relaxed boundary conditions. 
+
+Coupled magneto–mechanical loading: The random-particle RVE is finally subjected to a coupled loading path in which the macroscopic deformation gradient F(t) and the macroscopic magnetic induction B(t) are prescribed simultaneously; however, as in the strain-loading case, the loading is applied only up to 29% of the maximum prescribed level. Under these conditions, the homogenized response is reported in terms of both the macroscopic Cauchy stress σ and the macroscopic magnetic field H. Relative to the purely mechanical and purely magnetic cases, this loading path highlights the nonlinear interaction between deformation and magnetic effects. In particular, the 23 A PREPRINT - M ARCH 30, 2026 0.00 0.05 0.10 0.15 
+
+Time t
+
+> 0.98
+> 1.00
+> 1.02
+> Fxx
+
+Fxx    
+
+> 0.00 0.05 0.10 0.15
+
+Time t
+
+> 0.98
+> 1.00
+> 1.02
+> Fyy
+
+Fyy    
+
+> 0.00 0.05 0.10 0.15
+
+Time t
+
+> 0.96
+> 0.98
+> 1.00
+> 1.02
+> 1.04
+> Fzz
+
+Fzz 
+
+Figure 31: Homogenized deformation response under stress-relaxed boundary conditions, with the residual stress tolerance set to 10 −3 and the loading applied up to approximately 18% of the full prescribed value. random particle arrangement is expected to generate a more heterogeneous coupled response throughout the RVE, as the combined loading activates many localized particle–particle and particle–matrix interactions rather than a single preferred microstructural direction. 0.0 0.2 0.4 0.6 0.8 1.0        
+
+> Time t
+> 0.96
+> 0.98
+> 1.00
+> 1.02
+> 1.04
+> Diagonal components
+> Applied vs. average deformations
+> Applied Fxx
+> Average Fxx
+> Applied Fyy
+> Average Fyy
+> Applied Fzz
+> Average Fzz
+
+(a) Homogenized deformation (average vs. applied) 0.0 0.2 0.4 0.6 0.8 1.0       
+
+> Time t
+> 0
+> 1
+> 2
+> 3
+> 4
+> 5
+> 6
+> 7
+> Absolute error
+> 1e 14 Error: applied vs. average
+> |Fxx Fxx |
+> |Fyy Fyy |
+> |Fzz Fzz |
+
+(b) Deformation mismatch (average − ap-plied) 0.0 0.2 0.4 0.6 0.8 1.0  
+
+> Time t
+> 5000
+> 4000
+> 3000
+> 2000
+> 1000
+> 0
+> 1000
+> 2000
+> Stress  (Pa)
+> Average stress vs. time
+> xx
+> xy
+> xz
+> yx
+> yy
+> yz
+> zx
+> zy
+> zz
+
+(c) Homogenized stress response 0.0 0.2 0.4 0.6 0.8 1.0    
+
+> Time t
+> 0.980
+> 0.985
+> 0.990
+> 0.995
+> 1.000
+> 1.005
+> 1.010
+> 1.015
+> 1.020
+> J
+> Jvs. time
+> J= det( F)
+
+(d) Homogenized Jacobian J (volume change) 0.0 0.2 0.4 0.6 0.8 1.0     
+
+> Time t
+> 0.00
+> 0.01
+> 0.02
+> 0.03
+> 0.04
+> 0.05
+> 0.06
+> 0.07
+> B (T)
+> Magnetic flux density vs. time
+> Bx
+> Bexp
+> x
+> By
+> Bexp
+> y
+> Bz
+> Bexp
+> z
+
+(e) Homogenized magnetic induction ¯B vs. time 0.0 0.2 0.4 0.6 0.8 1.0  
+
+> Time t
+> 0
+> 10000
+> 20000
+> 30000
+> 40000
+> 50000
+> 60000
+> H (A/m)
+> Average magnetic field intensity vs. time
+> Hx
+> Hy
+> Hz
+
+(f) Homogenized magnetic field ¯H vs. time 
+
+Figure 32: Homogenized quantities for the particle RVE under the prescribed magneto-mechanical loading. As expected, the random-particle RVE exhibits a macroscopic response similar to that observed in the previous examples. However, as shown in Figure 33, the microscopic response is considerably more heterogeneous. In particular, the random particle distribution produces higher local stress concentrations together with more spatially variable displacement and magnetic potential fields. 
+
+4.6 Comparison of effective magnetostriction across particle arrangements 
+
+In magneto-active polymers, magnetically induced deformation is commonly referred to as the magnetostrictive effect. In the present computational homogenization setting, the appropriate measure of this response is the homogenized deformation obtained under purely magnetic loading and macroscopically stress-relaxed periodic boundary conditions. That is, the RVE is allowed to deform in response to the applied magnetic induction while the macroscopic deformation 24 A PREPRINT - M ARCH 30, 2026    
+
+> (a) Displacement magnitude (b) Magnetic potential (c) Final σzz
+
+Figure 33: Random-particle RVE (tet mesh): displacement magnitude, magnetic potential, and final σzz under the prescribed magneto-mechanical loading. is adjusted such that the targeted homogenized stress components remain approximately zero, rather than being prescribed a priori. To quantify this effect, we define the effective magnetostriction in the Cartesian directions as 
+
+λmag  
+
+> ii
+
+:= ¯Fii − 1, i ∈ { x, y, z }, (40) where ¯Fii denotes the corresponding homogenized deformation component. More generally, the magnetostriction along a unit direction N may be written as 
+
+λmag (N) = 
+
+p
+
+N · ¯CN − 1, ¯C = ¯FT ¯F, (41) but in the present study, the primary quantities of interest are the Cartesian components λmag  
+
+> xx
+
+, λmag  
+
+> yy
+
+, and λmag  
+
+> zz
+
+.To relate the observed field-induced deformation to the constitutive structure of the free energy, we consider a small-strain, low-field expansion of the same Helmholtz free energy used in the full formulation, 
+
+ψ(F, B ) = ψmech (F, ¯J(e)) + ψvac (F, B ) + ψmag (F, B ). (42) Let 
+
+F = I + H, ε = sym H, ∥H∥ ≪ 1. (43) Then, to first order in strain, 
+
+J = det F = 1 + tr ε, J−1 = 1 − tr ε, (44) and 
+
+(F B ) · (F B ) = B · B + 2 ε : ( B ⊗ B). (45) The mechanical contribution reduces to the usual small-strain elastic form, 
+
+ψmech = 12 Cijkl εij εkl , (46) where Cijkl is the linearized elasticity tensor. For the present Yeoh model, the nearly incompressible small-strain limit gives 
+
+E = 6 C1, (47) and the corresponding compliance tensor Sijkl satisfies 
+
+Sijpq Cpqkl = δik δjl . (48) We next expand the two magnetic contributions. The vacuum term is 
+
+ψvac (F, B ) = 12μ0J (F B ) · (F B ). (49) Using (44)–(45), this becomes 
+
+ψvac = 12μ0
+
+B2 + 1
+
+μ0
+
+ε : ( B ⊗ B) − 12μ0
+
+(tr ε)B2. (50) For the particle magnetization term, 
+
+ψmag (F, B ) = η J w mag (b), b = ∥J−1F B ∥, (51) 25 A PREPRINT - M ARCH 30, 2026 we use the low-field expansion of the Langevin law, 
+
+L(x) = x
+
+3 , χL := mleg  
+
+> s
+
+αleg 
+
+3 , μeff := μ0(1 + χL), (52) so that, to quadratic order in b,
+
+wmag (b) = b2
+
+2μeff 
+
+. (53) Hence, 
+
+ψmag = η
+
+2μeff J (F B ) · (F B ) = η
+
+2μeff 
+
+B2 + ημeff 
+
+ε : ( B ⊗ B) − η
+
+2μeff 
+
+(tr ε)B2. (54) Combining (46), (50), and (54), the total small-strain free energy may be written as 
+
+ψ(ε, B ) = 12 Cijkl εij εkl + 12 ν−1
+
+> mn
+
+BmBn − Γijmn εij BmBn, (55) where the magnetoelastic coupling tensor is 
+
+Γijmn = − 12
+
+ 1
+
+μ0
+
++ ημeff 
+
+
+
+(δim δjn + δin δjm − δij δmn ) . (56) The corresponding small-strain stress is therefore 
+
+σij = ∂ψ ∂ε ij 
+
+= Cijkl εkl − Γijmn BmBn. (57) Under the stress-relaxed conditions considered here, the targeted homogenized stress is approximately zero, so the induced strain is 
+
+εij = Sijkl Γklmn BmBn =: Λ ijmn BmBn, (58) with 
+
+Λijmn = Sijkl Γklmn . (59) For a field applied in the z-direction, B = B e z , one obtains 
+
+ε11 = Λ 1133 B2, ε22 = Λ 2233 B2, ε33 = Λ 3333 B2. (60) In the isotropic nearly incompressible limit, using E = 6 C1, these components reduce to 
+
+Λ3333 = − 16C1
+
+ 1
+
+μ0
+
++ ημeff 
+
+
+
+, Λ1133 = Λ 2233 = 112 C1
+
+ 1
+
+μ0
+
++ ημeff 
+
+
+
+. (61) Using the particle-phase material parameters from Table 1, 
+
+C1 = 1 .0 × 10 7 Pa , mleg  
+
+> s
+
+= 8 .41 × 10 5 A m −1,αleg = 2 .18 × 10 −5 m A −1, μ0 = 1 .2564 × 10 −6 H m −1. (62) gives 
+
+χL = 6 .11 , μeff = 8 .93 × 10 −6 H m −1. (63) Taking η = 1 in the particle phase then yields 
+
+Λ3333 = −1.51 × 10 −2 T−2, Λ1133 = Λ 2233 = 7 .56 × 10 −3 T−2. (64) Thus, the small-strain particle model predicts a dominant field-aligned contraction together with transverse expansion, with the axial component having twice the magnitude of each transverse component. This sign pattern is consistent with the present homogenized results, where the applied magnetic loading produces λmag  
+
+> zz
+
+< 0 and λmag  
+
+> xx
+
+, λ mag  
+
+> yy
+
+> 0.Figure 34 shows the full evolution of the diagonal effective magnetostriction components during loading. To facilitate comparison with the analytical coefficients in (64) , it is useful to define effective RVE-scale magnetostrictive coefficients by normalizing the final homogenized deformation by a common final applied magnetic induction. In the present comparison, we use the same final loading level for all three RVEs, namely 
+
+Bapp  
+
+> z, final
+
+= 0 .18 × 0.25 = 0 .045 T . (65) 26 A PREPRINT - M ARCH 30, 2026 We therefore define 
+
+ΛRVE  
+
+> ii 33
+
+= λmag 
+
+> ii
+
+
+
+Bapp 
+
+> z, final
+
+2 , i ∈ { x, y, z }. (66) The resulting values are reported in Table 4. These effective coefficients preserve the same sign structure as the analytical estimate, with positive transverse components and a negative axial component, and provide a consistent RVE-scale measure of the magnetostrictive response across all three microstructures. The difference in magnitude between the particle magnetostriction and the effective RVE-scale values should be interpreted in light of the underlying assumptions. The particle coefficients are derived from a homogeneous constitutive model in which the entire material is treated as magnetically active. By contrast, the numerical RVEs are two-phase composites in which only the particle phase possess magnetostrictive coupling, while the surrounding matrix is mechanically compliant but non-magnetostrictive. The homogenized response therefore reflects not only the intrinsic particle-level magnetoelastic coupling, but also phase contrast, particle–matrix interaction, and the geometric constraints imposed by the heterogeneous microstructure. Moreover, the normalized RVE-scale magnetostriction is much larger because the observed deformation is not simply the constitutive response of a homogeneous magnetic medium, but a particle-driven composite rearrangement in which local inclusion motion and interaction are transmitted through the surrounding matrix and then amplified at the structural level of the RVE. In fact, this rearrangement dominates the magnetostriction of the RVE in that its magnitude is on the order 10 4 times that of the inclusions themselves. Across all three microstructures, the response is qualitatively similar, with a dominant field-aligned contraction and compensating transverse expansion. Among the three cases, the random-particle arrangement exhibits the largest magnitude response, followed closely by the spiral configuration, whereas the spherical-inclusion case yields the smallest overall deformation. This ordering suggests that increased microscale freedom for rearrangement and interaction enhances the net magnetostrictive deformation captured at the homogenized level, while remaining consistent with the constitutive sign structure predicted by the small-strain analytical expansion. 0.00 0.01 0.02 0.03 0.04                    
+
+> Applied Bexp
+> z(T)
+> 0.02
+> 0.01
+> 0.00
+> 0.01
+> 0.02
+> 0.03
+> xx
+> xx
+> 0.00 0.01 0.02 0.03 0.04
+> Applied Bexp
+> z(T)
+> 0.02
+> 0.01
+> 0.00
+> 0.01
+> 0.02
+> 0.03
+> yy
+> yy
+> 0.00 0.01 0.02 0.03 0.04
+> Applied Bexp
+> z(T)
+> 0.04
+> 0.02
+> 0.00
+> 0.02
+> zz
+> zz
+> Particle Particle Chain Sphere
+
+Figure 34: Effective magnetostrictive strain components λmag  
+
+> ii
+
+= ¯Fii − 1 for the sphere, spiral, and random-particle RVEs under purely magnetic loading. Table 4: Effective RVE-scale magnetostrictive coefficients obtained by dividing the final magnetostrictive strains by the square of the final applied magnetic induction Bapp  
+
+> z, final
+
+= 0 .045 T .Arrangement ΛRVE 1133 [T −2] ΛRVE 2233 [T −2] ΛRVE 3333 [T −2]
+
+Spherical Inclusion 7.8706 7.8706 −15 .3723 
+
+Spiral 7.9343 7.9348 −15 .4943 
+
+Random Particles 8.0405 8.0469 −15 .7121 
+
+4.7 Incompressibility Study 
+
+To further investigate the role of incompressibility, a parameter study was performed in which the Poisson’s ratio of the magnetic inclusion was varied. Two loading cases were examined: a purely magnetic loading case, intended to illustrate differences in particle motion, and a uniaxial-strain case under the combined influence of mechanical loading and a magnetic field. Both cases were analyzed using a single spherical inclusion. The volume fraction, however, differed between the two studies: the purely magnetic case employed the same volume fraction as the example in Section 4.3, while the uniaxial-strain case used a volume fraction of 37%. 27 A PREPRINT - M ARCH 30, 2026 For the compressible material, the following Neo-Hookean strain-energy function, shown in Eq. 67, was adopted: 
+
+ψcomp mech = μ
+
+2
+
+  ¯I1 − 3 + κ
+
+2 (ln J)2 . (67) Additionally, to permit compressible material behavior, the volumetric contribution of the compressible phase was excluded from the ¯J averaging procedure and treated separately. 
+
+4.7.1 Purely Magnetic Loading 
+
+For this study, the Poisson’s ratio of the inclusion was varied over the values ν = 0 .40 , 0.45 , 0.48 , 0.49 , 0.495 , and 
+
+0.50 , while the Young’s modulus was held fixed at E = 5 .6 × 10 7. In this way, the effect of incompressibility was isolated by varying only ν. For each case, the corresponding shear and bulk moduli were computed from the standard isotropic relations. The resulting material parameters are summarized in Table 5. Table 5: Material parameters used in the purely magnetic incompressibility study, with Young’s modulus held constant at E = 5 .6 × 10 7.
+
+ν E μ κ
+
+0.40 5.6 × 10 7 2.000 × 10 7 9.333 × 10 7
+
+0.45 5.6 × 10 7 1.931 × 10 7 1.867 × 10 8
+
+0.48 5.6 × 10 7 1.892 × 10 7 4.667 × 10 8
+
+0.49 5.6 × 10 7 1.879 × 10 7 9.333 × 10 8
+
+0.495 5.6 × 10 7 1.873 × 10 7 1.867 × 10 9
+
+0.50 5.6 × 10 7 1.867 × 10 7 ∞
+
+The corresponding homogenized deformation responses are shown in Figure 35. The results demonstrate that the inclusion compressibility influences the overall deformation response, with increasing ν leading to a progressively more constrained macroscopic deformation. In particular, the diagonal components show the expected suppression of volumetric change as ν increases. Overall, these results indicate that even under purely magnetic loading, the mechanical compressibility of the particle phase significantly affects the effective deformation response. 0.0 0.2 0.4 0.6 0.8 1.0                    
+
+> Time t
+> 0.85
+> 0.90
+> 0.95
+> 1.00
+> 1.05
+> 1.10
+> 1.15
+> Components of  F
+> Fxx
+> 0.0 0.2 0.4 0.6 0.8 1.0
+> Time t
+> 0.85
+> 0.90
+> 0.95
+> 1.00
+> 1.05
+> 1.10
+> 1.15
+> Fyy
+> 0.0 0.2 0.4 0.6 0.8 1.0
+> Time t
+> 0.7
+> 0.8
+> 0.9
+> 1.0
+> 1.1
+> 1.2
+> 1.3 Fzz
+> Poisson Ratio
+> = 0.4 = 0.45 = 0.48 = 0.49 = 0.495 = 0.5
+
+Figure 35: Homogenized deformation response for each value of ν.Figure 36 shows the corresponding deviation of the homogenized Jacobian from unity. As expected, lower values of ν
+
+result in larger volumetric changes, while the nearly incompressible and incompressible cases remain close to J = 1 .This confirms that volumetric deformation is increasingly suppressed as ν approaches the incompressible limit. Figure 37 shows the homogenized magnetic field response H for each value of ν. Variations in ν lead to noticeable differences in the magnetic response, indicating that compressibility influences not only the mechanical deformation but also the coupled magnetic behavior. This highlights the role of magneto-mechanical coupling, where the mechanical constraint imposed by the inclusion phase directly impacts the effective magnetic response. Overall, these results demonstrate that inclusion compressibility has a non-negligible effect on both the mechanical and magnetic homogenized responses, even in a loading case driven purely by the applied magnetic induction. 
+
+4.7.2 Uniaxial Strain with Magnetic Field 
+
+As in the previous study, the Young’s modulus was held constant while the Poisson’s ratio ν was varied. The primary objective of this case was to examine the particle stress response under combined mechanical and magnetic loading. In 28 A PREPRINT - M ARCH 30, 2026 0.0 0.2 0.4 0.6 0.8 1.0       
+
+> Time t
+> 0.000
+> 0.005
+> 0.010
+> 0.015
+> 0.020
+> 0.025
+> J
+> Poisson Ratio
+> = 0.4 = 0.45 = 0.48 = 0.49 = 0.495 = 0.5
+
+Figure 36: Deviation of the homogenized Jacobian from unity for each value of ν.0.0 0.2 0.4 0.6 0.8 1.0                   
+
+> Time t
+> 25
+> 20
+> 15
+> 10
+> 5
+> 0
+> H (A/m)
+> Hx
+> 0.0 0.2 0.4 0.6 0.8 1.0
+> Time t
+> 20.0
+> 17.5
+> 15.0
+> 12.5
+> 10.0
+> 7.5
+> 5.0
+> 2.5
+> 0.0
+> Hy
+> 0.0 0.2 0.4 0.6 0.8 1.0
+> Time t
+> 0
+> 20000
+> 40000
+> 60000
+> 80000
+> Hz
+> Poisson Ratio
+> = 0.4 = 0.45 = 0.48 = 0.49 = 0.495 = 0.5
+
+Figure 37: Homogenized magnetic field response for each value of ν.contrast to the purely magnetic study, the particle–matrix stiffness ratio was reduced to 50, and the particle volume fraction was increased in order to amplify the influence of the inclusion response on the homogenized behavior. The values of ν considered in this case were 0.20 , 0.45 , and the incompressible limit. The corresponding material parameters are summarized in Table 6. Table 6: Material parameters used in the uniaxial-strain study with magnetic loading, with Young’s modulus held constant at E = 3 .7785 × 10 6.
+
+ν E μ κ
+
+0.20 3.779 × 10 6 1.574 × 10 6 2.099 × 10 6
+
+0.45 3.779 × 10 6 1.302 × 10 6 1.255 × 10 7
+
+0.50 3.779 × 10 6 1.259 × 10 6 incompressible limit In this case, a uniaxial stretch of 15% was prescribed in the x-direction, while the stretches in the y- and z-directions were adjusted such that the overall deformation remained isochoric. In addition, a magnetic induction of 250 mT was applied in the z-direction. Consistent with the preceding studies, both loads were applied incrementally over time using a linear ramp. This loading scenario was chosen to assess the influence of inclusion compressibility on the particle stress response under coupled magneto-mechanical loading. Figure 38 shows the resulting homogenized deformation response for each case, while Figure 39 presents the corre-sponding homogenized stress response. Additionally, Figure 40 illustrates the evolution of the particle Jacobian for each case, highlighting differences in the volumetric response as the inclusion compressibility is varied. From these results, the difference in particle behavior is apparent, with the compressible case producing a higher stress under this deformation. This is consistent with the fact that the applied deformation is isochoric, so the volumetric contribution to the strain energy does not contribute, and the stress response is governed primarily by the shear modulus. Since Young’s modulus is held fixed while Poisson’s ratio is increased toward incompressibility, the bulk modulus increases but the shear modulus decreases, leading the more incompressible case to exhibit a lower stress response. Additionally, Figure 41 compares the differences in the local stress field σzz among the three cases. 29 A PREPRINT - M ARCH 30, 2026 0.0 0.2 0.4 0.6 0.8 1.0 
+
+> Time t
+> 1.000
+> 1.025
+> 1.050
+> 1.075
+> 1.100
+> 1.125
+> 1.150
+> Fxx
+
+Fxx      
+
+> 0.0 0.2 0.4 0.6 0.8 1.0
+> Time t
+> 0.95
+> 0.96
+> 0.97
+> 0.98
+> 0.99
+> 1.00
+> Fyy
+
+Fyy      
+
+> 0.0 0.2 0.4 0.6 0.8 1.0
+> Time t
+> 0.94
+> 0.96
+> 0.98
+> 1.00
+> Fzz
+
+Fzz   
+
+> = 0.20 = 0.45 = 0.50 (incomp.)
+
+Figure 38: Homogenized deformation response for the different values of the inclusion Poisson’s ratio under uniaxial strain with an applied magnetic field. 0.0 0.2 0.4 0.6 0.8 1.0             
+
+> Time t
+> 0
+> 5000
+> 10000
+> 15000
+> 20000
+> 25000
+> xx  (Pa)
+> xx
+> 0.0 0.2 0.4 0.6 0.8 1.0
+> Time t
+> 20000
+> 15000
+> 10000
+> 5000
+> 0
+> yy  (Pa)
+> yy
+> 0.0 0.2 0.4 0.6 0.8 1.0
+> Time t
+> 30000
+> 25000
+> 20000
+> 15000
+> 10000
+> 5000
+> 0
+> zz  (Pa)
+> zz
+> = 0.20 = 0.45 = 0.50 (incomp.)
+
+Figure 39: Homogenized stress response for the different values of the inclusion Poisson’s ratio under uniaxial strain with an applied magnetic field. 0.0 0.2 0.4 0.6 0.8 1.0 
+
+Time t 
+
+0.98 
+
+0.99 
+
+1.00 
+
+1.01 
+
+1.02 
+
+> J p
+
+= 0.20 = 0.45 = 0.50 (incomp.) 
+
+Figure 40: Evolution of the particle Jacobian for the different values of the inclusion Poisson’s ratio under uniaxial strain with an applied magnetic field. 
+
+(a) ν = 0 .20 (b) ν = 0 .45 (c) Incompressible 
+
+Figure 41: Comparison of the local stress field σzz for the three inclusion compressibility cases under uniaxial strain with an applied magnetic field. 30 A PREPRINT - M ARCH 30, 2026 
+
+5 Conclusion 
+
+In this work, we developed a three-dimensional computational homogenization framework for magnetically active elastomers that enables fully coupled magneto-mechanical simulations at the RVE level. The formulation combines a J-bar-based treatment of near-incompressibility, periodic boundary conditions for consistent multiscale modeling, and a magnetic vector-potential description of the magnetic field. The framework was used to analyze a range of microscale configurations exhibiting overall incompressible behavior with heterogeneous inclusions. Both tetrahedral and hexahedral discretizations were successfully employed, and consistent homogenized responses were obtained under periodic boundary conditions. The results highlight the ability of the formulation to capture nontrivial particle kinematics and local field variations while preserving macroscopic incompressibility. Furthermore, the effect of inclusion compressibility was investigated, showing that variations in Poisson’s ratio influence both the local deformation patterns and the homogenized mechanical and magnetic responses. While these effects remain modest for low volume fractions and high stiffness contrasts, they become more pronounced as the relative stiffness and volumetric compliance of the inclusion phase change, particularly under coupled magneto–mechanical loading. Despite the robustness of the proposed formulation, several limitations should be noted. First, the use of the J-bar stabilization introduces an element-wise averaged volumetric response, which may smear localized volumetric effects and limit accuracy in problems where strong local dilatation gradients are important. Second, the present study is restricted to quasi-static magnetostatics and does not account for dynamic electromagnetic effects, eddy currents, or rate-dependent material behavior, which may become relevant in high-frequency or transient applications. Third, while the tetrahedral discretization enables complex geometries, the use of an H1-conforming approximation for the magnetic vector potential does not enforce strict H(curl) conformity, which may impact accuracy for problems involving sharp magnetic field discontinuities. In addition, the computational cost of fully coupled three-dimensional RVE simulations remains significant, particularly for high particle volume fractions or when fine mesh resolution is required to capture strong localization effects. Finally, the material models employed here are based on idealized hyperelastic and saturation-type magnetization laws; extensions to more complex constitutive behaviors, including hysteresis, viscoelasticity, and rate-dependent magnetization, remain an open area for future work. In addition, several constitutive assumptions adopted in the present study remain to be validated experimentally. In particular, the use of idealized hyperelastic and saturation-type magnetic laws assumes a largely reversible, rate-independent response and does not yet resolve possible hysteretic, viscoelastic, or other dissipative effects in the composite. Moreover, while the simulations capture particle rotation, translation, and interaction-driven rearrangement at the microscale, these mechanisms have not yet been directly compared against experimental observations. Experimental validation through free-magnetostriction tests, constrained or blocked-force actuation tests, cyclic magnetic loading, and time-dependent stress-relaxation or creep experiments, ideally combined with in situ imaging of particle motion, would provide a direct basis for assessing and refining these constitutive assumptions [ 43 ]. Several directions for future work follow naturally from the present formulation. A key extension is the integration of data-driven and machine learning techniques to accelerate the computational homogenization process. In particular, surrogate models trained on RVE simulations could be used to approximate the homogenized constitutive response, enabling efficient multiscale simulations and opening the door to inverse design and parameter identification [44 , 45 ]. Another important direction is the extension of the framework to more general coupled multiphysics settings, including electro–magneto–mechanical behavior. Incorporating electric fields alongside magnetic and mechanical effects would allow the modeling of a broader class of smart materials, such as magneto-electro-active composites and multifunctional metamaterials [ 46 , 47 ]. Finally, further developments could include the incorporation of more complex material behavior, such as hysteresis, rate dependence, and nonlinear magnetic saturation, as well as the exploration of higher inclusion volume fractions and more complex microstructural geometries. These extensions would enhance both the predictive capability and the practical applicability of the proposed multiscale framework [ 48 ]. Ultimately, these developments aim to bridge high-fidelity multiscale modeling and real-time predictive capabilities, enabling the design and control of advanced multifunctional materials. 
+
+Acknowledgements 
+
+This material is based upon work partially supported by the U.S. National Science Foundation under award No. 2452029 and partially under award No. 2235856 (MKR). The opinions, findings, and conclusions, or recommendations expressed are those of the authors and do not necessarily reflect the views of the NSF. The authors acknowledge the Texas Advanced Computing Center (TACC) at The University of Texas at Austin for providing computational resources that have contributed to the research results reported within this paper. URL: 
+
+http://www.tacc.utexas.edu 
+
+31 A PREPRINT - M ARCH 30, 2026 
+
+References 
+
+[1] M Farshad and Andre Benine. Magnetoactive elastomer composites. Polymer testing , 23(3):347–353, 2004. [2] Sung Soon Kang, Kisuk Choi, Jae-Do Nam, and Hyoung Jin Choi. Magnetorheological elastomers: Fabrication, characteristics, and applications. Materials , 13(20):4597, 2020. [3] Seyyedmohammad Aghamiri and Ramin Sedaghati. Magnetoactive metamaterials: A state-of-the-art review. 
+
+Advanced Engineering Materials , 27(23):e202501312, 2025. [4] Tatiana I Becker, Yuriy L Raikher, Oleg V Stolbov, Valter Böhm, and Klaus Zimmermann. Magnetoactive elastomers for magnetically tunable vibrating sensor systems. Physical Sciences Reviews , 7(10):1063–1090, 2022. [5] Evan Galipeau, Stephan Rudykh, Gal Debotton, and Pedro Ponte Castañeda. Magnetoactive elastomers with periodic and random microstructures. International journal of solids and structures , 51(18):3012–3024, 2014. [6] Karl A Kalina, Alexander Raßloff, Maximilian Wollner, Philipp Metsch, Jörg Brummund, and Markus Kästner. Multiscale modeling and simulation of magneto-active elastomers based on experimental data. Physical Sciences Reviews , 8(1):1–31, 2023. [7] Karl A Kalina, Philipp Gebhart, Jörg Brummund, Lennart Linden, WaiChing Sun, and Markus Kästner. Neural network-based multiscale modeling of finite strain magneto-elasticity with relaxed convexity criteria. Computer Methods in Applied Mechanics and Engineering , 421:116739, 2024. [8] Marc GD Geers, Varvara G Kouznetsova, and WAM1402 Brekelmans. Multi-scale computational homogenization: Trends and challenges. Journal of computational and applied mathematics , 234(7):2175–2182, 2010. [9] Fathollah Taheri-Behrooz and Emad Pourahmadi. A 3d rve model with periodic boundary conditions to estimate mechanical properties of composites. Struct. Eng. Mech , 72(6):713–722, 2019. [10] E Tikarrouchine, George Chatzigeorgiou, Francis Praud, Boris Piotrowski, Yves Chemisky, and Fodil Meraghni. Three-dimensional fe2 method for the simulation of non-linear, rate-dependent response of composite structures. 
+
+Composite Structures , 193:165–179, 2018. [11] A Valverde-González, J Reinoso, B Dortdivanlioglu, and Marco Paggi. Locking treatment of penalty-based gradient-enhanced damage formulation for failure of compressible and nearly incompressible hyperelastic materi-als. Computational Mechanics , 72(4):635–662, 2023. [12] Hendrik Schrautzer, Moritz Sallermann, Pavel F Bessarab, and Hannes Jónsson. Identification of mechanisms of magnetic transitions using an efficient method for converging on first-order saddle points. Physical Review B ,112(10):104433, 2025. [13] Erodita Saliji and Mahmood Jabareen. An mfe2 framework for the computational homogenization of nearly incompressible soft composites. Composite Structures , page 119611, 2025. [14] Oszkar Biro, Kurt Preis, and Kurt R Richter. On the use of the magnetic vector potential in the nodal and edge finite element analysis of 3d magnetostatic problems. IEEE Transactions on magnetics , 32(3):651–654, 1996. [15] H Kanayama, H Motoyama, K Endo, and F Kikuchi. Three-dimensional magnetostatic analysis using nedelec’s elements. IEEE Transactions on Magnetics , 26(2):682–685, 2002. [16] M Chari, A Konrad, M Palmo, and J D’angelo. Three-dimensional vector potential analysis for machine field problems. IEEE Transactions on Magnetics , 18(2):436–446, 2003. [17] Yin Liu, Shoue Chen, Xiaobo Tan, and Changyong Cao. A finite element framework for magneto-actuated large deformation and instability of slender magneto-active elastomers. International Journal of Applied Mechanics ,12(01):2050013, 2020. [18] Martin J Lahart. Electromagnetic scalar potentials: Overview and historical perspective. Journal of the Washington Academy of Sciences , pages 67–80, 2004. [19] William M Coombs, Tim J Charlton, Michael Cortis, and Charles E Augarde. Overcoming volumetric locking in material point methods. Computer Methods in Applied Mechanics and Engineering , 333:1–21, 2018. [20] Amin Saber and Ramin Sedaghati. The modeling of magnetorheological elastomers: A state-of-the-art review. 
+
+Advanced Engineering Materials , 25(16):2300182, 2023. [21] Clive L Dym, Irving Herman Shames, et al. Solid mechanics . Springer, 1973. [22] Paul G Huray. Maxwell’s equations . John Wiley & Sons, 2009. [23] A Dorfmann and RW21853031071 Ogden. Some problems in nonlinear magnetoelasticity. Zeitschrift für angewandte Mathematik und Physik ZAMP , 56(4):718–745, 2005. 32 A PREPRINT - M ARCH 30, 2026 [24] Yan-Lin Li, Sheng Sun, Qi I Dai, and Weng Cho Chew. Vectorial solution to double curl equation with generalized coulomb gauge for magnetostatic problems. IEEE Transactions on Magnetics , 51(8):1–6, 2015. [25] Gerhard A Holzapfel. Nonlinear solid mechanics: a continuum approach for engineering science, 2002. [26] P Metsch, KA Kalina, J Brummund, and M Kästner. Two-and three-dimensional modeling approaches in magneto-mechanics: a quantitative comparison. Archive of Applied Mechanics , 89(1):47–62, 2019. [27] Louis B Rall. Automatic differentiation: Techniques and applications . Springer, 1981. [28] P Ponte Castañeda and E Galipeau. Homogenization-based constitutive models for magnetorheological elastomers at finite strain. Journal of the Mechanics and Physics of Solids , 59(2):194–215, 2011. [29] Rodney Hill. Elastic properties of reinforced solids: some theoretical principles. Journal of the Mechanics and Physics of Solids , 11(5):357–372, 1963. [30] Bernard D Coleman and Walter Noll. The thermodynamics of elastic materials with heat conduction and viscosity. In The foundations of mechanics and thermodynamics: Selected papers , pages 145–156. Springer, 1974. [31] Daniel Arndt, Wolfgang Bangerth, Maximilian Bergbauer, Bruno Blais, Marc Fehling, Rene Gassmöller, Timo Heister, Luca Heltai, Martin Kronbichler, Matthias Maier, et al. The deal. ii library, version 9.7. Journal of Numerical Mathematics , 33(4):403–415, 2025. [32] R Zabihyan, J Mergheim, Ali Javili, and P Steinmann. Aspects of computational homogenization in magneto-mechanics: Boundary conditions, rve size and microstructure composition. International Journal of Solids and Structures , 130:105–121, 2018. [33] Samuel Edward Reynolds. H1-conforming Finite Elements on Nonstandard Meshes . PhD thesis, Portland State University, 2024. [34] Joachim Schöberl and Sabine Zaglmayr. High order nédélec elements with local complete sequence properties. 
+
+COMPEL-The international journal for computation and mathematics in electrical and electronic engineering ,24(2):374–384, 2005. [35] Helmut Brass and Knut Petras. Quadrature theory: the theory of numerical integration on a compact interval .Number 178. American Mathematical Soc., 2011. [36] Hervé Delingette. General object reconstruction based on simplex meshes. International journal of computer vision , 32(2):111–146, 1999. [37] Fumio Kikuchi. Theoretical analysis of nedelec’s edge elements. Japan journal of industrial and applied mathematics , 18(2):321–333, 2001. [38] Michael Okereke and Simeon Keates. Boundary conditions. In Finite Element Applications: A Practical Guide to the FEM Process , pages 243–297. Springer, 2018. [39] Sebastian Stark, Artem S Semenov, and Herbert Balke. On the boundary conditions for the vector potential formulation in electrostatics. International Journal for Numerical Methods in Engineering , 102(11):1704–1732, 2015. [40] Christian Miehe, Jan Schotte, and Jörg Schröder. Computational micro–macro transitions and overall moduli in the analysis of polycrystals at large strains. Computational Materials Science , 16(1-4):372–382, 1999. [41] A Javili, S Saeb, and P Steinmann. Aspects of implementing constant traction boundary conditions in com-putational homogenization via semi-dirichlet boundary conditions. Computational Mechanics , 59(1):21–35, 2017. [42] Karl A Kalina, Alexander Ra βloff, Maximilian Wollner, Philipp Metsch, Jörg Brummund, and Markus Kästner. Multiscale modeling and simulation of magneto-active elastomers based on experimental data. Physical Sciences Reviews , 8(1):1–31, 2023. [43] M Schümann and S Odenbach. In-situ observation of the particle microstructure of magnetorheological elastomers in presence of mechanical strain and magnetic fields. Journal of Magnetism and Magnetic Materials , 441:88–92, 2017. [44] Karl A Kalina, Jörg Brummund, and Markus Kästner. A physics-augmented neural network framework for finite strain incompressible viscoelasticity. Computer Methods in Applied Mechanics and Engineering , 455:118892, 2026. [45] Heinrich T Roth, Philipp Gebhart, Karl A Kalina, Thomas Wallmersperger, and Markus Kästner. A data-driven multiscale scheme for anisotropic finite strain magneto-elasticity. arXiv preprint arXiv:2510.24197 , 2025. [46] Dhiren K Pradhan, Shalini Kumari, Philip D Rack, and Ashok Kumar. Applications of strain-coupled magneto-electric composites. Encyclopedia of Smart Materials , 2021, 2021. 33 A PREPRINT - M ARCH 30, 2026 [47] Chuanyang Cai, Yao Wen, Shiheng Liang, Lei Yin, Ruiqing Cheng, Hao Wang, Xiaoqiang Feng, Liang Liu, and Jun He. Ferroelectricity-driven strain-mediated magnetoelectric coupling in two-dimensional multiferroic heterostructure. Nature Communications , 16(1):10664, 2025. [48] Karl Alexander Kalina, Jörg Brummund, Philipp Metsch, Markus Kästner, D Yu Borin, Julia Martina Linke, and Stefan Odenbach. Modeling of magnetic hystereses in soft mres filled with ndfeb particles. Smart Materials and Structures , 26(10):105019, 2017. 34

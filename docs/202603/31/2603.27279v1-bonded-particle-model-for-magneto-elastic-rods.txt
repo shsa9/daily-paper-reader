@@ -1,0 +1,861 @@
+Title: Bonded-particle model for magneto-elastic rods
+
+URL Source: https://arxiv.org/pdf/2603.27279v1
+
+Published Time: Tue, 31 Mar 2026 00:49:01 GMT
+
+Number of Pages: 39
+
+Markdown Content:
+# Bonded-particle model for magneto-elastic rods 
+
+## Gabriel Alkuino 1,2 , Joel T. Clemmer 3* ,Christian D. Santangelo 1,2 , Teng Zhang 2,4* 
+
+> 1
+
+Department of Physics, Syracuse University, Syracuse, NY, 13244, United States. 
+
+> 2
+
+BioInspired Syracuse, Syracuse University, Syracuse, NY, 13244, United States. 
+
+> 3
+
+Sandia National Laboratories, Albuquerque, NM, 87123, United States. 
+
+> 4
+
+Department of Mechanical and Aerospace Engineering, Syracuse University, Syracuse, NY, 13244, United States. *Corresponding author(s). E-mail(s): jtclemm@sandia.gov; tzhang48@syr.edu; Contributing authors: gsalkuin@syr.edu; cdsantan@syr.edu; 
+
+Abstract 
+
+We develop a bonded-particle model for magneto-elastic rods that unifies large deformations, contact, and long-range magnetic interactions within a single discrete-element framework. The rod is discretized into orientable particles con-nected by co-rotational bonds that capture stretching, shearing, bending, and twisting through a symmetric decomposition of relative displacement and rota-tion. Magnetic coupling is introduced at the particle level: each particle carries a dipole moment that rotates with it, enabling both external-field actuation and long-range dipole–dipole interactions without modifying the structural formula-tion. We implement the model in LAMMPS to take advantage of its parallel efficiency, long-range electrostatic solvers, and multiphysics capabilities. We val-idate the framework against three benchmark problems: writhing instabilities of straight and curved rods under extreme twisting, large deflections of magnetized beams in uniform and constant-gradient fields, and mechanical hysteresis of heli-cal rods with dipole–dipole interactions. To demonstrate multiphysics capability, we couple the model with a lattice Boltzmann fluid solver via the immersed boundary method and simulate filaments in oscillatory channel flow and fluid pumping by magnetically actuated cilia arrays. Across all examples, the model shows good agreement with experimental, analytical, and numerical reference results. 
+
+1 
+
+> arXiv:2603.27279v1 [cond-mat.soft] 28 Mar 2026 Keywords: magneto-elastic rods, bonded-particle method, discrete element method, co-rotational formulation, fluid–structure interaction, LAMMPS
+
+# 1 Introduction 
+
+Hard-magnetic soft materials have emerged as a promising platform for untethered soft robots, as they can be programmed and remotely controlled via external mag-netic fields [1, 2]. This has opened new possibilities in microrobotics for biomedical applications [3, 4]. Additionally, magnetic dipole–dipole interactions can be har-nessed to induce multistability [5, 6] and mechanical hysteresis [7–9], and form self-assembling network structures [10, 11], opening new avenues for metamaterial design [12]. Accurately and efficiently simulating such systems in complex environ-ments is challenging due to the interplay of large deformations, nonlocal interactions, contact, and other external forces. In numerous applications, the fundamental building blocks are beams or rods, owing to their capacity for large deformations and complex shape morphing. These have been used to design bio-inspired swimmers [3], robots [13], magneto-mechanical metamaterials [14], surgical catheters [15, 16], and artificial cilia [17, 18]. For hard-magnetic rods, reduced-order models based on Kirchhoff and Cosserat rod theories augmented with the Zeeman energy offer efficient alternatives to full three-dimensional simulations [8, 19–22]. These models have been extended to include dipole–dipole interactions [21, 23] and have been implemented in various simulation frameworks, including those capable of fluid–structure interaction [24, 25]. In geome-chanics, bonded-particle models are widely used to simulate elasticity and fracture in 2D and 3D solids [26–29]. Yet their application to 1D structures undergoing extreme deformation remains relatively unexplored, despite their natural suitability for soft matter systems across scales—from polymers to mechanical metamaterials. Although several studies have applied bonded-particle models to simulate rods and fibers [29– 31], they remain limited to pure planar bending or twisting cases and their stability remains unproven under scenarios of extreme deformation. Moreover, these methods remain underutilized despite their promise in simulating magneto-elastic materials. In this work, we develop a bonded-particle model for magneto-elastic rods that integrates seamlessly with discrete element and molecular dynamics frameworks, offer-ing a unified treatment of large deformations, contact, and long-range magnetic interactions. We implement our model in LAMMPS [32], leveraging its robust infras-tructure for large-scale systems, long-range electrostatics, and multiphysics coupling. The paper is organized as follows: Sec. 2 introduces the bonded-particle model for magneto-elastic rods, covering the elastic rod formulation, dynamics, contact, and magneto-elastic coupling; Sec. 3 validates the model against three benchmark prob-lems: straight and curved rods under extreme twisting; magnetized beams in uniform and constant-gradient fields; and helical rods with dipole–dipole interactions; Sec. 4 presents coupling with a lattice Boltzmann fluid solver, validated by simulating fila-ments in an oscillatory flow and fluid pumping by magnetic cilia arrays; and finally, Sec. 5 offers concluding remarks and an outlook on future directions. 22 Bonded-particle model for magneto-elastic rods 
+
+While the term bonded-particle model originates from Potyondy and Cundall [26], we use it here broadly to refer to any non-contact bonded interaction for modeling solid behavior. The simplest models treat a solid as a network of simple springs [33]; these are sometimes called mass-spring models (MSM) or lattice-spring models (LSM). Lloyd et al. [34] optimized the MSM for triangular (2D) and tetrahedral (3D) meshes and obtained good agreement with FEM, though the Poisson’s ratio cannot be indepen-dently specified ( ν2D = 1 /3 [35] and ν3D = 1 /4 [36]). Furthermore, they found that, in 3D, a volume correction term is needed for better accuracy. Clemmer et al. [37] used an MSM based on random sphere packing and introduced a deviatoric term—computed from the difference between local volumetric dilation and bond stretching—to access a larger range of Poisson’s ratios. Zhang [38] derived a lattice-spring equivalent of a hexahedral mesh element for neo-Hookean solids, which also includes a volume cor-rection term. This was later extended by Ye et al. [39] to include magnetic actuation. However, adding dipole–dipole interactions is not straightforward since the nodes are point particles. More generally, purely radial springs are insufficient for capturing the coupling between shear and rotation [40]. Some bonded-particle models address these limitations by incorporating shear and rotational springs through finite-sized, orientable particles. This also enables dipoles to be assigned directly to the discrete elements. However, the added rotational degrees of freedom make it difficult to derive the correct spring parameters from macroscopic elasticity in 2D and 3D [41]. For 1D systems, many bond models based on rod theory exist [42, 43]. Chen et al. [29] reviewed various bonded-particle models and unified rod-based bond models into a generic form. We build upon the formulation of Wang et al. [40, 41, 44, 45], here-after referred to simply as the BPM. 1 In particular, Wang [44] developed a technique that decomposes the relative rotation into two rotations: one axial rotation around the bond and one rotation about an axis perpendicular to the bond. Moreover, the rotation angles are sequence-independent, which uniquely determines a twisting and a bending angle. This method only requires the initial (reference) configuration and the current configuration, making it more stable than incremental formulations using linearized rotation vectors [44]. In this paper, we use the terms rod and beam inter-changeably. Beams commonly refer to bending-only structures, as in Sec. 3.2, though 
+
+beam elements in the FEM literature may include torsion as well. 
+
+## 2.1 BPM for elastic rods 
+
+In this section we formulate the BPM for elastic rods. Each cylindrical bond element has four linear springs corresponding to stretching, shearing, twisting, and bending (Fig. 1(b)). The elastic forces and torques are linearized functions of relative dis-placement and rotation, making the BPM a co-rotational model. Following other co-rotational formulations in mechanics [46–52], we introduce a central frame obtained by averaging the orientations of the two particles via quaternion spherical linear inter-polation, similar to Obermayr et al. [42]. The radial and shear forces arise as restoring  
+
+> 1This is the model implemented in LAMMPS as bond style bpm/rotational .
+
+3Fig. 1 Illustration of the bonded-particle model for magnetic rods. (a) Each particle is treated as a magnetic dipole. An external magnetic field or dipole–dipole interaction exerts a force and torque on the particle. Neighboring particles are connected by an elastic bond. (b) The relative displacement and rotation between two bonded particles are decomposed into four linear spring interactions. The reference configurations are displayed below the corresponding deformed configurations. 
+
+forces from displacement components along and transverse to the current bond direc-tion, respectively. Our formulation differs from Wang et al. [40, 41, 44, 45] in that we do not use one particle as the reference frame. The central frame eliminates the rota-tional shear term and ensures the formulation is symmetric under particle exchange. More details can be found in Supplementary Information S2. 
+
+Fig. 2 (a) The reference (light) and deformed (dark) bond. (b) The body frames of the two particles are defined by the quaternions q1 and q2 in the global frame. The central frame, C, is defined by 
+
+qC , which is the average of q1 and q2. (c) The relative displacement is measured from the moving C
+
+frame. (d) The C′ frame is obtained by aligning the C frame to the bond vector. (e) The orientation of particles 1 and 2 in the C′ frame is defined by the quaternions u∗ and u, respectively. Both quaternions are then decomposed in a bend before twist order such that the total rotation of particle 2 with respect to particle 1 is a sequence of four rotations. (f) Illustration of the swing–twist decomposition. 
+
+4Suppose a reference bond is initialized between two particles 1 and 2 with coordi-nates ( ⃗x i
+
+> 1
+
+, q i 
+
+> 1
+
+) and ( ⃗x i
+
+> 2
+
+, q i 
+
+> 2
+
+), respectively. Without loss of generality, let q i 
+
+> 1
+
+= q i 
+
+> 2
+
+= 1. In the current deformed configuration, the particles are described by ( ⃗x f 
+
+> 1
+
+, q f 
+
+> 1
+
+) and (⃗x f 
+
+> 2
+
+, q f 
+
+> 2
+
+). We decompose the rigid-body motion taking particle 1 to 2 into four distinct translational or rotational modes, each associated with a linear spring of stiffness we call Kr, Ks, Kt, or Kb. The initial and current bond vectors are ri := ⃗x i 
+
+> 2
+
+−⃗x i 
+
+> 1
+
+and 
+
+rf := ⃗x f 
+
+> 2
+
+−⃗x f 
+
+> 1
+
+, respectively. We define the central frame C with origin at the bond mid-point and orientation qC given by the average of the two particle orientations, where 
+
+q iC = 1. During the deformation, the central frame evolves from Ci to Cf . Therefore, the relative displacement must be evaluated in the moving C frame (Fig. 2(a)-(c)): ∆r[Cf ] = rf [Cf ] − ri[Ci] = q∗ 
+
+> C
+
+rf [O] qC − ri[O]. (1) From here on, since the initial frames are the same as the global frame O, the frames 1, 2, and C without the f superscript refer to the current configuration. For small relative displacements, the axial component of ∆ r is approximately ( rf − ri)ˆ rf . Therefore, the radial (axial) force on particle 1 is 
+
+fr := Kr (rf − ri)ˆ rf . (2) The shear force acts perpendicular to ˆ rf and lies in the plane spanned by ˆ ri[O] and ˆrf [C]. Let γ = arccos (ˆ ri[O] · ˆrf [C]) and define two unit vectors ˆ t[C] = (ˆ ri[O] ×
+
+ˆrf [C]) / ˆri[O] × ˆrf [C] and ˆ s = ˆ t × ˆrf , such that (ˆ s, ˆt, ˆrf ) form a right-handed basis. The shear force on particle 1 due to the transverse displacement is then 
+
+fs := Ks rf γ ˆs. (3) This force also produces a counter-torque to conserve angular momentum: 
+
+τs := 12 rf × fs = 12 Ks r2 
+
+> f
+
+γ ˆt. (4) The forces and torques are conveniently computed in C and then rotated back to the global frame via v[O] = qC v[C] q∗ 
+
+> C
+
+.To extract the bending and twisting angles, we define the C′ frame by rotating C
+
+such that its z-axis aligns with the bond vector (Fig. 2(d)); the rotation is given by the quaternion m (Eq. (S1)) in the C frame. In the C′ frame, each particle’s orientation is decomposed via swing–twist decomposition (Fig. 2(f)), 2 yielding (half) bending rotations R(θα, ˆz × ˆϕα) and (half) twisting rotations R(ψα, ˆz) for α = 1 and 2, all defined in C′ (Fig. 2(e)), where R(Φ , ˆn) is the rotation matrix that rotates by the angle Φ about the axis ˆ n. The effective bending and twisting rotations are then defined as 
+
+Rb = R(θ2, ˆz × ˆϕ2) R−1(θ1, ˆz × ˆϕ1), (5) 
+
+Rt = R(ψ2 − ψ1, ˆz). (6) 
+
+> 2This can be done using Wang’s [44] algorithm or other swing–twist decomposition algorithms [53].
+
+5Table 1 The four BPM spring constants. The bond is assumed to be a cylinder with length L and diameter d, with area A = πd 2/4, planar second moment of area      
+
+> I=πd 4/64, and polar second moment of area J=πd 4/32.
+
+stretch Kr EA/L 
+
+“shear” Ks 12 EI/L 3
+
+twist Kt GJ/L 
+
+bend Kb EI/L 
+
+The bending and twisting torques on particle 1 are 
+
+τb[C′] := Kbθ = Kbθˆb, (7) 
+
+τt[C′] := Ktψ = Kt(ψ2 − ψ1) ˆ z, (8) where θ = θˆb and ψ = ( ψ2−ψ1) ˆ z are the axis–angle vectors of Rb and Rt, respectively. These are then rotated back to the global frame via v[O] = qC m v[C′] m∗q∗ 
+
+> C
+
+. Finally, the net force and torque on each particle in the global frame are obtained by linear superposition: 
+
+f1
+
+τ1
+
+f2
+
+τ2
+
+ =
+
+
+
+fr + fs
+
+τs + τb + τt
+
+−fr − fs
+
+τs − τb − τt
+
+ . (9) The values of the spring constants ( Kr, K s, K t, K b) consistent with Euler–Bernoulli beam theory are listed in Table 1. The derivation can be found in Supplementary Information S2.2. The total energy of the bond is approximately 
+
+U ≈ 12 Kr(rf − ri)2 + 12 Ksr2 
+
+> f
+
+γ2 + 12 Ktψ2 + 12 Kbθ2. (10) 
+
+## 2.2 Dynamics and contact 
+
+The model described above was implemented as a custom bond style in the BPM package [37] in LAMMPS [32]. The equations of motion are integrated using velocity Verlet for translations and a Richardson update for quaternion orientations. The bond model also supports optional damping for each deformation mode. Radial damping is applied using the relative velocity projected along the bond axis, fr += gr (∆ v · ˆrc). For the angular deformation modes, strain rates are estimated by finite differences of the stored deformation measures: ˙ γ = ( γn − γn−1)/∆t for the shear angle, and sim-ilarly for the twist ˙ψ and bending ˙θ angles. Rate-proportional terms are then added to the corresponding elastic forces and torques, fs += gs rc ˙γ (with the associated τs
+
+updated accordingly), τt += gt ˙ψ, and τb += gb ˙θ, where the g coefficients are the corresponding damping factors. The bond-level damping targets high-frequency oscil-lations between neighboring particles, while global Langevin damping is applied at the particle level to dissipate low-frequency kinetic energy and aid convergence toward quasi-static equilibrium. For dynamic simulations, the moment of inertia of each dis-crete element is that of a solid sphere, which differs from the cylindrical segment it 6represents. However, for quasi-static problems this discrepancy is inconsequential, as inertial terms vanish at equilibrium and the static configuration is determined entirely by the bond forces and torques, which are independent of particle shape. This limita-tion could be lifted by allowing user-defined diagonal inertia tensors, which would be a straightforward extension. Since the bonded-particle method originated in geomechanics, our model benefits from the readily available, well-established granular contact models. Our formula-tion is therefore applicable to elasto-granular coupling problems [54, 55], which we leave for future work. In the examples of Sec. 3.1 and 3.3, granular interactions are included only to prevent rod self-intersection; this is handled by a Hertz–Mindlin con-tact model between non-bonded particles. A limitation of this approach is that, to prevent particles from passing through the gaps between bonded neighbors, the par-ticle diameter must be at least as large as the bond length, and preferably larger to produce a smoother contact surface. This constraint couples the contact geometry to the discretization, removing the freedom to independently refine the BPM resolution. A bond-based contact model, in which contact is detected between cylindrical bond segments rather than spheres, would decouple these concerns. For example, Crassous [56] developed such an approach by combining a discrete elastic rod model with a Cundall–Strack contact model between cylindrical bonds. 
+
+## 2.3 Magneto-elastic coupling 
+
+In this section, we couple a magnetic model to the elastic rod model. Various constitu-tive models for hard-magnetorheological elastomers (hMRE) have been developed by the solid mechanics community [57, 58]. For hard-magnetic slender rods with minimal stretching, simple phenomenological models have gained widespread adoption owing to their practicality [1, 59]. Here, we use the following model for ideal hMREs [1, 60] 
+
+M = J−1R ˜M , (11) where ˜M and M are the magnetization vector in the reference and current configura-tions, respectively, R is the rotational component of the deformation gradient F, and 
+
+J = det F. Therefore, a discrete dipole element transforms as ˜m = ˜M ˜V → m = M V =
+
+
+
+J−1R ˜M
+
+  
+
+J ˜V
+
+
+
+= R ˜m. (12) In other words, the dipole moment simply rotates with the particle. An illustration of the magneto-elastic coupling is provided in Fig. 1(a). Assigning dipole moments directly to particles rather than bonds makes the formulation versatile: it integrates with existing particle simulators. Under an external magnetic field B, a dipole moment m has energy U B = −m·B,from which the force f = ∇(m · B) and torque τ = m × B follow. The pairwise interaction energy between two dipoles mi and mj separated by rij is 
+
+U mij = μ0
+
+4πr 3
+
+> ij
+
+[mi · mj − 3( mi · ˆrij )( mj · ˆrij )] , (13) 7from which the forces and torques follow by differentiation. While we focus on ferro-magnetic rods, the BPM readily accommodates other magnetization models, including paramagnetic and superparamagnetic models common in soft matter and microscale systems [61–64]. 
+
+# 3 Numerical validation 
+
+In this section, we provide three numerical examples to validate the model. First, we study the extreme twisting of straight and curved rods to test purely elastic large-deformation behavior. Next, we consider magnetized beams in uniform and constant-gradient fields to demonstrate magnetic actuation. Finally, we examine helical rods with dipole–dipole interactions. 
+
+## 3.1 Straight and curved rods under extreme twisting 
+
+The writhing instabilities and plectoneme formation in twisted elastic rods have been extensively studied, both analytically and experimentally [65–68], and have served as benchmark problems for discrete rod models [51, 52, 69, 70]. Here, we apply our model to simulate the twisting of heavy elastic rods, initially compressed such that they buckle under their own weight, as studied by Lazarus et al. [71, 72] and fur-ther investigated by Cottanceau et al. [51], Grange and Bertrand [52]. Two cases are considered: a straight rod and a naturally curved rod.       
+
+> Fig. 3 The setup for the twisting experiment of Lazarus et al. [71]. (a) An initially straight rod is compressed by a fixed amount causing it to buckle under its own weight. The rod is then twisted multiple times and the resulting shape is studied. (b) An ideal naturally curved rod coiled into a circle with curvature κcan be straightened by applying a pure end moment M=κEI .
+
+For the first example, a straight rod of length L = 300 mm, diameter d = 3 .1 mm, density ρ = 1 .2 g /cm 3, and elastic moduli E = 1 .3 MPa and G = 433 kPa was discretized into N = 300 bonds. In the simulation, the leftmost particle was excluded from time-integration such that its position and orientation were fixed, corresponding to a clamped boundary condition. The simulation was performed in two stages. First, the rod was axially compressed by 80 mm by displacing the rightmost particle at 8constant velocity while keeping its orientation fixed, and then holding the particle fixed for some duration to allow the rod to equilibrate. Second, the rod was twisted up to 9 full rotations by rotating the rightmost particle about the initial rod axis at a constant rate.    
+
+> Fig. 4 Extreme twisting of a pre-buckled initially straight rod. (a) Top view snapshots at different twisting angles Φ comparing the experimental images of Lazarus et al. [71] and ours. (b) The maximum deflection as a function of the twist angle. The red points are their experimental measurements and the green curve is their semi-analytical solution, while the blue curve is our simulation result. The simulated plectoneme (inset) formation happens near their predicted critical angle θc= 11 .33 π.
+
+Fig. 4 compares our simulation results with Lazarus et al.’s [71]. Simulation snap-shots were taken every 3 .6◦, and the representative images used for comparison in Fig. 4(a) were those nearest to the listed experimental angles. The images show the top view , where gravity points into the page. The twisting simulation is shown in Supple-mentary Video 1. Fig. 4(b) plots the maximum deflection, out of the plane of the initial buckled rod, as the rod is twisted, compared against their semi-analytical solution. The simulated deflection is in excellent agreement with their theory and experiment. The instability occurs slightly past the predicted critical angle of θc = 11 .33 π, beyond which a plectoneme forms (Fig. 4(b) inset). This delay is expected because finite load-ing rates allow the system to persist on the stable branch beyond the theoretical bifurcation point due to inertial effects. Additionally, our physics-based simulations can only access the stable branch of their solution. This contrasts with continuation methods, which can trace both stable and unstable branches by solving the equilibrium equations directly. For the second example, a rod with the same parameters was used, except this time it was initially curved. To prepare the curved rod of length L, particles were placed along ⃗x i = R⟨cos ( θi − π/ 2) , 1 + sin ( θi − π/ 2) , 0⟩, where θi = iL/ (N R ), i =0, 1, . . . , N . The curvature of the rod is κ = 1 /R = 44 .84 m −1, causing it to coil into a circle 2 .14 times. In the simulations, this should not pose a problem unless contact is considered or the particles exactly overlap. Bonds were initialized in the coiled config-uration. The simulation procedure was similar to the previous one, with an additional stage in which the rod was first straightened by slowly applying a torque M = κEI on 9the free end (Fig. 3(b)), following the same procedure in Grange and Bertrand [52]. This serves as an additional validation that the model works for naturally curved rods without further modification. During this stage, gravitational and contact forces were not considered. A wall was also added at the rotating end of the rod to prevent the plectoneme loop from slipping off the end and untwisting the rod. The twisting sim-ulation is shown in Supplementary Video 2. Fig. 5 summarizes the results, and again we observe excellent agreement with Lazarus et al. [71].    
+
+> Fig. 5 Extreme twisting of a pre-buckled, naturally curved rod. The rod is coiled in its stress-free state and straightened before undergoing the same procedure as in Fig. 4. (a) Top view snapshots at different twisting angles comparing the experimental images of Lazarus et al. [71] with ours. (b) Max-imum deflection as a function of twist angle. The red points are their experimental measurements and the green curve is their semi-analytical solution, while the blue curve is our simulation result. The plectoneme forms at a critical angle θc= 16 .15 π.
+
+## 3.2 Magnetized beams in non-uniform fields 
+
+Next, we validate the magneto-elastic model against the comprehensive theoretical and experimental work of Yan et al. [19] on beam bending using uniform and constant-gradient magnetic fields. They developed a 1D variational model, which they showed to be equivalent to an earlier model by Lum et al. [1]. Both models assume an ini-tially straight beam in 2D and yield a second-order integro-differential equation. This equation can be difficult to solve for more complex magnetization profiles or external fields—such as those from portable magnets. The BPM sidesteps this since it computes the force and torque on each particle locally. We simulated some of the configurations in Yan et al. [19], shown in the left column of Fig. 6. All examples use a rectangular beam with geometry ( L = 25 .8 mm, W =1.21 mm, H = 0 .49 mm), Young’s modulus E = 1 .16 MPa, Poisson’s ratio ν ≈ 0.5, and density ρ = 2 .01 g /cm 3. Here, the beam can only bend along one plane and cannot twist; therefore, the relevant spring constants Kr , Ks, and Kb can be consistently defined even for a non-cylindrical cross-section. For a rectangular beam, I = W H 3/12. The magnetization has magnitude M = 94 .1 kA /m and direction that varies by case. 10 The beam was discretized into 258 bonds, each 0 .1 mm in length, with the leftmost particle clamped.          
+
+> Fig. 6 Magnetized beams under uniform and constant-gradient fields. The schematics in the left column were taken from Yan et al. [19]. (a) The beam is magnetized in the + ydirection and ( ∇B)yy >
+> 0. The tip deflection in the xand ydirections are compared with FEM results. (b) The tip deflection in the ydirection compared with FEM results for three different configurations.
+
+For the configuration in Fig. 6(a) (left), the beam was first relaxed under gravity (acting along + x) using Langevin dynamics until equilibrium was reached. A magnetic field was then applied incrementally via the scalar potential ψ = −(b/μ 0)y2/2 − (( x −
+
+L/ 2) 2 + z2)/4, where b is a variable prefactor. This potential yields the magnetic field 
+
+B = −μ0∇ψ = b ⟨− (x − L/ 2) /2, y, −z/ 2⟩ with gradient ∇B = b diag( −1/2, 1, −1/2), producing a torque and force on each particle. The dimensionless parameter λ∇ 
+
+> m
+
+:= 
+
+M bAL 3/(EI ) was increased from 0 to 100 in steps, with the beam allowed to equili-brate at each increment using Langevin dynamics. Fig. 6(a) plots the tip deflection in the x and y directions as a function of λ∇
+
+> m
+
+, showing excellent agreement with reference FEM results obtained using FEniCSx. Next, we compare the y-deflection of three configurations: A, B1, and B2, shown in Fig. 6(b) (left). Note that configuration B1 is identical to the one in Fig. 6(a). The simulation setup is the same as before, except there is no gravity. Both A and B2 have beams magnetized in the + x direction. A is subjected to a uniform field B = B ˆy,while B2 is subjected to the same constant-gradient field as above with an additional 0.01 mT in the + y direction to kick the beam out of equilibrium. We define the 11 dimensionless parameter λCm := M BAL 2/(EI ), with λ∇ 
+
+> m
+
+≈ 0.36 λCm for this particular experiment [19]. Fig. 6(b) plots the tip deflection in the y direction as a function of 
+
+λCm, again showing excellent agreement with reference FEM results. 
+
+## 3.3 Helical rods with dipole–dipole interactions 
+
+Having validated magnetic actuation, we now turn to dipole–dipole interactions. Heli-cal rods with intra-rod magnetic attraction have been experimentally realized by Sano et al. [8], and later numerically studied by Sano [23] and Huang et al. [21]. Sano [23] added a dipole–dipole potential energy term to the Kirchhoff-like theory developed by Sano et al. [8]. Meanwhile, Huang et al. [21] developed a model based on discrete dif-ferential geometry (DDG). In both these approaches, the continuous rod is discretized into a set of nodes and edge vectors. Unlike in the BPM, the nodes do not rotate; instead, the edge vectors rotate relative to some material frame. Therefore, the dipoles are assigned to the edge vectors. In Sano et al. [8], the hMRE was cast to a helical unstrained configuration and mag-netized along the screw axis. If the dipole–dipole attraction is sufficiently strong, the helix will initially adopt a contracted configuration. Then applying a constant-gradient magnetic field along the screw axis produces an approximately constant body force on each discrete segment. By varying the strength of ∇B, the helix can be stretched or compressed along this axis. Perhaps the most interesting result is the ability to pro-gram hysteretic response during the loading–unloading cycle by tuning the strength of the dipole–dipole interactions. Hysteresis arises because the field gradient required to detach the helix exceeds the value at which it contracts. A helix of radius R and pitch ψ can be arc-length-parametrized by 
+
+⟨R cos ( Ks ), R sin ( Ks ), s cos ψ⟩, where K = R−1 sin ψ. Here, K = √κ2 + τ 2, where 
+
+κ = K sin ψ is the curvature and τ = K cos ψ is the torsion. We consider the example in Fig. 2 of Sano [23] with the following helix geometry: L = 103 mm, L/ (2 πR ) = 1 .64, and ˜ψ := ψ/ (π/ 2) = 0 .96. The helix was discretized into N = 103 bonds, making the bond length approximately l = 1 mm. The rod diameter is d = 2 mm. Unlike the previous example, where increasing the number of particles generally improves accu-racy, with dipole–dipole interactions the particles ideally should represent cylindrical segments of aspect ratio d/l = p4/3 [73]. However, since we use a granular contact model, increasing the number of particles also leads to a smoother contact surface. A trade-off must therefore be made; a bond-based contact model that decouples contact resolution from magnetic resolution should be explored in future work. The particle at the base of the helix was clamped (topmost particle in Fig. 7), while the remaining particles evolved freely. A magnetic scalar potential of the form 
+
+ψ = −(b/μ 0)(x2 + y2)/4 − z2/2 was applied, where b is a variable prefactor, the z-axis is aligned with the screw axis, z = 0 at the clamped base, and the origin lies on the helix centerline. Sano [23] defined two dimensionless parameters that measure the magnetic forces relative to the elastic force: λm = L[M bA/ (EI )] 1/3 for the external actuation and γ = μ0M 2/E for the dipole–dipole interactions. Therefore, the prefactor can be written as 
+
+b =
+
+r μ0
+
+γE EI A
+
+ λm
+
+L
+
+3
+
+.
+
+12 The simulation proceeded by quasi-statically ramping the dimensionless magnetization parameter λm from 0 to 3 .5 in increments of 0 .1. After reaching the maximum field strength, λm was decreased back to zero following the same protocol. For the helix with the strongest dipole–dipole interactions ( γ = 4 × 10 −4), simulation snapshots at various λm values are shown in Fig. 7(a). The normalized distance as a function of 
+
+λm for different γ values is shown in Fig. 7(b). Our simulation results are consistent with Sano’s [23]. The model captures the hysteresis and the correct critical values λ+ 
+
+> m
+
+and λ− 
+
+> m
+
+for the detachment and contrac-tion. However, we did not obtain a good quantitative match. Some of the discrepancy may be attributed to a difference in setup. For example, the initial displacement for the contracted state of the magnetized helices is around half of the value reported by Sano. We also observed rotation before the helix detaches, which can be seen in the 
+
+λm = 3 snapshot in Fig. 7(b). Huang et al. [21] also reported quantitative differences in their simulations using a DDG-based rod model and discussed possible causes for these discrepancies.            
+
+> Fig. 7 Magnetic helical rods with dipole–dipole interactions. (a) Simulation snapshots for the helix with γ= 4 ×10 −4. The top row shows notable configurations for increasing λm, and the bottom row for decreasing λm. (b) The normalized distance as a function of λm(external field strength) for different values of γ(dipole–dipole interaction strength).
+
+13 4 Fluid–structure interaction 
+
+Many applications of magneto-elastic rods involve operation in a fluid environment, where hydrodynamic forces fundamentally shape the system’s dynamics and vice versa—from fluid-pumping artificial cilia to bio-inspired swimming robots [3, 4, 15, 18]. Capturing this behavior requires coupling the solid mechanics model with a fluid solver. For particle-based solid models, the immersed boundary method (IBM) cou-pled with the lattice Boltzmann method (LBM) is an increasingly popular choice, particularly in biophysics and microfluidics [74]. For slender structures specifically, recent works include coupling a Cosserat rod model with an isogeometric IBM [75] and with a velocity–vorticity Navier–Stokes formulation [24]. IBM decouples the fluid grid from the structural representation, accommodating large deformations and com-plex geometries without remeshing. The LBM recovers macroscopic flow quantities from the evolution of particle distribution functions via collision and streaming steps on a fixed Cartesian grid. Owing to its locality and flexibility, LBM exhibits good par-allel scalability and is naturally suited for coupling with the domain-decomposition framework used in LAMMPS. Accordingly, several LBM implementations are available within LAMMPS [76–78]. 
+
+## 4.1 Lattice Boltzmann method 
+
+In this work, we use a custom lightweight LBM implementation in LAMMPS with the main goal of demonstrating coupling with BPM. More complex applications may bene-fit from the more established implementations mentioned above. A detailed treatment of the LBM can be found in Kr¨ uger et al. [74]; here we summarize the essential features relevant to the present work. The LBM solves the discrete Boltzmann equation by evolving particle distribution functions fi(x, t ) on a regular lattice, where each fi repre-sents the probability of finding particles moving with discrete velocity ei. The evolution proceeds in two steps: collision, in which distributions at each node relax toward a local Maxwell–Boltzmann equilibrium f eq  
+
+> i
+
+under the Bhatnagar–Gross–Krook (BGK) approximation [79]; and streaming, in which post-collision distributions propagate to neighboring nodes along their respective velocity directions. The combined update reads 
+
+fi(x + ei∆t, t + ∆ t) = fi(x, t ) − 1
+
+τ
+
+fi(x, t ) − f eq  
+
+> i
+
+(x, t ) + Si, (14) where τ is the relaxation time related to the kinematic viscosity by ν = c2
+
+> s
+
+(τ − 12 )∆ t,
+
+cs = 1 /√3 is the lattice speed of sound, and Si is the Guo forcing term [80]. External body forces are incorporated through the Guo scheme, which adds a source term to the collision step, 
+
+Si =
+
+
+
+1 − 12τ
+
+
+
+wi
+
+ ei · F
+
+c2
+
+> s
+
++ (ei · u)( ei · F )
+
+c4
+
+> s
+
+− u · F
+
+c2
+
+> s
+
+
+
+, (15) and defines the macroscopic velocity at the half-timestep to ensure second-order accu-racy in the recovered Navier–Stokes equations. Macroscopic density and momentum 14 are obtained as 
+
+ρ = X
+
+> i
+
+fi, ρu = X
+
+> i
+
+fi ei + 12 F ∆t. (16) In this work we employ the three-dimensional D3Q19 lattice, where in each step, the distribution functions stream along 19 possible directions (one rest, six face-connected, and twelve edge-connected neighbors). The fluid–solid coupling is achieved using the immersed boundary method (IBM) [81], in which Lagrangian particles representing the solid structure exchange momentum with the Eulerian fluid lattice through a regularized delta function. At each coupling step, the fluid velocity at a particle position X is obtained by interpolation, 
+
+U (X) = X
+
+> x
+
+u(x) δh(x − X) ∆ xD, (17) where δh is a smoothed discrete delta function, ∆ x is the lattice spacing, and D is the spatial dimension. A penalty force is then computed to drive the particle velocity toward the local fluid velocity, 
+
+Fp = κ(U − vp), (18) where κ is the penalty stiffness. The reaction force −Fp is spread back onto the fluid lattice via the same delta function, 
+
+f (x) = − X
+
+> p
+
+Fp δh(x − Xp) ∆Vp
+
+∆xD , (19) where ∆ Vp is the Lagrangian volume element associated with the particle. Typical BPM applications require time steps smaller than the fluid time step (∆ tDEM < ∆tLBM ) for stability, such that multiple DEM steps are performed per LBM step. Following Tretyakov and D¨ unweg [82], Vlogman and Jain [83], the fluid velocity field is interpolated once at the beginning of each LBM cycle, but the penalty force—with stiffness κ = mp/∆tLBM , where mp is the particle mass—is recomputed at every DEM substep using the particle’s current velocity. The reaction force spread onto the fluid lattice is scaled by 1 /N , where N = ∆ tLBM /∆tDEM is the number of substeps, so that momentum is conserved over each LBM cycle. We do not update the velocity field during the DEM substep; this option could be added in the future. The present implementation treats solid nodes as point particles, neither transmitting nor receiving torques from the fluid. 
+
+## 4.2 Filaments in oscillatory flow 
+
+As a validation of the fluid–structure coupling, we simulate five elastic filaments immersed in an oscillatory flow setup experimentally and numerically studied by Pinelli et al. [84] (Fig. 9(a)). Each filament is a cylinder with diameter d = 1 mm and length L = 10 mm, discretized into N = 16 bonds. The filaments have Young’s modulus E = 1 .23 MPa, Poisson’s ratio νs = 0 .3, and density ρs = 0 .97 g /cm 3. They 15 Fig. 8 Schematic of the LBM coupling (using a D2Q9 lattice for illustration purposes). A rod is immersed in a fluid grid. Each LBM step updates the macroscopic fluid properties by collision and streaming of the distribution functions. For each DEM (sub)step, the fluid velocity is interpolated to the current position of the particle. A penalty force is computed from the difference between the interpolated fluid velocity and the actual particle velocity, where equal and opposite forces are applied to the particle and spread into the fluid grid. 
+
+are clamped to the lower wall ( y = 0) of a 10 L × 6L × 5L channel at a spacing of 
+
+L/ 2 along x, where the middle filament is at the center. The fluid has kinematic vis-cosity νf = 0 .1 mm 2/ms and density ρf = 1 .26 g /cm 3, yielding a Reynolds number Re = umax L/ν f = 60 based on a peak velocity of umax = 0 .6 m /s. A sinusoidal body-force acceleration gx(t) = g0 sin(2 πf t ) drives the flow, where g0 = 3 .8×10 −3 mm /ms 2
+
+and f = 1 Hz. The LBM grid has spacing ∆ x = 0 .625 mm (160 × 96 × 80 nodes), which is the same as the BPM bond length. The stiff BPM springs require sub-cycling at N = 21 DEM substeps per LBM step. No-slip walls bound the channel in y; the remaining directions are periodic. Fig. 9(b) shows the tip displacement of the right-most filament over successive cycles, excluding the initial two cycles during which the filaments have not yet reached steady oscillation. Our results agree well with Pinelli et al. [84] in both amplitude and frequency. The horizontal axis is shifted to align the phase with the reference data, as our body-force-driven flow begins at a displacement minimum at the start of each cycle. 
+
+## 4.3 Fluid pumping by magnetic cilia arrays 
+
+Finally, we demonstrate the capability of our framework by tackling a coupled magneto-elasto-hydrodynamic application: fluid transport driven by a magnetic cilia 16 Fig. 9 Filaments in an oscillatory flow. (a) Simulation setup. (b) Displacement of the rightmost filament’s tip (highlighted in red in (a)) over successive cycles, compared with the results of Pinelli et al. [84]. (c) The out-of-plane component of the vorticity in the plane containing the filaments during the maximum and minimum displacement. The scale bar (yellow) is L = 10 mm. 
+
+array. This particular example is from Gu et al. [17] and has since been the sub-ject of several numerical studies [24, 85, 86]. An Ncx × Ncy = 8 × 8 array of flexible cilia of length Lc = 4 mm, spaced Dsep = Lc apart, is placed in a large container. Each cilium has a circular cross-section of diameter d = 0 .8 mm and extends in the z
+
+direction. The material properties are: Young’s modulus E = 185 kPa, shear modulus 
+
+G = 61 .6 kPa, and density ρs = 2 .39 g /cm 3. Each cilium’s magnetization depends on its x position, M = M (cos θ ˆx + sin θ ˆz), where M = 20 kA /m and θ(x) = 2 πx/λ + θ0
+
+for an antiplectic 3 metachronal wave pattern. Here, we study the pumping behavior as a function of the wavelength λ, which Gu et al. [17] showed affects the pump-ing efficiency. Fig. 10(a) shows four different magnetization patterns corresponding to λ = 1 , 2, 4, and ∞ (and θ0 = 90 ◦). The structure is immersed in 99% glycerol (νf = 0 .9 mm 2/ms, ρf = 1 .26 g /cm 3). In the simulations, each cilium was discretized into N = 10 bonds with the bottom particle clamped. Dipole–dipole interactions between cilia were neglected in this study; according to Gu et al. [17], these become significant when the cilia are densely packed. A 90 × 36 × 45 LBM grid with spacing ∆ x = 1 mm was used. Periodic boundary conditions were applied along x, no-slip along y and the bottom z walls, and free-slip on the top z wall to approximate their setup. A schematic of the simulation setup is shown in Fig. 10(b). To replicate their experimental procedure, one thousand tracer particles (with diameter 200 μm and density 1 g /cm 3) were randomly seeded in the fluid domain and the net displacement per actuation cycle was recorded for particles inside the tracking region (40 × 36 × 30, 5 mm above the structure, shown as the 
+
+> 3wave direction opposite to the cilia power stroke direction
+
+17 green box in Fig. 10(b)). A uniform magnetic field of magnitude B = 80 mT, rotating in the xz -plane at a rate of ω = 30 ◦ s−1, was applied. We simulated 10 actuation cycles and discarded the first cycle as a transient, as it was the only cycle whose displacement deviated appreciably from the rest. The simulation for λ = L, where 
+
+L := Ncx Dsep = 32 mm, is shown in Supplementary Video 3. The simulated tracer trajectories are compared to the experimental images of Gu et al. [17] in Fig. 10(c). The metachronal wave patterns generate recirculating flow above the array, qualitatively consistent with their experiments, though the detailed flow topology differs. For each cycle, the net displacement of each tracer in the track-ing region was recorded (faint dots in Fig. 10(d)). The average displacement at each height was computed by binning the results into intervals of width matching the LBM grid spacing. The inset shows the mean displacement at heights below 4 mm. Consis-tent with their observation, the net transport decreases with increasing wavelength λ;however, the difference between λ = 2 L and λ = 4 L is not significant given the scatter in the data. Moreover, this scalar measure does not account for the flow direction or the presence of the eddies, and should therefore be interpreted only as a qualitative indicator of pumping performance. 18 Fig. 10 Fluid pumping by magnetic cilia arrays. (a) Side view of the cilia array and representative magnetization patterns, controlled by the wavelength λ. Each row of cilia (same y, into the page) has the same magnetization, whose direction is indicated by the corresponding arrow in the table. The plate (red particles) lies in the xy -plane and is not included in the simulation, serving only for visualization. (b) The cilia array is immersed in an open channel. A rotating uniform magnetic field is applied to actuate the cilia, and tracer particles are added to visualize the flow pattern. (c) Comparison of tracer trajectories between experimental images of Gu et al. [17] and our simulations. (d) The average net displacement per cycle at various heights above the cilia tip. The colors correspond to those in (c). The inset shows the average displacement for the region [0 , 4 mm] above the cilia tip. 
+
+# 5 Discussion and conclusion 
+
+We have presented a bonded-particle model for magneto-elastic rods that treats each rod as a chain of orientable dipolar particles connected by co-rotational bonds. In the examples considered, our framework accurately reproduces the writhing instabilities of straight and curved rods under extreme twisting (Sec. 3.1), the large deflections of magnetized beams in non-uniform fields (Sec. 3.2), the mechanical hysteresis of helical rods with dipole–dipole interactions (Sec. 3.3), and the fluid pumping by magnetic cilia arrays (Sec. 4.3). We briefly discuss our choice of discretization, which largely depends on the sys-tem considered. For problems governed only by external magnetic loading, the BPM can be accurate with as few as ten bonds, as is the case with a cantilever beam under an end load [29–31]; we verify this with a convergence analysis in Supplemen-tary Information S3.1. Here, the discretization need only be fine enough to capture the local distribution of magnetic force and torque along the rod. For instance, the 19 magnetized beam of Sec. 3.2, Fig. 6(a), reduces to a cantilever beam problem under a slope-dependent moment and body force, and a convergence study in Supplementary Information S3.3 confirms that the tip deflection converges linearly with increasing number of bonds. This is lower than the quadratic or higher-order convergence typical of finite element and geometrically exact rod discretizations, and it represents the prin-cipal numerical trade-off of the BPM approach. The advantage, however, is that the particle-level description makes it straightforward to retrofit additional multiphysics interactions—magnetic, fluidic, granular, or otherwise—without modifying the struc-tural formulation. For the dipole–dipole interactions of Sec. 3.3, the discretization is no longer unconstrained: the point-dipole approximation becomes inaccurate when individual segments are very long or very flat. Similarly, for the contact treatment in Sec. 3.1, the particle radius sets the contact surface geometry; a bond-based con-tact model would be needed to decouple the elastic and contact discretizations. These constraints on bond, magnetic, and contact resolution can conflict, and in general the different physical interactions may require separate discretizations. All examples presented here employ dissipative dynamics: the validation cases of Sec. 3 use Langevin dynamics to reach quasi-static equilibria, and the cilia array of Sec. 4.3 is explicitly damped by a viscous fluid. Strict energy conservation was there-fore neither required nor enforced. Applying the BPM to conservative Hamiltonian dynamics would require addressing sources of energy drift. Most importantly, the energy in Eq. (10) is only an approximation, and the rotation decomposition does not straightforwardly yield a global energy from which forces and torques can be obtained as gradients with respect to particle positions and orientations; addressing this is a key direction for future work. Although the examples in this work are restricted to rod-like structures, the bonded-particle framework is not. The BPM was originally developed for three-dimensional bond networks in granular and cementitious materials, and the co-rotational beam bonds introduced here can connect particles in arbitrary topologies—such as those in architected metamaterials [87–89]. In the future, extend-ing the formulation to shell-like and solid structures will allow us to simulate more complex systems. 
+
+# Supplementary materials 
+
+A Supplementary Information document is provided, covering LAMMPS implemen-tation details, derivation of the BPM spring constants, and additional convergence studies. 
+
+Supplementary Video 1. Side view of the twisting simulation and plectoneme for-mation of the buckled straight rod (Fig. 4). 
+
+Supplementary Video 2. Top view of the twisting simulation of the buckled curved rod (Fig. 5). 
+
+Supplementary Video 3. Magnetic cilia array simulation for λ = L (Fig. 10). 
+
+# Code availability 
+
+The code used in this study will be made available on GitHub upon publication. 20 Acknowledgments 
+
+GA and TZ gratefully acknowledge the National Science Foundation for finan-cial support through Grant Nos. CMMI-1847149 and OIA-2428643. GA gratefully acknowledges the NSF INTERN supplemental funding program under Grant No. CMMI-1847149 for supporting an internship at Sandia National Laboratories. Simula-tions were performed using the Zest cluster at Syracuse University, the Solo cluster at Sandia National Laboratories, and Expanse at the San Diego Supercomputer Center (SDSC) through allocation MSS170004 from the ACCESS program, which is sup-ported by U.S. National Science Foundation grants #2138259, #2138286, #2138307, #2137603, and #2138296. This work was performed, in part, at the Center for Integrated Nanotechnolo-gies, an Office of Science User Facility operated for the U.S. Department of Energy (DOE) Office of Science. Sandia National Laboratories is a multi-mission laboratory managed and operated by National Technology & Engineering Solutions of Sandia, LLC (NTESS), a wholly owned subsidiary of Honeywell International Inc., for the U.S. Department of Energy’s National Nuclear Security Administration (DOE/NNSA) under contract DE-NA0003525. This written work is authored by an employee of NTESS. The employee, not NTESS, owns the right, title and interest in and to the written work and is responsible for its contents. Any subjective views or opinions that might be expressed in the written work do not necessarily represent the views of the U.S. Government. The publisher acknowledges that the U.S. Government retains a non-exclusive, paid-up, irrevocable, world-wide license to publish or reproduce the published form of this written work or allow others to do so, for U.S. Government pur-poses. The DOE will provide public access to results of federally sponsored research in accordance with the DOE Public Access Plan. 
+
+# Author Contributions 
+
+G.A. performed the investigation, developed the software, conducted formal analysis, prepared the figures, and wrote the original draft. J.T.C. contributed to software development, methodology, and provided computational resources. C.D.S. contributed to formal analysis. T.Z. conceptualized the study, supervised the project, and acquired funding. J.T.C., C.D.S., and T.Z. reviewed and edited the manuscript. All authors reviewed the manuscript. 
+
+# Declarations 
+
+AI usage. An AI language model (Claude, Anthropic) was used to assist with the development of the lattice Boltzmann coupling code. All code was reviewed, tested, and validated by the authors. 21 References 
+
+[1] Lum, G.Z., Ye, Z., Dong, X., Marvi, H., Erin, O., Hu, W., Sitti, M.: Shape-programmable magnetic soft matter. Proceedings of the National Academy of Sciences 113 (41), 6007–6015 (2016) https://doi.org/10.1073/pnas.1608193113 [2] Hu, W., Lum, G.Z., Mastrangeli, M., Sitti, M.: Small-scale soft-bodied robot with multimodal locomotion. Nature 554 (7690), 81–85 (2018) https://doi.org/ 10.1038/nature25443 [3] Peyer, K.E., Zhang, L., Nelson, B.J.: Bio-inspired magnetic swimming micro-robots for biomedical applications. Nanoscale 5(4), 1259–1272 (2013) https: //doi.org/10.1039/c2nr32554c [4] Yang, Z., Zhang, L.: Magnetic actuation systems for miniature robots: A review. Advanced Intelligent Systems 2(9), 2000082 (2020) https://doi.org/10.1002/aisy. 202000082 [5] Gu, H., M¨ ockli, M., Ehmke, C., Kim, M., Wieland, M., Moser, S., Bechinger, C., Boehler, Q., Nelson, B.J.: Self-folding soft-robotic chains with reconfigurable shapes and functionalities. Nature Communications 14 (1), 1263 (2023) https: //doi.org/10.1038/s41467-023-36819-z [6] Korpas, L.M., Yin, R., Yasuda, H., Raney, J.R.: Temperature-responsive multi-stable metamaterials. ACS Applied Materials & Interfaces 13 (26), 31163–31170 (2021) https://doi.org/10.1021/acsami.1c07327 [7] Liang, X., Fu, H., Crosby, A.J.: Phase-transforming metamaterial with mag-netic interactions. Proceedings of the National Academy of Sciences 119 (1), 2118161119 (2022) [8] Sano, T.G., Pezzulla, M., Reis, P.M.: A Kirchhoff-like theory for hard magnetic rods under geometrically nonlinear deformation in three dimensions. Journal of the Mechanics and Physics of Solids 160 , 104739 (2022) https://doi.org/10.1016/ j.jmps.2021.104739 [9] Sun, H., Alkuino, G., Chi, Y., Zabila, Y., Qing, H., Makarov, D., Zhang, T., Yin, J.: Magnetic coupling transforms random snapping into ordered sequences in soft metamaterials. Science Advances (2026) https://doi.org/10.1126/sciadv.aec3182 [10] Gu, H., Boehler, Q., Ahmed, D., Nelson, B.J.: Magnetic quadrupole assemblies with arbitrary shapes and magnetizations. Science Robotics 4(35), 8977 (2019) https://doi.org/10.1126/scirobotics.aax8977 [11] Yang, X., Leng, J., Sun, C., Keten, S.: Self-assembled robust 2D networks from magneto-elastic bars. Advanced Materials Technologies 8(14), 2202189 (2023) https://doi.org/10.1002/admt.202202189 22 [12] Aghamiri, S., Sedaghati, R.: Magnetoactive metamaterials: A state-of-the-art review. Advanced Engineering Materials 27 (23), 202501312 (2025) https://doi. org/10.1002/adem.202501312 [13] Lee, Y., Koehler, F., Dillon, T., Loke, G., Kim, Y., Marion, J., Antonini, M.-J., Garwood, I.C., Sahasrabudhe, A., Nagao, K., et al. : Magnetically actuated fiber-based soft robots. Advanced Materials 35 (38), 2301916 (2023) https://doi.org/ 10.1002/adma.202301916 [14] Zou, B., Liang, Z., Zhong, D., Cui, Z., Xiao, K., Shao, S., Ju, J.: Magneto-thermomechanically reprogrammable mechanical metamaterials. Advanced Mate-rials 35 (8), 2207349 (2023) https://doi.org/10.1002/adma.202207349 [15] Hwang, J., Kim, J.-y., Choi, H.: A review of magnetic actuation systems and magnetically actuated guidewire-and catheter-based microrobots for vascular interventions. Intelligent Service Robotics 13 (1), 1–14 (2020) https://doi.org/10. 1007/s11370-020-00311-0 [16] Dreyfus, R., Boehler, Q., Lyttle, S., Gruber, P., Lussi, J., Chautems, C., Gerva-soni, S., Berberat, J., Seibold, D., Ochsenbein-K¨ olble, N., et al. : Dexterous helical magnetic robot for improved endovascular access. Science Robotics 9(87), 0298 (2024) https://doi.org/10.1126/scirobotics.adh0298 [17] Gu, H., Boehler, Q., Cui, H., Secchi, E., Savorana, G., De Marco, C., Gervasoni, S., Peyron, Q., Huang, T.-Y., Pane, S., Hirt, A.M., Ahmed, D., Nelson, B.J.: Magnetic cilia carpets with programmable metachronal waves. Nature Commu-nications 11 (1), 2637 (2020) https://doi.org/10.1038/s41467-020-16458-4 [18] Park, S., Choi, G., Kang, M., Kim, W., Kim, J., Jeong, H.E.: Bioinspired magnetic cilia: from materials to applications. Microsystems & Nanoengineering 9(1), 153 (2023) https://doi.org/10.1038/s41378-023-00611-2 [19] Yan, D., Abbasi, A., Reis, P.M.: A comprehensive framework for hard-magnetic beams: Reduced-order theory, 3D simulations, and experiments. International Journal of Solids and Structures 257 , 111319 (2022) https://doi.org/10.1016/j. ijsolstr.2021.111319 [20] Yang, Y., Li, M., Xu, F.: A 3D hard-magnetic rod model based on co-rotational formulations. Acta Mechanica Sinica 38 (9), 222085 (2022) https://doi.org/10. 1007/s10409-022-22085-x [21] Huang, W., Liu, M., Hsia, K.J.: A discrete model for the geometrically nonlinear mechanics of hard-magnetic slender structures. Extreme Mechanics Letters 59 ,101977 (2023) https://doi.org/10.1016/j.eml.2023.101977 [22] Bhosale, Y., Tekinalp, A.: MagnetoPyElastica: Open-source software for simu-lating magnetic Cosserat rods. Zenodo (2023). https://doi.org/10.5281/zenodo. 23 7658892 [23] Sano, T.G.: Reduced theory for hard magnetic rods with dipole–dipole interac-tions. Journal of Physics A: Mathematical and Theoretical 55 (10), 104002 (2022) https://doi.org/10.1088/1751-8121/ac4de2 [24] Tekinalp, A., Bhosale, Y., Cui, S., Chan, F.K., Gazzola, M.: Self-propelling, soft, and slender structures in fluids: Cosserat rods immersed in the velocity–vorticity formulation of the incompressible Navier–Stokes equations. Computer Methods in Applied Mechanics and Engineering 440 , 117910 (2025) https://doi.org/10. 1016/j.cma.2025.117910 [25] Huang, W., Hao, Z., Li, J., Tong, D., Guo, K., Zhang, Y., Gao, H., Hsia, K.J., Liu, M.: A tutorial on simulating nonlinear behaviors of flexible structures with the discrete differential geometry (DDG) method. Applied Mechanics Reviews, 1–88 (2025) https://doi.org/10.1115/1.4069025 [26] Potyondy, D.O., Cundall, P.A.: A bonded-particle model for rock. International journal of rock mechanics and mining sciences 41 (8), 1329–1364 (2004) https: //doi.org/10.1016/j.ijrmms.2004.09.011 [27] Lisjak, A., Grasselli, G.: A review of discrete modeling techniques for fracturing processes in discontinuous rock masses. Journal of Rock Mechanics and Geotech-nical Engineering 6(4), 301–314 (2014) https://doi.org/10.1016/j.jrmge.2013.12. 007 [28] Potyondy, D.O.: The bonded-particle model as a tool for rock mechanics research and application: current trends and future directions. Geosystem Engineering 
+
+18 (1), 1–28 (2015) https://doi.org/10.1080/12269328.2014.998346 [29] Chen, X., Peng, D., Morrissey, J.P., Ooi, J.Y.: A comparative assessment and unification of bond models in DEM simulations. Granular Matter 24 (1), 29 (2022) https://doi.org/10.1007/s10035-021-01187-2 [30] Guo, Y., Wassgren, C., Hancock, B., Ketterhagen, W., Curtis, J.: Validation and time step determination of discrete element modeling of flexible fibers. Powder technology 249 , 386–395 (2013) https://doi.org/10.1016/j.powtec.2013.09.007 [31] Nguyen, D.H., Kang, N., Park, J.: Validation of partially flexible rod model based on discrete element method using beam deflection and vibration. Powder Technology 237 , 147–152 (2013) https://doi.org/10.1016/j.powtec.2013.01.038 [32] Thompson, A.P., Aktulga, H.M., Berger, R., Bolintineanu, D.S., Brown, W.M., Crozier, P.S., In’t Veld, P.J., Kohlmeyer, A., Moore, S.G., Nguyen, T.D., et al. :LAMMPS-a flexible simulation tool for particle-based materials modeling at the atomic, meso, and continuum scales. Computer physics communications 271 ,108171 (2022) https://doi.org/10.1016/j.cpc.2021.108171 24 [33] Nealen, A., M¨ uller, M., Keiser, R., Boxerman, E., Carlson, M.: Physically based deformable models in computer graphics. In: Computer Graphics Forum, vol. 25, pp. 809–836 (2006). https://doi.org/10.1111/j.1467-8659.2006.01000.x . Wiley Online Library [34] Lloyd, B., Sz´ ekely, G., Harders, M.: Identification of spring parameters for deformable object simulation. IEEE transactions on visualization and computer graphics 13 (5), 1081–1094 (2007) https://doi.org/10.1109/tvcg.2007.1055 [35] Seung, H.S., Nelson, D.R.: Defects in flexible membranes with crystalline order. Physical Review A 38 (2), 1005 (1988) https://doi.org/10.1103/physreva.38.1005 [36] Greaves, G.N.: Poisson’s ratio over two centuries: challenging hypotheses. Notes and Records of the Royal Society 67 (1), 37–58 (2013) https://doi.org/10.1098/ rsnr.2012.0021 [37] Clemmer, J.T., Monti, J.M., Lechman, J.B.: A soft departure from jamming: the compaction of deformable granular matter under high pressures. Soft Matter 
+
+20 (8), 1702–1718 (2024) https://doi.org/10.1039/d3sm01373a [38] Zhang, T.: Deriving a lattice model for neo-Hookean solids from finite element methods. Extreme Mechanics Letters 26 , 40–45 (2019) https://doi.org/10.1016/ j.eml.2018.11.007 [39] Ye, H., Li, Y., Zhang, T.: Magttice: A lattice model for hard-magnetic soft materi-als. Soft Matter 17 (13), 3560–3568 (2021) https://doi.org/10.1039/d0sm01662d [40] Wang, Y., Abe, S., Latham, S., Mora, P.: Implementation of particle-scale rotation in the 3-D lattice solid model. Pure and Applied Geophysics 163 (9), 1769–1785 (2006) https://doi.org/10.1007/s00024-006-0096-0 [41] Wang, Y., Mora, P.: Macroscopic elastic properties of regular lattices. Journal of the Mechanics and Physics of Solids 56 (12), 3459–3474 (2008) https://doi.org/ 10.1016/j.jmps.2008.08.011 [42] Obermayr, M., Dressler, K., Vrettos, C., Eberhard, P.: A bonded-particle model for cemented sand. Computers and Geotechnics 49 , 299–313 (2013) https://doi. org/10.1016/j.compgeo.2012.09.001 [43] Zhang, K., Yan, H., Lu, J.-M., Ren, B.: Rod-bonded discrete element method. Graphical Models 133 , 101218 (2024) https://doi.org/10.1016/j.gmod.2024. 101218 [44] Wang, Y.: A new algorithm to model the dynamics of 3-D bonded rigid bodies with rotations. Acta Geotechnica 4(2), 117–127 (2009) https://doi.org/10.1007/ s11440-008-0072-1 25 [45] Wang, Y., Mora, P.: The ESyS Particle: A New 3-D Discrete Element Model with Single Particle Rotation. In: Advances in Geocomputing. Lecture Notes in Earth Science, vol 119. Springer, Berlin, Heidelberg., 183–228 (2009) https://doi.org/ 10.1007/978-3-540-85879-9 6 [46] Simo, J.C.: A finite strain beam formulation. the three-dimensional dynamic prob-lem. part i. Computer methods in applied mechanics and engineering 49 (1), 55–70 (1985) https://doi.org/10.1016/0045-7825(85)90050-7 [47] Rankin, C.C., Brogan, F.A.: An element independent corotational procedure for the treatment of large rotations. Journal of Pressure Vessel Technology 108 (2), 165–174 (1986) https://doi.org/10.1115/1.3264765 [48] Crisfield, M.A.: A consistent co-rotational formulation for non-linear, three-dimensional, beam-elements. Computer methods in applied mechanics and engi-neering 81 (2), 131–150 (1990) https://doi.org/10.1016/0045-7825(90)90106-v [49] Felippa, C.A., Haugen, B.: A unified formulation of small-strain corotational finite elements: I. theory. Computer Methods in Applied Mechanics and Engineering 
+
+194 (21-24), 2285–2335 (2005) https://doi.org/10.1016/j.cma.2004.07.035 [50] Le, T.-N., Battini, J.-M., Hjiaj, M.: A consistent 3D corotational beam element for nonlinear dynamic analysis of flexible structures. Computer Methods in Applied Mechanics and Engineering 269 , 538–565 (2014) https://doi.org/10.1016/j.cma. 2013.11.007 [51] Cottanceau, E., Thomas, O., V´ eron, P., Alochet, M., Deligny, R.: A finite element/quaternion/asymptotic numerical method for the 3D simulation of flex-ible cables. Finite Elements in Analysis and Design 139 , 14–34 (2018) https: //doi.org/10.1016/j.finel.2017.10.002 [52] Grange, S., Bertrand, D.: Co-rotational 3D beam element using quaternion algebra to account for large rotations: Formulation theory and static applica-tions. International Journal of Solids and Structures 293 , 112746 (2024) https: //doi.org/10.1016/j.ijsolstr.2024.112746 [53] Baker, M.J.: Maths - Decomposition of rotations. https://www.euclideanspace. com/maths/geometry/rotations/for/decomposition/index.htm. Accessed: 2025-12-02 [54] Schunter Jr, D.J., Brandenbourger, M., Perriseau, S., Holmes, D.P.: Elastogran-ular mechanics: buckling, jamming, and structure formation. Physical Review Letters 120 (7), 078002 (2018) https://doi.org/10.1103/physrevlett.120.078002 [55] Manning, M.L.: Essay: Collections of deformable particles present exciting chal-lenges for soft matter and biological physics. Physical Review Letters 130 (13), 130002 (2023) https://doi.org/10.1103/physrevlett.130.130002 26 [56] Crassous, J.: Discrete-element-method model for frictional fibers. Phys. Rev. E 
+
+107 , 025003 (2023) https://doi.org/10.1103/PhysRevE.107.025003 [57] Dorfmann, L., Ogden, R.W.: Nonlinear Theory of Electroelastic and Magnetoe-lastic Interactions vol. 1. Springer, New York (2014). https://doi.org/10.1007/ 978-1-4614-9596-3 [58] Lu, L., Sim, J., Zhao, R.R.: Mechanics of hard-magnetic soft materials: A review. Mechanics of Materials 189 , 104874 (2024) https://doi.org/10.1016/j.mechmat. 2023.104874 [59] Wang, L., Kim, Y., Guo, C.F., Zhao, X.: Hard-magnetic elastica. Journal of the Mechanics and Physics of Solids 142 , 104045 (2020) [60] Danas, K., Reis, P.M.: Stretch-independent magnetization in incompressible isotropic hard magnetorheological elastomers. Journal of the Mechanics and Physics of Solids 191 , 105764 (2024) https://doi.org/10.1016/j.jmps.2024.105764 [61] Dreyfus, R., Baudry, J., Roper, M.L., Fermigier, M., Stone, H.A., Bibette, J.: Microscopic artificial swimmers. Nature 437 (7060), 862–865 (2005) https://doi. org/10.1038/nature04090 [62] C¯ ebers, A.: Flexible magnetic filaments. Current opinion in colloid & interface science 10 (3-4), 167–175 (2005) https://doi.org/10.1016/j.cocis.2005.07.002 [63] Gerbal, F., Wang, Y., Lyonnet, F., Bacri, J.-C., Hocquet, T., Devaud, M.: A refined theory of magnetoelastic buckling matches experiments with ferromag-netic and superparamagnetic rods. Proceedings of the National Academy of Sciences 112 (23), 7135–7140 (2015) https://doi.org/10.1073/pnas.1422534112 [64] Erb, R.M., Martin, J.J., Soheilian, R., Pan, C., Barber, J.R.: Actuating soft matter with magnetic torque. Advanced Functional Materials 26 (22), 3859–3880 (2016) https://doi.org/10.1002/adfm.201504699 [65] Coyne, J.: Analysis of the formation and elimination of loops in twisted cable. IEEE Journal of Oceanic Engineering 15 (2), 72–83 (1990) https://doi.org/10. 1109/48.50692 [66] Thompson, J.M.T., Champneys, A.: From helix to localized writhing in the tor-sional post-buckling of elastic rods. Proceedings of the Royal Society of London. Series A: Mathematical, Physical and Engineering Sciences 452 (1944), 117–138 (1996) https://doi.org/10.1098/rspa.1996.0007 [67] Goriely, A., Tabor, M.: Nonlinear dynamics of filaments. iv spontaneous looping of twisted elastic rods. Proceedings of the Royal Society of London. Series A: Mathematical, Physical and Engineering Sciences 454 (1980), 3183–3202 (1998) https://doi.org/10.1098/rspa.1998.0297 27 [68] Goss, V., Heijden, G., Thompson, J., Neukirch, S.: Experiments on snap buckling, hysteresis and loop formation in twisted rods. Experimental mechanics 45 (2), 101–111 (2005) https://doi.org/10.1007/bf02428182 [69] Bergou, M., Wardetzky, M., Robinson, S., Audoly, B., Grinspun, E.: Discrete elastic rods. In: ACM SIGGRAPH 2008 Papers, pp. 1–12 (2008). https://doi.org/ 10.1145/1399504.1360662 [70] Gazzola, M., Dudte, L., McCormick, A., Mahadevan, L.: Forward and inverse problems in the mechanics of soft filaments. Royal Society open science 5(6), 171628 (2018) https://doi.org/10.1098/rsos.171628 [71] Lazarus, A., Miller, J., Reis, P.M.: Continuation of equilibria and stability of slen-der elastic rods using an asymptotic numerical method. Journal of the Mechanics and Physics of Solids 61 (8), 1712–1736 (2013) https://doi.org/10.1016/j.jmps. 2013.04.002 [72] Lazarus, A., Miller, J.T., Metlitz, M.M., Reis, P.M.: Contorting a heavy and naturally curved elastic rod. Soft Matter 9(34), 8274–8281 (2013) https://doi. org/10.1039/c3sm50873k [73] Petruska, A.J., Abbott, J.J.: Optimal permanent-magnet geometries for dipole field approximation. IEEE transactions on magnetics 49 (2), 811–819 (2012) https: //doi.org/10.1109/tmag.2012.2205014 [74] Kr¨ uger, T., Kusumaatmaja, H., Kuzmin, A., Shardt, O., Silva, G., Viggen, E.M.: The Lattice Boltzmann Method vol. 10. Springer, Switzerland (2017). https:// doi.org/10.1007/978-3-319-44649-3 [75] Agrawal, V., Kulachenko, A., Scapin, N., Tammisola, O., Brandt, L.: An efficient isogeometric/finite-difference immersed boundary method for the fluid–structure interactions of slender flexible structures. Computer Methods in Applied Mechan-ics and Engineering 418 , 116495 (2024) https://doi.org/10.1016/j.cma.2023. 116495 [76] Tan, J., Sinno, T.R., Diamond, S.L.: A parallel fluid–solid coupling model using LAMMPS and Palabos based on the immersed boundary method. Journal of Computational Science 25 , 89–100 (2018) https://doi.org/10.1016/j.jocs.2018.02. 006 [77] Ye, H., Shen, Z., Xian, W., Zhang, T., Tang, S., Li, Y.: OpenFSI: A highly efficient and portable fluid–structure simulation package based on immersed-boundary method. Computer Physics Communications 256 , 107463 (2020) https://doi.org/ 10.1016/j.cpc.2020.107463 [78] Denniston, C., Afrasiabian, N., Cole-Andr´ e, M., Mackay, F.: LAMMPS lb/fluid fix version 2: Improved hydrodynamic forces implemented into LAMMPS through a 28 lattice-Boltzmann fluid. Computer Physics Communications 275 , 108318 (2022) https://doi.org/10.1016/j.cpc.2022.108318 [79] Bhatnagar, P.L., Gross, E.P., Krook, M.: A model for collision processes in gases. i. small amplitude processes in charged and neutral one-component systems. Physical review 94 (3), 511 (1954) https://doi.org/10.1103/physrev.94.511 [80] Guo, Z., Zheng, C., Shi, B.: Discrete lattice effects on the forcing term in the lattice Boltzmann method. Physical Review E 65 (4), 046308 (2002) https://doi. org/10.1103/physreve.65.046308 [81] Peskin, C.S.: The immersed boundary method. Acta numerica 11 , 479–517 (2002) https://doi.org/10.1017/s0962492902000077 [82] Tretyakov, N., D¨ unweg, B.: An improved dissipative coupling scheme for a system of molecular dynamics particles interacting with a lattice Boltzmann fluid. Com-puter Physics Communications 216 , 102–108 (2017) https://doi.org/10.1016/j. cpc.2017.03.009 [83] Vlogman, T.G., Jain, K.: Efficient coupled lattice Boltzmann and discrete ele-ment method simulations of small particles in complex geometries. Computers & Mathematics with Applications 175 , 313–329 (2024) https://doi.org/10.1016/j. camwa.2024.10.004 [84] Pinelli, A., Omidyeganeh, M., Br¨ ucker, C., Revell, A., Sarkar, A., Alinovi, E.: The PELskin project: part IV—control of bluff body wakes using hairy filaments. Meccanica 52 (7), 1503–1514 (2017) https://doi.org/10.1007/s11012-016-0513-0 [85] Jiang, H., Gu, H., Nelson, B.J., Zhang, T.: Numerical study of metachronal wave-modulated locomotion in magnetic cilia carpets. Advanced Intelligent Systems 
+
+5(10), 2300212 (2023) https://doi.org/10.1002/aisy.202300212 [86] Huang, W., Liu, M., Hsia, K.J.: Modeling of magnetic cilia carpet robots using discrete differential geometry formulation. Extreme Mechanics Letters 59 , 101967 (2023) https://doi.org/10.1016/j.eml.2023.101967 [87] Deshpande, V.S., Fleck, N.A., Ashby, M.F.: Effective properties of the octet-truss lattice material. Journal of the Mechanics and Physics of Solids 49 (8), 1747–1769 (2001) https://doi.org/10.1016/S0022-5096(01)00010-2 [88] Yang, X., Leng, J., Sun, C., Keten, S.: Highly ordered 2D open lattices through self-assembly of magnetic units. Advanced Functional Materials 35 (2), 2412326 (2025) https://doi.org/10.1002/adfm.202412326 [89] Zhou, W., Nadarajah, S., Li, L., Izard, A.G., Yan, H., Prachet, A.K., Patel, P., Xia, X., Daraio, C.: 3D polycatenated architected materials. Science 387 (6731), 269–277 (2025) https://doi.org/10.1126/science.adr9713 29 Supplementary Information for: Bonded-particle model for magneto-elastic rods 
+
+## Gabriel Alkuino 1,2 , Joel T. Clemmer 3* ,Christian D. Santangelo 1,2 , Teng Zhang 2,4* 
+
+> 1
+
+Department of Physics, Syracuse University, Syracuse, NY, 13244, United States. 
+
+> 2
+
+BioInspired Syracuse, Syracuse University, Syracuse, NY, 13244, United States. 
+
+> 3
+
+Sandia National Laboratories, Albuquerque, NM, 87123, United States. 
+
+> 4
+
+Department of Mechanical and Aerospace Engineering, Syracuse University, Syracuse, NY, 13244, United States. *Corresponding author(s). E-mail(s): jtclemm@sandia.gov; tzhang48@syr.edu; Contributing authors: gsalkuin@syr.edu; cdsantan@syr.edu; 
+
+# Contents 
+
+S1 Notes on the LAMMPS implementation 2
+
+S1.1 BPM package . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 2S1.2 Magnetic dipoles . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 2S1.3 Unit systems . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 3S1.4 LBM coupling . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 3
+
+S2 More details on the BPM 3
+
+S2.1 Symmetric rotational decomposition . . . . . . . . . . . . . . . . . . . 3S2.2 Deriving the BPM spring constants . . . . . . . . . . . . . . . . . . . . 5S2.3 Elastic energy . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 7
+
+S3 Numerical validation for planar bending 7
+
+S3.1 Cantilever beam under static loading . . . . . . . . . . . . . . . . . . . 7S3.2 Cantilever beam under dynamic loading . . . . . . . . . . . . . . . . . 81S3.3 Additional data for magnetic beams . . . . . . . . . . . . . . . . . . . 8
+
+# S1 Notes on the LAMMPS implementation 
+
+To run a LAMMPS simulation, we need an input script and (optional) data file. The input script is a domain-specific language and contains all the instructions to run the simulation from start to finish. Each line is a command , whose details can be found in the official documentation (https://docs.lammps.org/). Here, we use monospace font to denote LAMMPS commands/styles. Some functionalities require additional 
+
+packages to be enabled before building LAMMPS. In this work, we use the following packages: BPM, DIPOLE, GRANULAR, LEPTON. 
+
+## S1.1 BPM package 
+
+The BPM package was developed by Clemmer et al. [1], providing the framework on which the present model is built. The atom style bpm/sphere defines spheri-cal particles with orientation represented by a unit quaternion. BPM particles are integrated in time using velocity-Verlet for translations and the Richardson update for quaternion orientations, as implemented in fix nve/bpm/sphere . The update dipole keyword/value pair can be added to also rotate the dipole moments with the quaternions. The elastic rod model developed in this paper is implemented as 
+
+bond style bpm/corotational (release date TBD). A bond is defined using a bond ID, a bond type, and two atom IDs. This can be in the data file or by using 
+
+create bonds .For the plectoneme example, pair style granular was used to model contact. To prevent particles from passing through the gap between two bonded particles, their diameter is set to 2–3 times the bond length. Then the pair interaction was disabled for particles connected up to three bonds away using the command special bonds lj 0 0 0 .
+
+## S1.2 Magnetic dipoles 
+
+The fix efield command is used to apply a uniform magnetic field, and the fix efield/lepton command is used for a non-uniform magnetic field. Magnetic dipole– dipole interaction can be added using pair style lj/cut/dipole/cut or other variants. For the rotation-based constitutive model used in this work [2], the update dipole keyword–value pair must be added to fix nve/bpm/sphere .With magnetic dipoles, it is best to use units lj or units cgs . Since the efield 
+
+commands were made for electric dipoles, other unit systems may have internal conversion factors that users should be aware of. For example, in units si the dipole– dipole energy will have a prefactor (4 πε 0)−1 = 8 .9876 × 10 9 Nm 2/C2 (Coulomb constant), so the consistent magnetic units should be μ∗ = c [Cm] = 3 × 10 8 [Am 2]and B∗ = c−1 [V /m] = 3 .33 × 10 −9 [T]. In this work, we only considered permanent dipoles. But other magnetization models can also be used. For example, a simple superparamagnetic model can be implemented using the fix set command to update the dipoles directly together 2with pair style lj/cut/dipole/cut . More complicated magnetization models may require users to modify the LAMMPS source code. 
+
+## S1.3 Unit systems 
+
+LAMMPS’ cgs units assume ESU, which is equivalent to EMU for purely magneto-static problems. The milli system is not built into LAMMPS; here we define it such that μ0 = 4 π. Its temperature scale is set by {kB }, the numerical value of the Boltz-mann constant in the chosen LAMMPS unit system. In lj , {kB } = 1, while in cgs ,
+
+{kB } = 1 .38 × 10 −16 .
+
+Table S1 : Unit systems used in the LAMMPS simulations. 
+
+> (a) CGS (EMU)
+
+Quantity Unit SI 
+
+Length cm 10 −2 mTime s 1 s Mass g 10 −3 kg Force dyne 10 −5 NEnergy erg 10 −7 JDensity g/cm 3 10 3 kg/m 3
+
+Stress Ba 10 −1 Pa Mag. dipole emu 10 −3 A m 2
+
+Mag. field G 10 −4 TKin. viscosity cm 2/s 10 −4 m2/s Temperature K 1 K 
+
+> (b) milli (mm, ms, mg)
+
+Quantity Unit SI 
+
+Length mm 10 −3 mTime ms 10 −3 sMass mg 10 −6 kg Force mN 10 −3 NEnergy μJ 10 −6 JDensity mg/mm 3 10 3 kg/m 3
+
+Stress kPa 10 3 Pa Mag. dipole – 10 −4 A m 2
+
+Mag. field – 10 −2 TKin. viscosity mm 2/ms 10 −3 m2/s Temperature – 10 −6/{kB } K
+
+## S1.4 LBM coupling 
+
+The LBM coupling is implemented as a custom user package outside the official LAMMPS distribution and is available at https://github.com/tengzhang48/CoupLB. Development of this code was assisted by an AI language model (Claude, Anthropic), which was used to help write and debug the source code. All code was reviewed, tested, and validated by the authors. 
+
+# S2 More details on the BPM 
+
+## S2.1 Symmetric rotational decomposition 
+
+In the BPM of Wang et al. [3–6] (and most beam-bond models [7]) one particle is chosen as the reference, from which the motion of the other particle is decomposed. However, we found that for non-planar deformations, Wang [5]’s decomposition algo-rithm for finite rotation is not permutation invariant; i.e., for a given bond, different forces and torques will be computed depending on which particle was chosen as the 3reference. This is because the non-commutativity of rotations makes it impossible to prescribe the same rotation order for both particles, leading to different bending planes and therefore different bending and rotational shear terms. This reference frame dependence is not unique to Wang [5]’s formulation; co-rotational models generally require specification of a distinguished frame, and many choices are possible [8, 9]. We modify the model by introducing a central frame obtained by averaging the orien-tation of the two particles using quaternion spherical linear interpolation, similar to the model of Obermayr et al. [9]. We measure the shear from this frame, which also combines into one translational shear term the otherwise separate translational and rotational shear components. The asymmetry in the original BPM formulation can be seen in Fig. S1 (left of 
+
+O). Exchanging 1 and 2 leads to different h, t, and b quaternions. The introduction of the C frame (Fig. S1, right of O) removes preference of one particle over the other. The C′ frame is defined by rotating C such that its z-axis aligns with the bond vector. This makes it such that in the C′ frame the twist axis is along z. The frame rotation is described by the quaternion m, and its axis is parallel to ˆ z[C] × rf [C]. Let 
+
+rf [C] = ⟨x, y, z ⟩ and r = || rf || . Then, from Eq. 20 in Wang [5], 
+
+m0 =
+
+√22
+
+r
+
+1 + zr ,m1 = −√22
+
+r
+
+1 − zry
+
+px2 + y2 ,m2 =
+
+√22
+
+r
+
+1 − zrx
+
+px2 + y2 ,m3 = 0 . (S1) The procedure of constructing the C′ frame is similar to Crisfield [8], Obermayr et al. [9]; however, in Crisfield [8] this was only approximated using a mid-point rule. Since qC is the average of q1 and q2, we define the half-rotation u0(C→2) = (1 →C) =
+
+q∗ 
+
+> C
+
+q2 = q∗ 
+
+> 1
+
+qC . In the C′ frame, this becomes u = m∗u0m. The total rotation from 1 ′
+
+to 2 ′ is u u = u2 = m∗q∗ 
+
+> 2
+
+q1m. However, rather than decomposing this rotation into bend and twist, we decompose each half-rotation separately: u = t2b2 and u∗ = t1b1.This yields a symmetric t2b2b∗
+
+> 1
+
+t∗ 
+
+> 1
+
+sequence in C′. From this, we define the effective “bending” b = b2b∗ 
+
+> 1
+
+and “twisting” t = t2t∗
+
+> 1
+
+. Combining the two bends into one guarantees angular momentum conservation. Exchanging 1 and 2 leads to the new m
+
+being related to the old m by a 180 ◦ rotation about any axis perpendicular to z, which only swaps u and u∗, guaranteeing symmetry. Note that t2b2b∗
+
+> 1
+
+t∗ 
+
+> 1
+
+= b∗
+
+> 1
+
+t∗
+
+> 1
+
+t2b2 since the total rotation is uu . This implies that the effective bending could be defined as either b = b2b∗ 
+
+> 1
+
+or b = b∗
+
+> 1
+
+b2; however, these are not equivalent since rotations do not commute. Moreover, any rotation can be parametrized by three parameters. Both t1 and t2 rotate about ˆ z, yielding a single twist parameter ψ2 − ψ1. However, the two bending rotations b1 and b2 generally occur in different planes. This gives a total of five parameters, which overdetermines the rotation. The chosen decomposition ensures consistency under particle exchange; 42′ 2 2 2′
+
+# O C C′
+
+# 1′ 1 1 1′
+
+## g = tb g0
+
+## h
+
+def 
+
+## q2
+
+## q1
+
+## q2
+
+## q1
+
+## qC
+
+## u0
+
+## u0∗
+
+## m
+
+def 
+
+## u = t2b2
+
+## u∗ = t1b1
+
+Fig. S1 : The different reference frames in (left of O) the original [3–6] and (right of O)the modified BPM formulation. All frames (except O) are in the current configuration. A quaternion is represented by an arrow, where the base is the reference frame in which the rotation is defined. A quaternion from O gives the orientation of the particle’s body-fixed frame. Some properties: (1) A rotation p : A → B, followed by another 
+
+q : B → C is equivalent to the quaternion pq : A → C (extrinsic). (2) If a vector 
+
+v is defined on frame A and q : A → B, then the vector becomes q∗vq in frame B.The central frame C is obtained by averaging the two particle frames. The frame C′
+
+is obtained by rotating C with m such that its z-axis is aligned to rf [C]. A change in reference frame is obtained by rotating 1, 2, and C by m. The quaternion u rotates 
+
+C′ to 2 ′ and its conjugate rotates C′ to 1 ′. Both u and u∗ are decomposed using a 
+
+bend before twist decomposition. (Since the quaternions bi and ti are defined in the 
+
+C′ frame, their composition order is right to left.) We then introduce an effective “bending” b = b2b∗ 
+
+> 1
+
+and “twisting” t = t2t∗ 
+
+> 1
+
+rotation defined in the C′ frame. whether there are better alternative parametrizations that preserve this symmetry remains an open question. 
+
+## S2.2 Deriving the BPM spring constants 
+
+For the axial stretching and twisting, we assume that the bond connecting two par-ticles is a cylinder of length L with a uniform circular cross section of area A.1 The radial spring stiffness Kr can be derived from the definition of Young’s modulus: 
+
+E = (tensile stress) /(tensile strain) ≈ (F/A )(∆ L/L ). Since F ≈ Kr∆L, we obtain 
+
+Kr = EA/L . The case for the twisting stiffness is similar. Here, we use the well-known 
+
+> 1The case with non-uniform cross section is also considered in Wang and Mora [6] by scaling the torques due to the movement of the “contact point”, however we do not consider that here.
+
+5result from the torsion of beams to obtain Kt = GJ/L (see Slaughter [10], Ch. 1.3), where J is the second polar moment of area. Now consider the case of planar bending. For the moment, we assume that there is neither stretching nor twisting, which we treat separately since we linearize the forces and torques. We base our model on the Euler–Bernoulli (EB) beam theory, which assumes unshearable beams. In this case, the “shear” is actually due to transverse displacements. For the two-node beam finite element shown in Fig. S2, using cubic Hermite shape functions the following matrix equation can be obtained (see Reddy [11], Hutton [12] for more details): 
+
+
+
+f1
+
+τ1
+
+f2
+
+τ2
+
+ = − EI L3
+
+
+
+12 6L −12 6L
+
+6L 4L2 −6L 2L2
+
+−12 −6L 12 −6L
+
+6L 2L2 −6L 4L2
+
+
+
+v1
+
+θ1
+
+v2
+
+θ2
+
+ (S2) The negative sign is due to the fact that in BPM, f and τ represent the restoring force and torque, rather than the applied ones. In matrix form, f = −Kug . The null space of the K is spanned by a = (1 , 0, 1, 0) and b = ( −L/ 2, 1, L/ 2, 1); any linear combination of these vectors added to ug will not change f and can be interpreted as a change of reference frame. 
+
+v1
+
+v2
+
+θ1 θ2
+
+Fig. S2 : Local frame of the beam element. Positive displacement and force are along the vertical direction. Positive angle and applied torque are counter-clockwise. For example, the generalized displacement vector in the central frame is uc := 
+
+ug − ¯va − ¯θb. Then, f = −Kuc becomes 
+
+
+
+f1
+
+τ1
+
+f2
+
+τ2
+
+ ≈ EI L3
+
+
+
+12( v2 − v1 − L¯θ)6L(v2 − v1 − L¯θ) + L2(θ2 − θ1)
+
+−12( v2 − v1 − L¯θ)6L(v2 − v1 − L¯θ) − L2(θ2 − θ1)
+
+ =
+
+
+
+Ksδs KsδsL/ 2 + Kbθb
+
+−Ksδs KsδsL/ 2 − Kbθb
+
+ ≈
+
+
+
+fs
+
+τs + τb
+
+−fs
+
+τs − τb
+
+ ,
+
+(S3) where δs := v2 − v1 − L¯θ, ¯θ := ( θ1 + θ2)/2, and θb := θ2 − θ1. In the planar case, the central frame is determined by ¯θ, which is the average of the rotation of the two particles. Computing the translational shear in this frame removes the need for an additional rotational shear term. The generalization of ¯θ is the quaternion spherical linear interpolation. 6The equivalence between BPM and FEM requires the shear stiffness Ks := 12 EI/L 3 and bending stiffness Kb := EI/L . The four constants are summarized in Table 1 of the main text and are consistent with the generalized Euler–Bernoulli beam bond model of Chen et al. [7]. Readers interested in alternative beam models (e.g., Timoshenko) may find the framework of Chen et al. [7] a useful starting point. For a solid cylinder of diameter d, I = πd 4/64 and J = πd 4/32. For a planar beam with cross section ( w, h ) bending about the w axis, I = wh 3/12. When there is no twisting, the spring constants Kr, Ks, and Kb can be consistently defined even for non-cylindrical bonds. 
+
+## S2.3 Elastic energy 
+
+The third term in Eq. (S3) can be obtained via fi = −∂U/∂v i and τi = −∂U/∂θ i with the chain rule from the following energy: 
+
+U ≈ 12 Ks δs 2 + 12 Kb θ2 
+
+> b
+
+. (S4) Therefore, the total energy of the bond is approximately 
+
+U ≈ 12 Kr (rf − ri)2 + 12 Ksr2 
+
+> f
+
+γ2 + 12 Ktψ2 + 12 Kbθ2. (S5) 
+
+# S3 Numerical validation for planar bending 
+
+We performed bending tests to validate the BPM parameters. For a rectangular pris-matic beam of dimensions ( L, W, h ), where h ≪ L, we let W be along the third dimension and bending axis. Therefore, the cross-sectional area is A = W h and second moment of area is I = W h 3/12. 
+
+## S3.1 Cantilever beam under static loading 
+
+For the first test, we simulated cantilever beams ( L/h = 100, E = 1, ν = 0 .5) under a static point load or uniform load. The applied loads were chosen such that the maximum tip deflection was 10% of the beam length, and the simulated shapes are compared against the exact Euler–Bernoulli deflection curves in Fig. S3: 
+
+y(x) = P x 2(3 L−x)/(6 EI ) for a point load P and y(x) = qx 2(6 L2 −4Lx +x2)/(24 EI )for a uniform load q [13]. The BPM is accurate even for a small number of bonds under a point load, consistent with the observations of Chen et al. [7], Guo et al. [14], Nguyen et al. [15]. However, for a uniformly loaded beam, more bonds are needed to accurately distribute the total load. We also compared the total bond energy (Eq. (S5)) with the theoretical strain energy of the equilibrium configuration: U = P 2L3/(6 EI ) for the point load and 
+
+U = q2L5/(40 EI ) for the uniform load. For the point load, the energy error is approxi-mately 1 .5% at N = 4 and does not decrease further due to the inherent discretization error. For the uniform load, N ≥ 128 bonds were needed to reduce the error below 1%. 7Fig. S3 : Static bending of a cantilever beam under (left) a point load and (right) a uniform load. The simulated deflected shapes for different numbers of bonds N are compared against the exact Euler–Bernoulli solutions (dashed lines). The applied loads are chosen such that the maximum tip deflection is 10% of the beam length. 
+
+## S3.2 Cantilever beam under dynamic loading 
+
+Next, we consider the example in Le et al. [16]. A cantilever beam of length L = 10m, with a uniform rectangular cross section of width w = 0 .5m and depth h = 0 .25m, has one end clamped and the free end subjected to a sinusoidal tip force P = P0 sin( ωt ), where P0 = 10MN and ω = 50rad /s. The beam has an elastic modulus E = 210GPa and density ρ = 7850kg /m3. There is no damping added and the simulation time step is 10 −8s. The tip displacement is plotted as a function of time for various numbers of bond elements N . We observe excellent agreement with Le et al. [16] for N ≥ 32. 
+
+## S3.3 Additional data for magnetic beams 
+
+We also performed a convergence study for the magnetized beam in Sec. 3.2, Fig. 6(a) of the main text. Fig. S5(a) shows the relative error of the tip deflection in y with respect to the FEM result as a function of the magnetic gradient parameter λ∇
+
+> m
+
+.Fig. S5(b) shows a log–log plot of the error at λ∇ 
+
+> m
+
+= 100 as a function of the number of BPM elements. The convergence is approximately linear. 
+
+# References 
+
+[1] Clemmer, J.T., Monti, J.M., Lechman, J.B.: A soft departure from jamming: the compaction of deformable granular matter under high pressures. Soft Matter 
+
+20 (8), 1702–1718 (2024) https://doi.org/10.1039/d3sm01373a [2] Danas, K., Reis, P.M.: Stretch-independent magnetization in incompressible isotropic hard magnetorheological elastomers. Journal of the Mechanics and 8Fig. S4 : The x and y tip displacements for different BPM resolutions N as a function of time for a cantilever beam under a sinusoidal tip force, compared to the reference solution in Le et al. [16]. 
+
+Fig. S5 : Convergence study for the magnetized beam of Fig. 6(a) in the main text. (a) Relative error of the y-tip deflection with respect to the FEM result as a function of the magnetic gradient parameter λ∇ 
+
+> m
+
+for different numbers of BPM elements N .(b) Log–log plot of the relative error at λ∇ 
+
+> m
+
+= 100 versus N , showing approximately linear convergence. Physics of Solids 191 , 105764 (2024) https://doi.org/10.1016/j.jmps.2024.105764 [3] Wang, Y., Abe, S., Latham, S., Mora, P.: Implementation of particle-scale rotation in the 3-D lattice solid model. Pure and Applied Geophysics 163 (9), 1769–1785 (2006) https://doi.org/10.1007/s00024-006-0096-0 [4] Wang, Y., Mora, P.: Macroscopic elastic properties of regular lattices. Journal of 9the Mechanics and Physics of Solids 56 (12), 3459–3474 (2008) https://doi.org/ 10.1016/j.jmps.2008.08.011 [5] Wang, Y.: A new algorithm to model the dynamics of 3-D bonded rigid bodies with rotations. Acta Geotechnica 4(2), 117–127 (2009) https://doi.org/10.1007/ s11440-008-0072-1 [6] Wang, Y., Mora, P.: The ESyS Particle: A New 3-D Discrete Element Model with Single Particle Rotation. In: Advances in Geocomputing. Lecture Notes in Earth Science, vol 119. Springer, Berlin, Heidelberg., 183–228 (2009) https://doi.org/ 10.1007/978-3-540-85879-9 6 [7] Chen, X., Peng, D., Morrissey, J.P., Ooi, J.Y.: A comparative assessment and unification of bond models in DEM simulations. Granular Matter 24 (1), 29 (2022) https://doi.org/10.1007/s10035-021-01187-2 [8] Crisfield, M.A.: A consistent co-rotational formulation for non-linear, three-dimensional, beam-elements. Computer methods in applied mechanics and engi-neering 81 (2), 131–150 (1990) https://doi.org/10.1016/0045-7825(90)90106-v [9] Obermayr, M., Dressler, K., Vrettos, C., Eberhard, P.: A bonded-particle model for cemented sand. Computers and Geotechnics 49 , 299–313 (2013) https://doi. org/10.1016/j.compgeo.2012.09.001 [10] Slaughter, W.S.: The Linearized Theory of Elasticity. Birkh¨ auser, Boston (2012). https://doi.org/10.1007/978-1-4612-0093-2 [11] Reddy, J.N.: An Introduction to the Finite Element Method. McGraw-Hill, Columbus (1993) [12] Hutton, D.: Fundamentals of Finite Element Analysis. McGraw-Hill, Columbus (2003) [13] Hibbeler, R.C.: Mechanics of Materials. Pearson, London (2018) [14] Guo, Y., Wassgren, C., Hancock, B., Ketterhagen, W., Curtis, J.: Validation and time step determination of discrete element modeling of flexible fibers. Powder technology 249 , 386–395 (2013) https://doi.org/10.1016/j.powtec.2013.09.007 [15] Nguyen, D.H., Kang, N., Park, J.: Validation of partially flexible rod model based on discrete element method using beam deflection and vibration. Powder Technology 237 , 147–152 (2013) https://doi.org/10.1016/j.powtec.2013.01.038 [16] Le, T.-N., Battini, J.-M., Hjiaj, M.: Efficient formulation for dynamics of corota-tional 2D beams. Computational Mechanics 48 (2), 153–161 (2011) https://doi. org/10.1007/s00466-011-0585-6 10

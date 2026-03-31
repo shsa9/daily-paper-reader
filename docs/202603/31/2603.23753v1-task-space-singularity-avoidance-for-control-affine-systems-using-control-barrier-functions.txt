@@ -1,0 +1,415 @@
+Title: Task-Space Singularity Avoidance for Control Affine Systems Using Control Barrier Functions
+
+URL Source: https://arxiv.org/pdf/2603.23753v1
+
+Published Time: Thu, 26 Mar 2026 00:23:36 GMT
+
+Number of Pages: 6
+
+Markdown Content:
+# Task-Space Singularity Avoidance for Control Affine Systems Using Control Barrier Functions 
+
+Kimia Forghani 1, Suraj Raval 1, Lamar Mair 2, Axel Krieger 3, and Yancy Diaz-Mercado 1
+
+Abstract — Singularities in robotic and dynamical systems arise when the mapping from control inputs to task-space motion loses rank, leading to an inability to determine inputs. This limits the system’s ability to generate forces and torques in desired directions and prevents accurate trajectory tracking. This paper presents a control barrier function (CBF) frame-work for avoiding such singularities in control-affine systems. Singular configurations are identified through the eigenvalues of a state-dependent input–output mapping matrix, and barrier functions are constructed to maintain a safety margin from rank-deficient regions. Conditions for theoretical guarantees on safety are provided as a function of the actuator dynamics. Simulations on a planar 2-link manipulator and a magnetically actuated needle demonstrate smooth trajectory tracking while avoiding singular configurations and reducing control input spikes by up to 100 × compared to the nominal controller. 
+
+I. INTRODUCTION In many dynamical systems, particularly safety-critical applications, it is essential to have the ability to generate necessary forces and torques to achieve desired trajectories while maintaining stability and safety guarantees at all times. However, systems with state-dependent task spaces may encounter configurations in which this capability is compromised. In robotics, such configurations are known as kinematic singularities, where the mapping from control inputs to task-space outputs and the kinematics Jacobian loses rank (e.g., Fig. 1). At a singular configuration, the actuation or control matrix becomes ill-conditioned, restrict-ing the system’s ability to simultaneously generate forces and torques in desired directions. This state-dependent rank deficiency complicates motion control, as the system can no longer track arbitrary trajectories within its operating space. Moreover, near singularities, controllers that rely on matrix inversion often produce large and abrupt control inputs due to poor numerical conditioning. These spikes in actuation not only reduce control effectiveness but may also induce instability, limit performance, and pose safety concerns. Singularities in robotic and dynamical systems are well-recognized challenges in control, particularly due to their ad-verse effects on manipulability and real-time control perfor-mance [1]. Prior approaches include hybrid switching control [2], hardware redesign [3], [4], Lie-bracket motion synthesis   
+
+> 1Authors are with the Department of Mechanical Engineering, Uni-versity of Maryland, College Park, MD 20742
+
+{kimiaf, sraval, yancy }@umd.edu  
+
+> 2Author is with the Division of Magnetic Manipulation and Particle Research, Weinberg Medical Physics, Inc., North Bethesda, MD 20852
+
+lamar.mair@gmail.com   
+
+> 3Author is with the Department of Mechanical Engineering, Johns Hopkins University, Baltimore, MD 21218
+
+axel@jhu.edu  
+
+> Fig. 1. Two similar end-effector trajectories (dashed lines) for a two-link manipulator. The red trajectory in the fourth pose passes through a singular configuration when the middle joint angle becomes zero (flat links), while the green trajectory avoids singularity by slightly modifying the joint angles.
+
+[5], [6], and regularization-based optimization methods [7], [8]. While effective in specific settings, these methods either lack formal safety guarantees or are difficult to generalize. Recent barrier-function approaches [9], [10] begin to address this limitation for particular system classes. Control barrier functions (CBFs) provide a mathematical approach in control theory for maintaining constraints and securing system stability and safety [11]. Expressed as a quadratic program (QP), they allow real-time computation of safe control actions. Their safety guarantees make them useful in various safety-critical applications, including colli-sion avoidance [12], multi-agent systems [13], and medical [14]. Here, we use CBFs to prevent the system from entering singular configurations accurately and efficiently. We estab-lish a theoretical framework for identifying singularity points in a control affine system whose task-space is influenced by the control signal, applicable to underactuated, overactuated, and fully actuated setups. We present an analytical CBF construction and a numerical representation. Leveraging the framework, we adjust control inputs in real-time to avoid sin-gular regions while minimizing deviation from the reference trajectory. Simulations validate the method. The rest of the paper is organized as: Section II provides background, Section III presents singularity identification, and CBF construction, Section IV presents case study and simulation results, and Section V concludes. II. BACKGROUND AND PRELIMINARIES 
+
+A. Dynamics and Task Output 
+
+Consider an affine control system: ˙x = f (x) + g(x)u,
+
+z = γ(x) (1) 
+
+> arXiv:2603.23753v1 [cs.RO] 24 Mar 2026
+
+with x ∈ Rn denoting the states, u ∈ Rm being the control input, where f : Rn → Rn and g : Rm → Rn×m are locally Lipschitz. The mapping between the task output z ∈ Rd and the space is given by a continuously differentiable map γ :
+
+Rn → Rd . The system is subject to input constraints u(t) ∈
+
+U ⊆ Rm, the space of admissible control signals. The task-space output changes according to ˙z = L f γ(x) + Lgγ(x)u (2) We define a state-dependent input-output mapping matrix according to the Lie derivative: 
+
+φ (x) = Lgγ(x) = ∂ γ ∂ x g(x) = J(x)g(x) ∈ Rd×m, (3) where J(x) ∈ Rd×n is the Jacobian of the task-space output function. A singular configuration occurs when the state-dependant input-output mapping matrix φ (x) loses rank, i.e., when the number of singular values that approach zero is greater than max (d, m) − min (d, m). When this happens, the mapping between control inputs and states locally collapses the input space along certain directions, resulting in a loss of local invertibility. Such singularities are associated with critical points where the system may exhibit changes in behavior because the commanded state cannot be achieved. 
+
+B. Control Barrier Functions 
+
+For the control-affine system in (1), define the safe set 
+
+C = {x ∈ Rn : h(x) ≥ 0}, (4) where h(x) is continuously differentiable. Safety is ensured if C is forward invariant [11]. A function h(x) is a Control Barrier Function (CBF) if there exists an extended class-K function α such that 
+
+L f h(x) + Lgh(x)u ≥ − α(h(x)) . (5) Since ˙ h(x, u) = L f h(x) + Lgh(x)u is affine in the control input, safety constraints can be incorporated into a quadratic program (QP). Given a nominal control input v(x), the CBF-QP minimally modifies it to enforce safety: 
+
+u(x) = arg min  
+
+> u∈Rm
+> 12
+
+∥u − v(x)∥2
+
+s.t. L f h(x) + Lgh(x)u ≥ − α(h(x)) . (6) III. CONTROL BARRIER FUNCTION CONSTRUCTION 
+
+A. Quadratic Problem 
+
+Equation (6) enforces safety while minimizing deviation from the desired control input. Here, we ensure minimal deviation from the desired task-space kinematics ˙ zd . As (1): ˙zd = L f γ(x) + φ (x)v(x), (7) where v(x) ∈ Rm is the reference or nominal control input. Since the deviation of the error between the desired and true task-space kinematics is given by 
+
+∥˙z − ˙zd ∥2 = ( u − v(x)) T φ T (x)φ (x)( u − v(x)) 
+
+We modify the QP formulation as: 
+
+u = arg min 
+
+> u∈Rm
+
+(u − v(x)) T Q(x)( u − v(x)) 
+
+s.t. L f h(x) + Lgh(x)u ≥ − α(h(x)) . (8) To ensure φ (x) is kept at full rank, we define 
+
+Q(x) = 
+
+(
+
+φ T (x)W φ (x), d ≥ m
+
+φ T (x)W φ (x) + Γ, d < m (9) for some positive definite matrices W ∈ Rd×d , Γ ∈ Rm×m. So long as φ (x) is full rank, this ensures that Q(x) is positive definite, and the QP cost is convex. 
+
+Remark 1: For over-actuated systems ( d < m), φ T φ is rank deficient, so a regularization term Γ ≻ 0 is added to ensure convexity [15]. See section IV.B. 
+
+Assumption 1: The reference policy v(x) stabilizes the dynamics in (1), and the desired output zd is reachable under admissible inputs, particularly in underactuated cases. 
+
+B. Singularity Points 
+
+Singular configurations occur when the input–output map-ping matrix φ (x) in (3) becomes rank deficient. This frame-work applies to underactuated, fully actuated, and over-actuated systems, independent of the chosen reference con-troller. Since φ (x) may be non-square, we define matrix 
+
+M(x) = φ (x)φ (x)T for over-actuated systems and M(x) = 
+
+φ (x)T φ (x) otherwise. The eigenvalues of M(x) are real, non-negative, and equal to the squared singular values of 
+
+φ (x). This allows a unified representation since a rectangular 
+
+φ ∈ Rn×m has only min (n, m) singular values, and M(x)
+
+preserves these values through its eigen-structure. Without loss of generality, we take the case where the system is over-actuated. In this case, the M(x) = φ (x)φ (x)T
+
+matrix is always a Rd×d square matrix, regardless of the number of actuators. To find its eigenvalues, we solve the characteristic equation: 
+
+det (λ I − φ (x)φ (x)T ) = 0 (10) Expanding the determinant in (10) leads to: 
+
+p(λ ) = λ d + cd−1λ d−1 + · · · + c1λ + c0, (11) where the coefficients ci depend on the entries of φ (x)φ (x)⊤.Analytically solving for p(λ ) = 0 gives an explicit expres-sion for each eigenvalue as a function of the states. This characterizes the level set in Rd where λ becomes zero. Subsequently, computing the derivative with respect to all states yields d conditions for constructing the CBF. 
+
+C. Barrier Function 
+
+We define the safe set associated with each CBF as: 
+
+Ci =
+
+n
+
+x ∈ Rd | λi(x) − ε ≥ 0
+
+o
+
+, (12) which corresponds to the subset of the state space where the 
+
+i-th eigenvalue of φ (x)φ (x)⊤ remains greater than zero and 
+
+ε > 0 is a small positive margin to enforce a buffer away from singularities. A candidate CBF for each eigenvalue is: 
+
+hi(x) = λi(x) − ε, (13) Lemma 1 ([16]): Let φ ∈ Rd×m be a differentiable matrix-valued function. Then the matrix M(x) = φ (x)φ (x)⊤ is symmetric, positive semidefinite, and differentiable. 
+
+Lemma 2 ([17]): All simple eigenvalues λi(x) of a sym-metric, differentiable matrix M(x) are differentiable functions of x.
+
+Theorem 1: For the system in (1), let M(x) = φ (x)φ (x)⊤ ∈
+
+Rd×d and suppose M(x) has eigenvalues λ1(x), . . . , λd (x).Then, for any ε > 0 and x(0) ∈ C , the functions 
+
+hi(x) = λi(x) − ε, i = 1, . . . , d,
+
+are valid barrier functions and the control in (8) renders the sets 
+
+Ci = {x ∈ Rd | hi(x) ≥ 0} = {x ∈ Rd | λi(x) ≥ ε}.
+
+forward invariant so long as either ∇λi(x)⊤g(x)̸ = 0 or 
+
+∇λi(x)⊤ f (x) ≥ − α(hi(x)) for every x ∈ C .
+
+Proof: Since both J(x) and the input matrix g(x) are assumed continuously differentiable, the mapping φ (x) = 
+
+J(x)g(x) is differentiable. Consequently by Lemma 1 the matrix M(x) = φ (x)φ (x)⊤ is symmetric, positive semidefi-nite, and differentiable. By Lemma 2, all eigenvalues λi(x) of 
+
+M(x) are differentiable and real. Thus, each function hi(x) = 
+
+λi(x) − ε is differentiable. Using the system dynamics, we compute the derivative along trajectories: ˙hi(x) = ∇λi(x)⊤ ˙x = ∇λi(x)⊤ ( f (x) + g(x)u) ,
+
+yielding the condition 
+
+∇λi(x)⊤ f (x) + ∇λi(x)⊤g(x)u + α(λi(x) − ε) ≥ 0. (14) This inequality is affine in u and is feasible if there exists an admissible u ∈ Rm satisfying it. In particular, feasibility is guaranteed if either 
+
+∇λi(x)⊤g(x)̸ = 0, (15) so that the control input can influence the inequality, or, if 
+
+∇λi(x)⊤g(x) = 0, the inequality is still feasible provided 
+
+∇λi(x)⊤ f (x) ≥ − α(hi(x)) ,
+
+i.e., the drift term naturally enforces safety. If either case is valid for every x ∈ C , this guarantees that all eigenvalues remain bounded away from zero, maintaining full rank of φ (x) and thus avoiding singular configurations. 
+
+Remark 2: Even when condition (15) is satisfied the fea-sibility of enforcing (14) is not guaranteed in the presence of control constraints such as bounded inputs or actuation saturation. In such cases, the validity of the CBF should be evaluated on a case-by-case basis by verifying whether the required control input lies within the admissible set U ⊂ Rm.
+
+Remark 3: Constructing a valid CBF for complex systems can be tedious due to extensive algebraic manipulation. An alternative is to approximate the derivative numerically at each time step. This simplifies system-dependent derivations but is sensitive to noise and disturbances, leading to numer-ical instabilities. Instead, we reformulate the problem as an obstacle avoidance problem, as described in section IV.B through an example. This approach eliminates the need to solve for eigenvalue conditions and uses numerical Singular Value Decomposition (SVD). IV. CASE STUDIES This section explains the general framework for construct-ing CBFs for any dynamical system to avoid singularities using analytical and numerical approaches. 
+
+A. Analytical CBF 
+
+Here we provide an example of a simple control system for which we can do an analytical derivation. 
+
+a) System description: Consider a 2–link planar ma-nipulator (Fig.1). Let the joint angles and control inputs be 
+
+q =
+
+q1
+
+q2
+
+
+
+∈ R2, u = ˙q ∈ R2.
+
+The joint–space dynamics are written in control–affine form: ˙q = f (q) + g(q)u, (16) 
+
+f (q) = 0, g(q) = I2. (17) The end–effector position, task output, is obtained via forward kinematics: 
+
+z(q) = 
+
+x(q)
+
+y(q)
+
+
+
+=
+
+l1 cos q1 + l2 cos (q1 + q2)
+
+l1 sin q1 + l2 sin (q1 + q2)
+
+
+
+, (18) where l1, l2 are the link lengths. This yields the task–space velocity relation ˙z = J(q)I2×2 u = J(q) u, (19) 
+
+J(q) = 
+
+−l1 sin q1 − l2 sin (q1 + q2) −l2 sin (q1 + q2)
+
+l1 cos q1 + l2 cos (q1 + q2) l2 cos (q1 + q2)
+
+
+
+.
+
+(20) 
+
+b) Control Barrier Function: To detect singularities we analyze the eigenvalues of JJ ⊤. Solving (10) with l1 = l2 = 1yields two eigenvalues λ1(q2), λ2(q2), with λ2 > λ1:
+
+λ1 = cos q2 − 12
+
+p12 cos q2 + 8 cos 2 q2 + 5 + 32 , (21) 
+
+λ2 = cos q2 + 12
+
+p12 cos q2 + 8 cos 2 q2 + 5 + 32 . (22) We define the CBF as: 
+
+h(q) = λ1(q2) − ε, ε > 0. (23) To enforce the constraint ˙ h(q, u) ≥ − α(h(q)) , we compute ˙h(q, u) = ∇h(q)⊤I2 ˙q =
+
+h
+
+0 ∂ λ 1 
+
+> ∂q2
+
+i
+
+u, (24) 
+
+∂ λ 1
+
+∂ q2
+
+= − sin q2 + 12 sin q2 + 16 cos q2 sin q2
+
+4p12 cos q2 + 8 cos 2 q2 + 5 . (25) 
+
+c) Feasibility Guarantee: Based on Theorem 1, the QP is feasible if either Lgh̸ = 0 or L f h + α(h) ≥ 0. That is: 
+
+either ∇h(q)⊤I2 =
+
+h
+
+0 ∂ λ 1 
+
+> ∂q2
+
+i̸
+
+= 0 or α(h) ≥ 0 (26) Solving for (25) equal to zero on 0 ≤ q ≤ 2π yields q =
+
+0, 2π 
+
+> 3
+
+, π, 4π 
+
+> 3
+
+. Since L f h = 0 here, feasibility holds whenever 
+
+α(h) = h ≥ 0, including at points where ∂ λ 1  
+
+> ∂q2
+
+= 0 (e.g., q2 ∈{2π/3, 4π/3}). The configurations for q = 0, π are on the safety boundary and therefore will not be reached. Fig. 2. Comparison of joint angles and velocities: (Left) without the CBF,       
+
+> θ2→0 at t=5sinduces spikes in joint velocities and abrupt changes in joint angles. (Right) with the CBF, the singularity is avoided, the joint angle trajectory remains smooth, and the joint velocities remain low.
+
+d) Quadratic Program: At each time step, a simple proportional controller is used to generate the task–space controller (desired end-effector velocity), and the corre-sponding reference joint velocity is obtained by mapping it using the pseudoinverse of the Jacobian. ˙zdes = Kp(zd − z), (27) 
+
+uref = J†(q) ˙zdes , (28) where zd is the target position. The actual input u is given by the solution of the QP min  
+
+> u∈R2
+
+∥J(q)u − J(q)uref ∥2
+
+s.t. ˙h(q, u) ≥ − α(h(q)) .
+
+(29) The cost minimizes deviation from the reference while the constraint keeps λ1(q) positive, thereby avoiding singular configurations. 
+
+e) Simulation: We consider two sequential tasks. The first drives the manipulator toward a singular configuration 
+
+(x, y) = ( √2, √2), which corresponds to holding q1 fixed while letting q2 → 0 (the arm straightens). The second task drives the manipulator to a non-singular target. As shown in Fig. 2, without the CBF the arm attempts to fully straighten, causing large spikes in the joint velocities due to Jacobian ill-conditioning. With the CBF constraint (29), the controller modifies u to keep q2 away from singularity. This reduces control spikes by approximately 70 × and 100 × for joints 1 and 2, respectively, while producing smoother joint trajectories. 
+
+B. Numerical CBF 
+
+The preceding example shows that CBFs can be con-structed directly from analytical derivatives of the eigen-values. However, for complex systems, the characteristic equation often yields expressions that are algebraically in-tractable. We next present an implementation in which the singular set is characterized numerically, while maintaining the same CBF-QP objective. 
+
+a) System description: We consider a magnetic ac-tuation system consisting of 4 stationary electromagnets arranged around a workspace to control the position of a magnetic agent as depicted in Fig. 3. Addressing singularities in magnetic actuation has been a key research focus due to their impact on controllability and stability [18]. Under some mild assumptions [19], the dynamics are modeled as a first order driftless system. The general dynamics is written as the control-affine system: ˙z = ˙X = g(X)u, (30) Here, ˙X represents both the state velocity vector of the magnet and its task output, and u is the control input. The dynamics are expanded as: 
+
+
+
+ct ˙xct ˙ycr ˙θ
+
+ =
+
+Fx,1 Fx,2 Fx,3 Fx,4
+
+Fy,1 Fy,2 Fy,3 Fy,4
+
+τ1 τ2 τ3 τ4
+
+
+
+I1
+
+I2
+
+I3
+
+I4
+
+ , (31) where the c are friction coefficients, Fx,i and Fy,i are the forces in the x and y directions, respectively, and τi is the torque generated by the i-th electromagnet, i = 1, . . . , 4, when supplied with 1 A of current. The control inputs are the currents Ii applied to each electromagnet. The magnetic agent is modeled as a magnetic dipole with moment m. The resulting torque and force acting on the agent are given by: 
+
+τ = m × B, F = ( m · ∇)B, (32) where B is the magnetic field at the agent’s location. The magnetic field B and its gradient are computed using the dipole approximation of each coil [20]. We are interested in determining singular configurations by identifying when the output matrix g defined in (31) becomes ill-conditioned. Since g is a non-square matrix, we consider gg T ≻ 0, whose eigenvalues are real, non-negative, and equal to the squares of the singular values of g:
+
+gg T =
+
+ ∑ni=1 F2 
+
+> x,i
+
+∑ni=1 Fx,iFy,i ∑ni=1 Fx,iτi
+
+∑ni=1 Fx,iFy,i ∑ni=1 F2 
+
+> y,i
+
+∑ni=1 Fy,iτi
+
+∑ni=1 Fx,iτi ∑ni=1 Fy,iτi ∑ni=1 τ2
+
+> i
+
+ (33) Although by solving the characteristic equation in (10) we have an explicit expression for the safe regions in terms    
+
+> Fig. 3. The magnetic actuation system (left), and the corresponding simulation workspace in MATLAB (right). Fig. 4. 3D scatter plot of configurations where the smallest singular value falls below a threshold for the magnetic system in Fig. 3. Color indicates singular value magnitude. Coordinates represent 2D position and orientation
+> θof the magnetic agent.
+
+of the system states (x, y, θ ), it is extremely lengthy and impractical, especially since constructing a CBF also requires computing its derivatives. To address this, we represent the unsafe regions as virtual 3D obstacles and reformulate the problem as a standard obstacle avoidance task. To create these obstacles we first create point clouds of unsafe con-figurations using the MATLAB built-in SVD function to numerically find configurations corresponding to near-zero singular values. The corresponding point cloud is illustrated in Fig. 4 
+
+b) 3D Obstacle Construction: Distance-based con-straints are often implemented by approximating obstacles as ellipsoids [21] or hyperspheres [22] to ensure differen-tiability. However, such approximations significantly over-estimate concave regions. Instead, we partition the sampled point cloud into multiple local components, using methods described below to guarantee local differentiability. Given a 3D point cloud P, we first scale it into a unit cube for numerical stability and reconstruct its surface boundary using the alpha shape method [23]. The resulting surface represents the zero level set of the barrier function and defines the safety boundary. The reconstruction partitions the point cloud into M distinct components. The alpha shape method preserves concave features through a tunable parameter α, producing a triangulated boundary that closely matches the sampled geometry. This triangulation ensures local continuity of the distance-based CBF near the safety boundary. Disjoint points are treated as separate obstacles to prevent undesirable switching behavior. 
+
+c) Safety-Set Construction: The closest point to a query point p is computed by projecting onto each triangle and selecting the minimum-distance candidate; if the projection lies outside a triangle, the closest point is computed on its edges. The computation is implemented using vectorized op-erations to efficiently handle large surface meshes. Although the closest point may switch abruptly in concave regions, this does not affect control since the CBF is active only  
+
+> Fig. 5. Snapshots of a simulated suturing task. The needle (gray) follows the planned trajectory (blue) while tilting from the reference orientation (gray shadow) to avoid singular configurations. Orange arrows indicate motion direction. The needle: a) approaches the first penetration site, b) tightens the suture while adjusting orientation, c) advances along the incision returning to the reference angle, d–f) completes the stitch.
+
+near the boundary. To allow greater control freedom away from singular regions, we choose a less restrictive class-K
+
+function in our CBF construction. In particular, the choice 
+
+α(h) = γh2 yields larger numerical value than α(h) = γh for large values of h ≥ 1. Thus, it relaxes the CBF constraint and reduces unnecessary control intervention away from the boundary. For agent at position X and obstacles O = 1, . . . , m, we define an obstacle avoidance function as: 
+
+hobs, i,O(X, p) = 12 (∥X − pO∥2 − δ 2), (34) where pO is the position of the closest point on obstacle O,and δ is the minimum allowable distance between the two. 
+
+d) CBF Controller: Our objective is to design a control input that tracks a desired state velocity while guaranteeing safety via CBFs. To achieve this, we penalize the deviation of the induced state velocity ˙ X = g(x)u (30) from a reference velocity ˙ Xref through the cost 
+
+(u − uref )⊤ 
+
+g(x)⊤W g (x)
+
+
+
+(u − uref ) (35) where W ≻ 0 is a weight matrix penalizing errors in state velocities. We weight x and y more heavily than θ .Since g(x)⊤W g (x) has rank at most 3 due to over-actuation, the resulting cost matrix is rank-deficient. We resolve this by introducing a regularization term Γ ≻ 0 [15] and define: 
+
+Q(x) = 
+
+
+
+g(x)⊤W g (x) + Γ
+
+
+
+(36) Fig. 6. Safe magnetic needle trajectory (time-colored dots) for a suture pattern in configuration space that avoids singular configurations (green). 
+
+The control input is computed by the following QP: min  
+
+> u∈Rd
+> 12
+
+(u − uref )⊤Q(x)( u − uref )
+
+s.t. Aobs u ≥ bobs 
+
+(37) where u ∈ Rd is the control input, uref ∈ Rd is the reference control input, Aobs = ∂ hm  
+
+> ∂x
+
+∈ Rm×d , and bobs = −α(hm) = 
+
+hm(x)2 ∈ Rm .
+
+e) Simulation: As a case study, we simulate a small-incision suturing task [24]. The objective is to steer amagnetically actuated needle along a stitch trajectory while avoiding singular configurations. The simulation represents the magnetic actuation environment in Fig. 3 with workspace diameter of 35 mm. Fig. 5 shows representative task snapshots. As the needle approaches singular regions, the CBF-QP modifies its orien-tation while maintaining the desired spatial path. This adjust-ment prevents rank deficiency of the actuation matrix without missing penetration points. Because suturing is performed on flexible tissue, these small orientation deviations do not degrade stitch quality. Once the unsafe region is cleared, the needle smoothly returns to the reference orientation. The RMS position error is 0.99 mm, the RMS orientation error is 0.65 rad, and the maximum current applied is 4 A. The corresponding trajectory in configuration space is shown in Fig. 6, where singular configurations are depicted in green. The colored path demonstrates that the needle remains outside the singular set while suturing. V. CONCLUSIONS In this work, we introduce a CBF-based framework to address configuration-dependent singularities in time-varying systems, a key challenge in robotics and control. Singularities are identified and represented analytically and numerically, and used to perform real-time avoidance via a CBF-QP with minimal trajectory deviation. Results demonstrate improved control smoothness and stability, reducing abrupt input fluc-tuations near singularities, ensuring safer operations. REFERENCES [1] B. Siciliano, O. Khatib, and T. Kr¨ oger, Springer handbook of robotics .Springer, 2008, vol. 200. [2] C. Tomlin and S. S. Sastry, “Switching through singularities,” Systems & control letters , vol. 35, no. 3, pp. 145–154, 1998. [3] S. E. Wright, A. W. Mahoney, K. M. Popek, and J. J. Abbott, “The spherical-actuator-magnet manipulator: A permanent-magnet robotic end-effector,” IEEE Transactions on Robotics , vol. 33, no. 5, pp. 1013– 1024, 2017. [4] X. Chen, A. Bhattacharjee, L. O. Mair, S. Raval, P. Addepalli, O. Erin, A. Bell, Y. Diaz-Mercado, and A. Krieger, “Mitigating singularities in control of magnetic capsule endoscopes using a novel nested electromagnetic coil system,” Journal of Medical Robotics Research ,vol. 9, no. 03n04, p. 2440005, 2024. [5] S. Raval, A. Bhattacharjee, X. Chen, L. Mair, A. Krieger, and Y. Diaz-Mercado, “Singularity-free approximate waypoint tracking controller for underactuated magnetic robots,” IFAC-PapersOnLine , vol. 58, no. 28, pp. 1079–1084, 2024. [6] A. M¨ uller, “Higher-order analysis of kinematic singularities of lower pair linkages and serial manipulators,” Journal of Mechanisms and Robotics , vol. 10, no. 1, p. 011008, 2018. [7] T. A. Johansen, T. I. Fossen, and S. P. Berge, “Constrained nonlinear control allocation with singularity avoidance using sequential quadratic programming,” IEEE transactions on control systems technology ,vol. 12, no. 1, pp. 211–216, 2004. [8] K. T. Nguyen, M. C. Hoang, G. Go, B. Kang, E. Choi, J.-O. Park, and C.-S. Kim, “Regularization-based independent control of an external electromagnetic actuator to avoid singularity in the spatial manipulation of a microrobot,” Control Engineering Practice , vol. 97, p. 104340, 2020. [9] V. Kurtz, P. M. Wensing, and H. Lin, “Control barrier functions for singularity avoidance in passivity-based manipulator control,” in 2021 60th IEEE Conference on Decision and Control (CDC) . IEEE, 2021, pp. 6125–6130. [10] M. Wu, A. Rupenyan, and B. Corves, “Singularity-avoidance control of robotic systems with model mismatch and actuator constraints,” 
+
+arXiv preprint arXiv:2411.07830 , 2024. [11] A. D. Ames, S. Coogan, M. Egerstedt, G. Notomista, K. Sreenath, and P. Tabuada, “Control barrier functions: Theory and applications,” in 2019 18th European control conference (ECC) . IEEE, 2019, pp. 3420–3431. [12] Y. Moon, G. Orosz, and H. K. Fathy, “Graceful vehicle collision avoidance using a second-order nonlinear barrier constraint,” in 2025 American Control Conference (ACC) , 2025, pp. 259–266. [13] Y. Zhang, Y. Lyu, S. Jo, Y. Yang, and W. Luo, “Adaptive deadlock avoidance for decentralized multi-agent systems via cbf-inspired risk measurement,” in 2025 IEEE International Conference on Robotics and Automation (ICRA) . IEEE, 2025, pp. 14 917–14 923. [14] K. Forghani, S. Raval, L. Mair, A. Krieger, and Y. Diaz-Mercado, “Su-ture thread modeling using control barrier functions for autonomous surgery,” arXiv preprint arXiv:2502.09813 , 2025. [15] A. N. Tikhonov and V. I. V. I. Arsenin, Solutions of ill-posed problems ,ser. Scripta series in mathematics. Winston and distributed solely by Halsted Press, 1977. [16] J. R. Magnus and H. Neudecker, “Matrix differential calculus with applications to simple, hadamard, and kronecker products,” Journal of Mathematical Psychology , vol. 29, no. 4, pp. 474–492, 1985. [17] P. Lancaster and M. Tismenetsky, The theory of matrices: with applications . Elsevier, 1985. [18] Z. Yang and L. Zhang, “Magnetic actuation systems for miniature robots: A review,” Advanced Intelligent Systems , vol. 2, no. 9, p. 2000082, 2020. [19] M. Fan, X. Liu, K. Jain, D. Lerner, L. O. Mair, I. N. Weinberg, Y. Diaz-Mercado, and A. Krieger, “Towards autonomous control of magnetic suture needles,” in 2020 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) , 2020, pp. 2935–2942. [20] D. J. Griffiths, Introduction to electrodynamics . Cambridge University Press, 2023. [21] F. Ferraguti, M. Bertuletti, C. T. Landi, M. Bonf` e, C. Fantuzzi, and C. Secchi, “A control barrier function approach for maximizing per-formance while fulfilling to iso/ts 15066 regulations,” IEEE Robotics and Automation Letters , vol. 5, no. 4, pp. 5921–5928, 2020. [22] J. Zeng, B. Zhang, and K. Sreenath, “Safety-critical model predictive control with discrete-time control barrier function,” in 2021 American Control Conference (ACC) . IEEE, 2021, pp. 3882–3889. [23] H. Edelsbrunner and E. P. M¨ ucke, “Three-dimensional alpha shapes,” 
+
+ACM Transactions On Graphics , vol. 13, no. 1, pp. 43–72, 1994. [24] Q. Wang, A. Bhattacharjee, X. Chen, L. O. Mair, Y. Diaz-Mercado, and A. Krieger, “Semi-autonomous 2.5 d control of untethered magnetic suture needle,” in 2025 IEEE International Conference on Robotics and Automation (ICRA) . IEEE, 2025, pp. 10 681–10 687.

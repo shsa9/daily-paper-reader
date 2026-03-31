@@ -6,32 +6,47 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-03-30
-- 运行时间：2026-03-30 20:23:28 UTC
+- 最新运行日期：2026-03-31
+- 运行时间：2026-03-31 20:20:09 UTC
 - 运行状态：成功
-- 本次总论文数：3
+- 本次总论文数：8
 - 精读区：0
-- 速读区：3
+- 速读区：8
 
 ### 今日简报（AI）
-今日速读 3 篇前沿论文，聚焦物理系统建模、电磁逆散射及不确定性下的鲁棒控制。
-重点关注 Port-Hamiltonian 框架对迟滞效应的精确刻画，以及物理信息神经算子（PINO）在解决复杂电磁逆散射问题中的应用。
-建议深入探索物理先验与深度学习结合的建模方法，以提升复杂动态系统的感知与控制精度。
-- 详情：[/202603/30/README](/202603/30/README)
+今日速览 8 篇前沿论文，深度解析磁弹性力学建模与控制系统避障技术。
+重点推荐磁弹性杆的颗粒模型仿真及磁力谐振器实验，并关注利用控制屏障函数规避机器人任务空间奇异点的最新进展。
+建议对软体机器人驱动或复杂系统控制感兴趣的读者，优先研读磁力耦合相关的物理建模方法。
+- 详情：[/202603/31/README](/202603/31/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [On Port-Hamiltonian Formulation of Hysteretic Energy Storage Elements: The Backlash Case](/202603/30/2603.25211v2-on-port-hamiltonian-formulation-of-hysteretic-energy-storage-elements-the-backlash-case)  
+1. [Bonded-particle model for magneto-elastic rods](/202603/31/2603.27279v1-bonded-particle-model-for-magneto-elastic-rods)  
+   标签：评分：7.0/10、query:em-force
+   evidence：弹性结构中远程磁相互作用和外场驱动的建模
+2. [Notes from the Physics Teaching Lab: A Magneto-Mechanical Harmonic Oscillator](/202603/31/2603.28647v1-notes-from-the-physics-teaching-lab-a-magneto-mechanical-harmonic-oscillator)  
+   标签：评分：7.0/10、query:em-force
+   evidence：具有涡流阻尼的磁驱动振荡器
+3. [Task-Space Singularity Avoidance for Control Affine Systems Using Control Barrier Functions](/202603/31/2603.23753v1-task-space-singularity-avoidance-for-control-affine-systems-using-control-barrier-functions)  
    标签：评分：6.0/10、query:em-force
-   evidence：磁滞电感器的端口哈密顿公式
-2. [Physics-Informed Neural Operator for Electromagnetic Inverse Scattering Problems](/202603/30/2603.25404v1-physics-informed-neural-operator-for-electromagnetic-inverse-scattering-problems)  
+   evidence：作为执行器动力学函数的力生成保证
+4. [A Monolithic Computational Homogenization Framework for Nearly Incompressible Magnetoelastic Composites](/202603/31/2603.25965v1-a-monolithic-computational-homogenization-framework-for-nearly-incompressible-magnetoelastic-composites)  
    标签：评分：6.0/10、query:em-force
-   evidence：用于电磁电流分布的物理信息神经网络算子
-3. [LQR for Systems with Probabilistic Parametric Uncertainties: A Gradient Method](/202603/30/2603.26080v1-lqr-for-systems-with-probabilistic-parametric-uncertainties-a-gradient-method)  
+   evidence：具有强磁机耦合特性的磁弹性复合材料建模
+5. [Data-driven discovery and control of multistable nonlinear systems and hysteresis via structured Neural ODEs](/202603/31/2603.27024v1-data-driven-discovery-and-control-of-multistable-nonlinear-systems-and-hysteresis-via-structured-neural-odes)  
    标签：评分：6.0/10、query:em-force
-   evidence：具有参数不确定性系统的LQR控制
+   evidence：具有磁滞特性的非线性系统数据驱动发现与控制
+6. [MetaTune: Adjoint-based Meta-tuning via Robotic Differentiable Dynamics](/202603/31/2603.27313v1-metatune-adjoint-based-meta-tuning-via-robotic-differentiable-dynamics)  
+   标签：评分：6.0/10、query:em-force
+   evidence：反馈控制器与扰动观测器的联合自动调优
+7. [Adaptive differentiating filter: case study of PID feedback control](/202603/31/2603.27615v1-adaptive-differentiating-filter-case-study-of-pid-feedback-control)  
+   标签：评分：6.0/10、query:em-force
+   evidence：机电应用中用于PID反馈的自适应微分滤波器
+8. [Monolithic piezo-magnonic-MEMS for efficient modulation of RF signals](/202603/31/2603.28411v1-monolithic-piezo-magnonic-mems-for-efficient-modulation-of-rf-signals)  
+   标签：评分：6.0/10、query:em-force
+   evidence：通过MEMS中的磁弹性耦合进行磁场的电压控制
 
 
 <div class="dpr-home-promo-card">
