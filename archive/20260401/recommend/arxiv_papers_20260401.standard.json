@@ -1,0 +1,167 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-01T20:50:05.335124+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 1,
+    "deep_cap": 6,
+    "deep_selected": 1,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [
+    {
+      "id": "2603.29745v1",
+      "title": "RHINO-MAG: Recursive H-Field Inference based on Observed Magnetic Flux under Dynamic Excitation",
+      "abstract": "Driven by the MagNet Challenge 2025 (MC2), increased research interest is directed towards modeling transient magnetic fields within ferrite material. An accurate time-resolved and temperature-aware H-field prediction is essential for optimizing magnetic components in applications with quasi-stationary / non-stationary excitation waveforms. Within the scope of this investigation, a selection of model structures with varying degrees of physically motivated structure are compared. Based on a Pareto investigation, a rather black-box gated recurrent unit (GRU) model structure with a graceful initialization setup is found to offer the most attractive model size vs. model accuracy trade-off, while the physics-inspired models performed worse. For a GRU-based model with only 325 parameters, a sequence relative error of 8.02 % and a normalized energy relative error of 1.07 % averaged across five different materials are achieved on unseen test data. With this excellent parameter efficiency, the proposed model won the first place in the performance category of the MC2.",
+      "authors": [
+        "Hendrik Vater",
+        "Oliver Schweins",
+        "Lukas Hölsch",
+        "Wilhelm Kirchgässner",
+        "Till Piepenbrock",
+        "Oliver Wallscheid"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY",
+        "cond-mat.mtrl-sci",
+        "eess.SP"
+      ],
+      "published": "2026-03-31T13:43:52+00:00",
+      "link": "https://arxiv.org/pdf/2603.29745v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "modeling transient magnetic fields under dynamic excitation",
+      "llm_evidence_cn": "动态励磁下的瞬态磁场建模",
+      "llm_evidence": "动态励磁下的瞬态磁场建模",
+      "canonical_evidence": "动态励磁下的瞬态磁场建模",
+      "llm_tldr_en": "Compares model structures for predicting time-resolved magnetic fields in ferrite materials.",
+      "llm_tldr_cn": "比较了预测铁氧体材料中时间分辨磁场的模型结构。",
+      "llm_tldr": "比较了预测铁氧体材料中时间分辨磁场的模型结构。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "eddy current effects in electromagnetic actuators dynamic modeling",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2603.29445v1",
+      "title": "Dual MPC for quasi-Linear Parameter Varying systems",
+      "abstract": "We present a dual Model Predictive Control (MPC) framework for the simultaneous identification and control of quasi-Linear Parameter Varying (qLPV) systems. The framework is composed of an online estimator for the states and parameters of the qLPV system, and a controller that leverages the estimated model to compute inputs with a dual purpose: tracking a reference output while actively exciting the system to enhance parameter estimation. The core of this approach is a robust tube-based MPC scheme that exploits recent developments in polytopic geometry to guarantee recursive feasibility and stability in spite of model uncertainty. The effectiveness of the framework in achieving improved tracking performance while identifying a model of the system is demonstrated through a numerical example.",
+      "authors": [
+        "Sampath Kumar Mulagaleti",
+        "Alberto Bemporad"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-03-31T08:50:34+00:00",
+      "link": "https://arxiv.org/pdf/2603.29445v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "dual MPC for simultaneous identification and control of qLPV systems",
+      "llm_evidence_cn": "用于qLPV系统同时辨识与控制的双重MPC",
+      "llm_evidence": "用于qLPV系统同时辨识与控制的双重MPC",
+      "canonical_evidence": "用于qLPV系统同时辨识与控制的双重MPC",
+      "llm_tldr_en": "Presents a dual MPC framework for tracking and active parameter estimation in quasi-LPV systems.",
+      "llm_tldr_cn": "提出了一种双重MPC框架，用于准LPV系统的轨迹跟踪和主动参数辨识。",
+      "llm_tldr": "提出了一种双重MPC框架，用于准LPV系统的轨迹跟踪和主动参数辨识。",
+      "llm_tags": [
+        "query:em-force:composite"
+      ],
+      "matched_query_tag": "query:em-force:composite",
+      "matched_query_text": "Papers central to 查找非接触式电磁激振器的力控制方法，特别是精密控制策略, especially work that connects or combines: electromagnetic exciter force control; ddy current magnetic bearing modeling; magnetic bearing flux feedback; non-contact electromagnetic shaker force control; precision force control strategies for electromagnetic actuators; closed-loop force control for electromagnetic shakers; flux feedback linearization zero bias magnetic bearing; non contact electromagnetic exciter precision force control; eddy current effects in electromagnetic actuators dynamic modeling; flux feedback control for magnetic bearing force precision.",
+      "matched_requirement_id": "req-composite-em-force",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.29526v1",
+      "title": "Cooperative Control of Parallel Actuators for Linear Robust Output Regulation of Uncertain Linear Minimum-phase Plants",
+      "abstract": "This paper investigates the robust output regulation problem for an uncertain linear minimum-phase plant with cooperative parallel operation of multiple actuators. Building on the internal model approach, we first propose a dynamic output feedback control law to solve the robust output regulation problem with a single actuator. Then, we construct a distributed dynamic output feedback control law that is nearly independent of the number of actuators and incorporates coupling terms to address the linear robust output regulation problem with cooperative parallel operation of multiple actuators over undirected communication networks. We reveal the connection in the design of parameters between the dynamic output feedback control law under single actuator operation and the distributed dynamic output feedback control law under cooperative parallel operation with multiple actuators. Moreover, we remove the existing assumption that the actuator dynamics must be Hurwitz stable, thereby enabling the incorporation of unstable actuators in our framework. Finally, two numerical examples are provided to validate the effectiveness of the proposed control laws.",
+      "authors": [
+        "Liang Xu",
+        "Tao Liu",
+        "Zhiyun Lin"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-03-31T10:08:05+00:00",
+      "link": "https://arxiv.org/pdf/2603.29526v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "cooperative control of parallel actuators for robust output regulation",
+      "llm_evidence_cn": "并行执行器的协同控制用于鲁棒输出调节",
+      "llm_evidence": "并行执行器的协同控制用于鲁棒输出调节",
+      "canonical_evidence": "并行执行器的协同控制用于鲁棒输出调节",
+      "llm_tldr_en": "Investigates robust output regulation using cooperative parallel actuators over communication networks.",
+      "llm_tldr_cn": "研究了通过通信网络协同并行执行器实现不确定系统的鲁棒输出调节。",
+      "llm_tldr": "研究了通过通信网络协同并行执行器实现不确定系统的鲁棒输出调节。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2603.29532v1",
+      "title": "Learning Surrogate LPV State-Space Models with Uncertainty Quantification",
+      "abstract": "The Linear Parameter-Varying (LPV) framework enables the construction of surrogate models of complex nonlinear and high-dimensional systems, facilitating efficient stability and performance analysis together with controller design. Despite significant advances in data-driven LPV modelling, existing approaches do not quantify the uncertainty of the obtained LPV models. Consequently, assessing model reliability for analysis and control or detecting operation outside the training regime requires extensive validation and user expertise. This paper proposes a Bayesian approach for the joint estimation of LPV state-space models together with their scheduling, providing a characterization of model uncertainty and confidence bounds on the predicted model response directly from input-output data. Both aleatoric uncertainty due to measurement noise and epistemic uncertainty arising from limited training data and structural bias are considered. The resulting model preserves the LPV structure required for controller synthesis while enabling computationally efficient simulation and uncertainty propagation. The approach is demonstrated on the surrogate modelling of a two-dimensional nonlinear interconnection of mass-spring-damper systems.",
+      "authors": [
+        "E. Javier Olucha",
+        "Valentin Preda",
+        "Amritam Das",
+        "Roland Tóth"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY",
+        "cs.LG"
+      ],
+      "published": "2026-03-31T10:13:25+00:00",
+      "link": "https://arxiv.org/pdf/2603.29532v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "LPV state-space models for nonlinear system modeling and control",
+      "llm_evidence_cn": "用于非线性系统建模与控制的LPV状态空间模型",
+      "llm_evidence": "用于非线性系统建模与控制的LPV状态空间模型",
+      "canonical_evidence": "用于非线性系统建模与控制的LPV状态空间模型",
+      "llm_tldr_en": "Proposes a Bayesian approach for LPV state-space modeling with uncertainty quantification for nonlinear systems.",
+      "llm_tldr_cn": "提出了一种带有不确定性量化的LPV状态空间建模方法，适用于非线性系统分析。",
+      "llm_tldr": "提出了一种带有不确定性量化的LPV状态空间建模方法，适用于非线性系统分析。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "eddy current effects in electromagnetic actuators dynamic modeling",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

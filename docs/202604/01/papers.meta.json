@@ -1,0 +1,65 @@
+{
+  "label": "2026-04-01",
+  "date": "2026-04-01",
+  "generated_at": "2026-04-01T20:55:06",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202604/01/2603.29745v1-rhino-mag-recursive-h-field-inference-based-on-observed-magnetic-flux-under-dynamic-excitation",
+      "section": "deep",
+      "title_en": "RHINO-MAG: Recursive H-Field Inference based on Observed Magnetic Flux under Dynamic Excitation",
+      "authors": "Hendrik Vater, Oliver Schweins, Lukas Hölsch, Wilhelm Kirchgässner, Till Piepenbrock, Oliver Wallscheid",
+      "date": "2026-03-31",
+      "pdf": "https://arxiv.org/pdf/2603.29745v1",
+      "score": "8.0",
+      "evidence": "动态励磁下的瞬态磁场建模",
+      "tldr": "本研究针对MagNet挑战赛2025，旨在解决铁氧体材料在动态激励下的瞬态磁场建模问题。通过对比物理启发式模型与黑盒模型，提出了一种基于门控循环单元（GRU）且具有优雅初始化设置的RHINO-MAG模型。该模型仅含325个参数，在五个不同材料的测试集上实现了8.02%的序列相对误差和1.07%的归一化能量误差，凭借极高的参数效率荣获挑战赛性能组冠军。",
+      "tags": "query:em-force",
+      "abstract_en": "Driven by the MagNet Challenge 2025 (MC2), increased research interest is directed towards modeling transient magnetic fields within ferrite material. An accurate time-resolved and temperature-aware H-field prediction is essential for optimizing magnetic components in applications with quasi-stationary / non-stationary excitation waveforms. Within the scope of this investigation, a selection of model structures with varying degrees of physically motivated structure are compared. Based on a Pareto investigation, a rather black-box gated recurrent unit (GRU) model structure with a graceful initialization setup is found to offer the most attractive model size vs. model accuracy trade-off, while the physics-inspired models performed worse. For a GRU-based model with only 325 parameters, a sequence relative error of 8.02 % and a normalized energy relative error of 1.07 % averaged across five different materials are achieved on unseen test data. With this excellent parameter efficiency, the proposed model won the first place in the performance category of the MC2.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/01/2603.29445v1-dual-mpc-for-quasi-linear-parameter-varying-systems",
+      "section": "quick",
+      "title_en": "Dual MPC for quasi-Linear Parameter Varying systems",
+      "authors": "Sampath Kumar Mulagaleti, Alberto Bemporad",
+      "date": "2026-03-31",
+      "pdf": "https://arxiv.org/pdf/2603.29445v1",
+      "score": "6.0",
+      "evidence": "用于qLPV系统同时辨识与控制的双重MPC",
+      "tldr": "提出了一种双重MPC框架，用于准LPV系统的轨迹跟踪和主动参数辨识。",
+      "tags": "query:em-force",
+      "abstract_en": "We present a dual Model Predictive Control (MPC) framework for the simultaneous identification and control of quasi-Linear Parameter Varying (qLPV) systems. The framework is composed of an online estimator for the states and parameters of the qLPV system, and a controller that leverages the estimated model to compute inputs with a dual purpose: tracking a reference output while actively exciting the system to enhance parameter estimation. The core of this approach is a robust tube-based MPC scheme that exploits recent developments in polytopic geometry to guarantee recursive feasibility and stability in spite of model uncertainty. The effectiveness of the framework in achieving improved tracking performance while identifying a model of the system is demonstrated through a numerical example.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/01/2603.29526v1-cooperative-control-of-parallel-actuators-for-linear-robust-output-regulation-of-uncertain-linear-minimum-phase-plants",
+      "section": "quick",
+      "title_en": "Cooperative Control of Parallel Actuators for Linear Robust Output Regulation of Uncertain Linear Minimum-phase Plants",
+      "authors": "Liang Xu, Tao Liu, Zhiyun Lin",
+      "date": "2026-03-31",
+      "pdf": "https://arxiv.org/pdf/2603.29526v1",
+      "score": "6.0",
+      "evidence": "并行执行器的协同控制用于鲁棒输出调节",
+      "tldr": "本文研究了具有多个并行执行器的不确定线性最小相位系统的鲁棒输出调节问题。基于内模原理，研究者首先设计了单执行器动态输出反馈控制律，并将其扩展为适用于无向通信网络的分布式协作控制方案。该方案实现了与执行器数量几乎无关的控制设计，并突破了执行器必须稳定的传统假设，通过数值仿真验证了其在处理不稳定执行器和多执行器协作方面的有效性。",
+      "tags": "query:em-force",
+      "abstract_en": "This paper investigates the robust output regulation problem for an uncertain linear minimum-phase plant with cooperative parallel operation of multiple actuators. Building on the internal model approach, we first propose a dynamic output feedback control law to solve the robust output regulation problem with a single actuator. Then, we construct a distributed dynamic output feedback control law that is nearly independent of the number of actuators and incorporates coupling terms to address the linear robust output regulation problem with cooperative parallel operation of multiple actuators over undirected communication networks. We reveal the connection in the design of parameters between the dynamic output feedback control law under single actuator operation and the distributed dynamic output feedback control law under cooperative parallel operation with multiple actuators. Moreover, we remove the existing assumption that the actuator dynamics must be Hurwitz stable, thereby enabling the incorporation of unstable actuators in our framework. Finally, two numerical examples are provided to validate the effectiveness of the proposed control laws.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/01/2603.29532v1-learning-surrogate-lpv-state-space-models-with-uncertainty-quantification",
+      "section": "quick",
+      "title_en": "Learning Surrogate LPV State-Space Models with Uncertainty Quantification",
+      "authors": "E. Javier Olucha, Valentin Preda, Amritam Das, Roland Tóth",
+      "date": "2026-03-31",
+      "pdf": "https://arxiv.org/pdf/2603.29532v1",
+      "score": "6.0",
+      "evidence": "用于非线性系统建模与控制的LPV状态空间模型",
+      "tldr": "提出了一种带有不确定性量化的LPV状态空间建模方法，适用于非线性系统分析。",
+      "tags": "query:em-force",
+      "abstract_en": "The Linear Parameter-Varying (LPV) framework enables the construction of surrogate models of complex nonlinear and high-dimensional systems, facilitating efficient stability and performance analysis together with controller design. Despite significant advances in data-driven LPV modelling, existing approaches do not quantify the uncertainty of the obtained LPV models. Consequently, assessing model reliability for analysis and control or detecting operation outside the training regime requires extensive validation and user expertise. This paper proposes a Bayesian approach for the joint estimation of LPV state-space models together with their scheduling, providing a characterization of model uncertainty and confidence bounds on the predicted model response directly from input-output data. Both aleatoric uncertainty due to measurement noise and epistemic uncertainty arising from limited training data and structural bias are considered. The resulting model preserves the LPV structure required for controller synthesis while enabling computationally efficient simulation and uncertainty propagation. The approach is demonstrated on the surrogate modelling of a two-dimensional nonlinear interconnection of mass-spring-damper systems.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

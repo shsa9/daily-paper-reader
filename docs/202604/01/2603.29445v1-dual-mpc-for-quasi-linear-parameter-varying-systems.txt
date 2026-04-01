@@ -1,0 +1,878 @@
+Title: Dual MPC for quasi-Linear Parameter Varying systems
+
+URL Source: https://arxiv.org/pdf/2603.29445v1
+
+Published Time: Wed, 01 Apr 2026 00:45:03 GMT
+
+Number of Pages: 9
+
+Markdown Content:
+# Dual MPC for quasi-Linear Parameter Varying systems 
+
+## Sampath Kumar Mulagaleti and Alberto Bemporad, Fellow, IEEE ∗
+
+## April 1, 2026 
+
+## Abstract 
+
+We present a dual Model Predictive Control (MPC) frame-work for the simultaneous identification and control of quasi-Linear Parameter Varying (qLPV) systems. The framework is composed of an online estimator for the states and parameters of the qLPV system, and a controller that leverages the estimated model to compute inputs with a dual purpose: tracking a reference output while actively exciting the system to enhance parameter estimation. The core of this approach is a robust tube-based MPC scheme that exploits recent developments in polytopic geometry to guarantee recursive feasibility and stability in spite of model uncertainty. The effectiveness of the framework in achieving improved tracking performance while identifying a model of the system is demonstrated through a numerical example. 
+
+## 1 Introduction 
+
+The closed-loop performance of a Model Predictive Control (MPC) scheme relies heavily on the quality of the model used. When dealing with minor prediction inaccuracies, robust MPC formulations provide an effective mechanism to ensure constraint satisfaction and stability [1]. However, as the complexity of control systems grows, the dynamical models employed are often highly nonlinear and identified directly from data [2]. For such systems, characterizing global uncertainty bounds is often not viable, and even if characterized, a robust MPC scheme using them might be excessively conservative. To ameliorate this conserva-tiveness, it becomes necessary to adapt the model online utilizing input-output data generated in closed loop. Typ-ically, such adaptive MPC schemes [3] couple an online parameter estimation mechanism with an MPC formula-tion endowed with stability guarantees in the presence of model changes. However, passive adaptation can be significantly en-            
+
+> ∗This work was funded by the European Union (ERC Advanced Research Grant COMPACT, No. 101141351). Views and opin-ions expressed are however those of the authors only and do not necessarily reflect those of the European Union or the European Research Council. Neither the European Union nor the grant-ing authority can be held responsible for them. The authors are with the IMT School for Advanced Studies Lucca, Italy. (Email:
+> s.mulagaleti@imtlucca.it ,alberto.bemporad@imtlucca.it )
+
+hanced by actively generating control inputs that simulta-neously improve the quality of the estimated model. This principle forms the core of dual control, where the applied input actively excites the system to facilitate parameter es-timation [4–6]. In the context of linear systems with input-state measurements, this is generally achieved by ensuring the computed input is persistently exciting [7–9], or di-rectly minimizing the prediction uncertainty [10]. For non-linear systems with input-state measurements, bounded-uncertainty estimators are typically employed alongside ac-tive exploration strategies to shrink parameter uncertainty sets [11–15]. When restricted to only input-output measurements, the dual-control problem becomes markedly more challenging [16]. A prevalent strategy in such settings involves using an Extended Kalman Filter (EKF) to perform joint state-parameter estimation along with their associated uncer-tainty, which are then propagated within the MPC frame-work to simultaneously minimize uncertainty alongside the control objective, and ensure probabilistic constraint sat-isfaction [6, 17–19]. While effective, propagating this un-certainty inherently yields a nonlinear and nonconvex op-timization problem, necessitating the development of spe-cialized solvers. Furthermore, unlike approaches that as-sume full state feedback, these output-feedback schemes typically lack guarantees regarding closed-loop stability in the presence of online parameter variations. 
+
+Contribution . We present an approach to synthesize dual MPC schemes for quasi-Linear Parameter Varying (qLPV) systems, in which the scheduling function is re-stricted to the simplex using a softmax operator. This parameterization effectively models complex nonlinear dy-namics [20], while being suitable for the synthesis of robust MPC schemes since the nonlinearity is bounded by con-struction. We estimate online the state and parameters of the model using an estimator that is subject to constraints. These constraints are designed to ensure that the down-stream dual MPC scheme, developed using a tube-based MPC (TMPC) approach, remains feasible. We solve the dual MPC problem in two stages, with the first stage com-puting a tracking control input to drive the model to a neighborhood of an output reference, and the second stage a perturbing input to promote active exploration. The bounds on this perturbation are user-specified, which is a standard exploration-exploitation tradeoff in dual MPC. 
+
+> arXiv:2603.29445v1 [eess.SY] 31 Mar 2026
+
+To develop the TMPC scheme, we extend the approach of [21, 22] to compute configuration-constrained polytopic tubes [23]. We demonstrate that the closed-loop is input-to-state (ISS) Lyapunov stable [24] against parameter vari-ations, and validate its effectiveness using a simple numer-ical example. 
+
+Notation . We denote by N the set of natu-ral numbers. For n ∈ N, we define ∆n := 
+
+{x ∈ Rn|x ∈ [0 , 1] , Pni=1 xi = 1 } as the simplex set. We denote by Imn the set of integers between n and m, and In
+
+as the identity matrix in Rn×n. We define softmax( x) : 
+
+Rn → Rn as the function with components exi / Pnj=1 exj
+
+for i ∈ In 
+
+> 1
+
+. Given a vector a ∈ Rn, |a| ∈ Rn denotes the element-wise absolute value vector. Given compact con-vex sets M1, · · · , M N ⊆ Rn, we define CH {Mi, i ∈ IN 
+
+> 1
+
+} := nPNi=1 λixi ∈ Rn xi ∈ Mi, λ ∈ ∆N
+
+o
+
+as the convex hull of the individual sets, and Mi ⊕ Mj ⊆ Rn as the Minkowski sum of the sets Mi and Mj . If Mi = {x}, i.e., its a single-ton, then we denote the sum as x ⊕ Mj .
+
+## 2 Problem Setup 
+
+We want to control the nonlinear discrete-time dynamical system 
+
+z+ = f (z, u ), y = g(z) (1) where u ∈ Rnu , y ∈ Rny and z ∈ Rnz are the input, out-put, and state vectors at time t ∈ N, respectively, and 
+
+z+ denotes the state at the next time step, under the fol-lowing setting: (a) The functions f and g, the state di-mension nz are unknown; ( b) The functions f and g are continuously differentiable, and satisfy 0 = f (0 , 0) and 0 = g(0); ( c) The input is subject to given constraints 
+
+u ∈ U := {u : |u| ≤ ϵu}; ( d) Only the output y is measur-able, and is subject to given convex constraints y ∈ Y.Under the above assumptions, we aim to design an output-reference tracking controller for the plant in a dual-control framework, in which we identify a model of the plant (1) while controlling it by applying a suitable input 
+
+u. To achieve this goal, our dual-control scheme consists of the following components: (a) A dynamical model of the plant with state x ∈ Rnx and parameters θ ∈ Rnθ ;(b) A dual-objective MPC scheme that at each time t uses the current state and parameter estimates to compute an input ut ∈ U which balances output reference tracking with active exploration; ( c) A mechanism to estimate the state xt+1 and parameters θt+1 using the output yt+1 of the plant. We endow this closed-loop scheme with recur-sive feasibility and asymptotic stability guarantees using modern computational tools from polytopic geometry. 
+
+## 3 Modelling 
+
+We model the dynamics of (1) using the qLPV system 
+
+x+ = A(p(x, u )) x + B(p(x, u )) u, ˆy = Cx, (2) where x ∈ Rnx , C ∈ Rny ×nx , and the matrix-valued func-tions ( A(p), B (p)) are parameterized as (A(p), B (p)) := 
+
+> np
+
+X
+
+> i=1
+
+pi(Ai, B i), (3) with Ai ∈ Rnx×nx and Bi ∈ Rnx×nu . We parameterize the scheduling function p : Rnx+nu → Rnp as 
+
+p(x, u ) = softmax( N (x, u )) , (4) where N : Rnx+nu → Rnp is a feedforward neural network (FNN) with continuously differentiable activation units. The parameterization in (4) results in p(x, u ) ∈ ∆np , i.e., the scheduling variable always belongs to the simplex, and is hence bounded by construction. We denote by θ ∈ Rnθ
+
+the parameters of (2), which include the system matrices 
+
+{Ai, B i} and FNN parameters, and assume instead that C
+
+is fixed and is a full row-rank matrix, such as a collection of 
+
+ny rows of the identity matrix of order nx, with ny ≤ nx.
+
+3.1 Combined state and parameter estimation 
+
+We recall the general approach to estimate the state x
+
+and parameters θ of (2) using input-output measurements from the plant. Denoting f (x, u, θ ) := A(p(x, u )) x +
+
+B(p(x, u )) u, we introduce the augmented system 
+
+ζ+ = F (ζ, u ) + w, y = ˜Cζ + v, (5) where ζ = ( x, θ ) is the augmented state with dynamics 
+
+F (ζ, u ) = ( f (x, u, θ ), θ ) and process noise w ∈ Rnx+nθ , the output matrix is ˜C = [ C 0], and output noise v ∈ Rny .Using input-output measurements u0: t := ( u0, · · · , u t) and 
+
+y0: t+1 := ( y0, · · · , y t+1 ), an observer estimates the state and parameter of (2) at time t + 1 as ˆζt+1 = ˆF (u0: t, y 0: t+1 ). (6) For example, when using an Extended Kalman Filter (EKF), the process and measurement noise are assumed to satisfy w ∼ N (0 , Q e) and v ∼ N (0 , R e) respectively. Then, assuming that ζt ∼ N (ˆζt, ˆPt), the mean and covari-ance of the state of (5) are updated as ˜ζt+1 = F (ˆζt, u t), (7a) ˜Pt+1 = ∇ζ F (ˆζt, u t) ˆPt∇ζ F (ˆζt, u t)⊤ + Qe, (7b) 
+
+Kt+1 = ˜Pt+1 ˜C⊤( ˜C ˜Pt+1 ˜C⊤ + Re)−1, (7c) ˆζt+1 = ˜ζt+1 + Kt+1 (yt+1 − ˜C ˜ζt+1 ), (7d) ˆPt+1 = ( Inx+nθ − Kt+1 ˜C) ˜Pt+1 . (7e) Alternative approaches, e.g., the Moving Horizon Estima-tor (MHE) [25, 26] can be used to model (6). In this work, we assume that given a constraint set Θ ⊆ Rnx+nθ , the estimator is (6) is designed to satisfy ˆζt+1 ∈ Θ. (8) While the MHE can explicitly handle such constraints, the EKF can be modified [27,28] to handle them by modifying the correction step in (7d) as ˆζt+1 = arg min  
+
+> ζ∈Θ
+
+∥ζ − ˜ζt+1 ∥2˜P −1
+
+> t+1
+
++ ∥yt+1 − ˜Cζ ∥2
+
+> R−1e
+
+. (9) In the next section, we formulate the constraint set Θ to guarantee stability of the proposed dual-control scheme. 
+
+## 4 Dual MPC 
+
+Towards developing a dual-control framework, we first for-mulate the MPC problem: min  
+
+> v,v s
+> N−1
+
+X
+
+> k=0
+
+zk − zs
+
+vk − vs
+
+ 2
+
+> Q
+
++
+
+zN − zs
+
+vN − vs
+
+ 2
+
+> P
+
+(10) + ℓ(vs, y r) + αa (v)s.t. zk+1 = f (zk, v k, ˆθ), z s = f (zs, v s, ˆθ),Cz k ∈ Y, v k ∈ U, k ∈ IN −10 ,Cz s ∈ Y, v s ∈ U, z 0 = ˆ x, z N ∈ O (vs, ˆθ),
+
+which depends on the state ˆ x and parameters ˆθ of (2) estimated using (6), and the output reference yr ∈ Rny .The optimization vector is the finite sequence of moves 
+
+v = ( v0, · · · , v N ). Problem (10) is formulated using an ar-tificial reference approach [29], in which the steady-state zs
+
+corresponding to an input vs is optimized online based on 
+
+yr through ℓ(vs, y r), such as ℓ(vs, y r) = ∥yr − Cz s∥22. Fur-thermore, the function a(v) is the active exploration objec-tive, designed to modify the input such that exploration is promoted, e.g., as in [30]. The factor α ≥ 0 weighs the ac-tive exploration objective against the tracking objective. Finally, the cost function matrices Q, P ⪰ 0, along with the terminal set O(vs, ˆθ) with terminal control input vN
+
+are designed to ensure recursive feasibility and stability of the closed-loop scheme formulated with ut = v∗ 
+
+> 0
+
+(ˆ xt, ˆθt, y r 
+
+> t
+
+), where v∗ 
+
+> 0
+
+(ˆ xt, ˆθt, y r 
+
+> t
+
+) is the first input of the parametric op-timizer of Problem (10). Unfortunately, solving Problem (10) entails the following challenges: 
+
+• It requires the use of NLP solvers. 
+
+• Recursive feasibility and stability cannot be guaran-teed if the parameter ˆθ is updated using (6). We now present a TMPC approximation of Problem (10) that addresses both these challenges. 
+
+Remark 1. Problem (10) is formulated using a certainty-equivalence approach similar to [10]. While this nominal formulation does not explicitly account for the effect of unmodeled dynamics on output constraint satisfaction, it serves as a theoretical baseline. In practice, prediction un-certainties are typically addressed via constraint tighten-ing [19, 31–33]. Rather than removing output constraints to trivially guarantee recursive feasibility, we retain them in this nominal setting. This establishes the stability prop-erties of the dual-control scheme, and provides the frame-work necessary for integration with constraint-tightening techniques. 
+
+4.1 Tube-based MPC 
+
+We construct our TMPC scheme based on the following observations and modifications: 
+
+Perturbed input: If the initial model ˆθ0 is good enough , a practical implementation of (10) would require a small active exploration constant α ≥ 0 in the objec-tive. Then, under sufficient smoothness of the dynam-ics and cost functions, the optimal solution to Problem (10) is continuous with respect to the weighting param-eter α. Consequently, for small values of α, the optimal dual-control solution lies in a bounded neighborhood of the pure-tracking solution, i.e., with α = 0. Motivated by this intuition, we propose a two-stage strategy. Given a tuning parameter β ∈ [0 , 1), we split the control input as 
+
+u = uc + up with uc ∈ (1 − β)U and up ∈ βU. In the first stage, we design a robust tracking controller to compute 
+
+uc using the uncertain model 
+
+x+ ∈ A(p(x, u )) x + B(p(x, u )) uc ⊕ W, (11) where the additive disturbance W is defined as 
+
+w ∈ W := CH βB iU, i ∈ Inp 
+
+> 1
+
+. (12) In the second stage, we utilize an active exploration crite-rion to compute the perturbation up ∈ βU, following which we apply the input u = uc + up to the plant. Future study can analyze the suboptimality of this approach. 
+
+Model encapsulation: From parameterizations (3) and (4), we observe that for any ( x, u ) ∈ Rnx × Rnu , the propagated state x+ according to (11) satisfies 
+
+x+ ∈ CH Aix + Biuc ⊕ W, i ∈ Inp 
+
+> 1
+
+(13) since p(x, u ) ∈ ∆np . Then, a tube constructed for the dif-ference inclusion (13) will encapsulate the set-valued tra-jectories of (11). Formally, for any M ∈ N, a tube is a sequence of sets {X0, · · · , X M } ⊆ Rnx satisfying 
+
+∀x ∈ Xt, ∃uc ∈ (1 − β)U : (14) 
+
+Aix + Biuc ⊕ W ⊆ Xt+1 , ∀ i ∈ Inp 
+
+> 1
+
+, t ∈ IM −10 .
+
+This condition implies that if x0 ∈ X0, then there exists an input sequence {uc0, · · · , u c 
+
+> M−1
+
+} ∈ (1 − β)U such that the resulting state trajectory of (11) satisfies xt ∈ Xt for 
+
+t ∈ { 1, · · · , M } for any {w0, · · · , w M −1} ∈ W .TMPC schemes construct a feasible tube that converges to a robust control invariant (RCI) set Xs ⊆ Rnx which satisfies the inclusion CX s ⊆ Y along with 
+
+∀x ∈ Xs, ∃uc ∈ (1 − β)U : (15) 
+
+Aix + Biuc ⊕ W ⊆ Xs, ∀ i ∈ Inp 
+
+> 1
+
+.
+
+4.2 Configuration-constrained TMPC 
+
+We develop our TMPC scheme using polytopes 
+
+X ← X(z, s ) := z ⊕ { x ∈ Rnx |F x ≤ s} , (16) where the matrix F ∈ Rf×nx is fixed a priori, and the parameters optimized online are the center z ∈ Rnx and offset vector s ∈ Rf . We also enforce nonnegative and configuration constraints [23] on s:
+
+E := s ∈ Rf s ≥ 0, Es ≤ 0 , (17) which ensures 0 ∈ { x ∈ Rnx |F x ≤ s}, and preserves the combinatorial structure of X(z, s ). Then, there exist ma-trices V := {Vj ∈ Rnx×f , j ∈ Iv
+
+> 1
+
+} such that for any z ∈ Rnx ,
+
+s ∈ E ⇒ X(z, s ) = CH {z + Vj s, j ∈ Iv
+
+> 1
+
+} . (18) Thus, the set E thus enables a linear parameterization of the halfspace and vertex representations of X(z, s ). 
+
+Proposition 1. The polytope Xs = X(zs, s ) satisfies the RCI condition in (15) if there exist vectors vs ∈ Rnu , c ∈
+
+Rvnu and q ∈ Rf verifying the inequalities 
+
+F (Ai(zs + Vj s) + Bi(vs + Uj c)) + d + q ≤ s + F z s,C(zs + Vj s) ∈ Y, v s + Uj c ∈ (1 − β)U, q ≥ 0,s ∈ E , ∀(i, j ) ∈ Inp 
+
+> 1
+
+× Iv
+
+> 1
+
+, (19) 
+
+where we define the disturbance vector 
+
+d := max {β|F B i|ϵu, i ∈ Inp 
+
+> 1
+
+} (20) 
+
+and matrices Uj := ej ⊗ Iv ∈ Rnu×vnu .Proof. The result follows from [23, Corollary 4], where 
+
+c = ( c1, · · · , c v) stacks the vertex control inputs, and (19) contains an additional disturbance vector q ≥ 0. Given model parameters ˆθ estimated by (6) and out-put reference yr ∈ Rny , the optimal RCI set is defined as 
+
+X(zso(ˆθ, y r), s o(ˆθ, y r)), where ( zso, s o) are part of the opti-mizers of the problem 
+
+r(ˆθ, y r) := min  
+
+> xr
+
+ℓ(xr, y r) s.t. (19) (21) defined over xr = ( zs, v s, s, c, q ) ∈ Rnx+nu+2 m+vnu . The optimal RCI cost is modeled, for example, as 
+
+ℓ(xr, y r) = 
+
+> v
+
+X
+
+> j=1
+
+∥yr − Cz s∥2 
+
+> Q1
+
++ ∥xr∥2 
+
+> Q2
+
+, (22) with Q1, Q 2 ≻ 0, such that the center of the optimal RCI set projected onto the output space tracks the ref-erence. Our goal is to formulate a TMPC scheme which computes a tube {X(zt, s ), t ∈ N} that converges to 
+
+X(zso(ˆθ, y r), s o(ˆθ, y r)). 
+
+Proposition 2. Suppose the vector xr satisfies (19) .Then, the sets {X(z0, s ), · · · , X (zM , s )} satisfy the tube con-dition (14) if there exist vectors {v0, · · · , v M −1} ∈ Rnu
+
+satisfying 
+
+F (Ai(zt − zs) + Bi(vt − vs)) ≤ q + F (zt+1 − zs),C(zt + Vj s) ∈ Y, v t + Uj c ∈ (1 − β)U,
+
+∀(i, j, t ) ∈ Inp 
+
+> 1
+
+× Iv 
+
+> 1
+
+× IM −10 . (23) 
+
+Proof. From [23, Corollary 4], the sets X(zt, s ) and 
+
+X(zt+1 , s ) are part of an invariant tube if 
+
+F (Ai(zt + Vj s) + Bi(vt + Uj c)) + d ≤ s + F z t+1 (24) holds with some vt ∈ Rnu for all ( i, j ) ∈ Inp 
+
+> 1
+
+×Iv
+
+> 1
+
+, along with the input and output constraints. From (19), the inequal-ity F (AiVj s + BiUj c) ≤ F z s + s − (F (Aizs + Bivs) + d + q)holds. Then, adding F (Aizt + Bivt) + d to both sides of this inequality, we see that the left-hand-side of (24) is 
+
+≤ F z s + s + F (Ai(zt − zs) + Bi(vt − vs)) − q. The proof concludes by enforcing this bound to be ≤ s + F z t+1 .Following Propositions 1 and 2, we formulate our TMPC controller based on the QP min  
+
+> x
+> N−1
+
+X
+
+> k=0
+
+zk − zs
+
+vk − vs
+
+ 2
+
+> Q
+
++
+
+zN − zs
+
+vN − vs
+
+ 2
+
+> P
+
++ ℓ(xr, y r) (25) s.t. F (Ai(zk − zs) + Bi(vk − vs)) ≤ q + F (zk+1 − zs),
+
+C(zk + Vj s) ∈ Y, v k + Uj c ∈ (1 − β)U,
+
+F (Ai(zN − zs) + Bi(vN − vs)) ≤ q + γF (zN − zs),
+
+C(zN + Vj s) ∈ Y, v N + Uj c ∈ (1 − β)U,
+
+F ˆx ≤ q + F z 0, (19) , (i, j, k ) ∈ Inp 
+
+> 1
+
+× Iv 
+
+> 1
+
+× IN −10 ,
+
+where γ ∈ (0 , 1) is some user-specified constant. The QP is parametric in the state ˆ x and parameter ˆθ of (2) estimated using (6), along with reference yr. The optimization vector is x = ( z0, v 0, · · · , z N , v N , xr). Denoting the parametric optimizer of (25) as x∗(ˆ x, ˆθ, y r), the closed-loop scheme is defined as 
+
+ut = v∗ 
+
+> 0
+
+(ˆ xt, ˆθt, y r 
+
+> t
+
+) + 
+
+> v
+
+X
+
+> j=1
+
+λj c∗ 
+
+> j
+
+(ˆ xt, ˆθt, y r 
+
+> t
+
+) + up 
+
+> t
+
+, (26a) (ˆ xt+1 , ˆθt+1 ) updated using (6) subject to (8) , (26b) for some up 
+
+> t
+
+∈ βU computed using an active exploration criterion, where λ ∈ Rv is computed as min 
+
+> λ∈∆v
+
+∥λ∥22 s.t. ˆx = z∗ 
+
+> 0
+
++
+
+> v
+
+X
+
+> j=1
+
+λj Vj s∗. (27) 4.3 Recursive feasibility and stability 
+
+To guarantee recursive feasibility when the state and pa-rameters are updated via (6), we restrict the estimator’s update step in (8). To this end, we define a parameterized polytope Θ( x, d ) to formulate (8) as Θ( x, d ) := 
+
+xθ
+
+
+
+F x ≤ q + F z 1, β |F B i|ϵu ≤ d, F (Ai(zk − zs) + Bi(vk − vs)) ,
+
+≤ q + F (zk+1 − zs),F (Ai(zN − zs) + Bi(vN − vs)
+
+≤ q + F (z+ − zs),F (Ai(z+ − zs) + Bi(v+ − vs)
+
+≤ q + γF (z+ − zs),F (Ai(zs + Vj s) + Bi(vs + Uj c)) 
+
+≤ s + F z s − (d + q),
+
+∀ (i, j, k ) ∈ Inp 
+
+> 1
+
+× Iv 
+
+> 1
+
+× IN −11 ,
+
+
+
+where z+, v+ are the shifted variables 
+
+z+ = zs + γ(zN − zs), v + = vs + γ(vN − vs). (28) 
+
+Lemma 1. Suppose Problem (25) is feasible with initial state-parameter estimate (ˆ x0, ˆθ0). Then, (25) is feasible for all t ∈ N with (ˆ xt, ˆθt) generated by the closed-loop scheme in (26) for any reference sequence {yr 
+
+> t
+
+, t ∈ N} and per-turbation sequence {up 
+
+> t
+
+∈ βU, t ∈ N} when (8) is defined as 
+
+(ˆ xt+1 , ˆθt+1 ) ∈ Θ( x∗(ˆ xt, ˆθt, y r 
+
+> t
+
+), d (ˆθt)) (29) 
+
+with the vector d(ˆθt) is computed as in (20) .Proof. We split the proof into two parts. First, we show that recursive feasibility holds if ˆθt+1 = ˆθt, i.e., the pa-rameters are held constant, and the state is updated as ˆxt+1 = f (ˆ xt, u t, ˆθt). Then, we extend the proof when they are updated following (26b). We denote the opti-mizer x∗(ˆ xt, ˆθt, y r 
+
+> t
+
+) of Problem (25) at time t as x∗ =(z∗ 
+
+> 0
+
+, v ∗ 
+
+> 0
+
+, · · · , z ∗ 
+
+> N
+
+, v ∗ 
+
+> N
+
+, xr∗). Suppose (25) is feasible at time t ∈ N and ut ∈ U
+
+from (26a) is applied with some up 
+
+> t
+
+∈ βU. From (24) in Proposition 2, we know that for all i ∈ Inp 
+
+> 1
+
+, the inequal-ity F (Ai(z∗ 
+
+> 0
+
++ Vj s∗) + Bi(v∗ 
+
+> 0
+
++ Uj c∗ + up 
+
+> t
+
+)) ≤ s∗ + F z ∗
+
+> 1
+
+holds for any up 
+
+> t
+
+∈ βU. Denoting pt = p(ˆ xt, u t), (4) implies pt ∈ ∆np . Hence, multiplying both sides of the inequality with pt,i and components λj computed as in (27) and summing, A(pt)ˆ xt + B(pt)ut ∈ X(z∗ 
+
+> 1
+
+, s ∗) follows. Hence, the constraint F ˆx ≤ s + F z 0 in (25) is feasible with ˆ x = A(pt)ˆ xt + B(pt)ut and z0 = z∗ 
+
+> 1
+
+. Furthermore, the RCI constraints in (19) are feasible with xr = xr∗ and ˆθt+1 = ˆθt for any yr
+
+> t+1
+
+, since yr only enters through the objective. Finally, we consider the candidate sequence 
+
+zk = z∗
+
+> k+1
+
+, v k = v∗
+
+> k+1
+
+, k ∈ IN −10 , (30a) 
+
+zN = z∗ 
+
+> N
+
++ γ(z∗ 
+
+> N
+
+− zs∗), v N = v∗ 
+
+> N
+
++ γ(v∗ 
+
+> N
+
+− vs∗) (30b) at time t + 1. Clearly, (30a) satisfies the constraints for 
+
+k ∈ IN −20 . For k = N , we know that the inequality 
+
+F (Ai(z∗ 
+
+> N
+
+− zs∗) + Bi(v∗ 
+
+> N
+
+− vs∗) ≤ q∗ + γF (z∗ 
+
+> N
+
+− zs∗) (31) holds since (25) is feasible at time t. Hence, the inequality 
+
+F (Ai(zN −1 − zs) + Bi(vN −1 − vs) ≤ q + F (zN − zs) holds at time t + 1 with k = N − 1 from (30b) along with (zN −1, v N −1, z s, v s, q ) = (z∗ 
+
+> N
+
+, v ∗ 
+
+> N
+
+, z s∗, v s∗, q ∗). Finally, multiplying both sides of (31) with γ ∈ (0 , 1), and not-ing that γq ∗ ≤ q∗ since q∗ ≥ 0, the inequality F (Ai(zN −
+
+zs) + Bi(vN − vs) ≤ q + γF (zN − zs) follows. Thus, (25) is recursively feasible with ˆ xt+1 = f (ˆ xt, u t, ˆθt) and ˆθt+1 = ˆθt. To conclude the proof when ˆ xt+1 and ˆθt+1 
+
+are updated as per (26b), note that the subsequent state and parameters satisfy (29), with the set Θ( x∗, d (ˆθt)) de-fined using the feasible sequence in (30). Hence, for any (ˆ xt+1 , ˆθt+1 ) ∈ Θ( x∗, d (ˆθt)), (30) is a feasible sequence at time t + 1. In the following result on stability of the closed-loop scheme, we assume a constant reference yr 
+
+> t
+
+≡ yr, ∀t ∈ N,and hence drop its time dependence. 
+
+Theorem 2. Suppose Problem (25) is feasible with initial state and parameter estimate (ˆ x0, ˆθ0), and (8) is such that 
+
+(29) holds. Suppose further that matrices Q, P ≻ 0 are chosen such that P ⪰ (1 − γ2)−1Q, and denote the optimal value of (25) as C(ˆ x, ˆθ). Then, L(ˆ x, ˆθ) := C(ˆ x, ˆθ) − r(ˆθ)
+
+serves as an ISS-Lyapunov function for (26) with respect to the optimal RCI set against ∥ˆθt+1 − ˆθt∥ irrespective of the perturbation sequence {up 
+
+> t
+
+∈ βU, t ∈ N} in (26a) , where 
+
+r(ˆθ) is the optimal RCI cost from (21) .Proof. From Lemma 1, we know that (25) remains recur-sively feasible if (29) holds. Let us call x∗ = x∗(ˆ xt, ˆθt) its optimizer. Firstly, observe that the tracking components of the objective of (25) are nonnegative since Q, P ≻ 0, and ℓ(xr∗) ≥ r(ˆθt) since r(ˆθt) is the optimal value of ℓ(xr)subject to (19). Hence, L(ˆ x, ˆθ) > 0 whenever ( z∗ 
+
+> 0
+
+, v ∗ 
+
+> 0
+
+)̸ =(zso(ˆθ), v so(ˆθ)), or equivalently if ˆ x / ∈ X(zso(ˆθ), s o(ˆθ)). Sub-stituting the sequence in (30) and denoting the deviation 
+
+mk = ( z∗ 
+
+> k
+
+− zs∗, v ∗ 
+
+> k
+
+− vs∗) for k ∈ IN 
+
+> 0
+
+, it follows that 
+
+L(ˆ xt+1 , ˆθt+1 ) − L (ˆ xt, ˆθt) ≤ (32) 
+
+− ∥ m0∥2 
+
+> Q
+
++ ∥mN ∥2  
+
+> Q+γ2P−P
+
++ r(ˆθt+1 ) − r(ˆθt).
+
+Clearly, P ⪰ (1 − γ2)−1Q implies that the second term is nonpositive. Furthermore, observe that ˆθ enters the con-straints (19) bilinearly with the primal variables in the strongly convex QP (21), such that its optimal value r(ˆθ)is Lipschitz continuous in ˆθ [34] under Linear Independence Constraint Qualification. Hence, there exists some Lr > 0such that r(ˆθt+1 ) − r(ˆθt) ≤ Lr ∥ˆθt+1 − ˆθt∥, and then 
+
+L(ˆ xt+1 , ˆθt+1 ) − L (ˆ xt, ˆθt) ≤ −∥ m0∥2 
+
+> Q
+
++ Lr ∥ˆθt+1 − ˆθt∥
+
+holds, concluding the proof. From Theorem 2, we see that if (6) results in bounded updates such that ∥ˆθt+1 − ˆθt∥ < ∞, then the cost increase is guaranteed to be bounded. For the EKF in (7), this is guaranteed if the covariance matrix ˆPt remains bounded, which is expected when the linearized augmented system is uniformly observable [35]. The convergence of the esti-mation scheme for the qLPV model class in the presence of time-varying constraints in (29) is a subject of future research. 
+
+4.4 Active exploration 
+
+From Lemma 1, we know that for any perturbation input 
+
+{up 
+
+> t
+
+∈ βU, t ∈ N} defining the control law in (26a), (25) remains feasible. Accordingly, we define the problem max  
+
+> u
+
+a(u) (33) s.t. xk+1 = f (xk, u k, ˆθ), x 0 = ˆ x, xk+1 ∈ X(z∗
+
+> k+1
+
+, s ∗), u k ∈ U, k ∈ IN p−10
+
+that is parametric in the current state and parameter (ˆ x, ˆθ) estimated by (6), along with the optimizer ˆ x∗ =ˆx∗(ˆ x, ˆθ, y r) of (25). For some user-specified N p ∈ N,the tube sequence in the constraints is defined with s∗ =
+
+s∗(ˆ x, ˆθ, y r), z∗ 
+
+> k
+
+= z∗ 
+
+> k
+
+(ˆ x, ˆθ, y r) if k ∈ IN 
+
+> 1
+
+and 
+
+z∗ 
+
+> k+1
+
+= γz ∗ 
+
+> k
+
++ (1 − γ)zs∗(ˆ x, ˆθ, y r) (34) otherwise. The active exploration objective a(u) is de-fined over u = ( u0, · · · , u N p−1). Some examples include the persistence of excitation criterion, e.g., [7, 36]; Fisher information, e.g., [17]; Predicted covariance minimization, e.g., [10, 18, 37]; General nonlinear regression-type criteria, e.g., [38]. Defining u∗(ˆ x, ˆθ, y r) as the optimizer of Problem (33), the closed-loop scheme is defined as 
+
+ut = u∗
+
+> 0
+
+(ˆ xt, ˆθt, y r 
+
+> t
+
+) (35a) (ˆ xt+1 , ˆθt+1 ) updated using (6) subject to (29) . (35b) 
+
+Corollary 1. Suppose that Problem (25) with the initial state and parameter estimate (ˆ x0, ˆθ0) is feasible. Then, 
+
+(25) , (33) and the constrained estimator (6) subject to 
+
+(29) remain recursively feasible irrespective of the refer-ence {yr 
+
+> t
+
+, t ∈ N}, and ISS-Lyapunov stable if the reference is held constant. Proof. The proof follows from Lemma 1, with the tube sequence for k ≥ N in (34) satisfying (24) from (31) and (19). Then, stability follows from Theorem 2. Note that in (33), optimizing the input sequence online freely might be computationally expensive. To overcome this difficulty, we approximately solve (33) using a sample-based approach. We first sample the set of perturbation trajectories Up := {up 
+
+> j
+
+= ( up0 , · · · , u p 
+
+> Np−1
+
+) ∈ βU, j ∈ IM p 
+
+> 1
+
+}, (36) and, for each u p ∈ Up, we compute the corresponding nom-inal input sequence as uc 
+
+> k
+
+= v∗ 
+
+> k
+
++Pv 
+
+> j=1
+
+λj c∗ 
+
+> j
+
+, with v∗ 
+
+> k
+
+defined similarly as (34) for k > N and λ computed as in (27) with (ˆ x, z ∗ 
+
+> 0
+
+) ← (xk, z ∗ 
+
+> k
+
+), with the state xk propagated using the input uk = uc 
+
+> k
+
++ up
+
+> k
+
+. Evaluating the maximizing sequence, we apply the corresponding input to the plant. 
+
+## 5 Numerical example 
+
+For the purpose of numerical illustration, we consider the nonlinear mass-spring-damper system with dynamics 1
+
+m[1] ¨x[1] = 10 u − ks(x [1] ) − kd( ˙ x[1] ) − ks(δx) − kd( ˙δx) ,
+
+m[2] ¨x[2] = −ks(x [2] ) − kd(x [2] ) + k s(δx) + k d( ˙δx) ,
+
+where (x [1] , x[2] ) are the positions of the masses. The input 
+
+u is the force applied on the first mass, and the output is the position of the second mass. Denoting δx = x [1] − x[2] ,the reaction forces are k s(x) = a x + b x3 and k d(v) = dv + e · tanh( v/ v0) respectively. The plant parameters are ( m[1] , m [2] , a, b, d, e, v0) = (0 .1, 0.01 , 1, 1, 0.5, 0.5, 0.01) in appropriate units. We obtain (1) by discretizing this system, with integration performed using the Runge-Kutta integrator (Tsit5) from the Diffrax library [39], with a time-step of 0 .02s using inputs u ∈ U = [ −1, 1]. We pa-rameterize (2) with nx = 2, np = 3, and the FNN in (4) with a single hidden layer containing 3 swish activation units, such that nθ = 42. Finally, we utilize C = [1 0] as the output matrix. For the TMPC controller, we set 
+
+F = [ Inx − Inx ]⊤, resulting in f = v = 4, and compute the matrix E ∈ R8×f defining (17) using [23]. We tune the tracking costs as Q = Inx+nu and P = Q/ (1 − γ2), and the optimal RCI set costs in (22) as Q1 = 10 and 
+
+Q2 = blkdiag(10 −6Inx+nu , 10 If , Ivnu , If ). For our simulations, we initialize the model and plant at the origin, and compute ˆθ0 following [20] using an input-output dataset Dtrain of length T = 100 points such that Problem (25) is feasible at (ˆ x0, ˆθ0) with β = 0 .3, γ = 0 .95 and N = 2. Evaluating the model quality using the mean-squared error (MSE) loss ℓ2 = PT −1 
+
+> t=0
+
+∥yt − ˆyt∥22/T ,ˆθ0 achieves MSE = 0 .003 over the training dataset. We also measure another dataset Dtest of length 10000 points, over which ˆθ0 achieves MSE = 0 .198. In these datasets, we scale the plant output by 2.5 to aid in effective learning. In the test set, the output tightly belongs in [−1.487 , 1.329]. Accordingly, we define Y = [ −0.8, 0.8], such that the output constraint set is smaller than the reachable set. We use the EKF in (7)-(9) as the estima-tor in (6) with Qe = blkdiag(10 −6Inx , 0Inθ ), Re = 0 .1 and ˆP0 = blkdiag( Inx , 10 −4Inθ ). A small value of initial covari-ance is selected over ˆθ0 to avoid large variations ∥ˆθt+1 − ˆθt∥
+
+during simulation. As the active exploration criterion in  
+
+> 1Code to reproduce the results is found on https://github.com/ samku/DMPC_qLPV
+
+Problem (33), we adopt the persistence-of-excitation con-dition for linear systems, given as 
+
+a(u) = min eigval 
+
+
+
+> t
+
+X
+
+> j=t−T
+
+uj:j+N uTj:j+N
+
+, (37) from [7], where T ∈ N is the horizon of past inputs, and 
+
+uj:j+N = ( uj , · · · , u j+N ) ∈ RN n u is the vector formed us-ing the input sequence. We select T = 10 in our simu-lations. As described in Section 4.4, alternative criteria designed for nonlinear systems might result in improved performance. Finally, we solve Problem (33) with N p = N
+
+through enumeration using M p = 20 samples defining (36). In Figure 1 (top), we demonstrate the performance of the closed-loop scheme in (35), in which the output ref-erence yr 
+
+> t
+
+is a piecewise constant signal varying between 0.8 and −0.8. By “No adapt” we indicate the case when EKF is not used to estimate the state or the parameters, such that ˆ xt+1 = f (ˆ xt, u t, ˆθ0), ∀t ∈ N. We report no benefit if only the state is updated using the EKF with parameters ˆθt = ˆθ0. Instead, when (35b) is executed to perform joint state-parameter estimation, the performance improves over time: both β = 0 (no additional pertur-bation) and β = 0 .3 result in improved tracking perfor-mance. Furthermore, faster parameter convergence is ob-tained with β = 0 .3, indicated by the model output ˆ yt
+
+tracking the plant output yt earlier. As noted in Remark 1, our scheme does not account for output constraint violation by the plant, as seen in Figure 1. However, the amount of violation reduces as the model quality improves. In Figure 1 (middle), we see that the Lyapunov cost reduces when the reference is held constant, validating Theorem 2. Exponential decrease is observed since the tracking costs dominate, because ∥ˆθt+1 − ˆθt∥ is maintained small, as shown in Figure 1 (bottom). In Fig-ure 1 (middle), we also plot optimality loss due to projec-tion in the EKF, i.e., (29), where ˆζu 
+
+> t
+
+denotes the uncon-strained update following (7), and the constrained update is computed following [27] as ˆζt = arg min ζ∈Θt ∥ζ − ˆζu 
+
+> t
+
+∥2ˆP −1
+
+> t
+
+.Finally, we report that the average computation time per step is 8 ms using the qpax QP-solver [40] implemented in jax [41] on a Windows 11 laptop with Intel Core i9-14900HX processor and 32GB of RAM, indicating real-time implementability. We further analyze the performance of (35) over 10 ran-domly generated piecewise constant reference trajectory realizations of 5000 time steps. Using the plant output, we evaluate the tracking cost as t = P5000  
+
+> t=0
+
+∥yt −yr 
+
+> t
+
+∥22, and con-straint violation as c = P5000  
+
+> t=0
+
+max i=1 ,2{Hiyt − hi, 0}2
+
+> 1
+
+,where Y = {y|Hy ≤ h}. Finally, setting ˆθ∗ = ˆθ5000 as the identified model, we compute the MSE over the test dataset to evaluate model quality. In Table 1, we present the mean and standard deviation statistics of these metrics over the reference trajectory realizations. First, we run the          
+
+> Figure 1: (Top) Tracking performance of (35) .The dull red, green and blue lines indicate the output trajectory ˆytof
+> (2) , and the gray region indicates constraints; (Middle) Lya-punov cost defined in Theorem 2, and optimality loss due to projection (29) ; (Bottom) Variation in estimated parameter
+> ∆ˆθt= ˆθt+1 −ˆθt.
+
+closed-loop without model adaptation. As expected, this results in a high tracking cost since the initial model does not capture the plant dynamics well. Then, adapting the model with (6), we see that as the value of the active ex-ploration constant β increases, the tracking performance, constraint satisfaction, and final model quality improve. For small values of β, the constraint violation is worse since the system is excited beyond the output bounds before the model converges. For β = 0 .3, the fast model convergence results in the best overall tracking performance along with reduced constraint violation. We report that for β > 0.3, the model output fails to track the reference, resulting in worse performance. 
+
+## 6 Conclusions 
+
+We have presented a dual MPC framework for nonlinear systems based on qLPV models, which is composed of a constrained estimator for state and parameters of the model, a TMPC controller, and a mechanism to perturb the inputs for the dual-control effect. The TMPC scheme is designed using configuration-constrained polytopes, and is guaranteed to be recursively feasible (Lemma 1) and ISS-stable (Theorem 2) against parameter updates. Through a simple numerical example, the effectiveness of the frame-Strategy t c ℓtest 2 (ˆθ∗)No adapt 389 .840 ± 59 .262 0.146 ± 0.208 0.198 ± 0.000 
+
+β = 0 350 .037 ± 76 .337 1.164 ± 1.378 0.045 ± 0.037 
+
+β = 0 .1 307 .916 ± 60 .129 3.668 ± 3.617 0.009 ± 0.003 
+
+β = 0 .2 243 .600 ± 37 .850 0.929 ± 1.003 0.007 ± 0.002 
+
+β = 0 .3 203 .995 ± 27 .431 0.180 ± 0.230 0.006 ± 0.001   
+
+> Table 1: Performance statistics (Mean and standard deviation) of
+> (35) over different reference realization.
+
+work is demonstrated using an EKF for parameter esti-mation, and active exploration criterion chosen to be the persistency-of-excitation condition. Future research will focus on the incorporation of constraint tightening tech-niques to provide output constraint satisfaction guaran-tees, the analysis of suboptimality induced by the two-stage approach, and convergence of the constrained esti-mator scheme for qLPV systems. 
+
+## References 
+
+[1] J. Rawlings, D. Mayne, and M. Diehl, Model Predictive Control: Theory, Computation, and Design. Nob Hill Publishing, 2nd ed., 2017. [2] A. Bemporad, “An L-BFGS-B approach for linear and nonlinear system identification under ℓ1 and group-lasso regularization,” IEEE Transactions on Automatic Control, vol. 70, no. 7, pp. 4857–4864, 2025. [3] D. Clarke, “Adaptive predictive control,” Annual Reviews in Control, vol. 20, pp. 83–94, 1996. [4] A. Feldbaum, “Dual control theory. I,” Avtomatika i Telemekhanika, vol. 21, no. 9, pp. 1240–1249, 1960. [5] Y. Bar-Shalom and E. Tse, “Dual effect, certainty equivalence, and separation in stochastic control,” IEEE Transactions on Automatic Control, vol. 19, no. 5, p. 494 – 500, 1974. [6] A. Mesbah, “Stochastic model predictive control with active uncertainty learning: A survey on dual con-trol,” Annual Reviews in Control, vol. 45, pp. 107– 117, 2018. [7] G. Marafioti, R. Bitmead, and M. Hovd, “Persistently exciting model predictive control,” International Journal of Adaptive Control and Signal Processing, vol. 28, p. 536–552, May 2013. [8] M. Lorenzen, M. Cannon, and F. Allg¨ ower, “Ro-bust MPC with recursive model update,” Automatica, vol. 103, pp. 461–471, 2019. [9] X. Lu and M. Cannon, “Robust adaptive model pre-dictive control with persistent excitation conditions,” Automatica, vol. 152, p. 110959, 2023. [10] T. Heirung, B. Foss, and B. Ydstie, “MPC-based dual control with online experiment design,” Journal of Process Control, vol. 32, pp. 64–76, 2015. [11] V. Adetola, D. DeHaan, and M. Guay, “Adaptive model predictive control for constrained nonlinear sys-tems,” Systems & Control Letters, vol. 58, no. 5, pp. 320–326, 2009. [12] J. K¨ ohler, P. K¨ otting, R. Soloperto, F. Allg¨ ower, and M. M¨ uller, “A robust adaptive model predictive con-trol framework for nonlinear uncertain systems,” Int. J. Robust Nonlinear Control, vol. 31, pp. 8725–8749, Dec. 2021. [13] T. Strelnikova, J. K¨ ohler, and J. Berberich, “Adap-tive tracking MPC for nonlinear systems via online linear system identification,” in Systems Theory in Data and Optimization (J. Berberich, A. Iannelli, and F. Allg¨ ower, eds.), (Cham), pp. 69–84, Springer Na-ture Switzerland, 2025. [14] R. Soloperto, M. M¨ uller, and F. Allg¨ ower, “Guaran-teed closed-loop learning in model predictive control,” IEEE Transactions on Automatic Control, vol. 68, no. 2, pp. 991–1006, 2023. [15] T. Baltussen, M. Heemels, and A. Katriniok, “Dual MPC for Active Learning of Nonparametric Uncer-tainties,” arXiv e-prints, p. arXiv:2511.08542, Nov. 2025. [16] T. Heirung, J. Paulson, S. Lee, and A. Mesbah, “Model predictive control with active learning under model uncertainty: Why, when, and how,” AIChE Journal, vol. 64, p. 3071–3081, June 2018. [17] S. Lucia and R. Paulen, “Robust nonlinear model pre-dictive control with reduction of uncertainty via ro-bust optimal experiment design,” IFAC Proceedings Volumes, vol. 47, no. 3, pp. 1904–1909, 2014. 19th IFAC World Congress. [18] B. Houska, D. Telen, F. Logist, and J. van Impe, “Self-reflective model predictive control,” SIAM Journal on Control and Optimization, vol. 55, no. 5, pp. 2959– 2980, 2017. [19] F. Messerer, K. Baumg¨ artner, and M. Diehl, “A dual-control effect preserving formulation for nonlin-ear output-feedback stochastic model predictive con-trol with constraints,” IEEE Control Systems Letters, vol. 7, pp. 1171–1176, 2023. [20] S. Mulagaleti and A. Bemporad, “Combined learning of linear parameter-varying models and robust control invariant sets,” 2025. [21] F. Badalamenti, S. Mulagaleti, A. Bemporad, B. Houska, and M. Villanueva, “Configuration-constrained tube MPC for tracking,” IEEE Control Systems Letters, vol. 8, pp. 1174–1179, 2024. [22] F. Badalamenti, S. Mulagaleti, M. Villanueva, B. Houska, and A. Bemporad, “Efficient configuration-constrained tube MPC via variables restriction and template selection,” in IEEE 64th Conference on Decision and Control, pp. 1783–1789, 2025. [23] M. Villanueva, M. M¨ uller, and B. Houska, “Configuration-constrained tube MPC,” Automatica, vol. 163, p. 111543, 2024. [24] D. Limon, T. Alamo, F. Salas, and E. Camacho, “In-put to state stability of min–max mpc controllers for nonlinear systems with bounded uncertainties,” Automatica, vol. 42, no. 5, pp. 797–803, 2006. [25] C. Rao, J. Rawlings, and D. Mayne, “Constrained state estimation for nonlinear discrete-time systems: stability and moving horizon approximations,” IEEE Transactions on Automatic Control, vol. 48, no. 2, pp. 246–258, 2003. [26] J. Schiller and M. M¨ uller, “A moving horizon state and parameter estimation scheme with guaranteed robust convergence,” IFAC-PapersOnLine, vol. 56, no. 2, pp. 6759–6764, 2023. 22nd IFAC World Congress. [27] D. Simon, “Kalman filtering with state constraints: A survey of linear and nonlinear algorithms,” Control Theory & Applications, IET, vol. 4, pp. 1303 – 1318, 09 2010. [28] S. Ansari, S. Molaei, K. Oldham, M. Heung, K. Ward, and K. Najarian, “An extended Kalman filter with inequality constraints for real-time detection of intra-dialytic hypotension,” in 39th Annual International Conference of the IEEE Engineering in Medicine and Biology Society (EMBC), pp. 2227–2230, 2017. [29] P. Krupa, J. K¨ ohler, A. Ferramosca, I. Alvarado, M. Zeilinger, T. Alamo, and D. Limon, “Model pre-dictive control for tracking using artificial references: Fundamentals, recent results and practical implemen-tation,” in IEEE 63rd Conference on Decision and Control, pp. 2977–2991, 2024. [30] X. Feng and B. Houska, “Real-time algorithm for self-reflective model predictive control,” Journal of Process Control, vol. 65, pp. 68–77, 2018. [31] J. Yan and R. Bitmead, “Model predictive control and state estimation: A network example,” IFAC Proceedings Volumes, vol. 35, no. 1, pp. 109–114, 2002. 15th IFAC World Congress. [32] J. K¨ ohler, F. Allg¨ ower, and M. M¨ uller, “A sim-ple framework for nonlinear robust output-feedback MPC,” in 18th European Control Conference, pp. 793–798, 2019. [33] M. Farina, L. Giulioni, L. Magni, and R. Scattolini, “An approach to output-feedback mpc of stochastic linear discrete-time systems,” Automatica, vol. 55, pp. 140–149, 2015. [34] A. Fiacco and Y. Ishizuka, “Sensitivity and stabil-ity analysis for nonlinear programming,” Ann. Oper. Res., vol. 27, pp. 215–235, Dec. 1990. [35] K. Reif, S. Gunther, E. Yaz, and R. Unbehauen, “Stochastic stability of the discrete-time extended kalman filter,” IEEE Transactions on Automatic Control, vol. 44, no. 4, pp. 714–728, 1999. [36] E. ˇZ´ aˇ cekov´ a, S. Pr´ ıvara, and M. Pˇ colka, “Persistent excitation condition within the dual control frame-work,” Journal of Process Control, vol. 23, no. 9, pp. 1270–1280, 2013. [37] M. Hovd and R. Bitmead, “Interaction between con-trol and state estimation in nonlinear MPC,” IFAC Proceedings Volumes, vol. 37, no. 9, pp. 119–124, 2004. 7th IFAC Symposium on Dynamics and Control of Process Systems. [38] K. Xie and A. Bemporad, “Online design of experi-ments by active learning for nonlinear system identi-fication,” 2025. [39] P. Kidger, On Neural Differential Equations. PhD thesis, University of Oxford, 2021. [40] K. Tracy and Z. Manchester, “On the differentiability of the primal-dual interior-point method,” 2024. [41] J. Bradbury, R. Frostig, P. Hawkins, M. Johnson, C. Leary, D. Maclaurin, G. Necula, A. Paszke, J. Van-derPlas, S. Wanderman-Milne, and Q. Zhang, “JAX: composable transformations of Python+NumPy pro-grams,” 2018.

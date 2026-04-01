@@ -6,47 +6,34 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-03-31
-- 运行时间：2026-03-31 20:20:09 UTC
+- 最新运行日期：2026-04-01
+- 运行时间：2026-04-01 20:54:31 UTC
 - 运行状态：成功
-- 本次总论文数：8
-- 精读区：0
-- 速读区：8
+- 本次总论文数：4
+- 精读区：1
+- 速读区：3
 
 ### 今日简报（AI）
-今日速览 8 篇前沿论文，深度解析磁弹性力学建模与控制系统避障技术。
-重点推荐磁弹性杆的颗粒模型仿真及磁力谐振器实验，并关注利用控制屏障函数规避机器人任务空间奇异点的最新进展。
-建议对软体机器人驱动或复杂系统控制感兴趣的读者，优先研读磁力耦合相关的物理建模方法。
-- 详情：[/202603/31/README](/202603/31/README)
+今日深度解析动态激励下的磁场递归推理技术，并同步覆盖 LPV 系统建模与协同控制的最新成果。
+重点关注 RHINO-MAG 在磁场推断上的高分表现，以及如何通过双重 MPC 和不确定性量化提升准线性系统的控制精度。
+建议从动态磁场建模入手，探索代理模型在复杂不确定系统中的鲁棒调节潜力。
+- 详情：[/202604/01/README](/202604/01/README)
 
 ### 精读区论文标签
-- 本次无精读推荐。
+1. [RHINO-MAG: Recursive H-Field Inference based on Observed Magnetic Flux under Dynamic Excitation](/202604/01/2603.29745v1-rhino-mag-recursive-h-field-inference-based-on-observed-magnetic-flux-under-dynamic-excitation)  
+   标签：评分：8.0/10、query:em-force
+   evidence：动态励磁下的瞬态磁场建模
 
 ### 速读区论文标签
-1. [Bonded-particle model for magneto-elastic rods](/202603/31/2603.27279v1-bonded-particle-model-for-magneto-elastic-rods)  
-   标签：评分：7.0/10、query:em-force
-   evidence：弹性结构中远程磁相互作用和外场驱动的建模
-2. [Notes from the Physics Teaching Lab: A Magneto-Mechanical Harmonic Oscillator](/202603/31/2603.28647v1-notes-from-the-physics-teaching-lab-a-magneto-mechanical-harmonic-oscillator)  
-   标签：评分：7.0/10、query:em-force
-   evidence：具有涡流阻尼的磁驱动振荡器
-3. [Task-Space Singularity Avoidance for Control Affine Systems Using Control Barrier Functions](/202603/31/2603.23753v1-task-space-singularity-avoidance-for-control-affine-systems-using-control-barrier-functions)  
+1. [Dual MPC for quasi-Linear Parameter Varying systems](/202604/01/2603.29445v1-dual-mpc-for-quasi-linear-parameter-varying-systems)  
    标签：评分：6.0/10、query:em-force
-   evidence：作为执行器动力学函数的力生成保证
-4. [A Monolithic Computational Homogenization Framework for Nearly Incompressible Magnetoelastic Composites](/202603/31/2603.25965v1-a-monolithic-computational-homogenization-framework-for-nearly-incompressible-magnetoelastic-composites)  
+   evidence：用于qLPV系统同时辨识与控制的双重MPC
+2. [Cooperative Control of Parallel Actuators for Linear Robust Output Regulation of Uncertain Linear Minimum-phase Plants](/202604/01/2603.29526v1-cooperative-control-of-parallel-actuators-for-linear-robust-output-regulation-of-uncertain-linear-minimum-phase-plants)  
    标签：评分：6.0/10、query:em-force
-   evidence：具有强磁机耦合特性的磁弹性复合材料建模
-5. [Data-driven discovery and control of multistable nonlinear systems and hysteresis via structured Neural ODEs](/202603/31/2603.27024v1-data-driven-discovery-and-control-of-multistable-nonlinear-systems-and-hysteresis-via-structured-neural-odes)  
+   evidence：并行执行器的协同控制用于鲁棒输出调节
+3. [Learning Surrogate LPV State-Space Models with Uncertainty Quantification](/202604/01/2603.29532v1-learning-surrogate-lpv-state-space-models-with-uncertainty-quantification)  
    标签：评分：6.0/10、query:em-force
-   evidence：具有磁滞特性的非线性系统数据驱动发现与控制
-6. [MetaTune: Adjoint-based Meta-tuning via Robotic Differentiable Dynamics](/202603/31/2603.27313v1-metatune-adjoint-based-meta-tuning-via-robotic-differentiable-dynamics)  
-   标签：评分：6.0/10、query:em-force
-   evidence：反馈控制器与扰动观测器的联合自动调优
-7. [Adaptive differentiating filter: case study of PID feedback control](/202603/31/2603.27615v1-adaptive-differentiating-filter-case-study-of-pid-feedback-control)  
-   标签：评分：6.0/10、query:em-force
-   evidence：机电应用中用于PID反馈的自适应微分滤波器
-8. [Monolithic piezo-magnonic-MEMS for efficient modulation of RF signals](/202603/31/2603.28411v1-monolithic-piezo-magnonic-mems-for-efficient-modulation-of-rf-signals)  
-   标签：评分：6.0/10、query:em-force
-   evidence：通过MEMS中的磁弹性耦合进行磁场的电压控制
+   evidence：用于非线性系统建模与控制的LPV状态空间模型
 
 
 <div class="dpr-home-promo-card">
