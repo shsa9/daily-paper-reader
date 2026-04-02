@@ -6,34 +6,22 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-01
-- 运行时间：2026-04-01 20:54:31 UTC
+- 最新运行日期：2026-04-02
+- 运行时间：2026-04-02 20:27:49 UTC
 - 运行状态：成功
-- 本次总论文数：4
-- 精读区：1
-- 速读区：3
+- 本次总论文数：0
+- 精读区：0
+- 速读区：0
 
 ### 今日简报（AI）
-今日深度解析动态激励下的磁场递归推理技术，并同步覆盖 LPV 系统建模与协同控制的最新成果。
-重点关注 RHINO-MAG 在磁场推断上的高分表现，以及如何通过双重 MPC 和不确定性量化提升准线性系统的控制精度。
-建议从动态磁场建模入手，探索代理模型在复杂不确定系统中的鲁棒调节潜力。
-- 详情：[/202604/01/README](/202604/01/README)
+> 今日无新推荐，系统未产出可展示论文。
+- 详情：[/202604/02/README](/202604/02/README)
 
 ### 精读区论文标签
-1. [RHINO-MAG: Recursive H-Field Inference based on Observed Magnetic Flux under Dynamic Excitation](/202604/01/2603.29745v1-rhino-mag-recursive-h-field-inference-based-on-observed-magnetic-flux-under-dynamic-excitation)  
-   标签：评分：8.0/10、query:em-force
-   evidence：动态励磁下的瞬态磁场建模
+- 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Dual MPC for quasi-Linear Parameter Varying systems](/202604/01/2603.29445v1-dual-mpc-for-quasi-linear-parameter-varying-systems)  
-   标签：评分：6.0/10、query:em-force
-   evidence：用于qLPV系统同时辨识与控制的双重MPC
-2. [Cooperative Control of Parallel Actuators for Linear Robust Output Regulation of Uncertain Linear Minimum-phase Plants](/202604/01/2603.29526v1-cooperative-control-of-parallel-actuators-for-linear-robust-output-regulation-of-uncertain-linear-minimum-phase-plants)  
-   标签：评分：6.0/10、query:em-force
-   evidence：并行执行器的协同控制用于鲁棒输出调节
-3. [Learning Surrogate LPV State-Space Models with Uncertainty Quantification](/202604/01/2603.29532v1-learning-surrogate-lpv-state-space-models-with-uncertainty-quantification)  
-   标签：评分：6.0/10、query:em-force
-   evidence：用于非线性系统建模与控制的LPV状态空间模型
+- 本次无速读推荐。
 
 
 <div class="dpr-home-promo-card">
