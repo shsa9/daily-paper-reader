@@ -1,0 +1,37 @@
+{
+  "label": "2026-04-03",
+  "date": "2026-04-03",
+  "generated_at": "2026-04-03T19:25:30",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202604/03/2604.01523v1-robust-autonomous-control-of-a-magnetic-millirobot-in-in-vitro-cardiac-flow",
+      "section": "quick",
+      "title_en": "Robust Autonomous Control of a Magnetic Millirobot in In Vitro Cardiac Flow",
+      "authors": "Anuruddha Bhattacharjee, Xinhao Chen, Lamar O. Mair, Suraj Raval, Yancy Diaz-Mercado, Axel Krieger",
+      "date": "2026-04-02",
+      "pdf": "https://arxiv.org/pdf/2604.01523v1",
+      "score": "7.0",
+      "evidence": "用于多线圈电磁驱动的带有扰动观测器的滑模控制器",
+      "tldr": "本研究针对磁性毫微机器人在脉动心脏血流中自主导航的难题，提出了一种视觉引导的控制框架。该系统集成了基于UNet的定位、A*路径规划以及带有扰动观测器的滑模控制器（SMC-DOB），用于多线圈电磁驱动。在体外心脏模型实验中，该系统在静态和脉动流条件下均表现出优异的鲁棒性，显著降低了跟踪误差，为实现心脏内靶向给药提供了技术支撑。",
+      "tags": "query:em-force",
+      "abstract_en": "Untethered magnetic millirobots offer significant potential for minimally invasive cardiac therapies; however, achieving reliable autonomous control in pulsatile cardiac flow remains challenging. This work presents a vision-guided control framework enabling precise autonomous navigation of a magnetic millirobot in an in vitro heart phantom under physiologically relevant flow conditions. The system integrates UNet-based localization, A* path planning, and a sliding mode controller with a disturbance observer (SMC-DOB) designed for multi-coil electromagnetic actuation. Although drag forces are estimated using steady-state CFD simulations, the controller compensates for transient pulsatile disturbances during closed-loop operation. In static fluid, the SMC-DOB achieved sub-millimeter accuracy (root-mean-square error, RMSE = 0.49 mm), outperforming PID and MPC baselines. Under moderate pulsatile flow (7 cm/s peak, 20 cP), it reduced RMSE by 37% and peak error by 2.4$\\times$ compared to PID. It further maintained RMSE below 2 mm (0.27 body lengths) under elevated pulsatile flow (10 cm/s peak, 20 cP) and under low-viscosity conditions (4.3 cP, 7 cm/s peak), where baseline controllers exhibited unstable or failed tracking. These results demonstrate robust closed-loop magnetic control under time-varying cardiac flow disturbances and support the feasibility of autonomous millirobot navigation for targeted drug delivery.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/03/2604.00667v1-explicit-mpc-for-parameter-dependent-linear-systems",
+      "section": "quick",
+      "title_en": "Explicit MPC for Parameter Dependent Linear Systems",
+      "authors": "Carlos J. G. Rojas, Esteban Lage Cano, Leyla Özkan",
+      "date": "2026-04-01",
+      "pdf": "https://arxiv.org/pdf/2604.00667v1",
+      "score": "6.0",
+      "evidence": "参数相关线性系统的显式模型预测控制",
+      "tldr": "本文针对受设计变量影响的参数相关线性系统，提出了两种显式模型预测控制（eMPC）方案。研究背景在于非线性系统线性化或物理属性变化导致的参数依赖。不同于将参数视为扰动的传统方法，本文将参数以仿射形式直接计入系统矩阵。为解决由此产生的非线性项带来的计算复杂性，提出了两种近似方法，并通过两个算例验证了其相对于精确eMPC的性能表现。",
+      "tags": "query:em-force",
+      "abstract_en": "This paper presents two explicit Model Predictive Control formulations for linear systems parameterized in terms of design variables. Such parameter dependent behavior commonly arises from operating point dependent linearization of nonlinear systems as well as from variations in mechanical, electrical, or thermal properties associated with material selection in the design of the process or system components. In contrast to explicit MPC approaches that treat design parameter variations and dependencies as disturbances, the proposed methods incorporate the parameters directly into the system matrices in an affine manner. However, explicitly incorporating these dependencies significantly increases the complexity of explicit MPC formulations due to resulting nonlinear terms involving decision variables and parameters. We address this complexity by proposing two approximation methods. Both methods are applied to two examples, and their performances are compared with respect to the exact eMPC implementation.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

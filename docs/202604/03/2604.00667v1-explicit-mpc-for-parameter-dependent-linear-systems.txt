@@ -1,0 +1,802 @@
+Title: Explicit MPC for Parameter Dependent Linear Systems
+
+URL Source: https://arxiv.org/pdf/2604.00667v1
+
+Published Time: Thu, 02 Apr 2026 00:46:58 GMT
+
+Number of Pages: 7
+
+Markdown Content:
+# Explicit MPC for Parameter Dependent Linear Systems 
+
+Carlos J. G. Rojas 1, Esteban Lage Cano 1, Leyla Özkan 1
+
+Abstract — This paper presents two explicit Model Predictive Control (MPC) formulations for linear systems parameterized in terms of design variables. Such parameter-dependent behav-ior commonly arises from operating-point–dependent lineariza-tion of nonlinear systems as well as from variations in mechan-ical, electrical, or thermal properties associated with material selection in the design of the process or system components. In contrast to explicit MPC approaches that treat design parame-ter variations and dependencies as disturbances, the proposed methods incorporate the parameters directly into the system matrices in an affine manner. However, explicitly incorporating these dependencies significantly increases the complexity of explicit MPC (eMPC) formulations due to resulting nonlinear terms involving decision variables and parameters. We address this complexity by proposing two approximation methods. Both methods are applied on two examples and their performances are compared with respect to the exact eMPC implementation. 
+
+I. INTRODUCTION Many control systems exhibit dynamics that vary with operating conditions or intrinsic properties of the physical components. Such variations occur naturally when nonlinear systems are linearized around different operating points, as well as from changes in mechanical, electrical or thermal characteristics associated with material selection and process design. Regardless of their role, these parameters enter the model as constants within the time domain, thus shaping the system behavior without dynamically evolving alongside the state. When these properties are design variables rather than fixed quantities, as in control co-design problems, the result-ing closed-loop behavior depends explicitly on parameters chosen for the system design stage. The effect of parametric variations on the system can be either taken into account directly in the representation of the dynamics or considered as uncertainties/disturbances [7]. In most cases, control strategies, including MPC approaches, treat parameter variations as disturbances and consider robust worst-case formulations [3]. While such approaches provide robustness, they lead to conservative control actions because they do not use specific information related to the measured parameters or design/material properties. On the other hand, explicitly incorporating parameter dependence into the pre-diction model allows the controller to account for the influ-ence of operating conditions, material properties, and design choices on system behavior. This is particularly relevant in control co-design problems, where control performance and                       
+
+> *This work was not supported by any organization The first two authors contributed equally to this work.
+> 1Control Systems Group, Department of Electrical Engineering, Eindhoven University of Technology, 5612 AZ, Eindhoven, The Netherlands.
+
+c.j.gonzalez.rojas@tue.nl, e.c.lage.cano@tue.nl, l.ozkan@tue.nl. 
+
+feasibility depend jointly on the controller and on the system design parameters. Explicit MPC has been an attractive strategy for low-order systems with real-time execution limitations since the optimization problem is solved offline and the resulting control law is implemented online as a piecewise-affine (PWA) function of the system state. Moreover, it has also been investigated in the context of integrated scheduling and control [4], and integration of design and control formula-tions [7]. However, formulating an eMPC with parameter-dependent system matrices results in nonlinear coupling between control decision variables and parameters, which makes the resulting optimization problem difficult to solve. In order to address this problem, we propose two approxi-mation methods. In the first method, we utilize McCormick envelopes constraints, whereas in the second method, we apply the Fréchet derivative to the matrix powers in the condensed model. The effectiveness of the proposed methods is demonstrated through two illustrative examples. These examples highlight the trade-offs between approximation accuracy and implementation complexity. This article is organized as follows: Section II introduces the assumptions underlying the model and control strategy. Section III presents the proposed methods for approximating explicit MPC laws with affine parameter dependence. Sec-tion IV illustrates the approach through representative case studies. Section V reports numerical results, and Section VI concludes the paper. II. PRELIMINARIES 
+
+A. Systems with parametric dependence 
+
+We consider a discrete linear parameter-dependent model representation of the system, 
+
+xk+1 = A(θ) xk + B(θ) uk, (1) 
+
+yk = C(θ) xk + D(θ)uk , (2) where xk ∈ Rn denotes the state at step k, and the state-space matrices depend on the parameter vector θ. The dependence of the matrices on θ may be obtained by: 1) Local linearization of nonlinear dynamics around an operating point (x⋆, u ⋆, θ ), yielding 
+
+A(θ) = ∂f 
+
+∂x 
+
+∣∣∣∣(x⋆,u ⋆,θ )
+
+, B(θ) = ∂f 
+
+∂u 
+
+∣∣∣∣(x⋆,u ⋆ ,θ )
+
+,
+
+(3) and analogously for C(θ) and D(θ) [9]. 2) Multi-model identification , in which local LTI models are estimated at sampled parameter values {θk} and 
+
+> arXiv:2604.00667v1 [eess.SY] 1 Apr 2026
+
+interpolated to produce a continuous mapping θ 7 →
+
+(A, B, C, D ) [9]. The parameter dependence of the system is captured through an affine parameterization as in the following. 
+
+A(θ) = A0 +
+
+> nθ
+
+∑
+
+> j=1
+
+θj Aj , (4) where A0, A j ∈ Rnx×nx are estimated according to one of the previous methods. This representation allows for the entire admissible design space to be explored using feasible values of θ. In contrast, the standard model for linear eMPC solutions [7] uses the following structure: 
+
+xk+1 = Ax k + Bu k + E d k, (5) 
+
+yk = Cx k + Du k, (6) where E ∈ Rn×r maps the effects of a constant input 
+
+dk = d (design parameters) on the dynamics of the system. For simplicity, we provide the following two definitions to express the state trajectories as affine functions of the initial condition and the input sequence. 
+
+Definition 1 (Condensed model for parameter-dependent representation) Consider the state evolution in (1), and let X and U denote the stacked state and input trajectories over the prediction horizon, i.e., 
+
+X = [x⊤ 
+
+> 1
+
+· · · x⊤
+
+> N
+
+]⊤ , U = [u⊤ 
+
+> 0
+
+· · · u⊤ 
+
+> N−1
+
+]⊤ .
+
+The unrolled dynamics are 
+
+X = Sx(θ)x0 + Su(θ)U, (7) with [Sx(θ)] 
+
+> k
+
+= A(θ)k , k = 0 , . . . , N. (8) 
+
+[Su(θ)] 
+
+> k,i
+
+=
+
+{A(θ)k−1−iB(θ), i ≤ k − 1,M0, i > k − 1. (9) 
+
+k, i = 0 , . . . , N − 1.
+
+where M0 ∈ Rn×m is a matrix of zeros [10]. 
+
+Definition 2 (Condensed model for parametric state-space model through exogenous input). Unrolling the dy-namics of the system introduced in (5) leads to the following condensed form: 
+
+X = Sxx0 + SuU + Sdd, (10) where 
+
+[Sd
+
+] 
+
+> k
+
+=
+
+> k−1
+
+∑
+
+> i=0
+
+Ai E, k = 1 , . . . , N. (11) and X, U, and Sx, Su as given in Definition 1. 
+
+B. Explicit MPC 
+
+For a given initial state x0 and a fixed parameter θ,consider the condensed form given in (7). The finite-horizon MPC problem can be formulated as follows: 
+
+Definition 3 (Condensed MPC Problem). 
+
+min  
+
+> U
+
+J0(x0, θ, U) = min  
+
+> U
+
+X⊤ ¯QX + U⊤ ¯RU, (12) subj. to GU ≤ w + Ex 0 (13) with 
+
+¯Q = IN ⊗Q ∈ R(N n )×(N n ), ¯R = IN ⊗R ∈ R(N m )×(N m ).
+
+and G, w and E obtained from the system constraints and the condensed model [10]. Notice that both the cost and constraints depend on the parameter θ, but we omitted it in the notation. For simplicity, we assume that only the dynamic matrix A depends on θ as follows 
+
+A(θ) = ˜A + θ∆A. (14) If we substitute this decomposition directly into the con-densed MPC formulation, powers of the form A(θ)k will appear in the objective function, which implies a nonlinear dependence on θ. This shows that even for this basic case, the optimization problem is generally nonconvex and could be computationally intractable due to the polynomial depen-dence on θ [11]. If the explicit dependence on θ is omitted, the objective function defined in (12) can be rewritten in quadratic form. 
+
+Definition 4 (Multiparametric Quadratic Program). 
+
+J0(x0, U) = U⊤HU + 2 f (x0)U + c. (15) Since the constraints of this optimization problem are affine, this is a multiparametric quadratic program (mpQP) with the initial condition x0 as the parameter. Its solution over the admissible set of initial states can be obtained using region-based or regionless approaches [12]. III. APPROXIMATION METHODS In this section, we present two methods that reduce the complexity of employing the state-space parametric de-pendent representation in the eMPC formulation. The first method handles the nonlinear terms through the introduction of McCormick constraints, and the second method employs first-order approximations through the use of the Fréchet derivative. Both methods consider the affine decomposition presented in (14), where ˜A and ∆A could be obtained by recentering and rescaling ( θ ∈ [−1, 1] ) or using the maximum and minimum values considered for the system (θ ∈ [0 , 1] ). 
+
+A. Method I: Explicit MPC for Parameter-Dependent Sys-tems Using McCormick Relaxations 
+
+We construct a first-order approximation of the lifted prediction model of the form 
+
+X ≈ Sx0 x0 + SuU +
+
+> nθ
+
+∑
+
+> p=1
+
+Sθpx0 (θpx0) + 
+
+> nθ
+
+∑
+
+> p=1
+
+Sθp u(θpU ),
+
+(16) where Sx0 and Su denote the standard prediction ma-trices associated with the nominal system matrices ˜A and 
+
+B, respectively. The matrices Sθpx0 and Sθpu capture the sensitivity of the predicted state trajectory with respect to the parameter component θp.The contribution of the initial condition x0 through the parameter θp to the predicted state at step i is given by the block S(i) 
+
+> θpx0
+
+∈ Rnx×nx ,
+
+S(i) 
+
+> θpx0
+
+=
+
+> i−1
+
+∑
+
+> ℓ=0
+
+˜A i−1−ℓ∆Ap ˜A ℓ, i = 1 , . . . , N, (17) where ∆Ap denotes the matrix associated with the p-th parameter. Stacking these blocks vertically yields Sθpx0 ∈
+
+RN n x×nx .Similarly, the contribution of the bilinear term θpuj to the predicted state xi is approximated by 
+
+S(i,j )  
+
+> θpu
+
+=
+
+> i−1−j
+
+∑
+
+> ℓ=0
+
+˜A i−1−j−ℓ∆Ap ˜A ℓ + ˜A i−1−j B, j < i, 
+
+(18) and is zero otherwise. Collecting all such blocks yields the lower block-triangular matrix Sθpu ∈ RN n x×N n u .The lifted model (16) contains bilinear terms involving parameters and decision variables. To render the formulation compatible with standard explicit MPC techniques, these bilinearities are treated as follows. First, the product θpx0
+
+involves parameters only and is therefore introduced as an auxiliary parameter 
+
+χp := θpx0 ∈ Rnx ,
+
+which augments the parameter vector by nx components for each θp. Second, the product θpU involves both a parameter and a decision variable. To handle this term, an auxiliary input variable 
+
+Vp := θpU ∈ RN n u
+
+is introduced. The equality is enforced through McCormick envelope constraints, which provide a convex relaxation of the bilinear mapping over bounded domains. This relaxation is exact at the boundary of the feasible set and corresponds to the convex hull of the bilinear term. 
+
+McCormick Envelope Constraints 
+
+Consider the bilinear terms uθp,k = θpuk, where θp ∈
+
+[θp, θp] and uk ∈ [u, u]. Each term is convexified using McCormick envelope constraints [13], imposed elementwise over the prediction horizon, 
+
+uθp,k ≥ θpuk + θpu − θpu,uθp,k ≥ θpuk + θpu − θpu, uθp,k ≤ θpuk + θpu − θpu,uθp,k ≤ θpuk + θpu − θpu. 
+
+(19) As a result, the prediction model becomes affine in the augmented decision variables and parameters, enabling a multiparametric quadratic programming formulation and the computation of an explicit piecewise-affine control law. 
+
+Resulting Quadratic Program 
+
+Define the augmented parameter vector 
+
+ξ⊤ := [x⊤ 
+
+> 0
+
+χ⊤ 
+
+> 1
+
+· · · χ⊤
+
+> nθ
+
+] , (20) and the augmented decision variable 
+
+z⊤ := [U ⊤ V ⊤ 
+
+> 1
+
+· · · V ⊤
+
+> nθ
+
+] . (21) Then (16) can be written compactly as 
+
+X = Φ ξ + Γ z, (22) with 
+
+Φ := [Sx0 Sθ1x0 · · · Sθnθ x0
+
+] ,
+
+Γ := [Su Sθ1u · · · Sθnθ u
+
+] .
+
+Since only the true input U is penalized, introduce the selector 
+
+SU := [IN n u 0 · · · 0] ,
+
+so that U = SU z. To preserve convexity of the quadratic program, a small regularization term may be introduced to ensure that the Hessian is positive semidefinite [20]. Substituting (22) into the cost function (12) yields 
+
+min 
+
+> z
+
+1
+
+2 z⊤Hz + f (ξ)⊤z s.t. Gz ≤ b + E ξ, (23) where 
+
+H = 2 (Γ⊤ ¯QΓ + S⊤ 
+
+> U
+
+¯RS U
+
+) , (24) 
+
+f (ξ) = 2 Γ ⊤ ¯QΦ ξ. (25) The constant term ξ⊤Φ⊤ ¯QΦξ is omitted since it does not affect the optimizer. Per-stage polyhedral constraints 
+
+xk ∈ X := {x : Fxx ≤ fx}, uk ∈ U := {u : Fuu ≤ fu}
+
+are stacked to yield 
+
+FX X ≤ fX , FU U ≤ fU ,
+
+with FX := IN ⊗Fx and fX := 1N ⊗fx. Using X = Φ ξ+Γ z
+
+and U = SU z, the constraints become 
+
+FX Γz ≤ fX − FX Φξ, (26) 
+
+FU SU z ≤ fU . (27) Hence, 
+
+G := 
+
+[ FX Γ
+
+FU SU
+
+]
+
+, b := 
+
+[fX
+
+fU
+
+]
+
+, E := 
+
+[−FX Φ0
+
+]
+
+.
+
+(28) Finally, the McCormick envelope constraints (19) are added elementwise over the prediction horizon. 
+
+B. Method II: Local explicit MPC for parametric dependen-cies 
+
+Starting from the affine decomposition introduced in (14), our objective is to preserve the QP structure and to obtain a control law that depends explicitly and linearly on θ. We approximate these matrix powers through a first–order local expansion using the Fréchet derivative [14]. Fréchet-based Local Approximation 
+
+For the matrix map f (M ) = M p, the Fréchet derivative at ˜A applied to a perturbation ∆A is 
+
+Lf ( ˜A)[∆ A] = 
+
+> p−1
+
+∑
+
+> r=0
+
+˜Ar (∆ A) ˜Ap−1−r . (29) Under the affine parameterization 
+
+A(θ) = ˜A + θ∆A, 
+
+the power A(θ)p admits the expansion 
+
+A(θ)p = ˜Ap + θ L f ( ˜A)[∆ A] + O( ˜A, θ ∆A), (30) where O contains second and higher-order terms. Neglecting higher-order terms yields the approximation 
+
+A(θ)p ≈ ˜A p + θ L f (∆ A, p ). (31) 
+
+Affine Structure of the Condensed Prediction Matrices 
+
+Replacing (31) in the condensed model in Definition 1 shows that the prediction matrices preserve an affine depen-dence on θ:
+
+Sx = ˜Sx + θ ∆Sx, Su = ˜Su + θ ∆Su, (32) where ˜Sx and ˜Su denote the nominal condensed matrices evaluated at ˜A, and 
+
+[∆Sx
+
+] 
+
+> k
+
+=
+
+
+
+0, k = 1 ,Lf (∆ A, k − 1) , k = 2 , . . . , N. 
+
+(33) The corresponding deviation in the input map is 
+
+[∆Su
+
+] 
+
+> k,i
+
+=
+
+
+
+Lf (∆ A, k − 1 − i) B, i ≤ k − 1,
+
+0, i > k − 1,
+
+(34) 
+
+k, i = 0 , . . . , N − 1.
+
+These matrices preserve the structure shown in Definition 3 and incorporate the first-order parameter sensitivity. We see that, in contrast to the condensed form in Definition 2, the affine structure proposed in (32) still accounts for the parametric effects within the state evolution (through ∆Sx)and also propagates its effects on all the inputs considered in the prediction (through ∆Su). Furthermore, this local approximation does not require the estimation of the E
+
+matrix required to propagate the artificial exogenous input introduced in the affine parametric representation [7]. 
+
+Resulting Parameter-Dependent Quadratic Program 
+
+Substituting (32) into the condensed cost yields the quadratic expression: 
+
+U⊤H(θ)U + 2 f (x0, θ )⊤U + c, (35) with 
+
+H = ˜S⊤ 
+
+> u
+
+¯Q ˜Su + R + θ
+
+( ˜S⊤ 
+
+> u
+
+¯Q∆Su + ∆ S⊤ 
+
+> u
+
+¯Q ˜Su
+
+)
+
++ θ2∆S⊤ 
+
+> u
+
+¯Q∆Su.f = ˜ S⊤ 
+
+> u
+
+¯Q ˜Sxx0 + θ
+
+( ˜S⊤ 
+
+> u
+
+¯Q∆Sxx0 + ∆ S⊤ 
+
+> u
+
+¯Q ˜Sxx0
+
+)
+
++ θ2∆S⊤ 
+
+> u
+
+¯Q∆Sxx0.c = x⊤ 
+
+> 0
+
+˜S⊤ 
+
+> x
+
+¯Q ˜Sxx0 + 2 θ x ⊤ 
+
+> 0
+
+∆S⊤ 
+
+> x
+
+¯Q ˜Sxx0
+
++ θ2x⊤ 
+
+> 0
+
+∆S⊤ 
+
+> x
+
+¯Q∆Sxx0.
+
+These expressions make the influence of the parameter θ
+
+on the quadratic cost components explicit. If a purely linear parameter dependence is desired, the second-order terms may be dropped. 
+
+First-Order Explicit Solution 
+
+As a representative example, consider the unconstrained formulation together with the first-order truncation of the parameter-dependent cost. 
+
+H(θ) ≈ H0 + θ ∆H, f (θ) ≈ f0 + θ ∆f, 
+
+In this reduced setting, the optimal control sequence can be obtained using the following first-order inverse expansion 
+
+H(θ)−1 ≈ H−10 − H−10 (θ∆H)H−10 . (36) Based on this approximation, the optimizer becomes 
+
+U ∗ 
+
+> 0
+
+(θ) = −H(θ)−1f (θ), (37) 
+
+U ∗ 
+
+> 0
+
+(θ) ≈ U ∗ 
+
+> 0
+
++ θ H −10
+
+(∆H U ∗ 
+
+> 0
+
+− ∆f ) + O(θ2), (38) where U ∗ 
+
+> 0
+
+= −H−10 f0 is the solution using the nominal parameter. This expression explicitly shows how the optimal sequence varies with θ and how the solution deviates from the nominal one when no constraint is active. Finally, when the system has state constraints, it is also necessary to approximate their condensed form to solve the quadratic program. Depending on the system, truncating the high-order terms can also alter the critical regions of the explicit MPC solution [15]. Therefore, it is important to carefully evaluate the validity region of the proposed model in terms of the parameters considered. IV. CASE STUDIES We demonstrate the methods on a thermal and a me-chanical system using an MPC formulation equivalent to the feedback structure with preview proposed in [16], [17]. The cost function penalizes tracking error and input effort, while initial-state and input bounds are imposed to reflect the physical limits of the system. We employ a small prediction horizon N to keep the examples computationally tractable. Furthermore, to isolate the effects of the approximations, we adopt a nominal model and avoid additional terms, such as disturbance models and terminal ingredients, which can be incorporated into the proposed methods. The parameters used for the model and the control formulation are given in Table I. 
+
+A. HEX: Heat exchanger 
+
+We first consider a simple heat exchanger with a paramet-ric dependence on the heat transfer area, based on the study presented in [18]. The hot fluid flows through a counter-flow heat exchanger with volumetric flow rate Fh, entering at temperature T in  
+
+> h
+
+and leaving at temperature Th. The cold fluid enters the heat exchanger at temperature T in  
+
+> c
+
+with volumetric flow rate Fc and exits at temperature Tc.TABLE I MODEL PARAMETERS FOR CASE STUDIES                                                                  
+
+> Parameter Description Value Unit
+> Mass–Spring–Damper System
+> mMass of the moving body 2kg
+> cDamping coefficient 3.109 N s/m
+> keSpring stiffness [500 ,2000] N/m
+> kuInput (actuator) gain 3.717 N/V
+> zDisplacement of the mass [−0.1,0.1] m
+> ˙zVelocity of the mass [−0.5,0.5] m/s
+> u(t)Control input [−5,5] V
+> Heat Exchanger System
+> VFluid volume 1000 L
+> CHeat capacity 1kJ/(L °C)
+> ThHot outflow temperature [45 ,70] °C
+> TcCold outflow temperature [25 ,45] °C
+> Tin
+> hHot inflow temperature [60 ,80] °C
+> Tin
+> cCold inflow temperature 25 °C
+> FhFlow rate of the hot fluid 2.5L/s
+> FcFlow rate of the cold fluid 2L/s
+> UHeat transfer coefficient 1kJ/(s m 2°C)
+> AhHeat transfer area [2 ,5] m2
+
+a) Continuous-time model: The lumped-parameter en-ergy balance equations are given by 
+
+V dT h
+
+dt = Fh
+
+(T in  
+
+> h
+
+− Th
+
+) − U A h
+
+Cr
+
+(Th − Tc),V dT c
+
+dt = Fc
+
+(T in  
+
+> c
+
+− Tc
+
+) + U A h
+
+Cr
+
+(Th − Tc).
+
+(39) In this setting, the inlet temperature of the hot stream, 
+
+T in  
+
+> h
+
+, is treated as the manipulated variable, while the cold-side outlet temperature Tc is selected as the controlled output. The control objective is to track a desired reference trajectory for Tc while respecting the system dynamics. 
+
+b) Affine parametric representation: As discussed in Section II-A, we consider a parametric discrete-time model of the HEX and include the effect of the constant exogenous input as a measured disturbance in the prediction of the systems dynamics: 
+
+xk+1 = A(θ) xk +B u k+E d k, yk = Cx k +Du k, (40) where the state, input, and disturbance are defined as 
+
+xk := 
+
+[Th,k 
+
+Tc,k 
+
+]
+
+, uk := T in 
+
+> h,k
+
+, dk := T in 
+
+> c,k
+
+.
+
+The parameter-dependent heat transfer coefficient is de-fined as 
+
+α(θ) := U A h(θ)
+
+Cr V ,
+
+where Ah(θ) denotes the effective heat transfer area, U
+
+is the overall heat transfer coefficient, Cr is the thermal capacitance, and V is the fluid volume. Starting from (39), the system can be written in state-space form as 
+
+˙x(t) = Ac(θ) x(t) + Bc u(t) + Ec d(t), (41) with 
+
+Ac(θ) = 
+
+
+
+− Fh
+
+V − α(θ) α(θ)
+
+α(θ) − Fc
+
+V − α(θ)
+
+ , (42) 
+
+Bc =
+
+[ Fh
+
+V
+
+0
+
+]
+
+, Ec =
+
+
+
+0
+
+Fc
+
+V
+
+ . (43) The heat transfer area is assumed to vary within known bounds, Ah ∈ [Amin , A max ], and is parameterized affinely as 
+
+Ah(θ) = Amin + θ (Amax − Amin ), θ ∈ [0 , 1] . (44) Using a forward Euler discretization with sampling time 
+
+Ts, the resulting discrete-time state matrix can be expressed in affine form with respect to θ as in (14), with 
+
+˜Ac := Ac(Amin ), ∆Ac := Ac(Amax ) − Ac(Amin ).
+
+The discrete-time input and disturbance matrices are given by 
+
+B := TsBc, E := TsEc.
+
+B. MSD: Mass–spring–damper system 
+
+As a second case study, we consider a mass–spring– damper system whose parameters (m, k e, c ) are taken from a real experimental setup [16]. To obtain an analytical linear model, friction effects are neglected in this initial study. 
+
+a) Continuous-time model: The system dynamics are described by 
+
+m¨z + c(θ) ˙ z + kez = kuu(t), x =
+
+[z
+
+˙z
+
+]
+
+, (45) where z denotes the position of the mass, ˙z its velocity, and 
+
+u(t) is the manipulated variable. 
+
+b) Affine parametric representation: Following a sim-ilar approach to the previous case study, the discrete-time parametric representation of the system is given by (1) with 
+
+A(θ) = 
+
+[ 1 Ts
+
+− ke(θ) 
+
+> m
+
+Ts 1 − c 
+
+> m
+
+Ts
+
+]
+
+, B =
+
+[ 0
+
+> Tsku
+> m
+
+]
+
+. (46) In this case, the design parameter is the stiffness of the spring 
+
+ke(θ) with limits defined in Table I. V. RESULTS Using the case studies described in Section IV, we com-pare the results obtained from the exact analytical solution implemented in YALMIP [19] with those obtained using the proposed methods described in Section III. The quantitative errors of the two methods with respect to the exact solution are presented in Table II.                            
+
+> TABLE II APPROXIMATION ERROR METRICS FOR CASE STUDIES
+> RMSE MAE NRMSE
+> θMethod I Method II Method I Method II Method I Method II
+> Mass–Spring–Damper System
+> 0.5 1.98e-4 5.13e-5 1.10e-3 4.60e-4 3.70e-2 9.60e-3 13.89e-5 6.06e-5 2.42e-4 4.44e-4 7.40e-3 1.16e-2
+> Heat Exchanger System
+> 0.5 4.43e-2 1.31e-1 7.52e-2 2.22e-1 1.10e-3 3.10e-3 12.08e-2 2.58e-1 3.02e-2 4.65e-1 4.92e-4 6.10e-3
+
+A. MSD numerical results 
+
+For the MSD, we define a sampling time Ts = 0 .01 s and a horizon N = 4 . The error is penalized with Q = 1000 I, and the input with R = 0 .0001 . The input and the initial states are constrained according to the values in Table I. The results for θ = 0 .5 ( ke = 1250) and θ = 1 ( ke = 2000) are shown in Figures 1 and 2, respectively. In this case, we observe that both methods provide good quantitative and qualitative results, independent of the θ used. There are two reasons for this behavior. First, based on the controller response, we see that the system does not seem to be sensitive enough to different values of ke. Second, the matrix ∆A obtained from the affine form (14) has a single nonzero entry, located off the diagonal. This makes the higher-order terms in A(θ)p
+
+negligible.                                  
+
+> Time [s]
+> 020 40 60 80 100 120 140 160 180 200
+> -0.01 00.01
+> 020 40 60 80 100 120 140 160 180 200
+> -5 05
+> 020 40 60 80 100 120 140 160 180 200
+> -0.4 -0.2 0
+> Method I Method II (I) Exact Reference
+
+Fig. 1. MSD: Exact vs Method I and Method II results for θ = 0 .5.                                 
+
+> Time [s]
+> 020 40 60 80 100 120 140 160 180 200
+> -0.01 00.01
+> 020 40 60 80 100 120 140 160 180 200
+> -5 05
+> 020 40 60 80 100 120 140 160 180 200
+> -0.4 -0.2 00.2
+> Method I Method II (I) Exact Reference
+
+Fig. 2. MSD: Exact vs Method I and Method II results for θ = 1 .
+
+B. HEX numerical results 
+
+For the HEX, we consider Ts = 10 s, N = 4 , Q = 100 I
+
+and R = 0 .001 . The input and the initial state are constrained by the limits in Table I. For simplicity, the prediction and control horizons are the same, but input blocking or rate-of-change constraints could also be considered. Since Method II is based on an approximate inversion, we assume that there is a smooth change in every step of the controller, and we use the previous region as the controller’s fallback option. The results for θ = 0 .5 ( A = 3 .5) and θ = 1 ( A = 5) 
+
+are presented in Figures 3 and 4, respectively. We noticed that for Ah = 5 ( θ = 1 ), the system is unable to follow the reference commanded at t = 400 , but this has to do with the physics of the HEX, not with the controllers themselves. We see that for θ = 0 .5 the response obtained with Method I follows the analytic solution almost exactly, while the solution obtained via Method II slightly deviates. In contrast, when θ = 1 , we observe some ripples in the output provided with Method II. Furthermore, the controller strategy computed by Method II has a bang-bang behavior (see Fig. 4). Based on this observation, we also implemented Method II without the inverse approximation (36). We found that without the inclusion of the approximate inverse (Method II (NI)), the response of the system does not have the aforementioned bang-bang behavior. Regarding Method I, the inclusion of additional parameters results in a substantial increase in the number of regions compared to Method II. In the HEX case, Method I and Method II yield 10 and 704 regions, respectively, whereas in the MSD case the number of regions are 20 and 732. Despite this increase in complexity, Method I produces predictions that are numerically more stable and closer to the exact solution, indicating a trade-off between computational complexity and approximation performance.                    
+
+> Time [min]
+> 50 100 150 200
+> 40 42 44
+> 020 40 60 80 100 120 140 160 180 200
+> 60 70 80
+> 50 100 150 200
+> 50 52 54
+> Method I Method II (I) Exact Reference
+
+Fig. 3. HEX: Exact vs Method II results for θ = 0 .5.
+
+VI. CONCLUSIONS This paper addressed the problem of eMPC formulation for parameter dependent linear systems. Two approximation methods were proposed to mitigate the resulting nonlin-ear terms in the mpQP problem. Both methods rely on a consistent state-space representation and employ established mathematical approximation techniques. The case studies Time [min]                     
+
+> 50 100 150 200
+> 40 42 44
+> 020 40 60 80 100 120 140 160 180 200
+> 60 70 80
+> 50 100 150 200
+> 48 50 52
+> Method I Method II (I) Method II (NI) Exact Reference
+
+Fig. 4. HEX: Exact vs Method II results for θ = 1 .
+
+demonstrated that the proposed methods provide a good approximation depending on the sensitivity of model to parameter and for certain values of θ. The future work will consider the incorporation of integral action in eMPC and application of control problems characterized by parameter-dependent dynamics, with particular emphasis on control co-design problems. ACKNOWLEDGMENT The authors acknowledge Dr. Valentina Breschi (TU Eind-hoven) for the helpful discussions regarding the development of Method II and Dr. Cesar Augusto Perez (TU Eindhoven) for the helpful discussions regarding the development of Method I. REFERENCES [1] A. Silva, “Engineering and technology applications of control co-design: A survey,” Engineering Applications of Control , 2024. [2] H. K. Fathy, J. A. Reyer, P. Y. Papalambros, and A. G. Ulsoy, “On the Coupling between the Plant and Controller Optimization Problems,” 
+
+Proceedings of the American Control Conference , vol. 3, pp. 1864– 1869, 2001. [3] M. B. Saltik, L. Özkan, J.H.A. Ludlage, S. Weiland and P. Van den Hof, “An outlook on robust model predictive control algorithms: Reflections on performance and computational aspects,” Journal of Process Control , vol. , 61, pp. 77-102, 2018. [4] J. Zhuge and M. G. Ierapetritou“Integration of scheduling and control for batch processes using multi-parametric model predictive control", 
+
+AICHEJ , vol. 60, pp. 3169-3183, 2014. [5] A. Deshmukh, D. Herber, and J. Allison, “Bridging the gap between open-loop and closed-loop control in co-design: A framework for complete optimal plant and control architecture design,” Proceedings of the American Control Conference , pp. 1–6, 2015. [6] V. Sakizlis, J. D. Perkins, and E. N. Pistikopoulos, “Recent advances in optimization-based simultaneous process and control design,” Com-puters and Chemical Engineering , vol. 28, no. 10, pp. 2069–2086, 2004. [7] N. A. Diangelakis, B. Burnak, J. Katz, and E. N. Pistikopoulos, “Process design and control optimization: A simultaneous approach by multi-parametric programming,” AIChE Journal , vol. 63, no. 11, pp. 4827–4846, 2017. [8] R. Tóth, P. S. C. Heuberger, and P. M. J. Van den Hof, “Discretization of linear parameter-varying state-space representations,” IET Control Theory & Applications , vol. 4, no. 10, pp. 2082–2096, 2010. [9] R. Tóth, Modeling and Identification of Linear Parameter-Varying Systems . Springer, Lecture Notes in Control and Information Sciences (LNCIS), vol. 403, 2010. [10] F. Borrelli, A. Bemporad, and M. Morari, Predictive Control for Linear and Hybrid Systems . Cambridge University Press, 2017. [11] T. Besselmann, J. Löfberg, and M. Morari, “Explicit MPC for LPV systems: Stability and optimality,” IEEE Transactions on Automatic Control , vol. 57, no. 9, pp. 2322–2332, 2012. [12] J. Drgoˇ na, F. Janeˇ cek, M. Klauˇ co, and M. Kvasnica, “Regionless Ex-plicit MPC of a Distillation Column,” in Proceedings of the European Control Conference (ECC) , 2016, pp. 1568–1573. [13] G. P. McCormick, “Computability of global solutions to factorable nonconvex programs: Part I—Convex underestimating problems,” 
+
+Mathematical Programming , vol. 10, pp. 147–175, 1976. [14] N. J. Higham, Functions of Matrices: Theory and Computation .Philadelphia, PA: SIAM, 2008. [15] C. J. G. Rojas, V. Breschi, and L. Özkan, “On local deformations of explicit MPC regions under parametric uncertainty,” in Proc. Benelux Meeting on Systems and Control , 2026. [Online]. Available: https://www.beneluxmeeting.nl/2026/ [16] A. L. Nash, “Experimental validation of a predictive control co-design algorithm,” ASME Letters in Dynamic Systems and Control , vol. 1, no. 1, 2021, Art. no. 014001, doi: 10.1115/1.4067654. [17] J. Theunissen, A. Sorniotti, P. Gruber, S. Fallah, M. Dhaens, “Region-less Explicit Model Predictive Control of Active Suspension Systems With Preview,” IEEE Transactions on Industrial Electronics , 2019 [18] C. S. Patilas and I. K. Kookos, “A novel approach to the simultaneous design and control problem,” Chemical Engineering Science , vol. 240, 2021, Art. no. 116637. [19] J. Löfberg, “YALMIP: A Toolbox for Modeling and Optimization in MATLAB,” in Proceedings of the CACSD Conference , Taipei, Taiwan, 2004. [20] A. Bemporad, M. Morari, V. Dua, and E. N. Pistikopoulos, “The ex-plicit linear quadratic regulator for constrained systems,” Automatica ,vol. 38, no. 1, pp. 3–20, 2002.
