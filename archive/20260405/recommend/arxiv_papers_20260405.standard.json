@@ -1,0 +1,96 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-05T20:12:43.299642+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2603.28362v1",
+      "title": "A Foldable and Agile Soft Electromagnetic Robot for Multimodal Navigation in Confined and Unstructured Environments",
+      "abstract": "Multimodal locomotion is crucial for an animal's adaptability in unstructured wild environments. Similarly, in the human gastrointestinal tract, characterized by viscoelastic mucus, complex rugae, and narrow sphincters like the cardia, multimodal locomotion is also essential for a small-scale soft robot to conduct tasks. Here, we introduce a small-scale compact, foldable, and robust soft electromagnetic robot (M-SEMR) with more than nine locomotion modes designed for such a scenario. Featuring a six-spoke elastomer body embedded with liquid metal channels and driven by Laplace forces under a static magnetic field, the M-SEMR is capable of rapid transitions (< 0.35 s) among different locomotion modes. It achieves exceptional agility, including high-speed rolling (818 mm/s, 26 BL/s), omnidirectional crawling, jumping, and swimming. Notably, the robot can fold to reduce its volume by 79%, enabling it to traverse confined spaces. We further validate its navigation capabilities on complex terrains, including discrete obstacles, viscoelastic gelatin surfaces, viscous fluids, and simulated biological tissues. This system offers a versatile strategy for developing high-mobility soft robots for future biomedical applications.",
+      "authors": [
+        "Zhihao Lv",
+        "Xiaoyong Zhang",
+        "Mengfan Zhang",
+        "Xiaoyu Song",
+        "Xingyue Liu",
+        "Yide Liu",
+        "Shaoxing Qu",
+        "Guoyong Mao"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cond-mat.mtrl-sci",
+        "cond-mat.soft",
+        "physics.app-ph"
+      ],
+      "published": "2026-03-30T12:30:09+00:00",
+      "link": "https://arxiv.org/pdf/2603.28362v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "electromagnetic robot driven by Laplace forces under magnetic field",
+      "llm_evidence_cn": "磁场下由洛伦兹力驱动的电磁机器人",
+      "llm_evidence": "磁场下由洛伦兹力驱动的电磁机器人",
+      "canonical_evidence": "磁场下由洛伦兹力驱动的电磁机器人",
+      "llm_tldr_en": "Presents a soft electromagnetic robot driven by magnetic forces for multimodal navigation.",
+      "llm_tldr_cn": "介绍了一种由电磁力驱动的软体机器人，用于多模态导航。",
+      "llm_tldr": "介绍了一种由电磁力驱动的软体机器人，用于多模态导航。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.01956v1",
+      "title": "Receding-Horizon Nonlinear Optimal Control With Safety Constraints Using Constrained Approximate Dynamic Programming",
+      "abstract": "We present a receding-horizon optimal control for nonlinear continuous-time systems subject to state constraints. The cost is a quadratic finite-horizon integral. The key enabling technique is a new constrained approximate dynamic programming (C-ADP) approach for finite-horizon nonlinear optimal control with constraints that are affine in the control. The C-ADP approach is intuitive because it uses a quadratic approximation of the cost-to-go function at each backward step. This method yields a sequence of analytic closed-form optimal control functions, which have identical structure and where parameters are obtained from 2 Riccati-like difference equations. This C-ADP method is well suited for real-time implementation. Thus, we use the C-ADP approach in combination with control barrier functions to obtain a continuous-time receding-horizon optimal control that is farsighted in the sense that it optimizes the integral cost subject to state constraints along the entire prediction horizon. Lastly, receding-horizon C-ADP control is demonstrated in simulation of a nonholonomic ground robot subject to velocity and no-collision constraints. We compare performance with 3 other approaches.",
+      "authors": [
+        "Ricardo Gutierrez",
+        "Jesse B. Hoagg"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-04-02T12:20:13+00:00",
+      "link": "https://arxiv.org/pdf/2604.01956v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "receding-horizon optimal control for nonlinear systems with state constraints",
+      "llm_evidence_cn": "具有状态约束的非线性系统收缩时域最优控制",
+      "llm_evidence": "具有状态约束的非线性系统收缩时域最优控制",
+      "canonical_evidence": "具有状态约束的非线性系统收缩时域最优控制",
+      "llm_tldr_en": "Proposes a receding-horizon optimal control for nonlinear systems, useful for precision actuator constraints.",
+      "llm_tldr_cn": "提出一种非线性系统收缩时域最优控制方法，适用于执行器精密控制中的约束处理。",
+      "llm_tldr": "提出一种非线性系统收缩时域最优控制方法，适用于执行器精密控制中的约束处理。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "label": "2026-04-05",
+  "date": "2026-04-05",
+  "generated_at": "2026-04-05T20:13:09",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202604/05/2603.28362v1-a-foldable-and-agile-soft-electromagnetic-robot-for-multimodal-navigation-in-confined-and-unstructured-environments",
+      "section": "quick",
+      "title_en": "A Foldable and Agile Soft Electromagnetic Robot for Multimodal Navigation in Confined and Unstructured Environments",
+      "authors": "Zhihao Lv, Xiaoyong Zhang, Mengfan Zhang, Xiaoyu Song, Xingyue Liu, Yide Liu, Shaoxing Qu, Guoyong Mao",
+      "date": "2026-03-30",
+      "pdf": "https://arxiv.org/pdf/2603.28362v1",
+      "score": "6.0",
+      "evidence": "磁场下由洛伦兹力驱动的电磁机器人",
+      "tldr": "本研究开发了一种名为M-SEMR的微型可折叠软体电磁机器人，旨在解决人体胃肠道等复杂环境下的导航难题。该机器人采用嵌入液态金属通道的六辐条弹性体结构，通过静态磁场下的安培力驱动，实现了包括高速滚动、跳跃和游泳在内的9种以上运动模式。其独特的折叠设计可减少79%的体积，使其能穿过狭窄空间。实验证明该机器人在多种模拟生物组织和粘性流体中具有卓越的敏捷性和适应性，为生物医学机器人提供了新方案。",
+      "tags": "query:em-force",
+      "abstract_en": "Multimodal locomotion is crucial for an animal's adaptability in unstructured wild environments. Similarly, in the human gastrointestinal tract, characterized by viscoelastic mucus, complex rugae, and narrow sphincters like the cardia, multimodal locomotion is also essential for a small-scale soft robot to conduct tasks. Here, we introduce a small-scale compact, foldable, and robust soft electromagnetic robot (M-SEMR) with more than nine locomotion modes designed for such a scenario. Featuring a six-spoke elastomer body embedded with liquid metal channels and driven by Laplace forces under a static magnetic field, the M-SEMR is capable of rapid transitions (< 0.35 s) among different locomotion modes. It achieves exceptional agility, including high-speed rolling (818 mm/s, 26 BL/s), omnidirectional crawling, jumping, and swimming. Notably, the robot can fold to reduce its volume by 79%, enabling it to traverse confined spaces. We further validate its navigation capabilities on complex terrains, including discrete obstacles, viscoelastic gelatin surfaces, viscous fluids, and simulated biological tissues. This system offers a versatile strategy for developing high-mobility soft robots for future biomedical applications.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/05/2604.01956v1-receding-horizon-nonlinear-optimal-control-with-safety-constraints-using-constrained-approximate-dynamic-programming",
+      "section": "quick",
+      "title_en": "Receding-Horizon Nonlinear Optimal Control With Safety Constraints Using Constrained Approximate Dynamic Programming",
+      "authors": "Ricardo Gutierrez, Jesse B. Hoagg",
+      "date": "2026-04-02",
+      "pdf": "https://arxiv.org/pdf/2604.01956v1",
+      "score": "6.0",
+      "evidence": "具有状态约束的非线性系统收缩时域最优控制",
+      "tldr": "本文针对具有状态约束的非线性连续时间系统，提出了一种基于约束近似动态规划（C-ADP）的收缩时域最优控制方法。该方法通过对代价函数进行二次近似，推导出解析形式的最优控制律，并结合控制屏障函数（CBF）确保全预测时域内的安全性。该方案计算效率高，适用于实时应用，并在非线性机器人避障仿真中验证了其优于传统方法的性能。",
+      "tags": "query:em-force",
+      "abstract_en": "We present a receding-horizon optimal control for nonlinear continuous-time systems subject to state constraints. The cost is a quadratic finite-horizon integral. The key enabling technique is a new constrained approximate dynamic programming (C-ADP) approach for finite-horizon nonlinear optimal control with constraints that are affine in the control. The C-ADP approach is intuitive because it uses a quadratic approximation of the cost-to-go function at each backward step. This method yields a sequence of analytic closed-form optimal control functions, which have identical structure and where parameters are obtained from 2 Riccati-like difference equations. This C-ADP method is well suited for real-time implementation. Thus, we use the C-ADP approach in combination with control barrier functions to obtain a continuous-time receding-horizon optimal control that is farsighted in the sense that it optimizes the integral cost subject to state constraints along the entire prediction horizon. Lastly, receding-horizon C-ADP control is demonstrated in simulation of a nonholonomic ground robot subject to velocity and no-collision constraints. We compare performance with 3 other approaches.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

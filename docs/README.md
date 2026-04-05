@@ -6,29 +6,29 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-04
-- 运行时间：2026-04-04 19:13:45 UTC
+- 最新运行日期：2026-04-05
+- 运行时间：2026-04-05 20:13:01 UTC
 - 运行状态：成功
 - 本次总论文数：2
 - 精读区：0
 - 速读区：2
 
 ### 今日简报（AI）
-今日速读聚焦前沿控制技术，涵盖触觉反馈优化与等离子体形状控制的最新仿真进展。
-重点关注受限执行器下的触觉阻尼闭式解，以及利用神经网络代理模型实现等离子体控制的实时动态验证。
-建议关注 AI 代理模型在复杂物理系统实时控制中的跨领域应用潜力。
-- 详情：[/202604/04/README](/202604/04/README)
+今日聚焦受限环境下的折叠式软体机器人导航与具备安全约束的非线性最优控制技术。
+重点展示了电磁驱动软体机器人的多模态敏捷运动，以及利用约束近似动态规划保障复杂系统安全性的新方案。
+建议关注如何将高安全性控制算法与柔性硬件结合，以提升机器人在极端非结构化环境中的作业能力。
+- 详情：[/202604/05/README](/202604/05/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Optimal Prioritized Dissipation and Closed-Form Damping Limitation under Actuator Constraints for Haptic Interfaces](/202604/04/2603.26347v1-optimal-prioritized-dissipation-and-closed-form-damping-limitation-under-actuator-constraints-for-haptic-interfaces)  
+1. [A Foldable and Agile Soft Electromagnetic Robot for Multimodal Navigation in Confined and Unstructured Environments](/202604/05/2603.28362v1-a-foldable-and-agile-soft-electromagnetic-robot-for-multimodal-navigation-in-confined-and-unstructured-environments)  
    标签：评分：6.0/10、query:em-force
-   evidence：触觉接口执行器约束下的阻尼限制方法
-2. [Real-time virtual circuits for plasma shape control via neural network surrogates: dynamic validation in closed-loop simulations](/202604/04/2604.00781v1-real-time-virtual-circuits-for-plasma-shape-control-via-neural-network-surrogates-dynamic-validation-in-closed-loop-simulations)  
+   evidence：磁场下由洛伦兹力驱动的电磁机器人
+2. [Receding-Horizon Nonlinear Optimal Control With Safety Constraints Using Constrained Approximate Dynamic Programming](/202604/05/2604.01956v1-receding-horizon-nonlinear-optimal-control-with-safety-constraints-using-constrained-approximate-dynamic-programming)  
    标签：评分：6.0/10、query:em-force
-   evidence：通过神经网络代理进行实时磁形状控制
+   evidence：具有状态约束的非线性系统收缩时域最优控制
 
 
 <div class="dpr-home-promo-card">

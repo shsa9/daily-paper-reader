@@ -1,0 +1,1276 @@
+Title: Receding-Horizon Nonlinear Optimal Control With Safety Constraints Using Constrained Approximate Dynamic Programming
+
+URL Source: https://arxiv.org/pdf/2604.01956v1
+
+Published Time: Fri, 03 Apr 2026 00:52:11 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# Receding-Horizon Nonlinear Optimal Control With Safety Constraints Using Constrained Approximate Dynamic Programming 
+
+Ricardo Gutierrez and Jesse B. Hoagg 
+
+Abstract — We present a receding-horizon optimal control for nonlinear continuous-time systems subject to state constraints. The cost is a quadratic finite-horizon integral. The key en-abling technique is a new constrained approximate dynamic programming (C-ADP) approach for finite-horizon nonlinear optimal control with constraints that are affine in the control. The C-ADP approach is intuitive because it uses a quadratic approximation of the cost-to-go function at each backward step. This method yields a sequence of analytic closed-form optimal control functions, which have identical structure and where parameters are obtained from 2 Riccati-like difference equations. This C-ADP method is well suited for real-time implementation. Thus, we use the C-ADP approach in combination with control barrier functions to obtain a continuous-time receding-horizon optimal control that is farsighted in the sense that it optimizes the integral cost subject to state constraints along the entire prediction horizon. Lastly, receding-horizon C-ADP control is demonstrated in simulation of a nonholonomic ground robot subject to velocity and no-collision constraints. We compare performance with 3 other approaches. 
+
+I. I NTRODUCTION 
+
+Autonomous systems are often required to achieve perfor-mance goals (e.g., way-point navigation, formation control) while satisfying state constraints (e.g., safety). However, performance goals and constraints may compete with one another. In this case, conflicts can be resolved using barrier functions [1]–[3] or model predictive control (MPC) [4]–[6]. Control barrier functions (CBFs) address state constraints by generating controls that make a specified safe set for-ward invariant [2]. CBFs are often integrated in real-time optimization as constraints that ensure forward invariance of the safe set while minimizing an instantaneous cost [3]. One approach is instantaneous minimum intervention, where a CBF safety filter generates a control that is as close as possible to a desired performance control while ensuring state constraint satisfaction. CBF methods have been demonstrated on a variety of applications, including mobile ground robots [7]–[13], unmanned air vehicles [14], [15], spacecraft [16], [17], and cruise control [3], [18]. CBF approaches can be computationally efficient (e.g., implemented as quadratic pro-grams); however, these methods tend to be shortsighted and greedy, prioritizing instantaneous safety and performance [19]. On the other hand, MPC optimizes performance over a forward-looking time horizon. In the most general setting, MPC methods can address nonlinear dynamics, nonlinear 
+
+> R. Gutierrez and J. B. Hoagg are with the Department of Mechanical and Aerospace Engineering, University of Kentucky, Lexington, KY, USA. (e-mail: Ricardo.Gutierrez@uky.edu, jesse.hoagg@uky.edu). R. Gutierrez is supported by the Fulbright-SENACYT Scholarship. This work is also supported in part by the National Science Foundation (1849213) and Air Force Office of Scientific Research (FA9550-20-1-0028).
+
+objective functions, and constraints. However, nonlinear MPC must be initialized carefully to ensure recursive feasibility of the constraints, and it is computationally expensive. Thus, methods have been developed to address the computational burden. For example, the iterative linear quadratic regulator (iLQR) uses Taylor-series expansion to approximate the nonlinear optimal control problem to a linear-quadratic problem that can be solved with finite-horizon time-varying LQR [20]. Then, iterative forward-and-backward passes are used to refine the solution; these passes may include line search [21]. However, convergence may be slow [22]. Constrained iLQR (CiLQR) is an extension to address constraints by including penalization in the cost function and using augmented Lagrangians [22], [23]. Although CiLQR encourages constraint satisfaction, constraints can be violated. Dynamic programming is a useful tool for problems that involve sequential decisions such as the multistage optimiza-tions that arise in finite-horizon optimal control [24], [25]. Dynamic programming involves solving the Bellman equation, which is generally difficult with nonquadratic cost, nonlinear dynamics, or constraints [26]. Thus, approximate dynamic programming (ADP) uses approximations to simplify the recursive solution of the Bellman equation [25]. For example, [26]–[29] use neural networks to approximate the cost-to-go function. However, this can be computationally expensive and does not directly address constraints. Approaches that address input constraints include [30]–[32]. For example, [32] uses dynamic programming to obtain an analytical solution for an input-constrained LQR problem, where the dynamics are linear and the scalar input is upper and lower bounded. Notably, [30]–[32] do not address state constraints. This article presents 2 primary contributions. First, Sec-tion II addresses discrete-time finite-horizon nonlinear optimal control with a quadratic cost, nonlinear dynamics, and nonlinear constraints, which are affine in the control at each step of the horizon. We present an analytic closed-form solution using constrained approximate dynamic programming (C-ADP), where the cost-to-go function is quadratically approximated at each step of the backward recursion. This approach yields a sequence of analytic nonlinear control functions that have identical structure, where the parameters of each function are obtained through the recursive solution of 2 Riccati-like difference equations. This analytic solution is well suited for real-time implementation, and the sequence of analytic optimal functions can be updated efficiently. These features are important for the article’s other contribution. The second contribution is a receding-horizon nonlinear optimal control for continuous-time systems subject to state 
+
+> arXiv:2604.01956v1 [eess.SY] 2 Apr 2026
+
+constraints. We use the C-ADP solution to construct a feedback control that approximately minimizes a finite-horizon integral cost subject to state constraints that are enforced along the horizon using affine constraints generated from a CBF. Notably, the sequence of C-ADP optimal control functions ensures that state constraints are satisfied not only instantly but for all time in the horizon. Note that although the C-ADP approach is discrete, the optimal control functions can be implemented continuously to ensure constraint satisfaction for the continuous-time dynamics. Finally, Section IV presents numerical simulations of a nonholonomic ground robot navi-gating a cluttered environment. We compare the performance of receding-horizon C-ADP control with 2 variants of CiLQR and a greedy minimum-intervention control. II. C ONSTRAINED APPROXIMATE DYNAMIC 
+
+PROGRAMMING (C-ADP) Consider the quadratic cost J : Rn × · · · × Rn × Rm ×· · · × Rm → R defined by 
+
+J(x1, . . . , x N , u 0, . . . , u N −1) ≜ lN (xN ) +  
+
+> N−1
+
+X
+
+> i=0
+
+li(xi, u i),
+
+(1) where stage cost li : Rn × Rm → R and terminal cost 
+
+lN : Rn → R are 
+
+li(xi, u i) ≜ 12 uT 
+
+> i
+
+Riui + Ω T 
+
+> i
+
+ui + 12 xT 
+
+> i
+
+Qixi + Γ T 
+
+> i
+
+xi, (2) 
+
+lN (xN ) ≜ 12 xT 
+
+> N
+
+QN xN + Γ T 
+
+> N
+
+xN , (3) where x0 ∈ Rn is given; R0, . . . , R N −1 ∈ Rm×m are posi-tive definite; Q0, . . . , Q N ∈ Rn×n are positive semidefinite; 
+
+Ω0, . . . , ΩN −1 ∈ Rm; and Γ0, . . . , ΓN ∈ Rn.The objective of this section is to solve the following constrained nonlinear optimization problem 
+
+min u0,...,u N −1
+
+> x1,...,x N
+
+J(x1, . . . , x N , u 0, . . . , u N −1) (4a) subject to xi+1 = F (xi) + G(xi)ui, i ∈ N , (4b) 
+
+ai(xi) + bi(xi)Tui ≥ 0, i ∈ N , (4c) where F : Rn → Rn, G : Rn → Rn×m, a1, . . . , a N −1 :
+
+Rn → R, and b1, . . . , b N −1 : Rn → Rm are continuously differentiable; and N ≜ {0, . . . , N − 1}.We restrict our attention to quadratic cost J; however, non-quadratic costs can be considered using 2nd-order Taylor-series approximation if appropriate. We make the following assumption to ensure feasibility. 
+
+Assumption 1. For all i ∈ N and all x ∈ Rn, if bi(x) = 0 ,then ai(x) > 0.The method in this article uses approximate dynamic programming to obtain a closed-form solution (i.e., ui as a function of xi) that satisfies constraints (4b) and (4c) but may be suboptimal because a 2nd-order expansion of the cost-to-go function along a nominal trajectory {¯xi}i∈N is used in each step of the dynamic programming recursion. The next subsection demonstrates the solution approach for an N = 3 horizon. Then, we present the N -step horizon closed-form C-APD solution and analyze its properties. 
+
+A. Solution Derivation for N = 3 
+
+Consider the optimization problem (4) , where N = 3 . The optimizer for step i = 2 is u∗ 
+
+> 2
+
+: Rn → Rm given by 
+
+u∗
+
+> 2
+
+(x2) ≜ arg min 
+
+> u2
+
+l2(x2, u 2) + l3(x3) (5a) subject to x3 = F (x2) + G(x2)u2, (5b) 
+
+a2(x2) + b2(x2)Tu2 ≥ 0. (5c) Since (5) is a QP, the first-order necessary conditions yield the minimizer 
+
+u∗
+
+> 2
+
+(x2) = k2(x2) + λ2(x2)W2(x2)b2(x2), (6) where 
+
+λ2(x2) ≜ max 
+
+
+
+0, −a2(x2) − b2(x2)Tk2(x2)
+
+b2(x2)TW2(x2)b2(x2)
+
+
+
+, (7) 
+
+W2(x2) ≜ (R2 + G(x2)TP3G(x2)) −1, (8) 
+
+k2(x2) ≜ −W2(x2)G(x2)T(P3F (x2) + T3) + Ω 2
+
+, (9) where P3 = Q3 and T3 = Γ 3. The optimal cost is 
+
+l∗ 
+
+> 2
+
+(x2) ≜ l2(x2, u ∗
+
+> 2
+
+(x2)) + l3(F ∗ 
+
+> 2
+
+(x2)) , (10) where F ∗ 
+
+> 2
+
+(x2) ≜ F (x2) + G(x2)u∗
+
+> 2
+
+(x2).The closed-form optimizer (6) for this first step is the unique global minimizer of (5) . The next step in dynamic programming is to find the optimal u1 by solving 
+
+min 
+
+> u1
+
+l1(x1, u 1) + l∗ 
+
+> 2
+
+(x2) (11a) subject to x2 = F (x1) + G(x1)u1, (11b) 
+
+a1(x1) + b1(x1)Tu1 ≥ 0. (11c) However, (11) cannot generally be solved in closed form. Thus, we solve a surrogate of this problem by approximating the cost-to-go l∗ 
+
+> 2
+
+in (11a) . First, (7) is approximated by replacing the maximum with the softplus. Specifically, let 
+
+η > 0, and consider softplus η : R → [0 , ∞) defined by 
+
+softplus η (z) = 1
+
+η log 
+
+
+
+1 + e ηz 
+
+, (12) which is a smooth upper-bound approximation of max {0, z }.Thus, λ2 is approximated as 
+
+˜λ2(x2) ≜ softplus η
+
+ −a2(x2) − b2(x2)Tk2(x2)
+
+b2(x2)TW2(x2)b2(x2)
+
+
+
+, (13) and the associated approximations of u∗ 
+
+> 2
+
+and F ∗ 
+
+> 2
+
+are 
+
+˜u∗
+
+> 2
+
+(x2) ≜ k2(x2) + ˜λ2(x2)W2(x2)b2(x2), (14) 
+
+˜F ∗ 
+
+> 2
+
+(x2) ≜ F (x2) + G(x2)˜ u∗
+
+> 2
+
+(x2). (15) Then, the cost-to-go (10) can be approximated by 
+
+˜l∗ 
+
+> 2
+
+(x2) ≜ l2(x2, ˜˜u∗
+
+> 2
+
+(x2)) + l3( ˜˜F ∗ 
+
+> 2
+
+(x2)) , (16) where 
+
+˜˜u∗
+
+> 2
+
+(x2) ≜ K2(x2 − ¯x2) + u∗
+
+> 2
+
+(¯ x2), (17) ˜˜F ∗ 
+
+> 2
+
+(x2) ≜ ˜A2(x2 − ¯x2) + F ∗ 
+
+> 2
+
+(¯ x2) (18) are the Taylor-series approximation of u∗ 
+
+> 2
+
+and F ∗ 
+
+> 2
+
+, and 
+
+K2 ≜ ∂ ˜u∗
+
+> 2
+
+(x)
+
+∂x ¯x2
+
+, ˜A2 ≜ ∂ ˜F ∗ 
+
+> 2
+
+(x)
+
+∂x ¯x2
+
+. (19) Then, using (2), (3), and (17)–(19) in (16) yields 
+
+˜l∗ 
+
+> 2
+
+(x2) = 12 xT2 P2x2 + T T2 x2, (20) where 
+
+P2 ≜ Q2 + KT2 R2K2 + ˜AT2 P3 ˜A2, (21) 
+
+T2 ≜ KT2
+
+
+
+R2u∗
+
+> 2
+
+(¯ x2) − R2K2 ¯x2 + Ω 2
+
+
+
++ Γ 2
+
++ ˜AT2
+
+
+
+P3F ∗ 
+
+> 2
+
+(¯ x2) − P3 ˜A2 ¯x2 + T3
+
+
+
+. (22) Then, we solve (11) with l∗ 
+
+> 2
+
+is replaced by ˜l∗ 
+
+> 2
+
+. Specifically, the optimizer for step i = 1 is u∗ 
+
+> 1
+
+: Rn → Rm given by 
+
+u∗
+
+> 1
+
+(x1) ≜ arg min 
+
+> u1
+
+l1(x1, u 1) + ˜l∗ 
+
+> 2
+
+(x2) (23a) subject to x2 = F (x1) + G(x1)u1, (23b) 
+
+a1(x1) + b1(x1)Tu1 ≥ 0. (23c) Note that (23) is a QP with structure that mirrors (5) from the previous backward step. The first-order necessary conditions yield the minimizer 
+
+u∗
+
+> 1
+
+(x1) = k1(x1) + λ1(x1)W1(x1)b1(x1), (24) where 
+
+λ1(x1) ≜ max 
+
+
+
+0, −a1(x1) − b1(x1)Tk1(x1)
+
+b1(x1)TW1(x1)b1(x1)
+
+
+
+, (25) 
+
+W1(x1) ≜ (R1 + G(x1)TP2G(x1)) −1, (26) 
+
+k1(x1) ≜ −W1(x1)G(x1)T(P2F (x1) + T2) + Ω 1
+
+, (27) where P3 and T3 are given by (21) and (22). Notice that the optimizer (24)–(27) has the same form as the optimizer (6)–(9) on the previous step with subscripts 2 and 3 replaced by 1 and 2, respectively. Similarly, the optimal cost is 
+
+l∗ 
+
+> 1
+
+(x1) ≜ l1(x1, u ∗
+
+> 1
+
+(x1)) + ˜l∗ 
+
+> 2
+
+(F ∗ 
+
+> 1
+
+(x1)) , (28) where F ∗ 
+
+> 1
+
+(x1) ≜ F (x1) + G(x1)u∗
+
+> 1
+
+(x1).The next backward step is to find the optimal u0 by solving the optimization (11) with subscripts 1 and 2 replaced by 0 and 1, respectively. To solve this optimization, we use the same steps as before. We replace the cost-to-go l∗ 
+
+> 1
+
+by the approximation 
+
+˜l∗ 
+
+> 1
+
+(x1) ≜ l1(x1, ˜˜u∗
+
+> 1
+
+(x1)) + ˜l∗ 
+
+> 2
+
+( ˜˜F ∗ 
+
+> 1
+
+(x1)) , (29) where ˜˜u∗ 
+
+> 1
+
+and ˜˜F ∗ 
+
+> 1
+
+(x1) are given by (17)–(19) and (13)–(15) with subscript 2 replaced by subscript 1. Then, substituting (2) and (20) into (29) yields 
+
+˜l∗ 
+
+> 1
+
+(x1) = 12 xT1 P1x1 + T T1 x1, (30) where 
+
+P1 ≜ Q1 + KT1 R1K1 + ˜AT1 P2 ˜A1, (31) 
+
+T1 ≜ KT1
+
+
+
+R1u∗
+
+> 1
+
+(¯ x1) − R1K1 ¯x1 + Ω 1
+
+
+
++ Γ 1
+
++ ˜AT1
+
+
+
+P2F ∗ 
+
+> 1
+
+(¯ x1) − P2 ˜A1 ¯x1 + T2
+
+
+
+. (32) The approximate cost-to-go (30)–(32) has the same form as the approximate cost-to-go (20)–(22) on the previous step with subscripts 2 and 3 replaced by 1 and 2, respectively. The optimizer for step i = 0 is u∗ 
+
+> 0
+
+: Rn → Rm given by 
+
+u∗
+
+> 0
+
+(x0) ≜ arg min 
+
+> u0
+
+l0(x0, u 0) + ˜l∗ 
+
+> 1
+
+(x1) (33a) subject to x1 = F (x0) + G(x0)u0, (33b) 
+
+a0(x0) + b0(x0)Tu0 ≥ 0. (33c) The QP (33) has the same structure as (5) and (23) from the previous steps, and the unique global minimizer has the same form as the previous steps. Specifically, the optimizer is given by (24)–(27) with subscripts 1 and 2 replaced by 0 and 1, respectively. 
+
+B. Solution for N -Step Horizon 
+
+The derivation process from the previous section can be applied for an N -step horizon. This process yields the following solution. For all i ∈ N , define 
+
+u∗ 
+
+> i
+
+(x) ≜ ki(x) + λi(x)Wi(x)bi(x), (34) where 
+
+λi(x) ≜ max 
+
+
+
+0, −ai(x) − bi(x)Tki(x)
+
+bi(x)TWi(x)bi(x)
+
+
+
+, (35) 
+
+Wi(x) ≜  Ri + G(x)TPi+1 G(x)−1, (36) 
+
+ki(x) ≜ −Wi(x)G(x)T(Pi+1 F (x) + Ti+1 ) + Ω i
+
+, (37) where 
+
+Pi ≜ Qi + KT 
+
+> i
+
+RiKi + ˜AT 
+
+> i
+
+Pi+1 ˜Ai, (38) 
+
+Ti ≜ ˜AT
+
+> i
+
+
+
+Pi+1 (F (¯ xi) + G(¯ xi)u∗ 
+
+> i
+
+(¯ xi) − ˜Ai ¯xi) + Ti+1 
+
+
+
++ KT 
+
+> i
+
+(Riu∗ 
+
+> i
+
+(¯ xi) − RiKi ¯xi + Ω i) + Γ i (39) where PN = QN , TN = Γ N , and 
+
+˜Ai ≜ ∂ ˜F ∗ 
+
+> i
+
+(x)
+
+∂x ¯xi
+
+, Ki ≜ ∂ ˜u∗ 
+
+> i
+
+(x)
+
+∂x ¯xi
+
+, (40) 
+
+˜λi(x) ≜ softplus η
+
+ −ai(x) − bi(x)Tki(x)
+
+bi(x)TWi(x)bi(x)
+
+
+
+, (41) 
+
+˜u∗ 
+
+> i
+
+(x) ≜ ki(x) + ˜λi(x)Wi(x)bi(x), (42) 
+
+˜F ∗ 
+
+> i
+
+(x) ≜ F (x) + G(x)˜ u∗ 
+
+> i
+
+(x). (43) The sequence of optimal functions u∗ 
+
+> N−1
+
+, . . . , u ∗ 
+
+> 0
+
+are solved using backward recursion. Specifically, (34)–(39) are solved from i = N −1 to i = 0 , where the the recursion is initialized with the terminal conditions PN = QN and TN = Γ N . Since 
+
+Qi is positive semidefinite and Ri is positive definite, it follows from (36) and (38) that Pi is positive semidefinite and for all x ∈ Rn, Wi(x) exists and is positive definite. Remark 1. The C-ADP solution (34)–(43) simplifies to the classic finite-horizon linear quadratic regulator (LQR) for discrete time. To illustrate this case, for all i ∈ N , let 
+
+Ri = R ∈ Rm×m, Qi = Q ∈ Rn×n, Ωi = 0 , and Γi = 0 ,which implies that (1) is the finite-horizon LQR cost. Next, let F (x) = Ax and G(x) = B, where A ∈ Rn×n and 
+
+B ∈ Rn×m, which implies that (4b) is linear (i.e., discrete-time linear dynamics). Finally, let ai(x) > 0 and bi = 0 ,which implies that there are no inequality constraints (i.e., (4c) are trivially satisfied). In this case, it follows from (34)–(43) that for i ∈ N , Ti = 0 , λi = 0 , and Wi = ( R+BTPi+1 B)−1.Furthermore, for i ∈ N , the optimizer is 
+
+u∗ 
+
+> i
+
+(x) = Kix, Ki = −(R + BTPi+1 B)−1BTPi+1 A, 
+
+where (38) simplifies to the discrete Riccati equation 
+
+Pi = Q+ATPi+1 A−ATPi+1 B(R+BTPi+1 B)−1BTPi+1 A, 
+
+where PN = QN . In this case, Ki is the LQR gain. The following result shows that u∗ 
+
+> i
+
+satisfies (4c) for all x.
+
+Theorem 1. Assume Assumption 1 is satisfied. Then, for all i ∈ N and all x ∈ Rn, ai(x) + bi(x)Tu∗ 
+
+> i
+
+(x) ≥ 0.
+
+Proof. Since Wi(x) is positive definite, it follows from (34) and (35) that 
+
+ai(x) + bi(x)Tu∗ 
+
+> i
+
+(x) = ai(x) + bi(x)Tki(x)+ max {0, −ai(x) − bi(x)Tki(x)},
+
+= max {0, a i(x) + bi(x)Tki(x)},
+
+which is nonnegative. The optimal functions u∗ 
+
+> i
+
+have identical structure for each step i, and the information required to construct u∗
+
+> i
+
+is propagated through the backward recursion of the matrices 
+
+Pi and Ti. Thus, the C-ADP solution (34)–(43) is well suited for a real-time receding-horizon implementation. Unlike iLQR or CilQR, the solution (34)–(43) satisfies the constraint (4c), and the solution is in closed form, which facilitates fast-and-efficient feedback implemented as presented in Section III. 
+
+C. Optimality of the Solution 
+
+Although (34)–(43) is not necessarily optimal with respect to the original cost (4a), u∗ 
+
+> i
+
+is optimal with respect to the approximate stage cost obtained by replacing the cost-to-go with the approximate cost-to-go. To more clearly explain, we define the approximate cost-to-go for the i − 1 step of recursion. Specifically, for all i ∈ N , define 
+
+˜l∗ 
+
+> i
+
+(xi) ≜ li
+
+
+
+xi, K i(xi − ¯xi) + u∗ 
+
+> i
+
+(¯ xi)
+
+
+
++ ˜l∗
+
+> i+1
+
+ ˜Ai(xi − ¯xi) + F (¯ xi) + G(¯ xi)u∗ 
+
+> i
+
+(¯ xi)
+
+
+
+, (44) where ˜l∗ 
+
+> N
+
+(xN ) = lN (xN ). The approximate cost-to-go (44) is the N -step extension of (16) and (29) used in the N = 3 
+
+derivation. Similar to Section II-A, using (2) in (44) yields 
+
+˜l∗ 
+
+> i
+
+(xi) = 12 xT 
+
+> i
+
+Pixi + T T 
+
+> i
+
+xi. (45) Then, for all i ∈ N , the approximate cost at step i is 
+
+˜Ji(xi, u i) ≜ li(xi, u i) + ˜l∗
+
+> i+1
+
+
+
+F (xi) + G(xi)ui
+
+
+
+, (46) and using (2) and (45) in (46) yields 
+
+˜Ji(xi, u i) = 12 uT
+
+> i
+
+h
+
+Ri + G(xi)TPi+1 G(xi)
+
+i
+
+ui
+
++
+
+h
+
+G(xi)T(Ti+1 + Pi+1 F (xi)) + Ω i
+
+iT
+
+ui
+
++ 12 xT 
+
+> i
+
+Qixi + 12 F (xi)TPi+1 F (xi)+ Γ T 
+
+> i
+
+xi + T T
+
+> i+1
+
+F (xi), (47) which is quadratic and strictly convex in ui. The next result shows that for all x ∈ Rn, u = u∗ 
+
+> i
+
+(x) is the unique global minimizer of ˜Ji(x, u ) subject to the constraint 
+
+ai(x) + bi(x)Tu ≥ 0. The proof is similar to that of [9, Theorem 1] and is omitted due to space constraints. 
+
+Theorem 2. Let i ∈ N and x ∈ Rn, and assume Assumption 1 is satisfied. Let u ∈ Rm be such that u̸ = u∗ 
+
+> i
+
+(x)
+
+and ai(x) + bi(x)Tu ≥ 0. Then, ˜Ji(x, u ) > ˜Ji(x, u ∗ 
+
+> i
+
+(x)) .III. C LOSED -F ORM RECEDING -H ORIZON NONLINEAR 
+
+OPTIMAL CONTROL WITH STATE CONSTRAINTS 
+
+This section presents a receding-horizon optimal control using the closed-form C-ADP solution (34)–(43). Consider the dynamic system 
+
+˙x(t) = f (x(t)) + g(x(t)) v(t), (48) where x(t) ∈ Rn is the state; x(0) = x0 ∈ Rn is the initial condition; v : [0 , ∞) → Rlv is the control; f : Rn → Rn
+
+and g : Rn → Rn×lv are continuously differentiable on Rn.Let T > 0 be a prediction horizon, and for each t ≥ 0,define the receding-horizon cost 
+
+J (t, x, ˆv) ≜
+
+Z t+Tt
+
+12 x(τ )TQ(τ )x(τ ) + Γ( τ )Tx(τ )+ 12 ˆv(τ )TRv (τ )ˆ v(τ ) + Ω v (τ )T ˆv(τ ) d τ, (49) where x satisfy (48) with v = ˆ v, Q(t) ∈ Rn×n is positive semidefinite, Rv (t) ∈ Rlv ×lv is positive definite, Ωv (t) ∈
+
+Rlv , and Γ( t) ∈ Rn.Let ψ0 : Rn → R be continuously differentiable, and define the safe set 
+
+C0 ≜ {x | ψ0(x) ≥ 0}, (50) which is the set of states that satisfy the state constraint. Our objective is to construct a feedback control ˆv such that for all time t ≥ 0, the cost J (t, x, ˆv) is approximately minimized subject to the state constraint x(t) ∈ C0. We address the problem using the closed-form C-ADP solution. Since (34)–(43) solves the optimization problem (4) that has only one affine constraint at each step of the horizon, we consider a state constraint set that can be modeled as the zero-superlevel set of the single candidate CBF ψ0. However, this approach can address safe sets that are the intersection of multiple zero-superlevel set (with potentially different relative degrees) by using a barrier function composition method. For example, see [9]–[13], which use a log-sum-exponential soft-minimum function to compose multiple barrier functions. Similarly, this approach can address both state and input constraints by applying the approach in [11], [12], [17], which uses control dynamics to transform input constraints into controller-state constraints. 
+
+A. Affine CBF Constraint Function for Safety 
+
+We assume the relative degree of ψ0 is at least d at each point in C0. Specifically, we make the following assumption. 
+
+Assumption 2. There exists a positive integer d such that for all i ∈ { 0, 1, ..., d − 2} and all x ∈ C0, Lg Lif ψ0(x) = 0 ;and there exists xe ∈ C0 such that Lg Ld−1 
+
+> f
+
+ψ0(xe)̸ = 0 .Assumption 2 implies that the relative degree of ψ0 is at least d at each point in C0. We use a higher-order approach to construct a candidate CBF. For all j ∈ { 1, ..., d − 1}, let 
+
+αj−1 : R → R be a (d − j)-times continuously differentiable extended class-K function, and define 
+
+ψj (x) ≜ Lf ψj−1(x) + αj−1(ψj−1(x)) . (51) For all j ∈ { 1, ..., d − 1}, the zero-superlevel set of ψj is given by 
+
+Cj ≜ {x | ψj (x) ≥ 0}. (52) We make the following assumption. 
+
+Assumption 3. For all x ∈ bd Cd−1, if Lg ψd−1(x) = 0 ,then Lf ψd−1(x) > 0.Assumption 3 is related to the constant-relative-degree assumption that is often invoked for CBF approaches. Here, we relax the assumption to require that Lg ψd−1 is nonzero only a subset of the boundary of Cd−1. Next, define 
+
+C ≜
+
+> d−1
+
+\
+
+> j=0
+
+Cj , (53) which is assumed to be nonempty and contain no isolated points. Assumption 3 implies that C ⊆ C0 is control forward invariant. Next, we construct a CBF-type constraint function on the control to ensure that x(t) ∈ C for all t ≥ 0. Let α :
+
+R → R be locally Lipschitz and nondecreasing such that 
+
+α(0) = 0 . Then, consider the CBF state-constraint function 
+
+ψ : Rn × Rlv × R → R given by 
+
+ψ(x, ˆv, ˆδ) ≜ Lf ψd−1(x) + Lg ψd−1(x)ˆ v
+
++ α(ψd−1(x)) + ψd−1(x)ˆδ, (54) where ˆv is the control variable and ˆδ is a slack. Define 
+
+a(x) ≜ Lf ψd−1(x) + α(ψd−1(x)) , b(x) ≜
+
+h Lg ψd−1(x)
+
+> ψd−1(x)
+
+i
+
+,
+
+and note that ψ(x, ˆv, ˆδ) = a(x) + b(x)T ˆu, where ˆu =  ˆv
+
+> ˆδ
+
+.The constraint a(x) + b(x)T ˆu ≥ 0 is sufficient to enforce 
+
+x(t) ∈ C.The cost (49) is quadratic in ˆv, whereas the constraint 
+
+a(x) + b(x)T ˆu ≥ 0 is a function of ˆv and ˆδ. Thus, let rδ > 0
+
+and consider the regularized cost 
+
+¯J (t, x, ˆu) = J (t, x, ˆv) + rδ
+
+2
+
+Z t+Tt
+
+ˆδ(τ )2 dτ. (55) 
+
+B. Receding-Horizon C-ADP Control 
+
+A receding-horizon implementation of (34)–(43) is used to construct a control ˆv and slack ˆδ that approximately minimizes 
+
+¯J (t, x, ˆu) subject to the constraint ψ(x, ˆv, ˆδ) ≥ 0. To apply (34)–(43), we discretize (48) . Let Tp > 0 be the planning time step such that N = T /T p is an integer. In other words, 
+
+Tp is the time step associated with the subscript i in the optimization (4). Then, let 
+
+xi+1 = fd(xi) + gd(xi)vi. (56) be the discretize approximation of (56). For example, fd and 
+
+gd can be obtained by discretizing (48) using the forward-Euler method. In this case, fd(x) = x + Tpf (x) and 
+
+gd(x) = Tpg(x). Higher-order or approximate zero-order-hold methods can also be used to improve accuracy of (56) if needed. Although fd and gd are used to construct the optimal functions u∗
+
+> 0
+
+, . . . , u ∗ 
+
+> N
+
+, the safety constraint ψ(x, ˆv, ˆδ) ≥ 0 is based on continuous-time dynamics (48). Since the optimization variable ˆu includes control ˆv and slack ˆδ, let 
+
+F (x) = fd(x), G(x) = gd(x) 0n×1
+
+. (57) Thus, xi+1 = F (xi) + G(xi)ui, where ui =  vi
+
+> δi
+
+.The C-ADP functions u∗
+
+> 0
+
+, . . . , u ∗ 
+
+> N
+
+are updated using (34)– (43) with update period Ts ∈ (0 , T p]. In other words, 
+
+u∗
+
+> 0
+
+, . . . , u ∗ 
+
+> N
+
+can be updated faster than the sample time used to discretize the horizon. We use subscript k ∈ N to indicate the update step. For example, Jk is the cost for the optimization (4) on step k, which corresponds to kT p in real time. Similarly, 
+
+u∗
+
+> 0,k
+
+, . . . , u ∗ 
+
+> N,k
+
+are the optimal functions obtained from (34)– (43) on time step k. For each k ∈ R, Jk is obtained by discretizing (55). Specifically, Jk is given by (4), where 
+
+Qi,k = Q(kT s + iT p), Γi,k = Γ( kT s + iT p),Ri,k =
+
+Rv (kT s + iT p) 0lv ×1
+
+01×lv rδ
+
+
+
+, Ωi,k =
+
+Ω( kT s + iT p)0
+
+
+
+.
+
+Then, for each k ∈ N, the optimal functions u∗
+
+> 0,k
+
+, . . . , u ∗
+
+> N,k
+
+are obtained from (34)–(43), where ai = a, bi = b, and 
+
+{¯xi,k }i∈N is the nominal trajectory used on the kth step. Finally, for all k ∈ N and all t ∈ [kT s, (k + 1) Ts), the optimal control v∗ : [0 , ∞) × Rn → Rℓ is given by 
+
+v∗(t, x ) ≜ Ilv 0lv
+
+u∗
+
+> 0,k
+
+(x), (58) and the optimal slack parameter δ∗ : [0 , ∞) × Rn → Rℓ is 
+
+δ∗(t, x ) ≜ 01×lv 1u∗
+
+> 0,k
+
+(x), (59) Note that v∗ and δ∗ are piecewise continuous in t and continuous in x on Rn. In addition, v∗ and δ∗ are continuous in t on each interval [kT s, (k + 1) T) but are generally discontinuous at kT s, which corresponds to the u∗ 
+
+> 0,k
+
+update. A smooth homotopy between consecutive optimal functions (e.g., [9], [13]) can be used instead of the the update (58) .Algorithm 1: Receding-Horizon C-ADP Control 
+
+Input: {¯xi, 0}i∈N , Q, Γ, R v , Ωv , r δ , T p, T, a, b, F, G 
+
+Output: v∗(t, x ) 
+
+> 1
+
+for k ← 0, 1, 2, . . . do  
+
+> 2
+
+if k > 0 then    
+
+> // Forward pass
+> 3
+
+{¯xi,k }i∈N ← (60)  
+
+> 4
+
+end    
+
+> // Backward pass
+> 5
+
+{u∗
+
+> i,k
+
+}i∈N ← (34) –(43)     
+
+> // Extract control function
+> 6
+
+v∗(t, x ) ← (58)  
+
+> 7
+
+end 
+
+If F ′, G′, and ψ′ 
+
+> d−1
+
+are locally Lipschitz on D ⊂ Rn, then (34)–(37) imply that v∗ and δ∗ are locally Lipschitz on D.The following theorem is the main result constraint satisfaction. The proof is similar to [9] and is omitted due to space limitations. 
+
+Theorem 3. Consider (48) , where Assumptions 2 and 3 are satisfied. Let v = v∗, where v∗ is given by (58) . Assume 
+
+F ′, G′, and ψ′ 
+
+> d−1
+
+are locally Lipschitz on C. Then, for all 
+
+x0 ∈ C, the following hold: 
+
+(a) There exists tm > 0 such that (48) with v = v∗ has a unique solution on [0 , t m).
+
+(b) For all t ∈ [0 , t m), x(t) ∈ C ⊆ C0.Theorem 3 shows that v∗ ensures safety, and Theorem 2 describes the optimality property of the sequence of functions 
+
+u∗ 
+
+> 0,k
+
+that constitute v∗.In this receding-horizon implementation, the nominal trajectory {¯xi,k }i∈N is obtained on each update k in a forward pass through (56) using the latest optimal control functions 
+
+u∗
+
+> i,k −1
+
+. Specifically, let {¯xi, 0}i∈N be the initial nominal trajectory, and let {u∗
+
+> i, 0
+
+}i∈N be the solution to (34)–(43) using {¯xi, 0}i∈N . Then, for all k ∈ { 1, 2, ... }, {¯xi,k }i∈N is the solution to 
+
+¯xi+1 ,k = F (¯ xi,k ) + G(¯ xi,k )u∗
+
+> i,k −1
+
+(¯ xi,k ), ¯x0,k = x(kT s).
+
+(60) Receding-horizon C-APD control is summarized in Alg. 1. IV. N ONHOLONOMIC GROUND ROBOT 
+
+Consider the nonholonomic differential drive mobile robot modeled by (48), where 
+
+x =
+
+
+
+qx
+
+qy
+
+γsω
+
+, f (x) = 
+
+
+
+s cos γ − ldω sin γs sin γ + ldω cos γω
+
+−c1s − c2s2 tanh sε1
+
+−c3ω − c4ω2 tanh ωε2
+
+,g(x) = 
+
+03×2
+
+M
+
+
+
+, M ≜ km
+
+rR a
+
+ 1 
+
+> m
+> 1
+> mlI
+
+− lI
+
+
+
+, u =
+
+ur
+
+ul
+
+
+
+,c1 ≜ 2kbkm
+
+mrR a
+
++ 2ε3
+
+mr , c3 ≜ kbkml2
+
+Ir 2Ra
+
++ lε 3
+
+Ir 2 ,
+
+where q ≜ [qx qy]T is the position of a point of interest on the robot in an orthogonal coordinate frame, γ is the direction of the velocity vector, s is the speed, ω is the angular velocity, 
+
+ur and ul are the control voltage applied to the right and left motors, km = 0 .1 N-m/Amp is the torque constant, r = 0 .1 mis the wheel radius, l = 0 .5 m is the distance between wheels, 
+
+ld = 0 .25 m is the distance from the mass center to the point of interest, Ra = 0 .27 ohms is the armature resistance, 
+
+m = 10 kg is the mass, I = 0 .83 kg-m2 is the moment of inertia, kb = 0 .0487 V-s/rad is the motor back-EMF constant, 
+
+ε3 = 0 .01 N-m-s is the friction coefficient, c2 = 0 .4581 m −1,
+
+c4 = 0 .3477 , and ε1 = ε2 = 0 .4. This model includes linear damping from the back-EMF of the motor and friction of the ground, as well as drag damping. This model is from [33]. Consider the map in Fig. 1. The objective is to navigate to a goal state xd ≜ [ qTd 03×1 ]T, where qd ∈ R3 is the goal loation, and satisfy state constraints. The robot must not collide with obstacles, its speed must satisfy 
+
+|s|≤ ¯s = 1 .5 m/s, and its angular velocity must satisfy 
+
+|ω|≤ ¯ω = 0 .5 rad/s. These constraints are modeled with barrier functions. Specifically, the area outside each obstacle is modeled as the zero-superlevel set of ϕ1(x), ..., ϕ 41 (x), and the bounds on s and ω are modeled by h42 (x) ≜ ¯s2 − s2 and 
+
+h43 (x) ≜ ¯ω2 −ω2. Note that h42 and h43 have relative degree 1, whereas ϕ1, ..., ϕ 41 have relative degree 2. To address multiple barrier functions with different relative degrees, we adopt the approach in [11], [12], which uses a log-sum-exponential function to compose multiple barrier functions. To compose the barrier functions with different degrees, we use a higher-order approach with ϕ1, ..., ϕ 41 , because they have relative degree two. For all i ∈ { 1, 2, ..., 41 }, define 
+
+hi(x) ≜ Lf ϕi(x) + ζϕ i(x), where ζ = 0 .5, and note that hi
+
+is relative degree one. Then, let ρ > 0, and consider the safe set C0 given by (50), where 
+
+ψ0(x) ≜ − 1
+
+ρ log 
+
+ nhX
+
+> i=1
+
+e−ρh i(x)
+
+, (61) where nh = 43 . The log-sum-exponential (61) is a smooth lower-bound approximation of min {h1, ..., h nh } with worst-case approximation error bounded by ρ−1 log nh [9]. Se-lecting ρ is a trade-off between the conservativeness of the approximation and numerical conditioning (see [9], [11], [12]). We let ρ = 750 .We compare receding-horizon C-ADP control with other several approaches. Specifically, we compare the following: 
+
+Method 1. C-ADP : Algorithm 1 is implemented with η = 1 ,
+
+Q = diag(1 , 1, 0, 16 , 160) , Γ = Qx d, Rv = diag(80 , 80) ,
+
+Ωv = 0 2×1, and rδ = 0 .2 × 10 10 . The horizon is T = 20 swith Tp = 0 .05 s, which yields N = 400 , and Ts = Tp.
+
+Method 2. CiLQR+CBF : CiLQR from [21] is implemented to compute a desired control vd using a single forward-and-backward pass per update, Levenberg–Marquardt regulariza-tion, and the line-search capability in [21] disabled. The horizon N , planning time step Tp, update period Ts, and cost are the same as in Method 1. As common in CiLQR, the constraints are added to the cost as exponentials (i.e., e−h42 (x) + e−h43 (x) + P41  
+
+> i=1
+
+e−ϕi(x)). Since CiLQR does not guarantee constraint satisfaction, the implemented control v
+
+is computed from a minimum-intervention QP with the CBF constraint (54). Specifically, 
+
+(v(x), δ (x)) = arg min 
+
+> ˆv, ˆδ
+
+∥ˆv − vd(x)∥2+rδ ˆδ2
+
+subject to (54) .
+
+(62) 
+
+Method 3. CiLQR+LS+CBF : This is the same as Method 2, but the line-search capability is enabled, where up to 10 forward-and-backward passes are allowed per update. 
+
+Method 4. NaiveControl+CBF : This method uses an analytic desired control vd that accomplishes destination seeking in an obstacle-free environment. However, vd is naive to obstacles, so the implemented control v is computed from the minimum intervention QP (62). This desired control is 
+
+vd(x) ≜ (M TM )−1M T
+
+ ˙sd(x) − c1s − c2s2 tanh sε1
+
+˙ωd(x) − c3ω − c4ω2 tanh ωε2
+
+
+
+,
+
+where kp = 0 .4, kd = 0 .75 , and 
+
+˙sd(x) ≜ cos γ sin γad + ldω2,
+
+˙ωd(x) ≜ l−1d
+
+  − sin γ cos γad − sω ,ad(x) ≜ −kp tanh( q − qd) − kd tanh ˙ q. 
+
+C-ADP control naturally satisfies the constraints (see Theorem 3). For the other methods, constraints are not necessarily satisfied by the desired control vd, which is why the CBF filter (62) is used. For all methods, the control v is implemented with a zero-order hold at 100 Hz. Each method is evaluated using 15 trials (5 initial positions paired with 3 goal locations). We say that the robot reaches 
+
+qd if the distance error ∥q − qd∥ reaches and stays within 
+
+dtol = 0 .25 m by the final time Tf = 120 s. Figure 1 shows the map with the 15 trajectories for each method. For each method, the robot safely navigate obstacles. All trials with C-ADP reach qd, whereas the success rates with Methods 2, 3, and 4 are 2, 12, and 10 out of 15, respectively. For Method 3, the 3 trials do not reach qd reach 0.5 m error; however, they do not get closer. The computation time (mean, standard deviation) on an Acer Nitro AN515-57 laptop (Intel Core i5-11400H @ 2.70 GHz, 16 GB RAM) are (51 , 2.1) ms, (8 .1, 0.5) ms, (62 , 19) 
+
+ms, and (2 .2, 0.2) ms for Methods 1, 2, 3 and 4, respectively. Thus, C-ADP compares favorably with Method 3 (CiLQR with line search), which is the only method with comparable performance. Note that CiLQR from [21] is computationally optimized, whereas our implementation of C-ADP is not. The large standard deviation for Method 3 is due to adaptive regularization and line search, which vary the number of forward-backward passes per step. To compare the methods in more detail, we consider 3 performance metrics. First, the success indicator (SI), which is equal to 0 if the robot reaches qd and equal to 1 otherwise. Second, the arrival time (AT), which is the time at which the robot reaches qd. We let AT = Tf if the robot does not reach −20         
+
+> −10
+> 0
+> 10
+> 20
+> qy (m)
+> 1) C−ADP
+> Start
+> Goal
+> 2) CiLQR+CBF
+> Start
+> Goal
+> −10 010 20
+> qx(m)
+> −20
+> −10
+> 0
+> 10
+> 20
+> qy (m)
+> 3) CiLQR+LS+CBF
+> Start
+> Goal
+> −10 010 20
+> qx(m)
+> 4) NaiveControl+CBF
+> Start
+> Goal
+
+Fig. 1: All 15 trajectories for each method. Blue lines indicate trajectories that reach qd, whereas red lines do not. 
+
+qd. Third, the total cost is TC ≜
+
+Z Tf
+
+> 0
+
+[x(t) − xd]TR[x(t) − xd] + v(t)TQv v(t) d t. 
+
+For each method and each trial, we also consider 3 metrics related to the control. The control magnitude (CM), control derivative (CD), and control intervention (CI) are CM ≜ max  
+
+> t
+
+∥v(t)∥, CD ≜ max  
+
+> t
+
+∥ ˙v(t)∥, CI ≜ max  
+
+> t
+
+∥δv (t)∥,
+
+where δv ≜ v − vd. For C-ADP control, it follows from (34)–(39) that vd is the value obtained with λ0,k = 0 . Next, we normalize these metrics across all 60 trials (4 methods, 15 trials). For each j ∈ I ≜ {1, 2, . . . , 60 }, let 
+
+˜AT j ≜ max ℓ∈I AT ℓ − AT j
+
+max ℓ∈I AT ℓ − min ℓ∈I AT ℓ
+
+.
+
+Note that ˜AT j = 1 if trial j arrives the fastest of the 60 trials, whereas ˜AT j = 0 if trial j arrives the slowest (i.e., does not arrive). Similarly, let ˜FI j , ˜TC j , ˜CM j , ˜CD j , and ˜CI j denote the other normalized metrics. For each metric, 1 is best and 0 is worst. Figure 2 provides radar plots summarizing the metrics for each algorithm. The shaded region is the average across all 15 trials and the dashed lines show each trial. Figure 2 shows that C-ADP provides the best overall results followed by CiLQR with line search. In contrast, CiLQR without line search has the worst performance metrics 0.5 
+
+> 1.0 ̃TC ̃SI ̃AT ̃CD ̃CM ̃CI
+
+1) C−ADP 
+
+> 0.5
+> 1.0 ̃TC ̃SI ̃AT ̃CD ̃CM ̃CI
+
+2) CiLQR+CBF 
+
+> 0.5
+> 1.0 ̃TC ̃SI ̃AT ̃CD ̃CM ̃CI
+
+3) CiLQR+LS+CBF 
+
+> 0.5
+> 1.0 ̃TC ̃SI ̃AT ̃CD ̃CM ̃CI
+
+4) NaiveControl+CBF Fig. 2: Performance and control metrics. Red lines show the mean, and the dashed lines show the 15 trials. (TC, FI, and AT). It is notable that line search significantly improves the performance of CiLQR because line-search approaches can also be implemented with the C-ADP control method. We note that since the C-ADP control has a closed-form expression, its can be implemented with a faster zero-order hold without reducing the update time Ts ∈ (0 , T p].In contrast, CiLQR is limited by Ts in the sense that the control obtained from CiLQR is constant for Ts (although the minimum intervention CBF can be implemented faster as it was in this example). REFERENCES [1] S. Prajna, A. Jadbabaie, and G. J. Pappas, “A framework for worst-case and stochastic safety verification using barrier certificates,” IEEE Trans. Autom. Contr. , vol. 52, no. 8, pp. 1415–1428, 2007. [2] P. Wieland and F. Allg ¨ower, “Constructive safety using control barrier functions,” IFAC Proc. Volumes , vol. 40, no. 12, pp. 462–467, 2007. [3] A. D. Ames, X. Xu, J. W. Grizzle, and P. Tabuada, “Control barrier function based quadratic programs for safety critical systems,” IEEE Trans. Autom. Contr. , vol. 62, no. 8, pp. 3861–3876, 2016. [4] F. Borrelli, A. Bemporad, and M. Morari, Predictive control for linear and hybrid systems . Cambridge University Press, 2017. [5] A. Bemporad, F. Borrelli, M. Morari, et al. , “Model predictive control based on linear programming˜ the explicit solution,” IEEE Trans. Autom. Contr. , vol. 47, no. 12, pp. 1974–1985, 2002. [6] P. Tøndel, T. A. Johansen, and A. Bemporad, “An algorithm for multi-parametric quadratic programming and explicit MPC solutions,” 
+
+Automatica , vol. 39, no. 3, pp. 489–497, 2003. [7] A. D. Ames, S. Coogan, M. Egerstedt, G. Notomista, K. Sreenath, and P. Tabuada, “Control barrier functions: Theory and applications,” in 
+
+Proc. Euro. Contr. Conf. , pp. 3420–3431, 2019. [8] R. K. Cosner, A. W. Singletary, A. J. Taylor, T. G. Molnar, K. L. Bouman, and A. D. Ames, “Measurement-robust control barrier functions: Certainty in safety with uncertainty in state,” in IEEE/RSJ Int. Conf. Int. Robots Sys. , pp. 6286–6291, 2021. [9] A. Safari and J. B. Hoagg, “Time-varying soft-maximum barrier functions for safety in unmapped and dynamic environments,” IEEE Trans. on Contr. Sys. Tech. , 2025. [10] A. Safari and J. B. Hoagg, “Safe navigation in unmapped environments for robotic systems with input constraints,” in Proc. Conf. Dec. Contr. ,pp. 6957–6962, IEEE, 2025. [11] P. Rabiee and J. B. Hoagg, “Composition of control barrier functions with differing relative degrees for safety under input constraints,” in 
+
+Proc. Amer. Contr. Conf. , pp. 3692–3697, 2024. [12] P. Rabiee and J. B. Hoagg, “A closed-form control for safety under input constraints using a composition of control barrier functions,” 
+
+arXiv preprint arXiv:2406.16874 , 2024. [13] P. Rabiee and J. B. Hoagg, “Soft-minimum and soft-maximum barrier functions for safety with actuation constraints,” Automatica , 2024. [14] Z. Wang, T. Hu, and L. Long, “Multi-uav safe collaborative transporta-tion based on adaptive control barrier function,” IEEE Trans. Sys., Man, and Cyb.: Systems , 2023. [15] Z. Zheng, J. Li, Z. Guan, and Z. Zuo, “Constrained moving path fol-lowing control for uav with robust control barrier function,” IEEE/CAA Automatica Sinica , vol. 10, no. 7, pp. 1557–1570, 2023. [16] J. Breeden and D. Panagou, “Robust control barrier functions under high relative degree and input constraints for satellite trajectories,” 
+
+Automatica , vol. 155, p. 111109, 2023. [17] S. S. Kamat, T. M. Seigler, and J. B. Hoagg, “Electromagnetic formation flying using alternating magnetic field forces and control barrier functions for state and input constraints,” IEEE Trans. Aerosp. Electron. Syst. , 2026. [18] W. Xiao, C. Belta, and C. G. Cassandras, “Event-triggered control for safety-critical systems with unknown dynamics,” IEEE Trans. Autom. Contr. , vol. 68, no. 7, pp. 4143–4158, 2022. [19] P. Rabiee and J. B. Hoagg, “Guaranteed-safe mppi through composite control barrier functions for efficient sampling in multi-constrained robotic systems,” in Proc. Conf. Dec. Contr. , pp. 5515–5520, 2025. [20] W. Li and E. Todorov, “Iterative linear quadratic regulator design for nonlinear biological movement systems,” in Int. Conf. Informatics Control Autom. Robot. , vol. 2, pp. 222–229, 2004. [21] B. Irigireddy, “iLQR: Iterative linear quadratic regulator implementa-tion.” https://github.com/Bharath2/iLQR , 2020. Accessed: 2026-03-19. [22] J.-P. Sleiman, F. Farshidian, and M. Hutter, “Constraint handling in continuous-time ddp-based model predictive control,” in Int. Conf. on Rob. and Autom. (ICRA) , pp. 8209–8215, IEEE, 2021. [23] Y. Aoyama, G. Boutselis, A. Patel, and E. A. Theodorou, “Constrained differential dynamic programming revisited,” in Int. Conf. on Rob. and Autom. (ICRA) , pp. 9738–9744, IEEE, 2021. [24] S. S. Rao, Engineering optimization: Theory and practice . Wiley, 2019. [25] D. P. Bertsekas et al. , “Dynamic programming and optimal control 3rd edition, volume ii,” Belmont, MA: Athena Scientific , vol. 1, 2011. [26] M. Ha, D. Wang, and D. Liu, “A novel value iteration scheme with adjustable convergence rate,” IEEE Trans. on Neur. Net. and Learn. Sys. , vol. 34, no. 10, pp. 7430–7442, 2022. [27] G. Xiao, H. Zhang, and Y. Luo, “Online optimal control of unknown discrete-time nonlinear systems by using time-based adaptive dynamic programming,” Neurocomputing , vol. 165, pp. 163–170, 2015. [28] F.-Y. Wang, N. Jin, D. Liu, and Q. Wei, “Adaptive dynamic pro-gramming for finite-horizon optimal control of discrete-time nonlinear systems with ε-error bound,” IEEE Trans. on Neur. Net. , vol. 22, no. 1, pp. 24–36, 2010. [29] W. Guo, J. Si, F. Liu, and S. Mei, “Policy approximation in policy iteration approximate dynamic programming for discrete-time nonlinear systems,” IEEE Trans. on Neur. Net. and Learn. Sys. , vol. 29, no. 7, pp. 2794–2807, 2017. [30] X. Yuan, L. Dong, and C. Sun, “Solver–critic: A reinforcement learning method for discrete-time-constrained-input systems,” IEEE Trans. Cybern. , vol. 51, no. 11, pp. 5619–5630, 2020. [31] X. Yang, H. He, and X. Zhong, “Approximate dynamic programming for nonlinear-constrained optimizations,” IEEE Trans. Cybern. , vol. 51, no. 5, pp. 2419–2432, 2019. [32] J. B. Mare and J. A. De Don ´a, “Solution of the input-constrained lqr problem using dynamic programming,” Sys, Contr. Letts. , vol. 56, no. 5, pp. 342–348, 2007. [33] I. Anvari, “Non-holonomic differential drive mobile robot control & design: Critical dynamics and coupling constraints,” tech. rep., Arizona State University, 2013.
