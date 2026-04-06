@@ -1,0 +1,37 @@
+{
+  "label": "2026-04-06",
+  "date": "2026-04-06",
+  "generated_at": "2026-04-06T19:48:22",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202604/06/2604.03151v1-observer-design-for-classes-of-nonlinear-port-hamiltonian-systems",
+      "section": "quick",
+      "title_en": "Observer design for classes of nonlinear port-Hamiltonian systems",
+      "authors": "Filippo Ugolini, Ning Liu, Yongxin Wu, Yann Le Gorrec, Alessandro Macchelli",
+      "date": "2026-04-03",
+      "pdf": "https://arxiv.org/pdf/2604.03151v1",
+      "score": "7.0",
+      "evidence": "磁悬浮系统和机电执行器的观测器设计",
+      "tldr": "本文针对具有状态相关输入矩阵的非线性端口哈密顿（pH）系统，提出了一种系统的观测器设计方法。该方法利用LPV多胞体嵌入框架和LMI综合条件，通过积分均值表示将非线性误差动力学转化为线性顶点系统的凸组合。研究涵盖了常增益和增益调度观测器，特别适用于磁悬浮、MEMS及电活性聚合物执行器等机电系统，有效降低了设计保守性并提高了收敛速度。",
+      "tags": "query:em-force",
+      "abstract_en": "This paper presents a systematic observer design methodology for a class of port-Hamiltonian (pH) systems with state-dependent input matrices. Such systems can model a wide range of electromechanical systems, including magnetic levitation systems, MEMS devices, and electro-active polymer actuators such as DEA actuators, HASEL actuators, etc. In these applications, state-dependent input matrices naturally arise when the system is modeled under quasi-static electrical assumptions. An LPV polytopic embedding framework, together with LMI-based synthesis conditions, is proposed. The nonlinear error dynamics are represented as a convex combination of linear vertex systems using an integral mean value representation, which enables systematic computation of the observer gains that ensures exponential convergence. Both constant-gain and gain-scheduled observers are derived. Numerical results demonstrate the effectiveness of the proposed observer, with the gain-scheduled design achieving a significant increase in the maximum certifiable decay rate compared with constant-gain approaches, thereby reducing conservatism.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/06/2604.00154v1-homogenization-of-hts-coils-with-the-h-h-phi-and-t-omega-foil-conductor-model",
+      "section": "quick",
+      "title_en": "Homogenization of HTS coils with the h, h-phi, and t-omega foil conductor model",
+      "authors": "Elias Paakkunainen, Louis Denis, Benoît Vanderheyden, Christophe Geuzaine, Paavo Rasilo, Sebastian Schöps",
+      "date": "2026-03-31",
+      "pdf": "https://arxiv.org/pdf/2604.00154v1",
+      "score": "6.0",
+      "evidence": "交流输电电流激励下高温超导线圈的数值模型",
+      "tldr": "本研究针对高温超导（HTS）线圈全解析有限元模拟计算量巨大的问题，提出并应用了基于箔片导体模型（FCM）的均质化方法。通过在h、h-phi和t-omega公式中引入额外的电压基函数，该方法在保持物理一致性的同时，将独立匝线圈简化为均质块体。在2D和3D几何结构下的验证表明，该模型在预测交流损耗方面具有极高精度，且t-omega公式在3D复杂模型中显著降低了自由度并实现了22倍的加速，为大规模HTS系统设计提供了高效工具。",
+      "tags": "query:em-force",
+      "abstract_en": "Efficient numerical models are required for the design of systems with high temperature superconductor (HTS) coils, as fully resolved finite element simulations of individual coated conductors become computationally prohibitive. This work applies the foil conductor model (FCM) to insulated HTS coils using magnetic field conforming h-(full), h-$φ$, and t-$ω$ formulations. The approach replaces individual turns by a homogenized bulk and ensures physically consistent current density distributions in the coils by using additional voltage basis functions in the finite element formulations. The models are verified in 2D axisymmetric and 3D geometries with a pancake coil simulation under AC transport current excitation. All FCM formulations show excellent agreement with reference detailed simulations, with coefficients of determination above 0.99 for instantaneous AC losses. In 3D, the h-$φ$ and especially the t-$ω$ formulation substantially reduce the number of degrees of freedom by using the magnetic scalar potential in non-conducting regions. Scalability is demonstrated with a 3D stack of racetrack coils model with a field- and angle-dependent critical current density. For the stack of racetrack coils, while maintaining accurate loss prediction, the t-$ω$ FCM achieves a speedup factor of 22 and reduces degrees of freedom by 78 % with respect to a detailed reference model.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

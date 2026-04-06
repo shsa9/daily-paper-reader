@@ -6,29 +6,29 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-05
-- 运行时间：2026-04-05 20:13:01 UTC
+- 最新运行日期：2026-04-06
+- 运行时间：2026-04-06 19:48:14 UTC
 - 运行状态：成功
 - 本次总论文数：2
 - 精读区：0
 - 速读区：2
 
 ### 今日简报（AI）
-今日聚焦受限环境下的折叠式软体机器人导航与具备安全约束的非线性最优控制技术。
-重点展示了电磁驱动软体机器人的多模态敏捷运动，以及利用约束近似动态规划保障复杂系统安全性的新方案。
-建议关注如何将高安全性控制算法与柔性硬件结合，以提升机器人在极端非结构化环境中的作业能力。
-- 详情：[/202604/05/README](/202604/05/README)
+今日聚焦非线性系统观测器设计与高温超导线圈的电磁建模优化。
+重点探讨了 port-Hamiltonian 系统的状态监测方案，以及 HTS 线圈在多种箔片导体模型下的均质化计算表现。
+建议关注复杂物理系统的高精度建模技术，以提升自动化控制与超导工程的仿真效率。
+- 详情：[/202604/06/README](/202604/06/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [A Foldable and Agile Soft Electromagnetic Robot for Multimodal Navigation in Confined and Unstructured Environments](/202604/05/2603.28362v1-a-foldable-and-agile-soft-electromagnetic-robot-for-multimodal-navigation-in-confined-and-unstructured-environments)  
+1. [Observer design for classes of nonlinear port-Hamiltonian systems](/202604/06/2604.03151v1-observer-design-for-classes-of-nonlinear-port-hamiltonian-systems)  
+   标签：评分：7.0/10、query:em-force
+   evidence：磁悬浮系统和机电执行器的观测器设计
+2. [Homogenization of HTS coils with the h, h-phi, and t-omega foil conductor model](/202604/06/2604.00154v1-homogenization-of-hts-coils-with-the-h-h-phi-and-t-omega-foil-conductor-model)  
    标签：评分：6.0/10、query:em-force
-   evidence：磁场下由洛伦兹力驱动的电磁机器人
-2. [Receding-Horizon Nonlinear Optimal Control With Safety Constraints Using Constrained Approximate Dynamic Programming](/202604/05/2604.01956v1-receding-horizon-nonlinear-optimal-control-with-safety-constraints-using-constrained-approximate-dynamic-programming)  
-   标签：评分：6.0/10、query:em-force
-   evidence：具有状态约束的非线性系统收缩时域最优控制
+   evidence：交流输电电流激励下高温超导线圈的数值模型
 
 
 <div class="dpr-home-promo-card">

@@ -1,0 +1,94 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-06T19:47:53.309428+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.03151v1",
+      "title": "Observer design for classes of nonlinear port-Hamiltonian systems",
+      "abstract": "This paper presents a systematic observer design methodology for a class of port-Hamiltonian (pH) systems with state-dependent input matrices. Such systems can model a wide range of electromechanical systems, including magnetic levitation systems, MEMS devices, and electro-active polymer actuators such as DEA actuators, HASEL actuators, etc. In these applications, state-dependent input matrices naturally arise when the system is modeled under quasi-static electrical assumptions. An LPV polytopic embedding framework, together with LMI-based synthesis conditions, is proposed. The nonlinear error dynamics are represented as a convex combination of linear vertex systems using an integral mean value representation, which enables systematic computation of the observer gains that ensures exponential convergence. Both constant-gain and gain-scheduled observers are derived. Numerical results demonstrate the effectiveness of the proposed observer, with the gain-scheduled design achieving a significant increase in the maximum certifiable decay rate compared with constant-gain approaches, thereby reducing conservatism.",
+      "authors": [
+        "Filippo Ugolini",
+        "Ning Liu",
+        "Yongxin Wu",
+        "Yann Le Gorrec",
+        "Alessandro Macchelli"
+      ],
+      "primary_category": "math.OC",
+      "categories": [
+        "math.OC"
+      ],
+      "published": "2026-04-03T16:13:23+00:00",
+      "link": "https://arxiv.org/pdf/2604.03151v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Observer design for magnetic levitation systems and electromechanical actuators",
+      "llm_evidence_cn": "磁悬浮系统和机电执行器的观测器设计",
+      "llm_evidence": "磁悬浮系统和机电执行器的观测器设计",
+      "canonical_evidence": "磁悬浮系统和机电执行器的观测器设计",
+      "llm_tldr_en": "Presents an observer design for port-Hamiltonian systems applicable to magnetic levitation.",
+      "llm_tldr_cn": "提出了一种适用于磁悬浮系统的端口哈密顿系统观测器设计方法。",
+      "llm_tldr": "提出了一种适用于磁悬浮系统的端口哈密顿系统观测器设计方法。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "flux feedback control for magnetic bearing force precision",
+      "matched_requirement_id": "req-10",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.00154v1",
+      "title": "Homogenization of HTS coils with the h, h-phi, and t-omega foil conductor model",
+      "abstract": "Efficient numerical models are required for the design of systems with high temperature superconductor (HTS) coils, as fully resolved finite element simulations of individual coated conductors become computationally prohibitive. This work applies the foil conductor model (FCM) to insulated HTS coils using magnetic field conforming h-(full), h-$φ$, and t-$ω$ formulations. The approach replaces individual turns by a homogenized bulk and ensures physically consistent current density distributions in the coils by using additional voltage basis functions in the finite element formulations. The models are verified in 2D axisymmetric and 3D geometries with a pancake coil simulation under AC transport current excitation. All FCM formulations show excellent agreement with reference detailed simulations, with coefficients of determination above 0.99 for instantaneous AC losses. In 3D, the h-$φ$ and especially the t-$ω$ formulation substantially reduce the number of degrees of freedom by using the magnetic scalar potential in non-conducting regions. Scalability is demonstrated with a 3D stack of racetrack coils model with a field- and angle-dependent critical current density. For the stack of racetrack coils, while maintaining accurate loss prediction, the t-$ω$ FCM achieves a speedup factor of 22 and reduces degrees of freedom by 78 % with respect to a detailed reference model.",
+      "authors": [
+        "Elias Paakkunainen",
+        "Louis Denis",
+        "Benoît Vanderheyden",
+        "Christophe Geuzaine",
+        "Paavo Rasilo",
+        "Sebastian Schöps"
+      ],
+      "primary_category": "cs.CE",
+      "categories": [
+        "cs.CE"
+      ],
+      "published": "2026-03-31T19:01:44+00:00",
+      "link": "https://arxiv.org/pdf/2604.00154v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "numerical models for HTS coils under AC transport current excitation",
+      "llm_evidence_cn": "交流输电电流激励下高温超导线圈的数值模型",
+      "llm_evidence": "交流输电电流激励下高温超导线圈的数值模型",
+      "canonical_evidence": "交流输电电流激励下高温超导线圈的数值模型",
+      "llm_tldr_en": "Applies foil conductor models to HTS coils for efficient numerical simulation of magnetic fields.",
+      "llm_tldr_cn": "将箔式导体模型应用于高温超导线圈，以实现磁场的有效数值模拟。",
+      "llm_tldr": "将箔式导体模型应用于高温超导线圈，以实现磁场的有效数值模拟。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "eddy current effects in electromagnetic actuators dynamic modeling",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
