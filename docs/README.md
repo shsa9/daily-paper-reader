@@ -6,29 +6,29 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-06
-- 运行时间：2026-04-06 19:48:14 UTC
+- 最新运行日期：2026-04-07
+- 运行时间：2026-04-07 19:46:28 UTC
 - 运行状态：成功
 - 本次总论文数：2
 - 精读区：0
 - 速读区：2
 
 ### 今日简报（AI）
-今日聚焦非线性系统观测器设计与高温超导线圈的电磁建模优化。
-重点探讨了 port-Hamiltonian 系统的状态监测方案，以及 HTS 线圈在多种箔片导体模型下的均质化计算表现。
-建议关注复杂物理系统的高精度建模技术，以提升自动化控制与超导工程的仿真效率。
-- 详情：[/202604/06/README](/202604/06/README)
+今日聚焦电磁场计算前沿，涵盖麦克斯韦特征值问题的自适应算法与磁滞回线的深度学习预测。
+重点关注 ResNet 增强的傅里叶算子（FNO）在高频序列预测中的表现，以及多级方法对复杂电磁方程求解效率的提升。
+建议深入探索物理算子学习与传统数值分析的结合，以应对高频电磁建模中的非线性挑战。
+- 详情：[/202604/07/README](/202604/07/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Observer design for classes of nonlinear port-Hamiltonian systems](/202604/06/2604.03151v1-observer-design-for-classes-of-nonlinear-port-hamiltonian-systems)  
-   标签：评分：7.0/10、query:em-force
-   evidence：磁悬浮系统和机电执行器的观测器设计
-2. [Homogenization of HTS coils with the h, h-phi, and t-omega foil conductor model](/202604/06/2604.00154v1-homogenization-of-hts-coils-with-the-h-h-phi-and-t-omega-foil-conductor-model)  
+1. [Adaptive Multilevel Methods for the Maxwell Eigenvalue Problem](/202604/07/2603.29718v1-adaptive-multilevel-methods-for-the-maxwell-eigenvalue-problem)  
    标签：评分：6.0/10、query:em-force
-   evidence：交流输电电流激励下高温超导线圈的数值模型
+   evidence：麦克斯韦特征值问题的多级方法
+2. [A Multi-Scale ResNet-augmented Fourier Neural Operator Framework for High-Frequency Sequence-to-Sequence Prediction of Magnetic Hysteresis](/202604/07/2604.04150v1-a-multi-scale-resnet-augmented-fourier-neural-operator-framework-for-high-frequency-sequence-to-sequence-prediction-of-magnetic-hysteresis)  
+   标签：评分：6.0/10、query:em-force
+   evidence：磁滞现象与磁通密度动态建模
 
 
 <div class="dpr-home-promo-card">

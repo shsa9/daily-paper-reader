@@ -1,0 +1,37 @@
+{
+  "label": "2026-04-07",
+  "date": "2026-04-07",
+  "generated_at": "2026-04-07T19:46:36",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202604/07/2603.29718v1-adaptive-multilevel-methods-for-the-maxwell-eigenvalue-problem",
+      "section": "quick",
+      "title_en": "Adaptive Multilevel Methods for the Maxwell Eigenvalue Problem",
+      "authors": "Qigang Liang, Xuejun Xu, Qingquan Zhang",
+      "date": "2026-03-31",
+      "pdf": "https://arxiv.org/pdf/2603.29718v1",
+      "score": "6.0",
+      "evidence": "麦克斯韦特征值问题的多级方法",
+      "tldr": "针对具有奇异性的麦克斯韦特征值问题，本文提出了一种自适应多级预处理Helmholtz-Jacobi-Davidson（PHJD）方法。该方法的核心在于利用局部多级法对修正方程进行预处理，从而实现了与网格尺寸和层数无关的拟最优收敛率。通过在复杂区域上的数值实验，验证了该算法在处理奇异性问题时的高效性和理论预测的准确性。",
+      "tags": "query:em-force",
+      "abstract_en": "In this paper, we propose an adaptive multilevel preconditioned Helmholtz-Jacobi-Davidson (PHJD) method for the Maxwell eigenvalue problem with singularities. The key idea in this work is to employ the local multilevel method for preconditioning the Jacobi-Davidson correction equation. It is shown that our convergence factor is quasi-optimal, which means the convergence factor is independent of mesh sizes and mesh levels provided the coarse mesh is sufficiently fine. Numerical experiments on complex domains are carried out to confirm the theoretical results and demonstrate the efficiency of the proposed method.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/07/2604.04150v1-a-multi-scale-resnet-augmented-fourier-neural-operator-framework-for-high-frequency-sequence-to-sequence-prediction-of-magnetic-hysteresis",
+      "section": "quick",
+      "title_en": "A Multi-Scale ResNet-augmented Fourier Neural Operator Framework for High-Frequency Sequence-to-Sequence Prediction of Magnetic Hysteresis",
+      "authors": "Ziqing Guo, Xiaobing Shen, Ruth V. Sabariego",
+      "date": "2026-04-05",
+      "pdf": "https://arxiv.org/pdf/2604.04150v1",
+      "score": "6.0",
+      "evidence": "磁滞现象与磁通密度动态建模",
+      "tldr": "针对电力电子设备中磁滞现象建模的挑战，特别是高频振荡和局部磁滞回线（minor loops）的精确捕捉，本文提出了一种多尺度ResNet增强的傅里叶神经算子（Res-FNO）框架。该框架结合了全局频谱建模与局部细节细化，通过引入磁通密度随时间的变化率（dB/dt）等物理特征，显著提升了模型对复杂磁滞行为的预测精度和泛化能力。",
+      "tags": "query:em-force",
+      "abstract_en": "Accurate modeling of magnetic hysteresis is essential for high-fidelity power electronics device simulations. The transient hysteresis phenomena such as the ringing effect and the minor loops are the bottleneck for the accurate hysteresis modeling and the core losses estimation. To capture the hysteresis loops with both the macro structure and the micro transient details, in this paper, we propose the multi-scale ResNet augmented Fourier Neural Operator (Res-FNO). The framework employs a hybrid input structure that combines sequential time-series data with scalar material labels through specialized feature engineering. Specifically, the time derivative of magnetic flux density ($\\frac{dB}{dt}$) is incorporated as a critical physical feature to enhance the model sensitivity to high-frequency oscillations and minor loop triggers. The proposed architecture synergizes global spectral modeling with localized refinement by integrating a multi-scale ResNet path in parallel with the FNO blocks. This design allows the global operator path to capture the underlying physical evolution while the local refinement path, compensates for spectral bias and reconstructs fine-grained temporal details. Extensive experimental validation across diverse magnetic materials from 79 to Material 3C90 demonstrates the strong generalization capability of the proposed Res-FNO, proving its robust ability to model complex ringing effects and minor loops in realistic power electronic applications.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

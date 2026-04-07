@@ -1,0 +1,1377 @@
+Title: Adaptive Multilevel Methods for the Maxwell Eigenvalue Problem
+
+URL Source: https://arxiv.org/pdf/2603.29718v1
+
+Published Time: Wed, 01 Apr 2026 01:03:15 GMT
+
+Number of Pages: 23
+
+Markdown Content:
+# Adaptive Multilevel Methods for the Maxwell Eigen-value Problem 
+
+Qigang Liang, Xuejun Xu * and Qingquan Zhang 
+
+School of Mathematical Sciences, Tongji University, Shanghai 200092, China and Key Laboratory of Intelligent Computing and Applications (Tongji University), Ministry of Education 
+
+Abstract. In this paper, we propose an adaptive multilevel preconditioned Helmholtz-Jacobi-Davidson (PHJD) method for the Maxwell eigenvalue problem with singular-ities. The key idea in this work is to employ the local multilevel method for precon-ditioning the Jacobi-Davidson correction equation. It is shown that our convergence factor is quasi-optimal, which means the convergence factor is independent of mesh sizes and mesh levels provided the coarse mesh is sufficiently fine. Numerical ex-periments on complex domains are carried out to confirm the theoretical results and demonstrate the efficiency of the proposed method. 
+
+AMS subject classifications : 65N25, 65N30, 78M10 
+
+Key words : Maxwell eigenvalue problem, local multilevel method, preconditioned Helmholtz-Jacobi-Davidson method 
+
+# 1 Introduction 
+
+The Maxwell eigenvalue problem, arising from electromagnetic waveguides and resonances in cavities, plays an important role in computational electromagnetism (e.g., [1, 3, 14]). The governing equations are 
+
+curl (μ−1curl u) = ω2εu in Ω,
+
+div (εu) = 0 in Ω,
+
+n×u = 0 on ∂Ω,where Ω⊂R3 is a bounded polyhedral domain and n is the unit outward normal vector. The coefficients ε and μ are the real relative electric permittivity and magnetic perme-ability, respectively, and ω is the resonant angular frequency of the electromagnetic wave for the cavity Ω. Assuming the medium is homogeneous and isotropic, we may set ε = μ = 1. For convenience, we denote λ := ω2.
+
+> ∗
+
+Corresponding author. Email address: qigang liang@tongji.edu.cn (Q. Liang), xuxj@tongji.edu.cn 
+
+(X. Xu), 2211332@tongji.edu.cn (Q. Zhang) http://www.global-sci.com/ Global Science Preprint   
+
+> arXiv:2603.29718v1 [math.NA] 31 Mar 2026 21INTRODUCTION
+
+Edge finite elements, introduced by N´ ed´ elec (see [21]), have been widely used to solve the Maxwell eigenvalue problem. The convergence properties of edge finite ele-ment methods can be found in [4, 8, 10, 16, 20] and the references therein. Due to geo-metric irregularities such as re-entrant corners, the eigenfunction corresponding to the principal eigenvalue often exhibit pronounced singularities. Consequently, if a quasi-uniform mesh is still employed to discretize the Maxwell eigenvalue problem, a larger number of degrees of freedom will be required to achieve the desired accuracy. Adap-tive edge finite element methods (AEFEM) have been proven to be highly effective in addressing the local singularities since they may accurately capture the singular behav-ior of eigenfunctions. In [6], Boffi introduces a residual-type a posteriori error estimator for the Maxwell eigenvalue problem and proves its reliability and efficiency. Moreover, the optimal convergence of the adaptive scheme in the case of simple eigenvalues is presented in [5]. The procedure of the AEFEM method is as follows 
+
+Solve → Estimate → Mark → Refine .As the number of adaptive refinement levels increases, we need to solve the large-scale discrete algebraic eigenvalue system arising from the Maxwell eigenvalue prob-lem in the Solve step, which is both challenging and time-consuming. The large kernel of the curl operator poses significant challenges to the design of algorithms, as the iterative process may plunge into this kernel. To prevent such an undesirable situa-tion, Hiptmair and Neymeyr [15] propose a projected preconditioned inverse iteration method. Multilevel preconditioned technique is applied to solve shifted Maxwell equa-tions with Helmholtz projection handling the kernel of the curl operator efficiently. Moreover, this idea has been generalized to adaptive schemes in [9]. A different ap-proach, the so-called two-grid method [26], is proposed for solving Maxwell eigenvalue problems. This method reduces the computation of Maxwell eigenvalue problems on a fine grid to solving linear indefinite Maxwell equations on the same fine grid and origi-nal eigenvalue problems on a much coarser grid. The method maintains asymptotically optimal accuracy under the assumption h = O(H3), while significantly reducing the overall computational cost. Recently, Liang and Xu [18] propose a two-level precondi-tioned Helmholtz subspace iterative method for solving Maxwell eigenvalue problems based on domain decomposition. By ingeniously reducing the fine-scale eigenvalue problem to a sequence of parallel preconditioned systems and Helmholtz projections, the method achieves optimality for degrees of freedom, scalability for parallel subdo-mains and robustness for clustered eigenpairs. The Jacobi-Davidson method [22], has been proven to be a powerful tool for solv-ing eigenvalue problems. However, for large-scale discrete eigenvalue problems, the Jacobi-Davidson correction operator typically becomes ill-conditioned. Therefore, it is important to develop an efficient preconditioning technique. The two-level precon-ditioned Jacobi-Davidson methods for eigenvalue problems are proposed by Zhao, Hwang and Cai [25] and extended by Wang and Xu [23, 24] for 2 m-th order ( m = 1, 2) elliptic eigenvalue problems. Recently, Guo, Liang and Xu propose a local multilevel 3
+
+preconditioned Jacobi-Davidson Method for elliptic eigenvalue problems on adaptive meshes in [12]. It is proved that the convergence factor of the method proposed in [12] is independent of the degrees of freedom and mesh levels. For the Maxwell eigenvalue problem, Liang and Xu [17] propose an efficient two-level preconditioned Helmholtz-Jacobi-Davidson method, which performs well in practice and has been shown to be both optimal and scalable. Although the two-level PHJD method based on domain de-composition is proved to be effective on quasi-uniform grids, it may be limited for the Maxwell eigenvalue problem with singularities. In this paper, we present an adaptive multilevel PHJD method to solve the Maxwell eigenvalue problem with singularities. In each outer iteration, we first solve a precon-ditioned Jacobi–Davidson correction equation. Then, we solve a Helmholtz projection system to ensure that the numerical solution is divergence-free in the discrete sense. Finally, we update the new iterative solution in the expanding Davidson subspace. To address the ill-conditioning of the Jacobi–Davidson correction equation, we design an efficient local multilevel preconditioner based on the local successive subspace correc-tion with shifted techniques. With respect to the Laplace equation in the Helmholtz projection system, we choose the existing local multilevel preconditioner which main-tains optimal and scalable performance under adaptive mesh refinement. It is worth noting that the application of the adaptive multilevel PHJD method is far from straightforward. First, some finite element estimates for the Maxwell eigen-value problem, that hold on quasi-uniform meshes in [17], are no longer valid on adaptive meshes. Second, since the Jacobi–Davidson correction equation is associated with the shifted Maxwell equations, some fundamental theoretical formulations in the local multilevel method need to be reformulated. Third, compared to elliptic eigen-value problems, the curl operator in the Maxwell eigenvalue problem has an infinite-dimensional kernel, which makes the design and analysis of iterative methods on adap-tive meshes difficult. By overcoming the challenges above, we prove that the approx-imate eigenvalue in the adaptive multilevel PHJD method converges uniformly to the discrete principal eigenvalue, provided that the coarse grid is sufficiently small. The rest of this paper is organized as follows. In section 2, we introduce model problems and the finite element discretization. The adaptive multilevel PHJD method is presented in section 3. Section 4 is dedicated to giving some useful lemmas and the detailed proof of the main result. In the final section, the numerical results are given to confirm the theoretical results and demonstrate the efficiency of the proposed method. 
+
+# 2 Model problems and preliminaries 
+
+In this section, we introduce model problems and preliminaries. For the sake of simplicity we assume that Ω is simply connected and its boundary is connected. We 4 2 MODEL PROBLEMS AND PRELIMINARIES 
+
+start with the introduction of some Hilbert spaces 
+
+H10 (Ω) :=
+
+n
+
+u ∈ H1(Ω) | u|∂Ω = 0
+
+o
+
+,
+
+H(curl ;Ω) :=u ∈ L2(Ω)3 | curl u ∈ L2(Ω)3 ,
+
+H0(curl ;Ω) :={u ∈ H(curl ;Ω) | u× n|∂Ω = 0},
+
+H0(curl 0;Ω) :={u ∈ H0(curl ;Ω) | curl u = 0},
+
+H(div; Ω) :=u ∈ L2(Ω)3 | div u ∈ L2(Ω)3 ,
+
+H(div 0;Ω) :=u ∈ L2(Ω)3 | div u = 0 .The spaces H(curl ;Ω) and H(div; Ω) are equipped with the norms 
+
+∥u∥curl :=  ∥u∥2 +∥curl u∥21/2 , ∥u∥div :=  ∥u∥2 +∥div u∥21/2 ,where ∥·∥ is the usual L2-norm induced by L2-inner product (·,·).The variational form of the eigenvalue problem for the Maxwell system reads as follows (
+
+Find (λ,u) ∈ R× H0(curl ;Ω)∩ H(div 0;Ω) with u̸ = 0, 
+
+a(u,v) = λb(u,v) ∀ v ∈ H0(curl ;Ω)∩ H(div 0;Ω). (2.1) where a(u,v) := ( curl u,curl v), b( u,v) := ( u,v). We may define the norm ∥·∥ a := pa(·,·)
+
+in H0(curl ;Ω)∩ H(div 0;Ω) and ∥·∥ b := pb(·,·) in H0(curl ;Ω). It is known that (2.1) has a countable sequence of real eigenvalues [4]. In this paper, we are interested in the case that the principal eigenvalue is simple, i.e., 0 < λ1 < λ2 ≤ λ3 ≤ ··· ,and corresponding eigenfunctions u1,u2,u3,··· , which satisfy 
+
+a(ui,uj) = λib(ui,uj) = δij λi.
+
+Remark 2.1. In practical computations, it is typically observed that the principal eigen-value of the Maxwell eigenvalue problem is simple unless the geometry or material coefficients exhibit special symmetries. Even a slight perturbation of these symmetries leads to a simple principal eigenvalue. For instance, in a rectangular cavity with three distinct side lengths, the principal eigenvalue turns out to be simple (see [1] ).To avoid the difficulty of enforcing the divergence-free condition, the following vari-ational formulation is often used 
+
+(
+
+Find (λ,u) ∈ R× H0(curl ;Ω) with u̸ = 0, 
+
+a(u,v) = λb(u,v) ∀ v ∈ H0(curl ;Ω). (2.2) Note that (2.2) drops the divergence-free condition and the eigenvalue may equal to zero (the corresponding eigenspace, i.e., H0(curl 0;Ω)= ∇H10 (Ω), is infinite-dimensional 5
+
+[11, Theorem I.2.9]). Meanwhile, the eigenfunctions corresponding to λ̸ = 0 remain unchanged. We now discuss the discretization of (2.2) with the edge finite element method. Let 
+
+{T l , l = 0,1, ..., L} be a sequence of shape-regular and nested geometrically conform-ing simplicial triangulations, obtained by successively refining a sufficiently fine initial coarse mesh T0 using the longest edge bisection method. The initial mesh size is scaled such that h0 < 1. For each level l, let El and Nl denote the sets of interior edges and interior nodes of Tl , respectively. We denote by bl,E the edge basis function associated with E ∈ E l and by φl,p the nodal basis function associated with p ∈ N l . The sets ˜ El and ˜Nl involved in the local smoothing are defined as ˜El = {E ∈ E l : E ∈ E l \E l−1 or E ∈ E l−1 but supp (bl,E)̸ = supp (bl−1, E)},˜Nl = p ∈ N l : p ∈ N l \N l−1 or p ∈ N l−1 but supp (φl,p)̸ = supp (φl−1, p) .For simplicity of notation, for 1 ≤ l ≤ L we write 
+
+> Nl[
+> i=1
+
+span {∇ φl,i} = [ 
+
+> p∈˜Nl
+
+span ∇φl,p ,
+
+> Ml[
+> i=1
+
+span {bl,i} = [ 
+
+> E∈˜El
+
+span {bl,E},where Nl = # ˜ Nl and Ml = # ˜ El . We define the local subspace Wl,i as 
+
+Wl,i =
+
+(
+
+span {∇ φl,i}, i = 1,..., Nl ,span {bl,j}, i = Nl + j, j = 1,..., Ml .On each mesh Tl , we introduce the lowest order edge element space of the first family [21] and the corresponding discrete divergence-free space, 
+
+Vl = {ul ∈ H0(curl ;Ω) ul |K = aK +bK ×x, ∀ K ∈ T l },
+
+Xl = {ul ∈ Vl b(ul ,∇p) = 0, ∀ p ∈ Sl },where Sl denotes the continuous piecewise linear polynomial space with vanishing trace on ∂Ω associated with Tl .The nested structure of the meshes induces a sequence of nested edge element spaces: V0 ⊂ V1 ⊂ V2 ⊂ ··· ⊂ VL. The finite element discretization of (2.2) is 
+
+(
+
+Find (λl ,ul ) ∈ R×Vl with ul̸ = 0, 
+
+a(ul ,vl ) = λl b(ul ,vl ) ∀ vl ∈ Vl . (2.3) In this setting, the eigenspace corresponding to the zero eigenvalue coincides with ∇Sl
+
+(see [13, Theorem 2.5]). Moreover, for λl̸ = 0, the corresponding eigenfunction ul sat-isfies the discrete divergence-free constraint, i.e., ul ∈ Xl . We denote by (λi,l ,ui,l ) the discrete eigenpairs corresponding to nonzero eigenvalues, which are ordered as 0 < λ1, l < λ2, l ≤ ··· ≤ λi,l ≤ ··· ≤ λnl ,l ,6 2 MODEL PROBLEMS AND PRELIMINARIES 
+
+since the principle eigenvalue is simple, in view of the a priori result (Theorem 2.1), we know that the discrete principal eigenvalue is also simple. For 0 ≤ l ≤ L, we define the level l operator Al : Vl → Vl such that 
+
+b(Al wl ,vl ) = a(wl ,vl ) ∀ vl ∈ Vl .We also define the local operator Al,i : Wl,i → Wl,i (i = Nl + j, j = 1,..., Ml ) such that 
+
+b(Al,iwl,i,vl,i) = a(wl,i,vl,i) ∀ vl,i ∈ Wl,i.Denote by Ωl,i the support of the basis function bl,i and by hl,i the diameter of Ωl,i. Using the scaling argument and the Poincar´ e inequality, we may show that the minimum eigenvalue of Al,i satisfies 
+
+λmin (Al,i) ≥ O(h−2 
+
+> l,i
+
+) ≥ O(h−20 ). (2.4) It is known that the following spatial decomposition properties are valid 
+
+H0(curl ;Ω) = ∇H10 (Ω)⊕W1 ⊕W2, (2.5) 
+
+Vl = ∇Sl ⊕Wl 
+
+> 1
+
+⊕Wl
+
+> 2
+
+, (2.6) where W1 =span {u1}, Wl 
+
+> 1
+
+=span {u1, l } and the notation ⊕ denotes the b(·,·)-orthogonal (also a(·,·)-orthogonal) direct sum. Denote by Ql : VL → Vl the b(·,·)-orthogonal projec-tion onto Vl , by Kl 
+
+> 0
+
+: Vl → ∇ Sl , Ql 
+
+> 1
+
+: Vl → Wl 
+
+> 1
+
+and Ql 
+
+> 2
+
+: Vl → Wl 
+
+> 2
+
+the b(·,·)-orthogonal pro-jections onto the respective subspaces of Vl , and by Ql,i : VL → Wl,i (0 ≤ l ≤ L, Nl +1 ≤
+
+i ≤ Nl + Ml ) the b(·,·)-orthogonal projection onto the discrete divergence-free local sub-space. The following a priori error estimate, (see [2, Theorem 3] and [5, Theorem 2]), is useful in our convergence analysis. Throughout this paper, unless otherwise stated, the positive constant C is independent of the number of mesh levels and the degrees of freedom in the finite element space. 
+
+Theorem 2.1. Let (λ1, l ,u1, l ) ( 0 ≤ l ≤ L) be the first eigenpair of (2.3) with ∥u1, l ∥curl =
+
+1 (∥u1, l ∥b =1). Then there exists an eigenpair (λ1,u1) ( u1 ∈W1) with ∥u1∥curl =1 (∥u1∥b =1)
+
+such that 
+
+|λ1 −λ1, l | ≤ Cδ2 
+
+> l
+
+(λ1),
+
+∥u1 −u1, l ∥curl ≤ Cδl (λ1) ( ∥u1 −u1, l ∥b ≤ Cδl (λ1)) ,
+
+where δl (λ1) denotes the gap between W 1 and W l
+
+> 1
+
+, namely 
+
+δl (λ1) := sup 
+
+> w∈W1,∥w∥curl =1
+
+inf 
+
+> v∈Wl
+> 1
+
+∥w−v∥curl .
+
+Remark 2.2. The error estimate δl (λ1)≤Ch s 
+
+> 0
+
+holds for all levels 0 ≤l ≤ L, with 1/2 <s≤1(see [4, Theorem 4.4]). 7
+
+# 3 The adaptive multilevel PHJD method 
+
+In this section, we propose an adaptive multilevel PHJD method to solve the prin-cipal eigenpair of the Maxwell eigenvalue problem. Given the approximate solution 
+
+(λL−11 ,uL−11 ) at level L−1, we proceed to compute the eigenpair at level L by employing the adaptive multilevel PHJD algorithm. Denote by λj the eigenvalue obtained at the j-th iteration of the adaptive multilevel PHJD algorithm. We introduce some simplified operators for the following discussion: ˜Aj 
+
+> 0
+
+= A0 −λj I, ˜ AjL = AL −λj I, ˜ Ajl,i = Al,i −λj I (l = 1,..., L,i = Nl +1,..., Nl + Ml ), which are defined by 
+
+b( ˜Aj
+
+> 0
+
+u0,v0) =( u0,v0)Ej ∀u0,v0 ∈ V0,
+
+b( ˜AjLuL,vL) =( uL,vL)Ej ∀uL,vL ∈ VL,
+
+b( ˜Ajl,iul,i,vl,i) =( ul,i,vl,i)Ej ∀ul,i,vl,i ∈ Wl,i,where (·,·)Ej := a(·,·)−λjb(·,·) and I is the identity operator. Similarly, we can define 
+
+(·,·)EL := a(·,·)−λ1, Lb(·,·). These bilinear forms define inner products on the local sub-spaces Wl 
+
+> 2
+
+and Wl,i for 0 ≤l ≤ L and Nl +1≤i≤ Nl +Ml . The validity of the inner product on Wl 
+
+> 2
+
+follows from the inequality λj < λ2, L, while on Wl,i, it is ensured by choosing a sufficiently small h0, as indicated in (2.4). We denote by ∥·∥ Ej the norm induced by 
+
+(·,·)Ej on Wl 
+
+> 2
+
+and Wl,i.
+
+Remark 3.1. It is crucial to note that ∥·∥ Ej is equivalent to ∥·∥ a in Wl 
+
+> 2
+
+and Wl,i, for 0 ≤ l ≤ L, Nl +1 ≤ i ≤ Nl + Ml . It suffices to provide the proof for Wl
+
+> 2
+
+, as the argument for 
+
+Wl,i is analogous. First, we observe that ∥u∥Ej ≤ ∥ u∥a holds for all u ∈ Wl
+
+> 2
+
+. Conversely, we have a(u,u) = ∥u∥2 
+
+> Ej
+
++λjb(u,u) ≤ β(λ2, l )∥u∥2 
+
+> Ej
+
+, where β(λ) := 1+λj(λ−λj)−1.
+
+3.1 Local multilevel preconditioner 
+
+To efficiently solve the Jacobi-Davidson correction equation in the adaptive multi-level PHJD method, we develop a local multilevel preconditioner. 
+
+Definition 3.1 (Local multilevel preconditioner BjL). Given g ∈VL, the operator BjL :VL →
+
+VL is defined by the following steps • Step 1. Set x0 = 0. • Step 2. For l = 0 to L, update the iterate by 
+
+xl+1 = xl +Rjl Ql
+
+ g − ˜AjL xl
+
+.• Step 3. Set BjL g := xL+1.For the smoother, we consider only the local edge smoother of Jacobi-type Rjl : Vl →
+
+Vl which performs Jacobi relaxations only on the edges in ˜ El .8 3 THE ADAPTIVE MULTILEVEL PHJD METHOD 
+
+Rjl : =
+
+(( ˜Aj
+
+> 0
+
+)−1Q02Q0 l = 0, 
+
+γ∑Nl +Ml 
+
+> i=Nl+1
+
+( ˜Ajl,i)−1Ql,i 1 ≤ l ≤ L, (3.1) where γ is a suitably chosen positive scaling factor (0 < γ < 1). For l = 0, the operator 
+
+Q02 is introduced to ensure that ( ˜Aj
+
+> 0
+
+)−1 is well-defined, owing to the fact that λj < λ2,0 .
+
+Remark 3.2. Although we only analyze the local Jacobi-type smoother in the conver-gence analysis in this paper, numerical simulations and theoretical results may be ex-tended to the local Gauss-Seidel smoother. Based on the multilevel framework described in [7], the error operator is defined as 
+
+EjL = I −BjL ˜AjL = ( I −TjL)··· (I −Tj
+
+> 1
+
+)( I −Tj
+
+> 0
+
+),where Tjl = Rjl Ql ˜AjL, l = 0,..., L.Due to the fact that Rjl is symmetric with respect to b(·,·), it is easy to see that ˜ EjL :=(I −Tj
+
+> 0
+
+)( I −Tj
+
+> 1
+
+)··· (I −TjL) is the adjoint of EjL with respect to (·,·)Ej . Further, it follows from EjL = ( I −TjL)EjL−1 that 
+
+I −EjL =
+
+> L
+
+# ∑
+
+> l=0
+
+Tjl Ejl−1. (3.2) 
+
+3.2 Algorithm 
+
+We propose the following adaptive multilevel PHJD algorithm for the Maxwell eigenvalue problem. 
+
+Algorithm 1 The adaptive multilevel PHJD algorithm 1. Initialization: let λ0 = λL−11 , u0 = uL−11 and set W0 = span u0 .2. Solve the Helmholtz projection system to get ˜ u1 = ( I −KL 
+
+> 0
+
+)u0,let u1 = ˜u1/ ˜u1
+
+> b
+
+, λ1 = Rq (u1) and set W1 = span u1 .3. Set j = 1, rj = λjuj − ALuj.4. If ∥rj∥b < tol , output λj and uj; else, do the following: (a) Solve preconditioned Jacobi-Davidson correction equation, i.e., 
+
+ej+1 = ( I −QUj )BjLrj,where QUj : VL → Uj := span uj is the b(·,·)-orthogonal projection. (b) Solve the Helmholtz projection system to get tj+1 = ( I −KL 
+
+> 0
+
+)ej+1.(c) Solve the first eigenpair in Wj+1
+
+a(uj+1,v) = λj+1b(uj+1,v) ∀ v ∈ Wj+1, ∥uj+1∥b = 1, where Wj+1 = Wj +span tj+1 .(d) Set j = j+1, rj = λjuj − ALuj, go to step 4. 9
+
+Remark 3.3. If the topology of either Ω or ∂Ω is more complex, the kernel of curl oper-ator is spanned by grad H10 (Ω) together with a low-dimensional subspace of harmonic vector fields. In this case, the algorithm can be modified following [15] to handle the kernel of the curl operator. To demonstrate that our algorithm can be extended to com-putational domains or their boundaries with non-trivial topology, we present several numerical examples, see Example 5.3 and Example 5.4. 
+
+# 4 Convergence analysis 
+
+In this section, we derive the convergence of the proposed adaptive multilevel PHJD method for the Maxwell eigenvalue problem. We begin by stating the main conver-gence result. 
+
+Theorem 4.1. For sufficiently small h 0 such that 0 < θ < 1, we have the following convergence estimates 
+
+∥ej+1 
+
+> L
+
+∥Ej ≤ 1−αj(1−θ)+ Ch s 
+
+> 0
+
+∥ejL∥Ej , (4.1) 
+
+and 
+
+λj+1 −λ1, L ≤
+
+n
+
+1−αj(1−θ)+ Ch s
+
+> 0
+
+o2
+
+(λj −λ1, L), (4.2) 
+
+where ejL = −QL 
+
+> 2
+
+uj, 0 < αj < 11−θ and s > 12 .
+
+Remark 4.1. In Theorem 4.1, we choose sufficiently small h0 to ensure that 0 < θ < 1. In fact, 
+
+θ =
+
+s
+
+1− (2−ω)( 1−Cδ0(λ1)) 2
+
+C +h2s 
+
+> 0
+
+→
+
+r
+
+1− (2−ω)
+
+C ∈ (0,1 ),as h 0 → 0. where ω∈(0,2 ) depends on the positive scaling factor of Jacobi smoother and the shape regularity of the meshes. 
+
+4.1 A rigorous proof of the convergence result. 
+
+In this subsection, we present a rigorous proof of the convergence result. The key idea is to introduce an auxiliary error operator and decompose it into a principal error term and a remainder term. Each term will be estimated individually, and the conver-gence result follows from the relation between the auxiliary and actual error terms. To construct the auxiliary error operator, we introduce an auxiliary function defined by ˜uj+1 := uj +αjtj+1 
+
+> L
+
+∈ Uj +span {tj+1 
+
+> L
+
+} ⊂ Wj+1,where αj is an undetermined parameter. Using the definition of tj+1 
+
+> L
+
+in Algorithm 1, it follows that ˜uj+1 = uj +αj(I −KL 
+
+> 0
+
+)( I −QUj )BjLrj. (4.3) 10 4 CONVERGENCE ANALYSIS 
+
+Combining (4.3), the definition of residual vector rj and the partitions of the identity operator in VL, we obtain ˜ej+1 
+
+> L
+
+= −QL 
+
+> 2
+
+˜uj+1
+
+= ejL −αj QL 
+
+> 2
+
+BjLrj +αj QL 
+
+> 2
+
+QUj BjLrj
+
+= ejL −αj QL 
+
+> 2
+
+BjL(λj I − AL)( KL 
+
+> 0
+
+uj +QL 
+
+> 1
+
+uj −ejL)+ αj QL 
+
+> 2
+
+QUj BjLrj
+
+= {ejL +αj QL 
+
+> 2
+
+BjL(λj I − AL)ejL}+αj{QL 
+
+> 2
+
+BjL(AL −λj I)QL 
+
+> 1
+
+uj
+
++QL 
+
+> 2
+
+QUj BjLrj}
+
+=: Ij 
+
+> 1
+
++ Ij
+
+> 2
+
+,(4.4) where Ij 
+
+> 1
+
+is the principal error term and Ij 
+
+> 2
+
+represents the remainder term. For the estimate of Ij
+
+> 1
+
+, we define the principal error operator GjL :WL 
+
+> 2
+
+→WL 
+
+> 2
+
+as follows 
+
+GjL := I +αj QL 
+
+> 2
+
+BjL(λj I − AL) = I −αj QL 
+
+> 2
+
+BjL ˜AjL.An upper bound for the norm of principal error operator is given in the following lemma. 
+
+Lemma 4.1. Under the same assumption as in Theorem 4.1, it holds that 
+
+∥GjLv∥Ej ≤  1−αj(1−θ)∥v∥Ej ∀v ∈ WL 
+
+> 2
+
+,
+
+where the coefficient αj satisfies 0 < αj < 11−θ .Proof. By applying the definitions of GjL and EjL together with the triangle inequality, we have 
+
+∥GjLv∥Ej = ∥(I −αj QL 
+
+> 2
+
+)v+αj QL 
+
+> 2
+
+EjLv∥Ej ≤ (1−αj)∥v∥Ej +αj∥QL 
+
+> 2
+
+EjLv∥Ej . (4.5) To bound ∥QL 
+
+> 2
+
+EjLv∥Ej , by the discrete Helmholtz decomposition and the definition of 
+
+(·,·)Ej , we obtain 
+
+(QL 
+
+> 2
+
+EjLv,QL 
+
+> 2
+
+EjLv)Ej = ( EjLv,EjLv)Ej −(QL 
+
+> 1
+
+EjLv,QL 
+
+> 1
+
+EjLv)Ej
+
+−(KL 
+
+> 0
+
+EjLv,KL 
+
+> 0
+
+EjLv)Ej
+
+≤ (EjLv,EjLv)Ej +( λj −λ1, L)b(EjLv,EjLv)+λjb(KL 
+
+> 0
+
+EjLv,KL 
+
+> 0
+
+EjLv). (4.6) We begin by estimating the first term in (4.6). Let Tj = ∑Ll=0 Tjl . Following the argument of Lemma 5 in [12], we derive the following lower bound of Tj in WL
+
+> 2
+
+∥v∥2 
+
+> Ej
+
+≤ C
+
+(1−Cδ0(λ1)) 2 (Tjv,v)Ej ∀v ∈ WL 
+
+> 2
+
+. (4.7) 4.1 A rigorous proof of the convergence result. 11 
+
+Moreover, the classical theory of multilevel methods [7] implies the following estimates 
+
+(TjvL,vL)Ej ≤ C
+
+> L
+
+# ∑
+
+> l=0
+
+(Tjl Ejl−1vL,Ejl−1vL)Ej ∀vL ∈ VL, (4.8) and 
+
+(2−ω)
+
+> L
+
+# ∑
+
+> l=0
+
+(Tjl Ejl−1vL,Ejl−1vL)Ej ≤ (vL,vL)Ej −(EjLvL,EjLvL)Ej ∀vL ∈ VL, (4.9) where ω = max l=0,..., L ωl (0 < ωl < 2) is determined by the damping parameter of the Jacobi smoother and the shape regularity of the meshes. Combining (4.7), (4.8), and (4.9), we obtain the estimate 
+
+(EjLv,EjLv)Ej ≤
+
+(
+
+1− (2−ω)( 1−C2δ0(λ1)) 2
+
+C1
+
+)
+
+∥v∥2 
+
+> Ej
+
+. (4.10) Next, the second term in (4.6) can be bounded using the estimates λj −λ1, L ≤ Ch 2s
+
+> 0
+
+and ∥EjLv∥b ≤C∥v∥a ≤C∥v∥Ej . The first inequality follows from mathematical induction and Lemma 4.3 in [17], while the second is derived using the Poincar´ e inequality and arguments similar to Lemma 8 in [12]. Then we estimate the remaining term in (4.6). Applying (3.2), we get 
+
+b(KL 
+
+> 0
+
+EjLv,KL 
+
+> 0
+
+EjLv) = b(KL 
+
+> 0
+
+EjLv,EjLv) = b(KL 
+
+> 0
+
+EjLv,EjLv−v)=−b(KL 
+
+> 0
+
+EjLv,Tj
+
+> 0
+
+v)−b(KL 
+
+> 0
+
+EjLv,
+
+> L
+
+# ∑
+
+> l=1
+
+Tjl Ejl−1v)) . (4.11) It follows from the definition of Rj 
+
+> 0
+
+in (3.1) that Tj
+
+> 0
+
+v is discretely divergence-free. Let 
+
+w0 denote the divergence-free component of Tj
+
+> 0
+
+v in the Helmholtz decomposition in 
+
+H0(curl ;Ω). Then, by Lemma 7.6 in [19], we have 
+
+∥w0 −Tj
+
+> 0
+
+v∥b ≤ Ch s
+
+> 0
+
+∥curl Tj
+
+> 0
+
+v∥b, (4.12) where C is a constant independent of the mesh size and 12 < s ≤ 1. Since w0 ∈ W1 ⊕W2,combining (4.11) and (4.12) we obtain 
+
+b(KL 
+
+> 0
+
+EjLv,KL 
+
+> 0
+
+EjLv) = −b(KL 
+
+> 0
+
+EjLv,Tj
+
+> 0
+
+v−w0)−b(KL 
+
+> 0
+
+EjLv,
+
+> L
+
+# ∑
+
+> l=1
+
+Tjl Ejl−1v),
+
+≤ ∥ KL 
+
+> 0
+
+EjLv∥b(Ch s
+
+> 0
+
+∥Tj
+
+> 0
+
+v∥Ej +∥
+
+> L
+
+# ∑
+
+> l=1
+
+Tjl Ejl−1v∥b). (4.13) Since Rj 
+
+> 0
+
+is symmetric with respect to b(·,·), we have 
+
+(Tj
+
+> 0
+
+vL,ω02 )Ej = ( vL,ω02 )Ej ∀vL ∈ VL,ω02 ∈ W02 . (4.14) 12 4 CONVERGENCE ANALYSIS 
+
+It follows from (4.14) that 
+
+∥Tj
+
+> 0
+
+v∥2 
+
+> Ej
+
+= ( Tj
+
+> 0
+
+v,v)Ej ≤ ∥ Tj
+
+> 0
+
+v∥Ej ∥v∥Ej , (4.15) To bound the second term in (4.13), we employ (4.9) and the Poincar´ e inequality on the local discrete divergence-free subspace. This yields the estimate 
+
+∥
+
+> L
+
+# ∑
+
+> l=1
+
+Tjl Ejl−1v∥b ≤ Ch 0(( v,v)Ej +λjb(EjLv,EjLv)) 12 ∀v ∈ WL 
+
+> 1
+
+⊕WL 
+
+> 2
+
+. (4.16) Using the estimate ∥EjLv∥b ≤C∥v∥Ej , together with (4.13), (4.15) and (4.16), we arrive at 
+
+∥KL 
+
+> 0
+
+EjLv∥b ≤ Ch s
+
+> 0
+
+∥v∥Ej +Ch 0(∥v∥2 
+
+> Ej
+
++λj∥EjLv∥2 
+
+> b
+
+) 12 ≤ Ch s
+
+> 0
+
+∥v∥Ej . (4.17) Finally, combining (4.6), (4.10) and (4.17), we obtain 
+
+∥QL 
+
+> 2
+
+EjLv∥Ej ≤
+
+s
+
+1− (2−ω)( 1−Cδ0(λ1)) 2
+
+C +Ch 2s 
+
+> 0
+
+∥v∥Ej . (4.18) Let θ =
+
+q
+
+1− (2−ω)( 1−Cδ0(λ1)) 2 
+
+> C
+
++Ch 2s 
+
+> 0
+
+. Substituting (4.18) into (4.5) completes the proof of this lemma. To estimate Ij
+
+> 2
+
+, we present the following lemma 
+
+Lemma 4.2. Under the same assumption as in Theorem 4.1, it holds that 
+
+∥Ij
+
+> 2
+
+∥Ej ≤ Ch s
+
+> 0
+
+∥ejL∥Ej .
+
+Proof. For the readability, we put the proof of this lemma in the appendix. Now we are in a position to present a proof of the main result. 
+
+Proof of Theorem 4.1 : By (4.4), Lemma 4.1 and Lemma 4.2, we have 
+
+∥ ˜ej+1 
+
+> L
+
+∥Ej ≤ ∥Ij
+
+> 1
+
+∥Ej +∥Ij
+
+> 2
+
+∥Ej
+
+≤ (1−αj(1−θ)) ∥ejL∥Ej +Ch s
+
+> 0
+
+∥ejL∥Ej
+
+≤ (1−αj(1−θ)+ Ch s
+
+> 0
+
+)∥ejL∥Ej . (4.19) Since Uj +span {tj+1 
+
+> L
+
+} ⊂ Wj+1, it follows that 
+
+λj+1 ≤ ˜λj+1 = Rq ( ˜uj+1).Then we obtain 
+
+λj+1 −λ1, L ≤ ˜λj+1 −λ1, L = ∥ ˜ej+1 
+
+> L
+
+∥2 
+
+> Ej
+
++( λj −λ1, L)∥ ˜ej+1 
+
+> L
+
+∥2
+
+> b
+
+. (4.20) 13 
+
+Combining (4.19), (4.20) and the Poincar´ e inequality, we derive 
+
+λj+1 −λ1, L ≤ (1+Ch s
+
+> 0
+
+)( 1−αj(1−θ)+ Ch s
+
+> 0
+
+)∥ejL∥2
+
+> Ej
+
+≤ (1−αj(1−θ)+ Ch s
+
+> 0
+
+)2∥ejL∥2
+
+> Ej
+
+≤ (1−αj(1−θ)+ Ch s
+
+> 0
+
+)2(λj −λ1, L),This implies (4.2). Regarding (4.1), we observe that 
+
+∥ej+1 
+
+> L
+
+∥Ej ≤
+
+q
+
+λj+1 −λ1, L ≤ (1−αj(1−θ)+ Ch s
+
+> 0
+
+)∥ejL∥Ej ,which completes the proof. 
+
+# 5 Numerical results 
+
+In this section, we will present several numerical experiments to verify the effec-tiveness and robustness of Algorithm 1 on simply connected domains, multiply con-nected domains, and the crack domain. The adaptive mesh refinement is driven by a residual-based a posteriori error estimator (see [6]). Let (λ1, L,u1, L) denote the finite el-ement approximation of the eigenpair (λ1,u1), satisfying the normalization conditions 
+
+∥u1, L∥b = 1 and (u1,u1, L) > 0. For each K ∈ T L, the a posteriori error indicator is defined by 
+
+μ2
+
+> L
+
+(u1, L,K) := h2 
+
+> K
+
+∥u1, L −curl (curl u1, L/λ1, L)∥20, K
+
++ 12 ∑
+
+> F∈F I(K)
+
+{hF ∥[[( curl u1, L/λ1, L)×n]] ∥20, F +hF ∥[[ u1, L ·n]] ∥20, F},where FI(K) denotes the set of interior faces of the element K, hF the diameter of F, [[ ·]] 
+
+the jump across F, and n the unit normal vector to F. Then the global a posteriori error estimate on TL is defined by 
+
+μL(u1, L,TL) := ∑
+
+> K∈T L
+
+μ2
+
+> L
+
+(u1, L,K)
+
+!1/2 
+
+.The stopping criterion of the algorithm is ∥rj∥b <10 −8. In the table summarizing the numerical results, DOF. denotes the degrees of freedom; Iters represents the number of iterations in the Jacobi-type or the Gauss-Seidel-type local multilevel smoother; Res. denotes the residual norm at convergence (i.e., ∥rj∥b) and λl 
+
+> 1
+
+represents the principal eigenvalue at level l obtained by Algorithm 1. For each of the following examples, the locally refined meshes and the corresponding solutions on a certain level are presented. The reduction of the a posteriori error is presented to confirm the efficiency and relia-bility of the adaptive finite element method. In addition, the quasi-optimality of the adaptive multilevel PHJD method is demonstrated by the boundedness of the number of iteration counts and the nearly linear increase of CPU time. 14 5 NUMERICAL RESULTS 
+
+Example 5.1. We consider the Maxwell eigenvalue problem on the Fichera corner do-main Ω = ( 0,2 π)3 \(π,2 π)×(π,2 π)×(π,2 π). 
+
+> (a) level = 1 (b) level = 15
+
+Figure 1: The local refined mesh on adaptive levels 1 and 15 Level( l) DOF. Iters(Jacobi) Iters(GS) Res. λl
+
+> 1
+
+4 1282 24 14 4.3274e-09 0.301528057 8 9698 24 14 5.1436e-09 0.317458912 11 38629 24 13 7.8428e-09 0.322869279 14 152014 24 13 8.6064e-09 0.324486372 16 360002 23 13 5.2117e-09 0.325503648 19 1325916 23 12 9.5636e-09 0.325931977 Table 1: The numerical results on each level Figure 1 displays a locally refined mesh of 234,299 elements generated by the adap-tive finite element algorithm, which accurately captures the locations of singularities. It can be observed from Table 1 that the adaptive multilevel PHJD algorithm converges in nearly the same number of iterations across all levels, although the number of degrees of freedom increases to 1,325,916. This indicates that the convergence rate is quasi-optimal. Figure 2 shows that the error curves obtained with uniform meshes and with adap-tively refined meshes are almost parallel, which verifies the effectiveness and reliability of the a posteriori error estimator. Figure 3 illustrates that the CPU time of the adaptive multilevel PHJD iteration scales linearly with the number of degrees of freedom. 
+
+Example 5.2. To simulate the situation of electromagnetic coils in practical applications, we consider the Maxwell eigenvalue problem on domain Ω = ( 0,2 π)3 \(0.5 π,1.5 π)×
+
+(0.5 π,1.5 π)×(0,2 π)15 
+
+Figure 2: Reduction of a posteriori error Figure 3: Increasing of CPU time Figure 4 displays a locally refined mesh of 273,714 elements generated by the adap-tive finite element algorithm. Local mesh refinement is mainly concentrated in the corner regions within the solenoid interior. It can be observed from Table 2 that the adaptive multilevel PHJD algorithm converges in almost the same small number of steps. This indicates that the convergence rate is quasi-optimal, which illustrates that our adaptive multilevel PHJD method is scalable for the multiply connected domain. Figure 5 shows that the error curves obtained with uniform meshes and with adap-tively refined meshes are almost parallel. Figure 6 illustrates that the CPU time for solving the algebraic system increases roughly linearly with respect to the degrees of freedom.  
+
+> (a) level = 1 (b) level = 15
+
+Figure 4: The local refined mesh on adaptive levels 1 and 15 16 5 NUMERICAL RESULTS 
+
+Level( l) DOF. Iters(Jacobi) Iters(GS) Res. λl
+
+> 1
+
+4 2071 25 14 6.6786e-09 0.245025619 8 11804 30 14 5.5633e-09 0.248053377 11 52344 28 13 6.6920e-09 0.248952103 14 196592 28 13 4.9924e-09 0.249614806 16 465860 27 12 9.0458e-09 0.249753098 18 1102892 28 13 4.8462e-09 0.249876756 Table 2: The numerical results on each level 
+
+Figure 5: Reduction of a posteriori error Figure 6: Increasing of CPU time The following two examples demonstrate that our adaptive multilevel PHJD method remains efficient for domains with multiply connected boundaries. 
+
+Example 5.3. We consider the Maxwell eigenvalue problem on cubic cavity whose boundary is multiply connected: Ω=( 0,2 π)3\(Q1∪Q2), where Q1=( 0.5 π,π)×(0.5 π,π)×
+
+(π,1.5 π) and Q2 = ( 0.5 π,π)×(π,1.5 π)×(0.5 π,π).We modified Algorithm 1 by adding a step that projects the iterative solution onto the subspace orthogonal to the low-dimensional space of harmonic vector fields. Figure 7 shows a locally refined mesh of 229,019 elements generated by the adaptive finite element algorithm. We observe that the mesh is locally refined near the boundary of the cavities. Table 3 indicates that the iteration count of the adaptive multilevel PHJD algorithm remains small and stable, even as the number of degrees of freedom increases to 991,722. This indicates that the convergence rate is quasi-optimal, demonstrating that our adaptive multilevel PHJD method is scalable for the multiply connected domain. 17  
+
+> (a) level = 1 (b) level = 15
+
+Figure 7: The local refined mesh on adaptive levels 1 and 15 Level( l) DOF. Iters(Jacobi) Iters(GS) Res. λl
+
+> 1
+
+4 1513 24 14 6.3401e-09 0.168228501 8 11731 26 14 8.1663e-09 0.189167802 11 47530 25 15 6.0027e-09 0.195310401 14 183585 25 15 5.1208e-09 0.198389974 16 418433 25 14 9.5662e-09 0.199332014 18 991722 26 15 7.7889e-09 0.199882133 Table 3: The numerical results on each level 
+
+Figure 8: Reduction of a posteriori error Figure 9: Increasing of CPU time Figure 8 displays that the error curves obtained with uniform meshes and with adaptively refined meshes are almost parallel. Figure 9 shows that for the CPU time 18 5 NUMERICAL RESULTS 
+
+of the adaptive multilevel PHJD iteration is almost linear in terms of the degrees of freedom. 
+
+Example 5.4. We consider the Maxwell eigenvalue problem on multiply connected do-main with cubic cavity: Ω = ( 0,4 π)3 \(Q1 ∪Q2), where Q1 = ( 2π,3 π)×(2π,3 π)×(0,4 π)
+
+and Q2 = ( 0.5 π,1.5 π)×(0.5 π,1.5 π)×(1.5 π,2.5 π).We modified the algorithm in the same manner as in Example 5.3. Figure 10 depicts a locally refined mesh of 228,729 elements generated by the adaptive finite element al-gorithm. We observe that the mesh is locally refined near the boundary of the cavities and in the corner regions within the solenoid interior. It can be observed from Table 4 that in each case the iteration counts remain almost uniform on different levels, al-though the number of degrees of freedom increases up to 1,293,489. This confirms the quasi-optimality of the proposed method.  
+
+> (a) outside (b) inside
+
+Figure 10: The local refined mesh on adaptive level 11 Level( l) DOF. Iters(Jacobi) Iters(GS) Res. λl
+
+> 1
+
+5 15728 23 14 4.6114e-09 0.059163470 7 37731 23 13 6.0091e-09 0.059657836 9 91931 22 13 5.5289e-09 0.059977658 11 228729 23 13 5.2923e-09 0.060170893 13 534404 22 12 6.4284e-09 0.060282554 15 1293489 22 12 7.8593e-09 0.060342783 Table 4: The numerical results on each level Figure 11 demonstrates the effectiveness and reliability of the a posteriori error es-timator. Figure 12 shows that the CPU time of the adaptive multilevel PHJD iteration scales linearly with the number of degrees of freedom. 19 
+
+Figure 11: Reduction of a posteriori error Figure 12: Increasing of CPU time The next example bears out that the adaptive multilevel PHJD method is also ef-ficient for the problems in non-Lipschitz domains, which are outside the scope of our theory. 
+
+Example 5.5. We address the crack problem in its standard formulation. Considering the Maxwell eigenvalue problem on domain Ω = ( 0,2 π)3 \(x,π,z): π ≤ x ≤2π,0 ≤z ≤2π 
+
+> (a) outside (b) inside
+
+Figure 13: The local refined mesh on adaptive level 20 Figure 13 displays a locally refined mesh of 233,311 elements generated by the adap-tive finite element algorithm. It shows that singularities are predominantly localized in the central region of the crack. Table 5 indicates that the iteration count of the adaptive multilevel PHJD algorithm remains small and stable, even as the number of degrees of freedom increases up to 1,251,925. This indicates that the convergence rate is quasi-optimal, which illustrates that our adaptive multilevel PHJD method is scalable for the 20 A THE PROOF OF LEMMA 4.2 
+
+non-Lipschitz domain. Level( l) DOF. Iters(Jacobi) Iters(GS) Res. λl
+
+> 1
+
+5 285 24 16 5.6978e-09 0.319151975 9 2966 28 17 4.3451e-09 0.337844743 11 7989 29 17 4.4389e-09 0.345413445 15 40613 30 17 7.3772e-09 0.351146037 17 95097 29 16 5.8351e-09 0.352123877 20 289815 29 16 4.8097e-09 0.353765744 24 1251925 28 16 8.4293e-09 0.354253128 Table 5: The numerical results on each level 
+
+Figure 14: Reduction of a posteriori error Figure 15: Increasing of CPU time Due to the non-Lipschitz geometry, Figure 14 shows that the convergence rate of adaptively refined meshes deteriorates to a lower order compared to uniform meshes. Figure 15 illustrates that the CPU time of solving the algebraic system still increases roughly linearly with respect to the degrees of freedom, which reveals the quasi-optimality of the algorithm. 
+
+# A The proof of Lemma 4.2 
+
+Proof of Lemma 4.2 : For the estimate of Ij
+
+> 2
+
+, we split it into two parts 
+
+Ij 
+
+> 2,1
+
+= αj QL 
+
+> 2
+
+BjL(AL −λj I)QL 
+
+> 1
+
+uj, Ij 
+
+> 2,2
+
+= αj QL 
+
+> 2
+
+QUj BjLrj.21 
+
+For Ij
+
+> 2,1
+
+, using the definition of ˜AjL, the Cauchy-Schwarz inequality, and the estimate 
+
+∥ ˜EjLv∥b ≤ C∥v∥Ej , we have 
+
+∥αj QL 
+
+> 2
+
+BjL ˜AjL QL 
+
+> 1
+
+vj∥2 
+
+> Ej
+
+= ( αj)2(EjL QL 
+
+> 1
+
+uj,QL 
+
+> 2
+
+EjL QL 
+
+> 1
+
+uj)Ej
+
+= ( αj)2(QL 
+
+> 1
+
+uj, ˜ EjL QL 
+
+> 2
+
+EjL QL 
+
+> 1
+
+uj)Ej
+
+≤ C(αj)2(λj −λ1, L)∥QL 
+
+> 1
+
+uj∥b∥QL 
+
+> 2
+
+EjL QL 
+
+> 1
+
+uj∥Ej .Combining the above results with the estimate λj−λ1, L≤Ch 2s 
+
+> 0
+
+and the identity pλj −λ1, L∥QL 
+
+> 1
+
+uj∥b=
+
+∥ejL∥Ej , we obtain 
+
+∥Ij
+
+> 2,1
+
+∥Ej ≤ Ch s
+
+> 0
+
+∥ejL∥Ej .Moreover, for Ij
+
+> 2,2
+
+, using the definition of QUj and the Cauchy-Schwarz inequality, we get 
+
+∥αj QL 
+
+> 2
+
+QUj BjLrj∥Ej = αj|b(BjLrj,uj)|∥ QL 
+
+> 2
+
+uj∥Ej ≤ αj∥BjLrj∥b∥ejL∥Ej .To estimate ∥BjLrj∥b, we utilize the definition of EjL and the spatial decomposition to split the term into two parts 
+
+∥BjLrj∥b = ∥(I −EjL)uj∥b ≤ ∥ (I −EjL)QL 
+
+> 1
+
+uj∥b +∥(I −EjL)QL 
+
+> 2
+
+uj∥b.For the first part, applying (3.2), (4.16), and the definition of Tj
+
+> 0
+
+, together with the esti-mates λj −λ1, L ≤ Ch 2s 
+
+> 0
+
+and ∥EjL QL 
+
+> 1
+
+uj∥b ≤ C∥QL 
+
+> 1
+
+uj∥a, yields 
+
+∥(I −EjL)QL 
+
+> 1
+
+uj∥b ≤∥ Tj
+
+> 0
+
+QL 
+
+> 1
+
+uj∥b +∥
+
+> L
+
+# ∑
+
+> l=1
+
+Tjl Ejl−1QL 
+
+> 1
+
+uj∥b
+
+≤ ∥ ( ˜Aj
+
+> 0
+
+)−1Q02Q0 ˜AjL QL 
+
+> 1
+
+uj∥b +∥
+
+> L
+
+# ∑
+
+> l=1
+
+Tjl Ejl−1QL 
+
+> 1
+
+uj∥b
+
+≤ C
+
+q
+
+λj −λ1, L∥QL 
+
+> 1
+
+uj∥b +Ch 0(( QL 
+
+> 1
+
+uj,QL 
+
+> 1
+
+uj)Ej
+
++λjb(EjL QL 
+
+> 1
+
+uj,EjL QL 
+
+> 1
+
+uj))) 12
+
+≤ Ch s
+
+> 0
+
+.The second part is bounded using the triangle inequality, the estimates λj −λ1, L ≤ Ch 2s
+
+> 0
+
+and the estimate of ∥EjL QL 
+
+> 2
+
+uj∥b. Specifically, we have 
+
+∥(I −EjL)QL 
+
+> 2
+
+uj∥b ≤ ∥ ejL∥b +∥QL 
+
+> 2
+
+uj∥a ≤ C∥ejL∥Ej ≤ Ch s
+
+> 0
+
+.Combining the estimates of Ij 
+
+> 2,1
+
+and Ij
+
+> 2,2
+
+, we finish the proof. 22 A THE PROOF OF LEMMA 4.2 
+
+References 
+
+[1] Constantine A. Balanis. Advanced Engineering Electromagnetics . Wiley Global Education, 2nd edition, 2012. [2] Daniele Boffi. Fortin operator and discrete compactness for edge elements. Numer. Math. ,87:229–246, 2000. [3] Daniele Boffi. Finite element approximation of eigenvalue problems. Acta Numer. , 19:1– 120, 2010. [4] Daniele Boffi, Paolo Fernandes, Lucia Gastaldi, and Ilaria Perugia. Computational models of electromagnetic resonators: analysis of edge element approximation. SIAM J. Numer. Anal. , 36:1264–1290, 1999. [5] Daniele Boffi and Lucia Gastaldi. Adaptive finite element method for the Maxwell eigen-value problem. SIAM J. Numer. Anal. , 57:478–494, 2019. [6] Daniele Boffi, Lucia Gastaldi, Rodolfo Rodr´ ıguez, and Ivana ˇ Sebestov´ a. A posteriori error estimates for Maxwell’s eigenvalue problem. J. Sci. Comput. , 78:1250–1271, 2019. [7] James H. Bramble. Multigrid Methods . Pitman Research Notes in Mathematics Series. John Wiley & Sons, New York, 1993. [8] Salvatore Caorsi, Paolo Fernandes, and Mirco Raffetto. On the convergence of Galerkin finite element approximations of electromagnetic eigenproblems. SIAM J. Numer. Anal. ,38:580–607, 2000. [9] Junqing Chen, Yifeng Xu, and Jun Zou. An adaptive inverse iteration for Maxwell eigen-value problem based on edge elements. J. Comput. Phys. , 229:2649–2658, 2010. [10] Anah´ ı Dello Russo and Ana Alonso. Finite element approximation of Maxwell eigenprob-lems on curved Lipschitz polyhedral domains. Appl. Numer. Math. , 59:1796–1822, 2009. [11] Vivette Girault and Pierre-Arnaud Raviart. Finite Element Methods for Navier-Stokes Equa-tions . Springer Series in Computational Mathematics. Springer-Verlag, Berlin, 1986. [12] Jianing Guo, Qigang Liang, and Xuejun Xu. Local multilevel preconditioned Jacobi-Davidson method for elliptic eigenvalue problems on adaptive meshes, 2025. arXiv:2511.18996. [13] Ralf Hiptmair. Multigrid method for Maxwell’s equations. SIAM J. Numer. Anal. , 36:204– 225, 1999. [14] Ralf Hiptmair. Finite elements in computational electromagnetism. Acta Numer. , 11:237– 339, 2002. [15] Ralf Hiptmair and Klaus Neymeyr. Multilevel method for mixed eigenproblems. SIAM J. Sci. Comput. , 23:2141–2164, 2002. [16] Fumio Kikuchi. On a discrete compactness property for the N´ ed´ elec finite elements. J. Fac. Sci. Univ. Tokyo Sect. IA Math. , 36:479–490, 1989. [17] Qigang Liang and Xuejun Xu. A two-level preconditioned Helmholtz-Jacobi-Davidson method for the Maxwell eigenvalue problem. Math. Comp. , 91:623–657, 2022. [18] Qigang Liang and Xuejun Xu. A two-level preconditioned Helmholtz subspace iterative method for Maxwell eigenvalue problems. SIAM J. Numer. Anal. , 61:642–674, 2023. [19] Peter Monk. Finite Element Methods for Maxwell’s Equations . Numerical Mathematics and Scientific Computation. Oxford University Press, New York, 2003. [20] Peter Monk and Leszek Demkowicz. Discrete compactness and the approximation of Maxwell’s equations in R3. Math. Comp. , 70:507–523, 2001. [21] Jean-Claude N´ ed´ elec. Mixed finite elements in R3. Numer. Math. , 35:315–341, 1980. [22] Gerard L. G. Sleijpen and Henk A. Van der Vorst. A Jacobi–Davidson iteration method for linear eigenvalue problems. SIAM Rev. , 42:267–293, 2000. [23] Wei Wang and Xuejun Xu. A two-level overlapping hybrid domain decomposition 23 
+
+method for eigenvalue problems. SIAM J. Numer. Anal. , 56:344–368, 2018. [24] Wei Wang and Xuejun Xu. On the convergence of a two-level preconditioned Jacobi-Davidson method for eigenvalue problems. Math. Comp. , 88:2295–2324, 2019. [25] Tao Zhao, Feng-Nan Hwang, and Xiao-Chuan Cai. A domain decomposition based Jacobi-Davidson algorithm for quantum dot simulation. In Domain decomposition methods in sci-ence and engineering XXII , Lect. Notes Comput. Sci. Eng., pages 415–423. Springer, Cham, 2016. [26] Jie Zhou, Xiaozhe Hu, Liuqiang Zhong, Shi Shu, and Long Chen. Two-grid methods for Maxwell eigenvalue problems. SIAM J. Numer. Anal. , 52:2027–2047, 2014.
