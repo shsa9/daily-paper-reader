@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-04-08 <!--dpr-date:20260408-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202604/08/2604.06133v1-learning-guided-force-feedback-model-predictive-control-with-obstacle-avoidance-for-robotic-deburring" data-sidebar-item="{&quot;title&quot;: &quot;Learning-Guided Force-Feedback Model Predictive Control with Obstacle Avoidance for Robotic Deburring&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2604.06133v1-learning-guided-force-feedback-model-predictive-control-with-obstacle-avoidance-for-robotic-deburring&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;em-force&quot;}], &quot;evidence&quot;: &quot;用于稳定力调节的力反馈模型预测控制&quot;}">Learning-Guided Force-Feedback Model Predictive Control with Obstacle Avoidance for Robotic Deburring</a>
   * 2026-04-07 <!--dpr-date:20260407-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202604/07/2603.29718v1-adaptive-multilevel-methods-for-the-maxwell-eigenvalue-problem" data-sidebar-item="{&quot;title&quot;: &quot;Adaptive Multilevel Methods for the Maxwell Eigenvalue Problem&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2603.29718v1-adaptive-multilevel-methods-for-the-maxwell-eigenvalue-problem&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;em-force&quot;}], &quot;evidence&quot;: &quot;麦克斯韦特征值问题的多级方法&quot;}">Adaptive Multilevel Methods for the Maxwell Eigenvalue Problem</a>

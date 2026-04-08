@@ -1,0 +1,57 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-08T20:34:38.345266+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.06133v1",
+      "title": "Learning-Guided Force-Feedback Model Predictive Control with Obstacle Avoidance for Robotic Deburring",
+      "abstract": "Model Predictive Control (MPC) is widely used for torque-controlled robots, but classical formulations often neglect real-time force feedback and struggle with contact-rich industrial tasks under collision constraints. Deburring in particular requires precise tool insertion, stable force regulation, and collision-free circular motions in challenging configurations, which exceeds the capability of standard MPC pipelines. We propose a framework that integrates force-feedback MPC with diffusion-based motion priors to address these challenges. The diffusion model serves as a memory of motion strategies, providing robust initialization and adaptation across multiple task instances, while MPC ensures safe execution with explicit force tracking, torque feasibility, and collision avoidance. We validate our approach on a torque-controlled manipulator performing industrial deburring tasks. Experiments demonstrate reliable tool insertion, accurate normal force tracking, and circular deburring motions even in hard-to-reach configurations and under obstacle constraints. To our knowledge, this is the first integration of diffusion motion priors with force-feedback MPC for collision-aware, contact-rich industrial tasks.",
+      "authors": [
+        "Krzysztof Wojciechowski",
+        "Ege Gursoy",
+        "Arthur Haffemayer",
+        "Sebastien Kleff",
+        "Vincent Bonnet",
+        "Florent Lamiraux",
+        "Nicolas Mansard"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-04-07T17:43:32+00:00",
+      "link": "https://arxiv.org/pdf/2604.06133v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "force-feedback model predictive control for stable force regulation",
+      "llm_evidence_cn": "用于稳定力调节的力反馈模型预测控制",
+      "llm_evidence": "用于稳定力调节的力反馈模型预测控制",
+      "canonical_evidence": "用于稳定力调节的力反馈模型预测控制",
+      "llm_tldr_en": "Integrates force-feedback MPC with motion priors for precise force regulation in contact-rich robotic tasks.",
+      "llm_tldr_cn": "将力反馈MPC与运动先验相结合，用于机器人接触任务中的精确力调节。",
+      "llm_tldr": "将力反馈MPC与运动先验相结合，用于机器人接触任务中的精确力调节。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "closed-loop force control for electromagnetic shakers",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

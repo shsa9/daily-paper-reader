@@ -6,29 +6,26 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-07
-- 运行时间：2026-04-07 19:46:28 UTC
+- 最新运行日期：2026-04-08
+- 运行时间：2026-04-08 20:34:53 UTC
 - 运行状态：成功
-- 本次总论文数：2
+- 本次总论文数：1
 - 精读区：0
-- 速读区：2
+- 速读区：1
 
 ### 今日简报（AI）
-今日聚焦电磁场计算前沿，涵盖麦克斯韦特征值问题的自适应算法与磁滞回线的深度学习预测。
-重点关注 ResNet 增强的傅里叶算子（FNO）在高频序列预测中的表现，以及多级方法对复杂电磁方程求解效率的提升。
-建议深入探索物理算子学习与传统数值分析的结合，以应对高频电磁建模中的非线性挑战。
-- 详情：[/202604/07/README](/202604/07/README)
+今日聚焦机器人去毛刺工艺，探索结合学习引导与力反馈的避障模型预测控制方案。
+该研究通过融合力控与避障算法，有效提升了工业机器人在复杂环境下的精细加工作业能力。
+推荐关注工业自动化与力控算法结合的读者，了解这种兼顾加工精度与作业安全的新思路。
+- 详情：[/202604/08/README](/202604/08/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Adaptive Multilevel Methods for the Maxwell Eigenvalue Problem](/202604/07/2603.29718v1-adaptive-multilevel-methods-for-the-maxwell-eigenvalue-problem)  
+1. [Learning-Guided Force-Feedback Model Predictive Control with Obstacle Avoidance for Robotic Deburring](/202604/08/2604.06133v1-learning-guided-force-feedback-model-predictive-control-with-obstacle-avoidance-for-robotic-deburring)  
    标签：评分：6.0/10、query:em-force
-   evidence：麦克斯韦特征值问题的多级方法
-2. [A Multi-Scale ResNet-augmented Fourier Neural Operator Framework for High-Frequency Sequence-to-Sequence Prediction of Magnetic Hysteresis](/202604/07/2604.04150v1-a-multi-scale-resnet-augmented-fourier-neural-operator-framework-for-high-frequency-sequence-to-sequence-prediction-of-magnetic-hysteresis)  
-   标签：评分：6.0/10、query:em-force
-   evidence：磁滞现象与磁通密度动态建模
+   evidence：用于稳定力调节的力反馈模型预测控制
 
 
 <div class="dpr-home-promo-card">
