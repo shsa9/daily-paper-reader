@@ -1,0 +1,425 @@
+Title: Improving INDI for Input Nonaffine Systems via Learning-Based Nonlinear Control Allocation
+
+URL Source: https://arxiv.org/pdf/2604.06337v1
+
+Published Time: Thu, 09 Apr 2026 00:06:08 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# Improving INDI for Input Nonaffine Systems via Learning-Based Nonlinear Control Allocation 
+
+Adam Hallmark and Pan Zhao, Member, IEEE 
+
+Abstract — This paper first demonstrates that applying stan-dard incremental nonlinear dynamic inversion (INDI) with incremental control allocation (ICA) to input nonaffine systems relies on an untenable linear approximation of the actuator model. It then shows that avoiding this issue, while retaining the static control allocation paradigm, generally requires solving a nonlinear programming (NLP) problem. To address the asso-ciated online computational challenges, the paper subsequently presents a supervised learning–based approach. Numerical experiments on an example problem validate the identified limitations of standard INDI + ICA for input nonaffine systems, while also demonstrating that the proposed learning-based method provides an effective and computationally tractable alternative. 
+
+Index Terms — Incremental nonlinear dynamic inversion, nonlinear control, control allocation, machine learning 
+
+I. I NTRODUCTION 
+
+Nonlinear dynamic inversion (NDI), also known as feed-back linearization, is a control design technique for a class of nonlinear systems that uses feedback to linearize the system response with respect to a virtual input [1]–[3]. This enables the application of linear control design techniques to shape the response of controlled variables for nonlinear systems. To achieve exact feedback linearization, the system model must be known exactly. For systems with complex dynamics or subject to disturbances, accurate dynamic models may be difficult to obtain. This practical difficulty has motivated the development of incremental NDI (INDI), which is a modification of standard NDI that incorporates sensor mea-surements to reduce model dependence. INDI has become a popular method for the control of aerospace systems [4]–[7]. See the survey [8] for references to additional applications. Overactuated systems are generally defined as systems that have more inputs than controlled variables [9]. Con-trol allocation (CA) is an approach used to manage the distribution of actuator effort for such systems [10]. When INDI is applied to overactuated input nonaffine systems, the typical derivation leads naturally to a linear CA problem. The resulting formulation is often called the incremental control allocation (ICA) problem, and it has been applied to aerospace systems [11], [12]. This approach involves local linearization of the actuator model so that the allocation problem can be cast as a linear one. In prior literature, it has been claimed that the use of this local linear approximation is actually an attractive feature of INDI over standard NDI that  
+
+> This research was financially supported in part by the Alabama Space Grant Consortium, NASA Training Grant NNH24ZHA003C A. Hallmark and P. Zhao are with the Department of Aerospace Engineer-ing and Mechanics, University of Alabama, Tuscaloosa, AL 35487, USA. Email:
+
+alhallmark@crimson.ua.edu , pan.zhao@ua.edu .
+
+enables application to nonaffine systems. For example, one of the earliest works in this area states that “The problem of applying DI to a system with a nonaffine control mapping has also been eliminated” [13]. While the survey [8] does mention that the local linearization is only an approximation, it also states that one of the key advantages of INDI over NDI is that it “is suitable for input non-affine systems”. While local linearization of the actuator model does enable the use of efficient linear CA methods for computing the control increment, the error involved in the approximation causes a direct degradation of the feedback linearization per-formance. Further, the assumption that would be necessary to ensure small degradation–a small control increment–conflicts with one of the assumptions commonly used to derive the INDI control law. To avoid the errors associated with local linearization of the actuator model while retaining the static control allocation approach, a nonlinear control allocation (NCA) problem must be solved. In this paper, we explicitly and precisely identify the problem with applying the standard INDI formulation with ICA to nonaffine systems, and we argue that the problem is fundamental. We then derive a control law and allocation scheme for nonaffine systems that is analogous to INDI but avoids the standard local linearization. Our formulation requires the solution of an NCA problem to compute the control input, and we propose a supervised learning-based approach to solve the resulting NCA problem. Simulation results validate the identified issues with the standard INDI approach for input nonaffine systems, and also demonstrate the potential of the proposed learning-based approach as an effective and computationally-tractable alternative for solving NCA problems. II. T HE PROBLEM WITH APPLYING STANDARD INDI + LCA TO INPUT NONAFFINE SYSTEMS 
+
+We begin by following a standard INDI control law derivation, similar to that of [8], [13]. Consider the following nonaffine system: 
+
+9x “ F px, u q “ f pxq ` gpx, u q, (1) where x P Rn and u P Rm with m ą n. We assume that the system (1) is fully input–state feedback linearizable with a well-defined vector relative degree, such that each state component can be independently linearized and assigned its own virtual control input. This simplifies our analysis and does not affect the main results. We pursue feedback linearization via INDI in such a case. The Taylor series 
+
+> arXiv:2604.06337v1 [eess.SY] 7 Apr 2026
+
+expansion of (1) around a particular state x0 and input u0 is given by 
+
+9x “ F px0, u 0q ` BF
+
+Bx px0, u 0q∆x ` BF
+
+Bu px0, u 0q∆u
+
+`Op} ∆x}2q ` Op} ∆u}2q ` Op} ∆x}} ∆u}q ,
+
+(2) where ∆x – x ´ x0 and ∆u – u ´ u0. In the typical INDI derivation, only the first-order terms in (2) are included and the heuristic “time scale separation principle” [12] is invoked to argue that the approximation ∆x « 0 is valid since the control inputs change faster than the states [5]. In fact, the continuity of xptq is sufficient to establish that ∆x « 0 is a valid approximation when x0 and x are the states at some time t0 and at some later time t “ t0 `∆t, respectively, with 
+
+∆t ą 0 being small. Thus, the second, fourth, and sixth terms on the right hand side of (2) can be reasonably neglected for sufficiently small ∆t. In our developments, ∆t corresponds to the sample time of the realized control system. 
+
+A. Review of INDI for input affine systems 
+
+In the control-affine case, we have in (1) that 
+
+gpx, u q “ Bpxqu, 
+
+which implies that 
+
+BiF
+
+Bui px0, u 0q “ 0, @i ą 1.
+
+This means that the fifth term on the right-hand side of (2) is precisely zero in the control-affine case. Let us proceed using the identity Op} ∆u}2q “ 0 to derive the control law. We will reintroduce this collection of terms subsequently in discussing the case of input nonaffine systems. For ease of notation, let us define 
+
+B0 – BF
+
+Bu px0, u 0q “ Bg
+
+Bu px0, u 0q,
+
+where the equality on the right follows from (1). We can now write the approximate relation 
+
+9x « F px0, u 0q ` B0∆u. (3) In typical INDI derivations/applications, the term F px0, u 0q
+
+is replaced by 9x0 which is directly measured or estimated using on-board sensors, meaning that we do not need to know the drift term f pxq in order to compute the control input. This control design choice makes the standard INDI naturally robust in the sense that the controller is less model-dependent and any disturbances injected into the system will be captured in 9x0. The use of estimated or measured 9x0 is also why INDI is often referred to as a sensor-based control method [14]. Let us introduce the so-called virtual control input ν. If we could design a control law for ∆u that achieves 9x « ν, then we would be able to arbitrarily specify the approximate linear closed-loop dynamics for x with suitable choice of feedback law for νpxq, e.g., νpxq “ ´ Kpx ´ xcq for tracking control, where xc is the commanded state. Replacing F px0, u 0q with the sensor estimate 9x0 and equating the right hand side of (3) with νpxq, which yields 9x « νpxq, we have 
+
+νpxq “ 9x0 ` B0∆u. (4) Assume that we do indeed select νpxq “ ´ Kpx ´ xcq as the virtual control law. Then, to compute the control increment 
+
+∆u, we need to solve at each time step 
+
+´Kpx ´ xcq ´ 9x0 “ B0∆u. (5) Any constrained or unconstrained linear control allocation method [10] can be used to determine a ∆u satisfying (5), e.g., via solving a quadratic programming (QP) problem: 
+
+min  
+
+> ∆u
+
+∆uT Q∆u
+
+s.t. condition (5) , (6) where Q ě 0. Note that the constrained approach of QP-based linear CA allows for the inclusion of inequality constraints on ∆u (actuator limits) in (6). The actual control input supplied to the system is then determined by u “
+
+u0 ` ∆u, where u0 is the input from the previous sample instant. 
+
+B. Issues with standard INDI for input nonaffine systems 
+
+In order to derive the implicit incremental control law in (5) which achieves the approximate feedback linearization 
+
+9x « νpxq, we first assumed that Op} ∆u}2q from (2) was equal to zero. Recall that this equality is actually guar-anteed to be true in the input affine case. In the case of input nonaffine systems, let us assume that ∆u is selected according to (5) and then investigate whether or not the approximation Op} ∆u}2q « 0 is reasonable (which, in turn, tells us whether or not we will actually achieve 9x « νpxq if we use (5)). Note that the approximation of Op} ∆u}2q « 0
+
+is justified only when }∆u} ! 1. Immediately, we can see from (5) that a large step change in xc from one sample to the next would generally imply a large }∆u},invalidating the approximation which was used to arrive at (5). Even in the case where the virtual control is designed for regulation of x to a fixed desired steady-state value, i.e., 
+
+νpxq “ ´ Kpx ´ xss q, we can see from (5) that a large change in the disturbance (observed through measurement of 9x0) from one sample to the next would also generally imply a large }∆u}. Thus, abrupt changes in either the virtual control or the potential disturbance are generally unacceptable for achieving accurate feedback linearization when applying the standard INDI to input nonaffine control systems . Note that this is also true when dim pxq “ dim puq,i.e., in the non-overactuated case. In summary, there is no intrinsic mechanism in (5) to ensure sufficiently small control increments. This may substantially limit practical applicability, as feedback linearization is often used to design tracking controllers for rapidly-varying reference commands, while sensor-based approaches are employed to enable the rejection of (large) disturbances. Even if we were to filter the reference command, i.e., enforce continuity of xcptq, and establish bounds on the time derivatives of xcptq and of any possible disturbance dptq,we would still need to incorporate these bounds in selecting the appropriate sample time for controller implementation to ensure that }∆u} ! 1 always holds. This requirement may lead to a control rate that is infeasible in practice, depending on the magnitude of the established bounds. Moreover, the objective of keeping }∆u} small is in direct conflict with the heuristic “time-scale separation principle” commonly invoked in deriving the INDI control law. In the case of input-output feedback linearization, similar conclusions apply. In the next section, we show how to derive the control law and allocation scheme for input nonaffine systems, which addresses the aforementioned problems. III. M ODIFIED INDI + A LLOCATION SCHEME FOR INPUT 
+
+NONAFFINE SYSTEMS 
+
+To address the issues of standard INDI for input nonaffine systems identified in Section II-B, we will develop a control law and allocation scheme for input nonaffine systems that is similar in spirit to the standard INDI formulation, while completely avoiding the assumption Op} ∆u}2q « 0. The control law for the actual input will be expressed in implicit form, similar to (5), but will require the solution of anonlinear control allocation (NCA) problem to compute the control input rather than a linear CA problem. Consider again the system (1). Instead of writing the full Taylor expansion in both arguments x and u, consider the partial Taylor expansion of the dynamics with respect to only 
+
+x around a particular state x0 while treating u as a parameter: 
+
+9x “ F px0, u q ` BF
+
+Bx px0, u q∆x ` Op} ∆x}2q. (7) Following the same arguments from Section II related to the continuity of xptq, we can reasonably make the assumption that ∆x « 0 for sufficiently small sample time ∆t of the eventual control implementation. Thus, we can reasonably neglect the second and third terms on the right hand side of (7), leading to 
+
+9x « F px0, u q “ f px0q ` gpx0, u q. (8) We would like to select a control input u to achieve the approximate feedback linearization with respect to the virtual input: 9x « ν. To this end, equate the right hand side of (8) with the desired dynamics νpxq, which yields 9x « νpxq, and we have 
+
+νpxq “ f px0q ` gpx0, u q. (9) Observe that, unlike (4), equation (9) does not involve the sensor estimate 9x0 and also depends on knowledge of the drift term f pxq. To include sensor feedback of the state derivative and retain the spirit of standard INDI control, we can replace f px0q by 9x0 ´ gpx0, u 0q1 and obtain the control law for u in implicit form: 
+
+νpxq “ 9x0 ´ gpx0, u 0q ` gpx0, u q. (10)         
+
+> 1Notice that x0and u0satisfy the dynamics (1), i.e., 9x0“fpx0q `
+> gpx0, u 0q.
+
+If we rearrange (10) and recall that u is of a higher dimension than the state x, we obtain the NCA problem in a typical form [10]: 
+
+νpxq ´ 9x0 ` gpx0, u 0qloooooooooooomoooooooooooon 
+
+> –μdes
+
+“ gupuq – gpx0, u q, (11) where μdes is the desired generalized input and can be thought of as the desired acceleration due to input. In general, we can attempt to solve the NCA problem during each sample period using the nonlinear programming (NLP) formulation as follows: 
+
+min  
+
+> u
+
+Jpuq
+
+s.t. μdes “ gupuq, (12) where Jpuq represents the static secondary control objective such as a power usage or “effort” proxy, e.g., Jpuq “ uT Qu .Inequality constraints on the input u (actuator limits) can also be added to (12), similar to how the constrained linear CA approach may be used to solve (5) in the presence of actuator limits. Since (5) or (12) would be solved in a sampled fashion, one can also incorporate actuator rate limits by limiting the change in control ∆u from the control u0
+
+at the previous sample instant using ∆umax “ 9umax ∆t in combination with the absolute limits on the control inputs. 
+
+Remark 1. When rate or absolute limits on actuators are included, one must consider that (5) or (12) may some-times be infeasible. In such cases, the equality constraint is typically relaxed using a penalized slack variable. Though this approach generally makes the computational problem feasible, a nonzero slack at any iteration of the control loop will introduce some additional pointwise error in the approximate relation 9x « νpxq. We can attempt to address this potential issue by limiting/filtering the signal νpxq, or, in the case of multiple controlled variables, by prioritizing the minimization of equality constraint errors for certain channels of the state which are most important for safety, for example [10]. 
+
+Remark 2. In some applications, the implicit control law (11) may be used in an inner loop while other control design methods are utilized for the higher-level controllers, so that the function gpx, u q may depend additionally on variables representing integrals of the states in (1), or on other time-varying parameters. Provided that these variables/parameters have continuous trajectories and can be measured or esti-mated, equation (11) can be straightforwardly modified to in-clude dependence of g on the additional variables/parameters at the previous sample instant. The NLP (12) is generally nonconvex due to the presence of a nonaffine equality constraint. Accordingly, direct NLP formulations of the NCA problem are often avoided in real-time control applications, as solvers for nonconvex problems typically lack the computational reliability and efficiency of convex optimization methods. In the next section, we propose an approach to address this issue. IV. L EARNING -B ASED NONLINEAR CONTROL 
+
+ALLOCATION 
+
+In this section, we describe a learning-based approach to provide approximate online solutions to the NCA problem in (11) with fast evaluation. We explain how our proposed learning-based approach is distinct from prior work, e.g., [15], [16], and argue that our proposed approach offers certain benefits over existing learning-based methods for general NCA. Consider (1) and (11), and let us reintroduce the so-called generalized input μ:
+
+μ – gpx, u q. (13) We can interpret μ as an intermediate variable that directly represents the instantaneous affine effect of u (with unity gain) on the state derivative 9x for a particular instantaneous value of x. In the case of motion control of aerospace vehicles, μ often has the physical meaning of the control-produced vehicle accelerations. In view of (11) and (13), the NCA problem can be understood as: given a desired μ and previous state x0, determine an optimal u˚ such that (13) holds with μ “ μdes and x “ x0. The optimality here is with respect to Jpuq in (12). Let x P X , u P U, and μ P M
+
+where X Ď Rn is some domain of interest containing the origin, U Ď Rm is the admissible set of inputs, and M Ď Rn
+
+is the image of X ˆ U under the mapping gpx, u q in (13). Let M0 denote the image of U under the mapping gpx0, u q
+
+for a particular state x0. The set M0 is often referred to as the attainable moment set in the aerospace control literature, with the name coming from consideration of the aircraft attitude control problem [17], [18]. The set M is thus the union of pointwise attainable moment sets across all x0 P X .The function gpx, u q may not depend explicitly on all 
+
+n components of the state x. As discussed in Remark 2, 
+
+gpx, u q may also depend on additional variables not included in x. Let xg denote the ng -dimensional vector containing all variables upon which gpx, u q depends explicitly, aside from u. Further, with a slight abuse of notation, let us from now on refer to g as depending explicitly on the arguments 
+
+pxg , u q, rather than px, u q. With the subscript L referring to “Learning”, define xL – rxTg, 0, μ Tdes sT and yL – u˚, where 
+
+u˚ is the corresponding optimal input vector with respect to Jpuq in (12). Let the dimension of xg be ng and let the set Xg Ď Rng denote the region of interest for xg . Let the dimension of xL be nxL , where nxL “ ng ` n. Define the set XA Ď RnxL via the property: 
+
+rxTg, 0, μ Tdes sT P XA ùñ D u P U : gpxg, 0, u q “ μdes ,
+
+and note that XA ‰ Xg ˆ M. To see this, observe that for a particular xg, 0 P Xg , the set of achievable μ is the pointwise attainable moment set M0 corresponding to xg, 0, not the entire union M. The set XA is simply the set of all pairs 
+
+pxg, 0, μ des q such that μdes can be achieved under the input constraints when xg “ xg, 0.
+
+A. Learning problem setup and training data generation 
+
+The key idea of the learning-based approach is to learn the inverse map XA Ñ U. We propose to learn this mapping using neural networks (NNs) trained via a supervised learn-ing approach where the labels are generated through offline solution of many NLP problems. We require N samples from the set XA along with the N corresponding optimal input vectors yL, obtained by numerically solving the NLP problem (12). Denote the 
+
+N ˆ nxL array of input data points by X, and the N ˆ m
+
+array of labels, or output data, by Y . The learning problem is formulated as a regression task using the labeled data pX, Y q
+
+and a chosen NN architecture. The resulting trained model takes the form: 
+
+ˆu˚ “ ϕN N pr xTg, 0, μ Tdes sT ; θN N q, (14) where ˆu˚ denotes the predicted optimal control input and 
+
+θN N represents the network parameters. To directly sample the points xiL, i “ 1, . . . , N from the set XA, an explicit description of XA is required. In general, such a description cannot be easily obtained since gpxg , u q is nonlinear. We propose the following heuristic method under the assumption that U is a hyperrectangle: 1) Define the region of interest Xg and obtain a coarse grid of Nx points over Xg . Next, obtain the vertices of U using the Cartesian product of the component-wise lower and upper bounds, which yields NV “ 2m
+
+vertices; 2) Obtain the Cartesian product of the Nx sampled points in Xg and the NV vertices of U, which yields Np “
+
+Nx ˆ NV points in Xg ˆ U;3) Evaluate gpxig , u iq for i “ 1, . . . , N p which yields the points μi, i “ 1, . . . , N p in the set M. Form the corresponding Np points in XA as xiA “rp xig qT , pμiqT sT , i “ 1, . . . , N p;4) Compute the convex hull of these Np points in XA.Denote the hull by PA, and denote the number of vertices of PA by NV,P ;5) Sample Ns points from within PA and add these to the vertices of PA to obtain Ninit “ Ns ` NV,P sampled points; 6) For each of the Ninit sampled points, attempt to solve the NLP problem (12) numerically. Reject the samples for which a solution to the corresponding NLP problem cannot be obtained, which will result in N ď Ninit 
+
+pairs of labeled data pX, Y q for training. In the case that N is smaller than desired after this procedure, one can simply increase Ns until N reaches some desired threshold. Note that the reason that the NLP problems may sometimes be infeasible is that rxTg, 0, μ Tdes sT P PA does not imply that rxTg, 0, μ Tdes sT P XA. In addition, there may be some points in XA that are not in PA. The former problem only causes wasted computational effort, whereas the latter leads to the possibility that certain regions of XA will not be covered by the training data. We do not address the coverage issue in this paper, but we note that one could use an exploratory sampling+rejection scheme to try and extend the covered region of XA outside of PA.
+
+Remark 3. One potential concern in the learning problem formulation is that the mapping XA Ñ U may be non-smooth or even discontinuous. If the training data exhibit sharp local jumps, for example as indicated by large output variations for nearby samples in X, then a single global regressor may be inadequate. In such cases, specialized network architectures, such as piecewise or gated neural network architectures, may be more appropriate. 
+
+Remark 4. We assume that the feasible NLP problems required for training-data generation can be solved reliably in an offline setting. The equality constraint in (11) is enforced up to a prescribed numerical tolerance, and sampled points for which the NLP solver fails to converge are rejected. Such rejection may arise either from true infeasibility or from numerical issues associated with the nonconvex optimization problem, including convergence to poor local minima. Be-cause these NLPs are solved offline, more computationally intensive optimization strategies may be employed, such as multi-start or basin-hopping methods. In the case of a nonsmooth mapping gpxg , u q–such as when when the actuator model is derived from interpolated CFD or flight-test data–gradient-free optimization methods such as particle swarm optimization (PSO) or genetic algorithms (GA) may also be considered. 
+
+Remark 5. Once the sampled trial points xiL are obtained, the attempted computation of the corresponding labels via NLP solvers is naturally amenable to parallelization, since each optimization problem is independent. Accordingly, parallel computing provides a practical means of mitigating the computational burden associated with offline training-data generation. However, the number of sample points required to maintain a fixed resolution generally grows exponentially with the dimension of xL, whereas parallelization yields at most approximately linear speed-up with the number of workers. We emphasize that this curse-of-dimensionality issue is generally encountered by any numerical approach that seeks to approximate the mapping XA Ñ U.
+
+B. Comparison with existing learning-based NCA methods 
+
+Our proposed approach differs from existing learning-based approaches for solving general static nonlinear control allocation problem. In particular, we focus on applying learn-ing to address the feedback linearization errors described in Section II-B, which arise when applying standard INDI to input nonaffine systems. Previous work [15], [16] does not generate labels using NLP. Instead, the primary training objective is to minimize the average allocation error over a collection of sampled points in the set Xg ˆ M, i.e., to minimize the average normed residual of (11) where u
+
+is replaced by the network output that depends on x0 and 
+
+μdes . In fact, in [15], only the allocation error is minimized while in [16] a joint loss function is proposed that allows the network to seek simultaneous minimization of the average normed allocation error and a secondary static control objec-tive that depends on the output ˆu˚ of the network. We believe that our proposed method makes more efficient use of the training data than existing approaches. This is because our method explicitly separates the problem of approximating the inverse mapping at inter-sample points from the problem of enforcing allocation accuracy and optimality at the sampled training points. The latter is handled through direct solution of the corresponding NLPs, for which established solvers are used to generate high-quality labels in a computationally efficient manner with point-wise accuracy guarantees at the sampled points. The learning model is tasked solely with interpolation of the inverse map over the input space. V. S IMULATION RESULTS 
+
+We consider a simple example system to: (1) demonstrate the issues described in Section II associated with applying standard INDI with linearized CA to input nonaffine systems, and (2) to show the effectiveness of our proposed learning-based approach from Section IV in solving the NCA problem that results in Section III after explicitly avoiding the issues with the standard formulation. The example system is a conceptual planar bi-tilt tricopter. A diagram of the system is shown in Fig. 1. Rotors 1 and 2 at the left and right ends, respectively, provide thrust inputs T1 and T2 and are capable of tilting about axes normal to the x-z plane. The tilt angles 
+
+ϕ1 and ϕ2 are measured as shown in Fig. 1, where a tilt to the left is taken as positive by convention. Rotor 3, located at the vehicle center, provides thrust input T3 and has a fixed orientation in the vehicle frame, i.e., rotor 3 cannot be tilted. The state vector x “ r vx, v z , 9θ, θ sT P R4 consists of the linear velocities vx and vz of the vehicle in the x and z
+
+directions, along with the angular velocity of the vehicle, 
+
+9θ, and the attitude angle, θ. The input vector is given by 
+
+u “ r T1, T 2, T 3, ϕ 1, ϕ 2sT P R5.
+
+Fig. 1: Diagram of the conceptual planar bi-tilt tricopter The simplified system dynamics obey (1), with the right-hand side, f pxq ` gpx, u q, given by                 
+
+> »——————–
+> 0
+> ´g
+> 0
+> x3
+> fi ffi ffi ffi ffi ffi ffi fl
+> `
+> »——————–
+> ´1
+> mpu3sin px4q` u1sin px4`u4q` u2sin px4`u5qq
+> 1
+> mpu3cos px4q` u1cos px4`u4q` u2cos px4`u5qq
+> LIyp´ u1cos pu4q` u2cos pu5qq
+> 0
+> fi ffi ffi ffi ffi ffi ffi fl
+> ,
+> (15)
+
+where m is the vehicle mass, Iy is the moment of inertia, L
+
+is the arm length, and g is the acceleration due to gravity. We consider box constraints on the inputs of the form u ďu ď u with 0 ď Ti ď mg for each of the three rotors and 
+
+´60 0 ď ϕi ď 60 0 for both tilt angles. We design a controller to track linear velocity and attitude reference commands. Attitude control is achieved through a cascaded structure. The overall control architecture is shown in Fig. 2. The angle controller is designed using proportional Linear + 
+
+> Angular
+> Velocity
+> Control
+> Angle
+> Control
+> Allocation
+> (LCA/NLP/NN)
+> Planar Bi-Tilt
+> Tricopter
+
+Fig. 2: Control architecture for the planar bi-tilt tricopter control: 9θc “ ´ Kθ pθ ´ θcq, with Kθ “ 10.3 to achieve a target time constant of 0.3s for the attitude control loop. The inner linear + angular velocity control loop is designed using feedback linearization. Let xr denote the reduced state consisting of rvx, v z , 9θsT . The virtual control νpxr q, which represents the desired dynamics 9xr,des , is designed using proportional control: νpxr q “ ´ Kpxr ´ xr,c q where xr,c is the commanded signal for xr and K “ diag pKvx , K vz , K 9θ q.We select Kvx “ 10.3 , Kvz “ 10.4 , and K 9θ “ 10.03 . The gain for angular rate control is selected such that the time constant for desired angular rate response is separated from that of the desired angle response by a factor of 10 to ensure adequate bandwidth separation of the angle control cascade. The gain for vz control is selected to be similar to what is commonly achievable in small multirotor drones. Typically, the time constant for the lateral velocity ( vx, in our case) response of multirotor drones is slower than that of the vertical velocity response due to the fact that non tilt-rotor drones must first change their attitude in order to generate a lateral force. We target a more aggressive lateral velocity response because of the ability to directly generate lateral forces that is provided by the rotor tilt capability. For the sake of discussing the linear + angular velocity control via feedback linearization in the context of our developments in previous sections, we can consider the first three rows of (15) as the dynamics (1), i.e., we can consider the feedback linearization of the reduced state xr
+
+where the dynamics are given by 9xr “ fr pxr q ` gr pθ, u q
+
+with θ representing xg from Section IV. Note that the drift term fr pxq is constant, which helps isolate the effect of the approximation of the nonlinear actuator model gr pθ, u q.We compare three design methods for attempting to achieve feedback linearization of the inner loop: 1) Standard INDI with LCA via local linearization of 
+
+gr pθ, u q
+
+2) Nonaffine-INDI (Section III) with NCA solved using online NLP. 3) Nonaffine-INDI (Section III) with NCA solved using the proposed learning-based approach from Section IV. For brevity, we will refer to the methods 1), 2), and 3) above as LCA, NLP, and NN, respectively. For the LCA method, we use a QP approach similar to (6) with inequality constraints (actuator limits) added to solve the linear alloca-tion problem (5) with B0 computed via analytical Jacobian. However, we minimize a quadratic form of the actual input u
+
+rather than of ∆u: pu0 ` ∆uqT Qpu0 ` ∆uq “ ∆uT Q∆u `
+
+2uT 
+
+> 0
+
+Q∆u where the equality holds for symmetric Q. For the NLP method, we minimize the same secondary objective 
+
+Jpuq “ uT Qu subject to the nonlinear condition (11). We use MATLAB quadprog with the ‘interior-point-convex’ algorithm to solve the QP problem and MATLAB fmincon 
+
+with the ‘interior-point’ algorithm to solve the NLP problem. For online solving of the NLP, we use the solution from the previous time step as an initial guess to warm-start the NLP solver. For the NN method, we obtained the data X using the heuristic method proposed in Section IV and solved the NLP for each sample point with the same method as was used for online evaluation. After rejecting infeasible sample points, we retained N “ 118 , 936 samples for training the network. The network consisted of three hidden layers with 128 neurons per layer and tanh activations. Our network architecture was chosen arbitrarily. Proper ablation studies could be used to find an appropriate balance between network complexity, inference time, and prediction accuracy for a particular problem. Our aim was simply to demonstrate the proposed method. To handle infeasible allocation problems in either the LCA or NLP methods, we utilized a prioritized relaxation scheme, as described in Remark 1, that was triggered in the event of unsuccessful exit flags of either quadprog or fmincon .We simulated the system in response to two reference trajectories, with states and inputs initialized at the trim point ˜x “ r 0, 0, 0, 0sT , ˜u “ r mg  
+
+> 3
+
+, mg  
+
+> 3
+
+, mg  
+
+> 3
+
+, 0, 0sT . The first reference trajectory, denoted by SingleStep , consists of a step command of `3 m/s in vx at t “ 1s with the vz
+
+and θ commands held at 0 over the 15 s trajectory duration. The second reference trajectory, denoted by TripleDoublet ,consists of three sequential doublets, one for each controlled variable, in the sequence vx, vz , θ with the trajectory duration also being 15 s. The responses to the SingleStep reference trajectory are shown in Fig. 3. The LCA method shows good tracking initially, but encounters a severe performance degradation starting from approximately t “ 5s characterized by high-frequency oscillations. The NLP method achieves the ideal response, while the NN method yields an almost identical response. The response to the TripleDoublet reference tra-jectory is shown in Fig. 4, with individual state components shown in each subplot. The responses to the first and third doublets are similar for all three methods, but the LCA method results in a poor response to the second doublet corresponding to the vertical velocity. The NN method achieves similar performance to the NLP method, as was the case for the SingleStep reference trajectory. The feedback linearization error for the TripleDoublet 
+
+reference trajectory is shown in Fig. 5. Note that the spikes in the error under the NLP and NN methods at the halfway points of the first two doublets are due to temporarily Time (s)       
+
+> 0510 15
+> -2
+> 0
+> 2
+> 4
+> vx(m/s)
+> vz(m/s)
+> _3(rad/s)
+> 3(rad)
+
+Time (s)       
+
+> 0510 15
+> -2
+> 0
+> 2
+> 4
+> vx(m/s)
+> vz(m/s)
+> _3(rad/s)
+> 3(rad)
+
+Time (s)       
+
+> 0510 15
+> -2
+> 0
+> 2
+> 4
+> vx(m/s)
+> vz(m/s)
+> _3(rad/s)
+> 3(rad)
+
+Fig. 3: State trajectories for the SingleStep reference trajec-tory under the LCA (top), NLP (middle), and NN (bottom) methods. infeasible allocation problems under the input constraints. However, the LCA method results in persistently large feed-back linearization errors during the second doublet, even when the QP remains feasible under the linearized equality constraint (5). The LCA method also experiences spikes in allocation error during the step changes within the first doublet. This provides direct evidence of the problem with applying standard INDI + linear CA to nonaffine control systems that was discussed in Section II. A comparison of allocator computational times is provided in Table I. The times listed for the LCA method corresponds solely to the solution time of the QP problem. The local effectiveness matrix B0 was computed analytically in our case. In practice, one may need to compute B0 using online numerical differentiation or obtain B0 from look-up tables, etc. The times listed for the NLP method correspond solely to the solution time of the NLP problem. The times listed for the NN method include only the network inference time. This does not account for pre- and post-processing (normal-ization) time. However, these operations generally involve only simple arithmetic operation and thus would likely not contribute meaningfully to the overall inference time. The measurements in Table I were obtained using the MATLAB 
+
+timeit function, which is more robust than the tic-toc 
+
+timing method. The measurements were conducted on a Windows machine with an Intel Core i7-14700 processor, which is not representative of the typical computing unit on common UAVs, for instance. However, we expect that the relative differences would approximately hold on different hardware. The results in Table I indicate that both LCA and NN enjoy small average runtime with a stable distribution, with 0 5 10 15          
+
+> vx (m/s)
+> -2
+> 0
+> 2LCA
+> NLP
+> NN
+> 0510 15
+> vz (m/s)
+> -2
+> 0
+> 2
+> 4LCA
+> NLP
+> NN
+> 0510 15
+> 3 (deg)
+> -20
+> 0
+> 20
+> 40 LCA
+> NLP
+> NN
+
+Time (s)   
+
+> 0510 15
+> _3 (deg/s)
+> -400
+> -200
+> 0
+> LCA
+> NLP
+> NN
+
+Fig. 4: State trajectories for the TripleDoublet reference trajectory under the LCA, NLP, and NN methods. TABLE I: Allocator Computational Times 
+
+SingleStep TripleDoublet 
+
+Mean ˘ SD [Max] (ms) LCA 0.84 ˘ 0.03 r1.29 s 0.85 ˘ 0.06 r2.50 s
+
+NLP 3.22 ˘ 3.42 r81 .7s 5.78 ˘ 18 .37 r744 s
+
+NN 0.69 ˘ 0.04 r1.02 s 0.71 ˘ 0.08 r2.59 s
+
+the NN method performing slightly faster in general than the LCA method. The average runtime of the NLP al-locator is substantially higher than that of the LCA and NN methods, though the average is on roughly the same order of magnitude. Importantly, the known flaws of the NLP method are highlighted by the standard deviation (SD) and worst-case runtimes, which indicate that NLP with no modification is not suitable for real-time implementation. For this particular example, the NN method achieved nearly identical performance to the NLP method for the reference trajectories that we tested. The NN method achieved this near-ideal response and outperformed LCA while actually being more computationally efficient than LCA in terms of online evaluation time. We do not claim that this will be uniformly true for all possible reference trajectories. 0 5 10 15 
+
+> e1 (m/s2 )
+
+-10 
+
+0
+
+10 
+
+20 LCA
+
+NLP
+
+NN
+
+0 5 10 15 
+
+> e2 (m/s2 )
+
+-10 
+
+0
+
+10 
+
+LCA
+
+NLP
+
+NN
+
+Time (s)
+
+0 5 10 15 
+
+> e3 (rad/s2 )
+
+-100 
+
+0
+
+100 
+
+200 LCA
+
+NLP
+
+NNFig. 5: Feedback linearization errors, defined as e “ 9x´νpxq,for the TripleDoublet reference trajectory under the LCA, NLP, and NN methods. VI. C ONCLUSION 
+
+In this paper, we identified and described a fundamental problem concerning the application of standard INDI +linearized CA to input nonaffine systems. We showed that to avoid this problem while still using static CA, the solution of an NCA problem is required. We proposed a novel learning-based approach to provide approximate online solutions to the NCA problem with efficient evaluation. Numerical simulations validated the issues with linearized CA for input nonaffine systems and demonstrated the effectiveness of the proposed learning-based approach. Future work will aim to develop an effective hybrid NLP + learning-based approach and apply these techniques to more complex systems. Ad-ditionally, we plan to investigate the use of similar methods for fault-tolerant control of hybrid VTOL aircraft. ACKNOWLEDGMENT 
+
+Generative AI tools were used to help polish the language in certain sections of the manuscript. REFERENCES [1] H. K. Khalil, Nonlinear Systems . Upper Saddle River, NJ, USA: Prentice Hall, 2002. [2] J.-J. E. Slotine and W. Li, Applied Nonlinear Control . Englewood Cliffs, NJ, USA: Prentice Hall, 1991. [3] D. Enns, D. Bugajski, R. Hendrick, and G. Stein, “Dynamic inversion: an evolving methodology for flight control design,” International Journal of Control , vol. 59, no. 1, pp. 71–91, 1994. [4] E. J. Smeur, G. C. de Croon, and Q. Chu, “Cascaded incremental nonlinear dynamic inversion for mav disturbance rejection,” Control Engineering Practice , vol. 73, pp. 79–90, 2018. [5] S. Sieberling, Q. Chu, and J. Mulder, “Robust flight control using incremental nonlinear dynamic inversion and angular acceleration prediction,” Journal of Guidance, Control, and Dynamics , vol. 33, no. 6, pp. 1732–1742, 2010. [6] P. Lu, E.-J. Van Kampen, C. De Visser, and Q. Chu, “Aircraft fault-tolerant trajectory control using incremental nonlinear dynamic inversion,” Control Engineering Practice , vol. 57, pp. 126–141, 2016. [7] G. Di Francesco and M. Mattei, “Modeling and incremental nonlinear dynamic inversion control of a novel unmanned tiltrotor,” Journal of Aircraft , vol. 53, no. 1, pp. 73–86, 2016. [8] A. Steinert, R. Stefan, S. Hafner, F. Holzapfel, and H. Haichao, “From fundamentals to applications of incremental nonlinear dynamic inversion: A survey on INDI–part I,” Chinese Journal of Aeronautics ,p. 103553, 2025. [9] M. W. Oppenheimer, D. B. Doman, and M. A. Bolender, “Control allocation for over-actuated systems,” in 2006 14th Mediterranean Conference on Control and Automation , pp. 1–6, 2006. [10] T. A. Johansen and T. I. Fossen, “Control allocation—a survey,” 
+
+Automatica , vol. 49, no. 5, pp. 1087–1103, 2013. [11] O. Pfeifle and W. Fichter, “Minimum power control allocation for incremental control of over-actuated transition aircraft,” Journal of Guidance, Control, and Dynamics , vol. 46, no. 2, pp. 286–300, 2023. [12] I. Matamoros and C. C. de Visser, “Incremental nonlinear control allocation for a tailless aircraft with innovative control effectors,” in 
+
+2018 AIAA Guidance, Navigation, and Control Conference , p. 1116, 2018. [13] B. Bacon and A. Ostroff, “Reconfigurable flight control using nonlin-ear dynamic inversion with a special accelerometer implementation,” in AIAA Guidance, Navigation, and Control Conference and Exhibit ,p. 4565, 2000. [14] X. Wang, E.-J. Van Kampen, Q. Chu, and P. Lu, “Stability analysis for incremental nonlinear dynamic inversion control,” Journal of Guidance, Control, and Dynamics , vol. 42, no. 5, pp. 1116–1129, 2019. [15] H. Z. I. Khan, S. Mobeen, J. Rajput, and J. Riaz, “Nonlinear control allocation: A learning based approach,” in 2024 IEEE 63rd Conference on Decision and Control (CDC) , pp. 2833–2838, IEEE, 2024. [16] H. Huan, W. Wan, C. We, and Y. He, “Constrained nonlinear control allocation based on deep auto-encoder neural networks,” in 2018 European Control Conference (ECC) , pp. 1–8, IEEE, 2018. [17] W. C. Durham, “Constrained control allocation,” Journal of Guidance, Control, and Dynamics , vol. 16, no. 4, pp. 717–725, 1993. [18] W. C. Durham, “Constrained control allocation - three-moment prob-lem,” Journal of Guidance, Control, and Dynamics , vol. 17, no. 2, pp. 330–336, 1994.

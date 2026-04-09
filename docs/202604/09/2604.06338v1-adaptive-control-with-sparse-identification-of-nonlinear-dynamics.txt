@@ -1,0 +1,897 @@
+Title: Adaptive Control with Sparse Identification of Nonlinear Dynamics
+
+URL Source: https://arxiv.org/pdf/2604.06338v1
+
+Published Time: Thu, 09 Apr 2026 00:06:27 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# Adaptive Control with Sparse Identification of Nonlinear Dynamics 
+
+Trivikram Satharasi 1, Tochukwu E. Ogri 1, Muzaffar Qureshi 1, Kyle Volle 2, Rushikesh Kamalapurkar 1
+
+Abstract — This paper develops a sparsity-promoting integral concurrent learning (SP-ICL) adaptation law for a linearly parametrized uncertain nonlinear control-affine system. The unknown parameters are learned using ICL with sparsity-promoting ℓ1 regularization. The use of ℓ1 regularization for sparsity promotion is common in system identification and machine learning; however, unlike existing approaches, this paper develops an online parameter update law that integrates the regularization penalty with ICL via sliding modes. Using the SP-ICL update law, we show via non-smooth Lyapunov analysis that the trajectories of the closed-loop system are ultimately bounded. Simulations verify the effectiveness of the sparsity penalty in the SP-ICL update law on recovering sparse dynamics during trajectory tracking. 
+
+I. I NTRODUCTION 
+
+The performance of most control systems depends on having accurate mathematical models to ensure stability and achieve desired closed-loop behavior. These models are typically derived from fundamental physical laws, such as Euler-Lagrange equations based on Newtonian mechanics, or satellite orbital and attitude dynamics based on gravitational theory [1]. However, in practice, such models often include parameters that are not exactly known. For instance, in au-tonomous driving applications, the friction coefficient varies with tire properties and road conditions, while air density fluctuates with changes in temperature and humidity. These sources of uncertainty have led to the development of adaptive control approaches, including recursive least squares and model reference adaptive control [2], which estimate the unknown parameters using Lyapunov-derived adaptive update laws to guarantee parametric convergence. However, these adaptive approaches usually require the persistent excitation (PE) condition [2]–[6], which is often difficult to satisfy in practice. To avoid the PE assumption, recent adaptive control meth-ods ensure parameter convergence under weaker, verifiable conditions. One such method is dynamic regressor extension and mixing (DREM), which transforms the original vector re-gression problem into multiple decoupled scalar regressions, enabling convergence with reduced excitation [7]. Another approach, memory regressor extension (MRE), incorporates                  
+
+> This research was supported in part by the Air Force Research Labo-ratory under contract number FA8651-24-1-0019. Any opinions, findings, or recommendations in this article are those of the author(s), and do not necessarily reflect the views of the sponsoring agencies.
+> 1Department of Mechanical and Aerospace Engineering, Univer-sity of Florida, email: {t.satharasi@ufl.edu, tochukwu.ogri, muzaffar.qureshi, rkamalapurkar }@ufl.edu .
+> 2Torch Technologies, Shalimar, FL, USA, email:
+> Kyle.Volle@torchtechnologies.com.
+
+state history alongside current measurements, allowing con-vergence under relaxed conditions such as interval or finite excitation [6], [8]–[12]. Despite these advancements in adaptive control, the meth-ods discussed above require a correct mathematical model structure to guarantee convergence and cannot handle cases where the underlying dynamics are unknown or uncertain. For uncertain dynamical systems, controllers can be designed by first identifying the system dynamics from collected data, such as input-output measurements or state trajectories, and then using the identified model for control design. Several data-driven methods have been developed for system identi-fication, including the autoregressive models [13], dynamic mode decomposition (DMD) [14], eigensystem realization algorithm (ERA) [15], Gaussian Process [16], [17], Koopman operator-based approaches [18], [19], Nonlinear Autoregres-sive Moving Average with Exogenous Inputs (NARMAX) models [20], Volterra series [21], and neural networks. While these approaches enable control design without prior knowl-edge of the underlying dynamics, most of these models are trained offline using historical data. Online adaptive control methods using neural networks address this limitation by integrating parameter adaptation into a Lyapunov-based framework, guaranteeing tracking performance [22]–[24]. While these methods allow real-time adaptation, they rely on the chosen network structure and typically produce models that approximate the observed dy-namics rather than recovering the true governing equations, with validity generally limited to the regions covered by the training data and a risk of overfitting under environmental changes such as varying friction. These limitations motivate data-driven sparse identification techniques such as SINDy [1], which aim to discover sparse models that reveal the underlying physical laws directly from observed trajectories. The SINDy algorithm [1] leverages the observation that many nonlinear dynamical systems depend on only a few active basis functions. SINDy identifies these active basis functions from a large candidate library using sparsity-promoting techniques, such as ℓ1-regularization [25], [26], or weaker formulations that incrementally reconstruct features for regression [27]. Computationally efficient variants, such as E-SINDy, have also been developed [28]. While SINDy can be used online within an MPC framework [28], [29], existing methods have not been studied from an adaptive control perspective with stability and convergence guaran-tees. This paper presents a sparsity-promoting integral con-current learning (SP-ICL) method for the adaptive iden-tification of nonlinear system dynamics. By incorporating 
+
+> arXiv:2604.06338v1 [math.OC] 7 Apr 2026
+
+ℓ1-regularization into an integral concurrent learning (ICL) framework, the approach promotes sparsity during online parameter estimation. In contrast to standard sparse iden-tification algorithms (e.g., SINDy) that predominantly op-erate offline without closed-loop stability guarantees, SP-ICL embeds the identification process within a Lyapunov-based adaptive control design. Because the ℓ1 penalty is non-smooth, the resulting parameter update law is governed by a differential inclusion. Employing non-smooth Lyapunov analysis, we derive sufficient conditions to establish con-vergence of tracking and parameter estimation errors. The resulting framework yields sparse, closed-form models of nonlinear dynamics suitable for real-time implementation. Due to the set-valued nature of the generalized gradient of the ℓ1 cost function, incorporating a projection operator [2], [11] to enforce boundedness of the parameter estimates, is challenging. For example, the projected differential inclusion must satisfy regularity conditions such as upper semiconti-nuity, which can be nontrivial to verify [30]. Instead, we exploit properties of the set-valued signum function to show that by projecting just the continuous part of the update law, the parameter estimates remain forward invariant with respect to the prescribed compact set. Furthermore, upper semicontinuity of the resulting update law follows from the continuity of the projection operator. II. P ROBLEM FORMULATION 
+
+Consider the nonlinear control-affine system 
+
+˙x = Y (x)θ + g(x)u, x(t0) = x0, (1) where x ∈ Rn is the state, θ ∈ Rp is an unknown parameter vector, and u ∈ Rm is the control input. The function Y :
+
+Rn → Rn×p is a known over-complete library of candidate nonlinear basis functions, and g : Rn → Rn×m is the known control effectiveness matrix. The representation in (1) assumes that the dynamics admit a decomposition over Y (x) with a sparse coefficient vector 
+
+θ. The functions Y and g are assumed to be locally Lipschitz continuous. The objective is to generate a sparse estimate of θ online while ensuring tracking of a bounded, continuously differen-tiable desired trajectory xd : R≥0 → Rn that satisfies 
+
+∥xd(t)∥ ≤ ¯xd, ∀t ≥ 0, (2) where ¯xd > 0 is a known constant. The following assumption is made to facilitate the formulation of the tracking controller. 
+
+Assumption 1: Let X ⊂ Rn be a compact set. The control effectiveness matrix g has full row rank for all x ∈ X , so a locally Lipschitz continuous right pseudoinverse g+(x) exists with g(x)g+(x) = In.The assumption above can only apply to fully actuated or overactuated systems ( m ≥ n). It is made to simplify the control design so that we can focus the discussion on sparse parameter estimation. To quantify the control objective, define the tracking error 
+
+e = x − xd and let ˆθ ∈ Rp be an estimate of θ, with 
+
+˜θ := θ − ˆθ denoting the parameter estimation error. Under Assumption 1, the input is selected as a standard certainty-equivalence feedback 
+
+u = g+(x)  ˙xd − Y (x)ˆθ − Ke , (3) where K = K⊤ ≻ 0 is a constant gain. Using (3) then yields the tracking error dynamics 
+
+˙e = −Ke + Y (x)˜θ. (4) III. P ARAMETER ESTIMATOR DESIGN 
+
+In this section, an SP-ICL update law is developed to estimate the unknown parameters. 
+
+Lemma 1: For a fixed delay T > 0 and for all t ≥ 0, the system dynamics satisfy the incremental relation 
+
+Uf (t) = Yf (t)θ, (5) where the filtered regressor Yf (t) and filtered state Uf (t) are defined piecewise as 
+
+Yf (t) := 
+
+(
+
+0n×p, t < T 
+
+R tt−T Y (x(τ )) dτ, t ≥ T
+
+and 
+
+Uf (t) := 
+
+(
+
+0n×1, t < T x(t)−x(t−T )−R tt−T g(x(τ )) u(τ ) dτ, t ≥ T. 
+
+Proof: The result follows directly from the Fundamen-tal Theorem of Calculus applied to (1). To enable online parameter adaptation and data reuse, a finite set of delayed samples of size N ≥ 1 is maintained in a history stack , defined as H := Uf i, Y f i
+
+> Ni=1
+
+, where 
+
+Uf i = Uf (ti) and Yf i = Yf (ti) for discrete times ti > T ,are updated according to Algorithm 1. We define the memory regression extension signals Y and U such that, 
+
+Y =
+
+> N
+
+X
+
+> i=1
+
+Yf ⊤ 
+
+> i
+
+Yf i
+
+1 + κ∥Yf i∥2 and U =
+
+> N
+
+X
+
+> i=1
+
+Yf ⊤ 
+
+> i
+
+Uf i
+
+1 + κ∥Yf i∥2 , (6) where  Yf i, U f i
+
+ ∈ H, and κ > 0 is a user-selected constant gain. The closed-loop system is assumed to satisfy the following excitation condition. 
+
+Assumption 2: The filtered regressor Yf : [t0, ∞) →
+
+Rn×p is finitely exciting (FE) over some interval [t0, t s], i.e., there exists a finite collection of sampling instants {ti}Ni=1 ⊂
+
+[t0, t s] such that for all t ≥ ts
+
+λmin (Y) ≥ y > 0. (7) 
+
+Remark 1: The assumption is commonly adopted in ICL-based parameter estimation frameworks ( [10], [11], [31], [32]). Unlike the classical PE condition, however, it requires excitation only over a finite interval, making it a weaker requirement. A history stack satisfying (7) is called full rank . The constant y measures the information-richness of the stored data and determines the convergence rate of the parameters as seen in the subsequent analysis. To guarantee sufficient excitation and improve estimator conditioning and alertness, the history stack H is updated using the strategy in Algo-rithm 1. Algorithm 1 ICL Data Selection 
+
+Require: Number of data points N , target y > 0, improve-ment threshold δ ≥ 1 
+
+> 1:
+
+Store the first N data: {Ufi , Y fi }Ni=1  
+
+> 2:
+
+for each new datum (Uf (t), Y f (t)) do  
+
+> 3:
+
+y ← P 
+
+> i
+
+Y ⊤ 
+
+> fi
+
+Yfi ▷ Current memory-regressor  
+
+> 4:
+
+if λmin {y} ≥ y then ▷ Favor new data if eigenvalue target is already met  
+
+> 5:
+
+for j = 1 to N do  
+
+> 6:
+
+yj ← P 
+
+> i̸=j
+
+Y ⊤ 
+
+> fi
+
+Yfi + Y ⊤ 
+
+> f
+
+(t)Yf (t) 
+
+> 7:
+
+if λmin {yj } ≥ y then ▷ Search from oldest to newest  
+
+> 8:
+
+for k = j to N − 1 do  
+
+> 9:
+
+Yfk ← Yf (k+1) , U fk ← Uf (k+1)  
+
+> 10:
+
+end for ▷ Shift data to make room for new datum  
+
+> 11:
+
+YfN ← Yf (t), U fN ← Uf (t) 
+
+> 12:
+
+break  
+
+> 13:
+
+end if  
+
+> 14:
+
+end for  
+
+> 15:
+
+else ▷ If the target is not met, then maximize the minimum eigenvalue  
+
+> 16:
+
+for j = 1 to N do  
+
+> 17:
+
+yj ← P 
+
+> i̸=j
+
+Y ⊤ 
+
+> fi
+
+Yfi + Y ⊤ 
+
+> f
+
+(t)Yf (t) 
+
+> 18:
+
+if λmin {yj } > δ · λmin {y} then  
+
+> 19:
+
+for k = j to N − 1 do  
+
+> 20:
+
+Yfk ← Yf (k+1) , U fk ← Uf (k+1)  
+
+> 21:
+
+end for ▷ Shift data to make room for new datum  
+
+> 22:
+
+YfN ← Yf (t), U fN ← Uf (t) 
+
+> 23:
+
+break  
+
+> 24:
+
+end if  
+
+> 25:
+
+end for  
+
+> 26:
+
+end if  
+
+> 27:
+
+end for 
+
+Under Algorithm 1, a candidate data point (Unew , Y new )
+
+replaces the oldest possible entry (Uf j , Y f j ) in the history stack H if 
+
+λmin (Y∗) > y, (8) where Y∗ = PNi̸=jYf ⊤  
+
+> iYf i
+> 1+ κ∥Yf i∥2
+
++ Y ⊤   
+
+> new Ynew
+> 1+ κ∥Ynew ∥2
+
+. By construction, (8) guarantees λmin (Y) > y for all t > t s, ensuring the history stack remains full rank and new data replaces old data whenever possible without decreasing the minimum eigenvalue of the memory regressor. 
+
+A. Sparse Recursive Cost and Generalized Gradient 
+
+To promote sparse parameter estimates while maintaining consistency with the accumulated integral data, consider the 
+
+ℓ1-regularized cost 
+
+J(ˆθ) := 12 ˆθ⊤Y ˆθ − ˆθ⊤U + λ∥ˆθ∥1, (9) where λ > 0 is the sparsity parameter and ∥ˆθ∥1 denotes the one-norm of ˆθ. The adaptive update law for ˆθ is derived to minimize the regularized cost using gradient descent. Since the ℓ1−regularization term is nonsmooth at the origin, a generalized gradient of J is utilized, given by the Clarke sub-differential [33] 
+
+∂ˆθ J(ˆθ) = Y ˆθ − U + λ SGN( ˆθ), (10) where SGN( ˆθ) denotes the componentwise set-valued sign map, defined for each component i as SGN( ˆθi) = z ∈
+
+[−1, 1] | z = sign( ˆθi) if ˆθi̸ = 0 .Define the compact set Θ := {θ ∈ Rp : ∥θ∥ ≤ rθ }, where 
+
+rθ > 0 is a known bound. The SP-ICL update law is designed as a differential inclusion using the negative gradient in (10) as 
+
+˙ˆθ ∈ proj Θ
+
+ˆθ, ϕ (x, e, ˆθ), Γ
+
+
+
+− λγ Γ SGN( ˆθ) =: G(t, ˆθ),
+
+(11) where ϕ(x, e, ˆθ) := Γ 
+
+
+
+Y (x)⊤e + γ U − Y ˆθ
+
+, γ > 0 is the ICL-learning gain, Γ = Γ ⊤ ≻ 0 is a diagonal adaptation gain matrix, and proj Θ(·, ·, ·) denotes the smooth projection operator from [4, Appendix E.1], which ensures that ˆθ(t) ∈
+
+Θ for all t ≥ t0, in the absence of the signum term in (11). To facilitate the subsequent stability analysis, we show that ˆθ(t) ∈ Θ ⊕ ¯B(0 , ϵ ) =: Θ ϵ, where ¯B(0 , ϵ ) is the closed Euclidean ball of radius ϵ > 0 centered at the origin, and ⊕
+
+denotes the Minkowski sum, even with the signum term in (11). 
+
+Lemma 2: If ˆθ(t0) ∈ Θϵ, then Θϵ is positively invariant under the differential inclusion (11). Consequently, ˆθ(t) ∈
+
+Θϵ for all t ≥ 0.
+
+Proof: Let ∂Θϵ denote the boundary of Θϵ, and let 
+
+TΘϵ(ˆθ) denote the tangent cone of Θϵ at ˆθ. Because Θϵ is a Euclidean ball centered at the origin, the outward-pointing unit normal vector at any boundary point ˆθ ∈ ∂Θϵ is given by n(ˆθ) = ˆθ 
+
+> ∥ˆθ∥
+
+.From (11), and the standard properties of the projection operator onto a closed convex set (see [4, Lemma E.1]), for any ˆθ ∈ ∂Θϵ, we have 
+
+n(ˆθ)⊤ proj Θ
+
+ˆθ, ϕ (x, e, ˆθ), Γ
+
+
+
+≤ 0. (12) Next, we evaluate the inner product of the normal vector with the set-valued term vθ := −λγ Γσ in (11), where σ ∈
+
+SGN( ˆθ). For ˆθ ∈ ∂Θϵ and all σ ∈ SGN( ˆθ), we have 
+
+n(ˆθ)⊤vθ ≤ − λγ n (ˆθ)⊤Γσ = −λγ ˆθ
+
+∥ˆθ∥
+
+!⊤
+
+Γσ
+
+≤ − λγ λ min (Γ) ∥ˆθ∥1 ≤ 0. (13) Then, it follows from (12) and (13) that for all ρ ∈ G(t, ˆθ),
+
+n(ˆθ)⊤ρ ≤ 0, (14) which implies that, for all ρ ∈ G(t, ˆθ), ρ ∈ TΘϵ(ˆθ). Invoking [34, Theorem. 7], Θ is positively invariant. Since Θϵ is compact, it follows that ˆθ(t) remains bounded for all t ≥ t0.IV. S TABILITY ANALYSIS 
+
+To facilitate the analysis, we analyze the closed-loop system with error states z = [ e⊤, ˜θ⊤ ]⊤ ∈ Rn+p. As shown in Lemma 2, due to the properties of the projection operator, if ˆθ(t0) ∈ Θϵ, then ˆθ(t) ∈ Θϵ for all t ≥ t0. Consequently, the parameter estimation error is uniformly bounded. We define this bounding set as the closed ball B ˜θ (2 rθ + ϵ) of radius 2rθ + ϵ, ensuring that ∥˜θ(t)∥ ≤ 2rθ + ϵ for all t ≥ t0.Define d(t, e ) := Y (e + xd(t)) ˜θ(t). If e ∈ Be(re) := 
+
+{e ∈ Rn : ∥e∥ ≤ re} for some re > 0, then x = e +
+
+xd(t) ∈ B(re + xd) ⊂ X . Since Y is continuous, there exists a constant ¯Y > 0 such that ∥Y (x)∥ ≤ ¯Y for all 
+
+x ∈ Bx(re +xd) ⊆ X . Consequently, the residual is bounded by 
+
+∥d(t, e )∥ ≤ ¯d, ∀e ∈ Be(re). (15) where d := (2 rθ + ϵ) ¯Y . The error dynamics (4) can then be expressed as 
+
+˙e = −Ke + d(t, e ), (16) where d(t, e ) acts as a bounded disturbance. Since Y is locally Lipschitz with respect to x, and both xd and ˜θ are continuous in t, the vector field (16) satisfies the conditions of Picard-Lindel¨ of Theorem [35, Theorem 3.1]. Thus, for any initial condition (t0, e 0), there exists a δ > 0 such that 
+
+[t0, t 0 +δ) is the maximal interval of existence for the unique solution e(·) of (16). 
+
+Theorem 1: Consider the closed-loop system given by (4) and (11). Let re > 0 and r > 0. Supposed that Assumption 1 and the initial closed-loop state satisfies 
+
+z(t0) ∈ Be(re) × B ˜θ (2 rθ + ϵ). (17) Assume that the feedback gain K = K⊤ ≻ 0 is selected sufficiently large such that the gain conditions 
+
+∥e(t0)∥2 < r 2 
+
+> e
+
+and d2
+
+k2 < r 2 
+
+> e
+
+, (18) hold, where k := λmin (K). Furthermore, assume that for 
+
+t ≥ ts, the recorded ICL data history is sufficiently rich such that Assumption 2 holds and the control parameters γ, λ, Γ
+
+are selected such that 
+
+r > mm max {re, 2rθ + ϵ} and ια < mm r2, (19) where α := min( k, γy ), ι := λγ √p, m :=  
+
+> 12
+
+min(1 , λ min (Γ −1)) , and m := 12 max(1 , λ max (Γ −1)) .Then, the following hold: 1) The solution is globally defined ( δ = ∞), and the error state trajectory t 7 → e(t) remains inside the the open ball Be(re) for all t ∈ [t0, t s).2) At time ts, the closed loop state satisfies z(ts) ∈
+
+Bz (r).3) For all t ≥ ts, the closed loop state z(t) ∈ Bz (r) and converges to a set Ωub,z , defined as 
+
+Ωub,z := 
+
+
+
+z ∈ Rn+p | ∥ z∥ ≤ 
+
+r mm
+
+ ια
+
+
+
+. (20) Furthermore, the ultimate bound is contained in the inner set, i.e., Ωub,z ⊂ Bz (rs).
+
+Proof: Part 1 - Analysis on the interval [t0, t s):
+
+Consider the continuously differentiable candidate Lya-punov function Ve : Rn → R defined as 
+
+Ve(e) := 12 e⊤e. (21) The time derivative of the function t 7 → Ve(e(t)) along the trajectory e(·) exists for almost all t ∈ [t0, t 0 + δ).Substituting the dynamics from (4), we obtain the bound 
+
+˙Ve(e(t)) = e(t)⊤ ˙e(t)= e(t)⊤  − Ke (t) + d(t, e (t)) 
+
+≤ − k∥e(t)∥2 + ∥e(t)∥∥ d(t, e (t)) ∥, (22) for almost all t ∈ [t0, t 0 + δ). Completing the squares, 
+
+˙Ve(e(t)) ≤ − k
+
+2 ∥e(t)∥2 + ∥d(t, e (t)) ∥2
+
+2k , (23) for almost all t ∈ [t0, t 0 + δ). Since Ve(e) = 12 ∥e∥2, the bound in (23) can be rewritten as the differential inequality 
+
+˙Ve(e(t)) ≤ − kV e(e(t)) + ∥d(t, e (t)) ∥2
+
+2k . (24) To establish boundedness, we ensure that the trajectory does not leave the set Be(re) where the bound ∥d(t, e (t)) ∥ ≤ 
+
+d holds. We prove this by contradiction. Assume that e(t0) ∈
+
+Be(re) and there exists a time T ∈ (0 , δ ) such that e(t0 +
+
+T ) /∈ Be(re).Because e(·) is continuous and e(t0) ∈ Be(re), the Intermediate Value Theorem guarantees the existence of time instances ϵ1 ∈ (0 , T ) and ϵ2 ∈ (ϵ1, T ] such that e(t) ∈
+
+Be(re) for all t ∈ [t0, t 0 + ϵ1], and e(t) /∈ Be(re) for all 
+
+t ∈ (t0 + ϵ1, t 0 + ϵ2). Over the interval [t0, t 0 + ϵ1], the trajectory remains within Be(re) ⊂ X , meaning the uniform bound ∥d(t, e (t)) ∥ ≤ d is valid. Applying the Comparison Lemma [36, Lemma 3.4] to (24) over t ∈ [t0, t 0 + ϵ1] yields 
+
+Ve(e(t)) ≤ Ve(e(t0)) e−k(t−t0)+ d2
+
+2k2
+
+
+
+1−e−k(t−t0)
+
+. (25) By substituting Ve(e) = 12 ∥e∥2 into (25), we establish the norm bound on the tracking error e as 
+
+∥e(t)∥2 ≤ ∥ e(t0)∥2e−k(t−t0) + d2
+
+k2
+
+
+
+1 − e−k(t−t0)
+
+≤ max 
+
+(
+
+∥e(t0)∥2, d2
+
+k2
+
+)
+
+, ∀t ∈ [t0, t 0 + ϵ1]. (26) Under the gain condition (18), the maximum of the initial tracking error and the disturbance-to-gain ratio is strictly less than r2 
+
+> e
+
+. Consequently, (26) implies the existence of a constant ϖ > 0 such that ∥e(t)∥ ≤ re − ϖ < r e for all 
+
+t ∈ [t0, t 0 + ϵ1]. As a result, t 7 → e(t) is not continuous at t0 + ϵ1, which is a contradiction. Therefore, our initial assumption must be false, proving that e(t) ∈ Be(re) for all 
+
+t ∈ [t0, t 0 + δ).Because the solution is restricted to the compact set 
+
+Be(re) over its maximal interval of existence, it is pre-compact. Since precompact maximal solutions are complete, we conclude that δ = ∞, i.e., the solution is defined and 
+
+e(t) ∈ Be(re) for all t ∈ [t0, t s].
+
+Part 2 - State Transition at t = ts:
+
+At ts, the tracking error satisfies e(ts) ∈ Be(re), while the projection operator ensures ˜θ(ts) ∈ B ˜θ (2 rθ + ϵ). Hence, the closed-loop state satisfies 
+
+z(ts) = 
+
+e(ts)˜θ(ts)
+
+
+
+∈ Be(re) × B ˜θ (2 rθ + ϵ). (27) 
+
+Part 3 - Analysis on the interval [ts, ∞):
+
+Consider the closed ball Bz (r) ⊂ Rn+p for r > 0, where 
+
+r > 0 is selected such that (19) is satisfied. This selection of r ensures that z(ts) ∈ Bz (r). For t ≥ ts, the system operates with a full-rank memory regressor, i.e., such that Assumption 2 holds. Consider the candidate Lyapunov function V : Rn+p → R
+
+defined as 
+
+V (z) := 12 ∥e∥2 + 12 ˜θ⊤Γ−1 ˜θ. (28) which satisfies the bounds m∥z∥2 ≤ V (z) ≤ m∥z∥2 for all 
+
+z ∈ Rn+p, where m, m > 0 are constants defined below (19). The closed-loop system is described by a differential inclusion. Since the closed-loop system is locally essentially bounded and measurable, the differential inclusion meets the conditions of [37, Thm. 2.2] and as a result, there exists 
+
+δ > 0 such that starting from the initial condition (ts, z (ts)) ,the closed loop admits a maximal absolutely continuous so-lutions on [ts, t s +δ). Let t 7 → z(t) be one such solution. Let 
+
+ϑ : [ ts, t s +δ) → Rp and σ : [ ts, t s +δ) → Rp be measurable selections that occur due to discontinuous points in the closed loop error system, such that ϱ(t) ∈ Proj Θ
+
+ ˆθ, ϕ, Γ and 
+
+σ(t) ∈ SGN( ˆθ), and ˙ˆθ(t) = ϑ(t) − λγ Γσ(t), for almost all t ∈ [ts, t s + δ). Since θ is constant, we have ˙˜θ = − ˙ˆθ.Whenever the time derivative of t 7 → V (z(t)) exists, it satisfies 
+
+˙V (z(t)) = −e⊤(t)Ke (t) + e⊤(t)Y (x(t)) ˜θ(t)
+
+− ˜θ⊤(t)Γ −1 ϑ(t) − λγ Γσ(t). (29) Applying the fundamental property of the projection op-erator, ˜θ⊤Γ−1ϑ ≤ ˜θ⊤Γ−1ϕ. Substituting the definition of ϕ
+
+in (11), we have 
+
+˜θ⊤Γ−1ϕ = ˜θ⊤Γ−1Γ
+
+
+
+Y (x)⊤e + γ(U + Y ˆθ)
+
+
+
+= ˜θ⊤Y (x)⊤e + γ ˜θ⊤(U − Y ˆθ). (30) By the design of the ICL memory stack, U = Yθ. Con-sequently, U − Y ˆθ = Y(θ − ˆθ) = Y ˜θ. Substituting these relations back into (31) yields 
+
+˙V (z(t)) ≤ − e⊤(t)Ke (t) − γ ˜θ⊤(t)Y ˜θ(t) + λγ ˜θ⊤(t)σ(t),
+
+(31) for almost all t ∈ [ts, t s + δ). Applying Assumption 2 and since ∥σ(t)∥ ≤ √p, we obtain 
+
+˙V (z(t)) ≤ − α∥z(t)∥2 + ι ≤ − αm V (z(t)) + ι. (32) where α, ι > 0 are constants defined below (19). To establish the ultimate boundedness of the closed-loop state, we again proceed by contradiction. For the sake of contradiction, assume that there exists some time t∗ > 0 such that z(ts + t∗) /∈ Bz (r). Since z(·) is continuous and our selection of r ensures that z(ts) ∈ Bz (r),by the Intermediate Value Theorem, there exist time instances 
+
+ρ1 ∈ (0 , t ∗) and ρ2 ∈ (ρ1, t ∗] such that z(t) ∈ Bz (r) for all 
+
+t ∈ [ts, t s +ρ1] and z(t) /∈ Bz (r) for all t ∈ (ts +ρ1, t s +ρ2).Applying the Comparison Lemma to (32) over t ∈ [ts, t s +
+
+ρ1] and using the bounds on V (z), we obtain 
+
+∥z(t)∥2 ≤ mm ∥z(ts)∥2e− αm (t−ts) + mmια
+
+
+
+1 − e− αm (t−ts)
+
+.
+
+(33) In particular, we have that 
+
+∥z(t)∥2 ≤ mm max 
+
+n
+
+∥z(ts)∥2, ια
+
+o
+
+, ∀t ∈ [ts, t s+ρ1]. (34) Provided the control parameters are selected according to (19), the bounds imply the existence of a constant ς > 0
+
+such that ∥z(t)∥ < r − ς for all t ∈ [ts, t s + ρ1]. As a result, t 7 → z(t) is not continuous at ts + ρ1, which is a contradiction. Therefore, our assumption that there exists some time t∗ >
+
+0 such that z(ts+t∗) /∈ Bz (r) is false. Using completeness of pre-compact solutions [38, Prop. 2] we conclude that δ = ∞
+
+and z(t) ∈ Bz (r) for all t ≥ ts.As t → ∞, the state exponentially converges to the ultimate bound 
+
+lim sup 
+
+> t→∞
+
+∥z(t)∥ ≤ 
+
+r mm
+
+ ια
+
+
+
+. (35) Since the solution z(·) being analyzed was selected arbitrar-ily, the ultimate bound holds for all solutions of the closed loop differential inclusion. V. S IMULATION STUDY 
+
+In this section, we evaluate the performance of the SP-ICL adaptive controller and study the effect of the sparsity regularization parameter λ. For the sake of this simulation, a nonlinear control-affine system of the form (1) is selected, with Y defined as 
+
+Y (x) = 
+
+ϕ(x)⊤ 01×10 
+
+01×10 ϕ(x)⊤
+
+
+
+∈ R2×20 , (36) where ϕ(x) = [1 , x 1, x 2, x 21, x 1x2, x 22, x 31, x 21x2, x 1x22, x 32]⊤,sparse vector of true parameters is θ =[0 , −1, −1, 0, 0, 0, 0, 0, 0, 0, 0, − 12 , 0, 0, 0, − 12 , 0, − 12
+
+, 0, 0] ⊤. The control effectiveness matrix is selected as 
+
+g(x) = I2.The initial state is selected as x(0) = [0 .5 0 .5] ⊤, and the parameter estimate is initialized as ˆθ(t0) = 0 20 ×1. The 0 20 40 60 80 100                      
+
+> 10 0
+> 10 0.2
+> t(s)
+> ∥˜θ(t)∥
+> λ= 0 λ= 10 −5
+> λ= 10 −4λ= 10 −3
+> λ= 5 ×10 −3λ= 10 −2
+> λ= 5 ×10 −2λ= 10 −1
+> Fig. 1. Parameter estimation error norm ∥˜θ(t)∥(log scale) for different values of the regularization parameter λ.
+
+history stack is constructed online using the data selection procedure described in Algorithm 1. The desired trajectory is defined as xd(t) = 
+
+sin( t) + 0 .12 sin(3 t) − 0.04 sin(5 t)0.95 sin(2 t) + 0 .08 sin(4 t)
+
+
+
+.For the experiments, the selected proportional error gain is 
+
+K = 10 I2, the relative concurrent learning gain γ = 0 .1, the adaptive update gain Γ = I20 , the minimum eigenvalue for the regressor y = 0 .5, and the normalization factor κ = 0 .01 .The integration window in Lemma 1 is selected as T = 0 .25 
+
+seconds. The integration is performed for 100 seconds using the dde23 integrator in MATLAB. Furthermore, to analyze the influence of the sparsity inducing term which is the primary contribution of the paper, We performed multiple experiments with λ = [0 , 10 −4, 5 ×
+
+10 −4, 10 −3, 5×10 −3], and classified the parameter estimates into sparse and non-sparse classes, also producing a confu-sion matrix for the classification errors in the experiment. VI. D ISCUSSION 
+
+Figures 1 and 2 show that the parameter estimation error and tracking error converge under the developed controller in (3) and parameter update law in (11). These results are consistent with the guarantees established in Theorem 1. An important observation in Figures 1 and 2 is the presence of chattering induced by the discontinuous signum term in the update law. This effect is further exacerbated by finite sampling and becomes more pronounced as the sparsity parameter λ increases. For smaller values of λ ∈{10 −5, 10 −4, 10 −3}, the chattering amplitude remains rela-tively low. In contrast, higher sparsity levels, corresponding to λ ∈ { 5 × 10 −3, 10 −2, 5 × 10 −2, 10 −1}, result in increased chattering, with λ = 10 −1 exhibiting the largest amplitude. Additionally, the parameter estimation error decreases with increasing λ, indicating improved sparsity in the learned model. This behavior can be attributed to the reduction of                           
+
+> 020 40 60 80 100
+> 10 −4
+> 10 −3
+> 10 −2
+> 10 −1
+> 10 0
+> t(s)
+> ∥e(t)∥
+> λ= 0 λ= 10 −5
+> λ= 10 −4λ= 10 −3
+> λ= 5 ×10 −3λ= 10 −2
+> λ= 5 ×10 −2λ= 10 −1
+> Fig. 2. Tracking error norm ∥e(t)∥(log scale) for different values of the regularization parameter λ.
+
+spurious correlations among candidate basis functions, lead-ing to a more accurate identification of the true underlying dynamics. For λ ≥ 10 −2, the error begins to increase, indicating that excessive sparsity penalization can remove relevant basis functions and reduce model fidelity. Table I further shows that as the sparsity parameter λ
+
+increases, the parameter estimation error decreases. However, the tracking error increases with stronger sparsity regular-ization. This degradation in tracking performance may be attributed to higher-amplitude chattering induced by the non-smooth parameter updates associated with the ℓ1 regulariza-tion. Table II and Figure 3 show that sparsity increases, i.e., the number of nonzero terms decreases, as λ increases, as expected. This effect is more pronounced in the interval 
+
+λ ∈ [10 −3, 10 −2], where a significant increase in sparsity is observed compared to smaller values of λ. This trend is also reflected in Fig. 1, where the parameter estimation error is lower for λ in this range. Furthermore, Table II indicates that very large values of λ result in fewer positive terms than required, leading to bias in the identified dynamics. This highlights a tradeoff between sparsity and estimation accuracy. We treat sparsity as a binary classification problem, labeling each basis function as sparse (positive) or non-sparse (negative), and evaluate performance using the F1 score [39, Chapter 8]. From Table II, the F1 score is 0.59 for small λ,where correlated functions are also predicted as sparse. As 
+
+λ increases, precision improves while recall remains high, giving a maximum F1 score of 0.89 at λ = 10 −2. For larger 
+
+λ, true positives are removed, reducing recall and driving the F1 score to zero. For this example, the best performance is obtained at λ = 5 × 10 −2 and the best sparse system was identified at λ = 10 −2.λ = 0 
+
+Predicted  
+
+> Positive Negative
+> True
+> Positive Negative
+
+TP 
+
+5
+
+FN 
+
+0
+
+FP 
+
+7
+
+TN 
+
+8 
+
+> Positive: 12 Negative: 8
+
+λ = 10 −5
+
+Predicted  
+
+> Positive Negative
+> True
+> Positive Negative
+
+TP 
+
+5
+
+FN 
+
+0
+
+FP 
+
+7
+
+TN 
+
+8 
+
+> Positive: 12 Negative: 8
+
+λ = 10 −4
+
+Predicted  
+
+> Positive Negative
+> True
+> Positive Negative
+
+TP 
+
+5
+
+FN 
+
+0
+
+FP 
+
+7
+
+TN 
+
+8 
+
+> Positive: 12 Negative: 8
+
+λ = 10 −3
+
+Predicted  
+
+> Positive Negative
+> True
+> Positive Negative
+
+TP 
+
+5
+
+FN 
+
+0
+
+FP 
+
+7
+
+TN 
+
+8 
+
+> Positive: 12 Negative: 8
+
+λ = 5 × 10 −3
+
+Predicted  
+
+> Positive Negative
+> True
+> Positive Negative
+
+TP 
+
+5
+
+FN 
+
+0
+
+FP 
+
+3
+
+TN 
+
+12  
+
+> Positive: 8 Negative: 12
+
+λ = 10 −2
+
+Predicted  
+
+> Positive Negative
+> True
+> Positive Negative
+
+TP 
+
+4
+
+FN 
+
+1
+
+FP 
+
+0
+
+TN 
+
+15  
+
+> Positive: 4 Negative: 15
+
+λ = 5 × 10 −2
+
+Predicted  
+
+> Positive Negative
+> True
+> Positive Negative
+
+TP 
+
+0
+
+FN 
+
+5
+
+FP 
+
+1
+
+TN 
+
+14  
+
+> Positive: 1 Negative: 19
+
+λ = 10 −1
+
+Predicted  
+
+> Positive Negative
+> True
+> Positive Negative
+
+TP 
+
+0
+
+FN 
+
+5
+
+FP 
+
+0
+
+TN 
+
+15  
+
+> Positive: 0 Negative: 20
+
+Fig. 3. Confusion matrix statistics for sparse term recovery. Classification performance is reported for nonzero (positive) and zero (negative) terms using true positives (TP), false positives (FP), false negatives (FN), and true negatives (TN). TABLE I EFFECT OF SPARSITY REGULARIZATION ON TRACKING PERFORMANCE AND MODEL RECOVERY . L OWER IS BETTER FOR ERROR METRICS .
+
+Sparsity Error 
+
+λ Nonzeros ↓ ∥e∥ ↓ ∥˜θ(tf )∥ ↓ 
+
+0 12 0.04452 0.88263 
+
+10 −5 12 0.04453 0.88209 
+
+10 −4 12 0.04456 0.87730 
+
+10 −3 12 0.04507 0.83245 
+
+5 × 10 −3 8 0.05013 0.70261 
+
+10 −2 4 0.05973 0.70286 
+
+5 × 10 −2 1 0.09927 1.61225 
+
+10 −1 0 0.10226 1.65263 
+
+VII. C ONCLUSION 
+
+This paper presents an online adaptive control framework with sparse identification that integrates ℓ1-regularization with ICL and trajectory tracking for nonlinear control-affine systems. The inclusion of ℓ1-regularization penalizes nonzero terms, reducing the co-occurrence of correlated basis func-tions and thereby promoting sparsity. The SP-ICL update law identifies relevant basis functions from an overcomplete dictionary of candidate basis functions. The stability of the resulting framework is established via Lyapunov-based analysis for non-smooth systems, where we prove ultimate boundedness of the trajectories of the closed-loop system while promoting sparsity. Simulation results show that sparsity improves parame-ter convergence by penalizing basis functions that are not present in the dynamical system, while still preserving sta-bility and tracking accuracy. To mitigate the observed chatter-ing, future research could explore replacing the discontinuous 
+
+TABLE II SPARSE TERM RECOVERY PERFORMANCE . C ONFUSION MATRIX COUNTS AND DERIVED PRECISION (P RES .), R ECALL (R EC .) AND F-1 METRICS FOR NONZERO TERM DETECTION .
+
+Counts Metrics 
+
+λ Positive Negative Prec Rec F1 0 12 8 0.42 1.00 0.59 
+
+10 −5 12 8 0.42 1.00 0.59 
+
+10 −4 12 8 0.42 1.00 0.59 
+
+10 −3 12 8 0.42 1.00 0.59 
+
+5 × 10 −3 8 12 0.62 1.00 0.77 
+
+10 −2 4 16 1.00 0.80 0.89 
+
+5 × 10 −2 1 19 0.00 0.00 0.00 
+
+10 −1 0 20 – 0.00 0.00 
+
+signum term in the SP-ICL update law with continuous approximations, such as saturation or smooth hyperbolic tangent functions. Furthermore, we would explore adaptive 
+
+ℓ1 regularization penalties to dynamically balance sparsity promotion and estimation accuracy, which could improve convergence for a broader class of nonlinear systems. REFERENCES [1] S. L. Brunton, J. L. Proctor, and J. N. Kutz, “Discovering governing equations from data by sparse identification of nonlinear dynamical systems,” Proc. Natl. Acad. Sci. , vol. 113, no. 15, pp. 3932–3937, 2016. [2] P. Ioannou and J. Sun, Robust adaptive control . Prentice Hall, 1996. [3] K. ˚Astr¨ om and B. Wittenmark, Adaptive control . Reading, MA: Addison-Wesley, 1989. [4] M. Krstic, I. Kanellakopoulos, and P. V. Kokotovic, Nonlinear and adaptive control design . New York, NY, USA: John Wiley & Sons, 1995. [5] R. Kamalapurkar, “Online output-feedback parameter and state estimation for second order linear systems,” in Proc. Am. Control Conf. , Seattle, WA, USA, May 2017, pp. 5672–5677. [6] Y. Pan and T. Shi, “Adaptive estimation and control with online data memory: A historical perspective,” IEEE Control Syst. Lett. , vol. 8, pp. 267–278, 2024. [7] A. Pyrkin, A. Bobtsov, R. Ortega, A. Vedyakov, and S. Aranovskiy, “Adaptive state observers using dynamic regressor extension and mixing,” Syst. Control Lett. , vol. 133, p. 104519, 2019. [8] A. Katiyar, S. Basu Roy, and S. Bhasin, “Finite excitation based robust adaptive observer for MIMO LTI systems,” Int. J. Adapt. Control Signal Process. , vol. 36, no. 2, pp. 180–197, 2022. [9] M. Qureshi, T. E. Ogri, H. Ramos, W. A. Makumi, Z. I. Bell, and R. Kamalapurkar, “A switched adaptive control approach to reduce sensing needs in trajectory tracking problems,” IEEE Control Syst. Lett. , vol. 9, pp. 2777–2782, Dec. 2025. [10] A. Parikh, R. Kamalapurkar, and W. E. Dixon, “Integral concurrent learning: adaptive control with parameter convergence using finite excitation,” Int. J. Adapt. Control Signal Process. , vol. 33, no. 12, pp. 1775–1787, Dec. 2019. [11] T. E. Ogri, Z. I. Bell, and R. Kamalapurkar, “State and parameter estimation for affine nonlinear systems,” in Proc. IEEE Conf. Decis. Control , Singapore, Dec. 2023, pp. 1517–1522. [12] Y. Xing, J. Na, R. Costa-Castell´ o, J. Wu, and X. Chen, “Optimal pa-rameter estimation under finite excitation,” IEEE Trans. Ind. Electron. ,vol. 72, no. 7, pp. 7534–7543, 2025. [13] H. Akaike, Fitting Autoregreesive Models for Prediction . New York, NY: Springer New York, 1998, pp. 131–135. [14] J. N. Kutz, X. Fu, and S. L. Brunton, Multiresolution Dynamic Mode Decomposition . Philadelphia, PA: Society for Industrial and Applied Mathematics, 2016. [15] J.-N. Juang and R. S. Pappa, “An eigensystem realization algorithm for modal parameter identification and model reduction,” J. Guid. Control Dyn. , vol. 8, no. 5, pp. 620–627, 1985. [16] L. Csat´ o and M. Opper, “Sparse on-line Gaussian processes,” Neural Comput. , vol. 14, no. 3, pp. 641–668, 2002. [17] M. Qureshi, T. E. Ogri, Z. I. Bell, and R. Kamalapurkar, “Scalar field mapping with adaptive high-intensity region avoidance,” in Proc. IEEE Conf. Control Technol. Appl. , Newcastle upon Tyne, UK, Aug. 2024, pp. 388–393. [18] I. Mezi´ c, “Spectral properties of dynamical systems, model reduction and decompositions,” Nonlinear Dyn. , vol. 41, no. 1–3, pp. 309–325, Aug. 2005. [19] G. Hagen and U. Vaidya, “An approach for nonlinear model extraction from time-series data,” in Proc. Amer. Control Conf. , 2008, pp. 3875– 3880. [20] S. A. Billings, Nonlinear system identification: NARMAX methods in the time, frequency, and spatio-temporal domains . John Wiley & Sons, 2013. [21] R. W. Brockett, “Volterra series and geometric control theory,” IFAC Proc. Vol. , vol. 8, no. 1, Part 1, pp. 245–254, 1975. [22] O. S. Patil, D. M. Le, M. L. Greene, and W. E. Dixon, “Lyapunov-derived control and adaptive update laws for inner and outer layer weights of a deep neural network,” IEEE Control Syst. Lett. , vol. 6, pp. 1855–1860, 2022. [23] D. M. Le, O. S. Patil, C. F. Nino, and W. E. Dixon, “Accelerated gradient approach for deep neural network-based adaptive control of unknown nonlinear systems,” IEEE Trans. Neural Netw. Learn. Syst. ,pp. 1–15, 2024. [24] R. G. Hart, O. Sudhir Patil, Z. I. Bell, and W. E. Dixon, “Concurrent learning for system identification and control using Lyapunov-based deep neural networks,” IEEE Control Syst. Lett. , vol. 9, pp. 2957–2962, 2025. [25] S. Istiqphara, O. Wahyunggoro, and A. Imam Cahyadi, “Recursive sparse identification of nonlinear dynamics for online equation dis-covery,” IEEE Access , vol. 12, pp. 169 592–169 605, 2024. [26] J. A. Meda-Campa˜ na, R. D. Vel´ azquez-S´ anchez, J. C. Garc´ ıa-Hern´ andez, S. G. Torres-Cedillo, and R. Tapia-Herrera, “Online sparse identification of nonlinear state-space equations via RLS,” Int. J. Control Autom. Syst. , vol. 23, pp. 2232 – 2246, 2025. [27] B. P. Russo, M. P. Laiu, and R. Archibald, “Streaming compression of scientific data via weak-SINDy,” SIAM J. Sci. Comput. , vol. 47, no. 1, pp. C207–C234, 2025. [28] U. Fasel, J. N. Kutz, B. W. Brunton, and S. L. Brunton, “Ensemble-SINDy: Robust sparse model discovery in the low-data, high-noise limit, with active learning and control,” Proc. R. Soc. A , vol. 478, no. 2260, Apr. 2022. [29] U. Fasel, E. Kaiser, J. N. Kutz, B. W. Brunton, and S. L. Brunton, “SINDy with control: A tutorial,” in Proc. IEEE Conf. Decis. Control .IEEE, 2021, pp. 16–21. [30] A. Bressan, A. Cellina, and G. Colombo, “Upper semicontinuous differential inclusions without convexity,” Proc. Amer. Math. Soc. ,1989. [31] G. Chowdhary and E. Johnson, “Concurrent learning for convergence in adaptive control without persistency of excitation,” in Proc. IEEE Conf. Decis. Control , 2010, pp. 3674–3679. [32] T. E. Ogri, M. Qureshi, Z. I. Bell, W. A. Makumi, and R. Kamalapurkar, “An output feedback approach to differential graphical games in networked linear systems,” IEEE Control Syst. Lett. , vol. 9, pp. 2265–2270, Sep. 2025. [33] F. H. Clarke, “Generalized gradients and applications,” Trans. Am. Math. Soc. , vol. 205, pp. 247–262, 1975. [34] J.-P. Aubin and A. Cellina, “Viability theory and regulation of con-trolled systems: The convex case,” in Differential Inclusions: Set-Valued Maps and Viability Theory . Berlin, Heidelberg, New York, Tokyo: Springer-Verlag, 1984, ch. 5, pp. 213–280. [35] E. A. Coddington and N. Levinson, Theory of ordinary differential equations . McGraw-Hill, 1955. [36] H. K. Khalil, Nonlinear systems , 3rd ed. Upper Saddle River, NJ: Prentice Hall, 2002. [37] D. Shevitz and B. Paden, “Lyapunov stability theory of nonsmooth systems,” IEEE Trans. Autom. Control , vol. 39 no. 9, pp. 1910–1914, 1994. [38] E. P. Ryan, “Discontinuous feedback and universal adaptive stabiliza-tion,” in Control of Uncertain systems . Springer, 1990, pp. 245–258. [39] C. D. Manning, P. Raghavan, and H. Sch¨ utze, An Introduction to Information Retrieval . Cambridge, UK: Cambridge University Press, 2008.

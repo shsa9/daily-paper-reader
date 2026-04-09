@@ -1,0 +1,246 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-09T20:11:38.144937+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 6,
+    "quick_skim_target": 11,
+    "quick_selected": 6
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.06923v1",
+      "title": "Phase-locked phonon laser enhanced ultra-weak force measurement",
+      "abstract": "Optically levitated micro- and nanoparticles are an ideal optomechanical platform for precision measurements, particularly enabling the detection of ultraweak forces. Nevertheless, quantum backaction and inherent instabilities induced by the trapping laser fundamentally restrict further improvements in force sensitivity and resolution. To circumvent these bottlenecks, we actively drive the levitated nanoparticle's mechanical motion in a phase-locked phonon laser mode and integrate a carrier-modulation measurement architecture to enhance force sensing capabilities. The stable and high-amplitude oscillation of the phonon laser allows for the robust trapping under 1 mW-level laser power, which in turn reduces the force noise to 4.0(3)*10^-22 N/Hz^1/2. Furthermore, by using phase-locked phonon laser, the measurement system achieves active stabilization and extended coherence time with the measured signal to 12,500 seconds, realizing a measurement resolution of 8(4)*10^-24 N with a sensitivity of 9.3(7)*10^-22 N/Hz^1/2 under a loaded force. These results establish the phonon laser as a low-noise, long-coherence-time, self-stabilizing platform for precision measurements, as well as in quantum and fundamental physics tests.",
+      "authors": [
+        "Yu Zheng",
+        "Long Wang",
+        "Lyu-Hang Liu",
+        "Yuan Tian",
+        "Xiang-Dong Chen",
+        "Dong Wu",
+        "Guang-Can Guo",
+        "Fang-Wen Sun"
+      ],
+      "primary_category": "physics.optics",
+      "categories": [
+        "physics.optics",
+        "physics.app-ph"
+      ],
+      "published": "2026-04-08T10:23:59+00:00",
+      "link": "https://arxiv.org/pdf/2604.06923v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Precision ultra-weak force measurement and sensing using phonon laser",
+      "llm_evidence_cn": "利用声子激光进行精密超弱力测量与传感",
+      "llm_evidence": "利用声子激光进行精密超弱力测量与传感",
+      "canonical_evidence": "利用声子激光进行精密超弱力测量与传感",
+      "llm_tldr_en": "Enhances force sensing resolution to 10^-22 N level using a phase-locked phonon laser architecture.",
+      "llm_tldr_cn": "利用锁相声子激光架构将力传感分辨率提升至10^-22 N量级。",
+      "llm_tldr": "利用锁相声子激光架构将力传感分辨率提升至10^-22 N量级。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "non contact electromagnetic exciter precision force control",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.00340v2",
+      "title": "Extended State Observer for Localized Fault Awareness in RF Accelerating Structures",
+      "abstract": "An observer framework is presented for robust regulation of RF cavity fields and localized identification of disturbances in RF systems. A standard cavity field observer is augmented with additional states to estimate the evolution of cavity detuning and phase drifts induced by the drive and receiver chains. Monte Carlo simulations are performed to assess the performance of the proposed estimator under realistic conditions for the intended high-power linear accelerator operation. Results showcase precise cavity field regulation and the reliability with which the observer assigns deviations to the correct subsystem. The resulting diagnostic capability provides a foundation for improved fault detection, faster troubleshooting during accelerator operation, and more informed maintenance of RF systems in large accelerator facilities.",
+      "authors": [
+        "Luke S. Baker",
+        "Sungil Kwon",
+        "Kwame Jyamfi",
+        "Quinten Cole",
+        "Isaac Roybal",
+        "AJ Garcia",
+        "Phil Torrez",
+        "Lawrence Castellano"
+      ],
+      "primary_category": "math.OC",
+      "categories": [
+        "math.OC"
+      ],
+      "published": "2026-04-01T00:30:55+00:00",
+      "link": "https://arxiv.org/pdf/2604.00340v2",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "extended state observer for robust regulation and disturbance identification in electromagnetic systems",
+      "llm_evidence_cn": "用于电磁系统鲁棒调节和扰动识别的扩张状态观测器",
+      "llm_evidence": "用于电磁系统鲁棒调节和扰动识别的扩张状态观测器",
+      "canonical_evidence": "用于电磁系统鲁棒调节和扰动识别的扩张状态观测器",
+      "llm_tldr_en": "Proposes an observer for precise field regulation and fault detection in RF accelerating structures.",
+      "llm_tldr_cn": "提出一种用于射频加速结构中精确场调节和故障检测的观测器框架。",
+      "llm_tldr": "提出一种用于射频加速结构中精确场调节和故障检测的观测器框架。",
+      "llm_tags": [
+        "query:em-force:composite"
+      ],
+      "matched_query_tag": "query:em-force:composite",
+      "matched_query_text": "Papers central to 查找非接触式电磁激振器的力控制方法，特别是精密控制策略, especially work that connects or combines: electromagnetic exciter force control; ddy current magnetic bearing modeling; magnetic bearing flux feedback; non-contact electromagnetic shaker force control; precision force control strategies for electromagnetic actuators; closed-loop force control for electromagnetic shakers; flux feedback linearization zero bias magnetic bearing; non contact electromagnetic exciter precision force control; eddy current effects in electromagnetic actuators dynamic modeling; flux feedback control for magnetic bearing force precision.",
+      "matched_requirement_id": "req-composite-em-force",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.06337v1",
+      "title": "Improving INDI for Input Nonaffine Systems via Learning-Based Nonlinear Control Allocation",
+      "abstract": "This paper first demonstrates that applying standard incremental nonlinear dynamic inversion (INDI) with incremental control allocation (ICA) to input nonaffine systems relies on an untenable linear approximation of the actuator model. It then shows that avoiding this issue, while retaining the static control allocation paradigm, generally requires solving a nonlinear programming (NLP) problem. To address the associated online computational challenges, the paper subsequently presents a supervised learning-based approach. Numerical experiments on an example problem validate the identified limitations of standard INDI + ICA for input nonaffine systems, while also demonstrating that the proposed learning-based method provides an effective and computationally tractable alternative.",
+      "authors": [
+        "Adam Hallmark",
+        "Pan Zhao"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-04-07T18:16:14+00:00",
+      "link": "https://arxiv.org/pdf/2604.06337v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "nonlinear control allocation for input nonaffine systems",
+      "llm_evidence_cn": "输入非仿射系统的非线性控制分配",
+      "llm_evidence": "输入非仿射系统的非线性控制分配",
+      "canonical_evidence": "输入非仿射系统的非线性控制分配",
+      "llm_tldr_en": "Improves incremental nonlinear dynamic inversion for systems with nonaffine actuator models using learning-based methods.",
+      "llm_tldr_cn": "利用学习方法改进了具有非仿射执行器模型系统的增量非线性动态逆控制。",
+      "llm_tldr": "利用学习方法改进了具有非仿射执行器模型系统的增量非线性动态逆控制。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.06338v1",
+      "title": "Adaptive Control with Sparse Identification of Nonlinear Dynamics",
+      "abstract": "This paper develops a sparsity-promoting integral concurrent learning (SP-ICL) adaptation law for a linearly parametrized uncertain nonlinear control-affine system. The unknown parameters are learned using ICL with sparsity-promoting $\\ell_1$ regularization. The use of $\\ell_1$ regularization for sparsity promotion is common in system identification and machine learning; however, unlike existing approaches, this paper develops an online parameter update law that integrates the regularization penalty with ICL via sliding modes. Using the SP-ICL update law, we show via non-smooth Lyapunov analysis that the trajectories of the closed-loop system are ultimately bounded. Simulations verify the effectiveness of the sparsity penalty in the SP-ICL update law on recovering sparse dynamics during trajectory tracking.",
+      "authors": [
+        "Trivikram Satharasi",
+        "Tochukwu E. Ogri",
+        "Muzaffar Qureshi",
+        "Kyle Volle",
+        "Rushikesh Kamalapurkar"
+      ],
+      "primary_category": "math.OC",
+      "categories": [
+        "math.OC",
+        "eess.SY"
+      ],
+      "published": "2026-04-07T18:16:31+00:00",
+      "link": "https://arxiv.org/pdf/2604.06338v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Adaptive control for nonlinear control-affine systems with parameter identification",
+      "llm_evidence_cn": "非线性控制仿射系统的自适应控制与参数辨识",
+      "llm_evidence": "非线性控制仿射系统的自适应控制与参数辨识",
+      "canonical_evidence": "非线性控制仿射系统的自适应控制与参数辨识",
+      "llm_tldr_en": "Develops a sparsity-promoting adaptive control law for uncertain nonlinear systems using integral concurrent learning.",
+      "llm_tldr_cn": "开发了一种基于积分并发学习的稀疏自适应控制律，用于不确定非线性系统。",
+      "llm_tldr": "开发了一种基于积分并发学习的稀疏自适应控制律，用于不确定非线性系统。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.06980v1",
+      "title": "Stochastic Adaptive Control for Systems with Nonlinear Parameterization: Almost Sure Stability and Tracking",
+      "abstract": "This paper concerns the adaptive control problem for a class of nonlinear stochastic systems in which the state update is given by a nonlinear function of linear dynamics plus additive stochastic noise. Such systems arise in a wide range of applications, including recurrent neural networks, social dynamics, and signal processing. Despite their importance, adaptive control for these systems remains relatively unexplored in the literature. This gap is primarily due to the inherently nonconvex dependence of the system dynamics on unknown parameters, which significantly complicates both controller design and analysis. To address these challenges, we propose an online nonlinear weighted least-squares (WLS)-based parameter estimation algorithm and establish the global strong consistency of the resulting parameter estimates. In contrast to most existing results, our consistency analysis does not rely on restrictive assumptions such as persistent excitation conditions of the trajectory data, making it applicable to stochastic adaptive control settings. Building on the proposed estimator, we further develop an adaptive control algorithm with an attenuating excitation signal that can effectively combine adaptive estimation and feedback control. Finally, we are able to show that the resulting closed-loop system is globally stable and that the system trajectory can track, in a long-run average sense, the reference trajectory generated with the true system parameters. The proposed methods and theoretical results are finally validated through simulations in two nonlinear interaction network applications.",
+      "authors": [
+        "Lantian Zhang",
+        "Bo Wahlberg",
+        "Silun Zhang"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-04-08T11:57:24+00:00",
+      "link": "https://arxiv.org/pdf/2604.06980v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Stochastic adaptive control for nonlinear parameterization and tracking",
+      "llm_evidence_cn": "非线性参数化系统的随机自适应控制与跟踪",
+      "llm_evidence": "非线性参数化系统的随机自适应控制与跟踪",
+      "canonical_evidence": "非线性参数化系统的随机自适应控制与跟踪",
+      "llm_tldr_en": "Proposes a weighted least-squares adaptive controller for nonlinear stochastic systems with nonconvex parameters.",
+      "llm_tldr_cn": "针对具有非凸参数的非线性随机系统，提出了一种加权最小二乘自适应控制器。",
+      "llm_tldr": "针对具有非凸参数的非线性随机系统，提出了一种加权最小二乘自适应控制器。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.07305v1",
+      "title": "Phase-Selective Excitation of Betatron Oscillations by Nonadiabatic Magnetic-Field Switching",
+      "abstract": "Nonadiabatic removal of an external transverse magnetic field provides a phase-selective mechanism for controlling betatron oscillations in laser wakefield accelerators. When the field is switched off on a timescale shorter than the betatron period, the equilibrium orbit shifts abruptly and acts as an impulsive transverse drive. The induced motion interferes coherently with the preexisting betatron oscillation, leading to phase-dependent enhancement or suppression of the oscillation amplitude. A theoretical model shows that the excitation is governed by the dimensionless switching parameter $χ=ω_βL_s/c$, which distinguishes nonadiabatic and adiabatic regimes. Particle-in-cell simulations confirm the predicted scaling and demonstrate controllable modulation of the betatron radiation spectrum while leaving longitudinal acceleration largely unaffected. These results establish magnetic-field switching as a direct mechanism for phase control of relativistic betatron oscillations in plasma-based accelerators.",
+      "authors": [
+        "R. S. Anandu",
+        "B. Ramakrishna"
+      ],
+      "primary_category": "physics.plasm-ph",
+      "categories": [
+        "physics.plasm-ph",
+        "physics.acc-ph"
+      ],
+      "published": "2026-04-08T17:14:03+00:00",
+      "link": "https://arxiv.org/pdf/2604.07305v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Magnetic-field switching for controlling oscillations and impulsive drive",
+      "llm_evidence_cn": "用于控制振荡和脉冲驱动的磁场切换",
+      "llm_evidence": "用于控制振荡和脉冲驱动的磁场切换",
+      "canonical_evidence": "用于控制振荡和脉冲驱动的磁场切换",
+      "llm_tldr_en": "Uses nonadiabatic magnetic-field switching to selectively excite or suppress betatron oscillations.",
+      "llm_tldr_cn": "利用非绝热磁场切换来选择性地激发或抑制电子感应加速器振荡。",
+      "llm_tldr": "利用非绝热磁场切换来选择性地激发或抑制电子感应加速器振荡。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "electromagnetic exciter force control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

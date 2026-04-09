@@ -1,0 +1,3672 @@
+Title: Stochastic Adaptive Control for Systems with Nonlinear Parameterization: Almost Sure Stability and Tracking
+
+URL Source: https://arxiv.org/pdf/2604.06980v1
+
+Published Time: Thu, 09 Apr 2026 00:55:30 GMT
+
+Number of Pages: 18
+
+Markdown Content:
+# Stochastic Adaptive Control for Systems with Nonlinear Parameterization: Almost Sure Stability and Tracking 
+
+# Lantian Zhang a, Bo Wahlberg b, Silun Zhang a
+
+> a
+
+Department of Mathematics, KTH Royal Institute of Technology, Stockholm, Sweden 
+
+> b
+
+Division of Decision and Control Systems, KTH Royal Institute of Technology, Stockholm, Sweden 
+
+Abstract 
+
+This paper concerns the adaptive control problem for a class of nonlinear stochastic systems in which the state update is given by a nonlinear function of linear dynamics plus additive stochastic noise. Such systems arise in a wide range of applications, including recurrent neural networks, social dynamics, and signal processing. Despite their importance, adaptive control for these systems remains relatively unexplored in the literature. This gap is primarily due to the inherently nonconvex dependence of the system dynamics on unknown parameters, which significantly complicates both controller design and analysis. To address these challenges, we propose an online nonlinear weighted least-squares (WLS)–based parameter estimation algorithm and establish the global strong consistency of the resulting parameter estimates. In contrast to most existing results, our consistency analysis does not rely on restrictive assumptions such as persistent excitation conditions of the trajectory data, making it applicable to stochastic adaptive control settings. Building on the proposed estimator, we further develop an adaptive control algorithm with an attenuating excitation signal that can effectively combine adaptive estimation and feedback control. Finally, we are able to show that the resulting closed-loop system is globally stable and that the system trajectory can track, in a long-run average sense, the reference trajectory generated with the true system parameters. The proposed methods and theoretical results are finally validated through simulations in two nonlinear interaction network applications. 
+
+Key words: Stochastic nonlinear systems, Adaptive control, System identification, Adaptive tracking. 
+
+1 INTRODUCTION 
+
+This paper considers the adaptive control problem for a class of nonlinear stochastic systems in the form 
+
+xt+1 = f (A∗xt + B∗ut) + wt+1 , t ≥ 0, (1) where xt ∈ Rn is the system state with initial condition 
+
+x0 ∈ Rn, ut ∈ Rm and wt+1 ∈ Rn represent the input and random noise process, respectively, f : Rn → Rn
+
+is a known nonlinear map, and matrices A∗ ∈ Rn×n
+
+and B∗ ∈ Rn×m are unknown parameters. This class of nonlinear dynamics occurs in many emerging applica-tions, including, e.g., Elman recurrent neural networks (RNNs) in machine learning. Therein, the model (1) is also known as a nonlinear recurrent dynamics with the 
+
+⋆ This work is supported by The Wallenberg AI, Au-tonomous Systems and Software Program (WASP) which is funded by the Knut and Alice Wallenberg Foundation. 
+
+Email addresses: lantian@kth.se (Lantian Zhang), 
+
+bo@kth.se (Bo Wahlberg), silunz@kth.se (Silun Zhang). 
+
+activation map f (·), and common choices for the nonlin-ear activation maps include the Heaviside, ReLU, and logistic functions (see, e.g., Mienye et al. (2024); Schäfer and Zimmermann (2006); Elman (1990)). Another ex-ample of the nonlinear model (1) arises in the dynamics of social networks, where the nonlinear map f reflects the saturation and binarization of opinions as individ-uals interact with their social peers, while the input ut
+
+models external interventions from influential actors or opinion leaders in the network (see, e.g., Durlauf and Ioannides (2010); Su et al. (2021); Ancona et al. (2023)) Additional examples of the nonlinear model (1) include neuronal dynamics in biomedical engineering (see Keeler et al. (1989) and Sect. 2 in Wu (2001)) and overflow os-cillations of digital filters in signal processing (see, e.g., Ebert et al. (1969); Ooba (2003)). Adaptive control is a framework for designing feedback controllers that continuously learn from and adjust to unknown or time-varying dynamics online and update their control actions in real time. The primary objec-tive of adaptive control is to ensure closed-loop stability and optimal performance in the presence of uncertain-
+
+Preprint submitted to Automatica 9 April 2026 
+
+> arXiv:2604.06980v1 [eess.SY] 8 Apr 2026
+
+ties, variations, and disturbances. A key idea to adap-tive control is to use the certainty-equivalence principle ,which estimates the unknown parameters online using observed data and designs the controller by treating the latest estimates as the true parameters. Although sub-stantial theoretical advances and practical implementa-tions have been achieved for linear stochastic adaptive control (Goodwin et al., 1981; Kumar, 1990; Guo, 1995; Duncan et al., 1999; Liu et al., 2025), these results do not extend easily to nonlinear stochastic systems. This is due to several fundamental challenges: first, estimat-ing unknown parameters in a nonlinear model generally leads to nonconvex optimization problems; second, un-like linear systems, the stabilization of nonlinear systems has no “one-size-fits-all” method, and their behavior can vary drastically depending on the specific nonlinearities involved, such as multiple equilibria, finite escape time, limit cycles, and even bifurcations; finally, nonlinear op-erations distort the distribution of the process noise and make the joint distribution of the state trajectory non-trivial, which significantly complicates system identifi-cation and adaptive control for the nonlinear dynamics (Schoukens and Ljung, 2019). Motivated by these chal-lenges, this paper investigates the adaptive control for an important class of nonlinearly parameterized stochas-tic systems given in (1) when the parameter matrices A∗
+
+and B∗ are unknown. 
+
+1.1 Related literature 
+
+Over the past decades, adaptive control of linear stochas-tic systems, i.e., the case f (x) = x in (1), has been extensively studied. Following the landmark work in Åström and Wittenmark (1973), rigorous convergence theories for self-tuning regulators have been estab-lished by combining least-squares (LS) estimation with minimum-variance control (see, e.g., Kumar (1990); Guo (1995)). In addition, based on the self-convergence property of the weighted least-squares (WLS) algorithm, the convergence theories of adaptive linear–quadratic– Gaussian (LQG) control have been developed in Guo (1996); Duncan et al. (1999). More recent advances can be found in Bian et al. (2016); Dörfler et al. (2023); Liu et al. (2025); Chiuso et al. (2025) and the refer-ences therein. Moreover, substantial progress has also been made on adaptive control for linear systems with nonlinear observations yt = h(xt), commonly referred to as Wiener systems. Under the assumption that the system matrix A∗ is stable, several adaptive regulation and tracking methods have been developed (see, e.g., Zhao et al. (2013); Zhang and Guo (2025); Zhang et al. (2022); Wahlberg et al. (2015); Zhao et al. (2023) and the references therein). Although extensive theories have been developed for lin-ear stochastic adaptive control, extending these results to nonlinear stochastic systems faces intrinsic challenges. Existing studies largely focus on nonlinear stochastic systems with linearly parameterized uncertainties of the form xt+1 = θ∗⊤ f (xt, u t) + wt+1 , where parameter es-timation can still be performed using linear techniques such as LS. However, even when estimation is tractable, ensuring closed-loop stability is considerably more chal-lenging due to nonlinear dynamics, especially when f
+
+exhibits superlinear growth. For example, when f (x) = 
+
+O(∥x∥b) and the unknown parameter θ∗ is scalar, Guo (1997) have shown that adaptive control systems based on LS are globally stabilizable if b < 4 but unstabilizable when b ≥ 4. The adaptive stabilization problem based on LS with multiple unknown parameters has later been investigated in Li and Lam (2013). More recent related works can be found, for example, in Li and Krstic (2020); Liu and Li (2025). The aforementioned works are primarily concerned with linear-in-parameter systems. In contrast, for nonlinearly parameterized systems, the estimation loss is generally highly nonconvex. As a result, even constructing a con-sistent parameter estimator is challenging, let alone es-tablishing developing nonlinear adaptive controllers. Re-cently, motivated by neural-network–type parameteri-zations, a growing body of work has investigated pa-rameter estimation for nonlinearly parameterized sys-tems (1) under a class of nonconvex objectives (see, e.g., (Foster et al., 2020; Oymak, 2019; Kowshik et al., 2021; Sattar and Oymak, 2022; Zhang and Zhang, 2025)). These studies typically analyze estimation error using data collected from trajectories of an already stabilized dynamical system. Such trajectory data can often be shown to satisfy persistence of excitation(PE) condi-tions, which are necessary to guarantee consistent pa-rameter estimation. However, adaptive control is inher-ently more challenging than purely parameter estima-tion for the nonlinearly parameterized system (1), which remains unresolved, especially when the closed-loop tra-jectory fails to satisfy the PE conditions. Due to these analytical challenges, only a few works have been de-voted to adaptive control for nonlinearly parameterized stochastic systems. Ma (2007) has studied the adap-tive bounded-input–bounded-output (BIBO) stabiliza-tion problem using a weighted least-squares (WLS)-type algorithm, where the unknown component belongs to a given set which has a finite number of members. Fur-thermore, Li and Chen (2015) has studied the adaptive stabilization problem for a class of nonlinearly parame-terized uncertain systems with a scalar-valued unknown parameter. In the scalar case, they showed that the re-quired PE conditions for parameter estimation actually hold. However, as pointed out by the authors in Li and Chen (2015), “for the multiple-parameter case, the anal-ysis will in general be extremely difficult”. 
+
+1.2 Main contributions 
+
+This paper studies online identification and adaptive control for the nonlinearly parameterized stochastic sys-2tem (1) with an unknown multidimensional parameter 
+
+[A, B ] ∈ Rn×(n+m). Inspired by Guo (1996); Duncan et al. (1999), we propose a novel nonlinear WLS-type pa-rameter estimation algorithm and develop an adaptive control method that incorporates an attenuating explo-ration signal into the certainty-equivalence controller. The main contributions are threefold: 
+
+• We propose a novel online parameter estimation al-gorithm for recovering the parameter [A∗, B ∗] from the trajectory data {xt, u t}t≥0. Unlike the parame-ter estimation results reported in (Foster et al., 2020; Kowshik et al., 2021; Oymak, 2019; Sattar and Oy-mak, 2022) for system (1), our estimation algorithm achieves strong consistency without requiring the data to be persistently exciting (See Remark 1). 
+
+• We design an adaptive controller and show that, under a stabilizability condition on the system, the closed-loop system induced by the proposed adaptive con-troller is globally stable. In particular, global stability is also guaranteed when the parameter estimates do not converge to the true parameter. Compared with existing results, our results are applicable to a class of nonlinear stochastic systems with multiple unknown parameters, which are not linearly parameterized. 
+
+• We further prove that, if the exploration signal in-troduced in the adaptive controller provides sufficient excitation, then the parameter estimates are strongly consistent along the adaptive closed-loop trajectory. At the same time, the closed-loop trajectory gener-ated by the proposed adaptive controller tracks the reference trajectory induced by the corresponding con-troller designed with full knowledge of the true pa-rameter. This adaptive tracking problem has received relatively limited attention in the existing literature on adaptive control of nonlinear stochastic systems. The remainder of the paper is organized as follows. Sec-tion 2 provides the preliminaries and formulates the problem. Section 3 presents the results on parameter es-timation, including the proposed online parameter esti-mation algorithm and its convergence properties. Sec-tion 4 addresses the adaptive control problem, focusing on closed-loop stability under adaptive nonlinear con-trol and the resulting tracking performance. Section 5 illustrates two application scenarios with numerical sim-ulations. Finally, Section 6 concludes the paper. 
+
+Notations. We use ∥·∥ to denote the Euclidean norm for vectors and the induced operator norm for matrices. For matrices M, N ∈ Rp×q , the Euclidean/Frobenius inner product is defined as ⟨M, N ⟩ = tr( M ⊤N ). For a square symmetric matrix M , we denote its largest and smallest eigenvalues by λmax (M ) and λmin (M ), respectively, and use tr[ M ] to denote the trace of M .We use the shorthand notation [n] = {1, 2, . . . , n } for any positive integer n.Finally, In denotes the n × n identity matrix. 
+
+Regularity of Functions. A mapping f : Rn → Rn
+
+is said to be α−strongly monotone on K if there exists a constant α > 0 such that (x − y)⊤(f (x) − f (y)) ≥
+
+α∥x − y∥2, ∀x, y ∈ K. The mapping f is said to be 
+
+Lipschitz continuous on a set K if there exists a constant 
+
+ν > 0 such that ∥f (x) − f (y)∥ ≤ ν∥x − y∥, ∀x, y ∈ K. In this case, we also say that f is ν-Lipschitz continuous .
+
+2 Preliminaries and Problem Formulation 
+
+In this paper, we consider the stochastic nonlinear sys-tem (1). The matrices A∗ and B∗ are unknown, while the nonlinear function f (·) is known and the trajectory data {xτ , u τ }0≤τ ≤t are observable at each time t ≥ 0.Let {F t} be a filtration, i.e., a nondecreasing family of 
+
+σ-algebras, defined by Ft = σ(x0, u i, w i, 0 ≤ i ≤ t). We assume that the nonlinear function f (·) and noise pro-cess {wt}t≥0 satisfy the following two assumptions. 
+
+Assumption 1 There exist a nonincreasing func-tion α : R≥0 → R>0 and a nondecreasing function 
+
+β : R≥0 → R>0 with inf z∈Rn α(∥f (z)∥) > 0 and 
+
+sup z∈Rn β(∥f (z)∥) < ∞, such that, for any c ≥ 0 and all ∥x∥, ∥y∥ ≤ c, 
+
+∥f (x) − f (y)∥ ≤ β(c)∥x − y∥, and 
+
+(x − y)⊤(f (x) − f (y)) ≥ α(c)∥x − y∥2. (2) 
+
+Assumption 2 The sequence {wt, Ft}t≥0 is a martin-gale difference sequence, and there exist constants γ > 2
+
+and σ > 0 such that, for all t ≥ 0,
+
+sup 
+
+> t≥0
+
+E [∥wt+1 ∥γ | F t] < ∞, E [wt+1 w⊤ 
+
+> t+1
+
+| F t
+
+] ≥ σI n.
+
+Moreover, if sup x∈Rn ∥f (x)∥ < ∞, we additionally as-sume that {wt}t≥0 is almost surely bounded. 
+
+Next, two sufficient conditions for Assumption 1 are given in Lemma 1 and further illustrated by the exam-ples given in Subsection 2.1, which shows that this as-sumption holds in a wide range of stochastic nonlinear systems. Note that nonlinear systems in which the noise term wt+1 enters inside the nonlinearity f (·) can also be transformed into the form (1) when f (·) is monotone and bounded and {wt} is i.i.d. Gaussian; see Example 3. 
+
+Lemma 1 Suppose f is a component-wise mapping of the form f (z) = ( f1(z1), · · · , f n(zn)) ⊤, where each fi(·) : 
+
+R → R acts on the i-th component of z. Then Assump-tion 1 holds in either of the following two cases: 
+
+• Case (i): For each i ∈ [n], the function fi is αi-strongly monotone and βi-Lipschitz continuous on R, for some constants αi > 0 and βi > 0. Then f satisfies Assump-tion 1 with α(·) ≡ min i∈[n] αi and β(·) ≡ max i∈[n] βi;
+
+3• Case (ii): For each i ∈ [n], the function fi is bounded, differentiable, and for any c ≥ 0,
+
+inf 
+
+> i∈[n],|x|≤ c
+
+ddx fi(x) > 0, sup 
+
+> i∈[n],|x|≤ c
+
+ddx fi(x) < ∞. (3) 
+
+In this case, f satisfies Assumption 1 with 
+
+α(c) = inf 
+
+> i∈[n],|x|≤ c
+
+ddx fi(x), c ≥ 0, and 
+
+β(c) = sup 
+
+> i∈[n],|x|≤ c
+
+ddx fi(x), c ≥ 0.
+
+(4) The proof of Lemma 1 is given in Appendix E. 
+
+2.1 Examples 
+
+In the following, we present three representative exam-ples of the nonlinear system (1) in which f satisfies As-sumption 1. 
+
+Example 1 (Nonlinear Opinion Dynamics) Consider a nonlinear opinion dynamical system with external noise(see, e.g., Durlauf and Ioannides (2010); Ancona et al. (2023); Bizyaeva et al. (2022) for background on nonlinear opinion formation) 
+
+xt+1 = a tanh( A∗xt + B∗ut) + wt+1 , (5) 
+
+where xt = [ x1,t , · · · , x n,t ] ∈ Rn represents the opin-ion states of the n agents at time t; A∗ ∈ Rn×n and 
+
+B∗ ∈ Rn denote the unknown adjacency matrices and the connections of influencers of the underlying social net-work; a > 0 is the maximum sensitivity of agents to so-cial influence; ut ∈ Rm is a pinning (or influence) input, potentially generated by a leader, that drives the opinion dynamics of the entire network. The hyperbolic tangent function tanh (·) is defined as tanh( z) = ez −e−z  
+
+> ez+e−z
+
+, z ∈ R,
+
+and is applied elementwise to vectors in (5) . This non-linear function captures the saturation effects in opinion updates arising from interactions among social peers. By Case (2) of Lemma 1, the function a tanh( ·) satisfies As-sumption 1 with the following functions α(·) and β(·):
+
+α(x) = a inf 
+
+> |z|≤ x
+
+ddz tanh (z) = 4a
+
+(ex + e−x)2 ,β(x) = a sup 
+
+> |z|≤ x
+
+ddz tanh (z) = a, ∀x ≥ 0.
+
+Example 2 (RNN Dynamics) Consider the classical Elman recurrent neural networks (RNN) state equation with external noise (See., e.g., Equation (14) of Mienye et al. (2024), p. 634 of Schäfer and Zimmermann (2006), Elman (1990)), 
+
+xt+1 = σ(A∗xt + B∗ut) + wt+1 , (6) 
+
+where xt and ut are the state vector and the input data at timestamp t. A∗ ∈ Rn×n and B∗ ∈ Rn×m are un-known state weight matrix and input weight matrix to be trained. The nonlinear function σ : Rn → Rn
+
+is an activation function of the form σ(τ1, . . . , τ n) = [σ1(τ1), . . . , σ n(τn)] ⊤. Classical examples of activation functions include: 1) The sigmoid function, i.e., σi(z) = 11+ e−z , ∀z ∈ R, i ∈
+
+[n]. In this case, by Case (2) of Lemma 1, Assumption 1 is satisfied with α(x) = e−x 
+
+> (1+ e−x)2
+
+and β(x) = 14 , ∀x ∈ R.2) The leaky ReLU (LReLu) function, i.e., σi(z) =LReLU( z) = max( bz, z ), b ∈ (0 , 1) , ∀z ∈ R, i ∈ [n]. In this case, by Case (1) of Lemma 1, Assumption 1 holds with constant functions α(x) ≡ b and β(x) ≡ 1, ∀x ∈ R.
+
+Example 3 (Neuronal Dynamics) To study neu-ronal behaviors, the following neuronal dynamics model has been proposed and investigated (see, e.g., Equation 
+
+(1) in Xing et al. (2022), Keeler et al. (1989), Sect. 2 in Wu (2001)): 
+
+xi,t +1 = I
+
+
+
+> n
+
+∑
+
+> j=1
+
+a∗ 
+
+> i,j
+
+xj,t + ci,t + ηi,t > 0
+
+ , i ∈ [n], t ≥ 0,
+
+(7) 
+
+where xi,t ∈ { 0, 1} denotes the state of neuron i ∈ [n] at time t, indicating whether neuron i is activated, and can be detected through experimental methods; the function 
+
+I(· > 0) represents the McCulloch–Pitts neuron model, defined as I(x > 0) = 1 if x > 0 and I(x > 0) = 0 oth-erwise; the parameter a∗ 
+
+> ij
+
+= γitij /n represents the total interaction strength between agents i and j, determined by the synaptic strength γi and the link strength tij be-tween them. The term ci,t represents a bias or an exter-nal intervention applied to neuron i at time t. The noise term ηi,t denotes the disturbance affecting neuron i at time t, and is assumed to be independent and identically distributed (i.i.d.) standard Gaussian. For model (7) , note that E[xi,t +1 | Ft] = 1 −
+
+F (− ∑nj=1 a∗ 
+
+> i,j
+
+xj,t + ci,t ), where F (·) denotes the cumu-lative distribution function (cdf) of the standard Gaus-sian distribution. Let wi,t +1 = xi,t +1 − E[xi,t +1 | F t],then {wi,t , Ft} forms a martingale difference sequence. Consequently, system (7) can be rewritten as 
+
+xi,t +1 = 1 − F
+
+−
+
+> n
+
+∑
+
+> j=1
+
+a∗ 
+
+> i,j
+
+xj,t + ci,t 
+
+ + wi,t +1 .
+
+By Case (2) of Lemma 1, one can verify that the function 
+
+1 − F (·) satisfies Assumption 1 with functions α(x) =  
+
+> 1√2π
+
+exp (− 12 x2) and β(x) = 1√2π , ∀x ∈ R.
+
+42.2 Problem formulation 
+
+Denote the system parameter by θ∗ = [A∗, B ∗]⊤ ∈
+
+R(n+m)×n, and assume that the true parameter θ∗ ∈ Θ,where Θ is a compact convex set in R(n+m)×n. We first consider the parameter estimation problem for the unknown parameter θ∗.
+
+Problem 1 At each time t ≥ 0, given the trajectory ob-servations {xτ , u τ −1}1≤τ ≤t, construct an online estimate 
+
+ˆθt of the unknown parameter θ∗, and determine condi-tions on the trajectory data {xτ , u τ −1} under which 
+
+lim 
+
+> t→∞
+
+∥∥∥ˆθt − θ∗
+
+∥∥∥2
+
+= 0 , a.s. 
+
+With the estimation algorithm provided in Problem 1, we further solve the adaptive control problem. Let the space of admissible feedback control laws be 
+
+U = {u : Rn → Rm | u is Lipschitz continuous }.
+
+Let π· be a given control design mechanism, which de-fines a mapping from Θ to U, and let {x∗ 
+
+> t
+
+} denote the cor-responding reference state trajectory generated by sys-tem (1) under the feedback controller u∗ 
+
+> t
+
+= πθ∗ (xt), i.e., 
+
+x∗ 
+
+> t+1
+
+= f (A∗x∗ 
+
+> t
+
++B∗πθ∗ (x∗ 
+
+> t
+
+))+ wt+1 , x ∗ 
+
+> 0
+
+= x0, a.s. (8) We will study the following adaptive control problem. 
+
+Problem 2 Given a control design mechanism π·, with-out knowing the true parameter θ∗, design an adaptive feedback control algorithm together with the online pa-rameter estimation algorithm 
+
+ut = G(xt, ˆθt),
+
+ˆθt = H({uτ }τ ≤t−1, {xτ }τ ≤t), ∀t ≥ 0,
+
+where {xt} is the closed-loop trajectory of system (1) with adaptive feedback control {ut}, such that the resulting trajectory {xt, u t} starting from any initial state x0 has the following two properties: 
+
+• Adaptive stabilization: the closed-loop system is glob-ally stable, i.e., 
+
+lim sup 
+
+> t→∞
+
+1
+
+t
+
+> t
+
+∑ 
+
+> τ=0
+
+∥xτ ∥2 < ∞, a.s. 
+
+• Asymptotic tracking: the averaged tracking error con-verges to zero almost surely, i.e., 
+
+lim 
+
+> t→∞
+
+1
+
+t
+
+> t
+
+∑ 
+
+> τ=0
+
+(∥∥xτ − x∗ 
+
+> τ
+
+∥2 + ∥uτ − u∗
+
+> τ
+
+∥∥2)
+
+= 0 , a.s ., 
+
+where {x∗ 
+
+> t
+
+}t≥0 and {u∗ 
+
+> t
+
+}t≥0 are given in (8) .
+
+These two problems outlined above will be addressed in Section 3 and Section 4, respectively. 
+
+3 Parameter estimation 
+
+In this section, we study the estimation problem of the unknown system parameter θ∗ = ( A∗, B ∗). The follow-ing assumption on θ∗ is needed. 
+
+Assumption 3 There exists a constant ϵ > 0 such that 
+
+{θ ∈ R(n+m)×n : ∥θ − θ∗∥ ≤ ϵ} is contained in a known compact convex set Θ.
+
+In the following, we construct the parameter estimation algorithm and present the corresponding estimation er-ror analysis in Sections 3.1 and 3.2, respectively. 
+
+3.1 Parameter estimation algorithm 
+
+Denote by ϕt = [x⊤ 
+
+> t
+
+, u ⊤
+
+> t
+
+]⊤ ∈ Rn+m the regression vec-tor. To construct an online estimation algorithm, for each t ≥ 0, we consider the weighted least-squares loss function given by 
+
+St(θ) = 1
+
+μt
+
+E
+
+[∥∥xt+1 − f (θ⊤ϕt)∥∥2 | F t
+
+]
+
+, θ ∈ Θ,
+
+where {μt}t≥0 is a weight sequence to be designed and is assumed to be adapted to the filtration {F t}t≥0. The loss function is minimized at θ∗, and min θ∈Θ St(θ) = 
+
+St(θ∗) = μ−1 
+
+> t
+
+E[∥wt+1 ∥2 | F t], ∀t ≥ 0.To estimate θ∗ by minimizing St(θ), we develop an online WLS-type algorithm, summarized in Algorithm 1. We now give an intuitive and constructive interpretation of Algorithm 1. Since ϕt and μt are Ft−measurable and 
+
+E[wt+1 | F t] = 0 , it follows that 
+
+St(θ) − St(θ∗) = μ−1 
+
+> t
+
+∥f (θ∗⊤ ϕt) − f (θ⊤ϕt)∥2. (12) By Assumption 1, the nonlinear map f (·) satisfies 
+
+dt∥θ∗⊤ ϕt − θ⊤ϕt∥2
+
+≤(θ∗⊤ ϕt − θ⊤ϕt)⊤[f (θ∗⊤ ϕt) − f (θ⊤ϕt)] , (13) where dt depends on the monotonicity function α(·) and is specified in Algorithm 1. On the other hand, applying the Cauchy–Schwarz inequality yields 
+
+(θ∗⊤ ϕt − θ⊤ϕt)⊤[f (θ∗⊤ ϕt) − f (θ⊤ϕt)] 
+
+≤∥ θ∗⊤ ϕt − θ⊤ϕt∥∥ f (θ∗⊤ ϕt) − f (θ⊤ϕt)∥. (14) 5Algorithm 1 Online WLS-type estimator for θ∗
+
+Initialization : Set the initial estimate as ˆθ0 =[ ˆA0, ˆB0]⊤ ∈ Θ, initialize the matrix P0 = In+m, and choose a positive real δ > 0.
+
+Update flows : Given the observation (ut, x t+1 ) for each time t > 0, the estimate ˆθt+1 is recursively updated as follows: 
+
+ˆθt+1 = Π t+1 Θ {ˆθt + 1
+
+μt
+
+dtPt+1 ϕt[xt+1 − f (ˆθ⊤ 
+
+> t
+
+ϕt)] ⊤}, (9) 
+
+Pt+1 = Pt − atd2 
+
+> t
+
+Ptϕtϕ⊤ 
+
+> t
+
+Pt, (10) 
+
+at = (μt + d2 
+
+> t
+
+ϕ⊤ 
+
+> t
+
+Ptϕt
+
+)−1 , (11) where ϕt = [x⊤ 
+
+> t
+
+, u ⊤
+
+> t
+
+]⊤ , μ t = (1 + log rt)1+ δ +
+
+dtg2 
+
+> t
+
+ϕ⊤ 
+
+> t
+
+Ptϕt, r t = 1 + ∑tτ =0 ∥ϕτ ∥2, d t = 12 α(∥ˆθ⊤ 
+
+> t
+
+ϕt∥ +max  
+
+> θ∈Θ
+
+∥θ⊤ϕt∥), g t = β(∥ˆθ⊤ 
+
+> t
+
+ϕt∥ + max  
+
+> θ∈Θ
+
+∥θ⊤ϕt∥), and func-tions α and β are defined in Assumption 1. The projec-tion operator Πt+1 Θ is defined as 
+
+Πt+1 Θ (x) = 
+
+
+
+x, if x ∈ Θ,
+
+arg min 
+
+> y∈Θϵ
+
+tr[( x − y)⊤P −1
+
+> t+1
+
+(x − y)] , if x / ∈ Θ,
+
+where Θϵ = {θ ∈ Θ : ∥θ − θ∗∥ ≤ ϵ}, and ϵ is given in Assumption 3. Squaring both sides of (14) and using (13), we obtain 
+
+∥f (θ∗⊤ ϕt) − f (θ⊤ϕt)∥2
+
+≥dt(θ∗⊤ ϕt − θ⊤ϕt)⊤[f (θ∗⊤ ϕt) − f (θ⊤ϕt)] =⟨θ∗ − θ, d tϕt[f (θ∗⊤ ϕt) − f (ˆθ⊤ 
+
+> t
+
+ϕt)] ⊤⟩.
+
+(15) Then, combining (9) and (15), we have 
+
+St(θ) − St(θ∗)
+
+≥E
+
+[
+
+⟨θ − θ∗, −μ−1 
+
+> t
+
+dtϕt[xt+1 − f (ˆθ⊤ 
+
+> t
+
+ϕt)] ⊤⟩ | F t
+
+]
+
+. (16) Since f (·) may be non-differentiable, (16) motivates us-ing μ−1 
+
+> t
+
+dtϕt[xt+1 − f (ˆθ⊤ 
+
+> t
+
+ϕt)] ⊤ as a gradient-like surro-gate in the parameter update. Instead of directly form-ing a first-order gradient algorithm, we adopt a Newton-type second-order update, which relies on multiplying an inverse (or an approximation) of the Hessian. Using the well-known Sherman–Morrison formula (Hager, 1989), 
+
+P −1 
+
+> t+1
+
+= P −1 
+
+> t
+
++ d2
+
+> t
+
+μt
+
+ϕtϕ⊤ 
+
+> t
+
+= P −10 +
+
+> t
+
+∑ 
+
+> τ=0
+
+d2
+
+> τ
+
+μτ
+
+ϕτ ϕ⊤ 
+
+> τ
+
+,
+
+the matrix Pt+1 provides a recursive Gauss–Newton type approximation of the inverse Hessian of the WLS loss St(θ). Accordingly, Algorithm 1 uses 
+
+μ−1 
+
+> t
+
+dtPt+1 ϕt[xt+1 − f (ˆθ⊤ 
+
+> t
+
+ϕt)] ⊤ as the update term for the online parameter estimate. The weight sequence 
+
+{μt} is designed, following the idea in Guo (1996), to ensure the self-convergence property of the algorithm (see Conclusion (i) of Theorem 1), which plays a key role in adaptive control design. Since a Newton-type update step alone may produce an estimate outside the compact set Θ, we introduce a projection operator in the algorithm. This time-varying projection is performed with respect to the matrix P −1
+
+> t+1
+
+and the set Θϵ. The reason for using this projection is to guarantee that it is invoked only finitely many times, that is, there exists a constant T > 0 such that 
+
+ˆθt+1 = ˆθt + μ−1 
+
+> t
+
+dtPt+1 ϕt[xt+1 − f (ˆθ⊤ 
+
+> t
+
+ϕt)] ⊤, ∀t > T .This property also follows from the specific choice of the weight sequence {μt}. Details of this argument can be found in the proof of Theorem 1. 
+
+3.2 Convergence analysis 
+
+In this subsection, we establish the strong consistency of the parameter estimates given by Algorithm 1.
+
+Theorem 1 Suppose Assumptions 1-3 hold. If the con-trol sequence {ut}t≥0 satisfies that there exist constants 
+
+c1 > 0 and c2 > 0 such that ∥ut∥ ≤ c1∥xt∥ + c2 for all 
+
+t ≥ 0, then the parameter estimates produced by Algo-rithm 1 satisfy the following three properties: (i) There exists a real-valued random matrix ¯θ, such that 
+
+lim 
+
+> t→∞
+
+ˆθt = ¯θ, a.s. (17) 
+
+(ii) The adaptive prediction error has the following asymp-totic upper bound as t → ∞ :
+
+> t
+
+∑ 
+
+> τ=1
+
+μ−1
+
+> τ
+
+∥∥∥f (θ∗⊤ ϕτ ) − f (ˆθ⊤ 
+
+> τ
+
+ϕτ )
+
+∥∥∥2
+
+= O(1) , a.s. (18) 
+
+(iii) The parameter estimation error has the following asymptotic upper bound as t → ∞ :
+
+∥∥∥θ∗ − ˆθt
+
+∥∥∥2
+
+= O
+
+( (log rt)1+ δ
+
+λt
+
+)
+
+, a.s., (19) 
+
+where rt and μt are defined in Algorithm 1, and λt is given by 
+
+λt = λmin 
+
+{ t∑ 
+
+> τ=0
+
+ϕτ ϕ⊤
+
+> τ
+
+1 + ∥ϕτ ∥2
+
+}
+
+. (20) The proof of Theorem 1 is provided in Appendix A. Notice that the condition imposed on the control se-quence {ut} in Theorem 1 is not restrictive, which holds 6for any state feedback controller that is Lipschitz in the state. Specifically, Conclusion (i) of Theorem 1 ensures that the algorithm converges to a fixed point ¯θ, though probably not θ∗, without any excitation condition re-quirement. This non-divergence property prevents the parameter estimates from varying excessively over time and the divergent propagation of the historical estimate error. This enables us to use the estimate ˆθt as a surro-gate parameter in the adaptive control design, as shown in Section 4. Furthermore, Conclusion (ii) of Theorem 1 establishes an asymptotic upper bound on the accumu-lated prediction regret, which is instrumental in estab-lishing the global stability of the adaptive closed-loop system, as shown in Theorem 2. 
+
+Remark 1 From Conclusion (iii), the parameter esti-mation error converges to zero almost surely provided that, almost surely, 
+
+(
+
+log 
+
+( t∑ 
+
+> τ=0
+
+∥ϕτ ∥2
+
+)) 1+ δ
+
+= o
+
+(
+
+λmin 
+
+{ t∑ 
+
+> τ=0
+
+ϕτ ϕ⊤
+
+> τ
+
+1 + ∥ϕτ ∥2
+
+}) 
+
+.
+
+(21) 
+
+In prior work on parameter estimation (e.g., Foster et al. (2020); Kowshik et al. (2021); Oymak (2019); Sattar and Oymak (2022)), the system (1) is typically assumed to be asymptotically global exponential stable (see Defini-tion 2 in Foster et al. (2020)), and the inputs and noises 
+
+{ut}, {wt} are taken to be independent and sub-Gaussian. Under these assumptions, the trajectory {ϕt} satisfies two key properties almost surely: 1) the PE condition, i.e., t = O
+
+(
+
+λmin 
+
+{ t∑ 
+
+> τ=0
+
+ϕτ ϕ⊤
+
+> τ
+
+}) 
+
+, a.s., (see, e.g., Theo-rem 4 in Foster et al. (2020)), and 2) bounded-moment condition, i.e., ∑tτ =0 ∥ϕτ ∥2+ ρ = O(t) for some ρ > 0.Together, these two conditions imply (21) , and hence Algorithm 1 is strongly consistent under this commonly studied setting. More importantly, (21) indicates that strong con-sistency of Algorithm 1 may still hold even when the classical PE condition fails. For instance, if the trajectory satisfies ∑tτ =0 ∥ϕτ ∥2+ ρ = O(t)and, instead of PE, obeys a weaker non-PE condition 
+
+(log t)1+ δ = o
+
+(
+
+λmin 
+
+{ t∑ 
+
+> τ=0
+
+ϕτ ϕ⊤
+
+> τ
+
+}) 
+
+, a.s. , then (21) re-mains valid. 
+
+4 Nonlinear Adaptive Control 
+
+In Section 3, we developed an online parameter estima-tion algorithm and established the strong consistency of the resulting estimates without requiring the PE condi-tions for the trajectory data. Building on these results, we investigate the adaptive control problem in this sec-tion. Suppose given a control design mechanism π· : Θ →U, where U denotes the space of all admissible feed-back control laws defined as U = {u : Rn → Rm :
+
+u is Lipschitz continuous }. Accordingly, for each θ ∈ Θ,the policy πθ (·) ∈ U , and we assume that there ex-ists a constant L > 0 such that for all θ ∈ Θ, πθ (·) is 
+
+L−Lipschitz continuous. Let {x∗ 
+
+> t
+
+}t≥0 denote the corresponding reference state trajectory generated by system (1) under the feedback controller ut = πθ∗ (xt), i.e., 
+
+x∗ 
+
+> t+1
+
+= f (A∗x∗ 
+
+> t
+
++ B∗πθ∗ (x∗ 
+
+> t
+
+)) + wt+1 , a.s., (22) with initial condition x∗ 
+
+> 0
+
+= x0. The problem considered here is the following: without knowing the true parame-ter θ∗, how do we design an adaptive controller such that the resulting closed-loop system is globally stable and the state trajectory tracks the reference trajectory {x∗ 
+
+> t
+
+}.
+
+Adaptive Control Law. With the parameter esti-mates produced by Algorithm 1, a intuitive approach to design an adaptive controller is to apply the certainty-equivalence principle (CEP), whereby the unknown true parameter is replaced by its online estimate in the controller. Given a control design mechanism π· and the current parameter estimate ˆθt = [ ˆAt, ˆBt] available up to time t, we construct the adaptive control law as 
+
+ut = πˆθt−1 (xt) + vt, (23) where vt = t−bϵt for some constant b>0. Here {ϵt}t≥0
+
+is an i.i.d. random variable sequence, independent of 
+
+{wt}t≥0, satisfying 
+
+E [ϵk] = 0 , E [ϵkϵ⊤
+
+> k
+
+] = I, ∥ϵt∥ ≤ ¯ϵ (24) for some constant ¯ϵ > 0. The additive perturbation vt
+
+serves as a probing (exploration) signal that injects ex-citation into the closed-loop, which is essential for con-sistent parameter learning and, consequently, effective adaptation. Under system (1) and the adaptive law (23), the result-ing closed-loop system is given by 
+
+xt+1 = f (A∗xt + B∗(πˆθt−1 (xt) + vt)) + wt+1 . (25) To establish stability of the closed-loop system (25), we impose a stabilizability requirement on the control de-sign mechanism π·. To this end, we first recall the notion of finite-gain Lq stability for nonlinear systems. 
+
+Definition 1 (Finite-gain Lq -stability) (see, e.g., (Van der Schaft , 2000, Def. 1.2.1)) The stochastic system xt+1 = F (xt, v t, w t) with input vt ∈ Rm, state 
+
+xt ∈ Rn, and noise wt ∈ Rn is said to be finite-gain Lq -stable (with respect to {vt} and {wt}) for some q > 0, if 
+
+7there exists a constant kq > 0 such that for every initial condition x0 ∈ Rn there exists a constant bq (x0) > 0
+
+with the property that 
+
+> t−1
+
+∑ 
+
+> τ=0
+
+∥xτ +1 ∥q ≤ kqt−1∑ 
+
+> τ=0
+
+(∥vτ ∥q + ∥wτ +1 ∥q ) + bq (x0), a.s .
+
+for any t ≥ 0 and any random variable sequences {vt}
+
+and {wt}.
+
+Consider now the following stabilizability notion. 
+
+Finite-gain Lq -stabilizability. Given a system of the form (1). We say that the control design mechanism π· is 
+
+finite-gain Lq -stabilizing if for each θ = [ A, B ]⊤ ∈ Θ, the feedback control πθ (·) ensures the closed-loop system 
+
+xt+1 (θ) = f (Ax t(θ) + B(πθ (xt(θ)) + vt)) + wt+1 ,
+
+to be finite-gain Lq -stable with respect to {vt} and {wt}.When the system (1) is linear and πθ (·) is a linear state-feedback controller, i.e., πθ (xt) = K(θ)xt, the finite-gain Lq stability condition is equivalent to requiring that 
+
+A+BK (θ) be Schur stable, which is a standard assump-tion in linear adaptive control (see, e.g., Duncan et al. (1999); Liu et al. (2025)). Assumption 4 extends this stabilizability requirement to the nonlinear setting. 
+
+Assumption 4 The control design mechanism π· is finite-gain Lγ -stabilizing, where the constant γ is given in Assumption 2. Moreover, there exist a constant 
+
+L1 > 0 such that for all θ1, θ 2 ∈ Θ and x ∈ Rn,
+
+∥πθ1 (x) − πθ2 (x)∥ ≤ L1∥θ1 − θ2∥∥ x∥. (26) 
+
+Remark 2 Assumption 4 requires knowing a parameter-dependent stabilizing controller πθ (·) for each θ ∈ Θ,rather than directly knowing a controller that stabi-lizes the true system. The former is more realistic: since the true parameter θ∗ is unknown, it is gener-ally difficult to directly specify a stabilizing controller for the true system (which depends on θ∗); however, one can often characterize how to design a stabilizing controller πθ (·) as a function of θ, should θ be known. To illustrate, consider the linear case where (1) reduces to xt+1 = Ax t + Bu t + wt+1 . For each stabilizable pair θ = [ A, B ]⊤, the LQG control design mechanism 
+
+πLQG  
+
+> θ
+
+(xt) = −R−1B⊤P (θ)xt, where P (θ) solves the discrete-time algebraic Riccati equation associated with 
+
+θ = [ A, B ]⊤, renders the closed-loop system finite-gain 
+
+Lγ -stable. In other words, while we may not know which specific controller stabilizes the true system, we do know 
+
+how to construct one given any stabilizable θ.
+
+Assumption 4 implies that the reference feedback law 
+
+u∗ 
+
+> t
+
+= πθ∗ (xt) stabilizes the true system (1). However, when θ∗ is unknown, it is not obvious whether the de-signed adaptive controller (23), i.e., ut = πˆθt−1 (xt) + vt,still stabilizes the true system. In what follows, Subsec-tions 4.1 and 4.2 establish the stability of the closed-loop system (25) under adaptive control (23) and analyze the long-run tracking performance of the resulting state tra-jectory, respectively. 
+
+4.1 Adaptive stabilization 
+
+In this subsection, building on the asymptotic analysis of parameter estimation in Section 3, we establish the global stability of the closed-loop system (25) and show that the parameter estimates ˆθt converge to the true parameter θ∗ along the resulting closed-loop trajectory. We first establish the following global stability result for the adaptive controller (23). 
+
+Theorem 2 Under Assumption 1-4, the system (1) with the adaptive control (23) is globally stable in the sense that, for any x0 ∈ Rn and ˆθ0 ∈ R(m+n)×n,
+
+lim sup 
+
+> t→∞
+
+1
+
+t
+
+> t
+
+∑ 
+
+> τ=0
+
+∥xτ ∥γ < ∞, a.s., (27) 
+
+where {xt} is the trajectory of the closed-loop system under adaptive control (23) , γ is given in Assumption 2. 
+
+We note that the result of Theorem 2 continues to hold even without a probing signal, i.e., when vt ≡ 0 in (23). In addition to this stability guarantee, the next theorem shows that, if the probing signal induces sufficient exci-tation, the estimates ˆθt converge to the ground truth θ∗.
+
+Theorem 3 Under Assumptions 1–4, if b ∈ [0 , (γ−2) 2 
+
+> 4γ(γ+2)
+
+),then the parameter estimates ˆθt generated by Algorithm 1 along the closed-loop trajectory induced by (25) are strongly consistent with the following convergence rate: 
+
+∥ˆθt − θ∗∥2 = O
+
+( (log t)1+ δ
+
+t1−2b−η
+
+)
+
+, a.s., (28) 
+
+where η is any constant satisfying η ∈
+
+( 8bγ−2 , 2( γ−2) 
+
+> γ(γ+2)
+
+)
+
+.
+
+Proofs of Theorems 2 and 3 are provided in Appendix B. Theorems 2 and 3 show that the adaptive controller (23), together with the estimator ˆθt, can simultaneously sta-bilize the system and ensure convergence of the param-eter estimates. Moreover, it is natural to ask whether, the resulting closed-loop trajectory can achieve a perfor-mance level comparable to that of a reference trajectory generated by the reference controller u∗ 
+
+> t
+
+= πθ∗ (xt) which presumes knowledge of the true parameter θ∗. This ques-tion is addressed in the next subsection. 84.2 Adaptive tracking 
+
+In this subsection, we establish an adaptive tracking re-sult under the adaptive control (23). The performance is measured by the following average tracking error: 
+
+Jt = 1
+
+t
+
+> t
+
+∑ 
+
+> τ=0
+
+(∥∥xτ − x∗ 
+
+> τ
+
+∥2 + ∥uτ − u∗
+
+> τ
+
+∥∥2)
+
+. (29) In the sequel, we show that, if the reference controller 
+
+πθ∗ (·) exponentially stabilizes any equilibrium of (1), then the adaptive controller (23), together with the es-timator ˆθt given in Algorithm 1, guarantees that the tracking error Jt in (29) vanishes asymptotically. To this end, we introduce the following assumption on the reference trajectory {x∗ 
+
+> t
+
+}t≥0, which requires that, under the true parameter θ∗, the closed-loop behavior induced by πθ∗ (·) is memoryless with respect to the ini-tial condition. 
+
+Assumption 5 There exists constants M0 > 0 and ρ0 ∈
+
+(0 , 1) such that, for any noise sequence {wt} ⊂ Rn sat-isfying Assumption 2 and any initial states x0, x ′ 
+
+> 0
+
+∈ Rn,
+
+∥x∗ 
+
+> t
+
+(x0) − x∗ 
+
+> t
+
+(x′
+
+> 0
+
+)∥ ≤ M0ρt
+
+> 0
+
+∥x0 − x′
+
+> 0
+
+∥, a.s., (30) 
+
+where x∗ 
+
+> t
+
+(x0) and x∗ 
+
+> t
+
+(x′
+
+> 0
+
+) are trajectories of system (22) 
+
+under the same noise sequence {wt} with initial condi-tions x0 and x′
+
+> 0
+
+, respectively. 
+
+Remark 3 Assumption 5 requires that the reference tra-jectory is exponentially contractive with respect to the initial condition. This condition ensures that transient estimation errors at the early stage do not affect the long-run average performance. For a linear stochastic system, i.e., f (x) = x, if the reference trajectory is generated un-der the feedback control u∗ 
+
+> t
+
+= K∗xt such that A∗ + B∗K∗
+
+is Schur stable, then there exist constants M0 > 0 and 
+
+ρ0 ∈ (0 , 1) such that ∥(A∗ + B∗K∗)t∥ ≤ M0ρt 
+
+> 0
+
+for all 
+
+t ≥ 0. In this case, (30) follows immediately. 
+
+Now, we are ready to give the convergence result of the tracking error Jt in the next theorem. 
+
+Theorem 4 Suppose that Assumptions 1-5 hold, then for any given b ∈
+
+[
+
+0, (γ−2) 2
+
+> 4γ(γ+2)
+
+)
+
+and x0 ∈ Rn, the closed-loop trajectory under adaptive control (23) guarantees that the average tracking error Jt defined in (29) vanishes with the following convergence rate: 
+
+Jt = O
+
+(
+
+t−2b + t (2 b+η−1)( γ−2)  
+
+> γ
+
+(log t) (1+ δ)( γ−2) 
+
+> γ
+
+)
+
+, a.s., 
+
+(31) 
+
+where δ > 0 is given in Algorithm 1, γ > 2 is given in Assumption 2, η is any constant satisfying 
+
+η ∈
+
+( 8bγ−2 , 2( γ−2) 
+
+> γ(γ+2)
+
+)
+
+.
+
+The proof of Theorem 4 is provided in Appendix D. As indicated by Theorem 4, the performance gap be-tween the adaptive trajectory and the reference trajec-tory consists of two sources: one is induced by the prob-ing signal vt injected through the control law (23), and the other is the estimation error ∥ˆθt − θ∗∥ at each time step. The decay rates of these two components corre-spond, respectively, to the two terms in (31). Theorem 4 focuses on the classical mean-square cost. In some scenarios, however, one may be interested in a more general nonlinear stage cost c : Rn+m → R and the associated trajectory tracking metric 1
+
+> t
+
+∑tτ =0 |c(xt, u t)−
+
+c(x∗ 
+
+> t
+
+, u ∗ 
+
+> t
+
+)|2. In this case, the corresponding convergence result is presented in the following corollary. 
+
+Corollary 1 Under the conditions of Theorem 4, with 
+
+(30) replaced by 
+
+|c(x∗ 
+
+> t
+
+(x0), u ∗ 
+
+> t
+
+(x0)) − c(x∗ 
+
+> t
+
+(x′
+
+> 0
+
+), u ∗ 
+
+> t
+
+(x′
+
+> 0
+
+)) |≤M0ρt
+
+> 0
+
+∥x0 − x′
+
+> 0
+
+∥, a.s. , (32) 
+
+and assuming that c(·) is Lipschitz continuous, we have that for any b ∈
+
+[
+
+0, (γ−2) 2
+
+> 4γ(γ+2)
+
+)
+
+and any x0 ∈ Rn,
+
+1
+
+t
+
+> t
+
+∑ 
+
+> τ=0
+
+|c(xt, u t) − c(x∗ 
+
+> t
+
+, u ∗ 
+
+> t
+
+)|2
+
+=O
+
+(
+
+t−2b + t (2 b+η−1)( γ−2)  
+
+> γ
+
+(log t) (1+ δ)( γ−2) 
+
+> γ
+
+)
+
+, a.s., where δ, γ , and η are as in Theorem 4. 
+
+5 Numerical Simulation 
+
+We present two application scenarios together with nu-merical simulations in Sections 5.1 and 5.2, respectively, to verify the proposed methods. 
+
+5.1 Pining control in opinion dynamics with a budget 
+
+Opinion dynamics typically involves nonlinearities in the form of “S-shaped” functions, such as the hyperbolic tangent and sigmoid (see, e.g., Ancona et al. (2023); Fontan and Zhang (2025)). Here, we consider a nonlin-ear discrete-time opinion dynamics 
+
+xt+1 = a tanh 
+
+(
+
+(α∗I + ˜A∗)xt + B∗ut
+
+)
+
++ wt+1 , (33) where xt = [ x1,t , · · · , x n,t ] ∈ Rn denotes the opinion state of n agents at time t. The constant a > 0 is the maximum sensitivity of agents, α∗ > 0 determines the extent to which each agent reinforces its own opinion, and ˜A∗ ∈ Rn×n is the adjacency matrix of an inter-action graph G without self-loops. The noise sequence 92 1
+
+34
+
+(a) 2 134(b) Fig. 1. Topology of the four agents. Yellow and green rep-resent different initial opinions of the agents; the red node denotes the leader (external controller), and the red arrow indicates the pinning input applied to agent 1. 
+
+{wt} is i.i.d. with sup t ∥wt∥ < ¯w and E[wtw⊤ 
+
+> t
+
+] > σI n
+
+for some constants ¯w > 0 and σ > 0. One way to inter-vening in the asymptotic behavior of the above opinion dynamics is through pinning control ut, whereby a se-lected subset of nodes is influenced by an external leader whose opinion remains constant over time. Given a bud-get M ∈ Z+, let D ⊂ { 1, 2, · · · , n } with |D| = M denote the set of pinned nodes. The pinning vector is defined as B∗ = [ b1, b 2, · · · , b n]⊤ ∈ Rn, where bi = I(i ∈ D).Assume α∗a > 1, so that the decoupled single-agent dy-namics xt+1 = a tanh( α∗xt) admits two nonzero equi-libria. The desired leader opinion xL ∈ R is chosen as one of these equilibria. Define the system parameter as θ∗ = [ α∗In+ ˜A∗]⊤. Given 
+
+xL and a parameter θ ∈ R2n×n, we can employ the pin-ning control law 
+
+ut = κ(θ)xL, (34) where κ(θ) > 0 is the control gain which depends on the graph topology ˜A∗ and reinforcement factor α∗. Under this pinning control design, the number of nodes whose opinions eventually agree in sign with the leader’s opin-ion is maximized under certain conditions (see (Ancona et al., 2023, Section IV-A) for details on the construc-tion of κ(θ) and the corresponding results). Here, “sign” refers to the binary-opinion setting. When the graph topology and reinforcement factor, i.e., the parameter θ∗, is unknown, the following numerical example illustrates that our proposed method can simul-taneously learn θ∗ and synthesize an adaptive control 
+
+ˆut, such that the resulting closed-loop opinion trajec-tory converges to that generated by the oracle control 
+
+u∗ 
+
+> t
+
+. Here, u∗ 
+
+> t
+
+is the controller by setting θ = θ∗ in (34). 
+
+Example 4 Consider the nonlinear opinion dynamics 
+
+(33) on a four-agent network, as illustrated in Fig. 1(a). The noise sequence {wt}t≥0 is i.i.d. and uniformly dis-tributed over [−0.1, 0.1] 4. Let a = 2 , α∗ = 0 .7, and let the corresponding adjacency matrix ˜A∗ be 
+
+˜A∗ =
+
+
+
+0 0.4 0 00.5 0 0 0.10.3 0 0 00 0 0.5 0
+
+
+
+.0 50 100 150 200 250 300 350 400 450 500           
+
+> Time(t)
+> 00.2 0.4 0.6 0.8 1
+> Trajectories for parameter estimation error
+> 050 100 150 200 250 300 350 400 450 500
+> Time(t)
+> 00.5 11.5
+> Trajectories for tracking error
+
+Fig. 2. Trajectories for the parameter estimation error and average performance tracking error. 
+
+The desired leader opinion in this example is calculated as xL = 1 .63 . Additionally, we set M = 1 and B∗ =[1 , 0, 0, 0] ⊤, meaning that agent 1 is the pinned node, as shown in Fig. 1(b). Let Θ = {θ ∈ R(n+m)×n : ∥θ∥ ≤ 5}
+
+and initialize ˆθ0 = 0 . The sequence ˆθt is generated using Algorithm 1, and the adaptive controller is implemented as ˆut = κ(ˆθt)xL + t− 18 ϵt., where κ(·) is designed accord-ing to (Ancona et al., 2023, Section IV.A), and the prob-ing signal {ϵt}t≥0 is i.i.d. and uniformly distributed on 
+
+[−1, 1] . By Theorem 3 and Corollary 1, the parameter es-timates are almost surely consistent, and the trajectory error associated with the sign function satisfies that 
+
+lim sup 
+
+> t→∞
+
+1
+
+t
+
+> t
+
+∑ 
+
+> τ=0 4
+
+∑
+
+> i=1
+
+∥sgn (xi,τ )−sgn (x∗ 
+
+> i,τ
+
+)∥ = 0 , a.s., (35) 
+
+where xi,t and x∗ 
+
+> i,t
+
+denote the opinion trajectory under adaptive control ˆut and oracle control u∗ 
+
+> t
+
+, respectively. In this setup, the parameter estimation error converges to zero, as shown in Fig.2(a). The regret trajectory de-fined in (35) is also plotted in Fig. 2(b). As can be seen, under the adaptive control ˆut, the time-averaged opinion of each agent converges to that under the oracle control 
+
+u∗ 
+
+> t
+
+associated with the true parameter θ∗.5.2 Epidemic models with multi-community 
+
+Consider a susceptible-infective (SI) model for the epi-demic evolution across n networks of individuals, 
+
+
+
+xi,t +1 =
+
+[
+
+(1 + βs i,t )xi,t + ∑ 
+
+> j̸=i
+
+αs i,t xj,t − ¯ui,t + ηi,t +1 
+
+]
+
+> +
+
+si,t = N − xi,t ,
+
+(36) where state xi,t and si,t represent the levels of infec-tive and susceptible in network i at time t, respectively. The constant N is the number of individuals in each 10 network, and α, β ∈ R are the intra-network and cross-network infection rates. For each network i ∈ [n], the action ¯ui,t represents a controlled removal rate, and the noise sequence {ηi,t } is i.i.d. Gaussian with distribution 
+
+N (0 , σ 2). Additionally, the operator [·]+ : R → R is de-fined by [z]+ = z if 0 ≤ z ≤ N , [z]+ = N if z > N , and 
+
+[z]+ = 0 otherwise. Without loss of generality, we consider the case n = 2 
+
+with a complete graph. 1 , and define xt = [ x1,t , x 2,t ]⊤,ut = [ x21,t , x 22,t , x 1,t x2,t , ¯u1,t , ¯u2,t ]⊤, ηt = [ η1,t , η 2,t ]⊤. Let 
+
+A∗ =
+
+[βN αN αN βN 
+
+]
+
+, B∗ =
+
+[−β 0 −α −1 00 −β −α 0 −1
+
+]
+
+.
+
+Then the dynamics (36) can be rewritten as xt+1 =[A∗xt +B∗ut +ηt+1 ]+, where the operator [·]+ is applied elementwise. Accordingly, we define the system param-eter as θ∗ = [ A∗, B ∗]⊤, which encodes the graph topol-ogy, the infection rates, and the community sizes. By an argument similar to that in Example 3, noise entering inside the nonlinear map can be recast as an equivalent additive external noise. Specifically, the sys-tem (36) can be rewritten as 
+
+xt+1 = h(A∗xt + B∗ut) + wt+1 , (37) where h : Rn → Rn is defined componentwise by h(z) = [h1(z1), . . . , h n(zn)] ⊤, with hi(zi) = E[[ zi + ηi,t +1 ]+] = 
+
+N −ziG(−zi)−(N −zi)G(N −zi)+ σ2[g(−zi)−g(N −zi)] .Here, G(·) and g(·) denote, respectively, the cumulative distribution function and the probability density func-tion of the Gaussian distribution N (0 , σ 2). The induced external noise wt+1 = xt+1 −h(A∗xt +B∗ut) is a martin-gale difference sequence. It is straightforward to verify that the map h and {wt} satisfy Assumptions 1 and 2. When the parameter θ∗ is known, a stabilizing feed-back control can be designed in the form ¯u∗ 
+
+> t
+
+=
+
+(R + P ∗)−1P ∗A∗x∗ 
+
+> t
+
+, where P ∗ ∈ R2×2 is the solution to the discrete-time Riccati equation P ∗ = A∗⊤ P ∗A∗ −
+
+A∗⊤ P ∗(R + P ∗)−1P ∗A∗ + Q, and Q > 0, R > 0 are given weighting matrices defining the quadratic ob-jective to be minimized (see Bloem et al. (2009) for details). The following example demonstrates that the proposed adaptive controller attains the same asymp-totic performance without prior knowledge of θ∗.
+
+Example 5 In (37) , we set the parameters α∗ = 0 .15 ,
+
+β∗ = 0 .3 and N = 10 . Define the feasible set Θ = {[A, B ]⊤ : ∥A∥ ≤ 15 , ∥B∥ ≤ 5, A ∈ R2×2, B ∈ R2×5},and let Θϵ = {θ : 2 θ ∈ Θ}. The parameter estimates ˆθt 
+
+> 1
+
+A general connection topology with n > 2 can be handled in a similar manner. 0 100 200 300 400 500 600 700 800 900 1000           
+
+> Time(t)
+> 0100 200 300
+> Trajectories for parameter estimation error
+> 0100 200 300 400 500 600 700 800 900 1000
+> Time(t)
+> 01000 2000 3000 4000 5000
+> Trajectories for tracking error
+
+Fig. 3. Trajectories of the parameter estimation error for dif-ferent noise standard deviations σ and the average tracking performance error. 
+
+are generated by Algorithm 1. Following the adaptive control structure in (23) , we apply the adaptive control 
+
+ut = [ x21,t , x 22,t , x 1,t x2,t , ¯u1,t , ¯u2,t ]⊤ with [¯ u1,t , ¯u2,t ]⊤ =
+
+(I + ˆPt
+
+)−1 ˆPt ˆAtxt + t− 18 ϵt. Here ϵt = [ ϵ1,t , ϵ 2,t ]⊤, with 
+
+{ϵi,t } i.i.d. and uniformly distributed on [−1, 1] . The matrix ˆPt is the unique solution to the Riccati equation 
+
+ˆPt = ˆA⊤ 
+
+> t
+
+ˆPt ˆAt − ˆA⊤ 
+
+> t
+
+ˆPt(I + ˆPt)−1 ˆPt ˆAt + I, where we choose Q = R = I2.In Fig.3, we plot the trajectories of the parameter esti-mation error under different noise standard deviations 
+
+σ = 1 , 5, 10 . In all three cases, the estimation error de-creases as t increases, which is consistent with Theorem 3. This is because larger noise inject stronger excitation during the estimation process. Moreover, the trajectory of tracking error is also shown in Fig. 3, which shows that both the state trajectory and the control signal track the reference ones asymptotically. 
+
+6 Conclusions 
+
+This paper investigated the online identification and adaptive control for nonlinear stochastic systems in which the state update is given by a nonlinear func-tion of linear dynamics with additive random noise. A new online identification algorithm is proposed to esti-mate the unknown parameters, and is shown that will converge to the true parameter almost surely under a general non-PE condition on the trajectory data. These identification results further allow us to establish global stability and asymptotic tracking optimality for the re-sulting adaptive closed-loop system. We note that the analysis can be extended to other settings, including the case where Gaussian noise enters inside the nonlinear map f (·), provided that f (·) is bounded and monotone, as illustrated in Example 3. However, many interesting problems remain open for future investigation, such as the design and analysis of adaptive control with general observation matrices, and extensions to more complex nonlinear systems including multi-layer networks. 11 A Proof of Theorem 1 
+
+For notational simplicity, define 
+
+ψt = f (θ∗⊤ ϕt) − f (ˆθ⊤ 
+
+> t
+
+ϕt), t ≥ 0. (A.1) Since both ϕt and ˆθt are Ft−measurable, it follows that 
+
+ψt is also Ft−measurable. As a key step toward Theo-rem 1, we first establish the following lemma. 
+
+Lemma 2 Under the conditions of Theorem 1, the pa-rameter estimates produced by Algorithm 1 have the fol-lowing property as t → ∞ :
+
+tr[( θ∗ − ˆθt)⊤P −1 
+
+> t
+
+(θ∗ − ˆθt)] + 
+
+> t
+
+∑ 
+
+> τ=0
+
+aτ ∥ψτ ∥2 = O (1) , a.s., where {aτ }τ ≥0 is defined in (11) .
+
+The proof of Lemma 2 is provided in Appendix F. 
+
+Proof. [Proof of Theorem 1.] We first prove property (i). Taking trace on both sides of (10) and summing up, we have 
+
+> ∞
+
+∑ 
+
+> τ=0
+
+aτ d2 
+
+> τ
+
+ϕ⊤ 
+
+> τ
+
+P 2 
+
+> τ
+
+ϕτ ≤
+
+> t
+
+∑ 
+
+> τ=1
+
+[tr (Pτ )−tr (Pτ +1 )] < ∞. (A.2) Besides, according to Cauchy-Schwarz inequality, 
+
+> ∞
+
+∑ 
+
+> τ=0
+
+∥∥aτ dτ Ptϕτ ψ⊤
+
+> τ
+
+∥∥ ≤
+
+> ∞
+
+∑ 
+
+> τ=0
+
+aτ d2 
+
+> τ
+
+ϕ⊤ 
+
+> τ
+
+P 2 
+
+> t
+
+ϕτ +
+
+> ∞
+
+∑ 
+
+> τ=0
+
+aτ ∥ψτ ∥2 .
+
+Therefore, by (A.2) and Lemma 2, we have 
+
+> ∞
+
+∑ 
+
+> τ=0
+
+∥∥aτ dτ Pτ ϕτ ψ⊤
+
+> τ
+
+∥∥ < ∞, a.s. (A.3) As for the noise term, note that at ≤ 1 by (11). Using (A.2) again and by Assumption 2, we know that 
+
+> ∞
+
+∑ 
+
+> τ=0
+
+E[∥aτ dτ Pτ ϕτ wt+1 ∥2 | F t] < ∞, a.s. So by Chow’s martingale convergence theorem (See Theorem 2.7 in Chen and Guo (1991)), we know that 
+
+∥∑∞  
+
+> τ=0
+
+aτ dτ Pτ ϕτ wτ +1 ∥ < ∞ almost surely. Hence, combining with (A.3), one can obtain 
+
+> ∞
+
+∑ 
+
+> τ=0
+
+∥∥∥aτ dτ Pτ ϕτ (ψτ + wτ +1 )⊤∥∥∥ < ∞, a.s. (A.4) We now prove the claim that there exists a finite stop-ping time t1 > 0 such that for all t ≥ t1, the projection is no longer active i.e., ˆθt+1 = ˆθt + μ−1 
+
+> t
+
+dtPt+1 ϕt[xt+1 −
+
+f (ˆθ⊤ 
+
+> t
+
+ϕt)] ⊤, ∀t > t 1. Indeed, from (A.4), there exists a finite stopping time t0 ≥ 0 such that 
+
+> ∞
+
+∑ 
+
+> τ=t0
+
+∥∥∥aτ dτ Pτ ϕτ (ψτ + wτ +1 )⊤∥∥∥ < ϵ
+
+2 , a.s. , (A.5) where ϵ is given in Assumption 3. For each sample point ω, if ˆθt + atdtPtϕt (ψt + wt+1 )⊤ ∈ Θ, t ≥ t0,then the claim holds with t1 = t0. Otherwise, there exists a finite time t′ 
+
+> 0
+
+≥ t0 such that ˆθt′ 
+
+> 0
+
++
+
+at′ 
+
+> 0
+
+dt′ 
+
+> 0
+
+Pt′ 
+
+> 0
+
+ϕt′
+
+> 0
+
+(ψt′ 
+
+> 0
+
++ wt′
+
+> 0+1
+
+)⊤ /∈ Θ. By the definition of the projection, we have ˆθt′ 
+
+> 0+1
+
+∈ Θϵ. Then, for all t ≥ t′ 
+
+> 0
+
++1, (A.5) ensures that ˆθt′ 
+
+> 0
+
++∑tτ =t′
+
+> 0
+
+aτ dτ Pτ ϕτ (ψτ + wτ +1 )⊤ ∈
+
+Θ. Thus, ˆθt + atdtPtϕt (ψt + wt+1 )⊤ ∈ Θ, ∀t ≥ t′ 
+
+> 0
+
++ 1 ,
+
+and the claim again holds with t1 = t′ 
+
+> 0
+
++ 1 . Therefore, the claim holds. By the claim, the estimate satisfies 
+
+ˆθt+1 = ˆθt1 + ∑tτ =t1 aτ dτ Pτ ϕτ [xτ +1 − f (ˆθ⊤ 
+
+> τ
+
+ϕτ )] ⊤ =ˆθt1 + ∑tτ =t1 aτ dτ Pτ ϕτ (ψτ + wτ +1 )⊤ , ∀t ≥ t1. From this and (A.4), it follows that property (i) holds. We now prove property (ii). To begin, we show that 
+
+d := inf  
+
+> t≥0
+
+dt > 0, and sup 
+
+> t≥0
+
+gt < ∞, a.s. (A.6) If sup x∈Rn |f (x)| < ∞, then the state trajectory is uniformly bounded almost surely, i.e., sup t ∥xt∥ < ∞,a.s. Together with the condition in Theorem 1 that 
+
+∥ut∥ ≤ c1∥xt∥ + c2, we also have sup t ∥ϕt∥ < ∞, a.s. From property (i), sup t ∥ˆθt∥ < ∞, a.s. Therefore, there exists a real-valued random variable C1 > 0 such that 
+
+sup t
+
+(
+
+∥ˆθ⊤ 
+
+> t
+
+ϕt∥ + ∥θ∗⊤ ϕt∥
+
+)
+
+≤ C1. Then, by the mono-tonicity of α(·) and β(·) in Assumption 1, we obtain 
+
+inf t≥0 dt ≥ 12 α(C1) > 0, and sup t≥0 gt ≤ β(C1) < ∞. If 
+
+sup x∈Rn ∥f (x)∥ = ∞, then we have dt = 12 α(∥ˆθ⊤ 
+
+> t
+
+ϕt∥ +max θ∈Θ ∥θ⊤ϕt∥) ≥ 12 inf z∈Rn α(∥f (z)∥) and gt =
+
+β(∥ˆθ⊤ 
+
+> t
+
+ϕt∥ + max θ∈Θ ∥θ⊤ϕt∥) ≤ inf z∈Rn β(∥f (z)∥). By Assumption 1, sup t gt ≤ sup z∈Rn β(∥f (z)∥) < ∞ and 
+
+inf t dt ≥ 12 inf z∈Rn α(∥f (z)∥) > 0, which proves (A.6). Moreover, since gt ≥ dt and dt ≥ d for all t ≥ 0, it fol-lows that dtg2 
+
+> t
+
+ϕ⊤ 
+
+> t
+
+Ptϕt ≥ dd 2 
+
+> t
+
+ϕ⊤ 
+
+> t
+
+Ptϕt. Then, by the defi-nition of at and μt in (11) and Algorithm 1, respectively, 
+
+μ−1 
+
+> t
+
+≤ (1 + d−1)at, ∀t ≥ 0. (A.7) Finally, combining (A.6), (A.7) with Lemma 2 gives property (ii) directly. To prove property (iii), from (10) and the Sherman– Morrison formula (Hager, 1989), we have 
+
+P −1 
+
+> t+1
+
+= P −1 
+
+> t
+
++ d2
+
+> t
+
+μt
+
+ϕtϕ⊤ 
+
+> t
+
+= P −10 +
+
+> t
+
+∑ 
+
+> τ=0
+
+d2
+
+> τ
+
+μτ
+
+ϕτ ϕ⊤ 
+
+> τ
+
+. (A.8) Using (A.6) and the fact that ∥Pt∥ ≤ ∥P0∥ for all 
+
+t ≥ 0, there exists a real-valued random variable 
+
+C2 > 0 such that |μt| = |(log rt)1+ δ + 12 dtg2 
+
+> t
+
+ϕ⊤ 
+
+> t
+
+Ptϕt| ≤ 
+
+C2[(log rt)1+ δ (1 + ∥ϕt∥2)] ,a.s. Substituting this bound into (A.8), we have 
+
+λmin {P −1 
+
+> t
+
+} ≥ d2
+
+C2(log rt)1+ δ λmin 
+
+{t−1∑ 
+
+> τ=0
+
+ϕτ ϕ⊤
+
+> τ
+
+1 + ∥ϕτ ∥2
+
+}
+
+, a.s. (A.9) 12 Moreover, we know that 
+
+∥θ∗ − ˆθt∥2 ≤ tr[( θ∗ − ˆθt)⊤P −1 
+
+> t
+
+(θ∗ − ˆθt)] 
+
+λmin {P −1 
+
+> t
+
+} .
+
+Finally, by combining this inequality with Lemma 2, (A.9), and (A.6), we conclude property (iii) holds. 2
+
+B Proof of Theorem 2 Proof. [Proof of Theorem 2.] For notational conve-nience, we define the sequences {¯rt}t≥0, {¯μt}t≥0, and 
+
+{ht}t≥0 as follows: 
+
+¯rt = 1 + 
+
+> t
+
+∑ 
+
+> τ=0
+
+∥ϕτ ∥γ , ¯μt = dtg2 
+
+> t
+
+ϕ⊤ 
+
+> t
+
+Ptϕt,ht = ∥(θ∗ − ˆθt)⊤ϕt∥2
+
+2¯ μt
+
+I (¯μt ≥ (1 + log rt)1+ δ ) .
+
+From property (i) of Theorem 1, we have lim t→∞ ˆθt =¯θ, a.s. Thus, we obtain 
+
+> t
+
+∑ 
+
+> τ=0
+
+∥(ˆθτ − ¯θ)⊤ϕτ ∥γ = o
+
+( t∑ 
+
+> τ=0
+
+∥ϕτ ∥γ
+
+)
+
++ O(1) = o(¯ rt) + O(1) , a.s. , t → ∞ .
+
+(B.1) Next, by the definition of ¯μt and the bound (A.6), to-gether with ∥Pt∥ ≤ ∥ P0∥, ∀t ≥ 0, we have 
+
+|¯μt| γ 
+
+> 2
+
+= O (∥ϕt∥γ ) , a.s. , t → ∞ . (B.2) Moreover, property (ii) of Theorem 1 gives 
+
+> t
+
+∑ 
+
+> τ=0
+
+hτ ≤
+
+> t
+
+∑ 
+
+> τ=0
+
+μ−1 
+
+> τ
+
+∥(θ∗ − ˆθτ )⊤ϕτ ∥2 = O(1) , a.s. , t → ∞ ,
+
+(B.3) and similarly, 
+
+> t
+
+∑ 
+
+> τ=0
+
+∥(θ∗ − ˆθτ )⊤ϕτ ∥2
+
+2(1 + log rτ )1+ δ I (¯μτ < (1 + log rτ )1+ δ )
+
+≤
+
+> t
+
+∑ 
+
+> τ=0
+
+μ−1 
+
+> τ
+
+∥(θ∗ − ˆθτ )⊤ϕτ ∥2 = O(1) , a.s. , t → ∞ .
+
+(B.4) From (B.3), we conclude that 
+
+|ht|γ = o(1) , a.s. , t → ∞ . (B.5) Note that ∥(θ∗ − ˆθτ )⊤ϕτ ∥2I (¯μτ ≥ (1 + log rτ )1+ δ ) =2¯ μτ hτ . Then, by (B.2) and (B.5), we have 
+
+> t
+
+∑ 
+
+> τ=0
+
+∥(θ∗ − ˆθτ )⊤ϕτ ∥γ I (¯μτ ≥ (1 + log rτ )1+ δ )
+
+=
+
+> t
+
+∑ 
+
+> τ=0
+
+|¯μτ hτ | γ 
+
+> 2
+
+= o(¯ rt), a.s. , t → ∞ .
+
+(B.6) Then, from (B.4), we also have 
+
+> t
+
+∑ 
+
+> τ=0
+
+∥(θ∗ − ˆθτ )⊤ϕτ ∥γ I (¯μτ < (1 + log rτ )1+ δ )
+
+=O((1 + log rt) (1+ δ)γ 
+
+> 2
+
+) = O((log t + log ¯ rt) (1+ δ)γ 
+
+> 2
+
+), a.s. (B.7) Combining (B.6) and (B.7) gives 
+
+> t
+
+∑ 
+
+> τ=0
+
+∥(θ∗ − ˆθτ )⊤ϕτ ∥γ = o(¯ rt) + O((log t) (1+ δ)γ 
+
+> 2
+
+), a.s. Using this together with (B.1), we obtain 
+
+> t
+
+∑ 
+
+> τ=0
+
+∥(θ∗ − ¯θ)⊤ϕτ ∥γ = o(¯ rt)+ O((log t) (1+ δ)γ 
+
+> 2
+
+), a.s. (B.8) Additionally, under Assumption (26), the controller mapping satisfies ∥πˆθτ −1 (xτ ) − π¯θ (xτ )∥ ≤ L1∥ˆθτ −1 −
+
+¯θ∥∥ xτ ∥ + L2, and therefore, 
+
+> t
+
+∑ 
+
+> τ=0
+
+∥πˆθτ −1 (xτ ) − π¯θ (xτ )∥γ = o(¯ rt) + O(1) , a.s. (B.9) For each t ≥ 0, define ¯vt = ( A∗ − ¯A)xt + B∗πˆθt−1 (xt) −
+
+¯Bπ ¯θ (xt) + B∗vt. Then, for each t ≥ 0,
+
+¯vt = [ θ∗ − ¯θ]⊤ϕt + ¯Bπ ˆθt−1 (xt) − ¯Bπ ¯θ (xt) + ¯Bv t.
+
+Then, from Assumption 2 and (24), the noise and input sequences satisfy, almost surely, ∑tτ =1 ∥wτ ∥γ = O(t),
+
+and ∑t−1  
+
+> τ=0
+
+∥vτ ∥γ = O(t). Combining these with (B.8) and (B.9), it follows that 
+
+> t−1
+
+∑ 
+
+> τ=0
+
+∥¯vτ ∥γ +
+
+> t
+
+∑ 
+
+> τ=1
+
+∥wτ ∥γ = o(¯ rt) + O(t), a.s. (B.10) Note that the system can be rewritten as 
+
+xt+1 =f
+
+(
+
+A∗xt + B∗πˆθt−1 (xt) + B∗vt
+
+)
+
++ wt+1 
+
+=f ( ¯Ax t + ¯Bπ ¯θ (xt) + ¯ vt
+
+) + wt+1 .
+
+(B.11) From Assumption 4 and (B.10), we obtain 
+
+> t
+
+∑ 
+
+> τ=0
+
+∥xτ ∥γ = o(¯ rt) + O(t), a.s., t → ∞ . (B.12) Since πθ∗ is Lipschitz continuous, there exists a con-stant L3 > 0 such that ∥πθ∗ (xt)∥ ≤ L3∥xt∥ + ∥πθ∗ (0) ∥.Moreover, by (26), we also know ∥πˆθt−1 (xt)−πθ∗ (xt)∥ ≤ 
+
+L1∥θ∗ − ˆθt−1∥∥ xt∥ + L2, which implies ∥πˆθt−1 (xt)∥ =
+
+O(∥xt∥) almost surely as t → ∞ . Therefore, by (B.12), 
+
+> t
+
+∑ 
+
+> τ=0
+
+∥uτ ∥γ =O
+
+( t∑ 
+
+> τ=0
+
+∥πˆθτ −1 (xτ )∥γ +
+
+> t
+
+∑ 
+
+> τ=0
+
+∥vτ ∥γ
+
+)
+
+=o(¯ rt) + O(t), a.s. 
+
+13 Since ϕt = [x⊤ 
+
+> t
+
+, u ⊤ 
+
+> t
+
+]⊤, the above result gives ¯rt =
+
+∑tτ =0 ∥ϕτ ∥γ = o(¯ rt) + O(t), a.s., which implies 
+
+¯rt = O(t), a.s. Finally, substituting this into (B.12), we conclude that 
+
+> t
+
+∑ 
+
+> τ=0
+
+∥ϕτ ∥γ = O(t), a.s., (B.13) and Theorem 2 holds. 2
+
+C Proof of Theorem 3 
+
+For each t ≥ 1, we define ζt = [ w⊤ 
+
+> t
+
+, κ ⊤ 
+
+> t
+
++ v⊤ 
+
+> t
+
+]⊤, κ t =
+
+πˆθt−1 (xt) − E[πˆθt−1 (xt) | F t−1], and δt = πˆθt−1 (xt) −
+
+πˆθt−1
+
+(f (θ∗⊤ ϕt−1)) .
+
+We first prove the following lemma. 
+
+Lemma 3 Under Assumptions 1-4, there exists a real-valued random variable ¯c > 0 such that 
+
+λmin 
+
+{ t∑ 
+
+> τ=1
+
+ζτ ζ⊤
+
+> τ
+
+}
+
+≥ ¯ct 1−2b, a.s. , ∀t ≥ 0.
+
+Proof. Since πˆθt (·) is L−Lipschitz, we have 
+
+∥δt+1 ∥ = ∥πˆθt (xt+1 ) − πˆθt
+
+(f (θ∗⊤ ϕt)) ∥≤L∥xt+1 − f (θ∗⊤ ϕt)∥ ≤ L∥wt+1 ∥. (C.1) Hence, by Assumption 2, 
+
+sup 
+
+> t≥0
+
+E [∥δt+1 ∥γ | F t] ≤ sup 
+
+> t≥0
+
+LE [∥wt+1 ∥γ | F t] < ∞, a.s. (C.2) Since πˆθt (f (θ∗⊤ ϕt)) is Ft−measurable, we have 
+
+E [δt+1 | F t] = E[πˆθt (xt+1 ) | F t]−πˆθt
+
+(f (θ∗⊤ ϕt)) . Thus, by the definition of κt+1 , we obtain 
+
+κt+1 = δt+1 − E [δt+1 | F t] , ∀t ≥ 0.
+
+From this and (C.2), it follows that 
+
+sup 
+
+> t≥0
+
+E [∥κt+1 ∥γ | F t] < ∞. (C.3) Note that {∥ κt+1 ∥2 − E[∥κt+1 ∥2 | F t]}t≥0 is a martin-gale difference sequence. Then by (C.3) and martingale convergence theorem (cf. Theorem 2.8 in Chen and Guo (1991)), we have for any η > 0,
+
+> t−1
+
+∑ 
+
+> τ=0
+
+(∥κτ +1 ∥2 − E [∥κτ +1 ∥2 | F τ
+
+]) = O(t 2 
+
+> γ
+
+(log t) 2  
+
+> γ+η
+
+), a.s. Combining this bound with (C.3) again gives ∑tτ =1 ∥κτ ∥2 =
+
+O(t), a.s. Applying the Cauchy-Schwarz inequality then yields ∑tτ =1 ∥wτ κ⊤ 
+
+> τ
+
+∥ = O(t), a.s. Hence, there exists a real-valued random variable c3 > 0 such that 
+
+> t
+
+∑ 
+
+> τ=1
+
+∥∥wτ κ⊤
+
+> τ
+
+∥∥ ≤ c3t, ∀t ≥ 0. (C.4) Using the martingale convergence theorem again (cf. Theorem 2.8 in Chen and Guo (1991)), we also have 
+
+> t−1
+
+∑ 
+
+> τ=0
+
+(wτ +1 w⊤  
+
+> τ+1
+
+− E [wτ +1 w⊤  
+
+> τ+1
+
+| F τ
+
+]) = O(t 2 
+
+> γ
+
+(log t) 2  
+
+> γ+η
+
+), a.s., for any η > 0. Then, by Assumption 2, there exists a real-valued random variable ¯σ > 0 such that 
+
+> t
+
+∑ 
+
+> τ=1
+
+wτ w⊤ 
+
+> τ
+
+=
+
+> t−1
+
+∑ 
+
+> τ=0
+
+(wτ +1 w⊤  
+
+> τ+1
+
+− E [wτ +1 w⊤  
+
+> τ+1
+
+| F τ
+
+]) 
+
++
+
+> t−1
+
+∑ 
+
+> τ=0
+
+E [wτ +1 w⊤  
+
+> τ+1
+
+| F τ
+
+] ≥ ¯σtI n, a.s. (C.5) Similarly, there exists a real-valued random variable ¯σ′ >
+
+0 such that λmin {∑tτ =1 ϵτ ϵ⊤ 
+
+> τ
+
+} ≥ ¯σ′t, a.s.. For each z = [ z1, z 2]⊤ ∈ Rn+m satisfying ∥z∥ = 1 ,
+
+z⊤
+
+> t
+
+∑ 
+
+> τ=1
+
+ζτ ζ⊤ 
+
+> τ
+
+z =
+
+> t
+
+∑ 
+
+> τ=1
+
+(z⊤ 
+
+> 1
+
+wτ + z⊤ 
+
+> 2
+
+κτ )( z⊤ 
+
+> 1
+
+wτ + z⊤ 
+
+> 2
+
+κτ )⊤
+
++
+
+> t
+
+∑ 
+
+> τ=1
+
+τ −b(z⊤ 
+
+> 1
+
+wτ + z⊤ 
+
+> 2
+
+κτ )ϵ⊤ 
+
+> τ
+
+z2 + τ −2bz⊤
+
+> 2
+> t
+
+∑ 
+
+> τ=1
+
+ϵτ ϵ⊤ 
+
+> τ
+
+z2.
+
+(C.6) Let the filtration { ¯Ft}t be the nondecreasing family of 
+
+σ−algebras defined by ¯Ft = σ(x0, {ϵi}0≤i≤t−1, {wi}0≤i≤t).Then, it is immediate that κt is ¯Ft−measurable for all 
+
+t ≥ 0, and E[z⊤ 
+
+> 1
+
+wt + z⊤ 
+
+> 2
+
+κt)ϵ⊤ 
+
+> t
+
+z2 | ¯Ft] = 0 , a.s. Again, applying the martingale convergence theorem, i.e., The-orem 2.8 in Chen and Guo (1991), we obtain 
+
+> t
+
+∑ 
+
+> τ=1
+
+(z⊤ 
+
+> 1
+
+wτ +z⊤ 
+
+> 2
+
+κτ )ϵ⊤ 
+
+> τ
+
+z2 = o
+
+( t∑ 
+
+> τ=1
+
+∥z⊤ 
+
+> 1
+
+wτ + z⊤ 
+
+> 2
+
+κτ ∥2
+
+)
+
+, a.s. 
+
+(C.7) Next, we prove Lemma 3 by considering two cases. Case (i): If ∥z2∥ ≤ ¯σ/ 4c3, then ∥z1∥ ≥ √16 c23 − ¯σ2/4c3 and one can verify 4c3∥z1∥∥ z2∥t ≤ ¯σ∥z1∥2t. Thus, 
+
+z⊤
+
+> t
+
+∑ 
+
+> τ=1
+
+ζτ ζ⊤ 
+
+> τ
+
+z ≥
+
+> t
+
+∑ 
+
+> τ=1
+
+(z⊤ 
+
+> 1
+
+wτ + z⊤ 
+
+> 2
+
+κτ )( z⊤ 
+
+> 1
+
+wτ + z⊤ 
+
+> 2
+
+κτ )⊤
+
+≥¯σ∥z1∥2t − 2c3∥z1∥∥ z2∥t ≥ ¯σ√16 c23 − ¯σ2
+
+8c3
+
+t. 
+
+(C.8) Case (ii): If ∥z2∥ ≥ ¯σ/ 4c3, then by (C.6) and (C.7), we have z⊤ ∑tτ =1 ζτ ζ⊤ 
+
+> τ
+
+z ≥ τ −2bz⊤
+
+> 2
+
+∑tτ =1 ϵτ ϵ⊤ 
+
+> τ
+
+z2 ≥ 
+
+> ¯σ¯σ′
+> 4c2
+
+t1−2b. From the two cases above, Lemma 3 follows. 2
+
+Proof. [Proof of Theorem 3.] We first prove that there exists a real-valued random variable c4 > 0 such that 
+
+λmin 
+
+{ t∑ 
+
+> τ=0
+
+ϕτ ϕ⊤
+
+> τ
+
+}
+
+≥ c4t1−2b, a.s. (C.9) From the definition of {ζt}, the sequence {ζt, Ft} is a martingale difference sequence, i.e., E[ζt+1 | F t] = 0, ∀t ≥ 0, and it satisfies sup t E[∥ζt+1 ∥2 | F t] < ∞.
+
+14 Moreover, ϕt+1 − ζt+1 is Ft−measurable for all t ≥ 0,and using (B.13), (C.3)-(C.4), and Assumption 2, 
+
+> t−1
+
+∑ 
+
+> τ=0
+
+∥ϕτ +1 − ζτ +1 ∥2 = O(t), a.s., t → ∞ . (C.10) Then, by the martingale convergence theorem (Theo-rem 2.8 in Chen and Guo (1991)), we have ∑tτ =0 (ϕτ −
+
+ζτ )ζ⊤ 
+
+> τ
+
+= O(t 12 (log t) 23 ), a.s. Since b < (γ−2) 2 
+
+> 4γ(γ+2)
+
+< 14 ,
+
+> t
+
+∑ 
+
+> τ=0
+
+(ϕτ − ζτ )ζ⊤ 
+
+> τ
+
+= o(t1−2b), a.s. (C.11) Note that ∑tτ =0 ϕτ ϕ⊤ 
+
+> τ
+
+= ∑tτ =0 (ϕτ − ζτ + ζτ )( ϕτ −
+
+ζτ + ζτ )⊤ ≥ ∑tτ =0 (ϕτ − ζτ )ζ⊤ 
+
+> τ
+
++ ∑tτ =0 ζτ (ϕτ − ζτ )⊤ +
+
+∑tτ =0 ζτ ζ⊤ 
+
+> τ
+
+. Using (C.11) and Lemma 3, the first two terms are o(t1−2b), a.s., while the last term scales as 
+
+t1−2b, a.s. Hence, (C.9) holds. Moreover, for each η ∈
+
+( 8bγ−2 , 2( γ−2)  
+
+> γ(γ+2)
+
+), we have 
+
+> t
+
+∑ 
+
+> τ=0
+
+ϕτ ϕ⊤
+
+> τ
+
+1 + ∥ϕτ ∥2 ≥
+
+> t
+
+∑ 
+
+> τ=0
+
+ϕτ ϕ⊤
+
+> τ
+
+1 + ∥ϕτ ∥2 I(1 + ∥ϕτ ∥2 ≤ τ η )=
+
+> t
+
+∑ 
+
+> τ=0
+
+ϕτ ϕ⊤
+
+> τ
+
+τ η −
+
+> t
+
+∑ 
+
+> τ=0
+
+ϕτ ϕ⊤
+
+> τ
+
+τ η I(1 + ∥ϕτ ∥2 > τ η ).
+
+(C.12) Then, note that 
+
+> t
+
+∑ 
+
+> τ=0
+
+∥∥∥∥
+
+ϕτ ϕ⊤
+
+> τ
+
+τ η I(1 + ∥ϕτ ∥2 > τ η )
+
+∥∥∥∥
+
+≤
+
+> t
+
+∑ 
+
+> τ=0
+
+∥∥∥∥
+
+ϕτ ϕ⊤
+
+> τ
+
+τ η
+
+∥∥∥∥( 1 + ∥ϕτ ∥2
+
+τ η
+
+) γ−24
+
+=O
+
+( t∑ 
+
+> τ=0
+
+∥ϕτ ∥2+ γ−22
+
+τ η( 12 + γ 
+
+> 4)
+
+)
+
+, a.s. (C.13) By the Cauchy–Schwarz inequality and (B.13), we get 
+
+> t
+
+∑ 
+
+> τ=0
+
+∥ϕτ ∥2+ γ−22
+
+τ η( 12 + γ  
+
+> 4)
+
+=
+
+> t
+
+∑ 
+
+> τ=0
+
+∥ϕτ ∥1+ γ
+
+> 2
+
+τ η( 12 + γ 
+
+> 4)
+
+≤
+
+[ t∑ 
+
+> τ=0
+
+∥ϕτ ∥γ
+
+] γ+2 2γ [ t∑ 
+
+> τ=0
+
+1
+
+τ ηγ (γ+2) /2( γ−2) 
+
+] γ−22γ
+
+≤t γ+2 2γ t γ−22γ −η(2+ γ)/4 = t1−η(2+ γ)/4.
+
+(C.14) Since η > 8bγ−2 , we have 1 − η(2 + γ)/4 < 1 − 2b − η. 
+
+Combining this with (C.13) and (C.14) gives 
+
+> t
+
+∑ 
+
+> τ=0
+
+ϕτ ϕ⊤
+
+> τ
+
+τ η I(1 + ∥ϕτ ∥2 > τ η ) = o(t1−2b−η ), a.s. (C.15) From (C.12), (C.15), and (C.9), we get t1−2b−η = O(λt),
+
+a.s., where λt is given in (20). With this, Theorem 3 follows from property (iii) of Theorem 1. 2
+
+D Proof of Theorem 4 Proof. [Proof of Theorem 4:] From Assumption 5, there exists a constant h > 0 such that ρ1 := M0ρh 
+
+> 0
+
+∈ (0 , 12 ).
+
+For each fixed t ≥ 0 and j ∈ [0 , h − 1] , define 
+
+¯xt+j+1 = f (A∗ ¯xt+j + B∗πθ∗ (¯ xt+j ) + wt+j+1 , ¯xt = xt.
+
+By Assumption 5, it holds that 
+
+∥x∗ 
+
+> t+h
+
+− ¯xt+h∥2 ≤ ρ1∥x∗ 
+
+> t
+
+− ¯xt∥2, a.s . (D.1) From the L-Lipschitz continuity of πθ∗ and Assump-tion 5, it holds that for each j ∈ [t, t + h],
+
+∥uj − ¯uj ∥ = ∥πˆθj−1 (xj ) + vj − πθ∗ (¯ xj )∥≤∥ πθ∗ (xj ) − πθ∗ (¯ xj )∥ + ∥πˆθj−1 (xj ) − πθ∗ (xj )∥ + ∥vj ∥≤L∥xj − ¯xj ∥ + L1∥θ∗ − ˆθj−1∥∥ xj ∥ + ¯ ϵj −b, (D.2) where ¯ϵ is the upper bound of the probing signal {ϵt}, and 
+
+L1 is the constant in Assumption 4. Applying the bound in (D.2) to the state recursion and using the Lipschitz property of f (·), there exists a constant ¯L > 0 such that 
+
+∥xj+1 − ¯xj+1 ∥ ≤ ¯L∥xj − ¯xj ∥ + ¯L∥uj − ¯uj ∥≤ ( ¯L + L ¯L)∥xj − ¯xj ∥ + ¯LL 1∥θ∗ − ˆθj−1∥∥ xj ∥ + ¯L¯ϵj −b.
+
+From this and the initial equality ¯xt = xt, there exists a constant M2 > 0 such that for each j ∈ [t, t + h],
+
+∥xt+h − ¯xt+h∥2 ≤ M2
+
+> t+h
+
+∑ 
+
+> τ=t
+
+∥θ∗ − ˆθτ −1∥2∥xτ ∥2 + M2t−2b.
+
+Combining the above bound and (D.1) gives 
+
+∥x∗ 
+
+> t+h
+
+− xt+h∥2 ≤ 2∥x∗ 
+
+> t+h
+
+− ¯xt+h∥2 + 2 ∥¯xt+h − xt+h∥2
+
+≤2ρ1∥x∗ 
+
+> t
+
+− xt∥2 + 2 M2
+
+> t+h
+
+∑ 
+
+> τ=t
+
+∥θ∗ − ˆθτ −1∥2∥xτ ∥2 + 2 M2t−2b.
+
+(D.3) Moreover, by the Cauchy–Schwarz inequality together with Theorems 2 and 3, we have 
+
+> ⌊t/h ⌋+1
+
+∑
+
+> k=0
+> kh +h
+
+∑ 
+
+> τ=kh
+
+∥θ∗ − ˆθτ −1∥2∥xτ ∥2
+
+=O(( 
+
+> t+h
+
+∑ 
+
+> τ=0
+
+∥θ∗ − ˆθτ −1∥2 γγ−2 )1− 2 
+
+> γ
+
+(
+
+> t+h
+
+∑ 
+
+> τ=0
+
+∥xτ ∥γ ) 2 
+
+> γ
+
+)=O([(log t)1+ δ t(2 b+η)]1− 2 
+
+> γ
+
+t 2 
+
+> γ
+
+), a.s. ,
+
+(D.4) where ⌊t/h ⌋ denotes the integer part of t/h . Then, com-bining (D.3) with (D.4), we get 
+
+> t
+
+∑ 
+
+> τ=0
+
+∥x∗ 
+
+> τ
+
+− xτ ∥2
+
+=O(
+
+> ⌊t/h ⌋+1
+
+∑
+
+> k=0
+> kh +h
+
+∑ 
+
+> τ=kh
+
+∥θ∗ − ˆθτ −1∥2∥xτ ∥2) + O(
+
+> t
+
+∑ 
+
+> τ=0
+
+τ −2b)=O((log t) (1+ δ)( γ−2)  
+
+> γ
+
+t(2 b+η−1)(1 − 2  
+
+> γ)+1
+
++ t1−2b), a.s. 
+
+(D.5) 15 Furthermore, note that 
+
+∥u∗ 
+
+> t
+
+− ut∥2
+
+=∥πθ∗ (x∗ 
+
+> t
+
+) − πˆθt−1 (x∗ 
+
+> t
+
+) + πˆθt−1 (x∗ 
+
+> t
+
+) − πˆθt−1 (xt)∥2
+
+=O(∥θ∗ − ˆθτ −1∥2∥x∗ 
+
+> t
+
+∥2) + O(∥xt − x∗ 
+
+> t
+
+∥2), a.s. 
+
+Then, using (D.4) and (D.5), the following holds almost surely as t → ∞ ,
+
+> t
+
+∑ 
+
+> τ=0
+
+∥u∗ 
+
+> τ
+
+− uτ ∥2
+
+=O((log t) (1+ δ)( γ−2)  
+
+> γ
+
+t(2 b+η−1)(1 − 2  
+
+> γ)+1
+
++ t1−2b). (D.6) Theorem 4 then follows from (29), (D.5), and (D.6). 2
+
+E Proof of Lemma 1 Proof. [Proof of Case (i).] Let α(·) ≡ min i∈[n] αi and 
+
+β(·) ≡ min i∈[n] βi. Then α(·) and β(·) are positive con-stant functions, and hence are nonincreasing and nonde-creasing, respectively. Moreover, inf z∈Rn α(∥f (z)∥) > 0
+
+and sup z∈Rn β(∥f (z)∥) < ∞. We now verify (2). In fact, for and c > 0 and all ∥y∥, ∥z∥ ≤ c,
+
+(y − z)⊤(f (y) − f (z)) = 
+
+> n
+
+∑
+
+> i=1
+
+(yi − zi)⊤(fi(yi) − fi(zi)) 
+
+≥
+
+> n
+
+∑
+
+> i=1
+
+αi∥yi − zi∥2 ≥ (min  
+
+> i∈[n]
+
+αi)∥y − z∥2 = α(c)∥y − z∥2.
+
+(E.1) where yi and zi denote the i-th components of vectors y
+
+and z, respectively. Similarly, we have ∥f (y) − f (z)∥ ≤ 
+
+β(c)∥y − z∥. Thus, (2) holds and Case (i) follows. [Proof of Case (ii).] With α(·) and β(·) defined in (4), it is clear that α(·) is nonincreasing and β(·) is non-decreasing, respectively. Besides, since sup z∈Rn f (z) <
+
+∞, it follows form (3) that inf z∈Rn α(∥f (z)∥) > 0 and 
+
+sup z∈Rn β(∥f (z)∥) < ∞. Moreover, for any c ≥ 0 and 
+
+∥y∥, ∥z∥ ≤ c, by the mean-value theorem, we have 
+
+(yi − zi)( fi(yi) − fi(zi)) ≥ ( inf 
+
+> |x|≤ c
+
+ddx fi(x))( yi − zi)2.
+
+where yi and zi are the i-th components of vectors y
+
+and z, respectively. Then, using an argument analogous to that in (E.1), we obtain (y − z)⊤(f (y) − f (z)) ≥
+
+(inf i∈[n],|x|≤ c ddx fi(x)) ∥y −z∥2 = α(c)∥y −z∥2. Similarly, we have ∥f (y)−f (z)∥ ≤ β(c)∥y −z∥. Case (ii) follows. 2
+
+F Proof of Lemma 2 Proof. [Proof of Lemma 2.] Following the analysis ideas of the classical LS for linear stochastic regression models (see, Lai and Wei (1982), Guo (1995)), we consider the stochastic time-varying Lyapunov function: 
+
+Vt = tr 
+
+[
+
+(θ∗ − ˆθt)⊤P −1 
+
+> t
+
+(θ∗ − ˆθt)
+
+]
+
+, t ≥ 0.
+
+For each t ≥ 0, define 
+
+et = ˆθt + μ−1 
+
+> t
+
+dtPt+1 ϕt[xt+1 − f (ˆθ⊤ 
+
+> t
+
+ϕt)] ⊤.
+
+We first prove the following inequality: 
+
+Vt+1 ≤ tr [(θ∗ − et)⊤P −1
+
+> t+1
+
+(θ∗ − et)] . (F.1) To prove (F.1), we consider two cases. Case (i) : If et /∈ Θ,then by (9) and the definition of the projection operator 
+
+Πt+1 Θ (·), we have ˆθt+1 = arg min y∈Θϵ ∥et − y∥P −1
+
+> t+1
+
+. Here, the norm ∥·∥ P −1
+
+> t+1
+
+is defined by ∥x∥P −1
+
+> t+1
+
+= (tr[ x⊤P −1
+
+> t+1
+
+x]) 12
+
+for all x ∈ R(m+n)×n and t ≥ 0. Since Θϵ is convex and compact, and θ∗ ∈ Θϵ by construction, (F.1) follows from the non-expansive property of the projection oper-ator (see Lemma 1 in Zhang et al. (2022)). Case (ii) : If instead et ∈ Θ, it satisfies ˆθt+1 = et, hence, the inequal-ity (F.1) holds with equality. Combining the two cases, (F.1) holds for all t ≥ 0.From (A. 8) , we have P −1 
+
+> t+1
+
+= P −1 
+
+> t
+
++μ−1 
+
+> t
+
+d2 
+
+> t
+
+ϕtϕ⊤ 
+
+> t
+
+. Hence, 
+
+(θ∗ − ˆθt)⊤P −1
+
+> t+1
+
+(θ∗ − ˆθt)=Vt + μ−1 
+
+> t
+
+d2 
+
+> t
+
+tr [( θ∗ − ˆθt)⊤ϕtϕ⊤ 
+
+> t
+
+(θ∗ − ˆθt)] , (F.2) and 
+
+atP −1
+
+> t+1
+
+Ptϕt =at
+
+(I + μ−1 
+
+> t
+
+d2 
+
+> t
+
+ϕtϕ⊤ 
+
+> t
+
+Pt
+
+) ϕt
+
+=atϕt
+
+(1 + μ−1 
+
+> t
+
+d2 
+
+> t
+
+ϕ⊤ 
+
+> t
+
+Ptϕt
+
+) = μ−1 
+
+> t
+
+ϕt. (F.3) Substituting (F.2) and (F.3) into (F.1) yields 
+
+Vt+1 ≤ tr [(θ∗ − et)⊤P −1
+
+> t+1
+
+(θ∗ − et)]
+
+=Vt + μ−1 
+
+> t
+
+d2 
+
+> t
+
+tr[( θ∗ − ˆθt)⊤ϕtϕ⊤ 
+
+> t
+
+(θ∗ − ˆθt)] 
+
+− 2μ−1 
+
+> t
+
+dt tr[( θ∗ − ˆθt)⊤ϕtψ⊤ 
+
+> t
+
+]+ μ−1 
+
+> t
+
+atd2 
+
+> t
+
+ϕ⊤ 
+
+> t
+
+Ptϕt tr[ ψtψ⊤ 
+
+> t
+
+]+ 2 μ−1 
+
+> t
+
+atd2 
+
+> t
+
+ϕ⊤ 
+
+> t
+
+Ptϕt tr[ ψtw⊤
+
+> t+1
+
+]
+
+− 2μ−1 
+
+> t
+
+dt tr[( θ∗ − ˆθt)⊤ϕtw⊤
+
+> t+1
+
+]+ μ−2 
+
+> t
+
+d2 
+
+> t
+
+ϕ⊤ 
+
+> t
+
+Pt+1 ϕt tr[ wt+1 w⊤
+
+> t+1
+
+].
+
+(F.4) Moreover, by Assumption 1, we have 
+
+tr [( θ∗ − ˆθt)⊤ϕtψ⊤ 
+
+> t
+
+] ≥ 2dttr [( θ∗ − ˆθt)⊤ϕtϕ⊤ 
+
+> t
+
+(θ∗ − ˆθt)] .
+
+(F.5) Besides, by the definition of μt in (10), we have dtμt ≥
+
+d2 
+
+> t
+
+g2 
+
+> t
+
+ϕ⊤ 
+
+> t
+
+Ptϕt, and hence 
+
+dt ≥ μ−1 
+
+> t
+
+d2 
+
+> t
+
+g2 
+
+> t
+
+ϕ⊤ 
+
+> t
+
+Ptϕt ≥ atd2 
+
+> t
+
+g2 
+
+> t
+
+ϕ⊤ 
+
+> t
+
+Ptϕt. (F.6) Note that 
+
+tr [ψtψ⊤ 
+
+> t
+
+] ≤ g2 
+
+> t
+
+tr [( θ∗ − ˆθt)⊤ϕtϕ⊤ 
+
+> t
+
+(θ∗ − ˆθt)] , (F.7) Then, by (F.5), (F.6), and (F.7), we have 
+
+μ−1 
+
+> t
+
+dttr [( θ∗ − ˆθt)⊤ϕtψ⊤ 
+
+> t
+
+] ≥ μ−1 
+
+> t
+
+atd2 
+
+> t
+
+ϕ⊤ 
+
+> t
+
+Ptϕttr [ψtψ⊤ 
+
+> t
+
+].
+
+(F.8) Now, substituting (F. 5) and (F. 8) into (F. 4) , and sum-16 ming up both sides of (F. 4) from τ = 0 to t, we obtain 
+
+Vt ≤V0 −
+
+> t
+
+∑ 
+
+> τ=0
+
+μ−1 
+
+> τ
+
+d2 
+
+> τ
+
+tr [( θ∗ − ˆθτ )⊤ϕτ ϕ⊤ 
+
+> τ
+
+(θ∗ − ˆθτ )] + 2 
+
+> t
+
+∑ 
+
+> τ=0
+
+μ−1 
+
+> τ
+
+aτ d2 
+
+> τ
+
+ϕ⊤ 
+
+> τ
+
+Pτ ϕτ tr [ψτ w⊤ 
+
+> τ+1
+
+]
+
+− 2
+
+> t
+
+∑ 
+
+> τ=0
+
+μ−1 
+
+> τ
+
+dτ tr [( θ∗ − ˆθτ )⊤ϕτ w⊤ 
+
+> τ+1
+
+]+
+
+> t
+
+∑ 
+
+> τ=0
+
+μ−2 
+
+> τ
+
+d2 
+
+> τ
+
+ϕ⊤ 
+
+> τ
+
+Pτ +1 ϕτ tr [wτ +1 w⊤ 
+
+> τ+1
+
+]. (F.9) We now analyze the last three terms on the right-hand side (RHS) of (F.9). For the third term on the RHS of (F.9), by the martingale convergence theorem (Theorem 2.8 in Chen and Guo (1991)) and Assumption 2, we have 
+
+> t
+
+∑ 
+
+> τ=0
+
+μ−1 
+
+> τ
+
+dτ tr [( θ∗ − ˆθτ )⊤ϕτ w⊤ 
+
+> τ+1
+
+]=o
+
+( t∑ 
+
+> τ=0
+
+μ−1 
+
+> τ
+
+d2 
+
+> τ
+
+tr 
+
+[
+
+(θ∗ − ˆθτ )⊤ϕτ ϕ⊤ 
+
+> τ
+
+(θ∗ − ˆθτ )
+
+])
+
+, a.s. 
+
+(F.10) For the fourth term, note that aτ d2 
+
+> τ
+
+ϕ⊤ 
+
+> τ
+
+Pτ ϕτ ≤ 1 and 
+
+tr [ψτ ψ⊤ 
+
+> τ
+
+] ≤ g2 
+
+> τ
+
+tr [( θ∗ − ˆθτ )⊤ϕτ ϕ⊤ 
+
+> τ
+
+(θ∗ − ˆθτ )] . Then, again applying Theorem 2.8 in Chen and Guo (1991) together with (A.6) and (F.6), we obtain 
+
+> t
+
+∑ 
+
+> τ=0
+
+μ−1 
+
+> τ
+
+aτ d2 
+
+> τ
+
+ϕ⊤ 
+
+> τ
+
+Pτ ϕτ tr [ψτ w⊤ 
+
+> τ+1
+
+]=o
+
+( t∑ 
+
+> τ=0
+
+(μ−1 
+
+> τ
+
+aτ d2 
+
+> τ
+
+ϕ⊤ 
+
+> τ
+
+Pτ ϕτ )2tr [ψτ ψ⊤ 
+
+> τ
+
+]
+
+)
+
+=o
+
+( t∑ 
+
+> τ=0
+
+μ−1 
+
+> τ
+
+d2 
+
+> τ
+
+tr [( θ∗ − ˆθτ )⊤ϕτ ϕ⊤ 
+
+> τ
+
+(θ∗ − ˆθτ )] 
+
+)
+
+, a.s. 
+
+For the last term on the RHS of (F.9), applying (A.8) and, for all k ≥ 0, setting wk = μ−1/2 
+
+> k
+
+dk and Ak = P −1
+
+> k+1
+
+in (Lai and Wei, 1982, Lemma 2(ii)), we obtain 
+
+> t
+
+∑ 
+
+> τ=0
+
+μ−1 
+
+> τ
+
+d2 
+
+> τ
+
+ϕ⊤ 
+
+> τ
+
+Pτ +1 ϕτ = O (log rt) , a.s. (F.11) Let Dt = μ−1 
+
+> t
+
+d2 
+
+> t
+
+ϕ⊤ 
+
+> t
+
+Pt+1 ϕt for t ≥ 0. By (F.11) and the Abel–Dini–Pringsheim theorem (see, e.g., (Hildebrandt , 1942, Theorem 1a)), it follows almost surely that 
+
+> t
+
+∑ 
+
+> τ=0
+
+μ−1 
+
+> τ
+
+d2 
+
+> τ
+
+ϕ⊤ 
+
+> τ
+
+Pτ +1 ϕτ
+
+(1 + log rτ )1+ δ = O
+
+( t∑ 
+
+> τ=0
+
+Dτ
+
+(∑τk=0 Dk)1+ δ
+
+)
+
+= O (1) .
+
+Since μt ≥ (1 + log rt)1+ δ for all t ≥ 0, we further have 
+
+> t
+
+∑ 
+
+> τ=0
+
+μ−2 
+
+> τ
+
+d2 
+
+> τ
+
+ϕ⊤ 
+
+> τ
+
+Pτ +1 ϕτ = O (1) , a.s. (F.12) From (F.12) and sup t≥0 E[∥wt+1 ∥2 | F t] < ∞, we have 
+
+> t
+
+∑ 
+
+> τ=0
+
+μ−2 
+
+> τ
+
+d2 
+
+> τ
+
+ϕ⊤ 
+
+> τ
+
+Pτ +1 ϕτ E[∥wτ +1 ∥2 | F τ ] = O (1) . (F.13) Moreover, the sequence {∥ wt+1 ∥2 − E[∥wt+1 ∥2 | F t]}t≥0
+
+is a martingale difference sequence with respect to {F t}.Thus, by the martingale convergence theorem (Theo-rem 2.8 in Chen and Guo (1991)) and (F.12), we obtain 
+
+> t
+
+∑ 
+
+> τ=0
+
+μ−2 
+
+> τ
+
+d2 
+
+> τ
+
+ϕ⊤ 
+
+> τ
+
+Pτ +1 ϕτ (∥wτ +1 ∥2−E[∥wτ +1 ∥2 | F τ ]) = O(1) , a.s. (F.14) Substituting (F.10)-(F.14) into (F.9) yields Lemma 2. 2
+
+References 
+
+Elman, J. L. (1990). Finding structure in time. Cognitive Science , 14(2), 179–211. Mienye, I. D., Swart, T. G., & Obaido, G. (2024). A com-prehensive review of deep learning: Architectures, re-cent advances, and applications. Information , 15(12), 755. Schäfer, A. M., & Zimmermann, H. G. (2006). Recurrent neural networks are universal approximators, In In-ternational Conference on Artificial Neural Networks ,Berlin, Heidelberg: Springer Berlin Heidelberg, 632– 640. Keeler, J. D., Pichler, E. E., & Ross, J. (1989). Noise in neural networks: Thresholds, hysteresis, and neuro-modulation of signal-to-noise. Proceedings of the Na-tional Academy of Sciences , 86(5), 1712–1716. Wu, J. (2001). Introduction to Neural Dynamics and Sig-nal Transmission Delay . Walter de Gruyter. Durlauf, S. N., & Ioannides, Y. M. (2010). Social inter-actions. Annual Review of Economics , 2(1), 451–478. Xing, Y., He, X., Fang, H., & Johansson, K. H. (2022). Recursive network estimation for a model with binary-valued states. IEEE Transactions on Automatic Con-trol , 68(7), 3872–3887. Ebert, P. M., Mazo, J. E., & Taylor, M. G. (1969). Over-flow oscillations in digital filters. Bell System Techni-cal Journal , 48(9), 2999–3020. Ooba, T. (2003). Stability of linear discrete dynamics employing state saturation arithmetic. IEEE Trans-actions on Automatic Control , 48(4), 626–630. Bizyaeva, A., Franci, A., & Leonard, N. E. (2022). Nonlinear opinion dynamics with tunable sensitiv-ity. IEEE Transactions on Automatic Control , 68(3), 1415–1430. Su, W., Chen, X., Yu, Y., & Chen, G. (2021). Noise-based control of opinion dynamics. IEEE Transactions on Automatic Control , 67(6), 3134–3140. Ancona, C., Lellis, P. D., & Iudice, F. L. (2023). Influ-encing opinions in a nonlinear pinning control model. 
+
+IEEE Control Systems Letters , 7, 1945–1950. Schoukens, J., & Ljung, L. (2019). Nonlinear system identification: A user-oriented road map. IEEE Con-trol Systems Magazine , 39(6), 28–99. 17 Chen, H., & Guo, L. (1991). Identification and Stochastic Adaptive Control . Boston, MA: Birkhäuser. Wahlberg, B., Welsh, J., & Ljung, L. (2015). Identifica-tion of stochastic Wiener systems using indirect infer-ence. IFAC-PapersOnLine , 48(28), 620–625. Guo, L. (1996). Self-convergence of weighted least squares with applications to stochastic adaptive con-trol. IEEE Transactions on Automatic Control , 41(1), 79–89. Foster, D., Sarkar, T., & Rakhlin, A. (2020). Learning nonlinear dynamical systems from a single trajectory. In Learning for Dynamics and Control , 851–861. Oymak, S. (2019). Stochastic gradient descent learns state equations with nonlinear activations. In Confer-ence on Learning Theory , 2551–2579. Kowshik, S., Nagaraj, D., Jain, P., & Netrapalli, P. (2021). Near-optimal offline and streaming algorithms for learning non-linear dynamical systems. Advances in Neural Information Processing Systems , 34, 8518– 8531. Sattar, Y., & Oymak, S. (2022). Non-asymptotic and ac-curate learning of nonlinear dynamical systems. Jour-nal of Machine Learning Research , 23(140), 1–49. Åström, K. J., & Wittenmark, B. (1973). On self tuning regulators. Automatica , 9(2), 185–199. Lai, T. L., & Wei, C. Z. (1982). Least squares estimates in stochastic regression models with applications to identification and control of dynamic systems. The Annals of Statistics , 10(1), 154–166. Goodwin, G. C., Ramadge, P. J., & Caines, P. E. (1981). Discrete time stochastic adaptive control. SIAM Jour-nal on Control and Optimization , 19(6), 829–853. Kumar, P. R. (1990). Convergence of adaptive con-trol schemes using least squares parameter estimates. 
+
+IEEE Transactions on Automatic Control , 35(4), 416– 424. Guo, L. (1995). Convergence and logarithm laws of self-tuning regulators. Automatica , 31(3), 435–450. Liu, N., Zhao, C., Tan, S., & Lü, J. (2025). Optimal adap-tive control of linear stochastic systems with quadratic cost function. IEEE Transactions on Automatic Con-trol . 70(10), 7024 - 7031. Dörfler, F., Tesi, P., & De Persis, C. (2023). On the certainty-equivalence approach to direct data-driven LQR design. IEEE Transactions on Automatic Con-trol , 68(12), 7989–7996. Chiuso, A., Fabris, M., Breschi, V., & Formentin, S. (2025). Harnessing uncertainty for a separation prin-ciple in direct data-driven predictive control. Auto-matica , 173, 112070. Bian, T., Jiang, Y., & Jiang, Z. P. (2016). Adaptive dy-namic programming for stochastic systems with state and control dependent noise. IEEE Transactions on Automatic Control , 61(12), 4170–4175. Guo, L. (1997). On critical stability of discrete-time adaptive nonlinear control. IEEE Transactions on Au-tomatic Control , 42(11), 1488–1499. Bercu, B., & Portier, B. (2002). Adaptive control of para-metric nonlinear autoregressive models via a new mar-tingale approach. IEEE Transactions on Automatic Control , 47(9), 1524–1528. Li, C., & Lam, J. (2013). Stabilization of discrete-time nonlinear uncertain systems by feedback based on LS algorithm. SIAM Journal on Control and Optimiza-tion , 51(2), 1128–1151. Li, W., & Krstic, M. (2020). Stochastic adaptive nonlin-ear control with filterless least squares. IEEE Trans-actions on Automatic Control , 66(9), 3893–3905. Liu, Z., & Li, C. (2025). Optimal adaptive output reg-ulation of discrete-time nonlinear stochastic systems. 
+
+SIAM Journal on Control and Optimization , 63(4), 2369–2396. Ma, H. (2007). Finite-model adaptive control using WLS-like algorithm. Automatica , 43(4), 677–684. Li, C., & Chen, M. Z. Q. (2015). Simultaneous identifi-cation and stabilization of nonlinearly parameterized discrete-time systems by nonlinear least squares al-gorithm. IEEE Transactions on Automatic Control ,61(7), 1810–1823. Zhang, L., Zhao, Y., & Guo, L. (2022). Identification and adaptation with binary-valued observations under non-persistent excitation. Automatica , 138, 110158. Zhang, L., & Guo, L. (2025). Adaptive tracking control with binary-valued output observations. 
+
+IEEE Transactions on Automatic Control . DOI: 10.1109/TAC.2025.3631410. Zhang, L., & Zhang, S. (2025). Online learning for non-linear dynamical systems without the IID condition. arXiv preprint arXiv:2504.02995. Zhao, Y., Guo, J., & Zhang, J. (2013). Adaptive track-ing control of linear systems with binary-valued ob-servations and periodic target. IEEE Transactions on Automatic Control , 58(5), 1293–1298. Zhao, W., Weyer, E., Yin, G., Dong, D., Zhang, Y., & Shen, T. (2023). Adaptive regulation of block-oriented nonlinear systems using binary sensors with applica-tions to automotive engine control. IEEE Transac-tions on Automatic Control , 68(3), 1369–1382. Duncan, T. E., Guo, L., & Pasik-Duncan, B. (1999). Adaptive continuous-time linear quadratic Gaussian control. IEEE Transactions on Automatic Control ,44(9), 1653–1662. Hager, W. W. (1989). Updating the inverse of a matrix. 
+
+SIAM Review , 31(2), 221–239. Van der Schaft, A. (2000). L2-gain and Passivity Techniques in Nonlinear Control . Berlin, Heidelberg: Springer Berlin Heidelberg. Bloem, M., Alpcan, T., & Başar, T. (2009). Optimal and robust epidemic response for multiple networks. 
+
+Control Engineering Practice , 17, 525–533. Fontan, A., & Zhang, S. (2025) Collective decision-making dynamics in hypernetworks. IEEE 64th Con-ference on Decision and Control (CDC) , 6222–6227. Hildebrandt, T. H. (1942). Remarks on the Abel-Dini theorem. The American Mathematical Monthly , 49(7), 441–445. 18

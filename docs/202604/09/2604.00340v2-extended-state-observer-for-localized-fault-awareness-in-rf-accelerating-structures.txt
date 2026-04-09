@@ -1,0 +1,420 @@
+Title: Extended State Observer for Localized Fault Awareness in RF Accelerating Structures
+
+URL Source: https://arxiv.org/pdf/2604.00340v2
+
+Published Time: Tue, 07 Apr 2026 00:46:17 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# Extended State Observer for Localized Fault Awareness in RF Accelerating Structures 
+
+Luke S. Baker, Sungil Kwon, Kwame Jyamfi, Quinten Cole, Isaac Roybal, AJ Garcia, Phil Torrez, Lawrence Castellano 
+
+Abstract — An observer framework is presented for robust regulation of RF cavity fields and localized identification of disturbances in RF systems. A standard cavity field observer is augmented with additional states to estimate the evolution of cavity detuning and phase drifts induced by the drive and receiver chains. Monte Carlo simulations are performed to assess the performance of the proposed estimator under realistic conditions for the intended high-power linear accelerator oper-ation. Results showcase precise cavity field regulation and the reliability with which the observer assigns deviations to the cor-rect subsystem. The resulting diagnostic capability provides a foundation for improved fault detection, faster troubleshooting during accelerator operation, and more informed maintenance of RF systems in large accelerator facilities. 
+
+I. I NTRODUCTION 
+
+Radio-frequency (RF) accelerating cavities are fundamen-tal components for transferring energy in modern particle accelerators. These resonant electromagnetic structures store RF energy synchronized with the arrival of charged particle bunches to efficiently transfer energy from high-power RF amplifiers such as klystrons and solid-state transmitters to the beam [1], [2]. Chains of coupled resonant cavities form accelerating structures through which the electromagnetic behavior is accurately modeled using the theory of coupled resonators [3], [4]. These models describe dispersion charac-teristics, field stability, and sensitivity to fabrication errors in multicell cavity structures. Because the energy gain imparted to the beam depends directly on the amplitude and phase of the accelerating field, maintaining stable cavity fields is essential for preserving quality beam and minimizing energy spread during accelerator operation [5]. The Los Alamos Neutron Science Center (LANSCE) provides a prominent example of an RF linear accelerator (linac) operating under such conditions. The LANSCE linac accelerates protons to energies approaching 800 MeV using a sequence of RF accelerating structures operating at multiple frequencies [6], [7]. Following Cockcroft Walton injectors and particle bunchers, acceleration begins with a 201.25 MHz drift-tube linac (DTL) that raises beam energy to approximately 100 MeV [7]. This is followed by a series of 805 MHz side-coupled cavity modules that provide the       
+
+> The authors would like to thank Alexander Scheinker, Anatoly Zlotnik, and Charles E. Taylor for helpful discussions. All authors are with the Accelerator Operations and Technology Division at the Los Alamos National Laboratory, Los Alamos, NM, USA 87545. L.S. Baker (lsbaker@lanl.gov) is the author of correspondence. Research conducted at Los Alamos National Laboratory is done under the auspices of the National Nuclear Security Administration of the U.S. Department of Energy under Contract No. 89233218CNA000001. Report No. LA-UR-26-22463.
+> Beam Current
+> RF Envelope
+> 0325 μs 950 μs
+> Fill Flattop RF Off
+
+325 μs 625 μs 7.38 ms 
+
+V cav 
+
+Fig. 1: Illustration of a macropulse repeated at 120 Hz. Beam is present only during the regulated flattop with a bunch repetition rate of 805 MHz for the side-coupled cavities at LANSCE. remaining energy gain [8]. The side-coupled architecture enables stable π/ 2-mode operation in long cavity chains while maintaining efficient RF coupling and field uniformity across the structure [8], [9]. Over several decades of oper-ation, LANSCE has provided extensive experience with the long-term operational behavior of RF systems in demanding accelerator environments [10], [11]. As illustrated in Figure 1, LANSCE operates in pulsed mode up to 120 Hz, where RF power is enabled only during the fill and flattop portions of each macropulse. A distinctive feature of LANSCE operation is the wide diversity of beam flavors delivered to multiple experimental facilities, including the Lujan Neutron Scattering Center, the Proton Radiography Facility, the Weapons Neutron Research Facility, the Isotope Production Facility, and the Ultra Cold Neutron Facility [12], [13]. These programs require beam pulses with substantially different average currents, repetition rates, and time structures [14]. As a result, the RF cavities experience a wide range of beam-loading conditions and dis-turbances that depend on beam current and its phase relative to the RF waveform [15], [16]. Additional perturbations arise from cavity detuning caused by thermal expansion, Lorentz-force deformation, and mechanical vibrations. These shift the resonant frequency and modify the efficiency of RF power transfer to the cavity fields [17]. In addition to intrinsic cavity perturbations, temperature variations in transmission cables and electronic components can shift the phases of RF drive and pickup signals relative to the reference. Projects at LANSCE continue to upgrade RF infrastructure and digital low-level RF (LLRF) control systems to improve stability and meet the demands of an increasingly wide range of beam flavors [18], [19], [20], [21]. Early accelerator facilities employed analog feedback 
+
+> arXiv:2604.00340v2 [math.OC] 4 Apr 2026
+
+loops and feedforward compensation to mitigate beam-loading transients and maintain acceptable field stability in pulsed linacs. Advances in digital signal processing and field-programmable gate array (FPGA) platforms have since enabled more flexible and precise digital LLRF architectures [22], [23], [24]. Modern systems represent field signals in complex baseband (IQ) form derived by approximate RLC circuit models to enable vector control of cavity fields using high-speed digital feedback loops [25], [26], [27], [28]. These architectures integrate RF detection, digital control algorithms, and timing synchronization to achieve amplitude and phase stability with precision for demanding accelerator environments. Large accelerator projects such as the Interna-tional Linear Collider and the European X-Ray Free Electron Laser (XFEL) have more recently provided opportunity to drive advances in RF technology for high-precision RF reference distribution, advanced RF diagnostics, and energy upgrades beyond 1 to 3 TeV [29], [30], [31], [32]. Proportional–integral (PI) control combined with feedfor-ward compensation is widely used in digital LLRF sys-tems as the basis for feedback regulation of cavity field amplitude and phase [33], [5], [27]. Robust and model-predictive control techniques have been proposed to reject disturbances and incorporate cavity dynamics more directly into the control design [34], [35], [36]. At the same time, adaptive and model-independent control methods have been explored to address time-varying operating conditions and uncertainties in RF cavity systems. Techniques based on ex-tremum seeking have been applied to automatically tune cav-ity resonance and optimize RF system performance without requiring detailed models of the underlying dynamics [37], [38]. Adaptive resonance control and beam-loading compen-sation strategies have also been proposed for operation under changing beam conditions [12], [16]. These developments reflect a broader trend toward RF control systems capable of accommodating multiple sources of variation while providing improved insight into system behavior [39], [5]. A persistent challenge in RF cavity control is distinguish-ing between physical sources of phase and amplitude error that produce similar signatures in measured RF signals. In digital LLRF systems, cavity detuning and phase drifts in the forward drive and receiver chains can all appear as rotations of the cavity phasor in the complex baseband representation [40], [41], [42], [43]. Conventional feedback controllers regulate the cavity field without explicitly identifying the origin of these disturbances, which complicates diagnostics and fault detection during accelerator operation. This work develops an observer framework that separates these distur-bance mechanisms within a unified baseband cavity model by augmenting the standard cavity field observer with addi-tional states that estimate forward-chain phase drift, cavity detuning, and receiver-chain phase drift. Beyond cavity field regulation, this approach provides a means to identify both the source and location of disturbances within the RF system for more informed diagnostics and troubleshooting before performance degrades or protective interlocks are triggered. The remainder of the paper is organized as follows. Section II develops a complex baseband model of the cavity dynamics, RF drive chain, and receiver system. Section III introduces the observer architecture used to estimate cavity state, additive disturbances, detuning, and hardware phase drifts. Section IV presents the feedforward and feedback control strategies used to regulate the cavity field based on these estimates. Section V evaluates the performance of the proposed approach using Monte Carlo simulations that compare regulation performance and fault localization capability against a conventional observer structure. II. B ASEBAND CAVITY MODEL 
+
+An accelerating cavity operating in its fundamental mode is approximated as a narrowband resonator at nominal angu-lar frequency ω0 and loaded quality factor QL. To model the cavity dynamics and associated control system, all voltages are represented as complex baseband envelopes in a frame rotating at the LLRF reference angular frequency ωref [44]. The physical accelerating voltage is given by 
+
+vcav (t) = ℜ
+
+n
+
+V cav (t) ejω ref to
+
+, (1) where V cav (t) is a slowly varying complex envelope whose magnitude and phase determine the accelerating gradient and RF phase relative to the LLRF reference. This section derives a complex baseband state-space model for estimating 
+
+V cav (t). The objective is to separate slow drifts introduced by the forward drive and receiver measurement chains from detuning dynamics associated with cavity operation off res-onance. Figure 2 illustrates the LLRF feedback loop and channels through which disturbances enter the system. 
+
+A. Drive Synthesis and Forward Path 
+
+In digital LLRF systems such as those at LANSCE, a complex baseband voltage command V (t) is synthesized by an FPGA within a field control module (FCM) or equivalent hardware. This signal is converted by a DAC (digital-to-analog converter) to an analog intermediate frequency (IF), upconverted to the RF carrier, amplified by the high-power amplifier chain, and delivered to the cavity input coupler by waveguide or coaxial transmission. Temperature varia-tions and slow phase drift in the modulator, upconverter,       
+
+> x∗
+> k
+> ±FCM Forward chain
+> φfwd
+> k
+> Cavity
+> Ak, B k
+> φrec
+> k
+> Receiver chain
+> +
+> νk
+> ±ESO
+> ˆxpred
+> k
+> ˆekukufwd
+> k
+> xk
+> ykrkˆxk
+> ∆ωk, d k
+> ˆdk
+
+Fig. 2: Simplified block diagram of the LLRF control sys-tem at LANSCE. Orange input boxes represent sources of disturbance, uncertainty, and noise. amplifiers, and transmission lines introduce a phase rotation between the commanded signal and the RF drive that reaches the cavity. We model this hardware drift in the forward drive chain as a lumped phase rotation φfwd (t) between the commanded drive V (t) and the forward voltage V fwd (t)
+
+incident on the cavity according to 
+
+V fwd (t) = ejφ fwd (t) V (t). (2) Although the forward coupler may not be exactly incident on the cavity, any additional phase drift accumulated along the transmission segment between the coupler and the cavity is considered negligible compared to that introduced by the DAC, upconverter, amplifier, and preceding transmission seg-ments. Therefore, the phase offset between the commanded RF drive and the forward drive may be filtered to directly infer the phase drift φfwd (t) accumulated along the forward path. This procedure isolates phase rotation introduced by the hardware drive chain from phase shifts arising from physical detuning within the cavity. 
+
+B. Cavity Voltage and Detuning 
+
+Detuning plays a critical role in RF cavity performance because even small frequency offsets from resonance can significantly impact power efficiency and system stability. Detuning relative to the reference is defined by 
+
+∆ω(t) = ωr (t) − ωref ,
+
+where ωr (t) is the instantaneous cavity resonance frequency. When the cavity is on resonance, reflected power is mini-mized for the given coupling. As the magnitude of detun-ing increases, the cavity impedance becomes increasingly reactive, resulting in higher reflected power and greater forward RF power required to maintain a specified cavity voltage. Consequently, sustained operation off resonance can quickly compromise high-power amplifier limits. At LANSCE, measurements of reflected power are routed to the resonance control (RC) system and the RF interface control (RFIC) chassis for monitoring. The RC system mechanically drives tuning slugs to minimize reflected power and maintain operation near resonance. In the rotating frame, the complex envelope is accurately modeled by the first-order system given by [27], [5] 
+
+˙V cav =  −ω1/2 + j∆ω V cav + ω1/2V fwd + d, (3) where ω1/2 = ω0/2QL is the loaded half-bandwidth and 
+
+d(t) is a complex disturbance normalized consistently with the voltage definition. This disturbance represents the ag-gregate effects of beam loading [45], calibration error, and residual mismatch. The reflected waveform is digitized and digitally downconverted in the FCM to produce complex IQ measurements consistent with the cavity pickup and forward signals. These measurements may be used to establish a systematic method to estimate detuning and distinguish it from hardware phase drifts accumulated along the drive and receiver chains. Incorporating the estimate into the control architecture not only improves drive prediction but increases operator awareness of developing faults that manifest as increasing reflected power. 
+
+C. Pickup and Receiver Chain 
+
+The cavity field is monitored by a weakly coupled pickup probe inside the cavity with which a signal proportional to the internal accelerating field is measured. The pickup analog RF signal is downconverted to IF near the cavity input coupler to reduce transmission loss and phase drift prior to transport to the FCM. The IF analog signal is converted by an ADC (analog-to-digital converter) to digital IF, filtered, and digitally downconverted to baseband in the FCM to produce complex IQ phasor signals that signify the amplitude and phase of the cavity field relative to the master reference. These IQ signals are supplied to the FPGA to compute the feedback drive command that regulates the cavity field and closes the control loop. Any slow electrical length change or phase drift in the analog receiver chain resulting from mixers, cables, filters, and ADC drifts appear as a complex rotation of the measured baseband signal. In the complex envelope representation, the receiver drift is described by a phase shift φrec (t) between the true cavity field V cav (t) and the measured pickup phasor 
+
+ycav (t). Because this rotation occurs downstream of the cavity and upstream of digitization with no additional phase references across the LLRF control architecture, the phase shift cannot be inferred from receiver data alone. The pickup measurement is modeled as 
+
+ycav (t) = ejφ rec (t)V cav (t) + νcav (t),
+
+where νcav (t) represents noise from quantization and cal-ibration errors. Consequently, φrec (t) must be treated as an unmeasured parameter or additional state variable that requires observer support. 
+
+D. State-Space Formulation 
+
+The IQ planar rotation matrix of a sufficiently small angle 
+
+θ(t) is approximated by 
+
+R(θ) = I + θJ, I =
+
+1 00 1
+
+
+
+, J =
+
+0 −11 0
+
+
+
+. (4) The state-space representation of the complex envelope is expressed in terms of the real vectors x = [ ℜV cav , ℑV cav ]′
+
+and u = [ ℜV, ℑV ]′ according to 
+
+˙x(t) = A(t)x(t) + B(t)u(t) + d(t), (5) 
+
+y(t) = C(t)x(t) + v(t) (6) where state, control, and measurement matrices are given by 
+
+A = ∆ ωJ − ω1/2I, B = ω1/2R(φfwd ), C = R(φrec ). (7) Digital implementation is obtained by integrating the above model with a forward Euler step and uniform sampling period Ts. Over the discrete time interval [k, k + 1) , the evolution of the cavity baseband state is approximated by 
+
+xk+1 = Akxk + Bkuk + dk, (8) 
+
+yk = Ckxk + νk, (9) where indices represent the discrete time samples. In opera-tion at LANSCE, the commanded input uk is held constant over each time segment [k, k + 1) of the feedback sequence. Although matrix exponentials may be derived in closed form to represent the exact evolution under piecewise constant control, we assume that the sampling frequency is sufficiently fast to accurately model dynamics with first-order sampling methods. Besides, any residual mismatch is lumped into the additive disturbance. III. I NFORMED OBSERVATION 
+
+Section II expresses the drive chain, cavity, and pickup channels in a common baseband frame. The dominant phase uncertainties are well represented by drift in the forward chain that rotates the commanded actuation before it reaches the cavity coupler, cavity resonance during the macropulse, and drift in the receiver chain that rotates the true cavity field before it appears in the pickup channel. This section establishes a framework to estimate the evolution of these phase uncertainties by integrating existing measurements with informed models. Assume that a drive signal has been applied to the cavity over the interval [k−1, k ) and that a new cavity field measurement becomes available at time k. The observers in this section create a prediction using quantities available before processing the new measurement, forms an innovation, and finally updates the internal estimates for the next propagation interval [k, k + 1) .
+
+A. State and Disturbance Observer 
+
+A reliable method for robust regulation is to estimate a small set of effective unknowns than to attempt full physical identification [46], [47]. For comparison to our proposed observer, we first consider a standard extended state observer (ESO) that tracks the cavity field while adapting an additive disturbance that lumps uncertainties appearing within the baseband model [48]. Let ˆAk−1, ˆBk−1 denote the state and control matrices used for prediction over [k − 1, k ). The predicted state is given by 
+
+ˆxpred  
+
+> k
+
+= ˆAk−1 ˆxk−1 + ˆBk−1uk−1 + ˆdk−1, (10) and the innovation is 
+
+rk = yk − ˆxpred  
+
+> k
+
+. (11) The ESO update is 
+
+ˆxk = ˆ xpred  
+
+> k
+
++ αx rk, ˆdk = ˆdk−1 + αd rk, (12) where αx ≥ 0 and αd ≥ 0 are gains that set the adaptation bandwidth. In practice, these gains are selected to ensure that the linearized ESO error dynamics are stable, robust to measurement noise, and fast compared to slow drifts. Equations (10)- (12) define the ESO or standard observer. 
+
+B. Forward Drift Observer 
+
+Forward drift is inferred from the difference between the planar orientations of the measured forward drive ufwd  
+
+> k
+
+and the commanded drive uk. The raw forward drift measurement is defined by 
+
+˜φfwd  
+
+> k
+
+= ∠ufwd  
+
+> k
+
+− ∠uk, (13) where ∠z = tan −1(zy /z x) denotes the planar orientation of a vector z. Because hardware drift evolves slowly relative to the control bandwidth, the estimate is updated with the low-bandwidth integrator defined by 
+
+ˆφfwd  
+
+> k
+
+= ˆ φfwd  
+
+> k−1
+
++ αfwd ˜φfwd  
+
+> k
+
+. (14) where αfwd ≥ 0 is the observer gain. The estimated forward drift is applied to the drive command through the control matrix update so that the cavity input remains aligned with the controller reference despite hardware phase rotation. 
+
+C. Detuning Observer 
+
+The resonance frequency of the cavity perturbs with wall deformation caused by Lorentz forces, thermal expansion of the cavity structure, and microphonic excitation from vibrations in the cryomodule and surrounding vacuum vessel [49]. In practice, such detuning often contains multiple vibration modes, bias offsets, and slow frequency wander that are difficult to represent with a fixed mechanical model. For inference during closed loop regulation, we directly estimate detuning from the reflected wave measurement using a re-flected wave model infused with a low bandwidth integrator. At the input coupler, the measured reflected wave urefl is the direct reflection of the incident forward wave and radiation from the stored cavity field leaking back through the same port according to the approximation urefl ≈ ufwd −κx , where 
+
+κ describes the coupling of the internal cavity field into the reflected measurement channel. By solving for x in (5), assuming steady operation, and substituting the resulting relation into the linear port model gives the reflected phasor estimation 
+
+ˆurefl  
+
+> k
+
+= ufwd  
+
+> k−1
+
+− κ I − ˆ∆ωk−1
+
+ω1/2
+
+J
+
+!−1
+
+ufwd 
+
+> k−1
+
+. (15) Detuning is estimated according to the value with which the reflected wave measurement urefl  
+
+> k
+
+and the model estimate 
+
+ˆurefl  
+
+> k
+
+agree. We use gradient decent on the squared norm of the reflected innovation rrefl  
+
+> k
+
+= urefl  
+
+> k
+
+− ˆurefl  
+
+> k
+
+to search for a detuning estimate that minimizes the norm of the innovation according to 
+
+ˆ∆ωk = ˆ∆ωk−1 + αω (rrefl  
+
+> k
+
+)′Ju fwd 
+
+> k−1
+
+, (16) where αω ≥ 0 is the observer gain or step size normalized to the gradient of the objective. Here, we have approximated the gradient to first order with respect to detuning. Note that this update defines a smooth integrator tailored to the sensitivity of cavity resonance with respect to the reflected wave. The detuning estimate is used immediately in the subsequent cavity prediction by updating ˆAk = A( ˆ∆ωk) for the next step in (10). 
+
+D. Receiver Drift Observer 
+
+Receiver drift represents a slow phase rotation applied to the cavity pickup phasor after the cavity dynamics and before digitization. Because this rotation cannot be inferred from monitor comparisons, it is estimated by comparing the measured pickup phasor yk with the baseband model prediction ˆxpred  
+
+> k
+
+. The raw receiver drift measurement is obtained from the difference between the orientations of the measured and predicted phasors according to 
+
+˜φrec  
+
+> k
+
+= ∠yk − ∠ˆxpred  
+
+> k
+
+. (17) As with the forward drive phase drift, the estimate of the receiver drift is updated using the low-bandwidth filter defined by 
+
+ˆφrec  
+
+> k
+
+= ˆ φrec  
+
+> k−1
+
++ αrec ˜φrec  
+
+> k
+
+, (18) where αrec ≥ 0 is the observer gain. When the receiver drift observer is activated and used in feedback control, the state and additive disturbance observers in (12) are computed following the computation of ˆφrec  
+
+> k
+
+. In particular, the cavity pickup and state estimate used to define the innovation in (11) are first aligned to the same reference by either inversely rotating the pickup signal to the controller reference frame or by rotating the state estimate to the drifted reference frame. IV. C ONTROL ARCHITECTURE 
+
+The objective of the LLRF controller is to regulate the cav-ity field to track a complex envelope x∗ 
+
+> k
+
+while compensating for effects of detuning, beam loading, slow phase drift, and measurement noise. Compensation is based on feedforward and feedback control models in which operational artifacts and disturbances are estimated online and used in the un-derlying models for improved tracking performance. In this section, we introduce the feedforward and feedback methods under the assumption that estimates of model parameters are provided by the observers defined in the previous section. 
+
+A. Feedforward 
+
+To drive the state estimation to the setpoint in one step, substitute ˆxpred  
+
+> k+1
+
+= x∗ 
+
+> k+1
+
+into (10) and invert ˆBk to obtain the feedforward command [50] 
+
+uff  
+
+> k
+
+= ˆB−1
+
+> k
+
+
+
+x∗ 
+
+> k+1
+
+− ˆAk ˆxk − ˆdk
+
+
+
+. (19) The control matrix is invertible for all practical (nonzero) values of ω1/2. If the estimated model agrees exactly with the plant, then this control command achieves perfect tracking in the absence of measurement and process noise. 
+
+B. Feedback 
+
+In addition to the feedforward component, the controller constructs the commanded input 
+
+uk = uff  
+
+> k
+
++ ufb  
+
+> k
+
+, ufb  
+
+> k
+
+= Kk (x∗ 
+
+> k
+
+− ˆxk) , (20) where Kk is a feedback gain. The feedback term in (20) is derived by linear quadratic regulation over one time step. The objective is to attenuate deviations from the desired regulation target while moderating control effort. Consider the quadratic performance index defined by the expression 
+
+ˆe′
+
+> k+1
+
+Q ˆek+1 + u′
+
+> k
+
+R u k, (21) where Q and R are positive semidefinite matrices, with one strictly positive definite, and ˆek = ˆxk − x∗ 
+
+> k
+
+is the estimated error. Substituting the error dynamics into (21) 
+
+Fig. 3: Representative MC realizations (showing 10/10k) of true and estimated forward-path phase drift, detuning, and receiver-path phase drift for the proposed and standard observers. Realizations are depicted over the fill and flattop portions of the macropulse. and minimizing with respect to uk leads to the optimal gain matrix 
+
+Kk =
+
+ ˆB′
+
+> k
+
+Q ˆBk + R
+
+−1 ˆB′
+
+> k
+
+Q ˆAk. (22) This gain formula may be expressed in closed form using properties of 2 by 2 matrices to enable relatively simple implementation onto FPGA firmware. V. R EGULATION AND FAULT LOCALIZATION 
+
+A Monte Carlo study is performed to evaluate observer robustness and the ability of the proposed estimation archi-tecture to correctly attribute error to its physical source. In RF cavity systems, multiple mechanisms can produce similar phase or amplitude deviations in the baseband response. A controller that regulates the field well but misidentifies the origin of these perturbations provides limited diagnostic value. The MC analysis therefore evaluates both regulation performance and the reliability with which the observer assigns deviations to the correct subsystem. Two estimation architectures are compared. The proposed observer explic-itly estimates forward drift, receiver drift, detuning, and a residual disturbance within the baseband model according to the observers defined above. The standard observer defined solely by equations (12) is also implemented for comparison. 
+
+A. Monte Carlo Construction 
+
+Each MC realization simulates the discrete cavity model and control architecture over the fill and flattop of aTs QL ω0 Q R      
+
+> 1e-6 1.61 e4 2π×805 e6 0.1I100 I
+
+TABLE I: Simulation parameters for regulating the baseband voltage command of an 805 MHz side-coupled cavity.           
+
+> αxαdαωαfwd αrec κ
+> 0.11e-4 1.00.9754 0.7316 200
+
+TABLE II: Parameters for propagating the proposed observer. The standard observer uses αx = 0 .1 and αd = 0 .3, with remaining parameters set to zero. macropulse spanning 1 ms. The simulations use ten thousand MC realizations to ensure sufficient exposure of systematic differences between the observer architectures. System pa-rameters are documented in Tables I and II. These are fixed across all MC trials for both the proposed and standard observers. For each MC trial, new randomized truth profiles are generated for the drift channels and noise processes. De-tuning is generated using a composite process consisting of a bias term, several sinusoidal components with randomized frequency and amplitude, low-frequency stochastic wander, and a thermal contribution derived from mixer temperature variations. Phase drifts in the forward and receiver chains are generated by slowly evolving stochastic trajectories with small periodic components to represent variations in the RF drive and receiver chains. Trajectories of the additive disturbance vector in the baseband model are generated by similar random processes. Gaussian measurement noise is injected into the cavity pickup, reflected-wave measurement, reference, and forward-drive channels each with a standard deviation of 1e-4. Ten of the ten thousand MC drifts and detuning trajectories as well as their estimations using both the proposed and standard observers are shown in Figure 3. 
+
+B. Regulation 
+
+Cavity field regulation is quantified using amplitude and phase errors between the cavity phasor and the reference trajectory. The amplitude and phase of the cavity field vector are defined by A(t) = px21(t) + x22(t) and φ(t) = 
+
+tan −1(x2/x 1), respectively. Amplitude and phase errors be-tween the cavity and reference signals are defined by 
+
+eA(t) = A(t) − A∗(t), eφ(t) = φ(t) − φ∗(t), (23) where the asterisk denotes the reference signature. Figure 4 displays the probability of the MC trials averaged over time to violate amplitude and phase error margins by the specified thresholds. Both the proposed and standard observers demon-strate the ability to regulate the cavity field while rejecting the effects of disturbances and noise. One distinct outcome of the proposed observer is the ability to maintain tight phase margins in the presence of receiver phase drift. In contrast, the standard observer does not compensate for errors caused by the receiver chain because its extended state only appears as an additive term in the baseband model. Let us note that further simulations show that phase errors incurred by the standard observer tend to decrease to the margins of the 
+
+Fig. 4: Likelihood that the average amplitude and phase regulation errors over time exceed the thresholds specified. proposed observer when disturbance drifts in the receiver channel are bypassed by setting φrec (t) = 0 .
+
+C. Localized Fault Identification 
+
+Awareness of faults is evaluated by measuring the abil-ity of the observer to correctly assign deviations to their physical source. A false-localization event is defined when the estimated drift of a given channel differs from the corresponding true drift by more than a specified threshold. For each channel, the fraction of MC realizations exceeding a given threshold averaged over time defines the likelihood of false localization. In analogy with the amplitude and phase violation metrics shown in Figure 4, the same probability construction is applied here to estimation error relative to the true drift trajectories. The resulting likelihoods are summarized in a Figure 5 for detuning and drifts in the forward and receiver chains. Figure 5 demonstrates a clear separation between the two observer architectures in their ability to localize faults. The proposed observer maintains low false-localization likelihood across all channels. This indicates that deviations in the cavity response are consistently attributed to the correct sub-system even under stochastic drift and measurement noise. Because forward drift, receiver drift, and detuning enter through distinct measurement relationships in the proposed observer formulation, their effects remain separable in the estimated states as the underlying trajectories evolve. In con-trast, the standard observer frequently exhibits elevated false-localization likelihood because the effects across channels are absorbed into a single disturbance estimate. Consequently, physically distinct mechanisms such as drive-chain phase drift, receiver-path variation, and cavity detuning are not reliably distinguished. Although both observer architectures maintain acceptable cavity field error margins under demand-ing operating conditions, the diagnostic interpretability of their estimated states differs significantly. Fig. 5: Likelihood that the average error over time between the true and estimated disturbances exceeds the specified thresholds. VI. C ONCLUSION 
+
+This work has presented an observer framework for RF cavity field regulation that explicitly separates several dis-turbance mechanisms commonly encountered in accelerator RF systems. By augmenting a standard ESO with dedicated estimators for forward-chain phase drift, receiver-chain phase drift, and cavity detuning, the proposed architecture enables simultaneous regulation of the cavity field and identification of the physical origin of phase perturbations. Monte Carlo analysis demonstrates that the proposed observer achieves regulation performance comparable to or better than con-ventional disturbance-based observers while significantly im-proving the reliability with which drift mechanisms are identified. In particular, simulations show an exponential reduction in false localization of detuning, forward-drive phase drift, and receiver-chain drift when compared with a standard ESO observer that models these effects as a single lumped disturbance. This improvement arises because each disturbance channel is inferred through a measurement relationship that is physically consistent with the underlying RF system. The ability to localize disturbances has important impli-cations for accelerator operations. In many facilities, in-creases in reflected power or phase error can arise from multiple sources that are difficult to distinguish in real time. By providing separate estimates for cavity detuning and hardware phase drift, the observer enables operators and diagnostic systems to identify the most likely subsystem responsible for a deviation. Such information can guide corrective actions such as resonance control adjustments, RF drive chain inspection, or calibration of receiver electronics. In large accelerator facilities where downtime and recovery procedures can be costly, improved diagnostic clarity can significantly reduce the time required to identify and resolve RF system faults. Several directions for future work remain. Experimen-tal validation of the proposed observer on operational RF stations would provide valuable insight into the interaction between estimator dynamics and real hardware nonlineari-ties. Additional extensions could consider mechanical models of cavity detuning, including microphonic vibration modes and Lorentz-force effects, which are particularly relevant in superconducting accelerators [51], [40], [49], [41]. Stability of the feedback control should be rigorously established, and adaptive observer gains may be considered for operations that require even tighter stability margins. Finally, integration of the observer outputs into higher-level machine protection and supervisory control systems may enable automated detec-tion of developing RF faults before they impact accelerator performance. As accelerator facilities continue to operate at higher beam power and tighter field stability requirements, the ability to regulate RF cavities while simultaneously di-agnosing the origin of disturbances will become increasingly important. Observer-based approaches that explicitly model the underlying physics of RF systems provide a promising path toward achieving both goals. REFERENCES [1] Thomas P Wangler. RF Linear Accelerators . John Wiley & Sons, 2008. [2] Hasan Padamsee, Jens Knobloch, and Tomas Hays. RF superconduc-tivity for accelerators . John Wiley & Sons, 2008. [3] DE Nagel. Coupled resonator model of linear accelerator tanks. In                     
+
+> Conference on Proton Linear Accelerators, MURA , volume 714, page 21ff, 1964. [4] DE Nagle, EA Knapp, and BC Knapp. Coupled resonator model for standing wave accelerator tanks. Review of Scientific Instruments ,38(11):1583–1587, 1967. [5] Stefan Simrock and Zheqiao Geng. Low-level radio frequency systems .Springer Nature, 2022. [6] Donald A Swenson. The los alamos meson physics facility. Technical report, Los Alamos Scientific Lab., NM, 1973. [7] JK Young, G Bolme, J Lyles, M Lynch, E Partridge, and D Rees. Lansce 201 mhz and 805 mhz rf system experience. In 2007 IEEE Particle Accelerator Conference (PAC) , pages 2412–2414. IEEE, 2007. [8] GR Swain, RA Jameson, R Kandarian, DJ Liska, ER Martin, James M Potter, et al. Cavity tuning for the lampf 805 mhz linac. In 1972 Linac Conference , 1973. [9] DA Swenson, EA Knapp, JM Potter, and EJ Schneider. Stabilization of the drift tube linac by operation in the π/2 cavity mode. In Proc. 6th Intl. Conf. on High Energy Accelerators , pages 167–173, 1967. [10] Robert A Jameson. Lampf proton linac performance. Technical report, Los Alamos Scientific Lab., N. Mex.(USA), 1975. [11] John Lyles, Walter Barkley, Ray Bratton, Mark Prokop, Daniel Rees, et al. Design, fabrication, installation and operation of new 201 mhz rf system at lansce. Proc. LINAC’16 , pages 3446–3448, 2016. [12] Alexander Scheinker. Iterative extremum seeking for feedforward compensation of beam loading in particle accelerator rf cavities. In
+> 2017 American Control Conference (ACC) , pages 2459–2464. IEEE, 2017.
+
+[13] Charles Edward Taylor, En-Chuan Huang, and Martin Joseph Kay. Post-dtl beam delivery. Technical report, Los Alamos National Laboratory (LANL), Los Alamos, NM (United States), 2025. [14] Clara-Marie Alvinerie, Charles Edward Taylor, and En-Chuan Huang. Lansce beam transport model enhancement and validation. Technical report, Los Alamos National Laboratory (LANL), Los Alamos, NM (United States), 2025. [15] Daniel Boussard. Control of cavities with high beam loading. IEEE Transactions on Nuclear Science , 32(5):1852–1856, 2007. [16] Alexander Scheinker, En-Chuan Huang, and Charles Taylor. Ex-tremum seeking-based control system for particle accelerator beam loss minimization. IEEE Transactions on Control Systems Technology ,30(5):2261–2268, 2021. [17] Ramona Leewe, Zahra Shahriari, and Mehrdad Moallem. Resonance frequency control of rf normal conducting cavity using gradient estimator of reflected power. Nuclear Instruments and Methods in Physics Research Section A: Accelerators, Spectrometers, Detectors and Associated Equipment , 869:172–179, 2017. [18] Daniel Rees, G Bolme, J Bradley, S Kwon, J Lyles, M Lynch, M Prokop, W Reass, and K Young. Lansce rf system refurbishment. In 
+
+2007 IEEE Particle Accelerator Conference (PAC) , pages 2400–2402. IEEE, 2007. [19] Mark Prokop, Sungil Kwon, Phillip Torrez, and Stephen Ruggles. Lansce-r low level rf control system. In 2007 IEEE Particle Acceler-ator Conference (PAC) , pages 2388–2390. IEEE, 2007. [20] Paula Jo Van Rooy, Mark S Prokop, Sung Il Kwon, Phillip Anthony Torrez, Lawrence James Castellano, Aaron Thomas Archuleta, and Colton Daniel Marchwinski. Lansce digital low level rf upgrade. Technical report, Los Alamos National Laboratory (LANL), 2022. [21] JTM Lyles, RE Bratton, TW Hall, and M Sanchez Barrueta. Rf system upgrade for low energy dtl cavity at lansce. In 5th North American Particle Accelerator Conference (NAPAC’22), Albuquerque, NM, USA, 07-12 August 2022 , pages 478–481. JACOW Publishing, Geneva, Switzerland, 2022. [22] Wojciech Giergusiewicz, Waldemar Koprek, Wojciech Jalmuzna, Krzysztof T Pozniak, and Ryszard S Romaniuk. Fpga based dsp board for llrf (simcon 3.0). In Photonics Applications in Industry and Research IV , volume 5948, pages 110–120. SPIE, 2005. [23] Sungil Kwon, Lawrence Castellano, David Knapp, M Prokop, P Tor-rez, Alexander Scheinker, J Lyles, and D Rees. Fpga implementation of a control system for the lansce accelerator. Proc. IPAC’16 , pages 2771–2773, 2016. [24] Sigit Basuki Wibowo, Toshihiro Matsumoto, Shinichiro Michizono, Takako Miura, Feng Qiu, and Na Liu. Digital low level rf control sys-tem for the international linear collider. Physical Review Accelerators and Beams , 21(8):082004, 2018. [25] T. Schilcher. Vector sum control of rf cavities. Proceedings of the Linear Accelerator Conference , 2002. [26] Alexander Scheinker, M Prokop, Joseph Bradley III, P Torrez, L Castellano, S Kwon, D Knapp, and John Lyles. Preliminary study of advanced llrf controls at lansce for beam loading compensation in the marie x-fel. In Proc. North Amer. Part. Accel. Conf , pages 411–413, 2017. [27] Sungil Kwon, Lawrence Castellano, Mark Prokop, Philip Torrez, and Alexander Scheinker. Fpga implementation of a prototype pi feedback control system for the lansce accelerator. In 2011 IEEE International Conference on Control Applications (CCA) , pages 1178–1183. IEEE, 2011. [28] Szymon Jablonski, Krzysztof Czuba, Frank Ludwig, and Holger Schlarb. 2 π low drift phase detector for high-precision measurements. 
+
+IEEE transactions on nuclear science , 62(3):1142–1148, 2015. [29] Thomas Schilcher. Vector sum control of pulsed accelerating fields in Lorentz force detuned superconducting cavities . DESY Hamburg, Germany, 1998. [30] SN Simrock. Low-level rf control development for the european x-fel. In Photonics Applications in Industry and Research IV , volume 5948, pages 31–45. SPIE, 2005. [31] Elmar Vogel. High gain proportional rf control stability at tesla cavities. Physical Review Special Topics—Accelerators and Beams ,10(5):052001, 2007. [32] Valery Shemelin, Hasan Padamsee, and Vyacheslav Yakovlev. Opti-mization of a traveling wave superconducting rf cavity for upgrading the international linear collider. Physical Review Accelerators and Beams , 25(2):021001, 2022. [33] M Champion, M Crofford, H Ma, M Piller, A Ratti, L Doolittle, M Monroy, S De Santis, H Shoaee, K Kasemir, et al. The spallation neutron source accelerator low level rf control system. In Proceedings of the 2003 Particle Accelerator Conference , volume 5, pages 3377– 3379. IEEE, 2003. [34] Sven Pfeiffer, Gerwald Lichtenberg, Christian Schmidt, Holger Schlarb, and Herbert Werner. Design of an optimal and robust controller for a free-electron laser exploiting symmetries of the rf-system. In 2012 IEEE 51st IEEE Conference on Decision and Control (CDC) , pages 4253–4258. IEEE, 2012. [35] Qian Xiangping, Yao Zeen, and Wang Qiang. Model-predictive control of power supply for particle accelerators. Nuclear Science and Techniques , 25, 2014. [36] Faya Wang. Enhancing srf cavity stability and minimizing detuning with data-driven resonance control based on dynamic mode decompo-sition. AIP Advances , 13(7), 2023. [37] Alexander Scheinker. Extremum seeking for rf cavity resonance control. In 2016 American Control Conference (ACC) , pages 6079– 6084, 2016. [38] Alexander Scheinker. Application of extremum seeking for time-varying systems to resonance control of rf cavities. IEEE Transactions on Control Systems Technology , 25(4):1521–1528, 2016. [39] Alexander Scheinker. Adaptive machine learning for robust diagnos-tics and control of time-varying particle accelerator components and beams. Information , 12(4):161, 2021. [40] M Liepe, Wolf-Dietrich Moeller, and Stefan N Simrock. Dynamic lorentz force compensation with a fast piezoelectric tuner. In 
+
+PACS2001. Proceedings of the 2001 Particle Accelerator Conference (Cat. No. 01CH37268) , volume 2, pages 1074–1076. IEEE, 2001. [41] Y Yamamoto, H Hayano, E Kako, T Matsumoto, S Michizono, T Miura, S Noguchi, M Sato, T Shishido, and K Watanabe. observation and numerical calculation of lorentz-detuning for the cryomodule test of stf baseline cavities at kek-stf. PAC09, Vancouver, Canada , 2009. [42] Bozo Richter, Andrea Bellandi, Julien Branlard, Leon Speidel, and An-nika Eichler. Estimation of superconducting cavity bandwidth and de-tuning using a luenberger observer. arXiv preprint arXiv:2506.21207 ,2025. [43] L Doolittle, SD Murthy, A Benwell, D Chabot, J Chen, B Hong, S Hoobler, J Nelson, and C Xu. Drift observations and mitigation in lcls-ii rf. arXiv preprint arXiv:2310.16392 , 2023. [44] Maurice Piller, M Champion, M Crofford, Hengjie Ma, and Lawrence Doolittle. The spallation neutron source rf reference system. In 
+
+Proceedings of the 2005 Particle Accelerator Conference , pages 3573– 3575. IEEE, 2005. [45] Alexander Scheinker and Spencer Gessner. Adaptive method for electron bunch profile prediction. Physical Review Special Top-ics—Accelerators and Beams , 18(10):102801, 2015. [46] Feng Qiu, Shinichiro Michizono, Takako Miura, Toshihiro Matsumoto, Mathieu Omet, and Basuki Wibowo Sigit. Application of distur-bance observer-based control in low-level radio-frequency system in a compact energy recovery linac at kek. Physical Review Special Topics—Accelerators and Beams , 18(9):092801, 2015. [47] Feng Qiu, Takako Miura, Dai Arakawa, Nao Higashi, Yosuke Honda, Eiji Kako, Toshihiro Matsumoto, Shinichiro Michizono, Tsukasa Miyajima, Takashi Obina, et al. Application of disturbance observer-based control on pulsed superconducting radio frequency cavities. 
+
+Physical Review Accelerators and Beams , 24(1):012804, 2021. [48] John Vincent, Dan Morris, Nathan Usher, Zhiqiang Gao, Shen Zhao, Achille Nicoletti, and Qinling Zheng. On active disturbance rejec-tion based control design for superconducting rf cavities. Nuclear Instruments and Methods in Physics Research Section A: Accelerators, Spectrometers, Detectors and Associated Equipment , 643(1):11–16, 2011. [49] SN Simrock. Digital low-level rf conctrols for future superconducting linear colliders. In Proceedings of the 2005 Particle Accelerator Conference , pages 515–519. IEEE, 2005. [50] Sungil Kwon, A Archuleta, L Castellano, M Prokop, P Van Rooy, CR Rose, and P Torrez. Iterative tuning of the beam feedforward controller for lansce linac digital low level rf control system. Proc. NAPAC2022, Albuquerque, New Mexico, USA , 2022. [51] Hasan S Padamsee. Superconducting radio-frequency cavities. Annual review of nuclear and particle science , 64(1):175–196, 2014.

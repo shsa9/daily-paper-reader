@@ -1,0 +1,93 @@
+{
+  "label": "2026-04-09",
+  "date": "2026-04-09",
+  "generated_at": "2026-04-09T20:14:25",
+  "count": 6,
+  "papers": [
+    {
+      "paper_id": "202604/09/2604.06923v1-phase-locked-phonon-laser-enhanced-ultra-weak-force-measurement",
+      "section": "quick",
+      "title_en": "Phase-locked phonon laser enhanced ultra-weak force measurement",
+      "authors": "Yu Zheng, Long Wang, Lyu-Hang Liu, Yuan Tian, Xiang-Dong Chen, Dong Wu, Guang-Can Guo, Fang-Wen Sun",
+      "date": "2026-04-08",
+      "pdf": "https://arxiv.org/pdf/2604.06923v1",
+      "score": "7.0",
+      "evidence": "利用声子激光进行精密超弱力测量与传感",
+      "tldr": "本研究针对光镊悬浮微粒在精密测量中受限于量子回馈噪声和激光不稳定性等问题，提出了一种基于锁相声子激光增强的超弱力测量方法。通过将悬浮纳米颗粒驱动至锁相声子激光模式，并结合载波调制测量架构，实现了在极低激光功率（1 mW级）下的稳定捕获。该方法显著降低了力噪声，并将测量系统的相干时间延长至12,500秒，最终实现了8(4)×10^-24 N的极高测量分辨率，为量子精密测量和基础物理测试提供了高稳定性平台。",
+      "tags": "query:em-force",
+      "abstract_en": "Optically levitated micro- and nanoparticles are an ideal optomechanical platform for precision measurements, particularly enabling the detection of ultraweak forces. Nevertheless, quantum backaction and inherent instabilities induced by the trapping laser fundamentally restrict further improvements in force sensitivity and resolution. To circumvent these bottlenecks, we actively drive the levitated nanoparticle's mechanical motion in a phase-locked phonon laser mode and integrate a carrier-modulation measurement architecture to enhance force sensing capabilities. The stable and high-amplitude oscillation of the phonon laser allows for the robust trapping under 1 mW-level laser power, which in turn reduces the force noise to 4.0(3)*10^-22 N/Hz^1/2. Furthermore, by using phase-locked phonon laser, the measurement system achieves active stabilization and extended coherence time with the measured signal to 12,500 seconds, realizing a measurement resolution of 8(4)*10^-24 N with a sensitivity of 9.3(7)*10^-22 N/Hz^1/2 under a loaded force. These results establish the phonon laser as a low-noise, long-coherence-time, self-stabilizing platform for precision measurements, as well as in quantum and fundamental physics tests.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/09/2604.00340v2-extended-state-observer-for-localized-fault-awareness-in-rf-accelerating-structures",
+      "section": "quick",
+      "title_en": "Extended State Observer for Localized Fault Awareness in RF Accelerating Structures",
+      "authors": "Luke S. Baker, Sungil Kwon, Kwame Jyamfi, Quinten Cole, Isaac Roybal, AJ Garcia, Phil Torrez, Lawrence Castellano",
+      "date": "2026-04-01",
+      "pdf": "https://arxiv.org/pdf/2604.00340v2",
+      "score": "6.0",
+      "evidence": "用于电磁系统鲁棒调节和扰动识别的扩张状态观测器",
+      "tldr": "本研究提出一种用于高功率线性加速器射频系统的扩展状态观测器框架，通过在标准观测器中引入额外状态，实现了对腔体失谐及相位漂移的实时估计。该方法不仅能确保腔场的精确调节，还能准确定位扰动来源，为加速器系统的故障诊断、快速排障及预防性维护提供了可靠的技术基础。",
+      "tags": "query:em-force",
+      "abstract_en": "An observer framework is presented for robust regulation of RF cavity fields and localized identification of disturbances in RF systems. A standard cavity field observer is augmented with additional states to estimate the evolution of cavity detuning and phase drifts induced by the drive and receiver chains. Monte Carlo simulations are performed to assess the performance of the proposed estimator under realistic conditions for the intended high-power linear accelerator operation. Results showcase precise cavity field regulation and the reliability with which the observer assigns deviations to the correct subsystem. The resulting diagnostic capability provides a foundation for improved fault detection, faster troubleshooting during accelerator operation, and more informed maintenance of RF systems in large accelerator facilities.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/09/2604.06337v1-improving-indi-for-input-nonaffine-systems-via-learning-based-nonlinear-control-allocation",
+      "section": "quick",
+      "title_en": "Improving INDI for Input Nonaffine Systems via Learning-Based Nonlinear Control Allocation",
+      "authors": "Adam Hallmark, Pan Zhao",
+      "date": "2026-04-07",
+      "pdf": "https://arxiv.org/pdf/2604.06337v1",
+      "score": "6.0",
+      "evidence": "输入非仿射系统的非线性控制分配",
+      "tldr": "本研究针对输入非仿射系统，指出传统增量非线性动态逆（INDI）结合增量控制分配（ICA）时依赖的执行器线性化假设存在缺陷。为解决由此产生的非线性规划（NLP）在线计算难题，提出了一种基于监督学习的非线性控制分配方法。该方法在保留静态分配范式的同时，显著降低了计算开销。数值实验验证了传统方法的局限性，并证明了所提学习方法在处理非仿射系统时的有效性与实时性。",
+      "tags": "query:em-force",
+      "abstract_en": "This paper first demonstrates that applying standard incremental nonlinear dynamic inversion (INDI) with incremental control allocation (ICA) to input nonaffine systems relies on an untenable linear approximation of the actuator model. It then shows that avoiding this issue, while retaining the static control allocation paradigm, generally requires solving a nonlinear programming (NLP) problem. To address the associated online computational challenges, the paper subsequently presents a supervised learning-based approach. Numerical experiments on an example problem validate the identified limitations of standard INDI + ICA for input nonaffine systems, while also demonstrating that the proposed learning-based method provides an effective and computationally tractable alternative.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/09/2604.06338v1-adaptive-control-with-sparse-identification-of-nonlinear-dynamics",
+      "section": "quick",
+      "title_en": "Adaptive Control with Sparse Identification of Nonlinear Dynamics",
+      "authors": "Trivikram Satharasi, Tochukwu E. Ogri, Muzaffar Qureshi, Kyle Volle, Rushikesh Kamalapurkar",
+      "date": "2026-04-07",
+      "pdf": "https://arxiv.org/pdf/2604.06338v1",
+      "score": "6.0",
+      "evidence": "非线性控制仿射系统的自适应控制与参数辨识",
+      "tldr": "本文提出了一种针对不确定非线性系统的稀疏促进积分并发学习（SP-ICL）自适应控制律。该方法通过滑动模态技术将L1正则化与ICL在线参数更新相结合，实现了在轨迹跟踪过程中对稀疏动力学参数的有效识别。通过非光滑Lyapunov分析证明了闭环系统的最终一致有界性，仿真验证了其在恢复稀疏动力学方面的优越性。",
+      "tags": "query:em-force",
+      "abstract_en": "This paper develops a sparsity-promoting integral concurrent learning (SP-ICL) adaptation law for a linearly parametrized uncertain nonlinear control-affine system. The unknown parameters are learned using ICL with sparsity-promoting $\\ell_1$ regularization. The use of $\\ell_1$ regularization for sparsity promotion is common in system identification and machine learning; however, unlike existing approaches, this paper develops an online parameter update law that integrates the regularization penalty with ICL via sliding modes. Using the SP-ICL update law, we show via non-smooth Lyapunov analysis that the trajectories of the closed-loop system are ultimately bounded. Simulations verify the effectiveness of the sparsity penalty in the SP-ICL update law on recovering sparse dynamics during trajectory tracking.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/09/2604.06980v1-stochastic-adaptive-control-for-systems-with-nonlinear-parameterization-almost-sure-stability-and-tracking",
+      "section": "quick",
+      "title_en": "Stochastic Adaptive Control for Systems with Nonlinear Parameterization: Almost Sure Stability and Tracking",
+      "authors": "Lantian Zhang, Bo Wahlberg, Silun Zhang",
+      "date": "2026-04-08",
+      "pdf": "https://arxiv.org/pdf/2604.06980v1",
+      "score": "6.0",
+      "evidence": "非线性参数化系统的随机自适应控制与跟踪",
+      "tldr": "本研究针对具有非线性参数化的随机非线性系统，提出了一种基于在线非线性加权最小二乘（WLS）的自适应控制方案。针对参数非凸依赖导致的控制难题，该方法无需持续激励条件即可实现参数估计的全局强一致性。通过结合衰减激励信号的自适应控制算法，成功实现了闭环系统的全局稳定性和对参考轨迹的长程平均跟踪，并在交互网络应用中验证了有效性。",
+      "tags": "query:em-force",
+      "abstract_en": "This paper concerns the adaptive control problem for a class of nonlinear stochastic systems in which the state update is given by a nonlinear function of linear dynamics plus additive stochastic noise. Such systems arise in a wide range of applications, including recurrent neural networks, social dynamics, and signal processing. Despite their importance, adaptive control for these systems remains relatively unexplored in the literature. This gap is primarily due to the inherently nonconvex dependence of the system dynamics on unknown parameters, which significantly complicates both controller design and analysis. To address these challenges, we propose an online nonlinear weighted least-squares (WLS)-based parameter estimation algorithm and establish the global strong consistency of the resulting parameter estimates. In contrast to most existing results, our consistency analysis does not rely on restrictive assumptions such as persistent excitation conditions of the trajectory data, making it applicable to stochastic adaptive control settings. Building on the proposed estimator, we further develop an adaptive control algorithm with an attenuating excitation signal that can effectively combine adaptive estimation and feedback control. Finally, we are able to show that the resulting closed-loop system is globally stable and that the system trajectory can track, in a long-run average sense, the reference trajectory generated with the true system parameters. The proposed methods and theoretical results are finally validated through simulations in two nonlinear interaction network applications.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/09/2604.07305v1-phase-selective-excitation-of-betatron-oscillations-by-nonadiabatic-magnetic-field-switching",
+      "section": "quick",
+      "title_en": "Phase-Selective Excitation of Betatron Oscillations by Nonadiabatic Magnetic-Field Switching",
+      "authors": "R. S. Anandu, B. Ramakrishna",
+      "date": "2026-04-08",
+      "pdf": "https://arxiv.org/pdf/2604.07305v1",
+      "score": "6.0",
+      "evidence": "用于控制振荡和脉冲驱动的磁场切换",
+      "tldr": "本研究提出了一种通过非绝热切换外部横向磁场来控制激光尾波场加速器中倍他特隆振荡的相位选择机制。当磁场关闭时间短于振荡周期时，平衡轨道的突变会产生脉冲式驱动，与原有振荡相干干涉，从而实现振幅的增强或抑制。该方法在不影响纵向加速的情况下，能有效调节倍他特隆辐射光谱，为等离子体加速器中的电子束动力学控制提供了新途径。",
+      "tags": "query:em-force",
+      "abstract_en": "Nonadiabatic removal of an external transverse magnetic field provides a phase-selective mechanism for controlling betatron oscillations in laser wakefield accelerators. When the field is switched off on a timescale shorter than the betatron period, the equilibrium orbit shifts abruptly and acts as an impulsive transverse drive. The induced motion interferes coherently with the preexisting betatron oscillation, leading to phase-dependent enhancement or suppression of the oscillation amplitude. A theoretical model shows that the excitation is governed by the dimensionless switching parameter $χ=ω_βL_s/c$, which distinguishes nonadiabatic and adiabatic regimes. Particle-in-cell simulations confirm the predicted scaling and demonstrate controllable modulation of the betatron radiation spectrum while leaving longitudinal acceleration largely unaffected. These results establish magnetic-field switching as a direct mechanism for phase control of relativistic betatron oscillations in plasma-based accelerators.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
