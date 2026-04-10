@@ -1,0 +1,780 @@
+Title: Safe Control of Feedback-Interconnected Systems via Singular Perturbations
+
+URL Source: https://arxiv.org/pdf/2604.02132v1
+
+Published Time: Fri, 03 Apr 2026 01:04:12 GMT
+
+Number of Pages: 11
+
+Markdown Content:
+# Safe Control of Feedback-Interconnected Systems via Singular Perturbations 
+
+Stefano Di Gregorio, Guido Carnevale, Giuseppe Notarstefano 
+
+Abstract 
+
+Control Barrier Functions (CBFs) have emerged as a powerful tool in the design of safety-critical controllers for nonlinear systems. In modern applications, complex systems often involve the feedback interconnection of subsystems evolving at different timescales, e.g., two parts from different physical domains (e.g., the electrical and mechanical parts of robotic systems) or a physical plant and an (optimization or control) algorithm. In these scenarios, safety constraints often involve only a portion of the overall system. Inspired by singular perturbations for stability analysis, we develop a formal procedure to lift a safety certificate designed on a reduced-order model to the overall feedback-interconnected system. Specifically, we show that under a sufficient timescale separation between slow and fast dynamics, a composite CBF can be designed to certify the forward invariance of the safe set for the interconnected system. As a result, the online safety filter only needs to be solved for the lower-dimensional, reduced-order model. We numerically test the proposed approach on: (i) a robotic arm with joint motor dynamics, and (ii) a physical plant driven by an optimization algorithm. 
+
+I. I NTRODUCTION 
+
+Autonomous and complex systems operating in real world scenarios require the design of control algorithms capable of enforcing strict safety operational constraints. This challenging requirement has given rise to intense research efforts in the control literature, as reviewed in the recent survey [1]. Among existing methods, Control Barrier Functions (CBFs) have emerged as a powerful tool for designing safety-critical controllers for nonlinear systems (see the comprehensive references [2]–[4]). Their versatility has been demonstrated across different domains, including robotics [5], autonomous vehicles [6], and human-robot interaction [7]. A major structural limitation arises when the control input does not directly affect the safety constraint, leading to a high relative degree. To address this, High-Order CBFs (HOCBFs) [8] have been proposed to propagate safety via successive differentiations of the constraint. Despite its effectiveness, this approach requires a uniform relative degree across the safe set. This limitation has motivated a shift toward more flexible architectures, such as leveraging input-output feedback linearization (see, e.g., [9]), rectified CBFs [10], or designs based on the backstepping technique [11]. Parallel to these developments, the integration of safety with other objectives has been widely explored. The combination of Control Lyapunov Functions (CLFs) and CBFs, allows for the simultaneous pursuit of safety and stability objectives. To this end, authors in [12] unify them under a single optimization-based framework. This unification has been further generalized by the development of a universal formula for safe stabilization [13], providing an analytical construction for the control law. To handle practical uncertainties, these formulations have been extended to enforce safety and stability under input disturbances using ISSf-CBFs (input-to-state safe CBFs, [14]). The conflict between reaching a target state and maintaining safety has been addressed in [15], where a hybrid CLF-CBF formulation is proposed to overcome intrinsic topological deadlocks. Recently, an extension to model uncertainties [16] is derived via an adaptive approach obtained by combining of a CBF, a CLF and a parameter error term. Beyond structural control design, a second major research direction focuses on the direct integration of CBFs into online dynamic optimization algorithms. In this framework, safety-critical control is reformulated as a constrained nonlinear program, where gradient flows are augmented with CBF-based inputs to ensure forward invariance of the feasible set [17]. This approach has been further extended to the context of feedback optimization (see, e.g., [18]–[20]). Specifically, authors of [21] propose a safe feedback optimization method that enforces state constraints at all times. However, the increasing complexity of modern control architectures leads to nontrivial and/or unknown interconnected dynamics, for which designing CBFs is challenging or even impossible. To mitigate this issue, there is a growing effort to develop approaches that synthesize CBFs for reduced-order models (see the recent survey [22]). Several of these approaches rely on specific system structures. For instance, when the system is in strict-feedback form, safety can be propagated from a virtual controller to the actual input via backstepping [23]. Alternative strategies include energy-based augmentations [24] or the model-free tracking of safe reference velocities [25]. Closer to our proposed methodology, the work [26] addresses safety in multi-agent systems by resorting to the system structure typically used in singular perturbations. Despite these advancements, a systematic framework to guarantee the safety of generally interconnected systems, especially when dealing with reduced-order models embedded within complex feedback loops, remains an open challenge. The main contribution of this paper is the establishment of a formal framework, based on singular perturbation (or timescale separation) theory, to guarantee the safety of feedback-interconnected systems. Specifically, we provide sufficient  
+
+> Work partially funded by FISA-2023-00210 project APACHE - CUP J53C25000520001, by the European Union - Next Generation EU - under the National Recovery and Resilience Plan (NRRP), Mission 4, Component 2, Investment 3.3; CUP J33C24001490009 and by IMA S.p.A. The authors are with the Department of Electrical, Electronic and Information Engineering, Alma Mater Studiorum Universit` a di Bologna, Bologna, Italy,
+
+name.lastname@unibo.it 
+
+> arXiv:2604.02132v1 [math.OC] 2 Apr 2026
+
+conditions lifting a CBF designed for a reduced-order model to the overall nonlinear, feedback-interconnected system. By adapting techniques from singular perturbation analysis, we show that if the neglected subsystem evolves on a sufficiently faster timescale than the reduced-order model, then a composite CBF can be constructed to certify the forward invariance of the safe set for the full interconnected system. Notably, our approach applies to broad classes of nonlinear dynamics without requiring a strict cascade structure or restrictive inversion-based feedback laws. From an implementation perspective, the proposed framework allows safe controllers to be synthesized solely for the lower-dimensional reduced-order model. This significantly simplifies the safety filter design and reduces the computational load, while still providing formal safety guarantees for the overall interconnection. This timescale separation arises naturally in modern applications, such as the interaction between physical domains evolving at different rates (e.g., the electrical and mechanical components of robotic systems), or the interconnection of physical systems with online optimization algorithms. The paper is organized as follows. In Section II, we review the definition of CBFs for continuous-time systems and the related safety guarantees. In Section III, we introduce the considered framework and our goal. In Section IV, we present motivating examples to illustrate the application of the proposed framework. In Section V, we establish the main result of the paper and we formally demonstrate it in Appendix A. Finally, in Section VI, we evaluate the proposed approach with numerical simulations. 
+
+Notation: R+ is the set {x ∈ R | x ≥ 0}. We denote by COL (v1, . . . , v N ) the vertical concatenation of the vectors 
+
+v1, . . . , v N . Let X ⊆ Rn and x ∈ Rn, then ∥x∥X := inf y∈X ∥x − y∥. A continuous function α : R+ → R+ is a class-K∞
+
+function, denoted by α ∈ K ∞, if it is strictly increasing, α(0) = 0 , and lim r→∞ α(r) = ∞.II. P RELIMINARIES ON CONTROL BARRIER FUNCTIONS 
+
+We start by recalling the theoretical foundations of Control Barrier Functions (CBFs) for continuous-time nonlinear systems as 
+
+˙x(t) = f (x(t), u (t)) , (1) where x(t) ∈ Rn is the system state at time t ∈ R+, u(t) ∈ U ⊆ Rm is the control input at time t, and f : Rn × Rm → Rn
+
+describes the system dynamics. The next definition introduces the notion of zero-superlevel set of a function. 
+
+Definition 1: Given h : Rn → R, the zero-superlevel set of h is defined as C := {x ∈ Rn | h(x) ≥ 0} and its boundary is ∂C := {x ∈ Rn | h(x) = 0 }. □
+
+Then, let us introduce Sx ⊆ Rn as the safe set of system (1). Accordingly, we say that system (1) is safe with respect to Sx
+
+if there exists a set C ⊆ S x that is forward invariant for system (1). A popular tool for constructively certifying the safety of system (1) is given by CBFs [2], [12], [22]. 
+
+Definition 2: A continuously differentiable function h : Rn → R with zero-superlevel set C is said to be a CBF for system (1) on C if there exists a class-K∞ function α ∈ K ∞ such that 
+
+sup 
+
+> u∈U
+
+∇h(x)⊤f (x, u ) ≥ − α(h(x)) ,
+
+for all x ∈ C . □
+
+With this definition at hand, we can state the following result. 
+
+Lemma 1: [22, Thm. 4] Consider a continuously differentiable function h : Rn → R with zero-superlevel set C. If a locally Lipschitz feedback controller π : Rn → U satisfies 
+
+∇h(x)⊤f (x, π (x)) ≥ − α(h(x)) ,
+
+for all x ∈ C , then C is forward invariant for the closed-loop system 
+
+˙x(t) = f (x(t), π (x(t))) . □
+
+III. S INGULAR PERTURBATIONS FOR SAFETY :PROBLEM STATEMENT 
+
+In this section, we outline our procedure based on singular perturbations to lift reduced-order safety certificates in feedback interconnected systems. Indeed, we focus on systems in the form 
+
+˙x(t) = f (x(t), z (t), u (t)) (2a) 
+
+ϵ ˙z(t) = g(z(t), x (t), u (t)) , (2b) where x(t) ∈ Rn and z(t) ∈ Rp are the system states at time t ∈ R+, u(t) ∈ Rm is the input applied at time t,
+
+f : Rn × Rp × Rm → Rn and g : Rp × Rn × Rm → Rp are the vector fields of the slow and fast subsystem, respectively, and ϵ > 0 is a tunable parameter to modulate the relative speed between the two. We impose Lipschitz continuity on the vector fields. 
+
+Assumption 1: The functions f and g are Lipschitz continuous with parameters Lf , L g > 0, respectively. □By borrowing the typical nomenclature of timescale separation (or singular perturbations) for stability analysis (see, e.g., the recent survey [27] or [28, Ch. 11]), we call x(t) and (2a) slow state and slow system, respectively, z(t) and (2b) are the 
+
+fast state and fast system, respectively. Fig. 1 describes system (2) in terms of block diagrams. ϵ ˙z(t) = g(z(t), x (t), u (t))   
+
+> Fast System
+> ˙x(t) = f(x(t), z (t), u (t))
+> Slow System
+> x(t)z(t)
+
+Fig. 1: Block diagram representation of (2). 
+
+A. Reduced-Order Safety Certificates 
+
+We are interested in designing safety certificates on reduced-order models and then lift them to the overall feedback-interconnected system. Purposely, we rely on the following three requirements. First, the safety specifications are defined solely in terms of the slow subsystem state x in (2a). More in detail, we introduce Sx ⊆ Rn as the safe set for the slow subsystem (2a) and, accordingly, the safe set for the overall system (2) is defined as 
+
+S := {(x, z ) ∈ Rn × Rp | x ∈ S x}. (3) Second, the fast subsystem (2b) admits an equilibrium function parametrized in x and u.
+
+Assumption 2: There exists a continuously differentiable function zeq : Sx × U → Rp such that 
+
+0 = g(zeq (x, u ), x, u ).
+
+for all x ∈ S x and u ∈ U . □
+
+Third, we assume the availability of a robustly-safe controller for a reduced-order model of (2a). Formally, we consider system (2) on the manifold {(x, z, u ) ∈ S x × Rp × U | z = zeq (x, u )}. Namely, we introduce the reduced dynamics 
+
+frs : Rn × Rm → Rn defined as 
+
+frs (x, u ) := f (x, z eq (x, u ), u ). (4) For the reduced system we let the following assumption hold. 
+
+Assumption 3: There exist a continuously differentiable function h : Rn → R with a compact zero-superlevel set C ⊆ S x,a Lπ -Lipschitz continuous and differentiable function π : C → U , a Lα-Lipschitz continuous function α ∈ K ∞, and a safety margin η > 0 such that 
+
+∇h(x)⊤frs (x, π (x)) ≥ − α(h(x)) + η, (5) for all x ∈ C . □
+
+The goal of our paper is to establish sufficient conditions to lift the safety certificate in Assumption 3 thus guaranteeing safety of the overall system (2). 
+
+B. Boundary Layer System 
+
+Here, following the nomenclature used in singular perturbations (timescale separation) for stability (see, e.g., [27]), we characterize the behavior of system (2) in the case where x(t) is fixed for all t ∈ R+. We introduce an auxiliary system called 
+
+boundary layer system obtained (i) by arbitrarily freezing the state-input pair (¯ x, ¯u) ∈ S x × U into the fast dynamics (2b), (ii) by using the stretched fast time variable τ := t/ϵ , and (iii) by considering the error coordinates ˜z(τ ) := z(τ )−zeq (¯ x, ¯u) ∈ Rp
+
+with respect to the corresponding zeq (¯ x, ¯u). Hence, the boundary layer system reads as 
+
+∂ ˜z(τ )
+
+∂τ = gbl (˜ z(τ ), ¯x, ¯u), (6) with ˜z(t) ∈ Rp, where gbl : Rp × Rn × Rm → Rp is defined as 
+
+gbl (˜ z, x, u ) := g(˜ z + zeq (x, u ), x, u ). (7) As depicted in Fig. 2, the boundary-layer system (6) represents system (2) in the limit ϵ → 0, which is equivalent to freezing the slow state and the input at a given (¯ x, ¯u) ∈ S x × U .˙z(τ ) = g(z(τ ), ¯x, ¯u)  
+
+> ˙x(τ) = 0
+> Boundary Layer System
+> ¯x
+> z(τ)
+
+Fig. 2: Block diagram representation of (6) in original coordinates (x, z ).The next assumption ensures global exponential stability of the origin, uniformly in (¯ x, ¯u), for system (6). 
+
+Assumption 4: There exists a continuous function U : Rp → R such that 
+
+b1 ∥˜z∥2 ≤ U (˜ z) ≤ b2 ∥˜z∥2 (8a) 
+
+∇U (˜ z)⊤gbl (˜ z, ¯x, ¯u) ≤ − b3 ∥˜z∥2 (8b) 
+
+∥∇ U (˜ z)∥ ≤ b4 ∥˜z∥ , (8c) for all ˜z ∈ Rp, ¯x ∈ S x, ¯u ∈ U , and some b1, b 2, b 3, b 4 > 0. □
+
+IV. M OTIVATING EXAMPLES SCENARIOS 
+
+In this section, we provide two examples that can be cast within our framework. 
+
+A. Robotic Manipulator with Actuator Dynamics 
+
+First, we focus on a fully actuated planar robotic arm with two degrees of freedom, in which the timescale separation is intrinsically determined by the nature of the mechanical and electrical domains. Specifically, the mechanical dynamics of the system are described by the standard rigid-body equations 
+
+ ˙q
+
+˙ω
+
+
+
+=
+
+" ωM (q)−1
+
+
+
+KI I − Bω − C(q, ω )ω − G(q)
+
+#
+
+, (9) where q = [ θ1, θ 2]⊤ ∈ T2 is the vector of angular positions, ω = [ ω1, ω 2]⊤ ∈ R2 is the vector of angular velocities, and 
+
+I = [ I1, I 2]⊤ ∈ R2 is the vector of motor currents. The terms M (q) ∈ R2×2, C(q, ω ) ∈ R2×2, and G(q) ∈ R2 represent the inertia matrix, the Coriolis/centrifugal matrix, and the gravity vector, respectively. The diagonal and positive definite matrices 
+
+B, K I ∈ R2×2 are the joint viscous friction and the motor torque constants, respectively. Coupled with the mechanical plant, the electrical dynamics of the two motors is 
+
+L ˙I = V − RI − Kω ω, (10) where V = [ V1, V 2]⊤ ∈ R2 is the voltage applied to the motors, while L, R, Kω ∈ R2×2 are positive definite diagonal matrices representing the inductance, resistance, and back-electromotive force constants, respectively. By assuming that L
+
+can be arbitrarily designed as L = ϵ ˜L with ˜L ≻ 0, we note that (9) and (10) can be framed within the interconnected system (2) with x := COL (q, ω ), z := I, u := V , and equilibrium function Ieq : T2 × R2 × R2 → R2 defined as 
+
+Ieq (COL (q, ω ), V ) := R−1 (V − Kω ω) . (11) Moreover, since R ≻ 0, each equilibrium Ieq (COL (q, ω ), V ) is globally exponentially stable uniformly in (COL (q, ω ), V ).Hence, Assumption 2 and 4 are satisfied. Assumption 3 thus corresponds to finding a safe controller on the reduced mechanical dynamics, namely 
+
+ ˙q
+
+˙ω
+
+
+
+=
+
+" ωM (q)−1
+
+
+
+KI R−1V − Bf ω − C(q, ω )ω − G(q)
+
+#
+
+, (12) where Bf := B + KI R−1Kω ∈ R2×2 is the effective damping matrix incorporating the back-electromotive force of the motors. −4 −3 −2 −1 0 1 2 3 4        
+
+> Slow State x
+> −8
+> −6
+> −4
+> −2
+> 0
+> 2
+> 4
+> 6
+> 8
+> Fast State  z
+> ∂= { x:h(x) = 0}
+> zeq (x)
+> ∂V= {( x,z) : V(x,z) = 0}
+> −100
+> 0
+> 100
+> Composite Control Barrier Function V(x, z)
+
+(a) 0 1 2 3 4 5   
+
+> Time t[s]
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> 2.5
+> 3.0
+> 3.5
+> Slow State  x(t)
+
+(b) −4 −3 −2 −1 0 1 2 3 4    
+
+> Slow State x−8
+> −6
+> −4
+> −2
+> 0
+> 2
+> 4
+> 6
+> 8
+> Fast State z
+> 0
+> 1
+> 2
+> 3
+> 4
+> 5
+> Time  t
+
+(c) 
+
+Fig. 3: Graphical representation of the safety guarantees provided by Theorem 1 for a toy 2D example. (a) Level sets of the composite CBF. (b) Time evolution of the slow state x. (c) Space-time evolution of the feedback-interconnected system. Safe trajectories are depicted in solid green ( ϵ < ¯ϵ), whereas unsafe trajectories are represented by dash-dotted red lines (ϵ ≥ ¯ϵ). 
+
+B. Suboptimal Safe Control 
+
+Second, we consider the case in which the slow subsystem (2a) is a given plant, while the fast one (2b) is an optimization algorithm aimed at finding a safe control input that minimizes the distance from a desired but possibly unsafe control action. We formulate this scenario by introducing, for all t ∈ R+, an optimization problem of the form 
+
+min  
+
+> u∈U
+
+ℓ(u, x (t)) (13a) s.t. ∇h(x(t)) ⊤f (x(t), u ) ≥ − α(h(x(t))) + η, (13b) where ℓ : Rm × Rn → R is the cost function for a desired policy πdes : Rn → U , and h : Rn → R is a CBF for the plant dynamics f . Then, by denoting with A : Rp × Rn → Rp the specific algorithm flow used to dynamically address problem (13), the resulting interconnected system reads as 
+
+˙x(t) = f (x(t), a (z(t))) (14a) 
+
+ϵ ˙z(t) = A(z(t), x (t)) , (14b) where ϵ > 0 is a parameter to modulate the speed of algorithm (14b), while a : Rp → U is an output map selecting only the current solution estimate associated with the overall algorithmic state z(t) which may contain additional variables (e.g., multiplier estimates and momentum terms). In this setup, Assumption 3 is satisfied when problem (13) admits a solution function u⋆ : C → U , that is continuously differentiable in the set C. Assumption 2 is satisfied provided that A
+
+admit an equilibrium function zeq : C → Rp such that a(zeq (x)) = u⋆(x) for all x ∈ C . Assumption 4 is achieved with exponential stability of zeq (x) for system ˙z(t) = A(z(t), x ) uniformly in x ∈ C . Finally, Assumption 1 corresponds to Lipschitz continuity of f and A.V. S INGULAR PERTURBATIONS FOR SAFETY :MAIN RESULT 
+
+In this section, we provide a safety certificate for the interconnected system (2) based on the reduced-order safety h and the stability properties of the boundary layer system (6) (cf. Assumption 4), respectively. To this end, we introduce the composite CBF function V : C × Rp → R defined as 
+
+V (x, z ) := h(x) − U (z − zeq (x, π (x))) , (15) and we denote as CV := {(x, z ) ∈ Rn × Rp | V (x, z ) ≥ 0} its zero-superlevel set. 
+
+Theorem 1: Consider system (2) and let Assumptions 1, 2, 3, and 4 hold. Then, there exists ¯ϵ > 0 such that, for all 
+
+ϵ ∈ (0 , ¯ϵ), the set CV is forward invariant for the closed-loop system 
+
+˙x(t) = f (x(t), z (t), π (x(t))) 
+
+ϵ ˙z(t) = g(z(t), x (t), π (x(t))) . □
+
+The proof of Theorem 1 is provided in Appendix A. To illustrate the theoretical guarantees provided by Theorem 1, we consider as a toy example the following two-dimensional singularly perturbed system 
+
+˙x(t) = z(t) − x(t), (17a) 
+
+ϵ ˙z(t) = u(t) + x(t) − z(t), (17b) with x(t), z(t), u(t) ∈ R. The equilibrium function (see Assumption 2) of the fast subsystem (17b) is given by zeq (x, u ) = 
+
+u + x, which results in a reduced system with single-integrator dynamics. We consider the safe set 
+
+Sx = {x ∈ R | β2 − x2 ≥ 0},
+
+for some β > 0, and the CBF h : R → R defined as 
+
+h(x) := β2 − x2.
+
+Namely, in this case, C ≡ S x. To achieve this safety goal while tracking a nominal policy πdes (x) = 2 sin( x), the actual control input u(t) = π(x) is computed via a CBF-QP based on the reduced-order dynamics. To satisfy Assumption 3, this QP strictly enforces the safety margin η > 0, guaranteeing that ∇h(x)⊤frs (x, π (x)) ≥ − α(h(x)) + η. In Fig. 3, we provide graphical representations that help visualize the concepts highlighted below regarding the meaning of Theorem 1. 
+
+a) Invariant Set Lifting: Since {x ∈ R | h(x) ≥ 0} ⊆ S x (cf. Assumption 3) and U (z − zeq (x, π (x))) ≥ 0 for all 
+
+(x, z ) ∈ S x × Rp (see (8)), we note that the zero superlevel set CV of V (cf. (15)) satisfies CV ⊆ S by construction. Indeed, as shown in Fig. 3a, in our example the resulting composite set CV (enclosed by the solid black line in Fig. 3a) is strictly contained within the boundaries (dashed vertical lines) of the “ideal” reduced-order safe set corresponding to the interval [−β, β ]. Theorem 1 ensures that, starting from any initial condition within the lifted set CV , the interconnected system remains safe for sufficiently small values of ϵ. This construction introduces a restriction on the admissible slow states. Indeed, (x, z ) ∈ C V ⇐⇒ h(x) ≥ U (z − zeq (x, π (x))) and, thus, h(x) must be sufficiently large to compensate for the energy stored in the fast state z when it deviates from the equilibrium zeq (x, π (x)) . Graphically, as shown in Fig. 3a and the 3D space-time plot in Fig. 3c, the effective safe region for x shrinks as z moves away from the equilibrium manifold 
+
+zeq (x, π (x)) (dashed blue curve). These boundaries coincide with the “ideal” reduced ones only when the fast state exactly lies in the equilibrium manifold (i.e., when z = zeq (x, π (x)) ). 
+
+b) Timescale Separation and Safety: Consistently with singular perturbation results for stability, Theorem 1 captures the timescale separation required to guarantee safety. In the ideal case ϵ → 0, the fast state would instantaneously converge to the equilibrium zeq (x, π (x)) , thus allowing the slow system to behave exactly as the ideal reduced one and, thus, to preserve safety by Assumption 3. However, for ϵ̸ = 0 , the timescale separation is not perfect. Here, the strict safety margin η plays a fundamental role, acting as a designed robustness buffer against the perturbation terms due to z(t)̸ = zeq (x(t), π (x(t))) . As shown in the time-domain plot of x(t) in Fig. 3b, when ϵ is below the critical threshold ¯ϵ, z(t) converges rapidly enough that the magnitude of the perturbation is absorbed by η, thus preserving safety. Conversely, if ϵ ≥ ¯ϵ, the transient deviation of z(t) from zeq (x(t), π (x(t))) leads to a constraint violation. VI. N UMERICAL SIMULATIONS 
+
+To validate the theoretical results of Theorem 1, we perform numerical simulations on (i) the fully actuated 2-DoF robotic arm described in Section IV-A, and (ii) the suboptimal safe control scenario described in Section IV-B. 
+
+A. Robotic Arm with Joint Motors 
+
+Consistently with our theoretical framework, we design the safety certificate strictly for the reduced-order mechanical dynamics (12). The physical parameters used in the simulations are provided in Table I (both the links and the motors are assumed to be identical to one another). TABLE I: Manipulator and Actuator Parameters                 
+
+> Symbol mlJbR˜LKIKω
+> Value 0.5 1.0 0.167 0.5 0.6 1.0 0.4 0.4
+
+As discussed in Section IV, the actual L is designed as L = ϵ ˜L, being ϵ > 0 the parameter modulating the timescale separation between the mechanical and electrical dynamics. We define a set of safety margins ¯hj (q) ≥ 0, to encompass both the joint limits qmin ≤ q ≤ qmax (with qmin = [0 ◦, −80 ◦]⊤, qmax = [185 ◦, 80 ◦]⊤) and the obstacle avoidance constraints. We consider five circular obstacles with radius r = 0 .3m centered at the workspace coordinates [1 .1, −1.7] ⊤, [2 .2, 0.0] ⊤,
+
+[1 .9, 0.6] ⊤, [1 .3, 1.7] ⊤, [−0.4, 2.1] ⊤ The position of the end-effector p(q) ∈ R2 is constrained to satisfy ∥p(q) − ck∥ ≥ r0 2 4 6 8 10             
+
+> t
+> −0.2
+> −0.1
+> 0.0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> 0.5
+> h(q(t),  ω(t)) 0.0
+> 1.0
+> 2.0
+> 3.0
+> θ1(t) [rad]
+> 0246810
+> t [s]
+> -1.0
+> 0.0
+> 1.0
+> θ2(t) [rad] 0.0 0.5 1.0 1.5 2.0 2.5 3.0
+> θ1[rad]
+> −1.5
+> −1.0
+> −0.5
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> θ2 [rad]
+
+Fig. 4: Results for the 2-DoF robotic arm with joint motors. Time evolution of h(q, ω ) (left) and of q = [ θ1, θ 2]⊤ (middle). System trajectories in the joint space (right), where red areas indicate unsafe regions. Blue-to-cyan solid lines indicate safe trajectories (corresponding to increasing ϵ < ¯ϵ), whereas the dash-dotted red lines denote safety violations ( ϵ ≥ ¯ϵ). for all k ∈ { 1, . . . , 5}, where ck is the center of the k-th obstacle. Since positional constraints exhibit a relative degree of two with respect to the control input, we employ High-Order CBFs (HOCBFs, see, e.g., [8]) as follows 
+
+hj (q, ω ) = ∇¯hj (q)⊤ω + γ¯hj (q), (18) where γ > 0 is a tunable parameter. To simplify the filter design, all constraints are aggregated into a single composite CBF 
+
+h(q, ω ) using the Log-Sum-Exp formulation (see, e.g., [29]), namely 
+
+h(q, ω ) := − 1
+
+ρ ln 
+
+X
+
+> j
+
+e−ρh j (q,ω )
+
+ , (19) with ρ > 0 modulating the approximation sharpness. The robust safety condition for the reduced-order system reads as 
+
+∇h(q, ω )⊤frs (q, ω ) + γh (q, ω ) − η ≥ 0, (20) where frs (q, ω ) is the vector field of the reduced-order system (12). We numerically implement a smooth safety filter, following the line of [30]. The system, initialized at rest ( q(0) = [0 ◦, 0◦]⊤, ω(0) = [0 , 0] ⊤), is driven toward the target configuration qtarget = [180 ◦, 0◦]⊤ by a nominal PD controller with gravity compensation. The parameters of the safety filter are set as γ = 10 , η = 0 .1, and ρ = 50 . Simulations are performed for 10 linearly spaced values of ϵ ∈ [0 .001 , 0.035] .Results are shown in Fig. 4. As theoretically predicted by Theorem 1, the interconnected system remains safe for sufficiently small ϵ. Conversely, as ϵ exceeds a critical threshold, constraint violations occur. 
+
+B. Suboptimal Safe Control 
+
+We consider a single-integrator system ˙x = u with state and input x, u ∈ R. The CBF is defined as h(x) = x, enforcing 
+
+x ≥ 0. We apply an unsafe nominal policy πdes = −3. To implement the safety filter dynamically, we define the algorithm 
+
+A(z, x ) in (14b) as the primal-dual gradient flow 
+
+A(z, x ) := 
+
+−∇ uℓ(z, x ) − λ∇ug(z, x )ΠR+ (g(z, x )) 
+
+
+
+,
+
+where z := [ u, λ ]⊤ comprises the control input and Lagrange multiplier, ℓ(u, x ) = ( u−πdes )2 is the cost function, g(u, x ) := 
+
+∇h(x)u + α(h(x)) − η encodes the robust safety constraint and ΠR+ is the projection onto R+. The overall interconnected system is initialized at x(0) = 4 and z(0) = [ πdes , 0] ⊤. The parameters of the safety filter are set as γ = 2 and η = 0 .1.Simulations span 10 seconds for 20 linearly spaced values of ϵ ∈ [0 .01 , 0.3] . We benchmark our suboptimal algorithm against an exact CBF-QP solution, computed by directly solving (13) at each time step. As shown in Fig. 5, the CBF-QP strictly maintains h(x(t)) ≥ 0. Conversely, the suboptimal approach preserves safety only for sufficiently small values of ϵ, while for larger values safety violations occur. VII. C ONCLUSIONS 
+
+In this paper, we developed a singular perturbation framework for safety, which is the first of its kind in the literature. More specifically, we considered feedback interconnections between two subsystems, referred to as the slow and fast subsystems, respectively. We then provided sufficient conditions to guarantee safety of the overall interconnected system, based on reduced-order safety properties of the slow subsystem and stability properties of the fast one. We illustrated the applicability of our theoretical results in two settings. The first is the safe control of a robotic arm with joint motors. The second is a suboptimal safe control scenario in which a physical plant interacts with an optimization algorithm that iteratively solves an optimization problem encoding safety constraints. 0 2 4 6 8 10  
+
+> t[s]
+> −1
+> 0
+> 1
+> 2
+> 3
+> 4
+> h(x(t))
+> 0
+
+Fig. 5: Time evolution of the CBF h(x) for varying values of ϵ. The green-to-red color gradient indicates increasing values of ϵ, with the ideal CBF-QP solution represented by the dashed black line. Unsafe trajectories are dash-dotted. APPENDIX 
+
+A. Proof of Theorem 1 
+
+The idea of the proof is to combine the reduced-system safety properties encoded in h (cf. Assumption 3) with the boundary-layer system (6) stability properties encoded in U (cf. Assumption 4) in order to guarantee that V (x, z ) = 
+
+h(x) − U  z − zeq (x, π (x))  ensures safety for the overall interconnected system (2). To this end, the proof exploits the parameter ϵ to arbitrarily slow down the evolution of the slow state x(t). Intuitively, this allows one to make arbitrarily small the approximation errors arising from the fact that the properties of h and U are established only for the limit cases detailed in Assumptions 3 and 4, rather than for the original interconnection (2). First of all, since they will be useful later, let us introduce the function zeq  
+
+> π
+
+: C → Rp and the constants Lh, L rs , L zeq  
+
+> π
+
+> 0
+
+defined as 
+
+zeq  
+
+> π
+
+(x) := zeq (x, π (x)) (21a) 
+
+Lrs := sup 
+
+> x∈C
+
+∥f (x, z eq  
+
+> π
+
+(x), π (x)) ∥ (21b) 
+
+Lh := sup 
+
+> x∈C
+
+∥∇ h(x)∥ (21c) 
+
+Lzeq  
+
+> π
+
+:= sup 
+
+> x∈C
+
+∥∇ zeq  
+
+> π
+
+(x)∥ . (21d) We highlight that the above constants exist and are finite since C is compact (cf. Assumption 3) f , zeq , ∇zeq , ∇h, and π
+
+are continuous (see Assumptions 1, 2, and 3, respectively). Then, by Lipschitz continuity of f and g (cf. Assumption 1) and π (cf. Assumption 3), we note that the solution to system (2) exists and is unique (see, e.g., [28, Thm. 3.2]). Let us rewrite system (2) in the error coordinate ˜z(t) := z(t) − zeq (x(t), π (x(t))) , thus obtaining 
+
+˙x(t) = ˜fπ (x(t), ˜z(t)) (22a) 
+
+˙˜z(t) = 1
+
+ϵ ˜gπ (˜ z(t), x (t)) − ∇ zeq  
+
+> π
+
+(x(t)) ˙ x(t), (22b) in which we introduce ˜fπ : C × Rp → Rn and ˜gπ : Rp × C → Rp defined as 
+
+˜fπ (x, ˜z) := f (x, ˜z + zeq  
+
+> π
+
+(x), π (x)) (23a) 
+
+˜gπ (˜ z, x ) := g(˜ z + zeq  
+
+> π
+
+(x), x, π (x)) . (23b) Now, let us consider a pair (x, ˜z) such that h(x) − U (˜ z) ≥ 0 and recall that this necessarily implies x ∈ S x since 
+
+C ⊆ S x (cf. Assumption 3) and U (˜ z) ≥ 0 for all ˜z ∈ Rp (see (8a) in Assumption 4). Then, we add and subtract the term 
+
+∇h(x)⊤frs (x, π (x)) = ∇h(x)⊤ ˜fπ (x, 0) (see the definitions of frs (4) and ˜fπ (23a)) to the Lie derivative of h along the trajectories of subsystem (22a), thus obtaining 
+
+∇h(x)⊤ ˜fπ (x, ˜z) = ∇h(x)⊤frs (x, π (x)) + ∇h(x)⊤( ˜fπ (x, ˜z) − ˜fπ (x, 0)) 
+
+> (a)
+
+≥ − α(h(x)) + η − ∥∇ h(x)∥ ˜fπ (x, ˜z) − ˜fπ (x, 0) 
+
+> (b)
+
+≥ − α(h(x)) + η − LhLf ∥˜z∥ , (24) where in (a) we exploit (5) (cf. Assumption 3) since x ∈ C , and we use the Cauchy-Schwarz inequality, while in (b) we use the Lipschitz continuity of f (cf. Assumption 1) and the bound (21c). Now, we evaluate the Lie derivative of the Lyapunov function U characterized in Assumption 4 along the trajectories of (22b) and we use (8b) to write 
+
+1
+
+ϵ ∇U (˜ z)⊤ ˜gπ (˜ z, x ) − ∇ U (˜ z)⊤∇zeq  
+
+> π
+
+(x) ˙ x(t)
+
+≤ − b3
+
+ϵ ∥˜z∥2 − ∇ U (˜ z)⊤∇zeq  
+
+> π
+
+(x) ˙ x(t)
+
+> (a)
+
+≤ − b3
+
+ϵ ∥˜z∥2 + b4Lzeq  
+
+> π
+
+∥˜z∥ ˜fπ (x, ˜z)
+
+> (b)
+
+≤ − b3
+
+ϵ ∥˜z∥2 + b4Lzeq  
+
+> π
+
+∥˜z∥ ∥ frs (x, π (x)) ∥ + b4Lzeq  
+
+> π
+
+∥˜z∥ ˜fπ (x, ˜z) − ˜fπ (x, 0) 
+
+> (c)
+
+≤ − b3
+
+ϵ ∥˜z∥2 + b4Lzeq  
+
+> π
+
+Lrs ∥˜z∥ + b4Lzeq  
+
+> π
+
+Lf ∥˜z∥2 (25) where in (a) we use the Cauchy-Schwarz inequality, the bounds (8c) (cf. Assumption 4) and (21d), and (22a), in (b) we add and subtract the term frs (x, π (x)) = ˜fπ (x, 0) (see the definitions of frs (4) and ˜fπ (23a)) in the last norm, and use the triangle inequality, while in (c) we use the Lipschitz continuity of f (cf. Assumption 1) and the bound (21b). Now, let us adapt the definition of V (cf. (15)) to the error coordinate ˜z, namely, let us introduce ˜V : C × Rp → R defined as 
+
+˜V (x, ˜z) := V (x, ˜z + zeq (x)) = h(x) − U (˜ z). (26) Then, the Lie derivative of ˜V along the trajectories of the interconnected system (22) reads as 
+
+∇ ˜V (x, ˜z)⊤
+
+ ˜fπ (x, ˜z) 
+
+> 1
+> ϵ
+
+˜gπ (˜ z, x ) + ∇zeq  
+
+> π
+
+(x) ˜fπ (x, ˜z)
+
+
+
+= ∇h(x)⊤ ˜fπ (x, ˜z) − 1
+
+ϵ ∇U (˜ z)⊤ ˜gπ (˜ z, x ) − ∇ U (˜ z)⊤∇zeq  
+
+> π
+
+(x) ˜fπ (x, ˜z)
+
+> (a)
+
+≥ − α(h(x)) + η +
+
+ b3
+
+ϵ − b4Lzeq  
+
+> π
+
+Lf
+
+
+
+∥˜z∥2 − (LhLf + b4Lzeq  
+
+> π
+
+Lrs ) ∥˜z∥ , (27) where in (a) we substitute the expressions found in (24) and (25). To simplify notation, let us introduce the constants 
+
+K1 := LhLf + b4Lzeq  
+
+> π
+
+Lrs and K2 := b4Lzeq  
+
+> π
+
+Lf , thus resulting in the following bound for the Lie derivative of ˜V :
+
+∇ ˜V (x, ˜z)⊤
+
+ ˜fπ (x, ˜z) 
+
+> 1
+> ϵ
+
+˜gπ (˜ z, x ) + ∇zeq  
+
+> π
+
+(x) ˜fπ (x, ˜z)
+
+
+
+≥ − α(h(x)) + η +
+
+ b3
+
+ϵ − K2
+
+
+
+∥˜z∥2 − K1 ∥˜z∥ . (28) Now, let us arbitrarily choose ν ∈ (0 , 1) and consider the decomposition 
+
+b3
+
+ϵ ∥˜z∥2 = ν b3
+
+ϵ ∥˜z∥2 + (1 − ν) b3
+
+ϵ ∥˜z∥2 .
+
+Then, by imposing the condition 
+
+ν b3
+
+ϵ − K2 > 0 ⇐⇒ ϵ < ¯ϵ1 := νb 3
+
+K2
+
+,
+
+we observe that the terms −K1 ∥˜z∥ +  ν b3 
+
+> ϵ
+
+− K2
+
+ ∥˜z∥2 form a parabola of ∥˜z∥ opening upwards and. Thus, we can bound this parabola through its minimum value, namely 
+
+−K1 ∥˜z∥ +
+
+
+
+ν b3
+
+ϵ − K2
+
+
+
+∥˜z∥2 ≥ − K21
+
+4  ν b3 
+
+> ϵ
+
+− K2
+
+ ,
+
+which allow us to further bound the right-hand side of (28) according to 
+
+∇ ˜V (x, ˜z)⊤
+
+ ˜fπ (x, ˜z) 
+
+> 1
+> ϵ
+
+˜gπ (˜ z, x ) + ∇zeq  
+
+> π
+
+(x) ˜fπ (x, ˜z)
+
+
+
+≥ − α(h(x)) + (1 − ν) b3
+
+ϵ ∥˜z∥2 + η − K21
+
+4  ν b3 
+
+> ϵ
+
+− K2
+
+
+
+> (a)
+
+≥ − α(h(x)) + (1 − ν) b3
+
+ϵ ∥˜z∥2 , (29) where in (a) we neglect the term η − K21
+
+> 4
+
+(ν b3 
+
+> ϵ−K2
+
+) by making it positive through the choice 
+
+ϵ < ¯ϵ2 := min 
+
+n
+
+¯ϵ1, 4ηνb 3 
+
+> K21+4 ηK 2
+
+o
+
+.
+
+Now, by Lα-Lipschitz continuity of α (cf. Assumption 3), it holds 
+
+|α(h(x)) − α(h(x) − U (˜ z)) | ≤ Lα|U (˜ z)| (30) Since U (˜ z) ≥ 0 (see (8a) in Assumption 4), and h(x) − U (˜ z) ≥ 0 by hypothesis, the bound (30) leads to 
+
+α(h(x)) ≤ α(h(x) − U (˜ z)) + LαU (˜ z)
+
+> (a)
+
+≤ α( ˜V (x, ˜z)) + Lαb2 ∥˜z∥2 , (31) where in (a) we use the definition of ˜V (cf. (26)) and the bound (8a). Then, by using (31), we can further bound the right-hand side of (29) as 
+
+∇ ˜V (x, ˜z)⊤
+
+ ˜fπ (x, ˜z) 
+
+> 1
+> ϵ
+
+˜gπ (˜ z, x ) + ∇zeq  
+
+> π
+
+(x) ˜fπ (x, ˜z)
+
+
+
+≥ − α( ˜V (x, ˜z)) − Lαb2 ∥˜z∥2 + (1 − ν) b3
+
+ϵ ∥˜z∥2 , (32) By setting ¯ϵ := min {¯ϵ2, (1 −ν)b3 
+
+> Lαb2
+
+} and using ϵ < ¯ϵ, we neglect that last two terms in the right-hand side of (32), thus obtaining 
+
+∇ ˜V (x, ˜z)⊤
+
+ ˜fπ (x, ˜z) 
+
+> 1
+> ϵ
+
+˜gπ (˜ z, x ) + ∇zeq  
+
+> π
+
+(x) ˜fπ (x, ˜z)
+
+
+
+≥ − α( ˜V (x, ˜z)) .
+
+The proof follows by using the last bound to invoke Lemma 1. REFERENCES [1] K.-C. Hsu, H. Hu, and J. F. Fisac, “The safety filter: A unified view of safety-critical control in autonomous systems,” Annual Review of Control, Robotics, and Autonomous Systems , vol. 7, 2023. [2] A. D. Ames, S. Coogan, M. Egerstedt, G. Notomista, K. Sreenath, and P. Tabuada, “Control barrier functions: Theory and applications,” in 2019 18th European control conference (ECC) . Ieee, 2019, pp. 3420–3431. [3] W. Xiao, C. G. Cassandras, and C. Belta, Safe autonomy with control barrier functions: Theory and applications . Springer, 2023. [4] S. Wang and S. Wen, “Safe control against uncertainty: A comprehensive review of control barrier function strategies,” IEEE Systems, Man, and Cybernetics Magazine , vol. 11, no. 1, pp. 34–47, 2025. [5] F. Ferraguti, C. T. Landi, A. Singletary, H.-C. Lin, A. Ames, C. Secchi, and M. Bonfe, “Safety and efficiency in robotics: The control barrier functions approach,” IEEE Robotics & Automation Magazine , vol. 29, no. 3, pp. 139–151, 2022. [6] A. Alan, A. J. Taylor, C. R. He, A. D. Ames, and G. Orosz, “Control barrier functions and input-to-state safety with application to automated vehicles,” IEEE Transactions on Control Systems Technology , vol. 31, no. 6, pp. 2744–2759, 2023. [7] C. T. Landi, F. Ferraguti, S. Costi, M. Bonf` e, and C. Secchi, “Safety barrier functions for human-robot interaction with industrial manipulators,” in 
+
+2019 18th European Control Conference (ECC) . IEEE, 2019, pp. 2565–2570. [8] W. Xiao and C. Belta, “High-order control barrier functions,” IEEE Transactions on Automatic Control , vol. 67, no. 7, pp. 3655–3662, 2021. [9] M. H. Cohen, R. K. Cosner, and A. D. Ames, “Constructive safety-critical control: Synthesizing control barrier functions for partially feedback linearizable systems,” IEEE Control Systems Letters , vol. 8, pp. 2229–2234, 2024. [10] P. Ong, M. H. Cohen, T. G. Molnar, and A. D. Ames, “Rectified control barrier functions for high-order safety constraints,” IEEE Control Systems Letters , vol. 8, pp. 2949–2954, 2024. [11] R. A. Freeman and P. Kokotovi´ c, “Backstepping design of robust controllers for a class of nonlinear systems,” in Nonlinear Control Systems Design 1992 . Elsevier, 1993, pp. 431–436. [12] A. D. Ames, X. Xu, J. W. Grizzle, and P. Tabuada, “Control barrier function based quadratic programs for safety critical systems,” IEEE Transactions on Automatic Control , vol. 62, no. 8, pp. 3861–3876, 2016. [13] P. Ong and J. Cort´ es, “Universal formula for smooth safe stabilization,” in 2019 IEEE 58th conference on decision and control (CDC) . IEEE, 2019, pp. 2373–2378. [14] S. Kolathaya and A. D. Ames, “Input-to-state safety with control barrier functions,” IEEE control systems letters , vol. 3, no. 1, pp. 108–113, 2018. [15] H. Matias and D. Silvestre, “Hybrid Lyapunov and barrier function-based control with stabilization guarantees,” arXiv preprint arXiv:2504.09760 ,2025. [16] M. Kamaldar, “Composite adaptive control barrier functions for safety-critical systems with parametric uncertainty,” arXiv preprint arXiv:2601.17683 ,2026. [17] A. Allibhoy and J. Cort´ es, “Control-barrier-function-based design of gradient flows for constrained nonlinear programming,” IEEE Transactions on Automatic Control , vol. 69, no. 6, pp. 3499–3514, 2023. [18] M. Colombino, E. Dall’Anese, and A. Bernstein, “Online optimization as a feedback controller: Stability and tracking,” IEEE Transactions on Control of Network Systems , vol. 7, no. 1, pp. 422–432, 2019. [19] A. Hauswirth, S. Bolognani, G. Hug, and F. D¨ orfler, “Timescale separation in autonomous optimization,” IEEE Transactions on Automatic Control ,vol. 66, no. 2, pp. 611–624, 2020. [20] G. Carnevale, N. Mimmo, and G. Notarstefano, “Nonconvex distributed feedback optimization for aggregative cooperative robotics,” Automatica , vol. 167, p. 111767, 2024. [21] G. Delimpaltadakis, P. Mestres, J. Cort´ es, and W. Heemels, “Safe feedback optimization through control barrier functions,” arXiv preprint arXiv:2602.09928 , 2026. [22] M. H. Cohen, T. G. Molnar, and A. D. Ames, “Safety-critical control for autonomous systems: Control barrier functions via reduced-order models,” 
+
+Annual Reviews in Control , vol. 57, p. 100947, 2024. [23] A. J. Taylor, P. Ong, T. G. Molnar, and A. D. Ames, “Safe backstepping with control barrier functions,” in 2022 IEEE 61st Conference on Decision and Control (CDC) . IEEE, 2022, pp. 5775–5782. [24] A. Singletary, S. Kolathaya, and A. D. Ames, “Safety-critical kinematic control of robotic systems,” IEEE Control Systems Letters , vol. 6, pp. 139–144, 2021. [25] T. G. Molnar, R. K. Cosner, A. W. Singletary, W. Ubellacker, and A. D. Ames, “Model-free safety-critical control for robotic systems,” IEEE robotics and automation letters , vol. 7, no. 2, pp. 944–951, 2021. [26] E. Dall’Anese, “Local safety filters for networked systems via two-time-scale design,” arXiv preprint arXiv:2603.03632 , 2026. [27] M. Abdelgalil, D. E. Ochoa, and J. I. Poveda, “Multi-time scale control and optimization via averaging and singular perturbation theory: From odes to hybrid dynamical systems,” Annual Reviews in Control , vol. 56, p. 100926, 2023. [28] H. K. Khalil, “Nonlinear systems,” Upper Saddle River , 2002. [29] A. Safari and J. B. Hoagg, “Safe navigation in unmapped environments for robotic systems with input constraints,” in 2025 IEEE 64th Conference on Decision and Control (CDC) . IEEE, 2025, pp. 6957–6962. [30] M. H. Cohen, P. Ong, G. Bahati, and A. D. Ames, “Characterizing smooth safety filters via the implicit function theorem,” IEEE Control Systems Letters , vol. 7, pp. 3890–3895, 2023.

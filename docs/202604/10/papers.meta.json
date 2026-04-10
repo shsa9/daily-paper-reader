@@ -1,0 +1,79 @@
+{
+  "label": "2026-04-10",
+  "date": "2026-04-10",
+  "generated_at": "2026-04-10T19:39:34",
+  "count": 5,
+  "papers": [
+    {
+      "paper_id": "202604/10/2604.02132v1-safe-control-of-feedback-interconnected-systems-via-singular-perturbations",
+      "section": "quick",
+      "title_en": "Safe Control of Feedback-Interconnected Systems via Singular Perturbations",
+      "authors": "Stefano Di Gregorio, Guido Carnevale, Giuseppe Notarstefano",
+      "date": "2026-04-02",
+      "pdf": "https://arxiv.org/pdf/2604.02132v1",
+      "score": "6.0",
+      "evidence": "机电互联子系统的反馈控制",
+      "tldr": "本研究针对具有多时间尺度特性的反馈互联非线性系统，提出了一种基于奇异摄动理论的安全控制方法。通过将低维简化模型上设计的控制屏障函数（CBF）提升至全阶系统，证明了在快慢动力学充分分离的情况下，复合CBF能确保全系统的安全性。该方法显著降低了在线安全滤波的计算负担，并在机器人手臂和优化驱动系统上得到了验证。",
+      "tags": "query:em-force",
+      "abstract_en": "Control Barrier Functions (CBFs) have emerged as a powerful tool in the design of safety-critical controllers for nonlinear systems. In modern applications, complex systems often involve the feedback interconnection of subsystems evolving at different timescales, e.g., two parts from different physical domains (e.g., the electrical and mechanical parts of robotic systems) or a physical plant and an (optimization or control) algorithm. In these scenarios, safety constraints often involve only a portion of the overall system. Inspired by singular perturbations for stability analysis, we develop a formal procedure to lift a safety certificate designed on a reduced-order model to the overall feedback-interconnected system. Specifically, we show that under a sufficient timescale separation between slow and fast dynamics, a composite CBF can be designed to certify the forward invariance of the safe set for the interconnected system. As a result, the online safety filter only needs to be solved for the lower-dimensional, reduced-order model. We numerically test the proposed approach on: (i) a robotic arm with joint motor dynamics, and (ii) a physical plant driven by an optimization algorithm.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/10/2604.02503v1-nonlinear-system-identification-of-variable-pitch-propellers-using-a-wiener-model",
+      "section": "quick",
+      "title_en": "Nonlinear System Identification of Variable-Pitch Propellers Using a Wiener Model",
+      "authors": "David Grasev, Miguel A. Mendez",
+      "date": "2026-04-02",
+      "pdf": "https://arxiv.org/pdf/2604.02503v1",
+      "score": "6.0",
+      "evidence": "从PWM到推力产生的执行机构链系统辨识",
+      "tldr": "本研究针对变螺距螺旋桨（VPP）动力系统，提出了一种基于Wiener模型的非线性系统辨识方法。通过实验数据建模，将PWM输入经一阶线性动力学处理后映射至静态非线性推力输出。该模型在保证计算轻量化和可解释性的同时，准确捕捉了系统的动静态特性，为实时数字孪生和控制应用提供了紧凑且高效的数学基础。",
+      "tags": "query:em-force",
+      "abstract_en": "This work presents the system identification of a variable-pitch propeller (VPP) powertrain, encompassing the full actuation chain from PWM signals to thrust generation, with the aim of developing compact models suitable for real-time digital twinning and control applications. The identification is grounded in experimental data covering both static and dynamic responses of the system. The proposed model takes the form of a Wiener-like architecture, where the PWM inputs are first processed through linear first-order dynamics describing the motor and pitch actuation, and the resulting states are then mapped via a static nonlinear relation to the generated thrust. This structure naturally arises under the assumptions that the electronic actuation operates on a much faster time scale than the mechanical response, and that the contribution of the aerodynamically induced torque is negligible in the tested regime. The resulting parsimonious representation is shown to reproduce the measured dynamics with good accuracy while remaining interpretable and computationally light, thereby providing a practical basis for integration in control-oriented digital twin frameworks.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/10/2604.05832v1-local-sensitivity-analysis-for-kernel-regularized-arx-predictors-in-data-driven-predictive-control",
+      "section": "quick",
+      "title_en": "Local Sensitivity Analysis for Kernel-Regularized ARX Predictors in Data-Driven Predictive Control",
+      "authors": "Aihui Liu, Magnus Jansson",
+      "date": "2026-04-07",
+      "pdf": "https://arxiv.org/pdf/2604.05832v1",
+      "score": "6.0",
+      "evidence": "弱激励状态下预测控制的灵敏度分析",
+      "tldr": "本研究探讨了数据驱动预测控制（MPC）中基于核正则化ARX模型的局部灵敏度分析。针对多步预测器与ARX参数之间的隐式依赖关系，提出了一种局部一阶线性化方法。通过推导雅可比矩阵，实现了控制相关的预测不确定性量化和任务感知的核正则化优化。实验表明，该方法在弱激励环境下能显著提升系统的鲁棒性，并进一步优化控制性能。",
+      "tags": "query:em-force",
+      "abstract_en": "We study local sensitivity of structured ARX-based data-driven predictive control. Although predictor estimation is linear in the ARX parameters, the lifted multi-step predictor used in MPC depends on them implicitly, which complicates both uncertainty propagation and task-aware regularization. We derive a local first-order linearization of this implicit predictor map. The resulting Jacobian yields both an approximate control-relevant prediction uncertainty term and a task-dependent sensitivity metric for shaping kernel regularization. Numerical results show that the proposed analysis is most useful in weak-excitation regimes, where baseline SS regularization already provides substantial robustness gains and the proposed sensitivity shaping yields a further smaller improvement.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/10/2604.06582v1-dae-index-reduction-for-electromagnetic-transient-models",
+      "section": "quick",
+      "title_en": "DAE Index Reduction for Electromagnetic Transient Models",
+      "authors": "Fiona Majeau, Jose Daniel Lara, Eduardo Corona, Bri-Mathias Hodge",
+      "date": "2026-04-08",
+      "pdf": "https://arxiv.org/pdf/2604.06582v1",
+      "score": "6.0",
+      "evidence": "电磁暂态模型与电机子系统",
+      "tldr": "针对电磁暂态（EMT）模型在特定拓扑下表现为高指数微分代数方程（DAE）且难以数值求解的问题，本文提出了一种无需模型近似或符号算法的模块化指数缩减方法。通过推导变压器及电机耦合子系统的降阶模型，该方法显著降低了大型电网模型构建的计算开销，将性能瓶颈从模型构建转向了数值积分，为大规模电力系统仿真提供了高效方案。",
+      "tags": "query:em-force",
+      "abstract_en": "Electromagnetic transient (EMT) models are index-2 differential-algebraic equations when they include certain topologies and are formulated with modified nodal analysis. Such systems are difficult to numerically integrate, a challenge that is currently addressed by applying model approximations or reformulating with index-reduction algorithms. These algorithms exist in general-purpose software tools, but their reliance on symbolic representation makes them computationally prohibitive for large network-wide EMT models. This paper derives and presents two modular index-reduced subsystem models that allow EMT models to be integrated with standard solvers, without approximations or symbolic algorithms. Both subsystems include a transformer, one isolated and one machine-coupled. We measure the computational performance of constructing EMT models with up to 1152 buses using the custom subsystem models and the symbolic algorithms. The custom approach reduces memory usage and runtime of model construction by several orders of magnitude compared to the general approach, shifting the bottleneck from construction to integration.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/10/2604.07155v1-immersed-boundary-conformal-isogeometric-methods-for-magnetostatics",
+      "section": "quick",
+      "title_en": "Immersed boundary-conformal isogeometric methods for magnetostatics",
+      "authors": "Yusuf T. Elbadry, Giuliano Guarino, Pablo Antolín, Oliver Weeger",
+      "date": "2026-04-08",
+      "pdf": "https://arxiv.org/pdf/2604.07155v1",
+      "score": "6.0",
+      "evidence": "电机与多材料领域的静磁建模",
+      "tldr": "针对等几何分析（IGA）在处理多材料电磁设备时面临的网格匹配难题，本文提出并评估了三种非匹配离散化策略：全嵌入法、非匹配补丁并集法和匹配层并集法。通过引入边界匹配高阶积分规则和Nitsche耦合方法，该框架显著降低了几何预处理难度和补丁数量。实验证明，并集方法在保持高精度的同时，有效解决了复杂电磁装置的仿真效率问题。",
+      "tags": "query:em-force",
+      "abstract_en": "Isogeometric analysis was proposed to bridge the gap between computer-aided design and numerical discretization. However, standard multi-patch isogeometric analysis mandates conformal discretizations across patch interfaces, posing challenges for multi-material domain problems. In the context of electric machines, this requirement becomes evident in a large number of patches needed to represent machines consisting of several domains and materials. In this work, we adopt, extend, and evaluate three non-conformal discretization strategies for magnetostatic problems: a fully immersed approach, the union with non-conformal patches, and the union with conformal layers. In all three methods, boundary-conformal high-order quadrature rules are employed for integration over trimmed boundary and interface elements. In the two union approaches, material regions are, as far as possible, represented by independent non-conformal spline patches that are embedded within a background patch and coupled weakly through Nitsche's method. In the latter framework, critical interfaces are additionally surrounded by conformal layers that enable the strong imposition of boundary conditions and improved resolution of interface behavior. The proposed approaches are assessed through several magnetostatic benchmark problems and an industrial application. The numerical results show that the union methods achieve highly accurate solutions, while the fully immersed approach struggles with discontinuities in field gradients across material interfaces. Nevertheless, these methods significantly reduce the geometric preprocessing effort compared to conventional, conformal multi-patch analysis and require substantially fewer patches. Overall, this demonstrates that our immersed boundary-conformal isogeometric framework possesses great potential for efficient simulation of complex electromagnetic devices.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

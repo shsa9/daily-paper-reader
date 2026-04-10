@@ -6,41 +6,38 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-09
-- 运行时间：2026-04-09 20:14:16 UTC
+- 最新运行日期：2026-04-10
+- 运行时间：2026-04-10 19:39:23 UTC
 - 运行状态：成功
-- 本次总论文数：6
+- 本次总论文数：5
 - 精读区：0
-- 速读区：6
+- 速读区：5
 
 ### 今日简报（AI）
-今日速读 6 篇前沿论文，聚焦精密测量技术与复杂动力学系统的智能控制优化。
-重点关注锁相声子激光器对超弱力测量灵敏度的显著提升，以及利用学习算法解决非仿射系统的控制分配难题。
-建议对量子传感和高精度工业控制感兴趣的读者，深入探索文中关于状态观测器与非线性控制的结合应用。
-- 详情：[/202604/09/README](/202604/09/README)
+今日聚焦复杂控制系统的安全性与非线性建模，深入探讨了从奇异摄动安全控制到变距螺旋桨识别的 5 项研究。
+最值得关注的是利用奇异摄动理论保障反馈系统安全，以及针对数据驱动预测控制进行的局部灵敏度分析。
+建议读者重点了解如何通过 Wiener 模型优化非线性系统识别，以提升复杂动力设备在实际应用中的控制精度。
+- 详情：[/202604/10/README](/202604/10/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Phase-locked phonon laser enhanced ultra-weak force measurement](/202604/09/2604.06923v1-phase-locked-phonon-laser-enhanced-ultra-weak-force-measurement)  
-   标签：评分：7.0/10、query:em-force
-   evidence：利用声子激光进行精密超弱力测量与传感
-2. [Extended State Observer for Localized Fault Awareness in RF Accelerating Structures](/202604/09/2604.00340v2-extended-state-observer-for-localized-fault-awareness-in-rf-accelerating-structures)  
+1. [Safe Control of Feedback-Interconnected Systems via Singular Perturbations](/202604/10/2604.02132v1-safe-control-of-feedback-interconnected-systems-via-singular-perturbations)  
    标签：评分：6.0/10、query:em-force
-   evidence：用于电磁系统鲁棒调节和扰动识别的扩张状态观测器
-3. [Improving INDI for Input Nonaffine Systems via Learning-Based Nonlinear Control Allocation](/202604/09/2604.06337v1-improving-indi-for-input-nonaffine-systems-via-learning-based-nonlinear-control-allocation)  
+   evidence：机电互联子系统的反馈控制
+2. [Nonlinear System Identification of Variable-Pitch Propellers Using a Wiener Model](/202604/10/2604.02503v1-nonlinear-system-identification-of-variable-pitch-propellers-using-a-wiener-model)  
    标签：评分：6.0/10、query:em-force
-   evidence：输入非仿射系统的非线性控制分配
-4. [Adaptive Control with Sparse Identification of Nonlinear Dynamics](/202604/09/2604.06338v1-adaptive-control-with-sparse-identification-of-nonlinear-dynamics)  
+   evidence：从PWM到推力产生的执行机构链系统辨识
+3. [Local Sensitivity Analysis for Kernel-Regularized ARX Predictors in Data-Driven Predictive Control](/202604/10/2604.05832v1-local-sensitivity-analysis-for-kernel-regularized-arx-predictors-in-data-driven-predictive-control)  
    标签：评分：6.0/10、query:em-force
-   evidence：非线性控制仿射系统的自适应控制与参数辨识
-5. [Stochastic Adaptive Control for Systems with Nonlinear Parameterization: Almost Sure Stability and Tracking](/202604/09/2604.06980v1-stochastic-adaptive-control-for-systems-with-nonlinear-parameterization-almost-sure-stability-and-tracking)  
+   evidence：弱激励状态下预测控制的灵敏度分析
+4. [DAE Index Reduction for Electromagnetic Transient Models](/202604/10/2604.06582v1-dae-index-reduction-for-electromagnetic-transient-models)  
    标签：评分：6.0/10、query:em-force
-   evidence：非线性参数化系统的随机自适应控制与跟踪
-6. [Phase-Selective Excitation of Betatron Oscillations by Nonadiabatic Magnetic-Field Switching](/202604/09/2604.07305v1-phase-selective-excitation-of-betatron-oscillations-by-nonadiabatic-magnetic-field-switching)  
+   evidence：电磁暂态模型与电机子系统
+5. [Immersed boundary-conformal isogeometric methods for magnetostatics](/202604/10/2604.07155v1-immersed-boundary-conformal-isogeometric-methods-for-magnetostatics)  
    标签：评分：6.0/10、query:em-force
-   evidence：用于控制振荡和脉冲驱动的磁场切换
+   evidence：电机与多材料领域的静磁建模
 
 
 <div class="dpr-home-promo-card">

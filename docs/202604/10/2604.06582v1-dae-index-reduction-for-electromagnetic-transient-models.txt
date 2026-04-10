@@ -1,0 +1,1440 @@
+Title: DAE Index Reduction for Electromagnetic Transient Models
+
+URL Source: https://arxiv.org/pdf/2604.06582v1
+
+Published Time: Thu, 09 Apr 2026 00:30:41 GMT
+
+Number of Pages: 11
+
+Markdown Content:
+> PREPRINT 1
+
+# DAE Index Reduction for Electromagnetic Transient Models 
+
+Fiona Majeau ∗† , Jose Daniel Lara ‡, Eduardo Corona §, and Bri-Mathias Hodge ∗†‡§ ∗ Electrical, Computer and Energy Engineering, University of Colorado Boulder, United States  
+
+> †
+
+Renewable and Sustainable Energy Institute, University of Colorado Boulder, United States  
+
+> ‡
+
+Grid Planning and Analysis Center, National Laboratory of the Rockies, Golden, United States  
+
+> §
+
+Applied Mathematics, University of Colorado Boulder, United States 
+
+Abstract —Electromagnetic transient (EMT) models are index-2 differential-algebraic equations when they include certain topologies and are formulated with modified nodal analysis. Such systems are difficult to numerically integrate, a challenge that is currently addressed by applying model approximations or reformulating with index-reduction algorithms. These algorithms exist in general-purpose software tools, but their reliance on symbolic representation makes them computationally prohibitive for large network-wide EMT models. This paper derives and presents two modular index-reduced subsystem models that allow EMT models to be integrated with standard solvers, without approximations or symbolic algorithms. Both subsystems include a transformer, one isolated and one machine-coupled. We measure the computational performance of constructing EMT models with up to 1152 buses using the custom subsystem models and the symbolic algorithms. The custom approach reduces memory usage and runtime of model construction by several orders of magnitude compared to the general approach, shifting the bottleneck from construction to integration. 
+
+Index Terms —electromagnetic transient simulation, differen-tial algebraic equations, index reduction, numerical integration 
+
+I. I NTRODUCTION 
+
+# ELECTROMAGNETIC transient (EMT) modeling and simulation is becoming increasingly necessary for pre-dicting network-wide stability as more power electronic de-vices connect to the grid. Quasi-static phasor (QSP) modeling has been the standard approach for network-wide stability predictions, but it neglects the electromagnetic dynamics of machine stators, transformers, and lines, which we will refer to collectively as network dynamics. As electromagnetic devices become more prevalent and less localized, it is harder to claim that time-scale separation justifies the exclusion of network dynamics [1], [2], [3]. Since EMT models include these dynamics, there is increasing interest in running network-wide EMT simulations. Unfortunately, EMT simulation tools were originally designed to simulate small subsets of a grid, and they do not scale well for simulations of realistically-sized grids, which can have over 100,000 state variables [4]. Therefore, researchers are trying to improve the computational feasibility of network-wide EMT simulations. One promising approach is a model formulation method called EMT-dq , proposed in [5]. This method defines the balanced network equations with respect to a rotating dq 
+
+reference frame (RF) instead of a stationary three-phase abc 
+
+RF. At a stable operating point, network states expressed in a dq RF are constant (time-invariant) while those expressed in an abc RF are sinusoidal (time-variant). When a system of differential equations is time-invariant, adaptive time stepping can meaningfully improve time-integration efficiency [5]. To advance the development of EMT-dq simulation tools, several open questions must be addressed. Most EMT tools use a systematic model formulation method, usually modified nodal analysis (MNA), to convert the network topology and device models into a system of differential-algebraic equa-tions (DAEs) [6]. However, when MNA is applied to models with network dynamics, specific network structures cause the resulting system of equations to be a numerically sensitive form called an index-2 DAE , which is challenging to integrate [7], [8]. This paper focuses on two common structures that cause this issue: an equivalent circuit of a transformer with nonzero magnetizing reactance, and the interface between a synchronous generator (SG) stator and transformer. We will refer to these structures as S1 and S2, respectively. Typically, the transformer in S2 is an S1 transformer, so we present models for S1 and the combined subsystem, S1+S2. For index-2 DAEs, it is generally recommended to perform a reformulation process called index reduction to achieve a form that can be reliably integrated [8], [9]. DAE index reduction algorithms have been implemented in many software tools, like Dymola (Modelica), Simscape (MATLAB), and ModelingToolkit (Julia). These algorithms perform symbolic transformations on a system of equations, like differentiation and equation sorting, to produce a symbolic model. To run a numerical simulation, the symbolic model is converted into numerical code through a process called code generation .There has been an effort to develop Modelica-based EMT sim-ulation tools which use Modelica’s symbolic transformation toolkit to perform index reduction. However, code generation is identified in [10] as a significant barrier to building large-scale Modelica-based EMT models. We encountered the same barrier when using ModelingToolkit, as shown in Section VI. There is limited mention of the existence or difficulty of index-2 EMT models in the literature. S2 is briefly consid-ered in the appendix of [11]. The authors show the steps for generating a state-space representation of this structure, which successfully reduces the index. However, this is not the primary focus of their paper, so they do not extend the process to other topologies or perform numerical experiments illustrating the validity or computational performance of the method. Index-2 structures are also discussed in [12], where they are called floating subnetworks. The authors experience convergence issues when integrating a system with S2 using the DAE solver, IDA [13]. They address this by adding a small shunt capacitor to every floating bus, which prevents  
+
+> arXiv:2604.06582v1 [eess.SY] 8 Apr 2026 PREPRINT 2
+
+convergence failures in their particular experiments and tech-nically reduces the index. However, convergence failures could still occur for other cases because the Newton iteration matrix (see Section III-A) is only slightly less ill-conditioned than the original system due to the small capacitor values. S1 and S2 also cause EMT-abc models to be index-2 DAEs. The PSCAD user guide provides insight on how both structures are handled [14]. S1 is formulated from Maxwell’s equations instead of the equivalent circuit, which generates an index-1 model. S2 is approximated by calculating the stator current injection in between two time-integration steps of the decoupled network solve. However, the stator current and terminal bus voltage are dynamically coupled and should be updated within the same time step. The user guide reports spurious voltage spikes at these simulated interfaces when the voltage changes quickly, which is likely an artifact of this decoupling. To compensate, the developers added a shunt resistor and current source to the interface model. The main contribution of this paper is a set of modular index-reduced subsystem models that resolve a numerical chal-lenge caused by common components, enabling large network-wide EMT-dq simulations. EMT-dq models with these sub-systems are compatible with standard index-1 DAE or ODE solvers. Without these subsystem models, there are only two options to reliably generate time-domain simulations of index-2 EMT-dq models: simplifying the model with approximations such as in [12] and [14], or building the model with general-purpose index reduction tools. The models presented in this paper require no additional approximations and can be built using orders of magnitude less memory and time than general-purpose tools. This paper does not provide models for every possible case of index-2 DAEs in power systems, nor does it claim to present a universal algorithm to derive them. Rather, we focus on the specific application of network-wide EMT-dq 
+
+models by addressing two commonly encountered subsystems that cause them to be index-2 DAEs. This paper is organized as follows. Section II defines DAEs and why they show up in EMT models. Section III discusses the numerical challenges of index-2 DAEs, the process of index reduction, and how index reduction can be applied to EMT models. Section IV derives two custom subsystem models and Section V describes the numerical experiments. Section VI presents experimental results which illustrate the validity, efficiency, and scalability of the custom approach. Section VII presents conclusions and future work. 
+
+Notation : Bold letters x represent column vectors of vari-ables or functions; ˙x or dx 
+
+> dt
+
+represent column vectors of element-wise time derivatives; subscripts RI and dq represent quantities defined with respect to the network RF and gen-erator RF, respectively; the network RF rotates at a constant system base frequency, ω0; the generator RF for an SG rotates at the shaft frequency, ω; pairs of RI or dq variables or functions may be represented as column vectors, e.g. i1,RI =[i1,R , i 1,I ]T or i1,RI ± i1,IR = [ i1,R + i1,I , i 1,I − i1,R ]T ;quantities are in per unit (pu) unless otherwise specified; the system is assumed to be balanced, so 0-axis equations are excluded. II. EMT M ODELS AS INDEX -2 DAE S
+
+A. Definitions 
+
+Consider a nonlinear system of DAEs in semi-explicit form, given by (1). The following discussion is restricted to this class of problems, since EMT-dq models are typically expressed in this form. We refer to elements of x as differential variables 
+
+and elements of z as algebraic variables . The Jacobian and implicit form of (1) are given by (2) and (3), respectively. We assume that (1) does not include redundant equations. 
+
+˙x = f (t, x, z) (1a) 
+
+0 = g(t, x, z) (1b) J (t, x, z) = 
+
+ fx fz
+
+gx gz
+
+
+
+(2) 
+
+F (t, x, z, ˙x) = f (t, x, z) − ˙x (3a) 
+
+G (t, x, z, ˙x) = g(t, x, z) (3b) The incidence matrix of (1) is given by (4), where the operator S{ A} denotes the sparsity pattern of matrix A. The incidence matrix, B, is a binary sparsity pattern matrix that defines the structural dependence of the system on ˙x and z. It is related to J through the sparsity patterns of fz and gz [15]. 
+
+B =
+
+"S{ ∂F  
+
+> ∂˙x
+
+} S{ ∂F 
+
+> ∂z
+
+}S{ ∂G  
+
+> ∂˙x
+
+} S{ ∂G 
+
+> ∂z
+
+}
+
+#
+
+=
+
+I S{ fz}
+
+0 S{ gz}
+
+
+
+(4) where S{ A} =
+
+(
+
+1 Aij ̸ = 0 0 Aij = 0 
+
+A system of DAEs can be categorized with an integer called the index , which describes how it relates to an equivalent system of ODEs. The index of (1) is the minimum number of times that (1b) must be differentiated with respect to t to determine ˙z as a continuous function of t, x, and z [9]. An index-0 DAE is an ODE. A semi-explicit system of DAEs given by (1) and (2) is index-1 if and only if gz is non-singular. Otherwise, it is index-2 or higher, a category referred to as higher-index DAEs [9]. Converting a higher index DAE to a lower index DAE is called index reduction . Differentiating (1b) once and solving for ˙z gives (5). If gz is non-singular, this expression can be evaluated, indicating that (1) is index-1 and (5) is index-0. If 
+
+gz is singular, then (1) is index-2 or higher, and subsequent differentiations are required to reduce the index [9]. 
+
+˙x = f (t, x, z) (5a) 
+
+˙z = g(t, x, z) = −g−1
+
+> z
+
+ ∂g
+
+∂t + gx f (t, x, z)
+
+
+
+(5b) Only a specific subset of g, called constraint equations , must be differentiated to reduce higher-index DAEs. They represent mutual dependencies between elements of x and can be identi-fied from the structure of gz. Consider the case where row i of 
+
+gz is all zeros. Since gi is only a function of x, it is a constraint equation. The corresponding elements of ˙x are also mutually dependent through ddt gi, which is called a hidden constraint equation . Consider the case where rows j and k of gz are nonzero and linearly dependent. The corresponding constraint PREPRINT 3
+
+equation can be formed by combining gj and gk through z.The number of constraint equations in (1) is the nullity of gz.However, most algorithms for identifying constraint equations are performed on B, which only represents the sparsity pattern of gz. Therefore, only the zero-row constraint equations can be preemptively detected and differentiated. For the systems in this paper, all constraint equations appear as rows of zeros. If a DAE is sufficiently differentiable, the index reduction process does not simplify or approximate the relationships represented by the equations. For example, if gz is non-singular, then (1) and (5) model the same dynamical system. However, if both models are numerically integrated with the same initial condition to get x(t) and z(t), the solution of (5) may drift away from the solution of (1). Since (5) does not explicitly include (1b), the solver will not enforce those relationships and rounding errors will propagate [9]. In practice, (5b) is added to the system and (1b) is retained. 
+
+B. Model formulation meets topology 
+
+Model formulation methods are procedures for identifying the relevant variables and relationships in a physical system and expressing them mathematically. The DAE index of a model is influenced by both the modeled system and the formulation method. There are several contexts in which DAE models arise from formulation methods. When a model is formulated with conservation laws, such as conservation of mass or momentum, algebraic relationships between variables are introduced. The EMT models discussed in this paper are DAEs due to Kirchhoff’s Current Law (KCL) and Kirchhoff’s Voltage Law (KVL) which enforce conservation of charge and energy, respectively. Algebraic equations also emerge when stiff systems of ordinary differential equations (ODEs) are approximated using singular perturbation theory. A common formulation method for dynamic power system models is MNA [6]. When network dynamics are retained, there are two structures of passive components that introduce constraint equations: a cutset of inductors and/or current sources (e.g. Fig. 1), and a loop of capacitors and voltage sources (e.g. Fig. 2) [7]. When MNA is applied to a system with one of these structures, the system of equations is an index-2 DAE. This result is an artifact of the physical system topology, the decision to model inductor and capacitor dynamics, and the model formulation method. This result applies to both EMT-abc and EMT-dq models, but we focus on the EMT-dq case. The next two sections show why applying MNA to these topologies generates constraint equations. v1       
+
+> X1i1
+> v0
+> i3
+> v3
+> X3
+> i2X2
+> v2
+> KCL
+> Fig. 1. Example of a cutset of in-ductors or current sources. KCL at v0
+> introduces constraint equations. −
+> +vS(t)X
+> +
+> −
+> vC
+> iC
+> KVL
+> Fig. 2. Example of a loop of ca-pacitors and voltage sources. KVL introduces constraint equations.
+
+C. Constraint equations from KCL 
+
+Consider a network that includes an instance of Fig. 1. When formulating an EMT-dq model of this network using MNA, this structure contributes three pairs of d-axis and q-axis inductor equations, (6a)-(6c), and KCL at the central node, (6d)-(6e) [16]. This is a DAE of form (1) where (6a)-(6c) correspond to (1a) and (6d)-(6e) correspond to (1b). 
+
+X1
+
+ω0
+
+di1,dq 
+
+dt = v0,dq − v1,dq ± X1i1,qd (6a) 
+
+X2
+
+ω0
+
+di2,dq 
+
+dt = v0,dq − v2,dq ± X2i2,qd (6b) 
+
+X3
+
+ω0
+
+di3,dq 
+
+dt = v0,dq − v3,dq ± X3i3,qd (6c) 
+
+0 = i1,d + i2,d + i3,d (6d) 
+
+0 = i1,q + i2,q + i3,q (6e) where x = {i1,dq , i2,dq , i3,dq }, z = {v0,dq }
+
+Since (6d)-(6e) only include elements of x, they are con-straint equations. Only two of the three currents in (6d) must be known to calculate the third and their time derivatives are similarly constrained. The time evolution of one current is therefore defined by both its differential equation and the hidden constraint equation. The same logic applies to (6e). Any EMT model with this structure, such as S1 and S2, is an index-2 DAE when formulated with MNA. 
+
+D. Constraint equations from KVL 
+
+Next, consider a network that includes an instance of Fig. 2. The voltage source, defined by Fd(t) and Fq (t), is an inde-pendent input, not an element of x or z. When formulating an EMT-dq model of this network using MNA, this structure will contribute one pair of d-axis and q-axis capacitor equations, (7a), and expressions of the independent voltage source, (7b)-(7c). This is a DAE of form (1) where (7a) correspond to (1a) and (7b)-(7c) correspond to (1b). 
+
+1
+
+Xω 0
+
+dvC,dq 
+
+dt = iC,dq ± 1
+
+X vC,qd (7a) 
+
+0 = Fd(t) − vC,d (t) (7b) 
+
+0 = Fq (t) − vC,q (t) (7c) where x = {vC,dq }, z = {iC,dq }
+
+Since (7b)-(7c) only include elements of x, they are con-straint equations. The time evolution of vC,d is defined by both its differential equation and the derivative of (7b). The same logic applies to vC,q . Any EMT model with this structure is an index-2 DAE when formulated with MNA. III. I NDEX REDUCTION 
+
+A. Difficulties of integrating of higher-index DAEs 
+
+EMT models must be numerically integrated over time to predict dynamic stability. There are many methods designed for ODEs and semi-explicit index-1 DAEs. IDA, a solver based on backward differentiation formula (BDF) methods, is a common choice for implicit index-1 DAEs [13]. While PREPRINT 4
+
+there are stable and consistent methods for some higher-index DAEs, notably Hessenberg index-2 DAEs 1, most have no standard options [8]. Higher-index DAEs of any form are difficult to integrate because gz is singular, causing the Newton iteration matrix of many standard methods to be ill-conditioned [9]. To illustrate this, consider (8), the k-step BDF method applied to (1). The vectors xn and zn are the predicted states at tn, αi are the BDF coefficients, and hn = tn −tn−1.
+
+> k
+
+X
+
+> i=0
+
+αn,i xn−i = hn f (tn, xn, zn) (8a) 
+
+0 = g(tn, xn, zn) (8b) To solve for xn and zn, reformulate (8) as the nonlinear root-finding problem, (9), and solve with Newton’s method. Each iteration, ν, of Newton requires solving the system of linear equations, (10), where ˜J is the Newton iteration matrix .
+
+˜F(tn, xn, zn) = 
+
+> k
+
+X
+
+> i=0
+
+αn,i xn−i − hn f (tn, xn, zn) = 0 (9a) 
+
+˜G(tn, xn, zn) = g(tn, xn, zn) = 0 (9b) 
+
+˜J(tn, x(ν) 
+
+> n
+
+, z(ν) 
+
+> n
+
+)
+
+"x(ν+1)  
+
+> n
+
+−x(ν)
+
+> n
+
+z(ν+1)  
+
+> n
+
+−z(ν)
+
+> n
+
+#
+
+= −
+
+" ˜F(tn, x(ν) 
+
+> n
+
+, z(ν) 
+
+> n
+
+)˜G(tn, x(ν) 
+
+> n
+
+, z(ν) 
+
+> n
+
+)
+
+#
+
+(10) For a k-step BDF method, the Newton iteration matrix is (11), evaluated at step n and iteration ν. When gz is singular, 
+
+˜J is ill-conditioned. Thus, small errors from evaluating ˜J, ˜F,or ˜G, like those caused by finite precision rounding, will cause large errors in the solution, x(ν+1)  
+
+> n
+
+and z(ν+1)  
+
+> n
+
+. Furthermore, ˜J
+
+becomes more ill-conditioned as hn decreases [9]. 
+
+˜J(t, x, z) = 
+
+" ∂ ˜F   
+
+> ∂x
+> ∂˜F
+> ∂z
+> ∂˜G
+> ∂x
+> ∂˜G
+> ∂z
+
+#
+
+=
+
+"α0I−hnfx −hnfz
+
+gx gz
+
+#
+
+(11) Another challenge with integrating higher-index DAEs is that the analytical error estimates of zn used for step size control do not tend to zero as hn decreases [9]. Therefore, the error estimates of zn can force hn to decrease, causing 
+
+˜J to become more ill-conditioned, and eventually causing Newton failure [8], [9]. Therefore, attempting to integrate an index-2 DAE with index-1 DAE solvers will likely lead to a Newton convergence error. Attributing this error to the DAE formulation is difficult because there are many possible reasons for convergence failure. Additionally, strategies to mitigate these issues do not work for every higher-index DAE system and thus must be tested on a case-by-case basis [9]. 
+
+B. General index reduction 
+
+Due to the difficulties of integrating higher-index DAEs directly, it is common to reformulate the original system into an index-1 DAE using index reduction. The process converts a DAE system of unknown index into a dynamically equivalent system that can be integrated with standard solvers. Fig. 3 shows the typical sequence of algorithms used in software tools. The specific implementation of each can vary.   
+
+> 1The systems in Section IV can be cast into index-2 Hessenberg form. Phase I: Index Reduction
+> Phase II:
+> Dimension Reduction
+> Constraint Differentiation
+> Variable Recategorization
+> Incidence Matrix Sorting
+> Start
+> Non-singular incidence matrix?
+> Forward Substitution
+> Algebraic loops?
+> Algebraic Loop Tearing
+> Small linear algebraic loops?
+> Exact Symbolic Inversion
+> Stop
+> Stop
+> Stop
+> Yes (DAE) index-1
+> Yes (DAE)
+> Yes (DAE)
+> (ODE)
+> No (DAE) index-2+
+> No (ODE)
+> No (DAE)
+> Fig. 3. The typical algorithmic workflow in software tools for performing index reduction and dimension reduction on a DAE of unknown index. The DAE index is noted at each state of index reduction. The equation format (DAE or ODE) is noted at each stage of dimension reduction.
+
+1) Index Identification: To start, determine if index re-duction is necessary with incidence matrix sorting . This algorithm attempts to convert the system incidence matrix, defined by (4), into lower-triangular (LT) or block-lower-triangular (BLT) form using row and column permutations. In LT form, each diagonal entry represents a causal relationship between an element of ˙x or z (column) and its defining equation (row). For higher-index DAEs, the singular incidence matrix cannot be permuted into LT or BLT form. In this case, sorting fails but reveals the q constraint equations. Tarjan’s algorithm is a common implementation of this step [15]. 
+
+2) Index Reduction: Phase I begins if index reduction is necessary, starting with constraint differentiation . All q
+
+constraint equations are differentiated and added to the system, revealing the hidden constraint equations. Then, variable re-categorization is performed to address the differential variable dependencies. For each constraint, one dependent differential variable is reclassified as algebraic. The time derivative of that variable, called a pseudo-derivative , is also reclassified as algebraic. This converts both the constraint and hidden PREPRINT 5
+
+constraint into standard algebraic equations. Phase I reduces the index by one, adds q equations and 2q algebraic variables, and removes q differential variables. Phase I is repeated until the DAE is index-1, which is a valid stopping point. Pantelides algorithm is a common implementation of Phase I [15]. 
+
+3) Dimension Reduction: Phase II (optional) attempts to reduce the dimension of the index-1 DAE 2 to improve com-putational efficiency without approximations. If the sorted incidence matrix is LT, then all algebraic equations can be substituted into the differential equations using forward sub-stitution resulting in an ODE. If the incidence matrix is in BLT form, only partial forward substitution is possible, leaving unsorted blocks that correspond to coupled algebraic loops. Algebraic loop dimensions can be reduced with algebraic loop tearing , which assumes one or more column-row causal relationships between tearing variables and residual equations 
+
+to allow further incidence matrix sorting. If post-tearing al-gebraic loops are small and linear, they can be solved by 
+
+exact symbolic inversion , reducing the system to an ODE. See Chapter 7 of [15] for details on most algorithms in Fig. 3. 
+
+C. Custom index reduction for power systems 
+
+The general index reduction (GIR) method described above has been implemented in several general-purpose software tools. These algorithms are designed to handle a variety of systems, which requires them to symbolically represent and manipulate models at runtime using computer algebra. To per-form time integration, the symbolic models are converted into numerical code using code generation. Unlike general-purpose tools, we are specifically interested in reducing the index of EMT-dq models and do not need the flexibility of GIR. By combining domain knowledge with GIR, we can avoid the computational overhead of symbolic representation. EMT-dq 
+
+models typically consist of interconnected subsystems, like transmission lines, transformers, and SGs, that are represented by dynamic equations. The follow sections describe why we can reduce the system index while remaining compatible with this modular approach. The result is two index-reduced topology-agnostic subsystem models, S1 and S1+S2, that can be implemented directly into numerical code. The derivations of both models are presented in Section IV. 
+
+1) Index Identification: The goal of incidence matrix sorting is to determine the DAE index and identify the constraint equations. Since S1 and S2 are cutsets of inductors and/or current sources, we know the index and the constraints. According to Section II-B, these structures cause the system to be an index-2 DAE with constraint equations from KCL. 
+
+2) Index Reduction: The hidden constraints introduced dur-ing constraint differentiation are the derivatives of the known KCL constraints and thus can be differentiated analytically and included in the numerical subsystem model. Variable recategorization of the dependent differential variables and pseudo-derivatives can occur at the same time. Neither step requires knowledge of other subsystems. 
+
+> 2This is not technically the same as reducing the index of the Phase I output, which would involve differentiating all remaining algebraic equations.
+
+3) Dimension Reduction: After index reduction, there are algebraic loops corresponding to S1 and S1+S2. However, these are decoupled from the rest of the incidence matrix and thus can be solved without knowledge of other subsystems. For example, consider the block matrix, (12). 
+
+Bblock =
+
+
+
+D1 0 0 0 0
+
+L21 D2 0 0 0
+
+L31 L32 D3 0 00 0 0 D4 0
+
+L51 L52 L53 L54 D5
+
+ (12) It is a BLT sparsity pattern matrix partitioned into diagonal blocks, Di, strictly lower blocks Lij , and zero-valued upper blocks. When a diagonal block, like D4, has zero-valued blocks to its left, its equations are structurally independent from the block rows above it. The variables in D4 can be solved without any other matrices in Bblock . This characteristic allows forward substitution , algebraic loop tearing , and 
+
+exact symbolic inversion to be performed prior to runtime and implemented directly into the modular numerical models. IV. S UBSYSTEM MODEL DERIVATIONS 
+
+This section derives two custom index-reduced subsystem models by manually performing GIR on two minimal grid models that contain S1 and S1+S2, respectively. We demon-strate that the subsystem equations are not sensitive to the specific network topology and can be implemented in code as modular numerical models. Only the equations relevant to the final subsystem are explicitly shown. In both cases, the generator and network have the same per-unit base power. 
+
+A. Inverter to transformer 
+
+Performing GIR on Fig. 4 derives the index-reduced sub-system model of S1, the transformer centered around v3,RI .The resulting model applies to any transformer connected on both sides to a bus whose complex voltage is a differential variable. In this case, one side is connected to an LC filter of an inverter and the other to a π-model transmission line. This model also applies to a transformer located between two 
+
+π-model transmission lines. INV         
+
+> RI dq
+> Xf ilt Rf ilt
+> v1,RI
+> Xf ilt
+> X1R1i1,RI
+> v3,RI
+> i3,RI
+> X3
+> R3
+> i2,RI X2R2
+> v2,RI
+> Bline
+> Xline Rline
+> Bline
+> Xload
+> Rload
+> Fig. 4. Schematic of a minimal grid featuring an inverter connected to a transformer, a π-section line, and a constant impedance load. All currents and voltages referenced in equations are labeled.
+
+We begin by defining the state variables, x, and algebraic variables, z, needed to define Fig. 4 as an EMT-dq model. All variable categories are named, but only the variables needed for the derivation are labeled in Fig. 4 and listed below. 
+
+x = xInverter ∪ xFilter ∪ xTransformer ∪ xLine ∪ xLoad 
+
+z = zInverter ∪ zFilter ∪ zTransformer ∪ zLine ∪ zLoad PREPRINT 6
+
+where 
+
+{v1,RI } ⊆ xFilter 
+
+{i1,RI , i2,RI , i3,RI } ⊆ xTransformer 
+
+{v3,RI } ⊆ zTransformer 
+
+{v2,RI } ⊆ xLine 
+
+Applying MNA to Fig. 4 causes the system to be an index-2 DAE, due to the cutset of inductors at v3,RI . The relevant subset of equations are (13). 
+
+X1
+
+ω0
+
+di1,RI 
+
+dt = v1,RI − v3,RI − R1i1,RI ± X1i1,IR (13a) 
+
+X2
+
+ω0
+
+di2,RI 
+
+dt = v3,RI − v2,RI − R2i2,RI ± X2i2,IR (13b) 
+
+X3
+
+ω0
+
+di3,RI 
+
+dt = v3,RI − R3i3,RI ± X3i3,IR (13c) 
+
+0 = i1,RI − i2,RI − i3,RI (13d) where 
+
+{i1,RI , i2,RI , i3,RI , v1,RI , v2,RI } ⊂ x, {v3,RI } ⊂ z
+
+The constraint equations are (13d), since they are only a function of elements of x. For constraint differentiation, add the derivatives of (13d) to the system and retain (13d). For variable recategorization, select the shunt currents, i3,RI , as the dependent differential variables. Convert their derivatives,  
+
+> ddt
+
+i3,RI , into pseudo-derivatives by renaming them to di 3,RI .With the index-reduced transformer model, (14), the full system becomes index-1 with a BLT incidence matrix. 
+
+X1
+
+ω0
+
+di1,RI 
+
+dt = v1,RI − v3,RI − R1i1,RI ± X1i1,IR (14a) 
+
+X2
+
+ω0
+
+di2,RI 
+
+dt = v3,RI − v2,RI − R2i2,RI ± X2i2,IR (14b) 
+
+X3
+
+ω0
+
+di 3,RI = v3,RI − R3i3,RI ± X3i3,IR (14c) 
+
+0 = i1,RI − i2,RI − i3,RI (14d) 
+
+0 = di1,RI 
+
+dt − di2,RI 
+
+dt − di 3,RI (14e) where 
+
+{i1,RI , i2,RI , v1,RI , v2,RI } ⊂ x, {v3,RI , i3,RI , di 3,RI } ⊂ z
+
+Finally, perform partial forward substitution of the index-1 BLT incidence matrix. Select v3,RI as the tearing variables and (14c) as the residual equations. This reduces the algebraic loop to a 2x2 linear system which we invert directly to solve for v3,RI . The final subsystem model is (15). Note that (15a) is separated for readability, but can be plugged into (15b)-(15c). 
+
+v3,RI = 
+
+> v1,RI
+> X1
+
++ v2,RI  
+
+> X2
+
++
+
+ R3 
+
+> X3
+
+− R1
+
+> X1
+
+
+
+i1,RI −
+
+ R3 
+
+> X3
+
+− R2
+
+> X2
+
+
+
+i2,RI  
+
+> 1
+> X1
+
++ 1 
+
+> X2
+
++ 1
+
+> X3
+
+(15a) 
+
+X1
+
+ω0
+
+di1,RI 
+
+dt = v1,RI − v3,RI − R1i1,RI ± X1i1,IR (15b) 
+
+X2
+
+ω0
+
+di2,RI 
+
+dt = v3,RI − v2,RI − R2i2,RI ± X2i2,IR (15c) The transformer subsystem model describes the dynamics of the independent interface currents, {i1,RI , i2,RI } and correctly reflects the dependency of the magnetizing branch current and voltage, {i3,RI , v3,RI }. The equations are decoupled from everything except for the adjacent independent voltages, and thus can be implemented as a modular subsystem model. During this derivation, we made no additional approximations. 
+
+B. Machine to transformer 
+
+Performing GIR on Fig. 5 derives the index-reduced subsys-tem model of S1+S2. The transformer, S1, is centered around 
+
+v3,RI , and the stator-transformer interface, S2, is at v1,RI .They are coupled through iRI , so the subsystem includes the machine, dynamic stator, and transformer. The transformer is also connected to a π-model transmission line. SG 
+
+vdq    
+
+> δ, ω, ψdq ,e′dq ,ψ′′ dq , v f
+
+idq 
+
+iRI 
+
+v1,RI 
+
+> RI dq
+
+X1 R1 i1,RI 
+
+v3,RI 
+
+i3,RI 
+
+X3
+
+R3
+
+i2,RI X2 R2
+
+v2,RI 
+
+Bline 
+
+Xline Rline 
+
+Bline 
+
+Xload 
+
+Rload  
+
+> Fig. 5. Schematic of a minimal grid featuring a SG connected to a transformer, aπ-section line, and a constant impedance load.
+
+We begin by defining the state variables, x, and algebraic variables, z, needed to define Fig. 5 as an EMT-dq model. All variable categories are named, but only the variables needed for the derivation are labeled in Fig. 5 and listed below. 
+
+x = xSG ∪ xT ransf ormer ∪ xLine ∪ xLoad 
+
+z = zSG ∪ zT ransf ormer ∪ zLine ∪ zLoad 
+
+where 
+
+{δ, ω, ψdq , e′dq , ψ′′ dq , v f } ⊆ xSG 
+
+{idq , vdq , iRI , v1,RI } ⊆ zSG 
+
+{i1,RI , i2,RI , i3,RI } ⊆ xTransformer 
+
+{v3,RI } ⊆ zTransformer 
+
+{v2,RI } ⊆ xLine 
+
+Applying MNA to Fig. 5 causes the system to be an index-2 DAE, due to the cutset of inductors at v3,RI and the cutset of a current source (stator) and an inductor at v1,RI . The relevant subset of equations are (13) from Section IV-A and (16)-(17). 
+
+0 = iR − i1,R (16a) 
+
+0 = iI − i1,I (16b) 
+
+iR = id sin δ + iq cos δ (17a) 
+
+iI = −id cos δ + iq sin δ (17b) 
+
+id = 1
+
+x′′ 
+
+> d
+
+ −ψd + γd1e′ 
+
+> q
+
++ (1 − γd1)ψ′′ 
+
+> d
+
+ (17c) 
+
+iq = 1
+
+x′′ 
+
+> q
+
+ −ψq − γq1e′ 
+
+> d
+
++ (1 − γq1)ψ′′ 
+
+> q
+
+ (17d) The constraint equations associated with KCL at v3,RI are (18a)-(18b), which are identical to (13d). The generator RF PREPRINT 7
+
+(dq) to network RF (RI) transformation is defined in (17a)-(17b). The stator current is defined in (17c)-(17d) in terms of machine states δ, ψdq , e′dq , and ψ′′ dq . This example corre-sponds to the Sauer-Pai machine model defined in [17], but the approach extends to any machine model with differentiable dynamic stator equations. Plugging (17) into (16) exposes the two constraint equations from KCL at v1,RI , shown in (18c)-(18d). 
+
+0 = i1,R − i2,R − i3,R (18a) 
+
+0 = i1,I − i2,I − i3,I (18b) 
+
+0 = −i1,R + 1
+
+x′′ 
+
+> d
+
+ −ψd + γd1e′ 
+
+> q
+
++ (1 − γd1)ψ′′ 
+
+> d
+
+ sin δ
+
++ 1
+
+x′′ 
+
+> q
+
+ −ψq − γq1e′ 
+
+> d
+
++ (1 − γq1)ψ′′ 
+
+> q
+
+ cos δ (18c) 
+
+0 = −i1,I − 1
+
+x′′ 
+
+> d
+
+ −ψd + γd1e′ 
+
+> q
+
++ (1 − γd1)ψ′′ 
+
+> d
+
+ cos δ
+
++ 1
+
+x′′ 
+
+> q
+
+ −ψq − γq1e′ 
+
+> d
+
++ (1 − γq1)ψ′′ 
+
+> q
+
+ sin δ (18d) where 
+
+{i1,RI , i2,RI , i3,RI , δ, ψdq , e′dq , ψ′′ dq } ⊂ x
+
+Since these two pairs of constraint equations are coupled through i1,RI , they cannot be addressed independently. Dif-ferentiate (18) to get the hidden constraints, (19a)-(19d), and add them to the system. The derivatives of (17) are separated for clarity. 
+
+0 = di1,R 
+
+dt − di2,R 
+
+dt − di3,R 
+
+dt (19a) 
+
+0 = di1,I 
+
+dt − di2,I 
+
+dt − di3,I 
+
+dt (19b) 
+
+0 = diR
+
+dt − di1,R 
+
+dt (19c) 
+
+0 = diI
+
+dt − di1,I 
+
+dt (19d) 
+
+diR
+
+dt = id cos δ + did
+
+dt sin δ − iq sin δ + diq
+
+dt cos δ (19e) 
+
+diI
+
+dt = id sin δ − did
+
+dt cos δ + iq cos δ + diq
+
+dt sin δ (19f) 
+
+x′′ 
+
+> d
+
+did
+
+dt = − dψd
+
+dt + γd1
+
+de′
+
+> q
+
+dt + (1 − γd1) dψ′′ 
+
+> d
+
+dt (19g) 
+
+x′′ 
+
+> q
+
+diq
+
+dt = − dψq
+
+dt − γq1
+
+de′
+
+> d
+
+dt + (1 − γq1) dψ′′ 
+
+> q
+
+dt (19h) For variable recategorization, select i3,RI and i1,RI as the four dependent differential variables. Rename the pseudo-derivatives, ddt i3,RI and ddt i1,RI , to di 3,RI and di 1,RI . Rename the derivatives in the corresponding transformer equations as well. With this index-reduced model, the system is index-1 with a BLT incidence matrix (not shown). For the optional dimension reduction, perform partial for-ward substitution on the incidence matrix. Then, select v3,RI 
+
+and v1,RI as the four tearing variables and (14a) and (14c) as the residual equations. For this example, ddt i1,RI becomes 
+
+di 1,RI in (14a). Similar to Section IV-A, tearing reveals a linear system of equations where the unknowns are the tearing variables, shown in (20). This case results in a 4x4 matrix since the two sets of constraint equations are coupled. The upper left corner the linear system matrix is diagonal, so we can solve this subsystem directly using the Schur complement. Thus, we can find analytical expressions for v3,RI and v1,RI to use in the final subsystem model. 
+
+
+
+− 1 
+
+> X1
+
+0 1 
+
+> X1
+
++ Φ dq Θ0 − 1 
+
+> X1
+
+Θ 1 
+
+> X1
+
++ Φ qd  
+
+> 1
+> X3
+
++ 1 
+
+> X2
+
+0 Φdq Θ0 1 
+
+> X3
+
++ 1 
+
+> X2
+
+Θ Φqd 
+
+
+
+v3,R 
+
+v3,I 
+
+v1,R 
+
+v1,I 
+
+
+
+=
+
+ 
+
+> βR
+> ω0
+
++ R1 
+
+> X1
+
+i1,R − i1,I βI 
+
+> ω0
+
++ R1 
+
+> X1
+
+i1,I + i1,R βR 
+
+> ω0
+
++ 1 
+
+> X2
+
+v2,R + R2 
+
+> X2
+
+i2,R + R3 
+
+> X3
+
+i3,R − i2,I − i3,I βI 
+
+> ω0
+
++ 1 
+
+> X2
+
+v2,I + R2 
+
+> X2
+
+i2,I + R3 
+
+> X3
+
+i3,I + i2,R + i3,R 
+
+ (20a) where 
+
+Φdq = 1
+
+x′′ 
+
+> d
+
+sin 2 δ + 1
+
+x′′ 
+
+> q
+
+cos 2 δ (20b) 
+
+Φqd = 1
+
+x′′ 
+
+> d
+
+cos 2 δ + 1
+
+x′′ 
+
+> q
+
+sin 2 δ (20c) 
+
+Θ = 
+
+
+
+− 1
+
+x′′ 
+
+> d
+
++ 1
+
+x′′ 
+
+> q
+
+
+
+sin δ cos δ (20d) 
+
+βR =
+
+
+
+id + ω0
+
+x′′ 
+
+> q
+
+(Γ q1 − raiq + ωψ d)
+
+
+
+cos δ
+
++
+
+
+
+−iq + ω0
+
+x′′ 
+
+> d
+
+(Γ d1 − raid − ωψ q )
+
+
+
+sin δ (20e) 
+
+βI =
+
+
+
+id + ω0
+
+x′′ 
+
+> q
+
+(Γ q1 − raiq + ωψ d)
+
+
+
+sin δ
+
++
+
+
+
+iq − ω0
+
+x′′ 
+
+> d
+
+(Γ d1 − raid − ωψ q )
+
+
+
+cos δ (20f) 
+
+Γd1 = 1
+
+ω0
+
+
+
+γd1
+
+de′
+
+> q
+
+dt + (1 − γd1) dψ′′ 
+
+> d
+
+dt 
+
+
+
+(20g) 
+
+Γq1 = 1
+
+ω0
+
+
+
+−γq1
+
+de′
+
+> d
+
+dt + (1 − γq1) dψ′′ 
+
+> q
+
+dt 
+
+
+
+(20h) The index-reduced model of a Sauer-Pai machine, dynamic stator, and transformer is shown in (21). The pre-substitution form is shown for readability, but it can be expressed as an ODE using forward substitution. 
+
+id = 1
+
+x′′ 
+
+> d
+
+ −ψd + γd1e′ 
+
+> q
+
++ (1 − γd1)ψ′′ 
+
+> d
+
+ (21a) 
+
+iq = 1
+
+x′′ 
+
+> q
+
+ −ψq − γq1e′ 
+
+> d
+
++ (1 − γq1)ψ′′ 
+
+> q
+
+ (21b) 
+
+i1,R = id sin δ + iq cos δ (21c) 
+
+i1,I = −id cos δ + iq sin δ (21d) 
+
+i3,R = i1,R − i2,R (21e) 
+
+i3,I = i1,I − i2,I (21f) 
+
+T ′
+
+> d0
+
+de′
+
+> q
+
+dt = −(xd − x′
+
+> d
+
+)  γd1id − γd2ψ′′  
+
+> d
+
++ γd2e′
+
+> q
+
+
+
+− e′ 
+
+> q
+
++ vf (21g) 
+
+T ′
+
+> q0
+
+de′
+
+> d
+
+dt = ( xq −x′ 
+
+> q
+
+)  γq1iq −γq2ψ′′  
+
+> q
+
+−γd2e′
+
+> d
+
+−e′ 
+
+> d
+
+(21h) PREPRINT 8
+
+T ′′ 
+
+> d0
+
+dψ′′ 
+
+> d
+
+dt = −ψ′′  
+
+> d
+
++ e′ 
+
+> q
+
+− (x′ 
+
+> d
+
+− xl)id (21i) 
+
+T ′′ 
+
+> q0
+
+dψ′′ 
+
+> q
+
+dt = −ψ′′  
+
+> q
+
+− e′ 
+
+> d
+
+− (x′ 
+
+> q
+
+− xl)iq (21j) 
+
+[v3,R v3,I v1,R v1,I ]T = soln . to (20) (21k) 
+
+vd = v1,R sin δ − v1,I cos δ (21l) 
+
+vq = v1,R cos δ + v1,I sin δ (21m) 
+
+1
+
+ω0
+
+dψd
+
+dt = raid + ωψ q + vd (21n) 
+
+1
+
+ω0
+
+dψq
+
+dt = raiq − ωψ d + vq (21o) 
+
+X2
+
+ω0
+
+di2,R 
+
+dt = v3,R − v2,R − R2i2,R + X2i2,I (21p) 
+
+X2
+
+ω0
+
+di2,I 
+
+dt = v3,I − v2,I − R2i2,I − X2i2,R (21q) The subsystem model, (21), describes the dynamics of the combined S1+S2 subsystem and correctly reflects the dependency of both the low-side and magnetizing branch of the transformer. The equations are decoupled from everything except for the high-side independent voltage, and thus can be implemented as a modular subsystem model. During this derivation, we made no additional approximations. In the remaining sections, custom index reduction (CIR) refers to the process of constructing an numerical EMT-dq 
+
+model with one or both of these derived subsystem models. V. E XPERIMENTAL DESIGN 
+
+The objective of these experiments is to evaluate the per-formance of constructing a numerical index-reduced EMT-dq 
+
+model using CIR versus GIR across varying system sizes. We also verify the equivalence of CIR and GIR. This section de-tails the methodology used to obtain the results in Section VI. 
+
+A. Power system models 
+
+The experiments use eight EMT-dq models of increasing size. Each model is built from of n instances of a 9-bus base system. The instances are connected together with additional lines chosen as a random graph. The load and network topology of each 9-bus instance are based on the WSCC 9-bus system [18]. The network and generators are modeled dynamically using a balanced EMT-dq framework. Since network-wide EMT simulations are most relevant for grids with inverters, we chose a two to one ratio of SGs to inverters within each 9-bus instance. The dynamic SG models include a 6th-order Sauer-Pai machine, dynamic stator, and Type I automatic voltage regulator [17]. The dynamic grid-forming inverter (GFM) model includes voltage inner control, active and reactive droop outer control, and an LC filter. Table I provides details about the eight cases used for this analysis. We built large models from stable substructures to improve the likelihood of initialization and enable the evaluation of the proposed method. Connecting smaller systems introduces non-realistic repeated structures, but test systems with dynamic networks and over 1000 buses are not widely available.                                                                 
+
+> TABLE I TOPOLOGICAL DETAILS OF SCALED SYSTEMS
+> Case C1 C2 C3 C4 C5 C6 C7 C8
+> Buses 918 36 72 144 288 576 1152 9-bus instances 124816 32 64 128 State variables 68 139 283 567 1135 2271 4543 9087 SGs 24816 32 64 128 256 Inverters 124816 32 64 128 Lines 613 28 56 112 224 448 896 Transformers 3612 24 48 96 192 384
+
+B. Experiments 
+
+The primary focus of these experiments is performance improvements associated with numerical model construction. However, the resulting models are also integrated to validate equivalency and to place the model-building process in the context of the full simulation. For the model build , we build each of the eight cases five times and measure the total allocated memory, maximum resi-dent set size, and wall clock runtime. Both implementations re-sult in a Julia object called ODEProblem , a numerical model that can be solved with time-integration methods available in DifferentialEquations.jl [19]. Since Julia uses just-in-time compilation, we throw out the first run of each experiment since it can be skewed by compilation overhead. For the integration , we integrate each of the eight cases five times and measure runtime. For all integration runs, a 20% load step is applied at bus 8 of the original 9-bus instance. We use Rodas5P , a 5th-order Rosenbrock method, with a 4th-order interpolant to allow direct comparison of specific time points. To validate, we compare the trajectories of CIR against that of GIR, using infinity norms of the trajectories and eigenvalues. The infinity norm of a vector, ||∗|| ∞, is the maximum absolute value. The first run of each experiment is again ignored due to just-in-time compilation. 
+
+C. Software and hardware 
+
+All experiments were implemented in Julia and performed on the Alpine cluster at University of Colorado Boulder [20] using a single AMD Milan (x86 64) CPU node. We used up to 64 cores for model construction, each with 3.75 GB RAM (240 GB RAM total), and up to 24 cores for numerical integration, each with 12 GB RAM (384 GB total). GIR was implemented using ModelingToolkit.jl [21] and CIR was implemented within PowerSimulationDynamics.jl [22]. The code to recreate the experimental results can be found in [23]. VI. E XPERIMENTAL RESULTS 
+
+A. Equivalence verification 
+
+To validate the models generated by CIR, we compare simulation results for a specific perturbation and eigenvalues of the initial condition. Table II shows the difference metrics used for these comparisons. Subscripts G and C refer to GIR and CIR, respectively. The vector x is the value of state x
+
+from tstart to tend . The vector λ is the eigenvalues of the pre-perturbation Jacobian evaluated at the initial condition. PREPRINT 9
+
+Column 1 of Table II shows the largest simulation error of any state variable at any time step. For example, when C8 is perturbed, the trajectories generated by the two methods never differ by more than 1.8e-04 pu for any of the 9087 state variables. Column 2 of Table II shows the mean infinity norm across all state variables. Column 3 of Table II compares the eigenvalues of the Jacobian evaluated at the initial condition. The difference norms are very small, indicating that the CIR and GIR index-reduced models are sufficiently equivalent. 
+
+TABLE II DIFFERENCE BETWEEN GIR-BASED AND CIR-BASED SIMULATIONS 
+
+Buses Max || xG − xC || ∞ Mean || xG − xC || ∞ || λG − λC || ∞
+
+9 2.1e-05 3.2e-06 1.6e-08 18 1.3e-05 1.5e-06 4.7e-09 36 1.4e-05 1.6e-06 4.7e-09 72 3.3e-05 1.4e-06 5.8e-09 144 3.6e-05 1.2e-06 5.9e-09 288 7.7e-05 9.8e-07 1.9e-08 576 1.4e-04 8.6e-07 1.0e-08 1152 1.8e-04 8.1e-07 1.1e-08 
+
+Fig. 6 shows a selection of the simulation results sum-marized in Table II. Only a subset of state variables from the 9-bus system are shown for readability. As suggested by the validation metrics in Table II, there are no perceptible differences between the two methods in these plots. 0 2 4 6 8
+
+> 1.000
+> 1.001
+> 1.002
+> 1.003
+> Per unit
+
+Rotor Angular Frequency (SG)     
+
+> 02468
+> 0.25
+> 0.50
+> 0.75
+> 1.00
+> 1.25
+> Radians
+
+Rotor Angle (SG) or Outer Loop Angle (GFM)     
+
+> 02468
+> 1.02
+> 1.04
+> 1.06
+> 1.08
+> Time (s)
+> Per unit
+
+Voltage Magnitude on High-Side of Transformer (SG, GFM)     
+
+> Gen 1 (SG) - General Gen 2 (GFM) - General Gen 3 (SG) - General
+> Gen 1 (SG) - Custom Gen 2 (GFM) - Custom Gen 3 (SG) - Custom
+
+Load Step in 9-bus Network Using Both Index-Reduced Models 
+
+Fig. 6. Comparison of the GIR and CIR index-reduced 9-bus models for a 20% load step at Bus 8. Only a subset of the 68 state variables are shown for readability. Metrics in Table II are based on all variables. 
+
+B. Performance comparison of model build 
+
+This section considers the relative computation performance of building a numerical model using CIR and GIR. Fig. 7, Fig. 8, and Fig. 9 illustrate the scaling of several performance metrics for both approaches. 
+
+1) Memory scaling analysis: Fig. 7 and Fig. 8, show that CIR is less memory intensive than GIR by several orders of magnitude. Fig. 7 states that the total memory allocated throughout the development of a numerical model is 10 2.6 to 
+
+10 3.7 times larger for GIR. Both approaches scale roughly as a power law. Fig. 8 shows that the maximum resident set size (RSS) 3 during the development of the numerical model is up to 10 times larger for GIR. This metric is only sensitive to system size for the larger models, once the memory needed to build the system exceeds the program overhead. The horizontal lines in Fig. 8 show two RAM sizes for context. A standard laptop with 16 GiB 4 of RAM would likely experience out-of-memory errors when building the 288-bus model with GIR, assuming some unavoidable operating system overhead. For both approaches, Fig. 7 indicates that total allocated memory scales as approximately O(n1.5) where n is the number of buses. Precise scaling is harder to quantify for the maximum RSS, because the program overhead is not surpassed until over 60 buses (GIR) and over 200 buses (CIR). The last few data points of GIR and CIR in Fig. 8 suggest approximately 
+
+O(n1.5) and O(n) scaling, respectively. 10 20 40 60 80 100 200 400 600 800 1000 
+
+> 10 −3
+> 10 −2
+> 10 −1
+> 10 0
+> 10 1
+> 10 2
+> 10 3
+> 10 4
+> 10 5
+
+Number of Buses 
+
+> Memory [GiB]
+
+Total Allocated Memory (Log-Log Scale) 
+
+> Model Build - General IR
+> Model Build - Custom IR
+
+Fig. 7. Memory allocated during build of ODEProblem assuming the initial condition is already known. 10 20 40 60 80 100 200 400 600 800 1000 
+
+> 10 0
+> 10 1
+> 10 2
+
+Number of Buses 
+
+> Memory [GiB]
+
+Maximum Resident Set Size (Log-Log Scale) 
+
+> Model Build - General IR
+> Model Build - Custom IR
+> 8 GiB RAM
+> 16 GiB RAM
+
+Fig. 8. Highest concurrent memory usage during build of ODEProblem 
+
+assuming the initial condition is already known. 
+
+> 3
+
+RSS is the RAM usage at a single point in time. Maximum RSS is a reasonable indicator of the RAM required to run a process. 
+
+> 4
+
+RAM is typically defined in GiB ( 230 bytes), not GB ( 10 9 bytes). PREPRINT 10 
+
+2) Runtime scaling analysis: Fig. 9 compares wall clock time between the two approaches. Building a numerical model with CIR is 10 2.8 to 10 4.5 times faster than GIR, shown by the solid lines. We are primarily interested in comparing the model build performance, but integration runtime is included for reference, shown by the dashed lines. CIR improves the runtime so drastically that the overall bottleneck of the CIR-based simulation is the time integration, not the model build like with GIR. For both approaches, the runtime scales as approximately O(n1.5) where n is the number of buses. 10 20 40 60 80 100 200 400 600 800 1000 
+
+> 10 −2
+> 10 −1
+> 10 0
+> 10 1
+> 10 2
+> 10 3
+> 10 4
+> 10 5
+> 10 6
+> Number of Buses
+> Time [s]
+
+Wall Clock Runtime (Log-Log Scale)    
+
+> Model Build - General IR
+> Model Build - Custom IR
+> Integration - General IR
+> Integration - Custom IR
+> Fig. 9. Wall clock time to build an ODEProblem assuming the initial condition is already known. The simulation runtime is included for reference.
+
+3) Discussion: These experiments measure the computa-tional complexity of building an index-reduced EMT-dq model that can be integrated by standard solvers. With GIR, the starting point is a higher-index DAE in symbolic form. With CIR, the starting point is a set of modular index-reduced numerical models. Building and manipulating a symbolic model is more memory intensive than performing calculations with numerical values because symbolic models represent expressions as structured objects rather than numbers. This is the primary reason for the significant memory discrepancies. Generating numerical code from a symbolic model is time intensive because the system must traverse the symbolic model and construct corresponding code that expresses the same system of equations and can be compiled for use by numerical solvers. This the primary reason for the significant runtime discrepancies between the two methods. VII. C ONCLUSION 
+
+In this paper, we present two modular index-reduced subsys-tem models that allow large network-wide EMT-dq models to be built and integrated with standard solvers, without incurring the significant computational costs associated with symbolic representation. Building an index-reduced EMT-dq model with these subsystem models is several orders of magnitude faster and less memory intensive than the general index reduction approach. These runtime improvements cause the computa-tional bottleneck of generating EMT-dq simulations to be time integration, not model construction. Future work will include evaluating the performance of these index-reduced models for a range of integration methods and developing more realistic EMT-dq benchmark models. ACKNOWLEDGMENTS 
+
+This material is based upon work supported by the U.S. De-partment of Energy, Office of Science, Office of Advanced Sci-entific Computing Research, Department of Energy Computa-tional Science Graduate Fellowship under Award Number DE-SC0024386. This report was prepared as an account of work sponsored by an agency of the United States Government. Neither the United States Government nor any agency thereof, nor any of their employees, makes any warranty, express or implied, or assumes any legal liability or responsibility for the accuracy, completeness, or usefulness of any information, apparatus, product, or process disclosed, or represents that its use would not infringe privately owned rights. Reference herein to any specific commercial product, process, or service by trade name, trademark, manufacturer, or otherwise does not necessarily constitute or imply its endorsement, recommen-dation, or favoring by the United States Government or any agency thereof. The views and opinions of authors expressed herein do not necessarily state or reflect those of the United States Government or any agency thereof. This work was authored in part by the National Laboratory of the Rockies for the U.S. Department of Energy (DOE), operated under Contract No. DE-AC36-08GO28308. Funding provided by applicable Department of Energy office and program office, e.g., U.S. Department of Energy Office of Electricity and Grid Deployment office. The views expressed in the article do not necessarily represent the views of the DOE or the U.S. Government. The U.S. Government retains and the publisher, by accepting the article for publication, acknowl-edges that the U.S. Government retains a nonexclusive, paid-up, irrevocable, worldwide license to publish or reproduce the published form of this work, or allow others to do so, for U.S. Government purposes. This work utilized the Alpine high performance computing resource at the University of Colorado Boulder. Alpine is jointly funded by the University of Colorado Boulder, the University of Colorado Anschutz, Colorado State University, and the National Science Foundation (award 2201538). REFERENCES [1] F. Milano, F. D¨ orfler, G. Hug, D. J. Hill, and G. Verbiˇ c, “Foundations and Challenges of Low-Inertia Systems (Invited Paper),” in 2018 Power Systems Computation Conference (PSCC) . Dublin, Ireland: IEEE, Jun. 2018, pp. 1–25. [2] U. Markovic, O. Stanojev, P. Aristidou, E. Vrettos, D. Callaway, and G. Hug, “Understanding Small-Signal Stability of Low-Inertia Systems,”         
+
+> IEEE Transactions on Power Systems , vol. 36, no. 5, pp. 3997–4017, Sep. 2021. [3] R. Henriquez-Auba, J. D. Lara, C. Roberts, and D. S. Callaway, “Grid Forming Inverter Small Signal Stability: Examining Role of Line and Voltage Dynamics,” in IECON 2020 The 46th Annual Conference of the IEEE Industrial Electronics Society .Singapore, Singapore: IEEE, Oct. 2020, pp. 4063–4068. [4] S. Subedi, M. Rauniyar, S. Ishaq, T. M. Hansen, R. Tonkoski, M. Shirazi, R. Wies, and P. Cicilio, “Review of Methods to Accelerate Electromag-netic Transient Simulation of Power Systems,” IEEE Access , vol. 9, pp. 89 714–89 731, 2021. [5] J. D. Lara, R. Henriquez-Auba, D. Ramasubramanian, S. Dhople, D. S. Callaway, and S. Sanders, “Revisiting Power Systems Time-Domain Simulation Methods and Models,” IEEE Transactions on Power Systems ,vol. 39, no. 2, pp. 2421–2437, Mar. 2024. PREPRINT 11
+
+[6] Chung-Wen Ho, A. Ruehli, and P. Brennan, “The modified nodal approach to network analysis,” IEEE Transactions on Circuits and Systems , vol. 22, no. 6, pp. 504–509, Jun. 1975. [7] C. Tischendorf, “Topological index-calculation of DAEs in circuit sim-ulation,” ZAMM - Journal of Applied Mathematics and Mechanics ,vol. 78, no. S3, pp. 1103–1104, Jan. 1998. [8] U. M. Ascher and L. R. Petzold, Computer Methods for Ordinary Dif-ferential Equations and Differential-Algebraic Equations . Philadelphia: Society for Industrial and Applied Mathematics, 1998. [9] K. E. Brenan, S. L. Campbell, and L. R. Petzold, Numerical Solution of Initial-Value Problems in Differential-Algebraic Equations . Society for Industrial and Applied Mathematics, Jan. 1995. [10] A. Guironnet, M. Saugier, S. Petitrenaud, F. Xavier, and P. Panciatici, “Towards an Open-Source Solution using Modelica for Time-Domain Simulation of Power Systems,” in 2018 IEEE PES Innovative Smart Grid Technologies Conference Europe (ISGT-Europe) . Sarajevo: IEEE, Oct. 2018, pp. 1–6. [11] E. Allen and M. Ilic, “Interaction of transmission network and load phasor dynamics in electric power systems,” IEEE Transactions on Circuits and Systems I: Fundamental Theory and Applications , vol. 47, no. 11, pp. 1613–1620, Nov. 2000. [12] M. A. Kulasza, U. D. Annakkage, and C. Karawita, “Extending the Frequency Bandwidth of Transient Stability Simulation Using Dynamic Phasors,” IEEE Transactions on Power Systems , vol. 37, no. 1, pp. 249– 259, Jan. 2022. [13] A. C. Hindmarsh, P. N. Brown, K. E. Grant, S. L. Lee, R. Serban, D. E. Shumaker, and C. S. Woodward, “SUNDIALS: Suite of nonlin-ear and differential/algebraic equation solvers,” ACM Transactions on Mathematical Software , vol. 31, no. 3, pp. 363–396, Sep. 2005. [14] “EMTDC User’s Guide v4.6,” Manitoba HVDC Research Centre, Win-nipeg, Manitoba, Canada, Tech. Rep., 2010. [15] F. E. Cellier and E. Kofman, Continuous System Simulation . New York: Springer, 2006. [16] F. Milano, I. Dassios, M. Liu, and G. Tzounas, Eigenvalue Problems in Power Systems , 1st ed. CRC Press, Dec. 2020. [17] F. Milano, Power System Modelling and Scripting , ser. Power Systems. Berlin, Heidelberg: Springer Berlin Heidelberg, 2010, vol. 0. [18] P. W. Sauer, M. A. Pai, and J. H. Chow, Power System Dynamics and Stability: With Synchrophasor Measurement and Power System Toolbox ,second edition ed. Hoboken, NJ, USA: IEEE Press, Wiley, 2017. [19] C. Rackauckas and Q. Nie, “DifferentialEquations.jl – A Performant and Feature-Rich Ecosystem for Solving Differential Equations in Julia,” 
+
+Journal of Open Research Software , vol. 5, no. 1, p. 15, May 2017. [20] University of Colorado Boulder Research Computing, “Alpine,” 2023. [21] Y. Ma, S. Gowda, R. Anantharaman, C. Laughman, V. Shah, and C. Rackauckas, “ModelingToolkit: A Composable Graph Transformation System For Equation-Based Modeling,” 2021. [22] J. D. Lara, R. Henriquez-Auba, M. Bossart, D. S. Callaway, and C. Barrows, “PowerSimulationsDynamics.jl – An Open Source Model-ing Package for Modern Power Systems with Inverter-Based Resources,” Mar. 2024. [23] F. Majeau, “DAE-Index-Reduction-for-EMT-Models,” 2026. [Online]. Available: https://github.com/fmajeau/ DAE-Index-Reduction-for-EMT-Models

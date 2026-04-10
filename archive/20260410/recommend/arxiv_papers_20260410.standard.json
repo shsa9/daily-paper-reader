@@ -1,0 +1,198 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-10T19:38:48.010168+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 5,
+    "quick_skim_target": 11,
+    "quick_selected": 5
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.02132v1",
+      "title": "Safe Control of Feedback-Interconnected Systems via Singular Perturbations",
+      "abstract": "Control Barrier Functions (CBFs) have emerged as a powerful tool in the design of safety-critical controllers for nonlinear systems. In modern applications, complex systems often involve the feedback interconnection of subsystems evolving at different timescales, e.g., two parts from different physical domains (e.g., the electrical and mechanical parts of robotic systems) or a physical plant and an (optimization or control) algorithm. In these scenarios, safety constraints often involve only a portion of the overall system. Inspired by singular perturbations for stability analysis, we develop a formal procedure to lift a safety certificate designed on a reduced-order model to the overall feedback-interconnected system. Specifically, we show that under a sufficient timescale separation between slow and fast dynamics, a composite CBF can be designed to certify the forward invariance of the safe set for the interconnected system. As a result, the online safety filter only needs to be solved for the lower-dimensional, reduced-order model. We numerically test the proposed approach on: (i) a robotic arm with joint motor dynamics, and (ii) a physical plant driven by an optimization algorithm.",
+      "authors": [
+        "Stefano Di Gregorio",
+        "Guido Carnevale",
+        "Giuseppe Notarstefano"
+      ],
+      "primary_category": "math.OC",
+      "categories": [
+        "math.OC",
+        "eess.SY"
+      ],
+      "published": "2026-04-02T15:04:51+00:00",
+      "link": "https://arxiv.org/pdf/2604.02132v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "feedback control of interconnected electrical and mechanical subsystems",
+      "llm_evidence_cn": "机电互联子系统的反馈控制",
+      "llm_evidence": "机电互联子系统的反馈控制",
+      "canonical_evidence": "机电互联子系统的反馈控制",
+      "llm_tldr_en": "Develops safe control for multi-timescale systems, applicable to electromagnetic-mechanical coupling.",
+      "llm_tldr_cn": "开发了多时间尺度系统的安全控制，适用于电磁-机械耦合系统。",
+      "llm_tldr": "开发了多时间尺度系统的安全控制，适用于电磁-机械耦合系统。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.02503v1",
+      "title": "Nonlinear System Identification of Variable-Pitch Propellers Using a Wiener Model",
+      "abstract": "This work presents the system identification of a variable-pitch propeller (VPP) powertrain, encompassing the full actuation chain from PWM signals to thrust generation, with the aim of developing compact models suitable for real-time digital twinning and control applications. The identification is grounded in experimental data covering both static and dynamic responses of the system. The proposed model takes the form of a Wiener-like architecture, where the PWM inputs are first processed through linear first-order dynamics describing the motor and pitch actuation, and the resulting states are then mapped via a static nonlinear relation to the generated thrust. This structure naturally arises under the assumptions that the electronic actuation operates on a much faster time scale than the mechanical response, and that the contribution of the aerodynamically induced torque is negligible in the tested regime. The resulting parsimonious representation is shown to reproduce the measured dynamics with good accuracy while remaining interpretable and computationally light, thereby providing a practical basis for integration in control-oriented digital twin frameworks.",
+      "authors": [
+        "David Grasev",
+        "Miguel A. Mendez"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-04-02T20:24:11+00:00",
+      "link": "https://arxiv.org/pdf/2604.02503v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "System identification of actuation chain from PWM to thrust generation",
+      "llm_evidence_cn": "从PWM到推力产生的执行机构链系统辨识",
+      "llm_evidence": "从PWM到推力产生的执行机构链系统辨识",
+      "canonical_evidence": "从PWM到推力产生的执行机构链系统辨识",
+      "llm_tldr_en": "Identifies a propeller powertrain model mapping PWM signals to thrust for real-time control applications.",
+      "llm_tldr_cn": "辨识了螺旋桨动力总成模型，将PWM信号映射到推力，用于实时控制应用。",
+      "llm_tldr": "辨识了螺旋桨动力总成模型，将PWM信号映射到推力，用于实时控制应用。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.05832v1",
+      "title": "Local Sensitivity Analysis for Kernel-Regularized ARX Predictors in Data-Driven Predictive Control",
+      "abstract": "We study local sensitivity of structured ARX-based data-driven predictive control. Although predictor estimation is linear in the ARX parameters, the lifted multi-step predictor used in MPC depends on them implicitly, which complicates both uncertainty propagation and task-aware regularization. We derive a local first-order linearization of this implicit predictor map. The resulting Jacobian yields both an approximate control-relevant prediction uncertainty term and a task-dependent sensitivity metric for shaping kernel regularization. Numerical results show that the proposed analysis is most useful in weak-excitation regimes, where baseline SS regularization already provides substantial robustness gains and the proposed sensitivity shaping yields a further smaller improvement.",
+      "authors": [
+        "Aihui Liu",
+        "Magnus Jansson"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-04-07T13:02:17+00:00",
+      "link": "https://arxiv.org/pdf/2604.05832v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "sensitivity analysis for predictive control in weak-excitation regimes",
+      "llm_evidence_cn": "弱激励状态下预测控制的灵敏度分析",
+      "llm_evidence": "弱激励状态下预测控制的灵敏度分析",
+      "canonical_evidence": "弱激励状态下预测控制的灵敏度分析",
+      "llm_tldr_en": "Provides sensitivity analysis for data-driven MPC, useful for precision control in low-force regimes.",
+      "llm_tldr_cn": "为数据驱动的预测控制提供灵敏度分析，有助于低力状态下的精密控制。",
+      "llm_tldr": "为数据驱动的预测控制提供灵敏度分析，有助于低力状态下的精密控制。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.06582v1",
+      "title": "DAE Index Reduction for Electromagnetic Transient Models",
+      "abstract": "Electromagnetic transient (EMT) models are index-2 differential-algebraic equations when they include certain topologies and are formulated with modified nodal analysis. Such systems are difficult to numerically integrate, a challenge that is currently addressed by applying model approximations or reformulating with index-reduction algorithms. These algorithms exist in general-purpose software tools, but their reliance on symbolic representation makes them computationally prohibitive for large network-wide EMT models. This paper derives and presents two modular index-reduced subsystem models that allow EMT models to be integrated with standard solvers, without approximations or symbolic algorithms. Both subsystems include a transformer, one isolated and one machine-coupled. We measure the computational performance of constructing EMT models with up to 1152 buses using the custom subsystem models and the symbolic algorithms. The custom approach reduces memory usage and runtime of model construction by several orders of magnitude compared to the general approach, shifting the bottleneck from construction to integration.",
+      "authors": [
+        "Fiona Majeau",
+        "Jose Daniel Lara",
+        "Eduardo Corona",
+        "Bri-Mathias Hodge"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-04-08T02:10:10+00:00",
+      "link": "https://arxiv.org/pdf/2604.06582v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "electromagnetic transient models and machine subsystems",
+      "llm_evidence_cn": "电磁暂态模型与电机子系统",
+      "llm_evidence": "电磁暂态模型与电机子系统",
+      "canonical_evidence": "电磁暂态模型与电机子系统",
+      "llm_tldr_en": "Develops index-reduced models for electromagnetic transients to enable standard numerical integration.",
+      "llm_tldr_cn": "开发了电磁暂态的降指数模型，以实现标准的数值积分。",
+      "llm_tldr": "开发了电磁暂态的降指数模型，以实现标准的数值积分。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "eddy current effects in electromagnetic actuators dynamic modeling",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.07155v1",
+      "title": "Immersed boundary-conformal isogeometric methods for magnetostatics",
+      "abstract": "Isogeometric analysis was proposed to bridge the gap between computer-aided design and numerical discretization. However, standard multi-patch isogeometric analysis mandates conformal discretizations across patch interfaces, posing challenges for multi-material domain problems. In the context of electric machines, this requirement becomes evident in a large number of patches needed to represent machines consisting of several domains and materials. In this work, we adopt, extend, and evaluate three non-conformal discretization strategies for magnetostatic problems: a fully immersed approach, the union with non-conformal patches, and the union with conformal layers. In all three methods, boundary-conformal high-order quadrature rules are employed for integration over trimmed boundary and interface elements. In the two union approaches, material regions are, as far as possible, represented by independent non-conformal spline patches that are embedded within a background patch and coupled weakly through Nitsche's method. In the latter framework, critical interfaces are additionally surrounded by conformal layers that enable the strong imposition of boundary conditions and improved resolution of interface behavior. The proposed approaches are assessed through several magnetostatic benchmark problems and an industrial application. The numerical results show that the union methods achieve highly accurate solutions, while the fully immersed approach struggles with discontinuities in field gradients across material interfaces. Nevertheless, these methods significantly reduce the geometric preprocessing effort compared to conventional, conformal multi-patch analysis and require substantially fewer patches. Overall, this demonstrates that our immersed boundary-conformal isogeometric framework possesses great potential for efficient simulation of complex electromagnetic devices.",
+      "authors": [
+        "Yusuf T. Elbadry",
+        "Giuliano Guarino",
+        "Pablo Antolín",
+        "Oliver Weeger"
+      ],
+      "primary_category": "cs.CE",
+      "categories": [
+        "cs.CE"
+      ],
+      "published": "2026-04-08T14:46:06+00:00",
+      "link": "https://arxiv.org/pdf/2604.07155v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "magnetostatic modeling for electric machines and multi-material domains",
+      "llm_evidence_cn": "电机与多材料领域的静磁建模",
+      "llm_evidence": "电机与多材料领域的静磁建模",
+      "canonical_evidence": "电机与多材料领域的静磁建模",
+      "llm_tldr_en": "Isogeometric methods for magnetostatic problems in electric machines with non-conformal discretizations.",
+      "llm_tldr_cn": "针对电机静磁问题的等几何分析方法，支持非共格离散化建模。",
+      "llm_tldr": "针对电机静磁问题的等几何分析方法，支持非共格离散化建模。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "eddy current effects in electromagnetic actuators dynamic modeling",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

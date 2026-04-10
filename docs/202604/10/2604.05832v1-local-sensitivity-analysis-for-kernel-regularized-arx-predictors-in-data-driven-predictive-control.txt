@@ -1,0 +1,911 @@
+Title: Local Sensitivity Analysis for Kernel-Regularized ARX Predictors in Data-Driven Predictive Control
+
+URL Source: https://arxiv.org/pdf/2604.05832v1
+
+Published Time: Wed, 08 Apr 2026 01:02:27 GMT
+
+Number of Pages: 7
+
+Markdown Content:
+# Local Sensitivity Analysis for Kernel-Regularized ARX Predictors in Data-Driven Predictive Control 
+
+Aihui Liu and Magnus Jansson 
+
+Abstract — We study local sensitivity of structured ARX-based data-driven predictive control. Although predictor es-timation is linear in the ARX parameters, the lifted multi-step predictor used in MPC depends on them implicitly, which complicates both uncertainty propagation and task-aware regularization. We derive a local first-order linearization of this implicit predictor map. The resulting Jacobian yields both an approximate control-relevant prediction uncertainty term and a task-dependent sensitivity metric for shaping kernel regularization. Numerical results show that the proposed anal-ysis is most useful in weak-excitation regimes, where baseline SS regularization already provides substantial robustness gains and the proposed sensitivity shaping yields a further smaller improvement. 
+
+I. I NTRODUCTION 
+
+Data-driven predictive control (DDPC) aims to reduce the reliance on an explicit state-space model by constructing the predictor directly from measured data. In recent years, DDPC has developed into a broad family of approaches with different predictor parameterizations [1]. Regardless of the specific formulation, however, the closed-loop performance depends critically on the quality of the multi-step predictor embedded in the controller. In finite and noisy data regimes, predictor uncertainty therefore becomes a central determinant of closed-loop behavior. From an identification-for-control perspective, the pre-dictor should be assessed not only by how well it fits measured data, but also by how estimation uncertainty affects downstream multi-step prediction and control performance. Recent Bayesian, kernel-based, and bias-variance viewpoints [2], [3], [4] all support this perspective. In the DDPC literature, this same concern has recently appeared in Final Control Error (FCE)-type formulations [5], where predictor uncertainty is incorporated directly into the control objec-tive. Together, these viewpoints suggest that the important question is not only how to estimate predictor parameters accurately, but also how to characterize and shape estimation error in directions that matter for the control objective. In structured ARX-based DDPC, a key difficulty remains: while the identification step is linear in the predictor parame-ters, the lifted multi-step predictor used inside MPC depends on them implicitly and nonlinearly. This mismatch is the main obstacle to propagating parameter uncertainty into a control-relevant multi-step prediction analysis. 
+
+> This work was supported by VINNOVA Competence Center DigIT Lab Sustainable Industry, contract [2023-00556]. A. Liu and M. Jansson are with the Department of Information Science and Engineering, KTH Royal Institute of Technology, Stockholm, Sweden
+
+{aihui,janssonm }@kth.se .
+
+To address this, we derive a local first-order sensi-tivity analysis of the implicit ARX multi-step predictor around a nominal estimate. The resulting Jacobian provides a tractable map from predictor-parameter perturbations to control-weighted multi-step prediction perturbations. It is then used in two ways: first, to approximate an FCE-type uncertainty term in the MPC objective; second, to construct a task-dependent regularization metric for predictor estimation. The focus of this paper is to build a practical local bridge between parameter uncertainty and control-relevant predictor sensitivity, and to demonstrate where this bridge is useful. The main contributions of this paper are: (i) We derive a local first-order sensitivity analysis for the implicit multi-step predictor in structured ARX-based DDPC, bridging linear predictor identification and control-relevant multi-step uncertainty propagation. (ii) We show that the same Jacobian has two uses: it yields an approximate FCE-type uncertainty term and a task-dependent sensitivity metric for shaping kernel regulariza-tion. (iii) We show numerically that the main practical value appears under weak excitation: baseline SS regularization substantially improves robustness, and the proposed sensitiv-ity shaping gives an additional improvement over the baseline SS prior. This paper is organized as follows. Section II intro-duces the structured ARX-based multi-step predictor and its predictor-parameter representation. Section III develops a local linearization of the implicit predictor map and uses it to propagate posterior parameter uncertainty into an approx-imate FCE-type cost. Section IV presents kernel-regularized identification and shows how the same local sensitivity in-duces a task-aware sensitivity-based kernel. Section V reports numerical simulations, and Section VI concludes the paper and discusses future work. II. S TRUCTURED ARX M ULTI -S TEP PREDICTOR 
+
+A. Predictor Markov parameters and ARX representation 
+
+We consider the discrete-time linear time-invariant (LTI) system in innovations form: 
+
+(
+
+x(t + 1) = Ax (t) + Bu (t) + Ke (t),
+
+y(t) = Cx (t) + Du (t) + e(t), (1) where x(t) ∈ Rn, u(t) ∈ Rnu and y(t) ∈ Rny denote the state, input and output, respectively, and e(t) is a zero-mean white innovation process. 
+
+> arXiv:2604.05832v1 [eess.SY] 7 Apr 2026
+
+It is convenient to rewrite (1) by introducing ˜ A = A − KC 
+
+and ˜ B = B − KD , which gives 
+
+(
+
+x(t + 1) = ˜Ax (t) + ˜Bu (t) + Ky (t),
+
+y(t) = Cx (t) + Du (t) + e(t). (2) For a chosen past horizon Lp and future horizon L f , define the stacked past and future signals 
+
+up(t) := col (u(t − Lp), u(t − Lp + 1), . . . , u(t − 1)) , (3) 
+
+yp(t) := col (y(t − Lp), y(t − Lp + 1), . . . , y(t − 1)) , (4) 
+
+u f (t) := col (u(t), u(t + 1), . . . , u(t + L f − 1)) , (5) 
+
+y f (t) := col (y(t), y(t + 1), . . . , y(t + L f − 1)) , (6) where col (·) denotes the column vector. Similarly, 
+
+e f (t) := col (e(t), e(t + 1), . . . , e(t + L f − 1)) . (7) We also use the notation for the past data zp(t) :=[y⊤ 
+
+> p
+
+(t), u⊤ 
+
+> p
+
+(t)] ⊤.The predictor form in (2) induces a one-step-ahead input-output predictor that can be written as 
+
+y(t) ≈
+
+> ∞
+
+# ∑
+
+> i=1
+
+φ iyy(t − i) + 
+
+> ∞
+
+# ∑
+
+> j=0
+
+φ ju u(t − j) + e(t), (8) where the matrices φ 0 
+
+> u
+
+= D, φ ju = C ˜A j−1 ˜B for j ≥ 1, and 
+
+φ iy = C ˜Ai−1K for i ≥ 1 are called the ARX coefficients or the predictor Markov parameters. In practice, we truncate this predictor and estimate a finite-order ARX model 
+
+y(t) ≈
+
+> na
+
+# ∑
+
+> i=1
+
+ˆφ iyy(t − i) + 
+
+> nb
+
+# ∑
+
+> j=0
+
+ˆφ ju u(t − j) + e(t), (9) For identification, we collect all predictor parameters in 
+
+θ := col (φ 1 
+
+> y
+
+, . . . , φ na 
+
+> y
+
+, φ 0 
+
+> u
+
+, . . . , φ nb 
+
+> u
+
+), (10) define y := col (y(t), . . . , y(t + N − 1)) , e := col (e(t), . . . , e(t +
+
+N − 1)) , and arrange (9) row-wise in vector form as 
+
+y = Hθ + e (11) where H is the regressor Hankel assembled from the corre-sponding past signals. The key advantage of this parameterization is that iden-tification is linear in θ , so posterior means and covariances remain available in closed form under regularization. Also, under the Gaussian noise assumption, the data enter the estimator through the sufficient statistics H⊤H and H⊤y.
+
+B. ARX-Based Multi-Step Predictor 
+
+We can write the state equation in (2) sequentially as 
+
+x(t) = 
+
+> Lp−1
+
+# ∑
+
+> k=0
+
+˜Ak[Ky (t − k − 1) + ˜Bu (t − k − 1)] + ˜ALp x(t − Lp)
+
+(12) For sufficiently large Lp and stable ˜A, the term ˜ALp is ne-glected, yielding an approximate dependence of the predictor state on past data. The resulting multi-step predictor can be written as 
+
+y f = Ψu Ψy
+
+ up
+
+yp
+
+
+
++ Φuu f + Φyy f + e f (13) The matrices Ψu, Ψy, Φu, Φy in this multi-step predictor are block Toeplitz matrices assembled from the ARX coefficient sequences {φ ju } and {φ iy}:
+
+Ψu =
+
+
+
+φ Lp 
+
+> u
+
+. . . φ 2 
+
+> u
+
+φ 1
+
+> u
+
+φ Lp+1 
+
+> u
+
+. . . φ 3 
+
+> u
+
+φ 2
+
+> u
+
+... ... ...
+
+φ Lp+L f −1 
+
+> u
+
+. . . φ L f +1 
+
+> u
+
+φ L f
+
+> u
+
+ ,
+
+Ψy =
+
+
+
+φ Lp 
+
+> y
+
+. . . φ 2 
+
+> y
+
+φ 1
+
+> y
+
+φ Lp+1 
+
+> y
+
+. . . φ 3 
+
+> y
+
+φ 2
+
+> y
+
+... ... ...
+
+φ Lp+L f −1 
+
+> y
+
+. . . φ L f +1 
+
+> y
+
+φ L f
+
+> y
+
+ ,
+
+Φu =
+
+
+
+φ 0
+
+> u
+
+φ 1 
+
+> u
+
+φ 0
+
+> u
+
+... ... . . .
+
+φ L f −1 
+
+> u
+
+φ L f −2 
+
+> u
+
+. . . φ 0
+
+> u
+
+ ,
+
+Φy =
+
+
+
+0
+
+φ 1 
+
+> y
+
+0... ... . . .
+
+φ L f −1 
+
+> y
+
+φ L f −2 
+
+> y
+
+. . . 0.
+
+
+
+(14) Typically, the ARX orders na, nb ≤ Lp are chosen no larger than Lp. Practically we can choose the ARX order by AIC or BIC, and then construct the matrices in (14) by padding the higher-order ARX coefficients with zeros as needed. Note that in (12), we are ignoring higher-order terms of ˜ALp .Accordingly, in (14), coefficients beyond the retained past horizon are zero-padded, i.e., terms starting from φ Lp onward are neglected in this approximation. The linear regression equation (13) expresses the future trajectory through past data, future inputs, and future outputs. This structured parameterization is more compact than a trajectory-coefficient description and is directly compatible with kernel priors and posterior covariance calculations. ˆy f (u f ; θ ) = ( I − Φy)−1
+
+Ψu Ψy
+
+ up
+
+yp
+
+
+
++ Φuu f
+
+
+
+(15) Equation (15) is the central object used by the controller. It is affine in the lifted signals but nonlinear in the identified parameter vector, since θ enters both the affine term and the inverse (I − Φy)−1. This is the source of the uncertainty-propagation difficulty addressed in the next section. III. L OCAL LINEARIZATION AND UNCERTAINTY 
+
+PROPAGATION 
+
+This section develops the main technical bridge of the paper: a local map from predictor-parameter uncertainty to control-relevant multi-step prediction sensitivity. Let ( ¯θ , Σθ ) denote the nominal estimate of the predictor parameters for (10), and its corresponding posterior covari-ance. In this section, we focus on how this parameter uncer-tainty Σθ propagates into control-relevant output uncertainty. 
+
+A. Local linearization of the implicit predictor 
+
+The multi-step predictor (15) can be written as ˆy f (u f ; θ ) = A(θ )−1
+
+b(θ ) + Φu(θ )u f
+
+
+
+(16) where 
+
+A(θ ) := I − Φy(θ ), b(θ ) := Ψu(θ )up + Ψy(θ )yp (17) To propagate parameter uncertainty analytically, we locally linearize the predictor around the estimated parameter ¯ θ .For a fixed candidate control sequence u f , we linearize the predictor map locally around ¯ θ
+
+ˆy f (u f ; θ ) ≈ ˆy f (u f ; ¯ θ ) + J( ¯θ , u f )( θ − ¯θ ) (18) where 
+
+J( ¯θ , u f ) := ∂ ˆy f (u f ; θ )
+
+∂ θ θ = ¯θ ∈ RnyL f ×nθ . (19) To compute this Jacobian, the main technical step is to differentiate through the implicit inverse. Note that 
+
+dA (θ ) = −dΦy(θ ),
+
+d(A(θ )−1) = −A(θ )−1(dA (θ )) A(θ )−1, (20) hence, 
+
+d ˆy f = d
+
+
+
+A−1(b + Φuu f )
+
+
+
+= ( dA −1)( b + Φuu f ) + A−1(db + dΦuu f )= A−1
+
+db + dΦuu f + ( dΦy)ˆy f
+
+ (21) The derivative separates naturally into three effects: pertur-bations entering a past-data term, a future-input term, and a future-output feedback term. For differentiation, we use θ to denote the padded coeffi-cient vector, with a slight abuse of notation. 
+
+θ = col (φ 1 
+
+> y
+
+, . . . , φ Lp+L f −1 
+
+> y
+
+, φ 0 
+
+> u
+
+, . . . , φ Lp+L f −1 
+
+> u
+
+) (22) which can fully parametrize the matrices. For differentiation, we temporarily use the padded coefficient vector that parame-terizes all entries appearing in the lifted matrices; lower-order models are recovered by zero padding. Since Ψu, Ψy, Φu, Φy depend linearly on the common coefficient vector θ , their derivatives can be represented by fixed coefficient-placement matrices 
+
+n
+
+EΨu 
+
+> i
+
+, EΨy 
+
+> i
+
+, EΦu 
+
+> i
+
+, EΦy
+
+> i
+
+onθ 
+
+> i=1
+
+(23) such that 
+
+Ψu(θ ) = 
+
+> nθ
+
+# ∑
+
+> i=1
+
+θiEΨu 
+
+> i
+
+, Ψy(θ ) = 
+
+> nθ
+
+# ∑
+
+> i=1
+
+θiEΨy 
+
+> i
+
+,
+
+Φu(θ ) = 
+
+> nθ
+
+# ∑
+
+> i=1
+
+θiEΦu 
+
+> i
+
+, Φy(θ ) = 
+
+> nθ
+
+# ∑
+
+> i=1
+
+θiEΦy 
+
+> i
+
+.
+
+(24) From (16) and (24), 
+
+∂ b
+
+∂ θ i
+
+= EΨu 
+
+> i
+
+up + EΨy 
+
+> i
+
+yp, ∂ Φu
+
+∂ θ i
+
+= EΦu 
+
+> i
+
+, ∂ Φy
+
+∂ θ i
+
+= EΦy 
+
+> i
+
+. (25) Because all lifted matrices depend linearly on the same coefficient vector, the Jacobian can be expressed through fixed coefficient-placement matrices. Therefore, take the i-th column of the Jacobian and evaluate at θ = ¯θ :
+
+Ji( ¯θ , u f ) = A( ¯θ )−1
+
+EΨu 
+
+> i
+
+up + EΨy 
+
+> i
+
+yp + EΦu 
+
+> i
+
+u f
+
++ EΦy 
+
+> i
+
+ˆy f (u f ; ¯ θ )
+
+ (26) and thus 
+
+J( ¯θ , u f ) = [ J1( ¯θ , u f ) . . . Jnθ ( ¯θ , u f )] . (27) Equation (26) shows a perturbation in θi affects the pre-dicted output through three contributions: the past data term 
+
+Ψu, Ψy, the explicit future-input term Φuu f , and the implicit future-output feedback term Φy ˆy f . This decomposition will be used next to separate the dependence of the Jacobian on the decision variable u f .
+
+B. Affine dependence on the future input 
+
+For later use in the Final Control Error (FCE)-type cost, it is convenient to make the dependence of the Jacobian on 
+
+u f explicit. At the expansion point ¯ θ , define ¯A := A( ¯θ ), ¯b := b( ¯θ ), ¯Φu := Φu( ¯θ ), (28) so that ˆy f (u f ; ¯ θ ) = ¯A−1 ¯b + ¯A−1 ¯Φuu f (29) Substituting the nominal predictor expression (29) into (26) makes the dependence of each Jacobian column on u f
+
+explicit: 
+
+Ji( ¯θ , u f ) = ¯A−1 
+
+EΨu 
+
+> i
+
+up + EΨy 
+
+> i
+
+yp + EΦy 
+
+> i
+
+¯A−1 ¯b
+
+
+
++ ¯A−1 
+
+EΦu 
+
+> i
+
++ EΦy 
+
+> i
+
+¯A−1 ¯Φu
+
+
+
+u f
+
+(30) In particular, each column can be separated into a term that depends only on the current operating condition and a term that depends affinely on the candidate future input u f .Define the i-th column of J as 
+
+Ji( ¯θ , u f ) = J0 
+
+> i
+
++ J1 
+
+> i
+
+u f , i = 1, . . . , nθ , (31) where J0 
+
+> i
+
+∈ RnyL f and J1 
+
+> i
+
+∈ RnyL f ×nuL f are: 
+
+J0 
+
+> i
+
+:= ¯A−1 
+
+EΨu 
+
+> i
+
+up + EΨy 
+
+> i
+
+yp + EΦy 
+
+> i
+
+¯A−1 ¯b
+
+
+
+J1 
+
+> i
+
+:= ¯A−1 
+
+EΦu 
+
+> i
+
++ EΦy 
+
+> i
+
+¯A−1 ¯Φu
+
+
+
+.
+
+(32) Hence, each Jacobian column depends affinely on u f , and the full Jacobian J( ¯θ , u f ) is columnwise affine in u f .This affine dependence is important because it allows the uncertainty contribution to inherit an explicit dependence on the decision variable u f . Since then it can be incorporated into the MPC objective, as in [5]. C. Uncertainty propagation 
+
+A first consequence of the local linearization is an ap-proximate output covariance and an associated FCE-type uncertainty penalty. Assume now that, after identification from data D, the parameter posterior is approximated by 
+
+θ |D ∼ N ( ¯θ , Σθ ) (33) where ¯θ is typically the posterior mean. Under the local approximation (18), ˆy f (u f ; θ ) − ˆy f (u f ; ¯ θ ) ≈ J( ¯θ , u f )( θ − ¯θ ). (34) This local approximation yields an explicit approximation of the predicted output covariance and, therefore, of the additional uncertainty term in the control cost. The conditional covariance of y f is approximated by 
+
+Σy f (u f ) := cov [ˆy f (u f ; θ )|D] ≈ J( ¯θ , u f )Σθ J( ¯θ , u f )⊤ (35) For the reference signal r f ∈ RnyL f and the quadratic weight Q and R, the nominal MPC tracking cost is 
+
+LMPC (u f ) = ∥r f − ˆy f (u f ; θ )∥2 
+
+> Q
+
++ ∥u f ∥2 
+
+> R
+
+(36) One immediate use of the local linearization is to ap-proximate how posterior parameter uncertainty contributes an additional term to the MPC objective. Following the FCE formulation in [5], we define 
+
+LFCE (u f ) = Eθ
+
+LMPC (u f )|D
+
+=E ∥r f − ˆy f (u f ; ¯ θ ) + ˆy f (u f ; ¯ θ ) − ˆy f (u f ; θ )∥2 
+
+> Q
+
++ ∥u f ∥2
+
+> R
+
+|D
+
+=∥r f − ˆy f (u f ; ¯ θ )∥2 
+
+> Q
+
++ ∥u f ∥2 
+
+> R
+
++ E ∥ˆy f (u f ; θ ) − ˆy f (u f ; ¯ θ )∥2
+
+> Q
+
+|D
+
++ 2(r f − ˆy f (u f ; ¯ θ )) ⊤QE (ˆy f (u f ; θ ) − ˆy f (u f ; ¯ θ )) |D
+
+(37) Following [5], we neglect the cross term within the local approximation. Under this approximation, the difference between the nominal MPC cost LMPC and the FCE-type cost LFCE is the uncertainty term LΩ. The local approximation gives it in closed form: 
+
+LΩ(u f ) = E ∥ˆy f (u f ; θ ) − ˆy f (u f ; ¯ θ )∥2
+
+> Q
+
+|D
+
+≈ E
+
+h
+
+(θ − ¯θ )⊤J⊤QJ (θ − ¯θ )
+
+i
+
+= tr 
+
+
+
+J⊤QJ Σθ
+
+ (38) Using the linearized predictor, this term becomes a quadratic form in θ − ¯θ , whose expectation is the trace expression in (38). Hence, the local Jacobian converts posterior parameter covariance into an explicit control-relevant penalty. The resulting approximate objective is given by 
+
+LFCE (u f ) ≈ LMPC (u f ) + LΩ(u f ) (39) 
+
+Remark 1: The vanishing of the cross term in (37) in [5] is only justified within the local approximation and should therefore be interpreted as approximate, especially when kernel regularization introduces bias. In the present paper, this uncertainty term is mainly used to motivate the sensitivity metric developed next; its empirical impact as a direct MPC cost augmentation will be assessed separately in Section V. In summary, the local linearization yields an explicit first-order map from posterior parameter covariance to weighted multi-step prediction uncertainty. In the next section, we use the same Jacobian to construct a task-dependent regulariza-tion term. IV. K ERNEL -R EGULARIZED IDENTIFICATION AND 
+
+SENSITIVITY -BASED KERNEL DESIGN 
+
+In this Section, we use kernel-regularized ARX identifica-tion to estimate the nominal ¯ θ and posterior covariance Σθ .We also specify how the local sensitivity derived in Section III is used to shape a task-aware kernel. 
+
+A. Kernel-Regularized Identification 
+
+Although the multi-step predictor used by MPC is non-linear in θ , the ARX identification step remains linear, so Gaussian priors and posterior uncertainty are available in closed form. The ARX linear regression in (11) is: 
+
+y = Hθ + e, (40) where the regressor H is built by stacking past input and output data. Following the classic kernel identification literature [6], [7], we place a Gaussian prior on θ ,
+
+θ ∼ N (0, K(η)) , (41) where K(η) ≻ 0 is a kernel covariance matrix with hyperpa-rameters η. In practice, K(η) may be chosen from standard TC/SS-type kernel families, and can be block-structured to distinguish the output-side and input-side predictor coeffi-cients, e.g. 
+
+K(η) = 
+
+Ky(ηy) 00 Ku(ηu)
+
+
+
+. (42) This yields a structured prior directly on the predictor Markov parameters. Assume the regression noise to be white with covariance 
+
+σ 2Inθ , the kernel-regularized estimator is ˆθ (η) = arg min 
+
+> θ
+
+1
+
+σ 2 ∥y − Hθ ∥2 + ∥θ ∥2 
+
+> K(η)−1
+
+, (43) with closed-form solution ˆθ (η) = 
+
+ 1
+
+σ 2 H⊤H + K(η)−1
+
+−1 1
+
+σ 2 H⊤y. (44) Under the Gaussian model 
+
+y|θ ∼ N (Hθ , σ 2I), (45) the posterior is also Gaussian: 
+
+θ |y, η ∼ N ( ¯θ , Σθ ), (46) where 
+
+Σθ (η) = 
+
+ 1
+
+σ 2 H⊤H + K(η)−1
+
+−1
+
+, ¯θ (η) = 1
+
+σ 2 Σθ (η)H⊤y.
+
+(47) The TC/SS kernel hyperparameters are selected by Em-pirical Bayes (EB). Marginalizing out θ gives 
+
+y ∼ N (0, Σy(η, σ 2)) , Σy(η, σ 2) = HK (η)H⊤ + σ 2I, (48) and therefore ˆη, ˆσ 2 = arg min   
+
+> η,σ2
+
+log det Σy(η, σ 2) + y⊤Σy(η, σ 2)−1y. (49) All estimation steps are implemented using Cholesky factorizations rather than explicit matrix inversion. This allows stable evaluation of posterior means, quadratic forms, and log-determinants through triangular solves and diagonal entries. This baseline kernel-regularized estimator provides both the nominal predictor and the posterior covariance needed for the local sensitivity analysis. 
+
+B. Sensitivity-based Kernel Design 
+
+The main practical use of the local Jacobian in this paper is to construct a task-dependent sensitivity metric that complements the baseline identification-oriented prior. From the uncertainty propagation analysis in Section III, the additional weighted prediction uncertainty is approxi-mated by (38): 
+
+LΩ(u f ) = E ∥ˆy f (θ ) − ˆy f ( ¯θ )∥2
+
+> Q
+
+|D, ξ 
+
+≈ tr 
+
+
+
+J( ¯θ , ξ )⊤QJ ( ¯θ , ξ )Σθ
+
+ (50) where ξ denotes the current task or operating condition, including the relevant past data up, yp and the nominal future input u f used to evaluate local prediction sensitivity for the target task. J( ¯θ , ξ ) is the Jacobian of the multi-step predictor with respect to θ as in (19): 
+
+J( ¯θ , ξ ) := ∂ ˆy f (θ , ξ )
+
+∂ θ θ = ¯θ . (51) 
+
+J( ¯θ , ξ ) is a local mapping that depends on the ξ , i.e., the current state or the past data and potential future control input. The uncertainty analysis suggests the local sensitivity matrix 
+
+W (ξ ) := J( ¯θ , ξ )⊤QJ ( ¯θ , ξ ). (52) which depends on the current operating condition ξ . ξ
+
+includes the relevant past data up, u f and the nominal fu-ture input u f associated with the target task. For a local perturbation δ θ , the quantity δ θ ⊤W (ξ )δ θ measures the first-order weighted prediction effect of that perturbation. The large value of δ θ ⊤W (ξ )δ θ produces a large increase in the weighted control-relevant prediction error, and those directions with small value are comparatively benign. This motivates using W (ξ ) to shape the regularization more strongly along directions that are locally more influential for the downstream control objective. Since the local sensitivity depends on the operating condi-tion, we average it over representative task realizations ξtask 
+
+near the target regime. The averaged sensitivity matrix yields: ¯W := Eξtask 
+
+h
+
+J( ¯θ , ξtask )⊤QJ ( ¯θ , ξtask )
+
+i
+
+, (53) and in practice, it can be approximated by ¯W ≈ 1
+
+Ntask 
+
+> Ntask
+
+# ∑
+
+> j=1
+
+J( ¯θ , ξ j)⊤QJ ( ¯θ , ξ j) (54) where {ξ j}Ntask  
+
+> j=1
+
+at each time step j are extracted from the task-specific operating data. Thus, ¯W captures which parameter directions matter on average for the training tasks of interest. We can normalize it for better numerics: ¯Wnorm = ¯W 
+
+> 1
+> nθ
+
+tr ( ¯W ) . (55) and use it to shape regularization beyond the baseline TC/SS prior. The proposed kernel shaping is intended as a local re-finement of the baseline identification-oriented kernel from Section IV-A. Let K denote the fixed baseline kernel co-variance obtained after the Empirical Bayes tuning in the ARX identification step. Using this kernel, the second-stage estimator is ˆθc = arg min 
+
+> θ
+
+1
+
+σ 2 ∥y−Hθ ∥22 +θ ⊤K−1θ + μ(θ − ¯θ )⊤ ¯W (θ − ¯θ ).
+
+(56) The shaped kernel therefore penalizes parameter variation more strongly in directions that are locally important for the downstream control objective, while preserving the compu-tational simplicity of quadratic regularization. The resulting estimator remains available in closed form: ˆθc =
+
+ 1
+
+σ 2 H⊤H + K−1 + μ ¯W
+
+−1  1
+
+σ 2 H⊤y + μ ¯W ¯θ
+
+
+
+.
+
+(57) This can be interpreted as combining the baseline prior precision with an additional sensitivity-based precision term. 
+
+Remark 2: In practice, when task-relevant data is not available, one convenient realization is a two-stage workflow. First, we use TC/SS kernel to identify the nominal ¯ θ , build the controller, and collect representative operating data for the target task. Then we compute the control-oriented kernel, re-identify, and build the new controller. When task-relevant data are already available a priori, ¯W can be constructed directly. 
+
+Remark 3: In this paper, after the baseline ARX kernel-identification step, we fix σ 2 and the baseline kernel K
+
+obtained from EB tuning, and tune the sensitivity kernel hyperparameter μ manually. Other possibilities in hyper-parameter tuning are left for future work. 
+
+Remark 4: The same Jacobian-based construction could in principle be used with other differentiable predictor pa-rameterizations, such as Fundamental Lemma-based predic-tors. But the number of parameters may become prohibitive. V. E XPERIMENTS 
+
+We evaluate the proposed framework in two identification regimes with different levels of informativeness and excita-tion. The first is a relatively well-conditioned regime with short data, used for comparison with the recent closed-loop DDPC controllers. The second is a weak-excitation regime, which serves as the main test since predictor uncertainty and regularization should matter most there. We consider the sampled second-order system in [8] and [9], with the MPC setup matched to [8]. The system matrices SPC IV Inno SSARX OLS OLS+FCE SS SS+W oracle KF 22.5 33.5 4Fig. 1. Closed-loop cost J over 500 Monte Carlo runs in the informative-data regime. Since the identification problem is already reasonably well-conditioned, all ARX-based variants are competitive and only limited gains are obtained from additional kernel regularization. 
+
+are 
+
+A =
+
+0.7326 −0.0861 0.1722 0.9909 
+
+
+
+, B =
+
+0.0609 0.0064 
+
+
+
+,
+
+C =  0 1.4142  , D = 0.
+
+(58) The process noise and measurement noise variance is Σw =
+
+σ 2
+
+> w
+
+I2 and Σv = σ 2 
+
+> v
+
+, respectively. The control objective is to track a sinusoidal reference signal r(t) = sin (2πt/75 ) under input and output constraints −2 ≤ u ≤ 2, −2 ≤ y ≤ 2. The past and future horizons for MPC are Lp = 10 and L f =
+
+15, respectively, and closed-loop performance is evaluated through the quadratic cost J = ∑Ntest  
+
+> t=1
+
+|| r(t) − y(t)|| 2 
+
+> Q
+
++ || u(t)|| 2
+
+> R
+
+with Q = 1 and R = 0.01. The ARX-based controllers use order na = nb = 10, which is chosen slightly larger than the AIC given order when the sample size is large. Each test trajectory has length Ntest = 150, and all reported results are based on NMC = 500 Monte Carlo runs. As recent DDPC baselines, we use four external methods: SPC in [10], IV in [11], Inno in [8], and SSARX in [12]. We compare them with several ARX-based variants derived from the proposed predictor framework and an oracle model-based benchmark (oracle KF). Here OLS denotes the plain ARX identification in (11), FCE adds the uncertainty penalty in the MPC cost as in (37), SS uses baseline SS-kernel regularization with EB tuning in (43), and SS+W adds the proposed sensitivity kernel in (56). We use the M ATLAB 
+
+command arxRegul for SS kernel and EB tuning, and set 
+
+μ = 1 for the un-normalized sensitivity kernel ¯W .In the informative-data regime, the training trajectory has length Ntrain = 150, and is generated by a simple feedback law u(t) = rtrain (t) − y(t) driven by a square wave reference of amplitude 1 and period 50. Fig. 1 shows the closed-loop control performance. In this regime, all ARX-based variants are competitive with the DDPC baselines, and the additional gains from further regularization or FCE term are modest. This is consistent with the view that, once the identification problem is well conditioned, there is little harmful uncertainty left for the proposed sensitivity mechanism to exploit. The weak-excitation regime is the main setting of interest, since it exposes the finite-data variance effects that motivate both regularized identification and sensitivity-guided shap-ing. The training data are again generated in closed-loop, this time by a sinusoidal reference of amplitude 1 and period 75, which yields less informative data and larger predictor uncertainty. In this case, the DDPC baselines frequently fail to yield valid closed-loop runs, so the detailed comparison in Fig. 2 and Fig. 3 is restricted to the ARX-based variants. Under limited excitation, the role of regularization be-comes much clearer. Fig. 2 shows the mean and standard deviation of output and input trajectories for a representative subset of controllers, and Fig. 3 reports the Monte Carlo cost distributions for the full ARX-based controller variants. In this regime, the dominant improvement comes from baseline SS regularization relative to OLS. The proposed sensitivity shaping then provides an additional improvement over SS, suggesting that the local Jacobian captures useful task-dependent structure beyond the identification-oriented prior alone. Adding the FCE-type term improves upon OLS but not further on already regularized predictors. A possible expla-nation is that the neglected cross term in (37) needs to remain small, which may be less accurate when the estimator is biased. Also, FCE might show an improvement in the tracking performance or worst-case control performance. To connect the closed-loop results in Fig. 3 to the proposed mechanism, we also show the trace of the parameter posterior -1 010 50 -1 012-1 010 50 -1 012-1 010 50 -1 012-1 010 50 -1 012-1 010 50 -1 012 
+
+> Fig. 2. Mean and standard deviation of closed-loop trajectories in the weak-excitation regime, for the output (top row) and the input (bottom row). The figure illustrates not only nominal tracking but also variability reduction due to regularized identification.
+
+OLS OLS+FCE SS SS+FCE SS+W SS+W+FCE oracle KF 23456Fig. 3. Closed-loop cost J in the weak-excitation regime. Baseline SS regularization provides the main stabilization relative to OLS, while the proposed sensitivity shaping yields an additional improvement over SS. TABLE I AVERAGE POSTERIOR COVARIANCE tr (Σθ ) AFTER IDENTIFICATION 
+
+OLS SS SS+W 0.0470 ± 0.0028 0.0113 ± 0.0044 0.0019 ± 0.0012 
+
+covariance tr (Σθ ) after identification in Table I. This reduc-tion in the parameter posterior uncertainty Σθ is consistent with the observed performance improvement. Fig. 4 illustrates how the baseline kernel and the nor-malized sensitivity matrix emphasize different parameter directions. The EB-tuned baseline SS kernel K reflects identification-oriented prior structure, whereas the normal-ized sensitivity matrix ¯Wnorm indicates parameter directions that are locally more harmful for the weighted multi-step prediction error. Large values in ¯Wnorm indicate parameter directions that are locally more influential for the weighted multi-step prediction error, and therefore candidates for stronger shrinkage in the shaped kernel. VI. C ONCLUSIONS AND FUTURE WORK 
+
+This paper developed a local first-order sensitivity analysis for the implicit structured ARX multi-step predictor. The main role of this analysis is to bridge linear predictor identification and control-relevant multi-step sensitivity. In the reported experiments, its clearest practical value lies in sensitivity-guided regularization under weak excitation: baseline SS regularization is the dominant source of improve-ment, while the proposed shaping provides an additional gain when predictor uncertainty remains significant. By con-trast, direct FCE-style cost augmentation is less consistently beneficial in the present study. Future possibilities include investigating the tuning strategy for hyperparameters and control-oriented kernel design. VII. A CKNOWLEDGMENT 
+
+The authors acknowledge the use of generative AI (Ope-nAI ChatGPT) for language refinement and phrasing sug-gestions in parts of the manuscript. All technical content, interpretations, and final text were reviewed and approved by the authors. 5 10 15 20 510 15 20 09.3e+02 2.8e+03 6.7e+03 1.5e+04 3.1e+04 6.4e+04 
+
+(a) K5 10 15 20 510 15 20 -0.24 -0.075 0.0046 0.094 0.27 0.64 1.4 
+
+(b) ¯Wnorm 
+
+Fig. 4. Heatmaps of (a) the empirical-Bayes tuned baseline SS kernel 
+
+K in (42), and (b) the normalized task-specific sensitivity kernel ¯Wnorm in (55). Larger entries in ¯ Wnorm indicate parameter directions with greater local influence on the weighted multi-step prediction error, and hence stronger candidates for shrinkage in the shaped estimator. 
+
+REFERENCES [1] P. Verheijen, V. Breschi, and M. Lazar, “Handbook of linear data-driven predictive control: Theory, implementation and design,” Annual Reviews in Control , vol. 56, p. 100914, 2023. [2] A. Scampicchio, A. Chiuso, S. Formentin, and G. Pillonetto, “Bayesian kernel-based linear control design,” in 2019 IEEE 58th Conference on Decision and Control (CDC) . IEEE, Dec. 2019, p. 822–827. [3] S. Formentin and A. Chiuso, “Control-oriented regularization for linear system identification,” Automatica , vol. 127, p. 109539, May 2021. [4] K. Colin, Y. Ju, X. Bombois, C. R. Rojas, and H. Hjalmarsson, “A bias-variance perspective of data-driven control,” IFAC-PapersOnLine ,vol. 58, no. 15, p. 85–90, 2024. [5] A. Chiuso, M. Fabris, V. Breschi, and S. Formentin, “Harnessing uncertainty for a separation principle in direct data-driven predictive control,” Automatica , vol. 173, p. 112070, Mar. 2025. [6] G. Pillonetto and G. De Nicolao, “A new kernel-based approach for linear system identification,” Automatica , vol. 46, no. 1, p. 81–93, Jan. 2010. [7] G. Pillonetto, F. Dinuzzo, T. Chen, G. De Nicolao, and L. Ljung, “Ker-nel methods in system identification, machine learning and function estimation: A survey,” Automatica , vol. 50, no. 3, p. 657–682, Mar. 2014. [8] Y. Wang, K. You, D. Huang, and C. Shang, “Data-driven output prediction and control of stochastic systems: An innovation-based approach,” Automatica , vol. 171, p. 111897, Jan. 2025. [9] V. Breschi, A. Chiuso, and S. Formentin, “Data-driven predictive control in a stochastic setting: a unified framework,” Automatica , vol. 152, p. 110961, Jun. 2023. [10] W. Favoreel, B. D. Moor, and M. Gevers, “SPC: Subspace predictive control,” IFAC Proceedings Volumes , vol. 32, no. 2, p. 4004–4009, Jul. 1999. [11] Y. Wang, Y. Qiu, M. Sader, D. Huang, and C. Shang, “Data-driven predictive control using closed-loop data: An instrumental variable approach,” IEEE Control Systems Letters , vol. 7, p. 3639–3644, 2023. [12] A. Liu and M. Jansson, “Closed-loop consistent, causal data-driven predictive control via ssarx,” arXiv preprint arXiv:2512.14510, 2025.
