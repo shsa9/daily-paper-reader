@@ -1,0 +1,737 @@
+Title: Force Polytope-Based Cant-Angle Selection for Tilting Hexarotor UAVs
+
+URL Source: https://arxiv.org/pdf/2604.05998v1
+
+Published Time: Wed, 08 Apr 2026 01:15:38 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+—————————————————————– PREPRINT —————————————————————– 
+
+# Force Polytope–Based Cant–Angle Selection for Tilting Hexarotor UAVs 
+
+Alberto Piccina 1, Massimiliano Bertoni 1, Angelo Cenedese 2,3, Giulia Michieletto 1,2
+
+> 1
+
+Department of Management and Engineering , University of Padova , Vicenza, Italy 
+
+> 2
+
+Department of Information Engineering , University of Padova , Padova, Italy 
+
+> 3
+
+Department of Industrial Engineering , University of Padova , Padova, Italy corresponding contact: alberto.piccina@phd.unipd.it 
+
+Abstract —From a maneuverability perspective, the main ad-vantage of tilting multirotor UAVs lies in the dynamic variability of the feasible executable wrench, which represents a key asset for physical interaction tasks. Accordingly, cant-angle selection should be optimized to ensure high performance while avoiding abrupt variations and preserving real-world feasibility. In this context, this work proposes a lightweight control framework for star-shaped interdependent cant-tilting hexarotor UAVs per-forming interaction tasks. The method uses an offline-computed look-up table of zero-moment force polytopes to identify feasible cant angles for a desired control force and select the optimal one by balancing efficiency and smoothness. The framework is integrated with a geometric full-pose controller and validated through Monte Carlo simulations in MATLAB/Simulink and compared against a baseline strategy. The results show a sig-nificant reduction in computation time, together with improved pose-tracking performance and competitive actuation efficiency. A final physics-based simulation of a complete wall inspection task in Simscape further confirms the feasibility of the proposed strategy in interacting scenarios. 
+
+Index Terms —Control Architecture, Multirotor Design and Control, Simulation 
+
+I. I NTRODUCTION 
+
+Recent advances in aerial robotics have enabled multirotor platforms to perform physical interaction tasks such as contact-based inspection, aerial grasping, and object manipulation [1], [2], [3] and references therein. Interactive tasks generally require multirotor platforms to generate desired interaction forces and moments in the three-dimensional space, while simultaneously performing trajectory tracking. The ability of a multirotor to generate interaction forces is fundamentally constrained by its actuator configuration. Traditional platforms with fixed thrust directions are intrin-sically underactuated, which limits their capability to produce arbitrary wrenches [4]. In contrast, thrust-vectoring archi-tectures enable improved force–moment decoupling. Among these, tilted multirotor UAVs provide enhanced maneuverabil-ity and improved force–moment decoupling, making them well-suited for interaction tasks [5]. These platforms are typically equipped with propellers whose spinning axes are rotated around the corresponding arms by a constant (cant) angle, which is selected to guarantee full actuation while 
+
+> *This work is partially financed by the European Union - Next Generation EU, Mission 4 Component 2 - CUP C53D23000520006 STARLIT - SafeTy Aware Reinforcement Learning for robotIc inspecTion.
+
+optimizing energy efficiency, particularly during position and trajectory tracking. Although less common, tilting multirotor UAVs extend this concept by allowing propeller spinning axes direction to be reconfigured during flight through one or more additional degrees of freedom [6], [7], [8]. By adapting the cant angles, these systems dynamically reshape their feasible wrench space, enabling both energy-efficient free flight and precise in-contact operations. The increased maneuverability enabled by time-varying cant tilt angles comes at the cost of greater mechanical and control complexity. Specifically, additional degrees of freedom must be explicitly controlled, and their online selection is generally strongly dependent on the application requirements. In physical interaction scenarios, it is therefore natural to adapt the tilt angles with the dual objective of accurately achieving the desired interaction force while limiting the asso-ciated computational burden. From a control perspective, this problem is typically addressed within the control allocation framework, which aims to determine the most suitable actuator commands (in terms of both cant tilt angles and spinning rates) corresponding to a given desired wrench. Control allocation for tilting multirotor platforms has been addressed through different strategies [9]. A widely used approach relies on the pseudo-inverse of the allocation matrix, which assumes a linear mapping from the desired wrench to actuator commands. For example, in [8], control allocation for the Voliro platform is performed via the Moore–Penrose pseudo-inverse, minimizing control effort by leveraging the instantaneous actuation geometry. However, this method does not explicitly consider actuator constraints or nonlinearities, which can limit performance during complex maneuvers or interactions. More sophisticated methods jointly allocate pro-peller spinning rates and tilt angles by formulating con-strained optimization problems. For instance, the MOMAV platform [10] employs a Sequential Quadratic Programming (SQP) approach to optimize control inputs under constraints. While this improves actuator utilization and feasibility, such optimization-based methods are computationally intensive and may not be suitable for real-time applications with fast dynamics. Alternatively, some platforms, like Fast-Hex [7], simplify the problem by fixing the cant angle and manually tuning it offline according to task requirements. This reduces computational load but sacrifices adaptability and optimality 
+
+> arXiv:2604.05998v1 [cs.RO] 7 Apr 2026
+
+—————————————————————– PREPRINT —————————————————————– 
+
+in dynamic scenarios, as the control allocation assumes a fixed rotor geometry regardless of changing conditions. In this work, we focus on the control of a specific class of star-shaped interdependent cant-tilting hexarotors. These platforms are equipped with six propellers equally spaced along a circumference centered at the vehicle’s center of mass (CoM). The propellers’ spinning axes can tilt during flight; however, consecutive propellers are constrained to tilt by the same magnitude but in opposite directions. This de-sign preserves overall geometric symmetry while allowing the UAV to reshape the space of feasible executable wrench directions online through a single collective tilt parameter. As a result, it provides a favorable trade-off between improved maneuverability and mechanical and algorithmic complexity. The control framework proposed for these UAVs relies on the geometric characterization of the executable force as a function of the assignable cant angle and aims to reduce the computational burden associated with tilt-angle allocation during interaction tasks. Specifically, we propose an approach that leverages:  
+
+> •
+
+an offline-computed look-up table (LUT) that maps the tilt angle to the corresponding three-dimensional polytope of executable force, according to the geometric interpre-tation and analysis outlined in [11];  
+
+> •
+
+an online candidate cant–angle identification step based on a safety–margin containment condition for a desired control force;  
+
+> •
+
+an online optimization of the selected cant angle among feasible candidates. The key idea is to shift most of the geometric feasibility analysis offline, so as to enable lightweight online cant-angle selection without resorting to computationally demanding joint nonlinear allocation. The remainder of the paper is organized as follows. Sec-tion II summarizes the system model and the formulation of the force polytope. Section III details the proposed control strategy for tilt-angle selection. Section IV presents the per-formance assessment of the method via MATLAB/Simulink environment. Finally, Section V draws the conclusions. II. M ODELING PRELIMINARIES 
+
+This section lays the foundations for the proposed cant-angle selection strategy, providing a comprehensive descrip-tion of the star-shaped interdependent cant-tilting hexarotors and of the corresponding force polytope used to characterize their actuation capabilities, according to [11]. 
+
+A. Star-shaped Interdependent Cant-Tilting Hexarotors 
+
+To model the dynamics of a star-shaped interdependent cant-tilting hexarotor (Figure 1), we introduce the global inertial frame FW = {OW , (xW , yW , zW )} (world frame )whose axes directions are identified by the unit vectors e1,
+
+e2 and e3 of the canonical basis of R3 for the sake of simplicity, and the frame FB = {OB , (xB , yB , zB )} (body frame ), attached to the vehicle’s CoM. In addition, each i-th propeller, i ∈ { 1 . . . 6} is associated with a local frame x  
+
+> y
+> z
+> α
+> FW
+> FB
+> FP5
+> FP2
+> FP1
+> FP4
+> FP6
+> FP3
+> Fig. 1. Schematic representation of a star-shaped interdependent cant-tilting hexarotor. Each propeller spinning axes can be online reoriented by selecting the cant angle α, thus enabling reconfiguration of the achievable wrench space.
+
+FPi = {OPi , (xPi , yPi , zPi )} (propeller frame ), whose origin OPi coincides with the propeller spinning center, and whose axis zPi identifies the spinning axis. Each propeller spinning axis can tilt over time. In de-tail, each local frame FPi can rotate around its xPi
+
+axis through a time-varying angle defined as αPi (t) =(−1) i α(t) with α(t) ∈ Γα = − π 
+
+> 3
+
+, π
+
+> 3
+
+, producing an alternating tilt pattern between adjacent rotors. The time-varying parameter α(t) enables dynamic modification of the achievable wrench space of the star-shaped interdependent cant-tilting hexarotor (hereafter, α-TingH). While rotating at a spinning rate ωPi (t) ∈ [0 , ¯ω] with ¯ω ∈
+
+R≥0, each propeller generates a thrust force fPi (t) ∈ R3 and a drag moment τ dPi (t) ∈ R3 both aligned with its zPi axis 
+
+fPi (t) = cf ωPi (t)2zPi and τ dPi (t) = κicτ ωi(t)2zPi , (1) where cf , c τ ∈ R≥0 are constant coefficients depending on the propellers geometrical and aerodynamical characteristics, and 
+
+κi = ( −1) i distinguishes the clockwise and counterclockwise spinning directions 1. Then, the control force f Bc (t) ∈ R3 and the control moment τ Bc (t) ∈ R3 acting on the platform body frame depend on the cant angle α(t) as 
+
+f Bc (t) = 
+
+> 6
+
+X
+
+> i=1
+
+RBPi (α(t)) fPi (t), (2) 
+
+τ Bc (t) = 
+
+> 6
+
+X
+
+> i=1
+
+RBPi (α(t))  pBPi × fPi (t) + τ dPi (t) , (3) where the vector pBPi ∈ R3 identifies the position of the i-th propeller spinning center in FB , and the rotation matrix 
+
+RBPi (α(t)) ∈ SO (3) describes the orientation of FPi with respect to (w.r.t.) FB . More specifically, it holds that 
+
+pBPi = ℓ Rz
+
+  π 
+
+> 6
+
++( i − 1) π
+
+> 3
+
+ xB , (4) 
+
+RBPi (α(t)) = Rz
+
+  π 
+
+> 6
+
++( i − 1) π
+
+> 3
+
+ Rx(( −1) i α(t)) , (5) 
+
+> 1Note that we account for platforms actuated by a set of rotors with uniform actuation and equal aerodynamic characteristics, as well as a balanced choice of CW/CCW spinning directions.
+
+—————————————————————– PREPRINT —————————————————————–                        
+
+> TABLE I PARAMETERS OF THE α-T ING HPLATFORM CASE STUDY
+> m[kg] 3.500
+> J[kg m 2]diag   0.147 0 .155 0 .251 
+> ℓ[m] 0.385
+> cf[N /Hz 2]1.500 ×10 −3
+> cτ[Nm /Hz 2]4.590 ×10 −5
+> ¯ω[Hz] 108 .00
+> τα[s] 5×10 −3
+
+where ℓ ∈ R≥0 denotes the distance between OB and any propeller spinning center, assumed to lie in the (xB , yB )
+
+plane, and Rx(·) and Rz (·) are the canonical rotation matrices about the x and z axes, respectively. According to the Newton-Euler approach, the dynamics of an α-TingH is described by the following equations 
+
+˙pWB (t) = vWB (t) (6) 
+
+˙RWB (t) = RWB (t)[ ωBB (t)] × (7) 
+
+m ¨pWB (t) = mg e3 + RWB (t)  f Bc (t) + f Ba (t) + f Bi (t) (8) 
+
+JB ˙ωBB (t) = −ωBB (t) × JB ωBB (t) + τ Bc (t) + τ Ba (t) (9) where pWB (t) ∈ R3 and RWB (t) ∈ SO (3) denote the position and orientation of FB w.r.t. FW . The vectors vWB (t) ∈ R3
+
+and ωBB (t) ∈ R3 represent the linear velocity of the α-TingH expressed in FW and its angular velocity expressed in FB ,respectively, with [ωBB (t)] × ∈ R3×3 denoting the associated skew-symmetric matrix. The scalars g ∈ R≤0 and m ∈ R≥0
+
+denote the gravitational acceleration and the total mass of the platform, while JB ∈ R3×3 is the positive-definite inertia matrix of the vehicle, expressed in FB . To obtain a more realistic representation of the UAV dynamics, the principal aerodynamic phenomena influencing multi-rotor behavior at non-zero velocities (such as blade flapping, air friction, and dihedral effects) are incorporated into (8)–(9) through the terms f Ba (t), τ Ba (t) ∈ R3, in FB and according to [12]. In (8)–(9), we also model the presence of a rigid interaction tool, assumed to be a lightweight stick attached so as to be approximately aligned with the platform CoM. Under this assumption, the term f Bi (t) ∈ R3 represents the interaction forces applied at the vehicle CoM, while the interaction torque is considered negligible. Such an assumption is well justified in application scenarios involving quasi-static contact tasks (e.g., pushing or probing), where the interaction tool is typically short and aligned with the platform frame. We further assume that f Bi (t) is known and is treated as an external disturbance, which will be subsequently compensated. Finally, in modeling the dynamics of an α-TingH, it is worth accounting also for the dynamics of the servomotors enabling propeller tilting, in line with the most common mechanical de-sign solutions [8]. Their action is modeled via a first-order sys-tem approximation, yielding ˙αPi (t) = 1
+
+> τα
+
+ α∗ 
+
+> Pi
+
+(t) − αPi (t),where α∗ 
+
+> Pi
+
+(t) ∈ Γα denotes the commanded tilt angle and 
+
+τα ∈ R>0 is the servomotor time constant. x [N] y [N]      
+
+> z[N]
+> 010 -10 010
+> 80
+> 90
+> Fig. 2. 3D representation of the zero-moment control force polytope for
+> α= 25 ◦.
+
+Remark. Hereafter, the numerical results refer to a case study of the α-TingH characterized by the parameters in Table I. From now on, frames and time dependence are omitted when not essential. 
+
+B. Zero-Moment Control Force Polytope 
+
+Recalling [11], by introducing the control input vector 
+
+u = ω2 
+
+> P1
+
+· · · ω2
+
+> P6
+
+⊤ ∈ U with U = Q6
+
+> i=1
+
+[0 , ¯ω2], the control force (2) and the control moment (3) can be expressed as 
+
+fc = Fαu and τ c = Mαu, where the matrices Fα, Mα ∈
+
+R3×6 depend on the (time-varying) tilt angle α and the block matrix Cα = F⊤ 
+
+> α
+
+; M⊤
+
+> α
+
+⊤ ∈ R6×6 defines the α-TingH control allocation matrix. The platform is fully actuated when Cα is full rank ( α̸ = 0 ), in which case the feasible control force space is three-dimensional. Beyond full actuation, the platform is fully decoupled when translational forces can be generated independently of the control moments, allowing pure translational motions with-out affecting the rotational dynamics. From a mathematical standpoint, the decoupling condition stands when fc can be assigned in the control force space F(α) ⊆ Im (Fα), indepen-dently of τ c, i.e.,when the zero-moment control force space 
+
+F0(α) ⊆ Im (Fα) coincides with F(α). Formally, it holds that 
+
+F(α) = fc ∈ R3 fc = Fαu, u ∈ U , (10) 
+
+F0(α) = fc ∈ R3 fc = Fαu, u ∈ (U ∩ ker( Mα)) . (11) In [11], it is shown that, for any fixed tilt angle, the expres-sion (11) of F0(α) corresponds to a bounded, convex, finite polytope that can be represented and analyzed geometrically (see an example in Figure 2). In particular, its geometric characteristics (such as volume) can thus be interpreted as indices of the platform’s maneuverability. In the case of α-TingH platforms, the time variation of the tilt angle plays a crucial role in shaping the zero-moment control force space, as it continuously modifies the geometry of the associated force polytope. Under the stated assumption for the interaction tool, this polytope directly defines the range of feasible interaction forces that can be applied without inducing rotational effects on the platform. Consequently, different values of α lead to distinct actuation and interaction capabilities, making the angle selection a key control aspect. —————————————————————– PREPRINT —————————————————————– Control Input Allocator (24)               
+
+> α–TingH Dynamics
+> Geometric Controller
+> Cant Angle Selector
+> (pr,Rr,vr,ωr)(f⋆c,τ⋆c)
+> α⋆
+> u⋆
+> (ˆ p,ˆR,ˆv,ˆω)
+> ˜fi
+> Fig. 3. Overall control architecture of the proposed framework. The geometric full-pose controller generates the desired wrench, while an offline-computed LUT is exploited to select a feasible and efficient tilt angle αprior to control allocation.
+
+III. C ONTROL FRAMEWORK OVERVIEW 
+
+This section presents the proposed trajectory-tracking con-trol architecture for α-TingH platforms, shown in Figure 3, consisting of a geometric full-pose controller, a cant-angle selector, and a standard control allocator. 
+
+A. Geometric Pose Controller 
+
+Described in [7], the adopted state-of-the-art controller leverages the geometry of the SE (3) = R3 × SO (3) manifold to achieve pose tracking. This approach is particularly suitable for fully actuated platforms, as it enables direct control of both position and orientation while preserving robustness to nonlinear dynamics. For α-TingH UAVs, the nonlinear motion equations (8)– (9) can be rewritten in a compact form suitable for feedback linearization as 
+
+ ¨p
+
+˙ω
+
+
+
+=
+
+ g e3 + 1 
+
+> m
+
+R (fa(v, α ) + fi)
+
+J−1 (−ω × Jω + τ a(ω, α )) 
+
+
+
++
+
+ 1 
+
+> m
+
+R 00 J−1
+
+ fc
+
+τ c
+
+
+
+(12) 
+
+=
+
+fe(R, v, α, fi)
+
+τ e(ω, α )
+
+
+
++
+
+ 1 
+
+> m
+
+R 00 J−1
+
+ fc
+
+τ c
+
+
+
+(13) where the dependence of fa and τ a on the platform linear and angular velocities, and on the tilt angle, is made explicit. Hereafter, the UAV state is assumed to be feed-back by a suitable estimator/measurement system, yielding 
+
+(ˆ p, ˆR, ˆv, ˆω) ∈ SE (3) × R6. The tilt angle α is treated as an internal variable of the control framework, whereas the interaction force fi is either directly measured or indirectly estimated, and a close approximation ˜fi ∈ R3 is assumed to be available. Given a reference pose trajectory (pr , Rr ) ∈ SE (3) , with corresponding reference velocities (vr , ωr ) ∈ R6, the posi-tion, orientation, linear velocity, and angular velocity errors are defined as 
+
+ep = ˆ p − pr (14) 
+
+eR = 12
+
+
+
+R⊤ 
+
+> r
+
+ˆR − ˆR⊤Rr
+
+∨
+
+(15) 
+
+ev = ˆ v − vr (16) 
+
+eω = ˆ ω − ˆR⊤Rr ωr (17) where (·)∨ denotes the vee operator, i.e., the inverse of the [·]×
+
+mapping. Then, the desired control wrench can be explicitly computed as 
+
+f ∗
+
+> c
+
+τ ∗
+
+> c
+
+
+
+=
+
+ 1 
+
+> m
+
+ˆR 00 J−1
+
+−1 
+
+−
+
+fe( ˆR, ˆv, α, ˜fi)
+
+τ e( ˆ ω, α )
+
+
+
++
+
+wp
+
+wo
+
+
+
+, (18) where wp, wo ∈ R3 are virtual control inputs enforcing the desired system behavior. In detail, a linear feedback law is adopted to define the virtual control inputs wp and wo, namely 
+
+wp = ¨ pr − Kpd ev − Kpp ep − Kpi 
+
+Z t
+
+> 0
+
+ep(τ ) dτ, (19) 
+
+wo = ˙ ωr − Kod eω − Kop eR − Koi 
+
+Z t
+
+> 0
+
+eR(τ ) dτ, (20) where Kpp , Kpd , Kpi , Kop , Kod , Koi ∈ R3×3 are diagonal, positive definite gain matrices. 
+
+B. Cant–Angle Selector 
+
+Given the desired control wrench, the optimal angle α∗
+
+is determined by a force–based cant–angle selector. Focus-ing only on the force component of the desired wrench is motivated by the typical requirements of interactive tasks performed by platforms equipped with a rigid interaction tool, as described in Section II. The selector consists of: i) an offline-computed LUT as-sociating discrete tilt angles in Γα with the corresponding zero-moment control force polytopes; ii ) an online candidate tilt angles identification step grounded on a safety-margin containment condition for the desired control force; and iii ) an 
+
+online optimization procedure selecting the optimal α∗ ∈ Γα
+
+among the admissible candidate angles. 
+
+1) Offline-Computed LUT: The LUT underlying the pro-posed cant-angle selector stores the boundaries of the zero-moment control force polytope for discretized values of the cant angle α ∈ Γα, using a fixed increment ∆α. From a practical standpoint, each LUT entry is computed using the results in [11]. Specifically, for any u ∈ U ∩ ker( Mα), it holds that 
+
+uk = uk+3 = ˜ uk, with ˜uk ∈ [0 , ¯ω2] and k ∈ { 1, 2, 3}. In other words, opposite propellers w.r.t. the platform CoM are required to spin at the same rate to generate a zero-moment control force in F0(α). Intuitively, this property follows from the balanced CW/CCW propeller spinning directions, alongside the alternating tilt pattern between adjacent rotors. In light of this fact, by defining ˜u = ˜u1 ˜u2 ˜u3
+
+⊤, any vector in the zero-moment control force space can be expressed as 
+
+fc = 2 cf FαS˜u with S =
+
+I3×3
+
+03×3
+
+
+
+. (21) Hence, the vertices of the polytope F0(α) are obtained from (21) by evaluating the components of ˜u at the extrema of the interval [0 , ¯ω2]. The convex hull of the resulting force vectors defines the boundary of F0(α).The collection of polytopes stored in the LUT provides a compact representation of the force-generation capabilities of the α-TingH platform and significantly reduces the computa-tional burden at runtime. —————————————————————– PREPRINT —————————————————————– 
+
+2) Online Candidate Tilt Angles Identification: The candi-date tilt-angle identification step determines the set of (dis-cretized) cant angles for which the platform can generate forces in all directions around the desired control force vector within a prescribed safety margin. Geometrically, this require-ment is expressed by imposing that a sphere with radius 
+
+r ∈ R≥0, centered at f ∗ 
+
+> c
+
+, be fully contained within the zero-moment force polytope associated with each candidate α.Practically, the set A is obtained by scanning the LUT and retaining the values of α for which B(f ∗ 
+
+> c
+
+, r ) ⊆ F 0(α),
+
+where B(f ∗ 
+
+> c
+
+, r ) denotes the Euclidean ball centered on f ∗ 
+
+> c
+
+with radius r. The radius r is defined as the product of a nominal robustness margin r∗ ∈ R≥0 and a relaxation parameter 
+
+cr ∈ (0 , 1] such that, as cr → 0, the admissible set A includes tilt angles for which the desired control force f ∗ 
+
+> c
+
+lies arbitrarily close to the boundary of the zero-moment force polytope. The identification of A is first performed with cr = 1
+
+(nominal robustness). If no α satisfies this condition, the procedure is repeated once with an assigned cr ∈ (0 , 1) to relax the robustness requirement. If no tilt angle satisfies the relaxed condition, the desired control force is declared unfea-sible, keeping the cant angle at its previous value to preserve configuration continuity, and raising an error condition. 
+
+3) Online Optimization Procedure: The optimal tilt angle 
+
+α∗ is then selected from the set A to ensure both system energy efficiency and smooth behavior. This is achieved by solving the optimization problem 
+
+α∗ = α(t+) = argmin α(t+)∈A J(α(t+), α (t)) , (22) where α(t) is the current cant angle, and the cost function 
+
+J(α(t+), α (t)) is defined as 
+
+J(α(t+), α (t)) = c1 |α(t+)| + c2 |α(t+) − α(t)|, (23) with tunable coefficients c1, c 2 ∈ R≥0. The first term in (23) penalizes deviation from the underactuated configuration ( α =0), which typically corresponds to a more energy-efficient regime, while the second term penalizes large changes relative to the current tilt angle, promoting temporal smoothness and avoiding abrupt transitions. 
+
+C. Control Allocator 
+
+Once the optimal tilt angle α∗ is identified, the mapping between the control input vector and the desired control wrench is defined by the corresponding control allocation matrix Cα∗ . The optimal control input vector u∗ can then be computed as 
+
+u∗ = C†
+
+> α∗
+
+f ∗
+
+> c
+
+τ ∗
+
+> c
+
+
+
+, (24) where the pseudoinverse C† 
+
+> α∗
+
+= C⊤
+
+> α∗
+
+ C⊤ 
+
+> α∗
+
+Cα∗
+
+−1 ∈ R6×6
+
+coincides with the inverse of Cα∗ for any α∗̸ = 0 .IV. A SSESSMENT AND VALIDATION 
+
+This section presents the results of the assessment and val-idation process of the proposed control framework conducted in MATLAB/Simulink environment.                                                          
+
+> TABLE II MODEL PARAMETERS OF MOCAP AND FORCE SENSOR
+> MoCap
+> Σp[m2]10 −7·diag   4.099 2 .838 0 .211 
+> ΣR[deg 2]diag   0.0012 0 .0011 0 .0011 
+> Σv[m 2/s 2]10 −6·diag   2.050 1 .419 0 .105 
+> Σω[deg 2/s 2]diag   0.0024 0 .0022 0 .0022 
+> Force Sensor Σf[N2]10 −3·diag   2.5 2 .5 2 .5
+> mf[N][0 .1 0 .1 0 .1] ⊤
+> TABLE III NUMERICAL SIMULATION PARAMETERS : C ONTROLLER GAINS ,CANT -A NGLE SELECTION ,AND FORCE PROFILE
+> Kpp diag ([30 30 70]) Kop diag ([20 20 5])
+> Kpd diag ([10 10 10]) Kod diag ([10 10 10])
+> Kpi diag ([30 30 40]) Koi diag ([0 .1 0 .1 1])
+> r∗[N] 1cr[−]13
+> Tw[s] {0,20 ,38 ,60 ,80 }Fw[N]
+> ( 000
+> ,
+> 000
+> ,
+> 0
+> −810
+> ,
+> −10 72
+> ,
+> −6
+> −80
+> 
+> )
+
+A. Simulation Scenario 
+
+The simulation scenario emulates in-contact tasks charac-terized by a time-varying interaction force. Initially, the α-TingH takes off and reaches a stationary hovering condition 
+
+(pr , Rr ) =
+
+0 0 1 ⊤, I3
+
+
+
+within 20s . Subsequently, the vehicle is subjected to an external force applied at its CoM, consistent with the interaction model described in Section II. Both the magnitude and direction of the applied force fi
+
+vary over time, mimicking disturbances experienced during the task. The interaction force is assumed to be measured by a force sensor operating at 100Hz . The measurement is modeled as 
+
+˜fi = fi +nf , where nf is Gaussian noise with mean mf ∈ R3
+
+and covariance Σf ∈ R3×3 (Table II). The α-TingH state is assumed to be retrieved through an external motion capture (MoCap) system at 100Hz . The impact of the MoCap system is modeled by introducing a 
+
+12ms delay and additive zero-mean Gaussian noise affecting position, orientation, linear velocity, and angular velocity with covariances Σp, ΣR, Σv , and Σω (Table II). Finally, the offline LUT storing the force polytope bound-aries is constructed by discretizing the tilt angle α ∈ Γα with resolution ∆α = 1 ◦.
+
+B. Effects of Different Weights 
+
+Since the cant–angle selection relies on the weighted cost function (23), we investigate the α–TingH behavior under different c1/c 2 ratios. In this sensitivity analysis, the nominal interaction force profile is generated from a sequence of waypoints (Tw, Fw)
+
+and interpolated with cubic polynomials. The adopted way-points, along with the controller gains and the candidate angle identification parameters, are reported in Table III. —————————————————————– PREPRINT —————————————————————– 
+
+(α∗, u∗) = ( α(t+), u(t+)) = argmin α(t+)∈Γα 
+
+> u(t+)∈¯U
+
+Cα(t+)u(t+) −
+
+f ∗
+
+> c
+
+τ ∗
+
+> c
+
+ 2
+
++ J(α(t+), α (t)) 
+
+!
+
+(25) 0 10 20 30 40 50 60 70 80           
+
+> −40
+> −20
+> 0
+> 20
+> 40
+> t[s]
+> α [deg]  c1/c 2= 0 .5
+> c1/c 2= 1 .0
+> c1/c 2= 2 .0
+> Fig. 4. Validation of the influence of the weight coefficients c1and c2on the cant-angle selection, with identical force profile and radius r∗.
+
+The ratio c1/c 2 is varied over the set {0.5, 1.0, 2.0}, and the resulting trends are reported in Figure 4. The following observations can be made. For c1/c 2 = 0 .5, the smoothness term dominates the cost function and α(t) evolves conserva-tively, with small incremental variations and limited sensitivity to efficiency changes. When c1/c 2 = 1.0, the two terms contribute equally, leading to a balanced behavior that avoids both excessive oscillations and overly conservative responses. For c1/c 2 = 2 .0, the efficiency term prevails, resulting in more aggressive variations of α(t) and occasional abrupt transitions (e.g., around 50s ). Based on this analysis, c1/c 2 = 1 .0 is selected for the Monte Carlo validation and physics-based simulation discussed in the following, as it is the most balanced ratio among the considered set. 
+
+C. Baseline Comparison 
+
+The performance of the proposed control framework is compared with a baseline solution in which the cant angle α
+
+and the control input vector u are jointly computed online by solving a constrained nonlinear optimization problem. In more detail, the selected baseline controller is an alternative to the combination of a cant–angle selector and a control allocator, and it outputs the pair (α∗, u∗) as in (25). In practice, the nonlinear program (25) is solved using a SQP-method, in line with joint optimization strategies commonly adopted for tilting multirotor platforms (see, e.g., [10]). For comparative analysis, the proposed control framework is evaluated for different values of the nominal robustness margin, namely r∗ ∈ {0.5, 1, 3, 5}N. For each value, 100 
+
+Monte Carlo (MC) runs are performed with fixed parameters 
+
+cr = 13 and c1 = c2 = 12 over N ∈ N simulation steps. In each run, the nominal interaction force profile fi(t) is generated from waypoint samples at times Tw (Table III), where the x and y components are drawn independently from U([ −15 , 15]) N and the z component from U([0 , 15]) N ,consistent with the pushing/probing scenario. The resulting discrete samples are then interpolated using cubic polynomials to obtain a continuous-time force profile fi(t).Figure 5 provides insight into the functioning of the cant-angle selector during a MC run with r∗ = 1 .0N . For selected time instants, it shows the profile of α(t) and the correspond-ing intersections of the zero-moment force polytope with the hovering plane z = mg (green areas). This visualization illus-trates how the cant-angle selection mechanism dynamically adapts the tilting configuration of the α–TingH platform in response to the applied interaction force (red dotted/solid line). Several key performance indicators (KPIs) are evaluated.  
+
+> •
+
+Both position and orientation errors (14)–(15) are ana-lyzed to assess controller accuracy by evaluating the norm of the mean error vector and the corresponding RMS values, defined as 
+
+∥¯e•∥ = 1
+
+N
+
+> N
+
+X
+
+> t=1
+
+e•(t) , RMS e• =
+
+vuut 1
+
+N
+
+> N
+
+X
+
+> t=1
+
+∥e•(t)∥2,
+
+(26) where (·)• ∈ {p, R } denotes either the position or orientation components.  
+
+> •
+
+The normalized Motor Effort Index (MEI) is investigated to quantify how intensely the actuation system is used relative to its saturation limit. In particular, we account for the average MEI, defined as 
+
+MEI = 1
+
+N
+
+> N
+
+X
+
+> t=1
+
+ 1¯ω max 
+
+> Pi
+
+ωPi (t)
+
+
+
+. (27)  
+
+> •
+
+The RMS value of the vector u is evaluated to quantify the overall control input effort: 
+
+RMS u =
+
+vuut 1
+
+N
+
+> N
+
+X
+
+> t=1
+
+∥u(t)∥2. (28)  
+
+> •
+
+The Force Efficiency Index (FEI) quantifies how ef-fectively the individual rotor contributions combine to produce the total control force. We focus on its average value 
+
+FEI = 1
+
+N
+
+> N
+
+X
+
+> t=1
+
+16cf ¯ω2
+
+> 6
+
+X
+
+> i=1
+
+fPi (t)
+
+!
+
+. (29)  
+
+> •
+
+The mean computation time ¯tc is evaluated as the av-erage allocation time per control step, measured from the desired control wrench to the resulting u and α, and averaged over the simulation horizon and all MC runs. Table IV summarizes the performance comparison between the baseline and the proposed control framework. From a computational perspective, for all values of r∗, the proposed control framework achieves a substantial reduction in mean —————————————————————– PREPRINT —————————————————————–                                                            
+
+> Fig. 5. Cant-angle trajectory α(t)and corresponding zero-moment force polytope sections at four selected instants on the hovering plane, together with the applied (red dashed) and instantaneous required (red marker) forces, confirming that the geometric containment condition is satisfied throughout the maneuver. TABLE IV
+> MC KPI S FOR THE BASELINE AND PROPOSED CONTROLLER .
+> baseline proposed controller
+> r∗= 0 .5Nr∗= 1 Nr∗= 3 Nr∗= 5 N
+> ¯tc[ms] 0.5792 0.0565 0.0545 0.0536 0.0521
+> ∥¯ep∥[m] 0.0422 0.0192 0.0192 0.0202 0.0223 RMS ep[m] 0.0352 0.0282 0.0280 0.0291 0.0313
+> ∥¯eR∥[rad] 0.0028 0.0004 0.0005 0.0008 0.0014 RMS eR[rad] 0.0046 0.0005 0.0005 0.0009 0.0013 FEI [−]0.6366 0.6465 0.5523 0.5355 0.5212 MEI [−]0.6532 0.5238 0.5435 0.5174 0.5586 RMS u
+> Hz 25023 4642 4649 4864 4865
+
+computation time ¯tc compared to the baseline. This confirms that the offline LUT effectively alleviates part of the online computational burden and makes the framework suitable for resource-constrained platforms. Focusing on pose-tracking performance, a clear trend emerges when jointly analyzing translational and rotational errors. Selecting r∗ ∈ {0.5, 1}N consistently provides the best overall pose accuracy, yielding the lowest mean and RMS errors for both position and orientation, with particularly pronounced improvements in the orientation-related metrics. However, as r∗ increases, a gradual degradation in both translational and rotational accuracy is observed. Furthermore, the proposed control framework achieves the highest FEI when r∗ = 0 .5N, indicating a more constructive combination of individual rotor thrust vectors and reduced internal force cancellation, although it remains comparable to the baseline method. In contrast, lower efficiency is observed for r∗ ∈ { 1, 3, 5}N, confirming that larger radii tend to favor configurations that are feasible but suboptimal in terms of force generation. Finally, the analysis of actuation effort highlights an impor-tant trade-off. The lowest RMS u is observed for r∗ = 0 .5N, while the baseline exhibits the highest value. This demon-strates that the proposed control framework can simultaneously reduce computational burden and maintain lower actuator usage. However, the non-monotonic behavior of the index indi-cates that increasing the sphere radius does not systematically decrease or increase actuator loading. Overall, the validation results indicate that selecting r∗ ∈{0.5, 1}N provides the most effective balance among tracking accuracy, computational cost, and actuation efficiency, whereas larger robustness margin leads to suboptimal tilt configuration, resulting in poorer force efficiency and pose–tracking perfor-mance. 
+
+D. Complete Interaction Task Simulation 
+
+As a final validation step, the proposed framework is eval-uated in a physics-based simulation environment. The simula-tion is implemented in Simscape using the MATLAB/Simulink toolbox RotorSuite [13], which provides a modular represen-tation of the multirotor platform, explicitly modeling masses, inertias, and actuator dynamics of the system. In the considered scenario, the α–TingH platform takes off and navigates toward a vertical wall located at xw =6m in FW . After approaching the wall, the vehicle per-forms three sequential interaction contacts at the points 
+
+{(6 , 0, 1) , (6 , 0, 2) , (6 , 0, 3) }, each lasting 5s , emulating a sur-face inspection task. The contact is modeled through the 
+
+Spatial Contact Force block in Simscape, representing the wall as a spring-damper system with stiffness Ke = 10 6 N/m and damping Kd = 10 3 Ns /m. When the end-effector tip reaches the wall, the resulting reaction force acts along the wall normal direction and is applied at the vehicle CoM, consistently with the assumed alignment of the tool with the body-frame x-axis. To maintain contact, the position reference offset along the x
+
+direction is set 2 cm beyond the wall surface. Representative snapshots of the task execution are shown in Figure 6, while the corresponding performance metrics are —————————————————————– PREPRINT —————————————————————– 
+
+TABLE V SIMSCAPE PHYSICS -B ASED SIMULATION : P ARAMETERS ,CONTROLLER GAINS , C ANT -A NGLE SELECTION , AND KPI S.
+
+m [kg] 3.8
+
+J kg m 2 diag ([0 .107 0 .103 0 .205]) 
+
+Kpp diag ([6 6 15]) Kop diag ([10 10 10]) 
+
+Kpd diag ([10 10 20]) Kod diag ([1 2 2]) 
+
+Kpi diag ([1 1 1]) Koi diag ([0 .1 0 .01 0 .1]) 
+
+r∗ [N] 1 cr [−] 13
+
+¯tc [ms] 0.0798 ∥¯ep∥ [m] 0.1340 RMS u [Hz 2] 4237 RMS ep [m] 0.1623 FEI [ −] 0.9131 ∥¯eR∥ [rad] 0.0032 MEI [ −] 0.7723 RMS eR [rad] 0.0047 
+
+reported in Table V. The results show that the proposed cant-angle selector enables the platform to complete the inspection sequence while adapting the tilt configuration to track the reference trajectory and counteract interaction forces. Compared to the numerical simulations in Section IV-C, a moderate degradation in tracking accuracy is observed, especially during the transitions between free flight and con-tact, mainly due to the increased complexity of the physics-based model, which explicitly accounts for contact effects and more realistic actuation dynamics. A further remark concerns the actuation-related KPIs. Both FEI and MEI are higher than in the numerical MC simulations due to the nature of the considered task. In particular, repetitive wall interaction induces a persistent force demand along the wall normal, thereby promoting more constructive thrust combinations and a more sustained actuation effort. Nevertheless, the controller preserves platform stability and successfully completes the task. Overall, these results confirm the feasibility of the proposed polytope-based cant-angle selector for complete interaction tasks, while highlighting possible improvements in transient response and interaction control. V. C ONCLUSION 
+
+This paper presented a control framework for α–TingH platforms performing in-contact tasks, featuring a lightweight polytope-based cant–angle selection strategy. The approach exploits an offline-computed LUT of zero-moment force poly-topes to identify feasible cant angle candidates online, and then selects the optimal angle via a minimization that balances a low-tilt preference with temporal smoothness. Numerical validation results show that the proposed strategy improves pose-tracking accuracy and force efficiency compared to a baseline optimization-based allocation method, while sub-stantially reducing the computational burden. Furthermore, physics-based simulations carried out in Simscape demonstrate that the proposed framework remains effective in realistic interaction scenarios, enabling stable wall-contact tasks while maintaining satisfactory performance. These results highlight the potential of geometric polytope-based reasoning for simplifying control allocation in thrust-
+
+(a) Free Flight (b) Wall Interaction Fig. 6. Snapshots of the Simscape simulation (video in the supplementary material), showing the variation of the cant angle as the platform interacts with the wall. 
+
+vectoring multirotor platforms while preserving interaction performance. Future work will extend the method to account explicitly for interaction-induced moments and will include experimental validation on the real platform, as well as real-time implementation on embedded onboard hardware. REFERENCES [1] F. Ruggiero, V. Lippiello, and A. Ollero, “Aerial manipulation: A literature review,” Robot. Automat. Lett. , vol. 3, no. 3, pp. 1957–1964, 2018. [2] A. Ollero, M. Tognon, A. Suarez, D. Lee, and A. Franchi, “Past, present, and future of aerial robotic manipulators,” IEEE Trans. Robot. , vol. 38, no. 1, pp. 626–645, 2021. [3] A. Piccina, M. Bertoni, and G. Michieletto, “A taxonomy on contact-aware multi-rotors for interaction tasks,” in Int. Conf. Unmanned Aircraft Syst. (ICUAS) . IEEE, 2025, pp. 355–361. [4] M. Idrissi, M. Salami, and F. Annaz, “A review of quadrotor un-manned aerial vehicles: applications, architectural design and control algorithms,” J. Intell. Robotic Syst. , vol. 104, no. 2, p. 22, 2022. [5] M. Ryll, G. Muscio, F. Pierri, E. Cataldi, G. Antonelli, F. Caccavale, and A. Franchi, “6d physical interaction with a fully actuated aerial robot,” in Int. Conf. Robot. Automat. (ICRA) . IEEE, 2017, pp. 5190–5195. [6] M. Ryll, H. H. B¨ ulthoff, and P. R. Giordano, “Modeling and control of a quadrotor uav with tilting propellers,” in Int. Conf. Robot. Automat. (ICRA) . IEEE, 2012, pp. 4606–4613. [7] M. Ryll, D. Bicego, M. Giurato, M. Lovera, and A. Franchi, “Fast-hex—a morphing hexarotor: design, mechanical implementation, control and experimental validation,” IEEE/ASME Trans. Mechatronics , vol. 27, no. 3, pp. 1244–1255, 2021. [8] M. Kamel, S. Verling, O. Elkhatib, C. Sprecher, P. Wulkop, Z. Taylor, R. Siegwart, and I. Gilitschenski, “The voliro omniorientational hexa-copter: An agile and maneuverable tiltable-rotor aerial vehicle,” Robot. Automat. Mag. , vol. 25, no. 4, pp. 34–44, 2018. [9] T. A. Johansen and T. I. Fossen, “Control allocation—a survey,” Auto-matica , vol. 49, no. 5, pp. 1087–1103, 2013. [10] M. Ruggia, “Momav: A highly symmetrical fully-actuated multirotor drone using optimizing control allocation,” Robot. Auton. Syst. , p. 105176, 2025. [11] M. Perin, M. Bertoni, N. Viezzer, G. Michieletto, and A. Cenedese, “Star-shaped tilted hexarotor maneuverability: Analysis of the role of the tilt cant angles,” in Int. Conf. Automat. Sci. Eng. (CASE) . IEEE, 2024, pp. 1791–1797. [12] P. Abbaraju, X. Ma, G. Jiang, M. Rastgaar, and R. M. Voyles, “Aero-dynamic modeling of fully-actuated multirotor uavs with nonparallel actuators,” in IEEE/RSJ Int. Conf. Intell. Robots Syst. (IROS) . IEEE, 2021, pp. 9639–9645. [13] N. Cigarini, G. Michieletto, and A. Cenedese, “Rotorsuite: A matlab/simulink toolbox for tilt multi-rotor uav modeling,” 
+
+arXiv:2602.18814 , 2026.

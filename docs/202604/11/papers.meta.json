@@ -1,0 +1,23 @@
+{
+  "label": "2026-04-11",
+  "date": "2026-04-11",
+  "generated_at": "2026-04-11T19:38:26",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202604/11/2604.05998v1-force-polytope-based-cant-angle-selection-for-tilting-hexarotor-uavs",
+      "section": "quick",
+      "title_en": "Force Polytope-Based Cant-Angle Selection for Tilting Hexarotor UAVs",
+      "authors": "Alberto Piccina, Massimiliano Bertoni, Angelo Cenedese, Giulia Michieletto",
+      "date": "2026-04-07",
+      "pdf": "https://arxiv.org/pdf/2604.05998v1",
+      "score": "6.0",
+      "evidence": "基于力多胞形的交互任务期望控制力控制",
+      "tldr": "本研究针对倾斜六旋翼无人机在物理交互任务中的灵活性，提出了一种基于力多胞形的倾角选择轻量级控制框架。该方法利用预计算的零力矩力多胞形查找表，根据期望控制力实时筛选最优倾角，旨在平衡执行效率与运动平滑性。通过蒙特卡洛模拟和壁面检查任务仿真验证，该方案在显著降低计算开销的同时，提升了位姿跟踪性能，证明了其在实际交互场景中的可行性。",
+      "tags": "query:em-force",
+      "abstract_en": "From a maneuverability perspective, the main advantage of tilting multirotor UAVs lies in the dynamic variability of the feasible executable wrench, which represents a key asset for physical interaction tasks. Accordingly, cant-angle selection should be optimized to ensure high performance while avoiding abrupt variations and preserving real-world feasibility. In this context, this work proposes a lightweight control framework for star-shaped interdependent cant-tilting hexarotor UAVs performing interaction tasks. The method uses an offline-computed look-up table of zero-moment force polytopes to identify feasible cant angles for a desired control force and select the optimal one by balancing efficiency and smoothness. The framework is integrated with a geometric full-pose controller and validated through Monte Carlo simulations in MATLAB/Simulink and compared against a baseline strategy. The results show a significant reduction in computation time, together with improved pose-tracking performance and competitive actuation efficiency. A final physics-based simulation of a complete wall inspection task in Simscape further confirms the feasibility of the proposed strategy in interacting scenarios.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

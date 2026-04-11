@@ -1,0 +1,55 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-11T19:38:03.337029+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.05998v1",
+      "title": "Force Polytope-Based Cant-Angle Selection for Tilting Hexarotor UAVs",
+      "abstract": "From a maneuverability perspective, the main advantage of tilting multirotor UAVs lies in the dynamic variability of the feasible executable wrench, which represents a key asset for physical interaction tasks. Accordingly, cant-angle selection should be optimized to ensure high performance while avoiding abrupt variations and preserving real-world feasibility. In this context, this work proposes a lightweight control framework for star-shaped interdependent cant-tilting hexarotor UAVs performing interaction tasks. The method uses an offline-computed look-up table of zero-moment force polytopes to identify feasible cant angles for a desired control force and select the optimal one by balancing efficiency and smoothness. The framework is integrated with a geometric full-pose controller and validated through Monte Carlo simulations in MATLAB/Simulink and compared against a baseline strategy. The results show a significant reduction in computation time, together with improved pose-tracking performance and competitive actuation efficiency. A final physics-based simulation of a complete wall inspection task in Simscape further confirms the feasibility of the proposed strategy in interacting scenarios.",
+      "authors": [
+        "Alberto Piccina",
+        "Massimiliano Bertoni",
+        "Angelo Cenedese",
+        "Giulia Michieletto"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "eess.SY"
+      ],
+      "published": "2026-04-07T15:24:09+00:00",
+      "link": "https://arxiv.org/pdf/2604.05998v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "force polytope-based control for desired control force in interaction tasks",
+      "llm_evidence_cn": "基于力多胞形的交互任务期望控制力控制",
+      "llm_evidence": "基于力多胞形的交互任务期望控制力控制",
+      "canonical_evidence": "基于力多胞形的交互任务期望控制力控制",
+      "llm_tldr_en": "Proposes a control framework using force polytopes to optimize force execution in tilting UAVs.",
+      "llm_tldr_cn": "提出一种利用力多胞形优化倾斜旋翼无人机力执行的控制框架。",
+      "llm_tldr": "提出一种利用力多胞形优化倾斜旋翼无人机力执行的控制框架。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
