@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-04-12 <!--dpr-date:20260412-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202604/12/2604.04327v1-mpc-and-system-identification-with-differentiable-physics-fluid-system-and-particle-beam-control" data-sidebar-item="{&quot;title&quot;: &quot;MPC and System Identification with Differentiable Physics: Fluid System and Particle Beam Control&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2604.04327v1-mpc-and-system-identification-with-differentiable-physics-fluid-system-and-particle-beam-control&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;em-force&quot;}], &quot;evidence&quot;: &quot;用于实时控制和参数估计的可微物理模拟&quot;}">MPC and System Identification with Differentiable Physics: Fluid System and Particle Beam Control</a>
   * 2026-04-11 <!--dpr-date:20260411-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202604/11/2604.05998v1-force-polytope-based-cant-angle-selection-for-tilting-hexarotor-uavs" data-sidebar-item="{&quot;title&quot;: &quot;Force Polytope-Based Cant-Angle Selection for Tilting Hexarotor UAVs&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2604.05998v1-force-polytope-based-cant-angle-selection-for-tilting-hexarotor-uavs&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;em-force&quot;}], &quot;evidence&quot;: &quot;基于力多胞形的交互任务期望控制力控制&quot;}">Force Polytope-Based Cant-Angle Selection for Tilting Hexarotor UAVs</a>

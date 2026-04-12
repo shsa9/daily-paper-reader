@@ -1,0 +1,23 @@
+{
+  "label": "2026-04-12",
+  "date": "2026-04-12",
+  "generated_at": "2026-04-12T19:47:38",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202604/12/2604.04327v1-mpc-and-system-identification-with-differentiable-physics-fluid-system-and-particle-beam-control",
+      "section": "quick",
+      "title_en": "MPC and System Identification with Differentiable Physics: Fluid System and Particle Beam Control",
+      "authors": "Alan Williams, Alp Sunol",
+      "date": "2026-04-06",
+      "pdf": "https://arxiv.org/pdf/2604.04327v1",
+      "score": "6.0",
+      "evidence": "用于实时控制和参数估计的可微物理模拟",
+      "tldr": "本研究提出了一种利用可微物理模拟器进行同步控制和参数估计的框架。通过将动力学视为计算对象并利用自动微分技术，该方法在模型预测控制（MPC）中直接通过模拟器梯度优化目标函数，并根据测量数据在线更新物理参数。该框架实现了控制输入与物理参数的实时联合优化，为流体系统和粒子加速器等复杂动力学系统的建模与控制提供了新途径。",
+      "tags": "query:em-force",
+      "abstract_en": "We consider the problem of simultaneous control and parameter estimation when the model is available only as a differentiable physics simulator. We propose a receding-horizon control framework in which a model predictive control (MPC) objective is optimized using gradients obtained by differentiating through the simulator, while physical parameters are updated online using measurement data. Unlike classical MPC, which relies on explicit algebraic models, our approach treats the dynamics as a computational object and performs simulation-based optimization using automatic differentiation. A shared differentiable model enables joint, real-time optimization of control inputs and physical parameters. We present two preliminary examples to demonstrate the proposed framework on two challenging applications: a fluid flow problem and a particle accelerator.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

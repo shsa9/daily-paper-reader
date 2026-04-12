@@ -1,0 +1,52 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-12T19:47:17.395120+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.04327v1",
+      "title": "MPC and System Identification with Differentiable Physics: Fluid System and Particle Beam Control",
+      "abstract": "We consider the problem of simultaneous control and parameter estimation when the model is available only as a differentiable physics simulator. We propose a receding-horizon control framework in which a model predictive control (MPC) objective is optimized using gradients obtained by differentiating through the simulator, while physical parameters are updated online using measurement data. Unlike classical MPC, which relies on explicit algebraic models, our approach treats the dynamics as a computational object and performs simulation-based optimization using automatic differentiation. A shared differentiable model enables joint, real-time optimization of control inputs and physical parameters. We present two preliminary examples to demonstrate the proposed framework on two challenging applications: a fluid flow problem and a particle accelerator.",
+      "authors": [
+        "Alan Williams",
+        "Alp Sunol"
+      ],
+      "primary_category": "math.OC",
+      "categories": [
+        "math.OC"
+      ],
+      "published": "2026-04-06T00:35:00+00:00",
+      "link": "https://arxiv.org/pdf/2604.04327v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Differentiable physics for real-time control and parameter estimation",
+      "llm_evidence_cn": "用于实时控制和参数估计的可微物理模拟",
+      "llm_evidence": "用于实时控制和参数估计的可微物理模拟",
+      "canonical_evidence": "用于实时控制和参数估计的可微物理模拟",
+      "llm_tldr_en": "Uses differentiable physics for simultaneous control and parameter estimation in complex systems.",
+      "llm_tldr_cn": "利用可微物理模拟实现复杂系统的同步控制与参数估计。",
+      "llm_tldr": "利用可微物理模拟实现复杂系统的同步控制与参数估计。",
+      "llm_tags": [
+        "query:em-force:composite"
+      ],
+      "matched_query_tag": "query:em-force:composite",
+      "matched_query_text": "Papers central to 查找非接触式电磁激振器的力控制方法，特别是精密控制策略, especially work that connects or combines: electromagnetic exciter force control; ddy current magnetic bearing modeling; magnetic bearing flux feedback; non-contact electromagnetic shaker force control; precision force control strategies for electromagnetic actuators; closed-loop force control for electromagnetic shakers; flux feedback linearization zero bias magnetic bearing; non contact electromagnetic exciter precision force control; eddy current effects in electromagnetic actuators dynamic modeling; flux feedback control for magnetic bearing force precision.",
+      "matched_requirement_id": "req-composite-em-force",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

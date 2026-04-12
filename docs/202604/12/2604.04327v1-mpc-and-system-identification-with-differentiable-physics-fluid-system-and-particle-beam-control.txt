@@ -1,0 +1,593 @@
+Title: MPC and System Identification with Differentiable Physics: Fluid System and Particle Beam Control
+
+URL Source: https://arxiv.org/pdf/2604.04327v1
+
+Published Time: Tue, 07 Apr 2026 01:19:08 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# MPC and System Identification with Differentiable Physics: Fluid System and Particle Beam Control 
+
+Alan Williams 1 Alp M. Sunol 2
+
+Abstract — We consider the problem of simultaneous control and parameter estimation when the model is available only as a differentiable physics simulator. We propose a receding-horizon control framework in which a model predictive control (MPC) objective is optimized using gradients obtained by differentiating through the simulator, while physical parameters are updated online using measurement data. Unlike classical MPC, which relies on explicit algebraic models, our approach treats the dynamics as a computational object and performs simulation-based optimization using automatic differentiation. A shared differentiable model enables joint, real-time optimiza-tion of control inputs and physical parameters. We present two preliminary examples to demonstrate the proposed framework on two challenging applications: a fluid flow problem and a particle accelerator. 
+
+I. I NTRODUCTION 
+
+Model-based control methods rely fundamentally on the availability of a system model that can be used to synthesize control laws. In classical control settings, this model is typically expressed in explicit algebraic form, for instance, as a linear or nonlinear state-space representation, which enables analytical reasoning, linearization, and the formu-lation of tractable optimization problems. In many modern applications, however, high-fidelity system models are no longer available in closed form. Instead, the system dynamics are encoded in complex computational pipelines, such as physics-based simulators, numerical solvers, or multiphysics models, which can only be queried through forward evalua-tion. This raises a fundamental question: how should control be performed when the system model is available only as a computational object rather than an explicit set of equations? Recent advances in differentiable physics and automatic differentiation have made it possible to compute exact gra-dients of simulator outputs with respect to inputs, initial conditions, and physical parameters. As a result, such com-putational models can now be treated as differentiable maps, enabling gradient-based optimization through time-evolving simulations. This capability opens the door to a new class of model-based control methods, in which control inputs are optimized directly through simulation rollouts, rather than through explicit algebraic reformulations of the dynamics. At the same time, the availability of simulator gradients naturally supports online parameter estimation, allowing 
+
+> 1Alan Williams is with the Accelerator Operations and Technology -Instrumentation and Control (AOT-IC) group, Adaptive Machine Learning Team at Los Alamos National Lab, Los Alamos, NM 87545, USA (e-mail: awilliams@lanl.gov).
+> 2Alp M. Sunol is in the Brenner Group at Harvard University’s School of Engineering and Applied Sciences (e-mail: asunol@seas.harvard.edu).
+
+physical parameters within the model to be adapted using measurement data. In this work, we formalize this approach as a receding-horizon framework that couples control and estimation through a shared differentiable model, treating the dynamics as an implicit computational constraint enforced through simulation. II. B ACKGROUND AND LITERATURE 
+
+Differentiable simulators provide gradients of simulation outputs with respect to inputs, states, and physical parame-ters, enabling gradient-based optimization through complex computational models; see [9] for a recent review. When MPC is used with physics simulators, repeated rollouts can make gradient computation expensive, and methods such as [8] seek to reduce this cost. Only a limited number of works consider MPC with differentiable physics. In [2], the authors couple MPC (solved with iLQR) and online system identification using a differentiable rigid-body simu-lator, together with a heuristic certainty score derived from closed-form dynamics to detect insufficient excitation. In contrast, we assume the dynamics are available only through a simulator and focus on formulating MPC, state estimation, and online parameter estimation for higher-complexity GPU-based simulations. This work presents two examples of differentiable simu-lation for control and parameter estimation: particle acceler-ator systems and fluid systems. In accelerator applications, model-based control has the potential to provide substantial speedups in tuning, since current approaches are often either model-free [10], [15] or based on data-driven surrogate models [3], [4]. Neither approach makes efficient use of high-fidelity computational models, and both typically require substantial data, either online during deployment or offline during training. In fluid mechanics, adjoint-based MPC has been applied to Navier–Stokes wind-farm models for power maximization through induction and yaw control [13], [14], though these works derive problem-specific adjoint equations and do not consider unknown physical parameters. More recently, Al-hashim et al. [1] used automatic differentiation through a full Navier–Stokes solver in JAX to optimize swimming gaits and chaotic mixing protocols, while Sunol et al. [12] imple-mented differentiable simulation to non-Newtonian fluids by learning constitutive laws from partial flow measurements. The present work builds on this computational infrastructure to couple receding-horizon control with online parameter estimation. 
+
+> arXiv:2604.04327v1 [math.OC] 6 Apr 2026
+
+III. D IFFERENTIABLE PHYSICS FOR CONTROL AND 
+
+ESTIMATION 
+
+This section formalizes the control and online estimation framework described in the introduction. We present the formulation in discrete time, with the understanding that in our fluid dynamics example, the “state” represents a high-dimensional discretized field (e.g., velocity fields). 
+
+A. Discrete-time dynamics with parameters 
+
+Let xt ∈ Rnx denote the state at time index t ∈{0, 1, 2, . . . }, ut ∈ Rnu the control input, and yt ∈ Rny
+
+the measurement. We distinguish  
+
+> •
+
+known model parameters ϕ ∈ Rnϕ (e.g., geometry, boundary conditions, known material properties), and  
+
+> •
+
+unknown physical parameters θ ∈ Rnθ to be estimated online (e.g., viscosity, constitutive-law parameters, drag coefficients). We assume discrete-time dynamics and measurements: 
+
+xt+1 = f (xt, u t; ϕ, θ ) , (1) 
+
+yt = h(xt, u t; ϕ, θ ) . (2) In many PDE-based models of the system above, the state 
+
+xt may be a discretized field over a spatial domain and yt
+
+consists of sparse samples (or a low-dimensional functional) of that field. A common structure is yt = P(xt) , where 
+
+P is a projection/sampling operator (e.g., point sensors, sub-sampled grid, line integrals, camera-based observation model, etc.). We assume the differentiable simulator captures the structural form of f and h, while prediction errors arise from mismatch in the unknown parameters θ.
+
+B. Constraints 
+
+We consider standard MPC constraints, including box constraints on inputs and their rates: 
+
+umin ≤ ut ≤ umax , −∆umax ≤ ut −ut−1 ≤ ∆umax , (3) and generic inequality constraints 
+
+g(xt, u t; ϕ, θ ) ≤ 0, (4) which may encode actuator limits, safety envelopes, or application-specific constraints (e.g., stress limits, maximum shear rate, bounds on a scalar field, etc.). In partially ob-served settings, such constraints are typically enforced on predicted/estimated states or outputs. 
+
+C. Finite-horizon objective 
+
+Let ˆxt|t denote the state estimate at time t given informa-tion up to time t, and let ˆθt denote the parameter estimate available at time t. For horizon N , we define the predicted rollout when ˆxt|t is given 
+
+ˆxt+k+1 |t = f
+
+
+
+ˆxt+k|t, u t+k|t; ϕ, ˆθt
+
+
+
+, k = 0 , . . . , N − 1,
+
+(5) with predicted outputs ˆyt+k|t = h(ˆ xt+k|t, u t+k|t; ϕ, ˆθt). A general MPC objective can be written as 
+
+Jt(ut; ˆ xt|t, ˆθt) =  
+
+> N−1
+
+X
+
+> k=0
+
+ℓ ˆyt+k|t, u t+k|t; rt+k
+
+ +
+
+ℓf
+
+ ˆyt+N |t; rt+N
+
+ , (6) where ut := {ut|t, . . . , u t+N −1|t} and rt+k denotes areference/command (or desired field statistic). 
+
+D. Simulation-based MPC via differentiable physics 
+
+At each time t, the MPC problem is 
+
+min 
+
+> ut
+
+Jt(ut; ˆ xt|t, ˆθt) (7a) s.t. ˆxt+k+1 |t = f
+
+
+
+ˆxt+k|t, u t+k|t; ϕ, ˆθt
+
+
+
+, (7b) 
+
+ˆyt+k|t = h
+
+
+
+ˆxt+k|t, u t+k|t; ϕ, ˆθt
+
+
+
+, (7c) 
+
+umin ≤ ut+k|t ≤ umax , (7d) 
+
+−∆umax ≤ ut+k|t − ut+k−1|t ≤ ∆umax , (7e) 
+
+g
+
+
+
+ˆxt+k|t, u t+k|t; ϕ, ˆθt
+
+
+
+≤ 0, (7f) where k = 0 , . . . , N − 1. Here ut−1 denotes the control input most recently applied to the plant. For k = 0 , the rate constraint is understood with ut−1|t := ut−1. Let u⋆t := 
+
+{u⋆t|t, . . . , u ⋆t+N −1|t} denote the optimizer of (7); the control applied to the plant is the first element, ut = u⋆t|t.The key distinction from classical MPC is that f and h
+
+may not be available in closed algebraic form; instead, they are implemented by a differentiable simulator. We therefore treat the dynamics in (7b) as an implicit computational constraint enforced through a rollout (5), and we compute gradients ∇ut Jt and (optionally) ∇ˆxt|t Jt, ∇ˆθt Jt by differ-entiating through the simulation via automatic differentiation. This enables standard gradient-based solvers without requir-ing explicit analytic derivatives of the underlying physics. In PDE-based systems, even a modest prediction horizon may correspond to thousands of simulator timesteps, making gradient computation through the full rollout the central computational challenge. 
+
+E. State estimation under sparse measurements 
+
+When the state is not directly observed, MPC requires a state estimate ˆxt|t. For high-dimensional fields and sparse measurements, an optimization-based observer is natural. Using past inputs ut−L:t−1 := {ut−L, . . . , u t−1} and mea-surements yt−L:t := {yt−L, . . . , y t} over a window of length L, and holding ˆθt fixed, we consider a moving-horizon observer that optimizes over a candidate trajectory 
+
+zt−L:t := {zt−L, . . . , z t}:
+
+min 
+
+> zt−L:t
+> t
+
+X
+
+> k=t−L
+
+∥yk − h(zk, u k; ϕ, ˆθt)∥2 
+
+> R
+
++ ∥zt−L − ¯xt−L∥2
+
+> P
+
+(8a) s.t. zk+1 = f (zk, u k; ϕ, ˆθt), k = t − L, . . . , t − 1. (8b) State estimation (8) 
+
+min 
+
+> zt−L:t
+> t
+
+X
+
+> k=t−L
+
+∥yk − h(zk , u k ; ϕ, ˆθt)∥2
+
+> R
+
++ ∥zt−L − ¯xt−L∥2
+
+> P
+
+subject to (8b) 
+
+MPC (7) 
+
+u⋆t = arg min 
+
+> ut
+
+Jt(ut; ˆ xt|t, ˆθt)
+
+subject to (7b)–(7f) 
+
+Physical plant 
+
+xk+1 = f (xk , u k ; ϕ, θ )
+
+yk = h(xk , u k ; ϕ, θ )
+
+Parameter estimation (9) 
+
+min 
+
+> θ∈Θ
+> t
+
+X
+
+> k=t−W
+
+∥yk − ˆyk|t∥2 
+
+> Rθ
+
++ λθ ∥θ − ¯θ∥2
+
+subject to (9b)-(9c) 
+
+ˆxt|t ut = u⋆t|t
+
+yt
+
+ˆxt−L:t ˆθt 
+
+> Fig. 1. Control and estimation with a shared differentiable model, with rollout constraints enforced in each of the three optimizations.
+
+Let z⋆t−L:t := {z⋆t−L, . . . , z ⋆t } denote the optimizer of (8). The observer output supplied to MPC is then the terminal estimate ˆxt|t := z⋆t . Here ¯xt−L is an arrival prior at the beginning of the estimation window, and ∥z∥2 
+
+> M
+
+:= z⊤M z .
+
+F. Online parameter estimation with differentiable physics 
+
+To identify unknown physical parameters θ, we use past input/output data over a window W , with ut−W :t−1 := 
+
+{ut−W , . . . , u t−1} and yt−W :t := {yt−W , . . . , y t}. Starting from an estimated state at the beginning of the window, denoted ˆxt−W |t, we simulate forward and fit θ by minimizing the mismatch between measured outputs yk and predicted outputs ˆyk|t:
+
+min 
+
+> θ∈Θ
+> t
+
+X
+
+> k=t−W
+
+∥yk − ˆyk|t∥2 
+
+> Rθ
+
++ λθ ∥θ − ¯θ∥2 (9a) s.t. ˆxk+1 |t = f (ˆ xk|t, u k; ϕ, θ ), k = t − W, . . . , t − 1,
+
+(9b) 
+
+ˆyk|t = h(ˆ xk|t, u k; ϕ, θ ), k = t − W, . . . , t. (9c) Here Θ encodes known bounds or priors, ¯θ is a prior, and 
+
+λθ ≥ 0 regularizes drift. Let θ⋆ denote the optimizer of (9); the parameter estimate supplied to MPC is then ˆθt := θ⋆.
+
+G. Coupling MPC, state estimates, and parameter estimates 
+
+The MPC problem (7) is solved at each time t using the current state and parameter estimates. In partially observed systems, this requires a choice of estimation architecture: a 
+
+fully coupled scheme updates both ˆxt|t and ˆθt at every step, while a decoupled scheme computes ˆxt|t synchronously (e.g., via (8)) and updates ˆθt asynchronously every M steps by solving (9) over a longer window. Under the decoupled ar-chitecture, the loop is: estimate ˆxt|t, solve (7) using (ˆ xt|t, ˆθt),apply ut = u⋆t|t, then update ˆθt periodically. In the accelerator example, the behavior is modeled as a static map, so state estimation is not required and ˆθt is updated synchronously at each control step. In the fluid mechanics example, we likewise assume the state is known. A key challenge is that closed-loop control may suppress informative transients, causing the parameter estimator in (9) to stagnate under sparse measurements. We do not study ob-servability here; in practice, window design, regularization, and excitation terms in (6) can help mitigate this issue. IV. F LUID MECHANICS EXAMPLE 
+
+A. Problem setup 
+
+We consider a two-dimensional elliptical foil (semi-axes 
+
+a = 0.5, b = 0.06 , chord c = 2a = 1.0) holding station in a background flow, as illustrated in Fig. 2. A mean background flow of velocity U in the +x direction is maintained by a pressure correction applied at each timestep, and the swimmer controls its vertical displacement (heave) and angular orientation (pitch) to hold station efficiently. The oscillatory body velocity vbody (t) arising from the heave and pitch motions is prescribed by the gait parameterization. The simulation is warmed up for 8 flapping periods before the MPC loop begins, ensuring a developed wake at the start of replanning. Following [1], the heaving and pitching motions are pa-rameterized by truncated Fourier series: 
+
+h(t) = 
+
+> Mf
+
+X
+
+> m=1
+
+αm cos(2 πmf t ) + βm sin(2 πmf t ), (10) 
+
+ψ(t) = ψ0 +
+
+> Mf
+
+X
+
+> m=1
+
+am cos(2 πmf t + ζ)+ bm sin(2 πmf t + ζ), (11) where f is the base frequency, ζ is a heave–pitch phase lag, and ψ0 is a constant pitch offset. The m = 0 (DC) modes are excluded from optimization: a constant heave offset is redundant with the particle position, and a constant pitch offset can lead to degenerate static-airfoil solutions that reduce drag without producing thrust. The variable t in this section is the continuous time variable, not to be confused with the discrete index in the previous section. The fluid is governed by the 2D incompressible momen-tum and continuity equations, 
+
+ρ
+
+ ∂v
+
+∂t + v · ∇ v
+
+
+
+= −∇ p + ∇ · τ + fIBM , (12) 
+
+∇ · v = 0 , (13) where v = [ vx(x, y ), v y (x, y )] ⊤ is the velocity field, p(x, y )
+
+is the pressure, and fIBM (x, y ) is the immersed boundary forcing that enforces the no-slip condition on the swimmer surface. The fluid density is ρ = 1 and the gradient operator is given by ∇ := [ ∂x, ∂ y ]⊤ — throughout this section, x, y 
+
+denotes the independent spatial variables of the PDE, and should be distinguished from the state and measurement vectors xk, y k in (1)-(2) which appear with subscripts. The deviatoric stress tensor is τ = η( ˙ γ)  ∇v + ∇v⊤, where the generalized viscosity η depends on the local shear rate 
+
+˙γ = p2 tr (DD ⊤), and where D = 12 (∇v + ∇v⊤) is the rate-of-strain tensor. For a Newtonian fluid, η is a constant; for a generalized Newtonian fluid, it is given by a constitutive model such as the Carreau–Yasuda relation: 
+
+η( ˙ γ) = η∞ + ( η0 − η∞) [1 + ( λ ˙γ)a](n−1) /a , (14) where η0 and η∞ are the zero- and infinite-shear-rate vis-cosities, λ is a relaxation time, n is the power-law index, and a controls the transition sharpness. The Newtonian limit is recovered when η0 = η∞ = η, in which case τ reduces to the Newtonian stress tensor (13) reduce to the Navier–Stokes equations. Mapping to the general framework of Section III: the state vector xk in (1) is a collection of the discretized velocity field v on an 256 × 256 grid of points on spatial variables 
+
+(x, y ) at time k. The control inputs uk are the Fourier gait coefficients {am, b m, α m, β m}Mf
+
+> m=1
+
+. These coefficients are held fixed over the horizon, so that the entire input trajectory is generated by a single periodic gait. From the perspective of the general MPC formulation (7), this restriction to Fourier-parameterized, horizon-constant gaits can be interpreted as an application-specific constraint on the admissible inputs, consistent with the generic constraint class in (7f). The known parameters ϕ include the domain geometry, grid resolution, boundary conditions, and base frequency; and the unknown parameter θ is the rheological quantity estimated online—in the Newtonian case, the scalar viscosity η.The measurement available to the swimmer consists of the hydrodynamic forces on its body, computed via the immersed boundary method (IBM). At each timestep, the IBM computes the force density fIBM in (12) required to enforce the no-slip condition on the swimmer surface. The net hydrodynamic force on the swimmer is F = [ Fx, F y ]⊤ =H fIBM dS . From this, we define two scalar measurements per flapping period T = 1/f : the mean thrust power 
+
+¯Pthrust = U R T 
+
+> 0
+
+Fx dt/T and the mean oscillatory input power 
+
+¯Posc = 1
+
+> T
+
+R T
+
+> 0
+
+H fIBM ·vbody dS dt , where vbody is the prescribed body velocity. These are the quantities a physical swimmer could sense via embedded strain or force sensors. The gait optimization objective is to maximize the Froude-type swimming efficiency [1]: 
+
+E = ¯Pthrust / ¯Posc , (15) by adjusting the Fourier coefficients, while simultaneously estimating θ from the mismatch between predicted and observed power measurements. In our implementation, the            
+
+> U
+> η( ˙ γ)x
+> y
+> h(t)
+> ψ(t)
+> Fig. 2. The elliptical foil in a background flow U, with heave h(t)and pitch ψ(t)parameterized by the Fourier series in (10) and (11). The solver implements the generalized Newtonian constitutive model (14), though results in this work use the Newtonian limit ( η0=η∞=η). The domain has periodic boundary conditions.
+
+MPC problem (7) is solved over a horizon of 4,000 simula-tion time steps, corresponding to two flapping periods. The objective is evaluated by computing the average efficiency (15) over only the final 2,000 steps of the rollout, so that the optimization targets a steady-state gait after the transient dynamics in the first period have decayed. Since the full simulator state ˆxt|t = xt is available at each replanning step, explicit state estimation (e.g., as in (8)) is therefore not required, and in future work we will consider the harder problem where the full state must be estimated from sparse field measurements. 
+
+B. Implementation 
+
+The plant model is a JAX-based incompressible flow solver with immersed boundary forcing and a generalized Newtonian viscosity model [12], although only the Newto-nian case is used in the present demonstration. The entire forward model—including the IBM force computation, pres-sure projection, and constitutive evaluation—is end-to-end differentiable, providing exact control gradients ∇uE for gait optimization and parameter sensitivities ∇θ of the estimation objective (9) via automatic differentiation. The receding-horizon loop follows the asynchronous archi-tecture of Section III. At each replanning step, a candidate policy (Fourier gait) is evaluated over a prediction horizon of two flapping periods ( 4,000 timesteps). The cost (15) is computed only over the second period, after the flow has reached steady state under the candidate policy; gradients are propagated through the full two-period horizon, including the transient first period. The policy is then updated via the Adam optimizer [7], and both periods are committed to the plant: the first serves as a wake-development warmup under the new gait, and the second is the measurement period from which power data is recorded for parameter estimation. The controller then replans from the resulting state, so each MPC cycle advances the system by two flapping periods. At each gait switch, the incoming Fourier coefficients are phase-matched to the current swimmer state so that h(t) and ψ(t)
+
+remain continuous across the transition. The restriction of the loss to the second period is deliberate: optimizing over the first (transient) period would reward gaits that exploit wake startup artifacts rather than steady-state efficiency. Parameter estimation is performed asynchronously every 
+
+M = 5 control updates. A sliding buffer of size W = 5 
+
+stores the plant state, applied policy, and measured power output from each committed two-period cycle. The esti-mator minimizes the power-prediction mismatch (9) over this buffer: each buffered cycle is re-simulated under the candidate ˆθ, and the predicted power is compared to the recorded measurement. With 5 buffered cycles of 4,000 
+
+timesteps each, the estimator differentiates through 20 ,000 
+
+total timesteps per update. For the Newtonian case ( θ = η), we reparameterize as log η to maintain positivity without box constraints. All simulations use a timestep ∆t = 10 −3.The gait optimizer runs 5 Adam steps per MPC cycle with learning rates of 1.5–2 × 10 −2 (rotation) and 3–4 × 10 −3
+
+(displacement); the viscosity estimator runs 1 gradient step per update with learning rates ranging from 10 to 40 across configurations. The three configurations in Fig. 3 differ in gait optimizer variant (Adam with and without backtracking line search), viscosity learning rate, and whether a late-stage learning rate decay (factor 0.25 after 20 MPC cycles) is applied. These choices were not extensively tuned. 
+
+C. Results 
+
+We demonstrate the joint control and estimation frame-work in the Newtonian limit, estimating the scalar viscosity 
+
+η while simultaneously optimizing the swimming gait. The true viscosity is set to ηtrue = 10 −3, corresponding to 
+
+Re = U c/η = 1 ,000 and the estimator is initialized at 
+
+ˆη0 = 2 ηtrue . The swimmer begins with a single-frequency heave–pitch gait and Mf = 6 Fourier modes available for optimization. Figure 3 shows the evolution of the system over 100 MPC cycles. The viscosity estimate ˆη converges to within 1% of the true value within 4–10 control updates depending on hyperparameter configuration (Fig. 3b), at which point the gait optimizer has access to an accurate plant model. The power-prediction residual | ¯Ppred (ˆ η) − ¯Pmeas | falls below 10 −3
+
+for all three configurations (Fig. 3c). Two features of the coupled dynamics are worth noting. First, the early MPC cycles produce policies that are subopti-mal not because the optimizer fails, but because it solves the 
+
+wrong problem: with ˆη > η true , the predicted flow is more viscous than reality, and the optimizer designs gaits suited to a lower-Re . Despite this model mismatch, the optimizer still improves efficiency during the early cycles because the qualitative physics of the correct Reynolds-number regime are preserved. However, efficiency oscillations persist well after ˆη has converged (Fig. 3a), indicating that the residual noise is driven by the gait optimization itself—nonconvexity                       
+
+> Fig. 3. Joint MPC gait optimization and viscosity estimation at Re =1,000 over 100 replanning cycles, shown for three hyperparameter con-figurations that differ in learning rates and late-stage decay schedule. (a) Swimming efficiency E; solid lines are 5-point centered moving averages and translucent markers show the raw per-cycle values; the dashed line is an offline gait optimization with known ηover many gradient steps. (b) Viscosity estimate ˆη; the dashed line is ηtrue = 10 −3. (c) Absolute power-prediction residual |Ppred −Pmeas |.
+
+of the landscape and aggressive per-step updates—rather than by parameter estimation error. Second, the gait changes driven by the MPC loop naturally provide persistence of excitation for the parameter estimator. Each replanning step alters the velocity and shear-rate dis-tribution around the swimmer, probing different regions of the constitutive response. This is in contrast to a fixed-gait scenario, where the estimator would observe the same flow conditions repeatedly and convergence of ˆη would depend entirely on the information content of a single operating point. The receding-horizon structure thus provides a self-exciting property: control updates that improve E simultane-ously enrich the data available for parameter estimation. The MPC-optimized gaits achieve swimming efficiencies that approach the offline-optimized reference of E ≈ 0.14 ,up from near-zero or negative initial values (negative E
+
+indicates the body produces net drag rather than thrust) under the starting gait and incorrect viscosity estimate. The persistent efficiency oscillations visible in Fig. 3(a) reflect several additional sources of approximation beyond gait nonconvexity: the short single-period replanning horizon, continuity corrections applied to the Fourier coefficients at each gait switch to prevent discontinuities in the swimmer trajectory, and the deliberate choice not to extensively tune the optimizer hyperparameters for this demonstration. The framework extends directly to Carreau–Yasuda parameters; extending it to partial state observations and simultaneous estimation of (η0, λ, n ) is deferred to future work. V. A CCELERATOR SYSTEM : A S TATIC EXAMPLE 
+
+A. Static Formulation 
+
+Particle accelerator tuning is a useful case for our frame-work, since high-fidelity models are generally computational and are rarely used directly in control. We reformulate the setup of Section III for this setting because, at the controller update rate, the plant appears static . In such tuning problems, a particle bunch traverses the beamline essentially instantaneously relative to actuator updates: the controller sets magnet setpoints, the bunch propagates through the beamline, and diagnostics return measurements. Only after the bunch has propagated and the measurements have been made can the next control action be applied. The accelerator is therefore naturally modeled as a static input–output map. Accordingly, from (1)–(2) we collapse the fast internal evolution into the measurement model and write 
+
+yt = h(ut; ϕ, θ ) , (16) where ut ∈ Rnu are the setpoints held during bunch t and 
+
+yt ∈ Rny are the resulting diagnostic readbacks. Unmeasured initial beam conditions are absorbed into the parameters: 
+
+ϕ denotes known configuration quantities, while θ captures unknown or drifting effects to be estimated online. The differentiable simulator then serves as a forward map from 
+
+ut to predicted measurements ˆyt.
+
+B. MPC in the static setting 
+
+Although (16) is static in time t, an MPC formulation remains valuable. Many accelerator objectives are sequential, for example enforcing smooth setpoint moves and rate limits over multiple steps. Likewise, safety constraints are often expressed in diagnostic space and can be imposed directly on predicted measurements. Planning over a horizon therefore provides a look-ahead mechanism for navigating a generally nonconvex tuning problem that depends on the current pa-rameter estimate ˆθt.Given a horizon N and a current parameter estimate ˆθt,we define predicted diagnostic outputs 
+
+ˆyt+k|t = h
+
+
+
+ut+k|t; ϕ, ˆθt
+
+
+
+, k = 0 , . . . , N. (17) A generic objective consistent with (6) becomes 
+
+Jt(ut; ˆθt) =  
+
+> N−1
+
+X
+
+> k=0
+
+ℓ ˆyt+k|t, u t+k|t
+
+ + ℓf
+
+ ˆyt+N |t
+
+ , (18) where ut := {ut|t, . . . , u t+N −1|t}. Application-specific con-straints are imposed directly on the predicted diagnostics and inputs through a differentiable inequality map 
+
+g
+
+
+
+ˆyt+k|t, u t+k|t; ϕ, ˆθt
+
+
+
+≤ 0, k = 0 , . . . , N − 1. (19) Putting these together, the static-horizon MPC problem at time t is 
+
+min 
+
+> ut
+
+Jt(ut; ˆθt) (20a) s.t. ˆyt+k|t = h
+
+
+
+ut+k|t; ϕ, ˆθt
+
+
+
+, (20b) 
+
+umin ≤ ut+k|t ≤ umax , (20c) 
+
+− ∆umax ≤ ut+k|t − ut+k−1|t ≤ ∆umax , (20d) 
+
+g
+
+
+
+ˆyt+k|t, u t+k|t; ϕ, ˆθt
+
+
+
+≤ 0, (20e) for k = 0 , . . . , N − 1. Here ut−1 denotes the most recently applied setpoint, and for k = 0 we define ut−1|t := ut−1.With slight abuse of notation, ut denotes the candidate horizon input sequence; the optimized sequence is denoted by u⋆t . Because h is provided by a differentiable beamline simulator, gradients of the objective and constraints with respect to the horizon inputs are obtained by differentiating through the simulation. 
+
+C. Online parameter estimation in the static setting 
+
+The same static viewpoint naturally yields a simplified parameter identification problem. Using a window of past applied setpoints {uk} with measured diagnostics {yk},we update θ by minimizing a simulation-to-measurement mismatch: 
+
+min 
+
+> θ∈Θ
+> t
+
+X
+
+> k=t−W
+
+∥yk − h(uk; ϕ, θ )∥22 + λθ ∥θ − ¯θ∥2, (21) where Θ encodes known parameter bounds/priors and ¯θ is a nominal parameter vector, and the optimizer of (21) is denoted as ˆθt. As in Sec. III, differentiability of h provides 
+
+∇θ efficiently, enabling frequent, warm-started updates that track calibration drift and model mismatch during operation. 
+
+D. Problem Setup 
+
+Our differentiable model is built using Cheetah [6], [11], which is a GPU accelerated particle beam modeling code. It is able to model general beamlines and contains 20+ unique beamline elements, including models for challenging space charge effects, with auto-differentiability provided by the PyTorch backend. The beamline is modeled after the Isotope Production Facility (IPF) beamline, which is an ap-proximately 30 meter long beamline containing 9 quadrupole magnets for beam focusing and 4 bending magnets [5] to direct the beam off of the primary linear accelerator axis. The IPF beamline extracts 100 MeV protons from the primary linear accelerator and directs them to a target, which produces radioisotopes for medical research, diagnosis, and other uses. It is essential that the shape of the particle beam is controlled to irradiate the surface of the target evenly, while also ensuring that the size of the particle bunch does not exceed the dimensions of the beam pipe along the way to the target in order to avoid damage to accelerator components. The control input is the vector of the first 7 quadrupole strengths ut ∈ R7, corresponding to the field strength setpoints of each quadrupole Q1 , . . . , Q7. The measurement vector yt ∈ R8 consists of transverse beam sizes at four diagnostic locations (segment exits) along the beamline: 
+
+yt = σax, σ ay , σ bx, σ by , σ cx, σ cy , σ dx, σ dy
+
+⊤, (22) where σ(·) 
+
+> x/y
+
+are the RMS sizes (in the horizontal and vertical directions) at the end of segments a–d within the 30 meter length. The unknown parameter vector θ ∈ R4
+
+parametrizes the incoming beam distribution and is taken as θ = [σx, σ px , σ y , σ py ]⊤ and is generally unknown in practice. The measurements do not exactly correspond to the current physical placement of these sensors at IPF, as this is a preliminary simulation based study. We use a tracking loss on the diagnostic nearest the target to achieve a circular 10 mm beam: 
+
+Jt(ut; ˆθt) = 1
+
+N 
+
+> N−1
+
+X
+
+> k=0
+
+ˆy(d) 
+
+> t+k|t
+
+− y⋆ 22
+
++ λsmooth Ωsmooth + λsoft Ωsoft , (23) where ˆy(d) 
+
+> t+k|t
+
+= [ˆ σdx, ˆσdy ]⊤ denotes the predicted beam sizes at the final diagnostic location, and y⋆ = [ σ⋆, σ ⋆]⊤ with 
+
+σ⋆ = 10 mm . We emphasize that the stage term tracks the 
+
+terminal diagnostic location d at every predicted step within the horizon, rather than tracking all intermediate diagnostics. The following loss terms penalize rate changes to the planned control inputs (quadrupole setpoints) and predicted beam size measurements greater than the threshold: 
+
+Ωsmooth = ut|t − ut−1 
+
+> 22
+
++ 
+
+> N−1
+
+X
+
+> k=1
+
+ut+k|t − ut+k−1|t 
+
+> 22
+
+,
+
+(24) 
+
+Ωsoft = 
+
+> N−1
+
+X
+
+> k=0
+
+max 0, ˆyt+k|t − ymax  
+
+> 22
+
+, (25) where N = 5 , λsmooth = 10 −4, λsoft = 1 .0, and threshold 
+
+ymax = 14 mm. Here ut−1 denotes the setpoint applied on the most recent step, i.e., the current actuator state at time t.
+
+E. Implementation 
+
+At each time step t, we solve the static MPC problem (20) by differentiating through the Cheetah simulator and running Adam for 50 optimizer iterations with a learning rate of 10 −2; at each iteration we roll out the horizon through the simulator and evaluate (23). We warm-start the horizon sequence by shifting the previously optimized control sequence by one step (receding-horizon shift) and  
+
+> Fig. 4. Quadrupole setpoint values (top) and beam size measurements (bottom) over 11 time steps.
+
+setting the new final input to the previous terminal value (i.e., 
+
+ut+N −1|t ← ut+N −2|t−1). To enforce actuator feasibility (20c)-(20d), we evaluate the objective using a projected control sequence over the 50 optimizer steps: each planned input is clamped to a per-step change limit ∆umax = 0 .1 and to fixed sign/magnitude bounds relative to nominal setpoints. After optimization is complete, we apply only the first action 
+
+ut|t to the plant and repeat. Parameter estimation is performed using the least-squares objective (21) with λθ = 0. In this example we use an expanding batch window: at control step t we fit θ
+
+using all measurements collected so far, i.e., the dataset 
+
+{(uk, y k)}tk=0 , so the window size grows from 1 up to 11 steps over t = 0 , . . . , 10 . We update θ = [ σx, σ px , σ y , σ py ]⊤
+
+by running Adam for 50 iterations at each time step t
+
+with a learning rate of 10 −3. After each optimizer step, the parameters are projected onto the box constraint set Θ.Instead of enforcing a hard constraint (20e), we include a hinge-squared soft constraint penalty Ωsoft in the objective. The soft penalty maintains feasibility even when the initial beam size violates the diagnostic threshold ymax , as occurs in our simulation initial condition. 
+
+F. Results 
+
+Over 11 tuning iterations, the differentiable MPC con-troller drives the simulated IPF beam toward the desired circular spot at the target while respecting diagnostic safety limits. As shown in Fig. 4, the run begins from an infeasible operating point in which two diagnostics violate the envelope threshold, with σcy and σdx initially exceeding ymax = 14 mm. Fig. 5. Loss curves of (23) for the MPC optimization problem (20) (top) and (21) (bottom) for the parameter estimation for the first 5 time steps. 
+
+The soft constraint penalty in (25) nevertheless keeps the optimization feasible and quickly steers the trajectory back into the safe region: within a few updates, all eight measure-ments fall below 14 mm and remain there, while the terminal diagnostic sizes σdx and σdy converge to the 10 mm target. The quadrupole setpoints evolve gradually (Fig. 4, top), aided by the rate-limiting projection, which prevents overly aggressive corrective moves at the first update. Fig. 5 shows that the MPC problem (20) converges reliably within each control step (top), while the parameter estimation objective (21) rapidly decreases (bottom), producing a good fit after the first update. A small performance dip immediately after the first control action is expected because control is applied before system identification at t = 0 ; once the first parameter update is incorporated, subsequent MPC steps improve both tracking at segment d and satisfaction of the beam-size limits along the beamline. VI. C ONCLUSION 
+
+We presented an MPC and online parameter estimation framework for systems whose dynamics are available only through a differentiable physics simulator. By differentiating through simulator rollouts, we optimize MPC objectives with respect to control inputs while updating unknown physical parameters from measurement mismatch using the same differentiable model. In the accelerator example, this enables gradient-based tuning of quadrupole setpoints while estimat-ing an unknown incoming beam distribution; in the fluid example, the same approach supports control of a swimmer while estimating an unknown fluid parameter. Identifiabil-ity remains a key challenge when informative excitation is suppressed by closed-loop behavior. Future work will incorporate principled constrained solvers, excitation-aware objectives, and experiments utilizing state estimation for partially observed, high-dimensional systems. ACKNOWLEDGMENTS 
+
+The authors thank Michael Brenner and Alex Scheinker for helpful discussions and guidance throughout this work. REFERENCES [1] M. G. Alhashim, K. Hausknecht, and M. P. Brenner, “Control of flow behavior in complex fluids using automatic differentiation,” 
+
+Proceedings of the National Academy of Sciences , vol. 122, no. 8, p. e2403644122, 2025. [2] S. Chen, K. Werling, A. Wu, and C. K. Liu, “Real-time model predic-tive control and system identification using differentiable simulation,” 
+
+IEEE Robotics and Automation Letters , vol. 8, no. 1, pp. 312–319, 2022. [3] A. L. Edelen, S. Biedron, B. Chase, D. Edstrom, S. Milton, and P. Stabile, “Neural networks for modeling and control of particle accelerators,” IEEE Transactions on Nuclear Science , vol. 63, no. 2, pp. 878–897, 2016. [4] S. Hirlaender and N. Bruchon, “Model-free and bayesian ensembling model-based deep reinforcement learning for particle accelerator con-trol demonstrated on the fermi fel,” arXiv preprint arXiv:2012.09737 ,2020. [5] K. F. Johnson, H. W. Alvestad, W. C. Barkley, D. B. Barlow, D. S. Barr, L. S. Bennett, L. J. Bitteker, E. A. Bjorklund, W. Boedeker, M. J. Borden et al. , “Commissioning and initial operation of the isotope production facility at the los alamos neutron science center (lansce).” Los Alamos National Laboratory, 01 2004. [Online]. Available: https://www.osti.gov/biblio/977750 [6] J. Kaiser, C. Xu, A. Eichler, and A. Santamaria Garcia, “Bridging the gap between machine learning and particle accelerator physics with high-speed, differentiable simulations,” Phys. Rev. Accel. Beams , vol. 27, p. 054601, May 2024. [Online]. Available: https://link.aps.org/doi/10.1103/PhysRevAccelBeams.27.054601 [7] D. P. Kingma and J. Ba, “Adam: A method for stochastic optimiza-tion,” arXiv preprint arXiv:1412.6980 , 2014. [8] C. Liang and D. Rakita, “Robust and efficient mujoco-based model predictive control via web of affine spaces derivatives,” arXiv preprint arXiv:2512.21109 , 2025. [9] R. Newbury, J. Collins, K. He, J. Pan, I. Posner, D. Howard, and A. Cosgun, “A review of differentiable simulators,” IEEE Access ,2024. [10] A. Scheinker, X. Pang, and L. Rybarcyk, “Model-independent particle accelerator tuning,” Physical Review Special Topics—Accelerators and Beams , vol. 16, no. 10, p. 102803, 2013. [11] O. Stein, J. Kaiser, and A. Eichler, “Accelerating linear beam dynamics simulations for machine learning applications,” in Proceedings of the 13th International Particle Accelerator Conference , 2022. [12] A. M. Sunol, J. V. Roggeveen, M. G. Alhashim, H. S. Bae, and M. P. Brenner, “Learning constitutive models and rheology from partial flow measurements,” arXiv preprint arXiv:2510.24673 , 2025. [13] M. Vali, V. Petrovi´ c, S. Boersma, J.-W. van Wingerden, and M. K¨ uhn, “Adjoint-based model predictive control of wind farms: Beyond the quasi steady-state power maximization,” IFAC-PapersOnLine , vol. 50, no. 1, pp. 4510–4515, 2017. [14] M. J. van den Broek, D. De Tavernier, B. Sanderse, and J.-W. van Wingerden, “Adjoint optimisation for wind farm flow control with a free-vortex wake model,” Renewable Energy , vol. 201, pp. 752–765, 2022. [15] A. Williams, A. Scheinker, E.-C. Huang, C. Taylor, and M. Krstic, “Experimental safe extremum seeking for accelerators,” IEEE Trans-actions on Control Systems Technology , vol. 32, no. 5, pp. 1881–1890, 2024.
