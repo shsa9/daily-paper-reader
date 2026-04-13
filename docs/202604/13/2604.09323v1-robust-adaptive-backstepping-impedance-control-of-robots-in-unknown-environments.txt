@@ -1,0 +1,626 @@
+Title: Robust Adaptive Backstepping Impedance Control of Robots in Unknown Environments
+
+URL Source: https://arxiv.org/pdf/2604.09323v1
+
+Published Time: Mon, 13 Apr 2026 00:59:01 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# Robust Adaptive Backstepping Impedance Control of Robots in Unknown Environments 
+
+Reza Nazmara ∗ Alap Kshirsagar ∗∗ Jan Peters ∗∗ 
+
+A. Pedro Aguiar ∗∗ Research Center for Systems and Technologies (SYSTEC), ARISE, Faculty of Engineering, University of Porto, 4200-465 Porto, Portugal. (email: up202103272@edu.fe.up.pt; pedro.aguiar@fe.up.pt)  
+
+> ∗∗
+
+Intelligent Autonomous Systems Lab, Department of Computer Science, TU Darmstadt, Germany. (email: alap@robot-learning.de; jan.peters@tu-darmstadt.de) 
+
+Abstract: This paper presents a Robust Adaptive Backstepping Impedance Control (RABIC) strategy for robots operating in contact-rich and uncertain environments. The proposed control strategy considers the complete coupled dynamics of the system and explicitly accounts for key sources of uncertainty, including external disturbances and unmodeled dynamics, while not requiring the robot’s dynamic parameters in implementation. We propose a backstepping-based adaptive impedance control scheme for the inner loop to track the reference impedance model. To handle uncertainties, we employ a Taylor series–based estimator for system dynamics, and an adaptive estimator for determining the upper bound of external forces. Stability analysis demonstrates the semi-global practical finite-time stability of the overall system. To demonstrate the effectiveness of the proposed method, a simulated mobile manipulator scenario and experimental evaluations on a real Franka Emika Panda robot were conducted. The proposed approach exhibits safer performance compared to PD control while ensuring trajectory tracking and force monitoring. Overall, the RABIC framework provides a solid basis for future research on adaptive and learning-based impedance control for coupled mobile and fixed serially linked manipulators. 
+
+Keywords: Impedance control; Robust adaptive control; Backstepping control; serially linked manipulators; Taylor series estimation. 1. INTRODUCTION Impedance control is a well-established interaction con-trol strategy that enables compliant and safe robot– environment interactions (Hogan, 1985), with broad appli-cations in industrial automation and medical robotics (Kong et al., 2025). Unlike conventional tracking controllers that primarily minimize trajectory errors (Zhang et al., 2024; Yan et al., 2024), impedance control regulates the dynamic relationship between motion and external forces (Hogan, 1985; Nazmara et al., 2020), thereby improving safety, robustness, and adaptability in contact-rich and uncertain environments. Since robots often operate at high speeds in environments with unknown dynamics, unintended col-lisions are inevitable (Nazmara et al., 2020). Such events can be costly and hazardous, particularly in industrial set-tings involving valuable equipment and human operators. Impedance control plays a critical role in mitigating these risks by shaping the robot’s interaction behavior without relying on cameras or explicit environment modeling. By adjusting mechanical impedance in joint or task space, robots can absorb disturbances, handle uncertainties, and limit excessive contact forces. Wheeled mobile manipulators (WMMs) (Li et al., 2007; Zhou et al., 2022), which integrate a robotic arm with a mobile base, can offer significant advantages over station-ary robotic arms (Zhang et al., 2024; Ahmadi et al., 2023) or mobile platforms without a manipulator (Yan et al., 2024; Da¸ s and Burdick, 2025). Combining both mobility and manipulation capabilities in a single system extends the operational workspace, increases flexibility, and en-ables the execution of complex tasks that are unattainable for fixed-base manipulators or mobile platforms alone. In collaborative settings, wheeled coupled mobile manipula-tors (Zhou et al., 2022) are capable of working together to manipulate large or unwieldy objects, execute synchro-nized assembly tasks, and adapt to changing environments. Most research on impedance control has primarily focused on fixed-base manipulators with relatively few studies addressing mobile manipulators, and even fewer control approaches that can be implemented on both mobile and fixed-base manipulators without modifying the control structure, while accounting for the robot’s configuration and dynamics. For example, Chien and Huang (2004) pro-posed an adaptive impedance control approach using func-tion approximation in a regressor-free design. Similarly, Zhang et al. (2018) developed a master–slave adaptive neural network framework for underwater manipulators, and Kong et al. (2025) introduced a neural network–based 
+
+> arXiv:2604.09323v1 [cs.RO] 10 Apr 2026
+
+Fig. 1. Overall block diagram of the proposed control strategy. A model reference impedance defines the desired inner-loop behavior. A Taylor series–based estimator and a force upper bound estimator in the backstepping control handle uncertainties and manage unwanted collisions in the WCMM’s and fixed-base manipulators’ joint space. optimal impedance control method for soft environmen-tal interactions. Huo et al. (2021) presented a model-free adaptive impedance strategy for autonomous sanding, while Zhu et al. (2025) proposed an active-impedance-based adaptive locomotion method for bionic hexapod robots. Although studies on mobile manipulators remain scarce, existing implementations often rely on simplifying assumptions. For instance, in (Souzanchi-K et al., 2017), a SCARA manipulator was considered, with negligible third-joint coupling, and impedance control was applied only along z. Other common simplifications include modeling the environment as a linear spring or assuming zero desired inertia, which restricts the flexibility and generality of the impedance behavior. An impedance control strategy that operates independently of the robot’s dynamic parameters, enabling seamless deployment on both coupled mobile manipulators and fixed-base manipulators, represents a practical and versatile design with straightforward imple-mentation. In comparison to the impedance control methods dis-cussed above, our proposed approach is simpler in both design and implementation, and can be deployed on mo-bile as well as fixed-base manipulators. More specifically, our method adopts a torque control strategy within the impedance control framework. Unlike impedance control schemes based on voltage control (Souzanchi-K et al., 2017; Nazmara et al., 2020; Ahmadi et al., 2023), the torque-based approach preserves a direct correspondence with the system’s physical dynamics. This results in im-proved accuracy, enhanced robustness against external dis-turbances, and superior trajectory tracking performance. Incorporating direct force feedback within the inner con-trol loop can lead to instability and difficulties during collisions. Unlike previous approaches (Chien and Huang, 2004; Zhang et al., 2018; Huo et al., 2021), our proposed method does not rely on a force sensor directly integrated into the torque control loop and does not require the nominal values of the robot’s dynamic parameters. Fur-thermore, compared to the regressor-based design pre-sented in (Zhang et al., 2018), the proposed approach offers greater implementation flexibility for robots with different configurations. Unlike learning-based or RL-based control architectures, which often rely on offline training, extensive datasets, or computationally intensive policy updates, the proposed approach performs closed-form parameter estimation fully online, without prior data, and with significantly lower computational requirements. This distinguishes our frame-work from model-based actor–critic methods (Zhao et al., 2022), whose dependence on accurate system models and substantial training effort may limit their suitability for real-time implementation in contact-rich scenarios. Recent RL formulations have demonstrated notable adapt-ability in dynamic and uncertain environments, yet man-aging uncertainty in a stable and computationally efficient manner can remain challenging. For instance, the model-based actor–critic strategy presented in Yao et al. (2023) ensures asymptotic Lyapunov stability under soft distur-bance assumptions, which are well suited to the hydraulic systems studied therein but less aligned with the abrupt and nonsmooth forces characteristic of impedance-control settings. Data-driven RL approaches Yao et al. (2024a) provide improved flexibility for handling complex uncer-tainties; however, their training demands, exploration re-quirements, and safety considerations may introduce prac-tical difficulties when deploying them on physical robotic platforms with strict real-time constraints. In contrast, the proposed robust adaptive controller avoids trial-and-error learning, guarantees immediate on-line adaptation, and ensures practically finite-time sta-bility, offering advantages in safety-critical interaction tasks. These properties enable its application to high-DOF robotic systems while maintaining predictable behavior during collisions and interactions with unstructured en-vironments. Furthermore, the Taylor-series-based estimator employed in our framework can be interpreted as a lightweight lo-cal model approximation of the unknown Euler–Lagrange dynamics. This viewpoint relates our approach to recent model–data hybrid strategies Yao et al. (2024b), which integrate analytical dynamics with learning-based com-ponents to improve modeling accuracy. However, unlike hybrid architectures that typically require neural network training or data accumulation, the proposed estimator operates entirely online, preserves a linear-in-parameters structure, and maintains formal Lyapunov-based guaran-tees. These characteristics make the method particularly suitable for real-time and safety-critical robotic applica-tions, where computational efficiency, robustness, and im-mediate adaptability are essential. In this context, developing robust impedance control strategies for high-degree-of-freedom (DoF) robots is es-sential to fully exploit their capabilities while ensuring safe, reliable, and high-performance operation in real-world environments. The main novelties and contributions of the proposed method are summarized as follows: (1) Developed a robust adaptive impedance control framework for high-DOF robots, enabling operation in both joint and task spaces and effective interaction with unknown environments. (2) Combined backstepping control with Lyapunov anal-ysis to ensure semi-global finite-time stability and robust adaptive performance. (3) Validated the approach through comprehensive sim-ulations and experiments on robotic systems. The rest of the paper is organized as follows. Section 2 presents the robot dynamics. Section 3 introduces the proposed control scheme and its stability analysis. Sec-tion 4 reports simulation and experimental results. Finally, Section 5 concludes the paper and outlines future work. 2. DYNAMIC MODELING OF ROBOTIC SYSTEMS We present the robot’s dynamic equation in a general configuration, i.e., a collaborative mobile manipulator (Li et al., 2007; Zhou et al., 2022): 
+
+D(θ) ¨θ + C(θ, ˙θ) ˙θ + G(θ) + J⊤
+
+> mm
+
+f e = τ r + τ u. (1) In (1), D(θ) ∈ Rn×n denotes the inertia matrix, C(θ, ˙θ) ∈
+
+Rn×n represents the Coriolis and centrifugal matrix, and 
+
+G(θ) ∈ Rn is the gravity vector. Here, n is the total number of joints in the WCMM system, defined as n =
+
+nb + nm, where nb and nm denote the number of joints in the mobile base and manipulator, respectively. The vectors 
+
+τ r ∈ Rn and τ u ∈ Rn represent the joint control effort and the lumped uncertainties, which include unmodeled dynamics, external disturbances, and friction. The term 
+
+Jmm ∈ R6×n denotes the full coupled Jacobian matrix of the WCMM, obtained by concatenating the Jacobian of the mobile base, Jb ∈ R6×nb , and the Jacobian of the manipulator, Jm ∈ R6×nm , such that Jmm = [ Jb Jm]. The vector f e ∈ R6 represents the external force acting at the robot end-effector. In this context, θ denotes the vector of joint angular positions, defined as θ = [ θb θm]⊤,where θb and θm correspond to the angular positions of the mobile base and manipulator, respectively. The components of these vectors are given by θb = [ θR θL]⊤ ∈
+
+R2×1, where θR and θL denote the angular positions of the right and left wheels, respectively. Similarly, θm =[θ1 . . . θ i . . . θ nm ]⊤ ∈ Rnm×1, where θi represents the angular position of the i-th manipulator joint. For clarity, all matrices and vectors in this paper are denoted in boldface. Considering the variable θr as the output of the reference impedance model and defining the tracking error as e =
+
+θr − θ, the following auxiliary variables are introduced: 
+
+ξ1 = R ( ˙ e + μe) d τ and ξ2 = ˙ e + μe, where μ is a positive definite design parameter. Based on these definitions, the following state-space representation can be derived ˙ξ1 = ξ2, (2a) ˙ξ2 = − ˆD−1
+
+τ r + H. (2b) where ˆD denotes the known nominal part of D, and H
+
+represents the uncertainty function, defined as 
+
+H = ¨θr + μ ˙e −
+
+
+
+D−1 − ˆD−1
+
+τ r
+
+− D−1 h
+
+τ u − C ˙θ − G − J⊤
+
+> mm
+
+f e
+
+i
+
+. (3) Equation (2) presents the new state-space representation of the overall tracking dynamics of the system, which will be used in the next section to derive the proposed impedance control scheme. 3. PROPOSED CONTROL AND STABILITY In this section, we propose a low-level impedance control strategy based on a model-reference impedance control approach. 
+
+3.1 Proposed Control 
+
+In this subsection, we present the proposed impedance control strategy for robotic systems. The control effort is designed to track the reference joint position θr , which is the output of the reference impedance model, while compensating for system uncertainties and external distur-bances. The reference impedance model dynamics, which generate the reference joint position signal θr , are de-scribed by the following equation ¨θr = M −1
+
+> r
+
+
+
+τ d − J⊤
+
+> mm
+
+f e
+
+
+
++ ¨θd
+
+− M −1 
+
+> r
+
+Br
+
+ ˙θr − ˙θd
+
+
+
+− M −1 
+
+> r
+
+Kr (θr − θd) , (4) where M r ∈ Rn×n, Br ∈ Rn×n, and Kr ∈ Rn×n are di-agonal matrices representing the desired inertia, damping, and stiffness, respectively. The signal θd ∈ Rn denotes the desired joint trajectory, and τ d ∈ Rn represents the desired joint torque for the mobile manipulator. Before proposing the inner-loop control effort, we model the uncertainty function H as follows 
+
+H = γ⊤ϕ + ϑ, (5) where γ is the regressor, ϕ is the vector of actual param-eters, and ϑ represents the unmodeled dynamics, which are assumed to be upper-bounded as |ϑi| ≤ ψi. The boundedness assumption (Ahmadi et al., 2023) on the unmodeled dynamics is realistic and consistent with the simulation and experimental results, based on the physical interpretation of serially linked robot arms and the formu-lation in (3). We clarify that the uncertainty term H ag-gregates modeling errors, actuator limits, and interaction forces, all of which are bounded due to finite link masses, joint limits, and feasible contact forces. Consequently, with bounded reference trajectories, all closed-loop signals re-main bounded, justifying the standard boundedness as-sumption used in the stability analysis. 
+
+Remark 1: For all expressions of the form xq with 0 <q < 1 and x possibly negative, the implementation uses the signed power function: sign( x) |x|q , as is standard for real-valued control inputs (see e.g., (Bhat and Bernstein, 2000)). Then, to track the desired impedance command θr , we propose the following control for each joint by taking into account Remark 1 in implementation as 
+
+τri = ˆDi
+
+h
+
+ξ1i + k1i (2 l − 1) ξ2iξ2( l−1) 1i
+
+i
+
++ ˆDik2i
+
+ ξ2i + k1iξ2l−11i
+
+2l−1 + ˆDi
+
+h
+
+ˆτi + sign( ξ2i + k1iξ2l−11i ) ˆψi
+
+i
+
+,
+
+(6) where k1i and k2i are positive control gains, ˆψi denotes the estimate of ψi, l satisfies 0 < l < 1, and ˆ τi represents the output of the Taylor-based estimator (Ahmadi et al., 2023), defined by the following equation ˆτi = γ⊤ 
+
+> i
+
+(t) ˆϕi(t), (7) where ˆϕi is the estimate of ϕi and γi is defined as 
+
+γi(t)⊤ =
+
+
+
+1,
+
+R t 
+
+> 0
+
+(ξ2i(τ ) − ξ2i0)dτ 
+
+k
+
+, (ξ2i(t) − ξ2i0)m
+
+
+
+,
+
+(8) in which k = 1 , . . . , l 1 and m = 1 , . . . , l 2. At the refer-ence point ξ2i0, the combined l1-th and l2-th order Taylor polynomial terms are represented by ˆτi, which can be parameterized in a linear form as ˆ τi = γi(t) ˆϕi(t). Here, ˆϕi(t) ∈ R(l1+l2+1) ×1 denotes the vector of Taylor coeffi-cients for Hi(t), and γi(t)⊤ ∈ R(l1+l2+1) ×1 is the regressor vector as previously defined. Then, we propose the parameter adaptation laws using the following equations ˙ˆϕ⊤ 
+
+> i
+
+= ρϕi (ξ2i + k1iξ2l−11i )γ⊤ 
+
+> i
+
+− σϕi
+
+ˆϕ⊤ 
+
+> i
+
+, (9) ˙ˆψi = ρψi ξ2i + k1iξ2l−11i − σψi
+
+ˆψi, (10) in which ρϕi , σϕi , ρψi , and σψi are positive constants. The overall block diagram of the system is depicted in Figure 1. As shown in this figure, the desired impedance command θr is first generated by a reference model and then provided to the inner loop, where a backstepping controller is used. The parameters within this backstep-ping controller are adjusted using two adaptive units. This backstepping controller is derived based on Lyapunov’s theorem to ensure the stability of the system. 
+
+3.2 Stability Analysis 
+
+In this subsection, we analyze the stability of the proposed control scheme using Lyapunov theory. To formalize the stability properties, we present the following theorem, which is subsequently proven. 
+
+Theorem 1. Consider the system described by (1), con-trolled according to the law in (6), with the Taylor-based estimator designed in (7) and adaptation parameters spec-ified by (9) and (10), and with modeling uncertainty H
+
+as in (5). Suppose the desired trajectory θd is sufficiently smooth, so that its time derivatives exist up to the required order, and assume that the unmodeled dynamics error ϑ
+
+is upper bounded. By substituting the control effort and adaptation parameters, letting ξ1 and ξ2 be the Taylor bases, and applying the system dynamics (2) together with the reference model (4), it can be established that the closed-loop system is semi-globally, practically, finite-time stable. 
+
+Proof. The proof proceeds by defining the following Lya-punov candidate function for the second subsystem using the backstepping technique 
+
+Vi = 0 .5 ( ξ1i)2 + 0 .5  ξ2i + k1iξ2l−11i
+
+2
+
++ 0 .5
+
+ ˜ϕ⊤ 
+
+> i
+
+˜ϕi/ρ ϕi + ˜ψ2 
+
+> i
+
+/ρ ψi
+
+
+
+(11) By differentiating (11), substituting the control effort from (6), modeling the uncertainty as in (5), and utilizing the system dynamics in (2), we obtain ˙Vi = ξ1iξ2i −  ξ2i + k1iξ2l−11i
+
+ ξ1i − k2i
+
+ ξ2i + k1iξ2l−11i
+
+2l
+
+−  ξ2i + k1iξ2l−11i
+
+ 
+
+γ⊤ 
+
+> i
+
+ˆϕi + ˆψi sign( ξ2i + k1iξ2l−11i )
+
+
+
++  ξ2i + k1iξ2l−11i
+
+   γ⊤ 
+
+> i
+
+ϕi + ϑi
+
+ − ˙ˆϕ⊤ 
+
+> i
+
+˜ϕi/ρ ϕi − ˙ˆψi ˜ψi/ρ ψi
+
+(12) By defining ˜ϕi = ϕi − ˆϕi and ˜ψi = ψi − ˆψi, and under the assumption that |ϑi| ≤ ψi, after some manipulations and simplifications, we can rewrite (12) as follows ˙Vi ≤ − k1iξ2l
+
+> 1i
+
+−k2i
+
+ ξ2i + k1iξ2l−11i
+
+2l+ ξ2i + k1iξ2l−11i
+
+ γ⊤ 
+
+> i
+
+˜ϕi
+
+|ξ2i + k1iξ2l−11i | ˜ψi − ˙ˆϕ⊤ 
+
+> i
+
+˜ϕi/ρ ϕi − ˙ˆψi ˜ψi/ρ ψi (13) By using the adaptation laws given in (9) and (10), we can rewrite (13) as the following inequality ˙Vi ≤ − k1iξ2l
+
+> 1i
+
+−k2i
+
+ ξ2i + k1iξ2l−11i
+
+2l+ ξ2i + k1iξ2l−11i
+
+ γ⊤ 
+
+> i
+
+˜ϕi
+
+|ξ2i+k1iξ2l−11i | ˜ψi−
+
+
+
+ρϕi (ξ2i + k1iξ2l−11i )γ⊤ 
+
+> i
+
+− σϕi
+
+ˆϕ⊤
+
+> i
+
+ ˜ϕi/ρ ϕi
+
+−
+
+
+
+ρψi ξ2i + k1iξ2l−11i − σψi
+
+ˆψi
+
+ ˜ψi/ρ ψ (14) Then, after some simplifications, the inequality (14) be-comes ˙Vi ≤ − k1iξ2l 
+
+> 1i
+
+− k2i
+
+ ξ2i + k1iξ2l−11i
+
+2l + ( σϕi /ρ ϕi ) ˆϕ⊤ 
+
+> i
+
+˜ϕi
+
++ ( σψi /ρ ψi ) ˆψi ˜ψi (15) We then employ the following inequalities ˆϕ⊤ 
+
+> i
+
+˜ϕi ≤ 0.5ϕ⊤ 
+
+> i
+
+ϕi − 0.5 ˜ϕ⊤ 
+
+> i
+
+˜ϕi (16) ˆψi ˜ψi ≤ 0.5ψ2 
+
+> i
+
+− 0.5 ˜ψ2 
+
+> i
+
+(17) By substituting (16) and (17) into (15) we have ˙Vi ≤ − k1iξ2l 
+
+> 1i
+
+− k2i
+
+ ξ2i + k1iξ2l−11i
+
+2l − (σϕi /2ρϕi ) ˜ϕ⊤ 
+
+> i
+
+˜ϕi
+
+− (σψi /2ρψi ) ˜ψ2 
+
+> i
+
++ ( σϕi /2ρϕi ) ϕ⊤ 
+
+> i
+
+ϕi + ( σψi /2ρψi ) ψ2
+
+> i
+
+(18) By applying Lemma 2 from Appendix A and considering 0 < l < 1, with the substitutions a = 1 − l, b = l, q1 = 1, 
+
+q2 = ˜ϕ2 
+
+> ij
+
+, and p = l l 
+
+> 1−l
+
+, we deduce that 
+
+− ˜ϕ⊤ 
+
+> i
+
+˜ϕi ≤ (1 − l) p −
+
+ ˜ϕ⊤ 
+
+> i
+
+˜ϕi
+
+l
+
+(19) Similarly, the following result can also be obtained 
+
+− ˜ψ2 
+
+> i
+
+≤ (1 − l) p −
+
+ ˜ψ2
+
+> i
+
+l
+
+(20) Then we choose ρi as the following equation 
+
+ρi = min {2k1i, 2k2i, σ ϕi , σ ψi } (21) Finally, by applying Lemma 3 from Appendix A, together with (19), (20), and (21), inequality (18) can be reformu-lated as follows ˙Vi + ρiV li 
+
+> i
+
+≤ ci (22) where ci is defined as the following 
+
+ci = ( σϕi / (2 ρϕi ) + σψi / (2 ρψi )) (1 − l) p+(σϕi /2ρϕi ) ϕ⊤ 
+
+> i
+
+ϕi + ( σψi /2ρψi ) ψ2 
+
+> i
+
+(23) Inequality (22) implies that the system described in (1) is semi-globally practically finite-time stable (Nazmara and Aguiar, 2024), and the tracking error converges to the desired impedance model defined in (4). 4. SIMULATION AND EXPERIMENTAL RESULTS This section presents simulations and experiments validat-ing the effectiveness, robustness, and safety of the pro-posed control scheme, where joint-space impedance control ensures full-body robot protection. 
+
+4.1 Simulation Setup and Baseline Scenarios on WMMs 
+
+Here, we designed two scenarios to evaluate the system’s performance under collision, representative of situations commonly encountered by mobile manipulators operating in dynamic environments. These scenarios involve colli-sions with a stiff object with different masses, where the equilibrium point—defined as the contact point when con-tact forces begin to appear— may change, thereby mak-ing the interaction behavior more realistic. Specifically, a mobile manipulator with nine DoF interacts with an environment consisting of a red box placed on top of a yellow box on a table (see Fig. 1). The mass of the red box is chosen between mr = 2 .5 kg, 5 kg, and 20 kg, and the friction coefficient is 0 .9. The mass of the yellow box my
+
+is 25 kg and it is fixed to the table. We compare the performance of a conventional PD control scheme (Scenario A) with our robust adaptive impedance control scheme (Scenario B). Our control approach is ap-plied simultaneously to all joints of the mobile manip-ulator, allowing the coupling effects—particularly those arising after collisions—to be effectively monitored and analyzed to ensure the overall safety of the robot. 
+
+Scenario A: PD Control on WMMs in MuJoCo 
+
+In this scenario, the robot interacts with the environment while operating under a conventional PD control scheme. The objective is to examine the system behavior when trajectory tracking is performed without any awareness of contact forces or collisions. Under PD control, the robot strictly follows the predefined desired trajectory, which is intentionally designed to include an obstacle, resulting in an unintended collision. Upon impact, the PD controller interprets the resulting contact force as an external disturbance and continues attempting to follow the trajectory. The proportional and derivative gains are defined as kp = [60 60 480 600 480 480 420 480 28 .8] ⊤
+
+and kd = [24 24 192 96 192 192 192 156 14 .4] ⊤, respec-tively. Figures 2(A.1)–(A.3) illustrate the state of the environment after the collision for three different red-box masses, along with the corresponding contact force for each case. In Scenarios A.1 and A.2, the red box falls due to the impact, whereas in Scenario A.3, the box is pushed; however, the robot lacks sufficient actuation power to sustain the motion and overcome friction. Overall, such situations, in which the robot experiences unexpected col-lisions without a dedicated interaction-control strategy, can significantly compromise performance and even lead to mechanical damage. 
+
+Scenario B: Proposed RABIC on WMMs in MuJoCo 
+
+In this scenario, our proposed robust adaptive impedance control scheme is implemented across all joint spaces. Figures 3(B.1)–(B.3) illustrate the state of the environ-ment after the collision for three different red-box masses, similar to Scenario-A, along with the corresponding force vectors. Our control scheme results in an initial contact force peak due to the sudden impact, similar to the PD control case but with a significantly smaller subsequent force. After the collision, the impedance controller adjusts the robot’s motion by following the reference impedance signal, θr , temporarily deviating from the desired tra-jectory θd, to generate joint torques in directions that reduce the contact forces. As a result, the contact forces rapidly decrease and eventually approach zero. The signal 
+
+θr serves as a reference trajectory that not only conveys time-dependent motion information but also encodes the desired mechanical impedance of the robot, thereby im-proving the safety of physical interactions. In both scenar-ios, the desired trajectory is given by θd, 1(t) = θd, 2(t) = 8 sin (0 .2πt/t f ), 
+
+θd, 3(t) = 1 .2 sin (0 .3πt/t f ), and the rest of the joints are held at constant positions θd, 4(t) = 0, θd, 5(t) = 1.7, 
+
+θd, 6(t) = −2.35, θd, 7(t) = 0, θd, 8(t) = 2 .35, and θd, 9(t) = 0.23 for tf = 2 .5. The timestep of the simulation is 1 ms .The desired impedance parameters are set to M r = In,
+
+Br = 20 In, Kr = In, and τ d = 0. The control gains are chosen as k1 = diag(5 .76 , 5.76 , 24 , 3.6, 24 , 24 , 24 , 24 , 24) and k2 = diag(7 .7, 7.7, 32 , 4.8, 32 , 32 , 32 , 32 , 32). The adaptive parameters are chosen as ρϕ = 50, ρψ = 0 .1, and σϕ = σψ = 0 .005, while the knowledge of the nominal inertia is assumed to be very limited, set as ˆD = In. These parameters are determined through Lyapunov stability guidelines to achieve an appropriate balance among min-imizing tracking error, maintaining smooth control effort, and enabling a rapid response of the impedance controller to unexpected collision events. A brief guideline for tuning the control parameters is as follows. The impedance parameters ( Mr , B r , K r ) are first selected using the Routh–Hurwitz criterion to shape the desired behavior in (4) and to ensure safe inertia, damping, and stiffness during collisions. Smaller Kr values increase compliance but may degrade tracking, while larger values reduce sensitivity to contact forces and make the behavior closer to PD control. The backstepping gains k1 and k2 are then chosen empirically, starting from small positive values and increasing them until they dominate the impedance dynamics and ensure contraction of ξ1 and ξ2. This proce-dure follows the Lyapunov conditions in Section 3 and al-lows a wide range of admissible gains. Finally, the adaptive rates ρϕi , ρ ψi , σ ϕi , σ ψi are tuned to regulate adaptation Scenario A.1 Scenario A.2 Scenario A.3 0 4 8 12 16                        
+
+> Time (s)
+> 20
+> 0
+> 20
+> 40
+> 60
+> fe [N]
+> fe, 1 fe, 2 fe, 3 fe, 4 fe, 5 fe, 6 04812 16
+> Time (s)
+> 20
+> 0
+> 20
+> 40
+> 60
+> fe [N]
+> fe, 1 fe, 2 fe, 3 fe, 4 fe, 5 fe, 6 04812 16
+> Time (s)
+> 20
+> 0
+> 20
+> 40
+> 60
+> fe [N]
+> fe, 1 fe, 2 fe, 3 fe, 4 fe, 5 fe, 6
+
+Fig. 2. (A.1)–(A.3): Snapshots and force profiles for collisions under PD control with a red box ( mr = 2 .5, 5, 20 kg). The robot, unaware of contact, follows its trajectory, causing impacts that knock over or push the box. The contact force increases with heavier boxes, highlighting the risks of damage and instability without interaction-aware control. For lighter boxes, PD control pushes the box until it falls, while the 20 kg box moves without knocking over. 
+
+Scenario B.1 Scenario B.2 Scenario B.3 0 4 8 12 16                        
+
+> Time (s)
+> 20
+> 0
+> 20
+> 40
+> 60
+> fe [N]
+> fe, 1 fe, 2 fe, 3 fe, 4 fe, 5 fe, 6 04812 16
+> Time (s)
+> 20
+> 0
+> 20
+> 40
+> 60
+> fe [N]
+> fe, 1 fe, 2 fe, 3 fe, 4 fe, 5 fe, 6 04812 16
+> Time (s)
+> 20
+> 0
+> 20
+> 40
+> 60
+> fe [N]
+> fe, 1 fe, 2 fe, 3 fe, 4 fe, 5 fe, 6
+
+Fig. 3. (B.1)–(B.3): Snapshots and force profiles for three collision scenarios under the proposed adaptive impedance control, where the robot impacts a red box ( mr = 2 .5, 5, 20 kg). Trajectory adaptation in response to collisions rapidly attenuates contact forces. For lighter boxes, the system behaves similarly to a PD controller, while for heavier boxes, it limits force growth by relaxing trajectory tracking to ensure safety and stability. speed and robust bound estimation, adjusted by observ-ing transient and steady-state behavior. The real-robot experiments confirm that the controller remains robust across a broad set of parameter choices. Figure 4 shows the control effort in Scenario B.3, where the red box is heaviest (20 kg), increasing response demands and instability risk. Even after strong collisions, the control remains smooth, while adaptive parameters adjust continuously. 
+
+4.2 Real-Robot Experimental Validation on the FR3 Robot 
+
+Both the baseline PD controller and the proposed impedance control were implemented on an FR3 Robot tracking ref-erence trajectories during obstacle collisions. The exper-iments used MushroomRL (D’Eramo et al., 2021) and PyLibfranka, with bias gravity compensation activated. Scenario C uses PD control, while Scenario D uses the proposed method. The desired joint-space trajectory is 
+
+θd, 1(t) = 0 .7 sin( ωt )0 4 8 12 16         
+
+> Time (s)
+> 20
+> 0
+> 20
+> 40
+> r [Nm]
+> r, 1 r, 2 r, 3 r, 4 r, 5 r, 6 r, 7 r, 8 r, 9
+
+Fig. 4. Joint control efforts τ r under the proposed robust adaptive impedance control for Scenario B.3. (1 − exp( −ωt )(1 + ωt )), where ω = 2 π/ 20, and the re-maining desired joint positions are set to θd, 2(t) = 0 .38, 
+
+θd, 3(t) = 1 .01, θd, 4(t) = −2.3, θd, 5(t) = −0.51, θd, 6(t) = Fig. 5. The real FR3 Robot during a collision with a box. 2.45, and θd, 7(t) = 1 .17. The obstacle has a total mass of 1.766 kg, as shown in the real robot task space in Figure 5. 
+
+Scenario C: PD Control on a Real Robot 
+
+The results, including collision torques at the joints, con-trol effort, and inner-loop tracking performance, are shown in Figures 6(C.1.a)–(C.1.c), respectively. PD gains are: 
+
+kp = [31 .2 9 .6 9 .6 16 .8 16 .8 16 .8 1 .15] ⊤ and 
+
+kd = [1 .92 0 .96 0 .96 0 .96 1 .92 1 .92 0 .14] ⊤. According to Figure 6(C.1.a)), the peak impact torque is −5.025 Nm at joint 1 ( t = 13 .2 s). The results indicate that the PD controller ignores contact forces, causing the torque to increase again after an initial decrease to nearly −4.53 Nm. 
+
+Scenario D: Proposed RABIC on a Real Robot 
+
+The results for this scenario are shown in Figures 6(D.1.a)–(D.1.c), which correspond to the external collision-induced joint torques, control effort, and inner-loop track-ing behavior, respectively. According to Figure 6(D.1.a), the peak collision-induced joint torque is −4.578 Nm at 
+
+t = 15 .7 s. Thereafter, the external torques decrease below 
+
+−3.25 Nm to prevent excessive environmental force. This reduction enhances safety, as the robot can no longer push the box as it did under PD control (Figure 6(C.1.a)). The proposed control efforts (Figure 6(D.1.b)) exhibit more active dynamic response compared to PD con-trol (Figure 6(C.1.b)), while remaining soft enough to be implemented on the robot joints and maintaining small inner-loop tracking errors (Figure 6(D.1.c)), un-like PD control where tracking after collision is more difficult (Figure 6(C.1.c)). The real-robot torque pro-files exhibit reduced chattering compared to simulation, as indicated by the lower root-mean-square (RMS) of the torque rate (real: 0.0065, simulation: 0.2477). This reduction is mainly attributed to inherent mechanical damping, sensor filtering, and the limited control band-width of the physical system, which attenuate high-frequency components. The remaining control gains are: 
+
+M r = In, Br = diag(6 .32 , 20 , 20 , 35 , 20 , 20 , 20), Kr =diag(10 , 1, 1, 300 , 1, 1, 1), k1 = diag(0 .48 , 0.84 , 0.48 , 0.84 ,
+
+0.48 , 0.48 , 0.48), and k2 = diag(0 .64 , 1.12 , 0.64 , 1.12 , 0.64 ,
+
+0.64 , 0.64). The adaptive parameters are chosen as ρϕ =diag(4 , 20 , 2, 20 , 2, 2, 2), ρψ = diag(0 .05 , 0.1, 0.05 , 0.5,
+
+0.05 , 0.05 , 0.05), σϕ = σψ = 0 .001, and l = 0 .999. 5. CONCLUSION AND FUTURE PERSPECTIVES In this paper, we presented a robust adaptive backstep-ping impedance control strategy for robots. By addressing dynamic coupling and system uncertainties, the proposed method enables compliant and reliable interaction with unknown environments and unintended collisions. The in-tegration of a Taylor series-based system approximation further enhances adaptability and robustness. Simulation results on a robotic arm mounted on a mobile base and experiments on the manipulator demonstrate the effective-ness and superiority of the proposed approach compared to conventional non-interactive control methods, partic-ularly in safety-critical scenarios. Future work could in-vestigate systematic extensions toward learning-enhanced impedance control. In particular, hybrid model-data ap-proaches could integrate learning components to compen-sate for unmodeled dynamics or time-varying uncertainties while maintaining stability and safety through the adap-tive backstepping structure. Promising directions include incorporating lightweight learning modules, such as locally valid function approximators or modest policy adaptation modules to improve performance in highly unstructured environments without compromising real-time feasibility.                    
+
+> Acknowledgment: This work was partially supported by Research Center for Systems and Technologies -SYSTEC and the Asso-ciate Laboratory Advanced Production and Intelligent Systems – ARISE (DOI 10.54499/LA/P/0112/2020) funded by Funda¸ c˜ ao para a Ciˆ encia e a Tecnologia, I.P./ MECI through the national funds. The first author was supported by aPh.D. Scholarship, grant 2022.11470.BD from FCT, Portugal. This work was also supported by the Deutsche Forschungsgemeinschaft (German Research Foun-dation, DFG) under Germany’s Excellence Strategy (EXC 3066/1 “The Adaptive Mind”, Project No. 533717223).
+
+REFERENCES Ahmadi, S.M., Taghadosi, M.B., and Nazmara, G. (2023). Adaptive finite-time impedance backstepping control for uncertain robotic systems interacting with unknown environments. International Journal of Control , 96(11), 2671–2682. Bhat, S.P. and Bernstein, D.S. (2000). Finite-time stability of continuous autonomous systems. SIAM Journal on Control and Optimization , 38(3), 751–766. Chien, M.C. and Huang, A.C. (2004). Adaptive impedance control of robot manipulators based on function approx-imation technique. Robotica , 22(4), 395–403. Da¸ s, E. and Burdick, J.W. (2025). Robust control barrier functions using uncertainty estimation with application to mobile robots. IEEE Transactions on Automatic Control .D’Eramo, C., Tateo, D., Bonarini, A., Restelli, M., and Peters, J. (2021). Mushroomrl: Simplifying reinforce-ment learning research. Journal of Machine Learning Research , 22(131), 1–5. Hogan, N. (1985). Impedance control: An approach to manipulation: Part ii—implementation. Journal of dy-namic systems, measurement, and control , 107(1), 8–16. Huo, Y., Li, P., Chen, D., Liu, Y.H., and Li, X. (2021). Model-free adaptive impedance control for autonomous robotic sanding. IEEE Transactions on Automation Science and Engineering , 19(4), 3601–3611. Kong, H., Peng, G., Li, G., and Yang, C. (2025). Neural-network-based optimal impedance control for robots in physical interaction with soft environments. IEEE Transactions on Systems, Man, and Cybernetics: Sys-tems .Li, Z., Ge, S.S., and Ming, A. (2007). Adaptive robust motion/force control of holonomic-constrained nonholo-Scenario C.1.a: Joint torque Scenario C.1.b: Control effort Scenario C.1.c: Tracking error 0 5 10 15 20 25        
+
+> t[s]
+> 5
+> 4
+> 3
+> 2
+> 1
+> 0
+> 1
+> e [Nm]
+> e, 1 e, 2 e, 3 e, 4 e, 5 e, 6 e, 7
+
+Scenario D.1.a: Joint torque 0 5 10 15 20 25 30                     
+
+> t[s]
+> 5
+> 4
+> 3
+> 2
+> 1
+> 0
+> 1
+> e [Nm]
+> e, 1 e, 2 e, 3 e, 4 e, 5 e, 6 e, 7 0510 15 20 25
+> t[s]
+> 4
+> 2
+> 0
+> 2
+> r [Nm]
+> r, 1 r, 2 r, 3 r, 4 r, 5 r, 6 r, 7
+
+Scenario D.1.b: Control effort 0 5 10 15 20 25 30                     
+
+> t[s]
+> 4
+> 2
+> 0
+> 2
+> r [Nm]
+> r, 1 r, 2 r, 3 r, 4 r, 5 r, 6 r, 7 0510 15 20 25
+> t[s]
+> 0.20
+> 0.15
+> 0.10
+> 0.05
+> 0.00
+> 0.05
+> er [rad]
+> er, 1 er, 2 er, 3 er, 4 er, 5 er, 6 er, 7
+
+Scenario D.1.c: Tracking error 0 5 10 15 20 25 30        
+
+> t[s]
+> 0.20
+> 0.15
+> 0.10
+> 0.05
+> 0.00
+> 0.05
+> er [rad]
+> er, 1 er, 2 er, 3 er, 4 er, 5 er, 6 er, 7
+
+Fig. 6. (C)–(D): Comparison of Scenario C (PD control) and Scenario D (proposed impedance control) for the real FR3 Robot. Columns show collision joint torque, control effort, and inner loop tracking error. nomic mobile manipulators. IEEE Transactions on Systems, Man, and Cybernetics, Part B (Cybernetics) ,37(3), 607–616. Nazmara, G.R. and Aguiar, A.P. (2024). Safe robust adap-tive motion control for underactuated marine robots. 
+
+Sensors , 24(12), 3974. Nazmara, G., Fateh, M.M., and Ahmadi, S.M. (2020). Ex-ponentially convergence for the regressor-free adaptive fuzzy impedance control of robots by gradient descent algorithm. International Journal of Systems Science ,51(11), 1883–1904. Qian, C. and Lin, W. (2001). Non-lipschitz continuous stabilizers for nonlinear systems with uncontrollable unstable linearization. Systems & Control Letters , 42(3), 185–200. Souzanchi-K, M., Arab, A., Akbarzadeh-T, M.R., and Fateh, M.M. (2017). Robust impedance control of un-certain mobile manipulators using time-delay compen-sation. IEEE Transactions on Control Systems Technol-ogy , 26(6), 1942–1953. Yan, L., Ma, B., Jia, Y., and Jia, Y. (2024). Observer-based trajectory tracking control of nonholonomic wheeled mobile robots. IEEE Transactions on Control Systems Technology , 32(3), 1114–1121. Yao, Z., Liang, X., Jiang, G.P., and Yao, J. (2023). Model-based reinforcement learning control of elec-trohydraulic position servo systems. IEEE/ASME Transactions on Mechatronics , 28(3), 1446–1455. doi: 10.1109/TMECH.2022.3219115. Yao, Z., Xu, F., Jiang, G.P., and Yao, J. (2024a). Data-driven control of hydraulic manipulators by reinforcement learning. IEEE/ASME Trans-actions on Mechatronics , 29(4), 2673–2684. doi: 10.1109/TMECH.2023.3336070. Yao, Z., Liang, X., Wang, S., and Yao, J. (2024b). Model-data hybrid driven control of hydraulic euler–lagrange systems. IEEE/ASME Transactions on Mechatronics ,PP, 1–13. Yu, S., Yu, X., Shirinzadeh, B., and Man, Z. (2005). Continuous finite-time control for robotic manipulators with terminal sliding mode. Automatica , 41(11), 1957– 1964. Zhang, J., Liu, W., Gao, L., Li, L., and Li, Z. (2018). The master adaptive impedance control and slave adaptive neural network control in underwater manipulator un-certainty teleoperation. Ocean Engineering , 165, 465– 479. Zhang, M., Zhang, Z., and Sun, M. (2024). Adap-tive tracking control of uncertain robotic manipulators. 
+
+IEEE Transactions on Circuits and Systems II: Express Briefs , 71(5), 2734–2738. Zhao, X., Han, S., Tao, B., Yin, Z., and Ding, H. (2022). Model-based actor-critic learning of robotic impedance control in complex interactive environment. IEEE Transactions on Industrial Electronics , 69(12), 13225– 13235. doi:10.1109/TIE.2021.3134082. Zhou, Z., Yang, X., Wang, H., and Zhang, X. (2022). Coupled dynamic modeling and experimental validation of a collaborative industrial mobile manipulator with human-robot interaction. Mechanism and Machine The-ory , 176, 105025. Zhu, Y., Liu, C., Yuan, P., and Li, D. (2025). Active impedance control based adaptive locomotion for abionic hexapod robot. Journal of Field Robotics , 42(1), 327–345. Appendix A 
+
+Lemma 2. Suppose a, b, and c are positive constants, and let q1 and q2 be arbitrary real numbers. Then, the following inequality is satisfied: 
+
+|q1|a|q2|b ≤ aa + b p|q1|a+b + ba + b p−a/b |q2|a+b (A.1) This result is presented in (Qian and Lin, 2001). 
+
+Lemma 3. Assume that p1, p 2, . . . , p n are positive real numbers and that l satisfies 0 < l < 1. Then, the following inequality holds: (p1 + p2 + · · · + pn)l ≤ pl 
+
+> 1
+
++ pl 
+
+> 2
+
++ · · · + pln (A.2) This statement is supported by (Yu et al., 2005).

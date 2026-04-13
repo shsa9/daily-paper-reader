@@ -6,26 +6,29 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-12
-- 运行时间：2026-04-12 19:47:31 UTC
+- 最新运行日期：2026-04-13
+- 运行时间：2026-04-13 20:13:48 UTC
 - 运行状态：成功
-- 本次总论文数：1
+- 本次总论文数：2
 - 精读区：0
-- 速读区：1
+- 速读区：2
 
 ### 今日简报（AI）
-今日聚焦可微物理在流体与粒子束控制中的应用，探索复杂物理系统的建模新路径。
-核心结论展示了利用可微物理引擎进行系统辨识与MPC控制的潜力，有效提升了流体与粒子束的操控精度。
-建议关注物理仿真与深度学习结合的跨学科方案，以应对高动态物理环境下的精准控制挑战。
-- 详情：[/202604/12/README](/202604/12/README)
+今日聚焦复杂系统的鲁棒性前沿，涵盖不可压缩磁流体数值方法与未知环境下的机器人自适应控制。
+重点展示了基于 H(curl) 的有限元法在磁流体动力学中的稳定性，以及反步阻抗控制在提升机器人交互精度上的突破。
+建议关注数值仿真与智能控制的跨界融合，以应对复杂物理场及动态环境中的工程挑战。
+- 详情：[/202604/13/README](/202604/13/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [MPC and System Identification with Differentiable Physics: Fluid System and Particle Beam Control](/202604/12/2604.04327v1-mpc-and-system-identification-with-differentiable-physics-fluid-system-and-particle-beam-control)  
+1. [Robust H(curl)-based finite element methods for the incompressible MHD system](/202604/13/2604.05717v1-robust-hcurl-based-finite-element-methods-for-the-incompressible-mhd-system)  
    标签：评分：6.0/10、query:em-force
-   evidence：用于实时控制和参数估计的可微物理模拟
+   evidence：磁流体动力学和磁场的有限元方法
+2. [Robust Adaptive Backstepping Impedance Control of Robots in Unknown Environments](/202604/13/2604.09323v1-robust-adaptive-backstepping-impedance-control-of-robots-in-unknown-environments)  
+   标签：评分：6.0/10、query:em-force
+   evidence：接触丰富环境下的机器人自适应阻抗控制
 
 
 <div class="dpr-home-promo-card">

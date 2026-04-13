@@ -1,0 +1,37 @@
+{
+  "label": "2026-04-13",
+  "date": "2026-04-13",
+  "generated_at": "2026-04-13T20:13:58",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202604/13/2604.05717v1-robust-hcurl-based-finite-element-methods-for-the-incompressible-mhd-system",
+      "section": "quick",
+      "title_en": "Robust H(curl)-based finite element methods for the incompressible MHD system",
+      "authors": "Lourenço Beirão da Veiga, Sergio Gómez, Ilaria Perugia, Enrico Zampa",
+      "date": "2026-04-07",
+      "pdf": "https://arxiv.org/pdf/2604.05717v1",
+      "score": "6.0",
+      "evidence": "磁流体动力学和磁场的有限元方法",
+      "tldr": "本研究针对不可压缩磁流体力学（MHD）系统，提出了一类基于 H(curl) 符合有限元方法的离散化方案。该方法同时对速度场和磁场采用 H(curl) 离散，特别适用于非凸多面体区域。通过引入三种稳定化公式，研究了其在压力鲁棒性、雷诺数鲁棒性以及磁场拉格朗日乘子需求方面的性能。数值实验验证了该方法在处理复杂几何和高雷诺数问题时的有效性与稳健性。",
+      "tags": "query:em-force",
+      "abstract_en": "We propose and analyze a class of finite element methods for the time-dependent incompressible magnetohydrodynamics system based on $H(\\mathrm{curl})$-conforming discretizations for both the velocity and the magnetic field. This choice is guided by the aim of developing methods that are also suitable for the types of solutions arising in problems posed on nonconvex domains. Within this framework, we introduce three stabilized formulations, and study how the stabilization mechanisms employed influence their structural properties. In particular, we focus on suitability for nonconvex polyhedral domains, the need for Lagrange multipliers for the magnetic field, pressure-robustness, and quasi-robustness with respect to both the fluid and magnetic Reynolds numbers. The proposed formulations are further assessed through numerical experiments, highlighting their practical performance.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/13/2604.09323v1-robust-adaptive-backstepping-impedance-control-of-robots-in-unknown-environments",
+      "section": "quick",
+      "title_en": "Robust Adaptive Backstepping Impedance Control of Robots in Unknown Environments",
+      "authors": "Reza Nazmara, Alap Kshirsagar, Jan Peters, A. Pedro Aguiar",
+      "date": "2026-04-10",
+      "pdf": "https://arxiv.org/pdf/2604.09323v1",
+      "score": "6.0",
+      "evidence": "接触丰富环境下的机器人自适应阻抗控制",
+      "tldr": "针对机器人在未知和复杂接触环境中的作业挑战，本文提出了一种鲁棒自适应反步阻抗控制（RABIC）策略。该方法无需预知机器人动力学参数，通过结合反步法、泰勒级数估计器和自适应力估计器，有效应对外部扰动和未建模动力学。实验证明该策略在保证轨迹跟踪和力监控的同时，比传统PD控制更具安全性，为复杂环境下的机器人控制提供了新方案。",
+      "tags": "query:em-force",
+      "abstract_en": "This paper presents a Robust Adaptive Backstepping Impedance Control (RABIC) strategy for robots operating in contact-rich and uncertain environments. The proposed control strategy considers the complete coupled dynamics of the system and explicitly accounts for key sources of uncertainty, including external disturbances and unmodeled dynamics, while not requiring the robot's dynamic parameters in implementation. We propose a backstepping-based adaptive impedance control scheme for the inner loop to track the reference impedance model. To handle uncertainties, we employ a Taylor series-based estimator for system dynamics and an adaptive estimator for determining the upper bound of external forces. Stability analysis demonstrates the semi-global practical finite-time stability of the overall system. To demonstrate the effectiveness of the proposed method, a simulated mobile manipulator scenario and experimental evaluations on a real Franka Emika Panda robot were conducted. The proposed approach exhibits safer performance compared to PD control while ensuring trajectory tracking and force monitoring. Overall, the RABIC framework provides a solid basis for future research on adaptive and learning-based impedance control for coupled mobile and fixed serially linked manipulators.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

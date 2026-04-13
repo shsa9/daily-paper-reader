@@ -1,0 +1,6597 @@
+Title: Robust H(curl)-based finite element methods for the incompressible MHD system
+
+URL Source: https://arxiv.org/pdf/2604.05717v1
+
+Published Time: Wed, 08 Apr 2026 01:05:31 GMT
+
+Number of Pages: 35
+
+Markdown Content:
+# Robust H(curl)-based finite element methods for the incompressible MHD system 
+
+L. Beir˜ ao da Veiga ∗† S. G´ omez ∗† I. Perugia ‡ E. Zampa ‡
+
+Abstract 
+
+We propose and analyze a class of finite element methods for the time-dependent incompressible magnetohydrodynamics system based on H(curl )-conforming discretizations for both the velocity and the magnetic field. This choice is guided by the aim of developing methods that are also suitable for the types of solutions arising in problems posed on nonconvex domains. Within this framework, we introduce three stabilized formulations, and study how the stabilization mechanisms employed influence their structural properties. In particular, we focus on suitability for nonconvex polyhedral domains, the need for Lagrange multipliers for the magnetic field, pressure-robustness, and quasi-robustness with respect to both the fluid and magnetic Reynolds numbers. The proposed formulations are further assessed through numerical experiments, highlighting their practical performance. 
+
+Keywords. Magnetohydrodynamics, H(curl )-conforming spaces, stabilized FEM, pressure-robustness, Reynolds quasi-robustness 
+
+Mathematics Subject Classification. 65M60, 65M15, 76W05 
+
+# 1 Introduction 
+
+The magnetohydrodynamic (MHD) model, which combines equations from electromagnetism and fluid dynamics, is highly relevant in the study of plasmas and liquid metals, and has applications across nu-merous fields, including geophysics, astrophysics, and engineering. The finite element (FE) discretization of MHD systems is a rich and active area of research, presenting a wide range of challenges due to the complexity of the model equations and their underlying topological structure. 
+
+Previous literature. The existing FE literature can be broadly classified into three main lines of research: 
+
+• Structure-preserving methods. These approaches aim to preserve, at the discrete level, as many of the invariants of the continuous system as possible, such as the total energy, Gauss’ law, magnetic helicity, and cross-helicity. Representative contributions in this direction include, without claiming completeness, those in [22, 27, 29, 31, 32]. The preservation of invariants is not merely a theoretical concern: it was shown in [27] and [32] that numerical schemes that fail to preserve magnetic helicity may exhibit unphysical dissipation. On the other hand, in practice, magnetic-helicity-preserving methods often suffer from spurious oscillations when applied to low-viscosity or low-magnetic-resistivity regimes, thereby severely limiting their applicability. Moreover, insights such as Onsager’s conjecture suggest that exact preservation of invariants may be incompatible with the approximation of low-regularity solutions. Works focusing on the design of structure-preserving discretizations are often characterized by a lack of a priori error estimates or a complete convergence analysis. A notable exception is the recent work [6], where error estimates are established for the method proposed in [29].                        
+
+> ∗Department of Mathematics and Applications, University of Milano-Bicocca, Via Cozzi 55, 20125 Milan, Italy (lourenco.beirao@unimib.it, sergio.gomezmacias@unimib.it)
+> †IMATI-CNR “E. Magenes”, Via Ferrata 5, 27100 Pavia, Italy
+> ‡Faculty of Mathematics, University of Vienna, Oskar-Morgenstern-Platz 1, 1090 Vienna, Austria (ilaria.perugia@univie.ac.at, enrico.zampa@univie.ac.at)
+
+1
+
+> arXiv:2604.05717v1 [math.NA] 7 Apr 2026
+
+• Convergent methods for low-regularity solutions. It is well known that, even in magnetostat-ics, H1-conforming approximations may lead to spurious modes and incorrect solutions [13], thus motivating the study of alternative discretizations for MHD systems. In this direction, Sch¨ otzau [39] and Prohl [37] proposed and analyzed convergent finite element methods (FEM) for the stationary and time-dependent MHD problems, respectively. In both works, the magnetic field is approximated using H(curl )-conforming FE spaces, enabling convergence under minimal regularity assumptions. 
+
+• Robust methods with respect to the fluid and magnetic Reynolds numbers. In the finite volume literature, it is well established that stabilization or upwinding strategies beyond classical convective stabilization are required to obtain schemes that are robust with respect to the magnetic Reynolds number; see, for instance, [2, 19]. While similar ideas have been introduced in the FE context [20, 28, 41, 42], most of these works lack a rigorous theoretical analysis. To date, initial theoretical studies have primarily focused on the linearized problem; see, for instance, [4, 23, 40]. To the best of the authors’ knowledge, the only works providing a proof of robustness in the fully nonlinear case are [5, 14], which are, however, restricted to convex domains and require a Lagrange multiplier to enforce the divergence-free constraint. 
+
+Motivation. A natural approach to developing FE schemes that are suitable also for nonconvex poly-hedral domains is to make use of H(curl )-conforming elements for the magnetic field. Although such elements have also been used for fluid flows, as discussed below, the literature on robust H(curl ) elements for high Reynolds numbers is very limited compared to that on H1- or H(div)-conforming elements. This work aims at contributing towards the design of H(curl )-conforming FE schemes for MHD systems with the following properties: i) suitability for general domains, ii) pressure-robustness, and iii) 
+
+quasi-robustness with respect to both fluid and magnetic Reynolds numbers. By pressure-robustness, we refer to schemes in which the discrete velocity solution is independent of modifications of the data that affect only the pressure at the continuous level, such as the gradient part of the load terms. By Reynolds quasi-robustess, we refer to schemes for which the error, measured in suitable norms including convective stability terms, remains bounded as the fluid and/or magnetic Reynolds numbers increase. 
+
+Novelty. For the methods proposed in this work, the pressure-robustness property is naturally enforced through the adopted H(curl )-based variational formulation. Ensuring Reynolds quasi-robustness is more involved and requires the addition of several stabilization terms to the discrete problem. In the present framework, we analyze how these stabilization mechanisms affect the aforementioned structural properties, and how they impact the minimal solution regularity required for convergence estimates. Our assessment of the various advantages and limitations associated with each specific stabilization approach has led to the development of the three methods proposed in this contribution. In all cases, we adopt H(curl )-conforming elements not only for the magnetic field but also for the fluid velocity. The motivation for the choice of using such discrete spaces also for the fluid velocity is twofold: the practical ad-vantage of a simplified implementation, and the theoretical interest in investigating H(curl )-conforming elements, which have been less explored in the fluid-dynamics setting. Although unconventional, this choice can be traced back to the seminal work of Girault on the Navier–Stokes equations [25, 26], and has since been employed in dual-field formulations [32, 43], cross-helicity-preserving discretizations of MHD [29, 31], analysis of the Stokes problem with a focus on boundary conditions [8, 9], and more recently in the context of polytopal discretizations [3, 15]. Below, we provide a detailed description of the three proposed methods and outline their features. 
+
+• Method 1 is fluid Reynolds quasi-robust, pressure robust, and only requires minimal regularity for 
+
+O(hs) convergence (with s > 1/2), which is consistent with the expected regularity in nonconvex polyhedral domains. Furthermore, the solenoidal constraint for the magnetic field is enforced natu-rally in the discrete formulation,thus avoiding the introduction of an additional Lagrange multiplier. However, a notable drawback of this scheme is its lack of magnetic Reynolds quasi-robustness. 
+
+• Method 2 can be viewed as a variant of the first scheme which, by introducing additional stabilization terms, also achieves magnetic Reynolds quasi-robustness. The price to pay is i) the necessity of a Lagrange multiplier to enforce the divergence-free condition on the magnetic field, and ii) the introduction of a strong stabilization term that, in the limit h → 0, essentially enforces H1 regularity on the magnetic field. 
+
+• Method 3 represents a potentially “ideal” scheme, since it combines the desirable properties of both approaches above and, in addition, appears capable of achieving faster pre-asymptotic error reduction rates in convection-dominated regimes. Unlike the first two schemes, a complete error 2analysis for this method is not yet available. Specifically, in this work, we prove that most error terms can be estimated optimally, whereas two terms require an additional, plausible assumption that has not yet been rigorously justified. Table 1 summarizes the properties of the three proposed schemes. From this table, it is clear that the quest for the provably perfect FEM for MHD systems on general domains remains open. Nevertheless, we believe this work provides some promising methods and establishes a solid foundation for further investigation. Method 1 ( §3–4) Method 2 ( §5) Method 3 ( §6) fluid Reynolds quasi-robust ✓ ✓ ✓
+
+magnetic Reynolds quasi-robust ✗ ✓ ✓(numerical) 
+
+pressure-robust ✓ ✓ ✓
+
+compatible with nonconvex ✓ ✗ ✓
+
+polyhedral domains Lagrange multiplier for B not required ✓ ✗ ✓
+
+theoretical error analysis complete complete partial 
+
+pre-asymptotic error reduction O(hk ) O(hk ) O(hk+ 12 ) (numerical)        
+
+> Table 1: Summary of the main properties of the three proposed methods. Symbols: ✓indicates the property holds, ✗
+> indicates it does not hold. The exponent kis the degree of the polynomials used in the approximation. For Method 3, some properties are observed numerically (proven under plausible assumptions).
+
+In the final part of the contribution, we present a set of computational tests comparing the practi-cal performance of the proposed methods in terms of both convergence to manufactured solutions and behavior on benchmark problems. In particular, for Method 3, the results obtained provide numerical evidence supporting the expected properties. 
+
+Outline. The article is organized as follows. At the end of the present section, we introduce the model equations and express them in an equivalent form, which will be useful in the sequel. After presenting the mesh, the discrete spaces and related assumptions in Section 2, we describe the first proposed method in Section 3. The theoretical analysis of such scheme is given in Section 4. The two aforementioned variants are introduced in Section 5 and Section 6, respectively, together with the associated theoretical developments. Finally, numerical tests in two space dimensions are presented in Section 7. 
+
+Governing equations. Let the space–time cylinder QT := Ω × I, where Ω ⊂ R3 is a spatial domain with Lipschitz boundary ∂Ω, and I = (0 , T ) is a time interval with final time T > 0. We denote by nΩ
+
+the unit normal vector pointing outward Ω. Given an external force f : QT → R3, initial data u0 : Ω → R3 and B0 : Ω → R3, and positive fluid ( νS ) and magnetic ( νM ) scaled diffusivity parameters, we consider the following time-dependent magnetohydrodynamics (MHD) system: find the velocity u : QT → R3, the isotropic pressure pisotr :
+
+QT → R, and the magnetic induction B : QT → R3 such that 
+
+∂tu − 2νS div ε(u) + ( ∇u)u + B × curl B − ∇ pisotr = f in QT , (1.1a) 
+
+∂tB + νM curl (curl B) − curl (u × B) = 0 in QT , (1.1b) div u = 0 and div B = 0 in QT , (1.1c) 
+
+u = 0, curl B × nΩ = 0, B · nΩ = 0 on ∂Ω × I, (1.1d) 
+
+u = u0 and B = B0 on Ω × { 0}. (1.1e) Recalling the identities (to be intended in the distributional sense) 
+
+−2 div ε(u) = curl (curl u) − 2∇(div u), (1.2a) (∇u)u = ( curl u) × u + 12 ∇| u|2, (1.2b) the solution ( u, p isotr , B) to the MHD system (1.1) satisfies also the following equations: 
+
+∂tu + νS curl (curl u) + ( curl u) × u + B × curl B − ∇ p = f in QT , (1.3a) 
+
+∂tB + νM curl (curl B) − curl (u × B) = 0 in QT , (1.3b) 3div u = 0 and div B = 0 in QT , (1.3c) 
+
+u = 0, curl B × nΩ = 0, B · nΩ = 0 on ∂Ω × I, (1.3d) 
+
+u = u0 and B = B0 on Ω × { 0}, (1.3e) since the last term in (1.2a) vanishes due to the incompressibility condition on u in (1.1c), and the last term in (1.2b) is “absorbed” into the modified pressure p := pisotr + |u|2/2. 
+
+Function spaces. In the following, we use standard notation for Sobolev, Lq , and Bochner spaces. For instance, given q ∈ [1 , ∞], s ≥ 0, and an open, bounded set D ⊂ Rd (d ∈ { 2, 3}) with Lipschitz boundary ∂D, we denote by W s,q (D) the corresponding Sobolev space with seminorm | · | W s,q (D) and norm ∥ · ∥ W s,q (D). In particular, we have Lq (D) := W 0,q (D), and L2(D) is the space of square integrable functions in D with inner product ( ·, ·)D and norm ∥ · ∥ L2(D). Moreover, we denote by Hs(D) := W s, 2(D)with seminorm | · | Hs(D) and norm ∥ · ∥ Hs(D). We use boldface to denote spaces of vector-valued functions with three components. In addition, we define the following spaces: 
+
+H(div; D) := {v ∈ L2(Ω) : div v ∈ L2(D)},
+
+H(curl ; D) := {v ∈ L2(Ω) : curl v ∈ L2(D)},
+
+as well as the kernel space 
+
+Z := v ∈ H(curl ; Ω) : ( v, ∇q)Ω = 0 for all q ∈ H1(Ω) , (1.4) where Ω is the spatial domain in the MHD system (1.1). Finally, given a time interval ( a, b ) and a Banach space ( Z, ∥·∥ Z ), we define the corresponding Bochner space as 
+
+Lq (a, b ; Z) := v : ( a, b ) → Z : ∥v∥Lq (a,b ;Z) < ∞ ,
+
+where 
+
+∥v∥Lq (a,b ;Z) := 
+
+ Z ba
+
+∥v(t)∥qZ
+
+1/q 
+
+dt if q ∈ [1 , ∞),
+
+ess sup t∈(a,b ) ∥v(t)∥Z if q = ∞.
+
+Remark 1.1 (Existence of continuous weak solutions) . The existence of a solution (u, p, B) to prob-lem (1.1) , written in variational form and posed in suitable Bochner spaces, is discussed, e.g., in [24, 
+
+§2.2]. It suffices, for instance, to assume that the external force f ∈ L2(QT ), and that the initial data (u0, B0) ∈ H1(Ω) × H(curl ; Ω) have vanishing divergence and satisfy the respective boundary con-ditions. In the following, we assume that these conditions on the data hold; in particular, we assume that u0 and B0 belong to Z, which implies that both u(·, t ) and B(·, t ) belong to Z for a.e. t ∈ (0 , T ).
+
+# 2 Meshes and discrete spaces 
+
+Let {T h}h> 0 be a family of conforming tetrahedral meshes of the spatial domain Ω. We denote the set of all faces of Th by Fh, while FI 
+
+> h
+
+and F∂h denote the sets of internal and boundary faces, respectively. For each f ∈ F I 
+
+> h
+
+, we denote by nf one of its two unit normal vectors, chosen and fixed once and for all. For each element K ∈ T h and each face f ∈ F h, let hK and hf be their corresponding diameters. We make the following assumptions on the mesh family {T h}h> 0.
+
+Assumption 2.1 (Mesh shape-regularity) . We assume that {T h}h> 0 is uniformly shape-regular, in the sense that the chunkiness parameter is uniformly bounded for all elements in the mesh family; see, e.g., [10, Def. 4.2.16]. 
+
+Assumption 2.2 (Mesh quasi-uniformity) . We assume that {T h}h> 0 is quasi-uniform, i.e., there is a constant Cqu > 0 independent of h such that 
+
+h ≤ Cqu hmin ,
+
+where hmin and h are the minimum and maximum element diameters of the mesh Th, respectively. 
+
+4Given a polynomial degree k ∈ N with k ≥ 1, we denote by Pk(Th) the space of piecewise polynomials of degree k defined on Th, and by Vgr ,k +1  
+
+> h
+
+= Pk+1 (Th) ∩ H1(Ω). Moreover, we define 
+
+Vgr ,k +1  
+
+> h
+
+:= 
+
+n
+
+ϕh ∈ V gr ,k +1  
+
+> h
+
+: (ϕh, 1) Ω = 0 
+
+o
+
+.
+
+Furthermore, we denote by Vcurl ,k h ⊂ H(curl ; Ω) and Vdiv ,k −1 
+
+> h
+
+⊂ H(div; Ω) the corresponding N´ ed´ elec space of the second kind [34, §1.2] and the Brezzi–Douglas–Marini (BDM) space [11, §2], respectively, both of degree k.For all ε > 0 and any k ∈ N with k ≥ 1, we define the standard interpolation operators: Icurl ,k h :
+
+H1+ ε(Ω) → Vcurl ,k h , Idiv ,k h : H 12 +ε(Ω) → Vdiv ,k −1 
+
+> h
+
+, and Icont ,k +1  
+
+> h
+
+: H3/2+ ε(Ω) → V gr ,k +1  
+
+> h
+
+(see, e.g., [7, 
+
+§2.5] or [17, §2.4]). Note that the required regularities can be significantly weakened by using more advanced approximation operators, following, e.g., [18, Ch. 17], or more recent literature (see [12] and references therein). In the next lemma, we recall the important commutativity properties of these operators (see, e.g., [7, 
+
+§2.5.6]). 
+
+Lemma 2.1 (Commutativity of the interpolation operators) . For any k ∈ N with k ≥ 1, the following identities hold: 
+
+Icurl ,k h (∇ϕ) = ∇I cont ,k +1  
+
+> h
+
+ϕ ∀ϕ ∈ H2+ ε(Ω) ,
+
+Idiv ,k h (curl v) = curl Icurl ,k h v ∀v ∈ H1+ ε(Ω) with curl v ∈ H1/2+ ε(Ω) .
+
+The regularity requirements can be significantly weakened (see the observation above). 
+
+# 3 Finite element method with uh ∈ Vcurl ,k h and Bh ∈ Vcurl ,k h
+
+We consider a semidiscrete-in-space formulation for the MHD system (1.3), in which both the fluid velocity u and the magnetic field B are approximated in Vcurl ,k h .For sufficiently regular functions, we define the following forms: 
+
+a(u, v) := ( curl u, curl v)Ω , c(w; u, v) := (( curl w) × u, v)Ω , b(v, q ) := ( v, ∇q)Ω ,dh(w, v) := − X 
+
+> f∈F ∂h
+
+(( curl w) × nΩ, v)f − X 
+
+> f∈F ∂h
+
+(( curl v) × nΩ, w)f + α X 
+
+> f∈F ∂h
+
+h−1 
+
+> f
+
+(w × nΩ, v × nΩ)f ,sh(w; u, v) := X 
+
+> f∈F I
+> h
+
+h−1 
+
+> f
+
+γ(w|f )( JuK, JvK)f ,
+
+where J·K in the Continuous Interior Penalty (CIP) stabilization term denotes the standard jump operator, 
+
+α ∈ R is a positive parameters independent of h, and 
+
+γ(w|f ) := max {CS , ∥w∥L∞(f )}, (3.1) for some “safeguard” positive constant CS independent of h. The form c(·; ·, ·) is skew-symmetric with respect to its last two arguments. The semidiscrete problem reads as follows: for all t ∈ (0 , T ], find ( uh(·, t ), p h(·, t ), Bh(·, t )) ∈ Vcurl ,k h ×Vgr ,k +1  
+
+> h
+
+× Vcurl ,k h , with uh and Bh differentiable in time, such that (∂tuh, vh)Ω + νS a(uh, vh) + c(uh; uh, vh) − c(Bh; Bh, vh)+νS dh(uh, vh) − b(vh, p h) + μssh(uh; uh, vh) = ( Icurl ,k h (f ), vh)Ω ∀vh ∈ Vcurl ,k h , (3.2a) 
+
+b(uh, q h) = 0 ∀qh ∈ V gr ,k +1  
+
+> h
+
+, (3.2b) (∂tBh, Ch)Ω + νM a(Bh, Ch) + c(Ch; Bh, uh) = 0 ∀Ch ∈ Vcurl ,k h , (3.2c) 
+
+uh(·, 0) = Π curl ,k h u0 and Bh(·, 0) = Π curl ,k h B0, (3.2d) where μs in R is a positive parameter and Π curl ,k h : L2(Ω) → Vcurl ,k h denotes the L2(Ω)-orthogonal projection into Vcurl ,k h .5Remark 3.1 (Role of the additional terms in (3.2)) . The form sh(·; ·, ·) is introduced in order to stabilize the scheme for large values of the fluid Reynold number (i.e., in our scaled model, when 0 < ν S ≪ 1). The form dh(·, ·) is introduced to enforce weakly the tangential boundary condition on uh following a Nitsche-type approach. The motivation for such a weak imposition is that, as shown in [9], imposing this condition directly in Vcurl ,k h can lead to an ill-posed problem. The normal boundary conditions on uh
+
+and Bh and the tangential boundary condition on curl Bh are satisfied weakly. Finally, the interpolation operator acting on the loading term f is critical for achieving pressure robustness; see Remark 3.4 below. 
+
+We now define the following discrete version of the kernel space in (1.4): 
+
+Zcurl ,k h := vh ∈ Vcurl ,k h : ( vh, ∇qh)Ω = 0 for all qh ∈ V gr ,k +1  
+
+> h
+
+.
+
+Due to (3.2b), it is immediate that uh ∈ Zcurl ,k h at all times. Moreover, since ∇V gr ,k +1  
+
+> h
+
+⊂ Vcurl ,k h , it holds 
+
+v ∈ Z =⇒ Πcurl ,k h v ∈ Zcurl ,k h .
+
+As a consequence of the above observations, we can restrict the discretization space for uh to Zcurl ,k h and eliminate the unknown ph, so that the semidiscrete-in-space formulation (3.2) reduces to the following first-order-in-time system of equations: for all t ∈ (0 , T ], find ( uh(·, t ), Bh(·, t )) ∈ Zcurl ,k h × Vcurl ,k h ,differentiable in time, such that (∂tuh, vh)Ω + νS a(uh, vh) + c(uh; uh, vh) − c(Bh; Bh, vh)+νS dh(uh, vh) + μssh(uh; uh, vh) = ( Icurl ,k h (f ), vh)Ω ∀vh ∈ Zcurl ,k h , (3.3a) (∂tBh, Ch)Ω + νM a(Bh, Ch) + c(Ch; Bh, uh) = 0 ∀Ch ∈ Vcurl ,k h , (3.3b) 
+
+uh(·, 0) = Π curl ,k h u0(·) and Bh(·, 0) = Π curl ,k h B0(·) in Ω . (3.3c) 
+
+Remark 3.2 (Discrete divergence-free property) . By choosing test functions Ch = ∇φh with φh ∈Vgr ,k +1  
+
+> h
+
+in equation (3.2c) , we trivially obtain (∂tBh, ∇φh)Ω = 0 for all φh ∈ V gr ,k +1  
+
+> h
+
+. This property, combined with Πcurl ,k h B0 ∈ Zcurl ,k h (which follows from B0 ∈ Z), implies that also Bh ∈ Zcurl ,k h at all times. As a consequence, we could also restrict (3.3b) to Zcurl ,k h . However, the error analysis in Section 4.3 below requires the use of discrete test functions that do not necessarily belong to Zcurl ,k h . For this reason, we prefer to write the method in the form (3.3) .
+
+Remark 3.3 (Other boundary conditions and cross-helicity conservation) . If the term dh(uh, vh) in (3.3) 
+
+is omitted, the method imposes nonstandard slip boundary conditions: 
+
+u · nΩ = 0 , nΩ × curl u = 0 .
+
+These boundary conditions were adopted, e.g., in [3, 15, 25, 26], and their connection with the standard slip boundary conditions is discussed in [8, 33]. They are particularly noteworthy because, in the inviscid and unforced case, namely, when f = 0 and νS = νM = 0 , if the stabilization term sh(uh; uh, vh) is omitted, one can take vh = Bh and Ch = uh in (3.3) and obtain the following discrete conservation of the cross-helicity: 
+
+ddt (uh, Bh)Ω = 0 .
+
+Other finite element methods that preserve this property are discussed in [6, 22, 29]. 
+
+Remark 3.4 (Pressure robustness) . Let the loading term f be of the form f = ∇ϕ, where ϕ is a scalar function of regularity depending on the specific interpolant Icurl ,k h adopted in (3.3) ; see Lemma 2.1 and the text above it. Due to the first commutativity property in Lemma 2.1, the term on the right-hand side of equation (3.3a) reduces to 
+
+(Icurl ,k h (f ), vh)Ω = ( Icurl ,k h (∇ϕ), vh)Ω = ( ∇I cont ,k +1  
+
+> h
+
+ϕ, vh) = 0 ∀vh ∈ Zcurl ,k h .
+
+Therefore, gradient perturbations do not affect the approximation of the velocity field u.
+
+63.1 Well-posedness 
+
+Without loss of generality and to simplify the presentation, in the following analysis, we will assume that the positive parameter μs is set equal to 1. For any given w in L∞(Ω), we define the following discrete seminorms for sufficiently regular vector functions v defined in Ω: 
+
+∥v∥2# := ∥ curl v∥2 
+
+> L2(Ω)
+
++ X 
+
+> f∈F ∂h
+
+h−1 
+
+> f
+
+∥v × nΩ∥2 
+
+> L2(f)
+
+, (3.4) 
+
+|v|2 
+
+> w
+
+:= X 
+
+> f∈F I
+> h
+
+h−1 
+
+> f
+
+γ(w|f )∥JvK∥2  
+
+> L2(f)
+
+. (3.5) 
+
+Lemma 3.5 (Coercivity in ∥ · ∥ #). Let Assumption 2.1 on Th hold and let w ∈ L∞(Ω) be given. For α
+
+sufficiently large, there is a positive constant β independent of h, νS , and νM such that 
+
+a(vh, vh) + dh(vh, vh) ≥ β∥vh∥2# ∀vh ∈ Zcurl ,k h . (3.6) 
+
+Proof. By the Young inequality with parameter ε > 0, and the definition of the form dh(·, ·), we have 
+
+a(vh, vh) + dh(vh, vh)= ∥ curl vh∥2 
+
+> L2(Ω)
+
++ 2 X 
+
+> f∈F ∂h
+
+(curl vh, vh × nΩ)f + α X 
+
+> f∈F ∂h
+
+h−1 
+
+> f
+
+∥vh × nΩ∥2 
+
+> L2(f)
+
+≥ ∥ curl vh∥2 
+
+> L2(Ω)
+
+− ε X 
+
+> f∈F ∂h
+
+hf ∥ curl vh∥2  
+
+> L2(f)
+
++
+
+
+
+α − 1
+
+ε
+
+ X  
+
+> f∈F ∂h
+
+h−1 
+
+> f
+
+∥vh × nΩ∥2 
+
+> L2(f)
+
+. (3.7) We estimate the second term on the right-hand side of (3.7). To do so, we use the standard trace-inverse inequality for polynomials (see, e.g., [18, Lemma 12.8]) with constant Cinv independent of h, to obtain 
+
+ε X 
+
+> f∈F ∂h
+
+hf ∥ curl vh∥2  
+
+> L2(f)
+
+≤ εC inv ∥ curl vh∥2
+
+> L2(Ω)
+
+. (3.8) Then, the coercivity bound (3.6) follows by combining (3.8) with (3.7), and taking ε sufficiently small and α sufficiently large, both depending only on Cinv .
+
+Theorem 3.6 (Well-posedness) . Let Assumption 2.1 on Th hold. Assume that f ∈ C0([0 , T ]; S) with the space S sufficiently regular for Icurl ,k h (f ) to be well defined; see Remark 3.8 below. If α is sufficiently large as in Lemma 3.5, there exists a unique solution (uh, Bh) ∈ C1([0 , T ]; Zcurl ,k h ) × C1([0 , T ]; Zcurl ,k h )
+
+to the semidiscrete-in-space formulation (3.3) . Moreover, such a unique solution satisfies the following continuous dependence on the data: 
+
+12
+
+ ∥uh∥2  
+
+> L∞(0 ,T ;L2(Ω))
+
++ ∥Bh∥2 
+
+> L∞(0 ,T ;L2(Ω))
+
+
+
++ 2 βν S
+
+Z T
+
+> 0
+
+∥uh(·, t )∥2# dt + 2 νM
+
+Z T
+
+> 0
+
+∥ curl Bh(·, t )∥2 
+
+> L2(Ω)
+
+dt + 2 
+
+Z T
+
+> 0
+
+|uh(·, t )|2 
+
+> uh
+
+dt
+
+≤ ∥ u0∥2 
+
+> L2(Ω)
+
++ ∥B0∥2 
+
+> L2(Ω)
+
++ 2 ∥I curl ,k h (f )∥2 
+
+> L1(0 ,T ;L2(Ω))
+
+. (3.9) 
+
+Proof. The semidiscrete-in-space formulation (3.3) is a first-order-in-time Cauchy problem in a finite-dimensional space with continuous (locally Lipschitz) nonlinear coefficients. By the Picard–Lindel¨ of theorem, the local Lipschitz continuity of the nonlinear functional defining the Cauchy problem implies the existence and uniqueness of a solution ( uh, Bh) ∈ C1([0 , t ∗]; Zcurl ,k h ) × C1([0 , t ∗]; Zcurl ,k h ) to (3.3), for some time t∗ ∈ (0 , T ]. To conclude global existence up to the final time T , it only remains to show that solutions to (3.3) cannot blow up in finite time. Taking vh = uh and Ch = Bh in (3.3a) and (3.3b), respectively, integrating in time until t ∈ (0 , T ], summing both equations, using the H¨ older inequality, and recalling the coercivity bound in (3.6), we get 12
+
+
+
+∥uh(·, t )∥2 
+
+> L2(Ω)
+
++ ∥Bh(·, t )∥2
+
+> L2(Ω)
+
+
+
++ βν S
+
+Z t
+
+> 0
+
+∥uh(·, s )∥2# ds + νM
+
+Z t
+
+> 0
+
+∥ curl Bh(·, s )∥2 
+
+> L2(Ω)
+
+ds +
+
+Z t
+
+> 0
+
+|uh(·, s )|2 
+
+> uh
+
+ds
+
+7≤ 12
+
+
+
+∥Πcurl ,k h u0∥2 
+
+> L2(Ω)
+
++ ∥Πcurl ,k h B0∥2
+
+> L2(Ω)
+
+
+
++ ∥I curl ,k h (f )∥L1(0 ,T ;L2(Ω)) ∥uh∥L∞(0 ,t ;L2(Ω)) ,
+
+(3.10) where we also used the skew-symmetry property of c(·; ·, ·) and the identity sh(uh; uh, uh) = |uh|2 
+
+> uh
+
+,with | · | uh as in (3.5). Since t is arbitrary, it is easy to check that the solution to (3.3) cannot blow up in finite time and thus it can be extended up to T . Applying the Young inequality in the last term on the right-hand side of (3.10) with t = T and taking the supremum for t ∈ [0 , T ] on the left-hand side, with some simple manipulations, we obtain 14
+
+ ∥uh∥2  
+
+> L∞(0 ,T ;L2(Ω))
+
++ ∥Bh∥2 
+
+> L∞(0 ,T ;L2(Ω))
+
+
+
++ βν S
+
+Z T
+
+> 0
+
+∥uh(·, t )∥2# dt + νM
+
+Z T
+
+> 0
+
+∥ curl Bh(·, t )∥2 
+
+> L2(Ω)
+
+dt +
+
+Z T
+
+> 0
+
+|uh(·, t )|2 
+
+> uh
+
+dt
+
+≤ 12
+
+ ∥Πcurl ,k h u0∥2 
+
+> L2(Ω)
+
++ ∥Πcurl ,k h B0∥2
+
+> L2(Ω)
+
+ + ∥I curl ,k h (f )∥2 
+
+> L1(0 ,T ;L2(Ω))
+
+.
+
+This, together with the continuity of the Π curl ,k h operator in the L2(Ω) norm and some trivial manipula-tions, gives the stability estimate (3.9), and the proof is complete. 
+
+Remark 3.7. In light of Remark 3.4, if the gradient component of the Helmholtz–Hodge decomposition of the loading term f has sufficient regularity for the application of Icurl ,k h , then f on the right-hand side of (3.9) can be replaced by its Helmholtz–Hodge projection; see, e.g., [30]. 
+
+Remark 3.8. The explicit expression of the stability bound in terms of f depends on the choice of the commuting interpolation operator Icurl ,k h used in (3.3) . For the simpler choice based on a direct evaluation of the degrees of freedom, we have 
+
+∥I curl ,k h (f )( ·, t )∥L2(Ω) ≤ ∥ f (·, t )∥L2(Ω) + C′h1+ ε|f (·, t )|H1+ ε(Ω) 
+
+for all ε > 0. This bound directly reflects on (3.9) . By using more involved approximants (e.g., [12]), the regularity requirement on f and, consequently, the norm appearing on the right-hand side in the above bound can be weakened. 
+
+We close this section by noting that there also exists a (unique) discrete pressure solution. 
+
+Corollary 3.9 (Existence of a discrete pressure) . Under the assumptions of Theorem 3.6, there exists a unique ph ∈ C0([0 , T ]; Vgr ,k +1  
+
+> h
+
+) such that the triple (uh, p h, Bh) solves problem (3.2) .Proof. The following inf–sup condition readily follows from ∇V gr ,k +1  
+
+> h
+
+⊆ Vcurl ,k h and the Poincar´ e– Wirtinger inequality: there exists a positive constant C independent of h (and of νS and νM ) such that sup 
+
+> 0̸=vh∈Vcurl ,k h
+
+b(vh, q h)
+
+∥vh∥H(curl ;Ω) 
+
+≥ C∥qh∥H1(Ω) ∀ qh ∈ V gr ,k +1  
+
+> h
+
+.
+
+Therefore, recalling the classical theory of mixed problems, equation (3.3a) implies that, at every time t,the problem of finding ph ∈ V gr ,k +1  
+
+> h
+
+such that 
+
+b(vh, p h) =( ∂tuh, vh)Ω + νS a(uh, vh) + c(uh; uh, vh) − c(Bh; Bh, vh)+ νS dh(uh, vh) + sh(uh; uh, vh) − (Icurl ,k h (f ), vh)Ω ∀vh ∈ Vcurl ,k h
+
+has a unique solution. 
+
+# 4 Convergence analysis 
+
+This section is devoted to deriving a priori error estimates for the semidiscrete-in-space formulation (3.3) which are robust for small values of the fluid diffusivity parameter (i.e., for 0 < ν S ≪ 1). Henceforth, we denote by Id the identity operator. Moreover, we use a ≲ b to denote the existence of a positive constant C such that a ≤ Cb , where C depends only on the mesh regularity parameter, and the method parameters α and CS , and is, in particular, independent of h, νS , and νM .84.1 Properties of the L2 projection operator Πcurl ,k h
+
+We now present some stability and approximation properties of the L2(Ω) projection operator Π curl ,k h
+
+onto Vcurl ,k h .
+
+Lemma 4.1 (Estimates in L∞(Ω) for Π curl ,k h ). Under the mesh conditions in Assumptions 2.1 and 2.2, there hold 
+
+∥Πcurl ,k h v∥L∞(Ω) ≲ ∥v∥L∞(Ω) ∀v ∈ L∞(Ω) , (4.1a) 
+
+∥(Id − Πcurl ,k h )v∥L∞(Ω) ≲ hr |v|W r, ∞(Ω) ∀v ∈ W r, ∞(Ω) , 0 ≤ r ≤ k + 1 , (4.1b) 
+
+∥ curl Πcurl ,k h v∥L∞(Ω) ≲ |v|W 1,∞(Ω) ∀v ∈ W 1,∞(Ω) . (4.1c) 
+
+Proof. As the discrete space Vcurl ,k h satisfies the hypotheses in [16], the stability bound (4.1a) follows from the main theorem therein. To prove (4.1b), we observe that, for any vh ∈ Vcurl ,k h , we have 
+
+∥(Id − Πcurl ,k h )v∥L∞(Ω) ≤ ∥ v − vh∥L∞(Ω) + ∥vh − Πcurl ,k h v∥L∞(Ω) 
+
+= ∥v − vh∥L∞(Ω) + ∥Πcurl ,k h (vh − v)∥L∞(Ω) ≲ ∥v − vh∥L∞(Ω) ,
+
+where, in the last step, we have used (4.1a). Then, estimate (4.1b) follows from [17, Cor. 5.4]. As for (4.1c), we use the triangle inequality, a polynomial inverse estimate, the well-known stability of Icont ,1
+
+> h
+
+in W 1,∞(Ω) and its approximation properties, and (4.1b) with r = 1, to deduce 
+
+∥ curl Πcurl ,k h v∥L∞(Ω) ≤ ∥ curl (Π curl ,k h v − I cont ,1 
+
+> h
+
+v)∥L∞(Ω) + ∥ curl Icont ,1 
+
+> h
+
+v∥L∞(Ω) 
+
+≲ h−1∥Πcurl ,k h v − I cont ,1 
+
+> h
+
+v∥L∞(Ω) + ∥v∥W 1,∞(Ω) 
+
+≤ h−1∥Πcurl ,k h v − v∥L∞(Ω) + h−1∥v − I cont ,1 
+
+> h
+
+v∥L∞(Ω) + ∥v∥W 1,∞(Ω) 
+
+≲ ∥v∥W 1,∞(Ω) ,
+
+thus obtaining (4.1c). 
+
+Lemma 4.2 (Further estimates for Π curl ,k h ). Under the mesh conditions in Assumptions 2.1 and 2.2, the following estimates hold for any r ∈ [1 , k + 1] :
+
+∥(Id − Πcurl ,k h )v∥L2(Ω) ≲ hr |v|Hr (Ω) ∀v ∈ Hr (Ω) , (4.2a) 
+
+∥ curl (Id − Πcurl ,k h )v∥L2(Ω) ≲ hr−1|v|Hr (Ω) ∀v ∈ Hr (Ω) , (4.2b) 
+
+∥(Id − Πcurl ,k h )v∥# ≲ hr−1|v|Hr (Ω) ∀v ∈ Hr (Ω) . (4.2c) 
+
+Proof. Let v ∈ Hr (Ω). Estimate (4.2a) follows from the approximation properties of the space Vcurl ,k h
+
+(see, e.g., [17, Cor. 5.3]). To prove (4.2b), we employ standard polynomial inverse estimates, the quasi-uniformity of Th, and the stability properties of Π curl ,k h to deduce the following bound for any vh ∈ Vcurl ,k h :
+
+∥ curl (Id − Πcurl ,k h )v∥L2(Ω) ≤ ∥ curl (v − vh)∥L2(Ω) + ∥ curl (vh − Πcurl ,k h v)∥L2(Ω) 
+
+≲ ∥ curl (v − vh)∥L2(Ω) + h−1∥Πcurl ,k h (vh − v)∥L2(Ω) 
+
+≲ ∥ curl (v − vh)∥L2(Ω) + h−1∥v − vh∥L2(Ω) ,
+
+which, combined with the approximation properties of Vcurl ,k h , gives (4.2b). For any f ∈ F ∂h , let Kf ∈ T h be the only element such that f ⊂ ∂K f . By the definition in (3.4) of ∥ · ∥ # and the fact that nΩ is unitary, we have 
+
+∥(Id − Πcurl ,k h )v∥2# ≤ ∥ curl (Id − Πcurl ,k h )v∥2 
+
+> L2(Ω)
+
++ X 
+
+> f∈F ∂h
+
+h−1 
+
+> f
+
+∥(Id − Πcurl ,k h )v∥2 
+
+> L2(f)
+
+. (4.3) Therefore, it only remains to estimate the second term on the right-hand side of (4.3). Using the trace inequality for continuous functions (see [18, Lemma 12.15]) and proceeding as for (4.2b), we obtain 
+
+X 
+
+> f∈F ∂h
+
+h−1 
+
+> f
+
+∥(Id − Πcurl ,k h )v∥2  
+
+> L2(f)
+
+≲ X 
+
+> f∈F ∂h
+
+h−1
+
+> f
+
+ h−1 
+
+> Kf
+
+∥(Id − Πcurl ,k h )v∥2  
+
+> L2(Kf)
+
++ hKf |(Id − Πcurl ,k h )v|2 
+
+> H1(Kf)
+
+
+
+≲ X 
+
+> f∈F ∂h
+
+h−1 
+
+> f
+
+h2r−1 
+
+> Kf
+
+|v|2   
+
+> Hr(Kf)
+
+≲ h2( r−1) |v|2 
+
+> Hr(Ω)
+
+,
+
+which completes the proof of (4.2c). 94.2 The projection operators J av ,g 
+
+> h
+
+, J av ,c 
+
+> h
+
+, J div ,k h , and J curl ,k h and their proper-ties 
+
+In the error analysis, we also use the projection operators J av ,g 
+
+> h
+
+: Pk+1 (Th) → V gr ,k +1  
+
+> h
+
+, J av ,c 
+
+> h
+
+: Pk(Th) →
+
+Vcurl ,k h , J div ,k h : L1(Ω) → Vdiv ,k −1 
+
+> h
+
+, and J curl ,k h : L1(Ω) → Vcurl ,k h defined in [17, §4.2 and §5], for which we recall the following properties. 
+
+Lemma 4.3 (Properties of J av ,g 
+
+> h
+
+and J av ,c 
+
+> h
+
+). Let Assumption 2.1 on Th be satisfied. Then, for all ϕh ∈
+
+Pk+1 (Th) and vh ∈ Pk(Th), there hold 
+
+X
+
+> K∈T h
+
+|(Id − J av ,g 
+
+> h
+
+)ϕh|2 
+
+> H1(K)
+
+≲ X 
+
+> f∈F I
+> h
+
+h−1 
+
+> f
+
+∥JϕhK∥2  
+
+> L2(f)
+
+, (4.4a) 
+
+∥vh − J av ,c 
+
+> h
+
+vh∥2 
+
+> L2(Ω)
+
+≲ X 
+
+> f∈F I
+> h
+
+hf ∥JvhK × nf ∥2  
+
+> L2(f)
+
+. (4.4b) 
+
+Lemma 4.4 (Properties of J div ,k h ). Let Assumption 2.1 on Th be satisfied. Then, for any q ∈ [1 , ∞],
+
+∥J div ,k h v∥Lq (Ω) ≲ ∥v∥Lq (Ω) ∀v ∈ Lq (Ω) ,
+
+curl (J curl ,k h v) = J div ,k h (curl v) ∀v ∈ Lq (Ω) with curl v ∈ Lq (Ω) .
+
+Lemma 4.5 (Properties of J curl ,k h ). Let Assumption 2.1 on Th be satisfied. Then, for any q ∈ [1 , ∞],
+
+r ∈ [0 , k + 1] , and s ∈ [0 , k ], there hold 
+
+∥J curl ,k h v∥Lq (Ω) ≲ ∥v∥Lq (Ω) ∀v ∈ Lq (Ω) ,
+
+∥(Id − J curl ,k h )v∥Lq (Ω) ≲ inf 
+
+> vh∈Vcurl ,k h
+
+∥v − vh∥Lq (Ω) ≲ hr |v|W r,q (Ω) ∀v ∈ W r,q (Ω) ,
+
+∥ curl (Id − J curl ,k h )v∥Lq (Ω) ≲ inf 
+
+> wh∈Vdiv ,k −1
+> h
+
+∥ curl v − wh∥Lq (Ω) 
+
+≲ hs| curl v|Ws,q (Ω) ∀v ∈ H(curl ; Ω) with curl v ∈ W s,q (Ω) .
+
+The reason why we do not restrict equation (3.3b) to the discrete kernel space Zcurl ,k h is that J curl ,k h B
+
+does not necessarily belong to Zcurl ,k h , even if B ∈ Z.
+
+4.3 A priori error estimates 
+
+We are now in a position to derive a priori error estimates for the semidiscrete-in-space formulation (3.3). In this section, we denote by ( u, p isotr , B) a continuous weak solution to (1.1) in the sense of [37, Def. 2.1]. In order to guarantee the consistency of the scheme and be able to write the error equation, we make the following regularity assumptions. 
+
+Assumption 4.1 (Regularity of the weak solution) . We assume that a continuous weak solution (u, p isotr , B)
+
+to (1.1) (in the sense of [37, Def. 2.1]) satisfies 
+
+u ∈ H1(0 , T ; L2(Ω)) ∩ L2(0 , T ; H3/2+ ε(Ω)) , pisotr ∈ L2(0 , T ; H1(Ω)) ,
+
+B ∈ H1(0 , T ; L2(Ω)) ∩ L2(0 , T ; Z),
+
+for some ε > 0.
+
+For convenience, we define the error functions 
+
+eu := u − uh, eu 
+
+> I
+
+:= u − Πcurl ,k h u, eu 
+
+> h
+
+:= uh − Πcurl ,k h u,
+
+eB := B − Bh, eB 
+
+> I
+
+:= B − J curl ,k h B, eB 
+
+> h
+
+:= Bh − J curl ,k h B.
+
+Remark 4.6 (Discrete approximants) . We adopt different approximants for the velocity u and the mag-netic field B, although both approximants belong to the same discrete space Vcurl ,k h . The motivation for using Πcurl ,k h u for the velocity is twofold: (i) Πcurl ,k h u ∈ Zcurl ,k h , which is important to handle the incompressibility constraint in a pressure-robust way; and (ii) it guarantees the orthogonality properties needed in handling certain convection terms following a CIP approach. In contrast, for the magnetic field, we use J curl ,k h B. Although such an approximant does not guarantee J curl ,k h B ∈ Zcurl ,k h , it enjoys commuting diagram properties that are crucial for the analysis. 
+
+10 Proposition 4.7 (Bound on the discrete errors) . Let Assumption 2.1 on the mesh family {T h}h> 0 hold, and let α be sufficiently large as in Lemma 3.5. Let also (u, p isotr , B) be a weak solution to (1.1) satisfying Assumption 4.1, and (uh, Bh) ∈ C1([0 , T ]; Zcurl ,k h ) × C1([0 , T ]; Zcurl ,k h ) be the solution to (3.3) . Then, the following error bound holds for a.e. t ∈ (0 , T ):
+
+12ddt
+
+
+
+∥eu 
+
+> h
+
+∥2 
+
+> L2(Ω)
+
++ ∥eB 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+
+
++ βν S ∥eu 
+
+> h
+
+∥2# + νM ∥ curl eB 
+
+> h
+
+∥2 
+
+> L2(Ω)
+
++ |eu 
+
+> h
+
+|2
+
+> uh
+
+≤ M0 + M1 + M2 + M3 + M4 + M5 + M6 + M7,
+
+where 
+
+M0 := ( ∂teu 
+
+> I
+
+, eu 
+
+> h
+
+)Ω + ( ∂teB 
+
+> I
+
+, eB 
+
+> h
+
+)Ω, M4 := c(J curl ,k h B; Bh, eu 
+
+> h
+
+) − c(B; B, eu 
+
+> h
+
+),M1 := νS a(eu 
+
+> I
+
+, eu 
+
+> h
+
+) + νM a(eB 
+
+> I
+
+, eB 
+
+> h
+
+), M5 := c(eB 
+
+> h
+
+; B, u) − c(eB 
+
+> h
+
+; Bh, Πcurl ,k h u),M2 := νS dh(eu 
+
+> I
+
+, eu 
+
+> h
+
+), M6 := sh(uh; eu 
+
+> I
+
+, eu 
+
+> h
+
+),M3 := c(u; u, eu 
+
+> h
+
+) − c(uh; Π curl ,k h u, eu 
+
+> h
+
+), M7 := ( Icurl ,k h f − f − ∇ p, eu 
+
+> h
+
+)Ω.
+
+Proof. Due to the consistency of the semidiscrete-in-space formulation (3.3) and the regularity assump-tions on ( u, p, B), for a.e. t ∈ (0 , T ), we have (∂tu, vh)Ω + νS a(u, vh) + c(u; u, vh) − c(B; B, vh)+νS dh(u, vh) + sh(uh; u, vh) = ( f + ∇p, vh)Ω ∀vh ∈ Zcurl ,k h ,
+
+(∂tB, Ch)Ω + νM a(B, Ch) + c(Ch; B, u) = 0 ∀Ch ∈ Vcurl ,k h .
+
+Consequently, the following error equations hold: (∂teu, vh)Ω + νS a(eu, vh) + νS dh(eu, vh) + c(u; u, vh) − c(uh; uh, vh)
+
+−c(B; B, vh) + c(Bh; Bh, vh) + sh(uh; eu, vh)=  f + ∇p − I curl ,k h (f ), vh)Ω ∀vh ∈ Zcurl ,k h , (4.5a) (∂teB , Ch)Ω + νM a(eB , Ch) + c(Ch; B, u) − c(Ch; Bh, uh) = 0 ∀Ch ∈ Vcurl ,k h . (4.5b) By adding and subtracting suitable terms in (4.5), we obtain (∂teu 
+
+> h
+
+,vh)Ω + νS a(eu 
+
+> h
+
+, vh) + νS dh(eu 
+
+> h
+
+, vh) + c(uh; eu 
+
+> h
+
+, vh) − c(eB 
+
+> h
+
+; Bh, vh) + sh(uh; eu 
+
+> h
+
+, vh)= ( ∂teu 
+
+> I
+
+, vh)Ω + νS a(eu 
+
+> I
+
+, vh) + νS dh(eu 
+
+> I
+
+, vh) + c(u; u, vh) − c(uh; Π curl ,k h u, vh)
+
+− c(B; B, vh) + c(J curl ,k h B; Bh, vh) + sh(uh; eu 
+
+> I
+
+, vh)+ ( Icurl ,k h f − f − ∇ p, vh)Ω ∀vh ∈ Zcurl ,k h ,
+
+(∂teB 
+
+> h
+
+,Ch)Ω + νM a(eB 
+
+> h
+
+, Ch) + c(Ch; Bh, eu 
+
+> h
+
+)= ( ∂teB 
+
+> I
+
+, Ch)Ω + νM a(eB 
+
+> I
+
+, Ch) + c(Ch; B, u) − c(Ch; Bh, Πcurl ,k h u) ∀Ch ∈ Vcurl ,k h .
+
+We now take vh = eu 
+
+> h
+
+and Ch = eB 
+
+> h
+
+and sum the resulting equations. Using Lemma 3.5, the iden-tity sh(uh; eu 
+
+> h
+
+, eu 
+
+> h
+
+) = |eu 
+
+> h
+
+|2 
+
+> uh
+
+, with | · | uh as in (3.5), and the skew-symmetry property of c(·; ·, ·), we get 12ddt
+
+
+
+∥eu 
+
+> h
+
+∥2 
+
+> L2(Ω)
+
++ ∥eB 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+
+
++ νS β∥eu 
+
+> h
+
+∥2# + νM ∥ curl eB 
+
+> h
+
+∥2 
+
+> L2(Ω)
+
++ |eu 
+
+> h
+
+|2
+
+> uh
+
+≤
+
+h
+
+(∂teu 
+
+> I
+
+, eu 
+
+> h
+
+)Ω + ( ∂teB 
+
+> I
+
+, eB 
+
+> h
+
+)Ω
+
+i
+
++
+
+h
+
+νS a(eu 
+
+> I
+
+, eu 
+
+> h
+
+) + νM a(eB 
+
+> I
+
+, eB 
+
+> h
+
+)
+
+i
+
++ νS dh(eu 
+
+> I
+
+, eu 
+
+> h
+
+)+
+
+h
+
+c(u; u, eu 
+
+> h
+
+) − c(uh; Π curl ,k h u, eu 
+
+> h
+
+)
+
+i
+
++
+
+h
+
+c(J curl ,k h B; Bh, eu 
+
+> h
+
+) − c(B; B, eu 
+
+> h
+
+)
+
+i
+
++
+
+h
+
+c(eB 
+
+> h
+
+; B, u) − c(eB 
+
+> h
+
+; Bh, Πcurl ,k h u)
+
+i
+
++ sh(uh; eu 
+
+> I
+
+, eu 
+
+> h
+
+) + ( Icurl ,k h f − f − ∇ p, eu 
+
+> h
+
+)Ω
+
+=: M0 + M1 + M2 + M3 + M4 + M5 + M6 + M7,
+
+which completes the proof. 11 In the next lemmas, we estimate the terms M1, . . . , M 7 separately. Such results hold for a.e. t ∈ (0 , T ); however, for the sake of brevity, we avoid recalling it at every instance. For the same reason, in each lemma, we only specify the regularity assumptions necessary to estimate each term, and assume that all the hypotheses of Proposition 4.7, as well as Assumption 2.2, hold. 
+
+Lemma 4.8 (Estimate of M0). If ∂tu ∈ L2(0 , T ; Hk(Ω)) and ∂tB ∈ L2(0 , T ; Hk(Ω)) , it holds that 
+
+M0 ≲ h2k |∂tu|2  
+
+> Hk(Ω)
+
++ |∂tB|2 
+
+> Hk(Ω)
+
+ + ∥eu 
+
+> h
+
+∥2 
+
+> L2(Ω)
+
++ ∥eB 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+.
+
+Proof. The result immediately follows from the approximation properties in Lemmas 4.2 and 4.5 of Π curl ,k h
+
+and J curl ,k h , respectively. 
+
+Lemma 4.9 (Estimate of M1). If u ∈ L2(0 , T ; Hk+1 (Ω)) and curl B ∈ L2(0 , T ; Hk(Ω)) , for any δ > 0,it holds that 
+
+M1 ≲ 12δ h2k νS |u|2 
+
+> Hk+1 (Ω)
+
++ νM | curl B|2 
+
+> Hk(Ω)
+
+ + δ
+
+2
+
+ νS ∥eu 
+
+> h
+
+∥2# + νM ∥ curl eB 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+.
+
+Proof. The estimate of M1 can be obtained using the Young inequality with parameter δ, and the ap-proximation properties in Lemmas 4.2 and 4.5 of Π curl ,k h and J curl ,k h , respectively. 
+
+Lemma 4.10 (Estimate of M2). If u ∈ L2(0 , T ; Hk+1 (Ω)) , for any δ > 0, it holds that 
+
+M2 ≲ νS
+
+δ h2k|u|2 
+
+> Hk+1 (Ω)
+
++ δν S ∥eu 
+
+> h
+
+∥2#.
+
+Proof. Using the definition of dh(·, ·), we write 
+
+M2 = νS dh(eu 
+
+> I
+
+, eu 
+
+> h
+
+) = −νS
+
+X 
+
+> f∈F ∂h
+
+ (curl eu 
+
+> I
+
+) × nΩ, eu
+
+> h
+
+ 
+
+> f
+
+− νS
+
+X 
+
+> f∈F ∂h
+
+ (curl eu 
+
+> h
+
+) × nΩ, eu
+
+> I
+
+
+
+> f
+
++ αν S
+
+X 
+
+> f∈F ∂h
+
+h−1
+
+> f
+
+ eu 
+
+> I
+
+× nΩ, eu 
+
+> h
+
+× nΩ
+
+ 
+
+> f
+
+=: M (1) 2 + M (2) 2 + M (3) 3 , (4.6) and estimate each term M (i)2 separately. Using the Young inequality, the trace inequality for continuous functions, and the approximation properties of Π curl ,k h in Lemma 4.2, the term M (1) 2 can be estimated as 
+
+M (1) 2 = νS
+
+X 
+
+> f∈F ∂h
+
+  curl eu 
+
+> I
+
+, eu 
+
+> h
+
+× nΩ
+
+ 
+
+> f
+
+≤ νS
+
+2δ
+
+X 
+
+> f∈F ∂h
+
+hf ∥ curl eu 
+
+> I
+
+∥2  
+
+> L2(f)
+
++ δν S
+
+2 ∥eu 
+
+> h
+
+∥2#
+
+≲ νS
+
+2δ
+
+X 
+
+> f∈F ∂h
+
+hf
+
+ h−1 
+
+> Kf
+
+∥ curl eu 
+
+> I
+
+∥2  
+
+> L2(Kf)
+
++ hKf | curl eu 
+
+> I
+
+|2 
+
+> H1(Kf)
+
+ + δν S
+
+2 ∥eu 
+
+> h
+
+∥2#
+
+≲ νS
+
+2δ h2k|u|2 
+
+> Hk+1 (Ω)
+
++ δν S
+
+2 ∥eu 
+
+> h
+
+∥2#. (4.7) As for M (2) 2 , we use the Young inequality, the inverse trace inequality for polynomials, the trace inequality for continuous functions, and the approximation properties of Π curl ,k h in Lemma 4.2 to obtain 
+
+M (2) 2 = −νS
+
+X 
+
+> f∈F ∂h
+
+ (curl eu 
+
+> h
+
+) × nΩ, eu
+
+> I
+
+ 
+
+> f
+
+≤ νS
+
+2δ
+
+X 
+
+> f∈F ∂h
+
+h−1 
+
+> f
+
+∥eu 
+
+> I
+
+∥2  
+
+> L2(f)
+
++ δν S
+
+2
+
+X 
+
+> f∈F ∂h
+
+hf ∥ curl eu 
+
+> h
+
+∥2 
+
+> L2(f)
+
+≲ νS
+
+2δ h2k|u|2 
+
+> Hk+1 (Ω)
+
++ δν S
+
+2 ∥eu 
+
+> h
+
+∥2#. (4.8) The term M (3) 2 can be estimated similarly: 
+
+M (3) 2 = αν S
+
+X 
+
+> f∈F ∂h
+
+h−1 
+
+> f
+
+(eu 
+
+> I
+
+× nΩ, eu 
+
+> h
+
+× nΩ)f ≤ αν S
+
+2δ
+
+X 
+
+> f∈F ∂h
+
+h−1 
+
+> f
+
+∥eu 
+
+> I
+
+∥2  
+
+> L2(f)
+
++ δν S
+
+2 ∥eu 
+
+> h
+
+∥2#
+
+≲ αν S
+
+2δ h2k|u|2 
+
+> Hk+1 (Ω)
+
++ δν S
+
+2 ∥eu 
+
+> h
+
+∥2#. (4.9) The desired result then follows combining (4.7)–(4.9) with (4.6). 12 Lemma 4.11 (Estimate of M3). If u ∈ L2(0 , T ; Hk+1 (Ω)) ∩ L∞(0 , T ; W 1,∞(Ω)) , then the following estimate holds for any δ > 0:
+
+M3 ≲ h2k  1 + h2|u|W 1,∞(Ω) 
+
+ |u|2 
+
+> Hk+1 (Ω)
+
++ δ|eu 
+
+> h
+
+|2
+
+> uh
+
++
+
+
+
+(1 + δ−1)∥u∥2 
+
+> L∞(Ω)
+
++ |u|W 1,∞(Ω) 
+
+
+
+∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+.
+
+Proof. Adding and subtracting suitable terms, we split M3 as follows: 
+
+M3 = c(u; u, eu 
+
+> h
+
+) − c(uh; Π curl ,k h u, eu 
+
+> h
+
+)= c(eu 
+
+> I
+
+; u, eu 
+
+> h
+
+) + c(Π curl ,k h u; eu 
+
+> I
+
+, eu 
+
+> h
+
+) + c(eu 
+
+> h
+
+; eu 
+
+> I
+
+, eu 
+
+> h
+
+) − c(eu 
+
+> h
+
+; u, eu 
+
+> h
+
+)=: M (1) 3 + M (2) 3 + M (3) 3 + M (4) 3 . (4.10) Using the H¨ older and the Young inequalities, and the approximation properties of Π curl ,k h in Lemma 4.2, we get 
+
+M (1) 3 = c(eu 
+
+> I
+
+; u, eu 
+
+> h
+
+) =  (curl eu 
+
+> I
+
+) × u, eu
+
+> h
+
+ 
+
+> Ω
+
+≤ ∥ u∥L∞(Ω) ∥ curl eu 
+
+> I
+
+∥L2(Ω) ∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+≲ h2k|u|2 
+
+> Hk+1 (Ω)
+
++ ∥u∥2
+
+> L∞(Ω)
+
+∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+. (4.11) The term M (2) 3 can be estimated similarly, using also a polynomial inverse estimate (see [18, Lemma 12.1]) and the stability property in Lemma 4.1 of Π curl ,k h :
+
+M (2) 3 = c(Π curl ,k h u; eu 
+
+> I
+
+, eu 
+
+> h
+
+) =  (curl Πcurl ,k h u) × eu 
+
+> I
+
+, eu
+
+> h
+
+
+
+> Ω
+
+≤ ∥ curl Πcurl ,k h u∥L∞(Ω) ∥eu 
+
+> I
+
+∥L2(Ω) ∥eu 
+
+> h
+
+∥L2(Ω) 
+
+≲ |u|W 1,∞(Ω) 
+
+ h2k+2 |u|2 
+
+> Hk+1 (Ω)
+
++ ∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+. (4.12) As for the term M (3) 3 , we use the H¨ older inequality, a polynomial inverse estimate, and estimate (4.1b) for Π curl ,k h to obtain 
+
+M (3) 3 = c(eu 
+
+> h
+
+; eu 
+
+> I
+
+, eu 
+
+> h
+
+) =  (curl eu 
+
+> h
+
+) × eu 
+
+> I
+
+, eu
+
+> h
+
+ 
+
+> Ω
+
+≤ ∥ eu 
+
+> I
+
+∥L∞(Ω) ∥ curl eu 
+
+> h
+
+∥L2(Ω) ∥eu 
+
+> h
+
+∥L2(Ω) 
+
+≲ h−1∥eu 
+
+> I
+
+∥L∞(Ω) ∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+≲ |u|W 1,∞(Ω) ∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+. (4.13) The estimate of the term M (4) 3 is more involved. Using identity (1.2b) elementwise, we split M (4) 3 into two terms as follows: 
+
+M (4) 3 = −c(eu 
+
+> h
+
+; u, eu 
+
+> h
+
+) =  (curl eu 
+
+> h
+
+) × eu 
+
+> h
+
+, u
+
+> Ω
+
+= X
+
+> K∈T h
+
+h (∇eu 
+
+> h
+
+)eu 
+
+> h
+
+, u 
+
+> K
+
+− 12
+
+ ∇| eu 
+
+> h
+
+|2, u
+
+> K
+
+i
+
+=: M (4 a)3 + M (4 b)3 . (4.14) To estimate the first term on the right-hand side of (4.14), we first observe that eu 
+
+> h
+
+· I cont ,1 
+
+> h
+
+u ∈
+
+Pk+1 (Th), where Icont ,1 
+
+> h
+
+is applied componentwise to u. Therefore, since eu 
+
+> h
+
+∈ Zcurl ,k h and the gradient of global constants in Ω is zero, the following identity holds: 
+
+ eu 
+
+> h
+
+, ∇J av ,g 
+
+> h
+
+(eu 
+
+> h
+
+· I cont ,1 
+
+> h
+
+u) 
+
+> Ω
+
+= 0 . (4.15) Adding and subtracting suitable terms, and using the identity in (4.15) and the identity 
+
+v · ∇ (v · w) = w ·  (∇v)v + v ·  (∇w)v,
+
+we have 
+
+M (4 a)3 = X
+
+> K∈T h
+
+ (∇eu 
+
+> h
+
+)eu 
+
+> h
+
+, u 
+
+> K
+
+= X
+
+> K∈T h
+
+h (∇eu 
+
+> h
+
+)eu 
+
+> h
+
+, (Id − I cont ,1 
+
+> h
+
+)u 
+
+> K
+
++  (∇eu 
+
+> h
+
+)eu 
+
+> h
+
+, Icont ,1 
+
+> h
+
+u
+
+> K
+
+i
+
+= X
+
+> K∈T h
+
+h (∇eu 
+
+> h
+
+)eu 
+
+> h
+
+, (Id − I cont ,1 
+
+> h
+
+)u 
+
+> K
+
++  ∇(eu 
+
+> h
+
+· I cont ,1 
+
+> h
+
+u), eu
+
+> h
+
+
+
+> K
+
+13 −  (∇Icont ,1 
+
+> h
+
+u)eu 
+
+> h
+
+, eu
+
+> h
+
+
+
+> K
+
+i
+
+= X
+
+> K∈T h
+
+h (∇eu 
+
+> h
+
+)eu 
+
+> h
+
+, (Id − I cont ,1 
+
+> h
+
+)u 
+
+> K
+
++  ∇(Id − J av ,g 
+
+> h
+
+)( eu 
+
+> h
+
+· I cont ,1 
+
+> h
+
+u), eu
+
+> h
+
+
+
+> K
+
+−  (∇Icont ,1 
+
+> h
+
+u)eu 
+
+> h
+
+, eu
+
+> h
+
+
+
+> K
+
+i
+
+=: L1 + L2 + L3. (4.16) To estimate L1, we use the H¨ older inequality, a polynomial inverse estimate, and the local approxi-mation properties of Icont ,1 
+
+> h
+
+in L∞(K) to get 
+
+L1 = X
+
+> K∈T h
+
+ (∇eu 
+
+> h
+
+)eu 
+
+> h
+
+, (Id − I cont ,1 
+
+> h
+
+)u
+
+> K
+
+≤ X
+
+> K∈T h
+
+∥∇eu 
+
+> h
+
+∥L2(K)∥eu 
+
+> h
+
+∥L2(K)∥(Id − I cont ,1 
+
+> h
+
+)u∥L∞(K)
+
+≲ X
+
+> K∈T h
+
+|u|W 1,∞(K)∥eu 
+
+> h
+
+∥2 
+
+> L2(K)
+
+≲ |u|W 1,∞(Ω) ∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+. (4.17) As for L2, we use the Young inequality, the approximation properties in Lemma 4.3, the continuity of Icont ,1 
+
+> h
+
+u, and the definition of γ(·) in (3.1), and obtain 
+
+L2 = X
+
+> K∈T h
+
+ eu 
+
+> h
+
+, ∇(Id − J av ,g 
+
+> h
+
+)( eu 
+
+> h
+
+· I cont ,1 
+
+> h
+
+u)
+
+> K
+
+≤ δ
+
+2∥u∥2
+
+> L∞(Ω)
+
+X
+
+> K∈T h
+
+|(Id − J av ,g 
+
+> h
+
+)( eu 
+
+> h
+
+· I cont ,1 
+
+> h
+
+u)|2 
+
+> H1(K)
+
++ 12δ ∥u∥2
+
+> L∞(Ω)
+
+∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+≲ δ
+
+2
+
+∥I cont ,1 
+
+> h
+
+u∥2
+
+> L∞(Ω)
+
+∥u∥2
+
+> L∞(Ω)
+
+X 
+
+> f∈F I
+> h
+
+h−1 
+
+> f
+
+∥Jeu 
+
+> h
+
+K∥2  
+
+> L2(f)
+
++ 12δ ∥u∥2
+
+> L∞(Ω)
+
+∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+≲ δ
+
+2CS
+
+|eu 
+
+> h
+
+|2 
+
+> uh
+
++ 12δ ∥u∥2
+
+> L∞(Ω)
+
+∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+, (4.18) where CS > 0 is the safeguard constant in (3.1), and we have used the trivial stability of Icont ,1 
+
+> h
+
+u in the L∞(Ω) norm. We now estimate L3 using the H¨ older inequality and the stability of Icont ,1 
+
+> h
+
+in the W 1,∞(Ω) norm as follows: 
+
+L3 = − X
+
+> K∈T h
+
+ (∇Icont ,1 
+
+> h
+
+u)eu 
+
+> h
+
+, eu
+
+> h
+
+ 
+
+> K
+
+≤ ∥ ∇Icont ,1 
+
+> h
+
+u∥L∞(Ω) ∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+≲ |u|W 1,∞(Ω) ∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+. (4.19) Combining (4.17)–(4.19) with (4.16), we get 
+
+M (4 a)3 ≲ δ
+
+2CS
+
+|eu 
+
+> h
+
+|2 
+
+> uh
+
++
+
+ 12δ ∥u∥2 
+
+> L∞(Ω)
+
++ |u|W 1,∞(Ω) 
+
+
+
+∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+. (4.20) We now consider the term M (4 b)3 on the right-hand side of (4.14). Using integration by parts, the identity J|v|2K = 2 {{v}} · JvK (where {{·} } denotes the standard average operator), the fact that u = 0
+
+on ∂Ω and div u = 0 in Ω, the definition in (3.1) of γ(·), an inverse trace inequality, and the Young inequality, we have 
+
+M (4 b)3 = − 12
+
+X
+
+> K∈T h
+
+ ∇| eu 
+
+> h
+
+|2, u 
+
+> K
+
+= − 12
+
+X 
+
+> f∈F I
+> h
+
+Z
+
+> f
+
+(u · nf )J|eu 
+
+> h
+
+|2K dS
+
+= − X 
+
+> f∈F I
+> h
+
+Z
+
+> f
+
+(u · nf ){{eu 
+
+> h
+
+}} · Jeu 
+
+> h
+
+K dS
+
+≤ ∥ u∥L∞(Ω) 
+
+ X  
+
+> f∈F I
+> h
+
+hf
+
+γ(uh|f ) ∥{ {eu 
+
+> h
+
+}}∥ 2 
+
+> L2(f)
+
+1/2
+
+|eu 
+
+> h
+
+|uh
+
+14 ≲ 1
+
+√CS
+
+∥u∥L∞(Ω) ∥eu 
+
+> h
+
+∥L2(Ω) |eu 
+
+> h
+
+|uh
+
+≲ δ
+
+2 |eu 
+
+> h
+
+|2 
+
+> uh
+
++ 12CS δ ∥u∥2
+
+> L∞(Ω)
+
+∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+. (4.21) The proof is then concluded by combining (4.11), (4.12), (4.13), (4.20), and (4.21) with (4.10). 
+
+Lemma 4.12 (Estimate of M4). If B ∈ L2(0 , T ; Hk(Ω)) ∩L∞(0 , T ; L∞(Ω)) with curl B ∈ L2(0 , T ; Hk(Ω)) ∩
+
+L∞(0 , T ; L∞(Ω)) , the following estimate holds: 
+
+M4 ≲ h2k ∥ curl B∥L∞(Ω) |B|2  
+
+> Hk(Ω)
+
++ | curl B|2 
+
+> Hk(Ω)
+
+
+
++ ∥ curl B∥L∞(Ω) ∥eB 
+
+> h
+
+∥2 
+
+> L2(Ω)
+
++ ( ∥B∥2 
+
+> L∞(Ω)
+
++ ∥ curl B∥L∞(Ω) )∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+.
+
+Proof. Adding and subtracting suitable terms, we can split M4 as follows: 
+
+M4 = c(J curl ,k h B; Bh, eu 
+
+> h
+
+) − c(B; B, eu 
+
+> h
+
+)= c(J curl ,k h B; eB 
+
+> h
+
+, eu 
+
+> h
+
+) − c(J curl ,k h B; eB 
+
+> I
+
+, eu 
+
+> h
+
+) − c(eB 
+
+> I
+
+; B, eu 
+
+> h
+
+)=: M (1) 4 + M (2) 4 + M (3) 4 . (4.22) Using the properties of J div ,k h and J curl ,k h from Lemmas 4.4 and 4.5, respectively, together with the H¨ older and the Young inequalities, we obtain 
+
+M (1) 4 = c(J curl ,k h B; eB 
+
+> h
+
+, eu 
+
+> h
+
+) =  (curl (J curl ,k h B)) × eB 
+
+> h
+
+, eu
+
+> h
+
+
+
+> Ω
+
+=  J div ,k h (curl B) × eB 
+
+> h
+
+, eu
+
+> h
+
+
+
+> Ω
+
+≤ ∥J div ,k h (curl B)∥L∞(Ω) ∥eB 
+
+> h
+
+∥L2(Ω) ∥eu 
+
+> h
+
+∥L2(Ω) 
+
+≲ ∥ curl B∥L∞(Ω) 
+
+ ∥eB 
+
+> h
+
+∥2 
+
+> L2(Ω)
+
++ ∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+. (4.23) Proceeding similarly and using the approximation properties of J curl ,k h in Lemma 4.5, we get the following estimates of M (2) 4 and M (3) 4 :
+
+M (2) 4 = −c(J curl ,k h B; eB 
+
+> I
+
+, eu 
+
+> h
+
+) = − (curl (J curl ,k h B)) × eB 
+
+> I
+
+, eu
+
+> h
+
+
+
+> Ω
+
+≲ ∥ curl B∥L∞(Ω) ∥eB 
+
+> I
+
+∥L2(Ω) ∥eu 
+
+> h
+
+∥L2(Ω) 
+
+≲ ∥ curl B∥L∞(Ω) (h2k|B|2  
+
+> Hk(Ω)
+
++ ∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+), (4.24) 
+
+M (3) 4 = −c(eB 
+
+> I
+
+; B, eu 
+
+> h
+
+) =  (curl eB 
+
+> I
+
+) × B, eu
+
+> h
+
+
+
+> Ω
+
+≤ ∥ B∥L∞(Ω) ∥ curl eB 
+
+> I
+
+∥L2(Ω) ∥eu 
+
+> h
+
+∥L2(Ω) 
+
+≲ h2k| curl B|2  
+
+> Hk(Ω)
+
++ ∥B∥2
+
+> L∞(Ω)
+
+∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+. (4.25) The proof concludes combining (4.23)–(4.25) with (4.22). 
+
+Lemma 4.13 (Estimate of M5). If u ∈ L2(0 , T ; Hk+1 (Ω)) ∩L∞(0 , T ; L∞(Ω)) and B ∈ L2(0 , T ; Hk(Ω)) ∩
+
+L∞(0 , T ; L∞(Ω)) , the following estimate holds for any δ > 0:
+
+M5 ≲ h2k|u|2 
+
+> Hk+1 (Ω)
+
++ ( δν M )−1h2k∥u∥2
+
+> L∞(Ω)
+
+|B|2  
+
+> Hk(Ω)
+
++ δν M ∥ curl eB 
+
+> h
+
+∥2
+
+> L2(Ω)
+
++  ∥B∥2 
+
+> L∞(Ω)
+
++ ( δν M )−1∥u∥2
+
+> L∞(Ω)
+
+∥eB 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+. (4.26) 
+
+Proof. Adding and subtracting suitable terms, the following splitting of M5 can be obtained: 
+
+M5 = c(eB 
+
+> h
+
+; B, u) − c(eB 
+
+> h
+
+; Bh, Πcurl ,k h u)= c(eB 
+
+> h
+
+; B, eu 
+
+> I
+
+) + c(eB 
+
+> h
+
+; eB 
+
+> I
+
+, Πcurl ,k h u) − c(eB 
+
+> h
+
+; eB 
+
+> h
+
+, Πcurl ,k h u)=: M (1) 5 + M (2) 5 + M (3) 5 . (4.27) Using the H¨ older inequality, polynomial inverse estimates, the approximation properties of Π curl ,k h ,and the Young inequality, we get 
+
+M (1) 5 = c(eB 
+
+> h
+
+; B, eu 
+
+> I
+
+) =  (curl eB 
+
+> h
+
+) × B, eu
+
+> I
+
+
+
+> Ω
+
+15 ≤ ∥ B∥L∞(Ω) ∥ curl eB 
+
+> h
+
+∥L2(Ω) ∥eu 
+
+> I
+
+∥L2(Ω) 
+
+≲ h−1∥B∥L∞(Ω) ∥eB 
+
+> h
+
+∥L2(Ω) ∥eu 
+
+> I
+
+∥L2(Ω) 
+
+≲ h2k|u|2 
+
+> Hk+1 (Ω)
+
++ ∥B∥2
+
+> L∞(Ω)
+
+∥eB 
+
+> h
+
+∥2 
+
+> L2(Ω)
+
+. (4.28) Proceeding similarly, and using the stability of Π curl ,k h in the L∞(Ω) norm given in (4.1a) of Lemma 4.1, we have, for any δ > 0, 
+
+M (2) 5 = c(eB 
+
+> h
+
+; eB 
+
+> I
+
+, Πcurl ,k h u) =  (curl eB 
+
+> h
+
+) × eB 
+
+> I
+
+, Πcurl ,k h u
+
+> Ω
+
+≤ ∥ Πcurl ,k h u∥L∞(Ω) ∥ curl eB 
+
+> h
+
+∥L2(Ω) ∥eB 
+
+> I
+
+∥L2(Ω) 
+
+≲ ∥u∥L∞(Ω) ∥ curl eB 
+
+> h
+
+∥L2(Ω) ∥eB 
+
+> I
+
+∥L2(Ω) 
+
+≲ δν M ∥ curl eB 
+
+> h
+
+∥2 
+
+> L2(Ω)
+
++ ( δν M )−1h2k∥u∥2
+
+> L∞(Ω)
+
+|B|2  
+
+> Hk(Ω)
+
+. (4.29) As for M (3) 5 , we use again Lemma 4.1, the H¨ older inequality, and the Young inequality to obtain 
+
+M (3) 5 = −c(eB 
+
+> h
+
+; eB 
+
+> h
+
+, Πcurl ,k h u) = − (curl eB 
+
+> h
+
+) × eB 
+
+> h
+
+, Πcurl ,k h u
+
+> Ω
+
+≤ ∥ Πcurl ,k h u∥L∞(Ω) ∥ curl eB 
+
+> h
+
+∥L2(Ω) ∥eB 
+
+> h
+
+∥L2(Ω) 
+
+≲ δν M ∥ curl eB 
+
+> h
+
+∥2 
+
+> L2(Ω)
+
++ ( δν M )−1∥u∥2
+
+> L∞(Ω)
+
+∥eB 
+
+> h
+
+∥2 
+
+> L2(Ω)
+
+. (4.30) Estimate (4.26) can then be obtained combining (4.28)–(4.30) with (4.27). 
+
+Lemma 4.14 (Estimate of M6). If u ∈ L2(0 , T ; W k+1 ,4(Ω)) , the following estimate holds for any δ > 0:
+
+M6 ≲ δ−1h2k∥uh∥L2(Ω) |u|2  
+
+> Wk+1 ,4(Ω)
+
++ δ|eu 
+
+> h
+
+|2 
+
+> uh
+
+. (4.31) 
+
+Proof. Using the definition of the stabilization form sh(·; ·, ·) and the Young inequality, we get, for any δ > 
+
+0, 
+
+M6 = sh(uh; eu 
+
+> I
+
+, eu 
+
+> h
+
+) = X 
+
+> f∈F I
+> h
+
+h−1 
+
+> f
+
+γ(uh|f ) Jeu 
+
+> I
+
+K, Jeu 
+
+> h
+
+K
+
+> f
+
+≤ 12δ
+
+X 
+
+> f∈F I
+> h
+
+h−1 
+
+> f
+
+γ(uh|f )∥eu 
+
+> I
+
+∥2  
+
+> L2(f)
+
++ δ
+
+2 |eu 
+
+> h
+
+|2 
+
+> uh
+
+. (4.32) It only remains to estimate the first term on the right-hand side of (4.32). Let us restrict to the case γ(uh|f ) = ∥uh∥L∞(f ) for all f ∈ F I 
+
+> h
+
+, the case γ(uh|f ) = CS being analogous and simpler. We denote by ωf the union of the two elements in Th sharing an internal face f , and by hωf the maximum of their diameters. Using the trace inequality for continuous functions, and the approximation properties of Π curl ,k h in Lemma 4.2, the H¨ older inequality ( |φ|L2(D) ≤ | D|1/4|φ|L4(D)), the polynomial inverse estimate ∥ϕh∥L∞(K) ≲ h−3/2 
+
+> K
+
+∥ϕh∥L2(K) in dimension 3, and the fact that |K| ≃ h3 
+
+> K
+
+, we obtain 
+
+X 
+
+> f∈F I
+> h
+
+h−1 
+
+> f
+
+∥uh∥L∞(f )∥Jeu 
+
+> I
+
+K∥2  
+
+> L2(f)
+
+≲ X 
+
+> f∈F I
+> h
+
+h−1 
+
+> f
+
+h2k+1  
+
+> ωf
+
+∥uh∥L∞(ωf )|u|2 
+
+> Hk+1 (ωf)
+
+≲ X 
+
+> f∈F I
+> h
+
+h2kf ∥uh∥L∞(ωf )|ωf |1/2|u|2  
+
+> Wk+1 ,4(ωf)
+
+≲ h2k X 
+
+> f∈F I
+> h
+
+∥uh∥L2(ωf )|u|2  
+
+> Wk+1 ,4(ωf)
+
+≲ h2k∥uh∥L2(Ω) |u|2 
+
+> Wk+1 ,4(Ω)
+
+,
+
+which completes the proof. 
+
+Remark 4.15 (Uniform bound on ∥uh∥L2(Ω) ). Recalling the stability bound in (3.9) , under suitable assumptions on the data, the quantity ∥uh(·, t )∥L2(Ω) appearing in (4.31) is uniformly bounded for a.e. 
+
+t ∈ (0 , T ).
+
+Lemma 4.16 (Estimate of M7). Let ef = f + ∇p. If ef ∈ L2(0 , T ; Hk(Ω)) , then 
+
+M7 ≲ h2k|ef |2  
+
+> Hk(Ω)
+
++ ∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+.
+
+16 Proof. The estimate can be obtained from the fact that ( Icurl ,k h (∇ϕ), vh) = 0 for all ϕ ∈ H1(Ω) and vh ∈
+
+Zcurl ,k h (see Remark 3.4), the approximation properties of Icurl ,k h from [18, Cor. 19.9(i)], and the Young inequality as follows: 
+
+M7 =  Icurl ,k h (f ) − f − ∇ p, eu
+
+> h
+
+ 
+
+> Ω
+
+=  Icurl ,k h (ef ) − ef , eu
+
+> h
+
+ 
+
+> Ω
+
+≲ h2k|ef |2  
+
+> Hk(Ω)
+
++ ∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+.
+
+Remark 4.17 (Pressure-robust character of M7). By equation (1.3a) and recalling that p represents the modified pressure, we can write 
+
+ef = ∂tu + νS curl (curl u) + ( curl u) × u + B × curl B .
+
+Consequently, if all the terms on the right-hand side belong to L2(0 , T ; Hk(Ω)) , also the approximation of the term M7 is independent of the modified pressure p.
+
+The previous results and a Gr¨ onwall argument allow us to derive a priori error estimates for the solution of the semidiscrete formulation (3.2). 
+
+Theorem 4.18 (A priori error estimates) . Let the solution (u, p isotr , B) to problem (1.1) satisfy the regularity Assumption 4.1. Let also (uh, p h, Bh) be the solution to the semidiscrete formulation (3.2) ,assuming f ∈ C0([0 , T ]; S), where S has sufficient regularity for Icurl ,k h (f ) to be well defined (see Re-mark 3.8). Furthermore, let the mesh Assumptions 2.1 and 2.2 hold, and the parameter α be sufficiently large. If 
+
+u ∈ L∞(0 , T ; W 1,∞(Ω)) , B, curl B ∈ L∞(0 , T ; L∞(Ω)) ,
+
+and the following additional k-dependent regularity conditions hold: 
+
+u, B ∈ H1(0 , T ; Hk(Ω)) , u ∈ L2(0 , T ; W k+1 ,4(Ω)) , curl B ∈ L2(0 , T ; Hk(Ω)) ,
+
+f ∈ L2(0 , T ; Hk(Ω)) , p ∈ L2(0 , T ; Hk+1 (Ω)) ,
+
+with p = pisotr + |u|2/2, then the following estimate holds for all t ∈ (0 , T ]:
+
+∥eu∥2 
+
+> L∞(0 ,t ;L2(Ω))
+
++ ∥eB ∥2 
+
+> L∞(0 ,t ;L2(Ω))
+
++ β
+
+Z t
+
+> 0
+
+
+
+νS ∥eu(·, s )∥2# + νM ∥ curl eB (·, s )∥2 
+
+> L2(Ω)
+
++ |eu(·, s )|2
+
+> uh
+
+
+
+ds
+
+≲ (1 + νS + νM + ν−1 
+
+> M
+
+)eR2(1+ ν−1 
+
+> M)t
+
+h2k , (4.33) 
+
+where the hidden constant is independent of h, νS , and νM , but depends, in particular, on the norms of the continuous solution indicated in the assumptions above and the mesh regularity parameters. Moreover, the constant R2 depends on ∥u∥L∞(0 ,T ;W 1,∞(Ω)) , ∥B∥L∞(0 ,T ;L∞(Ω)) , and ∥ curl B∥L∞(0 ,T ;L∞(Ω)) .Proof. After combining Proposition 4.7 with Lemmas 4.8–4.16 (see also Remark 4.15), we observe that all terms multiplied by δ can be absorbed into the left-hand side by taking δ > 0 sufficiently small, only depending on the shape-regularity parameter of the mesh and the safeguard constant CS in (3.1). We thus obtain, for a.e. t ∈ (0 , T ), ddt
+
+
+
+∥eu 
+
+> h
+
+∥2 
+
+> L2(Ω)
+
++ ∥eB 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+
+
++ βν S ∥eu 
+
+> h
+
+∥2# + νM ∥ curl eB 
+
+> h
+
+∥2 
+
+> L2(Ω)
+
++ |eu 
+
+> h
+
+|2
+
+> uh
+
+≤ h2k (1 + νS + νM + ν−1 
+
+> M
+
+) R1 + (1 + ν−1 
+
+> M
+
+)R2 (∥eu 
+
+> h
+
+∥2 
+
+> L2(Ω)
+
++ ∥eB 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+),
+
+(4.34) where 
+
+• the positive real function R1 = R1(t), t ∈ [0 , T ], is independent of h, νM , and νS but depends, in particular, on the shape-regularity parameter, the quasi-uniformity constant, the domain Ω, and the following norms: 
+
+∥∂tu(·, t )∥Hk (Ω) , ∥∂tB(·, t )∥Hk (Ω) , |u(·, t )|W k+1 ,4(Ω) ,
+
+∥B(·, t )∥Hk (Ω) , ∥ curl B(·, t )∥Hk (Ω) , ∥f (·, t )∥Hk (Ω) , ∥p(·, t )∥Hk+1 (Ω) ,
+
+as well as on 
+
+∥u∥L∞(0 ,t ;W 1,∞(Ω)) and ∥ curl B∥L∞(0 ,t ;L∞(Ω)) ;17 • the positive real function R2 is independent of t, h, νM , and νS but depends, in particular, on the mesh regularity parameters and the norms ∥u∥L∞(0 ,T ;W 1,∞(Ω)) , ∥B∥L∞(0 ,T ;L∞(Ω)) , and 
+
+∥ curl B∥L∞(0 ,T ;L∞(Ω)) .By classical arguments and the Gr¨ onwall lemma bound (4.34) yields, for all t ∈ (0 , T ), 
+
+∥eu 
+
+> h
+
+(·, t )∥2 
+
+> L2(Ω)
+
++ ∥eB 
+
+> h
+
+(·, t )∥2
+
+> L2(Ω)
+
++
+
+Z t
+
+> 0
+
+e(1+ ν−1 
+
+> M)R2(t−s)
+
+
+
+βν S ∥eu 
+
+> h
+
+(·, s )∥2# + νM ∥ curl eB 
+
+> h
+
+(·, s )∥2 
+
+> L2(Ω)
+
++ |eu 
+
+> h
+
+(·, s )|2
+
+> uh
+
+
+
+ds
+
+≤ e(1+ ν−1 
+
+> M)R2t
+
+
+
+∥eu 
+
+> h
+
+(·, 0) ∥2 
+
+> L2(Ω)
+
++ ∥eB 
+
+> h
+
+(·, 0) ∥2
+
+> L2(Ω)
+
+
+
++ h2k(1 + νS + νM + ν−1 
+
+> M
+
+)
+
+Z t
+
+> 0
+
+e(1+ ν−1 
+
+> M)R2(t−s)
+
+R1(s) d s. 
+
+Note that, by the approximation estimates in Lemmas 4.2 and 4.5, 
+
+∥eu 
+
+> h
+
+(·, 0) ∥2 
+
+> L2(Ω)
+
++ ∥eB 
+
+> h
+
+(·, 0) ∥2 
+
+> L2(Ω)
+
+≲ h2k (∥u0∥2  
+
+> Hk(Ω)
+
++ ∥B0∥2 
+
+> Hk(Ω)
+
+) .
+
+Then, estimating the exponential on the left–hand side from below by 1 and the exponential in the integral on the right–hand side from above by e(1+ ν−1 
+
+> M)R2t
+
+, we obtain 
+
+∥eu 
+
+> h
+
+(·, t )∥2 
+
+> L2(Ω)
+
++ ∥eB 
+
+> h
+
+(·, t )∥2 
+
+> L2(Ω)
+
++
+
+Z t
+
+> 0
+
+
+
+βν S ∥eu 
+
+> h
+
+(·, s )∥2# + νM ∥ curl eB 
+
+> h
+
+(·, s )∥2 
+
+> L2(Ω)
+
++ |eu 
+
+> h
+
+(·, s )|2
+
+> uh
+
+
+
+ds
+
+≲
+
+
+
+∥u0∥2  
+
+> Hk(Ω)
+
++ ∥B0∥2  
+
+> Hk(Ω)
+
++ (1 + νS + νM + ν−1 
+
+> M
+
+)
+
+Z T
+
+> 0
+
+R1(s) d s
+
+
+
+e(1+ ν−1 
+
+> M)R2t
+
+h2k . (4.35) Furthermore, by standard arguments, the approximation estimates in Lemmas 4.2 and 4.5 easily lead to 
+
+∥eu 
+
+> I
+
+(·, t )∥2 
+
+> L2(Ω)
+
++ ∥eB 
+
+> I
+
+(·, t )∥2 
+
+> L2(Ω)
+
++
+
+Z t
+
+> 0
+
+
+
+βν S ∥eu 
+
+> I
+
+(·, s )∥2# + νM ∥ curl eB 
+
+> I
+
+(·, s )∥2 
+
+> L2(Ω)
+
++ |eu 
+
+> I
+
+(·, s )|2
+
+> uh
+
+
+
+ds
+
+≲ (1 + νS + νM ) h2k
+
+Z t
+
+> 0
+
+R1(s)d s . 
+
+(4.36) The result now follows from the estimates in (4.35) and (4.36), and the triangle inequality. 
+
+Remark 4.19 (Pressure-robust estimate) . The error estimate in Theorem 4.18 also depends on the 
+
+L2(0 , T ; Hk+1 (Ω)) norm of p. In order to obtain an error estimate that reflects the pressure robustness of the scheme (i.e. independent of p), we just recall Remark 4.17. Consequently, the constant C appearing in (4.33) becomes independent of p, at the expense of requiring the additional regularity mentioned in that remark. 
+
+Remark 4.20 (Suitability for nonconvex polyhedral domains) . Thanks to the formulation and discrete spaces adopted in method (3.2) , we have derived error estimates under the spatial regularity assumptions for the magnetic field B(·, t ) ∈ Hk(Ω) ∩ L∞(Ω) and curl B(·, t ) ∈ Hk(Ω) ∩ L∞(Ω) a.e. in (0 , T ), as opposed to the stronger requirement B(·, t ) ∈ Hk+1 (Ω) ∩ W1,∞(Ω) , typically needed in related approaches (see, e.g., [5, §5.2]). These assumptions are better suited to the regularity expected for magnetic fields in nonconvex polyhedral domains. Furthermore, with a simple modification of bounds (4.25) and (4.28) ,based on a different application of the H¨ older inequality, one can verify that the minimal regularity as-sumptions in space required for B are B(·, t ) ∈ Hs(Ω) , ∂tB(·, t ) ∈ Hs(Ω) , and curl B(·, t ) ∈ W s, ∞(Ω) ,with s ∈ (1 /2, 1] , yielding an O(hs) convergence rate. Importantly, the method does not enforce H1(Ω) -regularity on Bh in the limit of vanishing h, thereby allowing solutions with reduced regularity. In par-ticular, this includes the classical magnetostatic singularities arising in nonconvex polyhedral domains. 
+
+Remark 4.21 (Lack of νM -quasi-robustness and O(hk) convergence) . The error estimate (4.34) shows that the method is quasi-robust with respect to the fluid Reynolds number. Indeed, since no factor of ν−1
+
+> S
+
+appears, the right-hand side remains bounded as νS → 0. In contrast, the presence of ν−1 
+
+> M
+
+indicates that the method is not quasi-robust with respect to the magnetic Reynolds number. Such quasi-robustness can be achieved at the expense of additional stabilization terms and regularity assumptions, as we show in the following Section 5. Furthermore, for method (3.2) , we are unable to obtain pre-asymptotic error 
+
+18 reduction rates of order O(hk+ 12 ) for the velocity when νS < h . This limitation arises from the h−1
+
+factor in the form sh(wh; uh, vh), which is required to control the term M (4) 3 in (4.14) . However, for all the other terms, by introducing additional stabilization and assuming higher regularity, it is possible to recover convergence rates of order O(hk+ 12 ), as we demonstrate in Section 6 below. 
+
+# 5 A νM -quasi-robust variant 
+
+In this section, we introduce an additional stabilization term so that the constant in the final error estimate does not depend on ν−1 
+
+> M
+
+, and therefore does not grow unboundedly when νM → 0. To obtain such a robust estimate, we require higher regularity on the magnetic field B than that assumed in Theorem 4.18 for the method in (3.2). We modify the semidiscrete problem as follows: for all t ∈ (0 , T ], find ( uh(·, t ), p h(·, t ), Bh(·, t ), ϕ h(·, t )) ∈ Vcurl ,k h ×V gr ,k +1  
+
+> h
+
+×Vcurl ,k h ×V gr ,k +1  
+
+> h
+
+, with uh and Bh differentiable in time, such that (∂tuh, vh)Ω + νS a(uh, vh) + c(uh; uh, vh) − c(Bh; Bh, vh)+νS dh(uh, vh) − b(vh, p h) + μssh(uh; uh, vh) = ( Icurl ,k h (f ), vh)Ω ∀vh ∈ Vcurl ,k h , (5.1a) 
+
+b(uh, q h) = 0 ∀qh ∈ V gr ,k +1  
+
+> h
+
+, (5.1b) (∂tBh, Ch)Ω + νM a(Bh, Ch) + c(Ch; Bh, uh)+μbsh(uh; Bh, Ch) + b(Ch, ϕ h) = 0 ∀Ch ∈ Vcurl ,k h , (5.1c) 
+
+b(Bh, ψ h) = 0 ∀ψh ∈ V gr ,k +1  
+
+> h
+
+, (5.1d) 
+
+uh(·, 0) = Π curl ,k h u0(·) and Bh(·, 0) = Π curl ,k h B0(·) in Ω , (5.1e) where μs and μb are real positive parameters, which are set equal to 1 in the forthcoming analysis to simplify the presentation. 
+
+Remark 5.1 (Additional stabilization term) . The main difference with respect to the scheme in (3.2) is the addition of the term sh(uh; Bh, Ch) in (5.1c) , which is a jump stabilization for the magnetic field. Consequently, we have also introduced a Lagrange multiplier ϕh in (5.1) , since Zcurl ,k h is no longer an invariant subspace for (5.1c) due to the presence of sh(uh; Bh, Ch). Furthermore, we note that this jump stabilization enforces additional regularity on the discrete magnetic field Bh; in particular, or every t, it may drive Bh to converge, as h → 0, to a limit function in H1(Ω) . As a consequence, the formulation implicitly restricts the class of admissible solutions to H1(Ω) -regular magnetic fields, a property that may fail, for instance, in nonconvex polyhedral domains. Both the convexity assumption and the introduction of a Lagrange multiplier to handle the divergence-free constraint are standard features in the literature; see, e.g., [5, 14]. In Section 6 below, we present an alternative method that can potentially circumvent these limitations. 
+
+5.1 A priori error estimates 
+
+For the error analysis of (5.1), compared to that of (3.2), we replace J curl ,k h with Π curl ,k h in the choice of the approximant for the magnetic field B. More precisely, we define 
+
+eu := u − uh, eu 
+
+> I
+
+:= u − Πcurl ,k h u, eu 
+
+> h
+
+:= uh − Πcurl ,k h u,
+
+eB := B − Bh, eB 
+
+> I
+
+:= B − Πcurl ,k h B, eB 
+
+> h
+
+:= Bh − Πcurl ,k h B. (5.2) The reason for such a modification is to guarantee that eB 
+
+> h
+
+∈ Zcurl ,k h , which is now required in the initial steps of the following proof. By arguments similar to those employed in the proof of Proposition 4.7, and making use of the discrete and continuous equations (also exploiting, as noted above, that eB 
+
+> h
+
+∈ Zcurl ,k h ), for a.e. t ∈ (0 , T ), we obtain 12ddt
+
+
+
+∥eu 
+
+> h
+
+∥2 
+
+> L2(Ω)
+
++ ∥eB 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+
+
++ βν S ∥eu 
+
+> h
+
+∥2# + νM ∥ curl eB 
+
+> h
+
+∥2 
+
+> L2(Ω)
+
++ |eu 
+
+> h
+
+|2 
+
+> uh
+
++ |eB 
+
+> h
+
+|2 
+
+> uh
+
+≤
+
+> 8
+
+X
+
+> i=0
+
+Mi ,
+
+where 
+
+M8 := sh(uh; eB 
+
+> I
+
+, eB 
+
+> h
+
+),
+
+and M0, . . . , M 7 are as defined in Proposition 4.7, with the only difference being that, in M4, J curl ,k h B
+
+is replaced by Π curl ,k h B.19 Estimates of individual terms. The estimates of M0, M2, M3, M6, and M7 are identical to those in the previous section (see Lemmas 4.8, 4.10, 4.11, 4.14, and 4.16). We estimate the remaining terms. 
+
+Lemma 5.2 (Estimate of M1). Let u and B belong to L2(0 , T ; Hk+1 (Ω)) . Then, for any δ > 0, it holds 
+
+M1 = νS a(eu 
+
+> I
+
+, eu 
+
+> h
+
+) + νM a(eB 
+
+> I
+
+, eB 
+
+> h
+
+)
+
+≲ 12δ h2k νS |u|2 
+
+> Hk+1 (Ω)
+
++ νM |B|2
+
+> Hk+1 (Ω)
+
+ + δ
+
+2
+
+ νS ∥eu 
+
+> h
+
+∥2# + νM ∥ curl eB 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+.
+
+Proof. The proof uses the same arguments as those for Lemma 4.9, but employs the approximation properties in Lemma 4.2 of Π curl ,k h also for the magnetic field. 
+
+Lemma 5.3 (Estimate of M4). If B ∈ L2(0 , T ; Hk+1 (Ω)) ∩ L∞(0 , T ; W 1,∞(Ω)) , the following estimate holds: 
+
+M4 ≲ h2k|B|2 
+
+> Hk+1 (Ω)
+
++ |B|W1,∞(Ω) ∥eB 
+
+> h
+
+∥2 
+
+> L2(Ω)
+
++
+
+
+
+|B|W1,∞(Ω) + ∥B∥2
+
+> L∞(Ω)
+
+
+
+∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+.
+
+Proof. We split the term M4 as in (4.22), recalling that J curl ,k h B is now replaced by Π curl ,k h B in all terms. The first term M (1) 4 is bounded essentially as in (4.23), but now using the stability properties in Lemma 4.1 of Π curl ,k h . We obtain 
+
+M (1) 4 = c(Π curl ,k h B; eB 
+
+> h
+
+, eu 
+
+> h
+
+) ≲ |B|W1,∞(Ω) 
+
+ ∥eB 
+
+> h
+
+∥2 
+
+> L2(Ω)
+
++ ∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+.
+
+By an inverse estimate, the mesh quasi-uniformity, and the approximation bound (4.2a) for Π curl ,k h , we obtain 
+
+M (2) 4 = −c(Π curl ,k h B; eB 
+
+> I
+
+, eu 
+
+> h
+
+) ≲ h−1∥B∥L∞(Ω) ∥eB 
+
+> I
+
+∥L2(Ω) ∥eu 
+
+> h
+
+∥L2(Ω) 
+
+≲ hk∥B∥L∞(Ω) |B|Hk+1 (Ω) ∥eu 
+
+> h
+
+∥L2(Ω) 
+
+≲ h2k|B|2 
+
+> Hk+1 (Ω)
+
++ ∥B∥2
+
+> L∞(Ω)
+
+∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+.
+
+The term M (3) 4 is bounded as in (4.25), but now uses the approximation bound (4.2b) for Π curl ,k h , yielding 
+
+M (3) 4 = −c(eB 
+
+> I
+
+; B, eu 
+
+> h
+
+) ≲ h2k|B|2 
+
+> Hk+1 (Ω)
+
++ ∥B∥2
+
+> L∞(Ω)
+
+∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+.
+
+The proof concludes combining the above bounds with (4.22). 
+
+Lemma 5.4 (Estimate of M5). If u ∈ L2(0 , T ; Hk+1 (Ω)) ∩L∞(0 , T ; W 1,∞(Ω)) and B ∈ L2(0 , T ; Hk+1 (Ω)) ∩
+
+L∞(0 , T ; L∞(Ω)) , the following estimate holds for any δ > 0:
+
+M5 ≲ h2k |u|2 
+
+> Hk+1 (Ω)
+
++ |B|2
+
+> Hk+1 (Ω)
+
+ + δ|eB 
+
+> h
+
+|2
+
+> uh
+
++  (1 + δ−1)∥u∥2 
+
+> L∞(Ω)
+
++ ∥B∥2 
+
+> L∞(Ω)
+
++ |u|W 1,∞(Ω) 
+
+∥eB 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+. (5.3) 
+
+Proof. We split M5 as in (4.27). While the first term M (1) 5 is handled identically as in (4.28), the other two terms need to be modified to obtain νM -quasi-robust bounds. For the term M (2) 5 , we proceed as in (4.29), but we now make use of an inverse estimate to obtain 
+
+M (2) 5 = c(eB 
+
+> h
+
+; eB 
+
+> I
+
+, Πcurl ,k h u) ≤ ∥ Πcurl ,k h u∥L∞(Ω) ∥ curl eB 
+
+> h
+
+∥L2(Ω) ∥eB 
+
+> I
+
+∥L2(Ω) 
+
+≲ ∥u∥L∞(Ω) h−1∥eB 
+
+> h
+
+∥L2(Ω) ∥eB 
+
+> I
+
+∥L2(Ω) 
+
+≲ h2k|B|2 
+
+> Hk+1 (Ω)
+
++ ∥u∥2
+
+> L∞(Ω)
+
+∥eB 
+
+> h
+
+∥2 
+
+> L2(Ω)
+
+.
+
+We split the third term M (3) 5 as : 
+
+M (3) 5 = −c(eB 
+
+> h
+
+; eB 
+
+> h
+
+, Πcurl ,k h u) = −c(eB 
+
+> h
+
+; eB 
+
+> h
+
+, Πcurl ,k h u − u) − c(eB 
+
+> h
+
+; eB 
+
+> h
+
+, u) =: M (3 a)5 + M (3 b)5 .
+
+As for M (3 a)5 , we use the approximation property in (4.1b) of Π curl ,k h and an inverse inequality to obtain 
+
+M (3 a)5 = −c(eB 
+
+> h
+
+; eB 
+
+> h
+
+, Πcurl ,k h u − u) = − (curl eB 
+
+> h
+
+) × eB 
+
+> h
+
+, Πcurl ,k h u − u)Ω ≲ |u|W 1,∞(Ω) ∥eB 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+.
+
+20 Finally, due to the skew-symmetry property of c(·; ·, ·), we have M (3 b)5 = c(eB 
+
+> h
+
+; u, eB 
+
+> h
+
+). As a consequence, we can estimate M (3 b)5 identically to M (4) 3 , see (4.14), since the two terms are the same up to the trivial substitution of eB 
+
+> h
+
+in lieu of eu 
+
+> h
+
+. In this respect, the presence of the stabilization term sh(·; ·, ·) also for the magnetic field is critical. We have 
+
+M (3 b)5 ≲
+
+ 1 + CS
+
+2CS
+
+
+
+δ|eB 
+
+> h
+
+|2 
+
+> uh
+
++
+
+ 1 + CS
+
+2CS
+
+
+
+δ−1∥u∥2 
+
+> L∞(Ω)
+
++ |u|W 1,∞(Ω) 
+
+
+
+∥eB 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+. (5.4) The derivation of (5.4) is analogous to that of M (4) 3 in Lemma 4.11, with eB 
+
+> h
+
+in place of eu 
+
+> h
+
+. We emphasize that the first term still yields the seminorm indexed by uh, since in the analogue of (4.21) we still multiply and divide by γ(uh|f ) (and not by γ(Bh|f )). Estimate (5.3) can then be obtained combining the bounds above with (4.27). 
+
+Lemma 5.5 (Estimate of M8). If B ∈ L2(0 , T ; W k+1 ,4(Ω)) , the following estimate holds: 
+
+M8 ≲ δ−1h2k∥uh∥L2(Ω) |B|2  
+
+> Wk+1 ,4(Ω)
+
++ δ|eB 
+
+> h
+
+|2 
+
+> uh
+
+.
+
+Proof. The estimate for the new term M8 is treated exactly as M6 in Lemma 4.14, up to the trivial substitutions of eu 
+
+> h
+
+by eB 
+
+> h
+
+and eu 
+
+> I
+
+by eB 
+
+> I
+
+.Once the above modified bounds are derived, we can apply the same arguments as in the proof of Theorem 4.18, obtaining the following error estimates. 
+
+Theorem 5.6 (A priori error estimates) . Let the solution (u, p isotr , B) to problem (1.1) satisfy the regularity Assumption 4.1. Let also (uh, p h, Bh) be the solution to the semidiscrete formulation (5.1) ,assuming f ∈ C0([0 , T ]; S), where S has sufficient regularity for Icurl ,k h (f ) to be well defined (see Re-mark 3.8). Furthermore, let the mesh Assumptions 2.1 and 2.2 hold, and the parameter α be sufficiently large. If 
+
+u, B ∈ L∞(0 , T ; W 1,∞(Ω)) ,
+
+and the following additional k-dependent regularity conditions hold: 
+
+u, B ∈ H1(0 , T ; Hk(Ω)) , u, B ∈ L2(0 , T ; W k+1 ,4(Ω)) ,
+
+f ∈ L2(0 , T ; Hk(Ω)) , p ∈ L2(0 , T ; Hk+1 (Ω)) ,
+
+with p = pisotr + |u|2/2, then the following estimate holds for a.e. t ∈ (0 , T ):
+
+∥eu∥2 
+
+> L∞(0 ,t ;L2(Ω))
+
++ ∥eB ∥2
+
+> L∞(0 ,t ;L2(Ω))
+
++ β
+
+Z t
+
+> 0
+
+
+
+νS ∥eu(·, s )∥2# + νM ∥ curl eB (·, s )∥2 
+
+> L2(Ω)
+
++ |eu(·, s )|2 
+
+> uh
+
++ |eB (·, s )|2
+
+> uh
+
+
+
+ds
+
+≲ (1 + νS + νM ) exp( R2t)h2k ,
+
+where the hidden constant is independent of h, νS , and νM , but depends, in particular, on the norms of the continuous solution indicated in the assumptions above and the mesh regularity parameters. Moreover, the constant R2 depends on ∥u∥L∞(0 ,T ;W 1,∞(Ω)) and ∥B∥L∞(0 ,T ;W 1,∞(Ω)) .
+
+Compared to Theorem 4.18, Theorem 5.6 eliminates the term ν−1 
+
+> M
+
+on the right-hand side of the estimate, at the cost of the stronger regularity assumptions on B. Similar to the method analyzed in Section 4, the theoretical estimates in Theorem 5.6 reflect the pressure robustness of the scheme in the sense of Remark 4.19. 
+
+# 6 A variant toward O(hk+1 /2) convergence 
+
+6.1 Motivation 
+
+The method introduced in Section 5 achieves νS - and νM -quasi-robustness, but it comes with several limitations: i) it yields only O(hk) pre-asymptotic convergence rates even in low-diffusion regimes, ii) re-quires higher regularity of B to guarantee convergence, and iii) introduces a Lagrange multiplier to enforce the divergence-free constraint on Bh. The last two shortcomings arise in other quasi-robust MHD discretizations, as emphasized in Remark 5.1. Ideally, one would like a quasi-robust method that 21 also applies to nonconvex polyhedral domains, achieves a pre-asymptotic convergence rate of O(hk+ 12 )for sufficiently smooth solutions, and avoids the use of a Lagrange multiplier for the magnetic field. To the best of the authors’ knowledge, no method has been rigorously shown to satisfy all of these properties simultaneously, and even numerical evidence in this direction remains limited. In this section, we therefore introduce a new variant that appears to be a strong candidate for achieving these goals. The proposed formulation has several favorable features. First, it does not involve jump stabilization of the discrete magnetic field Bh, which may otherwise hinder convergence if B lacks sufficient regularity, and it avoids introducing Lagrange multipliers for the magnetic field. Second, a partial analysis suggests that the method is νS - and νM -quasi-robust and achieves the improved pre-asymptotic rate of O(hk+ 12 ). The argument is complete except for the estimation of two contributions, M (4) 3 and M (3 b)5 , which share the same structure. Nevertheless, we include the method because of its appealing structure and its very favorable numerical performance, and we present the partial analysis because it provides valuable insights: 
+
+i) it shows that all other error terms can be controlled in a robust and “optimal” way, ii) it highlights the specific role of the proposed stabilization terms, and iii) it aligns with the numerical results reported below, supporting the effectiveness of the approach. Overall, the experiments provide strong evidence that this variant is a promising approach for constructing quasi-robust MHD discretizations. 
+
+6.2 The method 
+
+For sufficiently smooth vector fields w, z, u, and v, we define the forms 
+
+esh(w, z; u, v) := X 
+
+> f∈F I
+> h
+
+eγ(w|f , z|f )( JuK, JvK)f + X 
+
+> f∈F ∂h
+
+eγ(w|f , z|f )( u · nΩ, v · nΩ)f ,σh(w, z; u, v) := X 
+
+> f∈F I
+> h
+
+h2 
+
+> f
+
+eγ(w|f , z|f )( J∇uK, J∇vK)f ,τh(w, z; u, v) := X 
+
+> f∈F I
+> h
+
+h2 
+
+> f
+
+eγ(w|f , z|f )( Jcurl uK, Jcurl vK)f ,
+
+with eγ(w, z) := max {CS , ∥w∥L∞(f ), ∥z∥L∞(f )}, together with the associated seminorms 
+
+|u|2 
+
+> es, w,z
+
+:= esh(w, z; u, u), |u|2 
+
+> σ, w,z
+
+:= σh(w, z; u, u), |u|2 
+
+> τ, w,z
+
+:= τh(w, z; u, u). (6.1) By a slight abuse of notation, we let |u|·,w := |u|·,w,w. It follows directly that, for all w and z, it holds |u|·,w ≤ | u|·,w,z . We modify the method in (3.2) as follows: for all t ∈ (0 , T ], find ( uh(·, t ), p h(·, t ), Bh(·, t )) ∈
+
+Vcurl ,k h × V gr ,k +1  
+
+> h
+
+× Vcurl ,k h , with uh and Bh differentiable in time, such that (∂tuh, vh)Ω + νS a(uh, vh) + c(uh; uh, vh) − c(Bh; Bh, vh) + νS dh(uh, vh)
+
+−b(vh, p h) + μsesh(uh, Bh; uh, vh) + μσ σh(uh, Bh; uh, vh) = ( Icurl ,k h (f ), vh)Ω ∀vh ∈ Vcurl ,k h , (6.2a) 
+
+b(uh, q h) = 0 ∀qh ∈ V gr ,k +1  
+
+> h
+
+, (6.2b) (∂tBh, Ch)Ω + νM a(Bh, Ch) + c(Ch; Bh, uh)+μτ τh(uh, Bh; Bh, Ch) = 0 ∀Ch ∈ Vcurl ,k h , (6.2c) 
+
+uh(·, 0) = Π curl  
+
+> h
+
+u0(·) and Bh(·, 0) = Π curl  
+
+> h
+
+B0(·) in Ω , (6.2d) where μs, μσ , and μτ are positive real parameters, which are set equal to 1 in the forthcoming analysis to simplify the presentation. 
+
+Remark 6.1 (Discrete divergence-free property) . The same argument in Remark 3.2 implies that the discrete divergence-free property for Bh is also preserved by method (6.2) , as the additional stabiliza-tion term τh(uh, Bh; Bh, Ch) vanishes for all w ∈ L∞(Ω) and Ch = ∇φh with φh ∈ V gr ,k +1  
+
+> h
+
+. As a consequence, no Lagrange multiplier is required for the magnetic variable in this formulation. 
+
+6.3 A priori error estimates 
+
+To establish convergence rates of order O(hk+ 12 ) in low-diffusion regimes, we assume the following prop-erty (which is used only to deal with terms M (4) 3 and M (3) 5 ): given u ∈ H10(Ω) ∩ W 1,∞(Ω), it holds 
+
+c(wh; wh, u) ≲ |u|W 1,∞(Ω) ∥wh∥2 
+
+> L2(Ω)
+
+∀wh ∈ Zcurl ,k h , (6.3) 22 possibly with the addition on the right-hand-side of terms involving the discrete seminorms in (6.1) evaluated on wh. Although we have not been able to prove (6.3), we consider it reasonable, at least on convex domains. This property is motivated by the fact that an analogous estimate can be established at the continuous level, as shown in the following lemma. 
+
+Lemma 6.2. Let Ω be a convex domain, or a domain with C1,1 boundary. Then, for all u ∈ H10(Ω) ∩
+
+W 1,∞(Ω) and w ∈ Z, it holds 
+
+c(w; w, u) ≲ |u|W 1,∞(Ω) ∥w∥2
+
+> L2(Ω)
+
+.
+
+Proof. The assumptions on the domain imply that w ∈ H1(Ω), see [1, Thm. 2.17]; therefore, all the following manipulations are well defined. We start by recalling the identity 
+
+curl (w × u) = w (∇ · u) − u (∇ · w) + ( u · ∇ )w − (w · ∇ )u . (6.4) Elementary algebraic steps, integration by parts (also recalling that u has zero trace on ∂Ω), and the identity in (6.4) give 
+
+c(w; w, u) = ( curl w × w, u)Ω = ( curl w, w × u)Ω = ( w, curl (w × u)) Ω
+
+= ( w, w (∇ · u)) Ω − (w, u (∇ · w)) Ω + ( w, (u · ∇ )w)Ω − (w, (w · ∇ )u)Ω .
+
+Since ∇ · w = 0 by assumption, the second term on the right-hand side vanishes. For the third term, an elementary identity and a standard integration by parts (again recalling that u has zero trace on ∂Ω) yield (w, (u · ∇ )w)Ω = 12 (u, ∇(|w|2)) Ω = − 12 (w, w (∇ · u)) Ω .
+
+As a consequence, we obtain 
+
+c(w; w, u) = 12 (w, w (∇ · u)) Ω − (w, (w · ∇ )u)Ω ≲ |u|W 1,∞(Ω) ∥w∥2 
+
+> L2(Ω)
+
+,
+
+and the proof is complete. As in Section 5, we use Π curl ,k h to define the approximants of both u and B, and adopt the same error notation as in (5.2). For the formulation in (6.2), the following analogue of the bound in Proposition 4.7 holds, for a.e. t ∈ (0 , T ): 12ddt
+
+
+
+∥eu 
+
+> h
+
+∥2 
+
+> L2(Ω)
+
++ ∥eB 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+
+
++ νS β∥eu 
+
+> h
+
+∥2# + νM ∥ curl eB 
+
+> h
+
+∥2
+
+> L2(Ω)
+
++ |eu 
+
+> h
+
+|2 
+
+> es, uh,Bh
+
++ |eu 
+
+> h
+
+|2 
+
+> σ, uh,Bh
+
++ |eB 
+
+> h
+
+|2 
+
+> τ, uh,Bh
+
+≤
+
+> 9
+
+X
+
+> i=0
+
+Mi,
+
+where Mi for i = 0 , . . . , 5 and M7 are defined as in Proposition 4.7, the only difference being that J curl ,k h B
+
+is replaced by Π curl ,k h B in M4, and 
+
+M6 := esh(uh, Bh; eu 
+
+> I
+
+, eu 
+
+> h
+
+),M8 := σh(uh, Bh; eu 
+
+> I
+
+, eu 
+
+> h
+
+),M9 := τh(uh, Bh; eB 
+
+> I
+
+, eB 
+
+> h
+
+).
+
+We estimate the terms M0, M1, M2 as in Lemmas 4.8, 4.9, 4.10, respectively, taking into account the additional regularity assumed for B. For the terms M3, M4, M5, and M7, under additional regularity assumptions, we improve on the bounds obtained in Lemmas 4.11, 4.12, 4.13, and 4.16. In particular, the most involved estimates are those of terms M (1) 3 , M (4) 4 , and M (1) 5 . Finally, the terms M6, M8, and M9
+
+are estimated with standard arguments. We recall that the assumed property (6.3) is used below only in the estimate of the terms M (4) 3 and M (3) 5 .
+
+Remark 6.3 (Treatment of the term M (3 b)5 ). We highlight that the term M (3 b)5 can no longer be treated robustly with respect to νM by following the argument used in Lemma 5.4, since the modified stabilization term esh(·, ·; ·, ·) has a different scaling in h than sh(·; ·, ·). Alternatively, we could estimate M (3 b)5 without the need of the assumed property (6.3) , at the cost of a factor ν−1 
+
+> M
+
+in the estimates. This, however, would prevent proving the pre-asymptotic error decay O(hk+1 /2) sought in this section. 
+
+23 Lemma 6.4 (Estimates of M0, M1, M2, and M7). Let ef = f + ∇p. If u, ∂ tu ∈ L2(0 , T ; Hk+1 (Ω)) ,
+
+B, ∂ tB ∈ L2(0 , T ; Hk+1 (Ω)) , and ef ∈ L2(0 , T ; Hk+1 (Ω)) , for any δ > 0, there hold 
+
+M0 ≲ h2k+2  |∂tu|2 
+
+> Hk+1 (Ω)
+
++ |∂tB|2
+
+> Hk+1 (Ω)
+
+ + ∥eu 
+
+> h
+
+∥2 
+
+> L2(Ω)
+
++ ∥eB 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+,M1 ≲ 12δ h2k νS |u|2 
+
+> Hk+1 (Ω)
+
++ νM |B|2
+
+> Hk+1 (Ω)
+
+ + δ
+
+2
+
+ νS ∥eu 
+
+> h
+
+∥2# + νM ∥ curl eB 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+,M2 ≲ νS
+
+δ h2k|u|2 
+
+> Hk+1 (Ω)
+
++ δν S ∥eu 
+
+> h
+
+∥2#,M7 ≲ h2k+2 |ef |2 
+
+> Hk+1 (Ω)
+
++ ∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+.
+
+Proof. These estimates can be proven using the same arguments as in Lemmas 4.8, 4.9, 4.10, and 4.16. 
+
+Lemma 6.5 (Alternative estimate of M3). If u ∈ L2(0 , T ; Hk+1 (Ω)) ∩ L∞(0 , T ; W 1,∞(Ω)) , then the following estimate holds: 
+
+M3 ≲  δ−1∥u∥2
+
+> L∞(Ω)
+
+h2k+1 + |u|W 1,∞(Ω) h2k+2 |u|2
+
+> Hk+1 (Ω)
+
++ δ |eu 
+
+> h
+
+|2 
+
+> σ, uh
+
++ |eu 
+
+> h
+
+|2
+
+> es, uh
+
+ + |u|W 1,∞(Ω) ∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+.
+
+Proof. We split M3 as in (4.10). We start with M (1) 3 . Using an integration by parts and the identity in (6.4), which can be written as 
+
+curl (v × w) = ( dv)w − (dw)v,
+
+with dv := ∇v − (∇ · v)Id, we obtain 
+
+M (1) 3 = c(eu 
+
+> I
+
+; u, eu 
+
+> h
+
+) = ( curl eu 
+
+> I
+
+× I cont ,1 
+
+> h
+
+u, eu 
+
+> h
+
+)Ω + ( curl eu 
+
+> I
+
+× (u − I cont ,1 
+
+> h
+
+u), eu 
+
+> h
+
+)Ω
+
+= ( curl eu 
+
+> I
+
+, Icont ,1 
+
+> h
+
+u × eu 
+
+> h
+
+)Ω + ( curl eu 
+
+> I
+
+× (u − I cont ,1 
+
+> h
+
+u), eu 
+
+> h
+
+)Ω
+
+= X
+
+> K∈T h
+
+(eu 
+
+> I
+
+, curl (Icont ,1 
+
+> h
+
+u × eu 
+
+> h
+
+)) K + X
+
+> K∈T h
+
+(nK × eu 
+
+> I
+
+, Icont ,1 
+
+> h
+
+u × eu 
+
+> h
+
+)∂K 
+
++ ( curl eu 
+
+> I
+
+× (u − I cont ,1 
+
+> h
+
+u), eu 
+
+> h
+
+)Ω
+
+= X
+
+> K∈T h
+
+(eu 
+
+> I
+
+, (dIcont ,1 
+
+> h
+
+u)eu 
+
+> h
+
+)K − X
+
+> K∈T h
+
+(eu 
+
+> I
+
+, (deu 
+
+> h
+
+)Icont ,1 
+
+> h
+
+u)K
+
++ X
+
+> K∈T h
+
+(nK × eu 
+
+> I
+
+, Icont ,1 
+
+> h
+
+u × eu 
+
+> h
+
+)∂K + ( curl eu 
+
+> I
+
+× (u − I cont ,1 
+
+> h
+
+u), eu 
+
+> h
+
+)Ω
+
+=: M (1 a)3 + M (1 b)3 + M (1 c)3 + M (1 d)3 .
+
+We bound M (1 a)3 using the stability of Icont ,1 
+
+> h
+
+in W 1,∞(Ω) and the H¨ older inequality as follows: 
+
+M (1 a)3 ≲ ∥eu 
+
+> I
+
+∥L2(Ω) |u|W 1,∞(Ω) ∥eu 
+
+> h
+
+∥L2(Ω) 
+
+≲ |u|W 1,∞(Ω) h2k+2 |u|2 
+
+> Hk+1 (Ω)
+
++ |u|W 1,∞ ∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+.
+
+To bound M (1 b)3 , we note that ( deu 
+
+> h
+
+)Icont ,1 
+
+> h
+
+u is a (possibly discontinuous) piecewise polynomial of de-gree k in Ω (the differential operators in the definition of d are taken elementwise). Then, using the 
+
+L2(Ω)-orthogonality of eu 
+
+> I
+
+to Vcurl ,k h , bound (4.4b), the stability of Icont ,1 
+
+> h
+
+in the L∞(Ω) norm, and the approximation properties in Lemma 4.2 of Π curl ,k h , we obtain 
+
+−M (1 b)3 = X
+
+> K∈T h
+
+(eu 
+
+> I
+
+, (deu 
+
+> h
+
+)Icont ,1 
+
+> h
+
+u)K = ( eu 
+
+> I
+
+, (deu 
+
+> h
+
+)Icont ,1 
+
+> h
+
+u − J av ,c 
+
+> h
+
+(( deu 
+
+> h
+
+)Icont ,1 
+
+> h
+
+u)) Ω
+
+≲ ∥eu 
+
+> I
+
+∥L2(Ω) 
+
+ X  
+
+> f∈F I
+> h
+
+hf ∥J(deu 
+
+> h
+
+)Icont ,1 
+
+> h
+
+u)K × nf ∥2 
+
+> L2(f)
+
+1/2
+
+≲ 12δ h−1∥u∥2
+
+> L∞(Ω)
+
+∥eu 
+
+> I
+
+∥2 
+
+> L2(Ω)
+
++ δ
+
+2CS
+
+|eu 
+
+> h
+
+|2
+
+> σ, uh
+
+≲ 12δ h2k+1 ∥u∥2
+
+> L∞(Ω)
+
+|u|2 
+
+> Hk+1 (Ω)
+
++ δ
+
+2CS
+
+|eu 
+
+> h
+
+|2 
+
+> σ, uh
+
+.
+
+24 As for M (1 c)3 , we use similar arguments combined with the trace inequality to get 
+
+M (1 c)3 = X
+
+> K∈T h
+
+(nK × eu 
+
+> I
+
+, Icont ,1 
+
+> h
+
+u × eu 
+
+> h
+
+)∂K 
+
+≤ X 
+
+> f∈F I
+> h
+
+∥I cont ,1 
+
+> h
+
+u∥L∞(f )∥eu 
+
+> I
+
+× nF ∥L2(f )∥Jeu 
+
+> h
+
+K∥L2(f )
+
+≲ 12δ
+
+X 
+
+> f∈F I
+> h
+
+∥u∥2 
+
+> L∞(f)
+
+∥eu 
+
+> I
+
+× nF ∥2  
+
+> L2(f)
+
++ δ
+
+2
+
+X 
+
+> f∈F I
+> h
+
+∥Jeu 
+
+> h
+
+K∥2 
+
+> L2(f)
+
+≲ 12δ ∥u∥2
+
+> L∞(Ω)
+
+X
+
+> K∈T h
+
+
+
+h−1 
+
+> K
+
+∥eu 
+
+> I
+
+∥2 
+
+> L2(K)
+
++ hK |eu 
+
+> I
+
+|2
+
+> H1(K)
+
+
+
++ δ
+
+2
+
+X 
+
+> f∈F I
+> h
+
+∥Jeu 
+
+> h
+
+K∥2 
+
+> L2(f)
+
+≲ 12δ ∥u∥2
+
+> L∞(Ω)
+
+h2k+1 |u|2 
+
+> Hk+1 (Ω)
+
++ δ
+
+2
+
+X 
+
+> f∈F I
+> h
+
+∥Jeu 
+
+> h
+
+K∥2 
+
+> L2(f)
+
+≲ 12δ ∥u∥2
+
+> L∞(Ω)
+
+h2k+1 |u|2 
+
+> Hk+1 (Ω)
+
++ δ
+
+2CS
+
+|eu 
+
+> h
+
+|2 
+
+> es, uh
+
+.
+
+Finally, we bound M (1 d)3 using the H¨ older inequality, a polynomial inverse estimate, and the approxima-tion properties of Icont ,1 
+
+> h
+
+in L∞(Ω) as follows: 
+
+M (1 d)3 = ( curl eu 
+
+> I
+
+× (u − I cont ,1 
+
+> h
+
+u), eu 
+
+> h
+
+)Ω
+
+≲ ∥ curl eu 
+
+> I
+
+∥L2(Ω) h|u|W 1,∞(Ω) ∥eu 
+
+> h
+
+∥L2(Ω) 
+
+≲ |u|W 1,∞(Ω) h2k+2 |u|2 
+
+> Hk+1 (Ω)
+
++ |u|W 1,∞(Ω) ∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+.
+
+Collecting the bounds for M (1 a)3 , M (1 b)3 , M (1 c)3 , and M (1 d)3 yields the following estimate of M (1) 3 :
+
+M (1) 3 ≲  δ−1∥u∥2
+
+> L∞(Ω)
+
+h2k+1 + |u|W 1,∞(Ω) h2k+2 |u|2
+
+> Hk+1 (Ω)
+
++ δ
+
+2CS
+
+ |eu 
+
+> h
+
+|2 
+
+> σ, uh
+
++ |eu 
+
+> h
+
+|2
+
+> es, uh
+
+ + |u|W 1,∞(Ω) ∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+. (6.5) The terms M (2) 3 and M (3) 3 can be estimated as in the proof of Lemma 4.11 as 
+
+M (2) 3 ≲ |u|W 1,∞(Ω) 
+
+ h2k+2 |u|2 
+
+> Hk+1 (Ω)
+
++ ∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+, (6.6) 
+
+M (3) 3 ≲ |u|W 1,∞(Ω) ∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+, (6.7) while, for M (4) 3 , we use the assumed property (6.3) to get 
+
+M (4) 3 ≲ |u|W 1,∞(Ω) ∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+. (6.8) The result follows by combining the splitting in (4.10) with estimates (6.5), (6.6), (6.7), and (6.8). 
+
+Lemma 6.6 (Estimate of M4). If B ∈ L2(0 , T ; Hk+1 (Ω)) ∩ L∞(0 , T ; W 1,∞(Ω)) , the following estimate holds: 
+
+M4 ≲  δ−1∥B∥2
+
+> L∞(Ω)
+
+h2k+1 + |B|W 1,∞(Ω) h2k+2 |B|2 
+
+> Hk+1 (Ω)
+
++ δ |eu 
+
+> h
+
+|2 
+
+> σ, Bh
+
++ |eu 
+
+> h
+
+|2
+
+> es, Bh
+
+
+
++ |B|W 1,∞(Ω) ∥eu 
+
+> h
+
+∥2 
+
+> L2(Ω)
+
++ |B|W 1,∞(Ω) ∥eB 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+.
+
+Proof. We split M4 as follows: 
+
+M4 = c(Π curl ,k h B; Bh, eu 
+
+> h
+
+) − c(B; B, eu 
+
+> h
+
+)= c(Π curl ,k h B; eB 
+
+> h
+
+, eu 
+
+> h
+
+) − c(Π curl ,k h B; eB 
+
+> I
+
+, eu 
+
+> h
+
+) − c(eB 
+
+> I
+
+; B, eu 
+
+> h
+
+)= c(Π curl ,k h B; eB 
+
+> h
+
+, eu 
+
+> h
+
+) − c(Π curl ,k h B; eB 
+
+> I
+
+, eu 
+
+> h
+
+) − c(eB 
+
+> I
+
+; B − I cont ,1 
+
+> h
+
+B, eu 
+
+> h
+
+) − c(eB 
+
+> I
+
+; Icont ,1 
+
+> h
+
+B, eu 
+
+> h
+
+)=: M (1) 4 + M (2) 4 + M (3) 4 + M (4) 4 . (6.9) 25 Using the stability properties of Π curl ,k h from Lemma 4.1, together with the H¨ older and the Young inequalities, we obtain 
+
+M (1) 4 = c(Π curl ,k h B; eB 
+
+> h
+
+, eu 
+
+> h
+
+) =   curl (Π curl ,k h B) × eB 
+
+> h
+
+, eu
+
+> h
+
+
+
+> Ω
+
+≤ ∥ curl (Π curl ,k h B)∥L∞(Ω) ∥eB 
+
+> h
+
+∥L2(Ω) ∥eu 
+
+> h
+
+∥L2(Ω) 
+
+≲ |B|W 1,∞(Ω) 
+
+
+
+∥eB 
+
+> h
+
+∥2 
+
+> L2(Ω)
+
++ ∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+
+
+. (6.10) Proceeding similarly and using the approximation properties in Lemma 4.2 of Π curl ,k h , we get 
+
+M (2) 4 = −c(Π curl ,k h B; eB 
+
+> I
+
+, eu 
+
+> h
+
+) = −  curl (Π curl ,k h B) × eB 
+
+> I
+
+, eu
+
+> h
+
+
+
+> Ω
+
+≲ |B|W 1,∞(Ω) ∥eB 
+
+> I
+
+∥L2(Ω) ∥eu 
+
+> h
+
+∥L2(Ω) 
+
+≲ h2k+2 |B|W 1,∞(Ω) |B|2 
+
+> Hk+1 (Ω)
+
++ |B|W 1,∞(Ω) ∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+. (6.11) As for M (3) 4 , we use the H¨ older inequality, the approximation properties of Icont ,1 
+
+> h
+
+in the L∞(Ω) norm, a polynomial inverse estimate, and the approximation properties of Π curl ,k h to obtain 
+
+M (3) 4 = −c(eB 
+
+> I
+
+; B − I cont ,1 
+
+> h
+
+B, eu 
+
+> h
+
+) = − (curl eB 
+
+> I
+
+) × (B − I cont ,1 
+
+> h
+
+B), eu
+
+> h
+
+
+
+> Ω
+
+≲ h|B|W 1,∞(Ω) ∥ curl eB 
+
+> I
+
+∥L2(Ω) ∥eu 
+
+> h
+
+∥L2(Ω) 
+
+≲ h2k+2 |B|W 1,∞(Ω) |B|2 
+
+> Hk+1 (Ω)
+
++ |B|W 1,∞(Ω) ∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+. (6.12) Finally, we estimate the term M (4) 4 by following the same approach used for M (1 a)3 + M (1 b)3 + M (1 c)3 in Lemma 6.5. The additional boundary term, which arises here since B (and hence Icont ,1 
+
+> h
+
+B) does not vanish on ∂Ω, does not change the estimate. Specifically, 
+
+M (4) 4 = −c(eB 
+
+> I
+
+; Icont ,1 
+
+> h
+
+B, eu 
+
+> h
+
+) = − curl eB 
+
+> I
+
+, (Icont ,1 
+
+> h
+
+B) × eu
+
+> h
+
+
+
+> Ω
+
+≲  δ−1∥B∥2
+
+> L∞(Ω)
+
+h2k+1 + |B|W 1,∞(Ω) h2k+2 |B|2
+
+> Hk+1 (Ω)
+
++ δ
+
+2CS
+
+ |eu 
+
+> h
+
+|2 
+
+> σ, Bh
+
++ |eu 
+
+> h
+
+|2
+
+> es, Bh
+
+ + |B|W 1,∞(Ω) ∥eu 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+.
+
+(6.13) The proof concludes combining estimates (6.10)–(6.13) with the splitting (6.9). 
+
+Lemma 6.7 (Alternative estimate of M5). If both u and B are in L2(0 , T ; Hk+1 (Ω)) ∩L∞(0 , T ; W 1,∞(Ω)) ,the following estimate holds for any δ > 0:
+
+M5 ≲  δ−1∥B∥2
+
+> L∞(Ω)
+
+h2k+1 + |B|W 1,∞(Ω) h2k+2 |u|2 
+
+> Hk+1 (Ω)
+
++ δ|eB 
+
+> h
+
+|2
+
+> τ, uh,Bh
+
++  δ−1∥u∥2
+
+> L∞(Ω)
+
+h2k+1 + |u|W 1,∞(Ω) h2k+1 |B|2
+
+> Hk+1 (Ω)
+
++ ( |u|W 1,∞(Ω) + |B|W 1,∞(Ω) )∥eB 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+.
+
+Proof. We split M5 as in (4.27). Then, standard manipulations yield 
+
+M (1) 5 = c(eB 
+
+> h
+
+; B, eu 
+
+> I
+
+) =  (curl eB 
+
+> h
+
+) × B, eu
+
+> I
+
+
+
+> Ω
+
+=  (curl eB 
+
+> h
+
+) × (B − I cont ,1 
+
+> h
+
+B), eu
+
+> I
+
+ 
+
+> Ω
+
++  (curl eB 
+
+> h
+
+) × I cont ,1 
+
+> h
+
+B, eu
+
+> I
+
+
+
+> Ω
+
+=: M (1 a)5 + M (1 b)5 .
+
+For the term M (1 a)5 , the H¨ older inequality, a polynomial inverse estimate, and the approximation prop-erties of Icont ,1 
+
+> h
+
+lead to 
+
+M (1 a)5 ≲ h−1∥eB 
+
+> h
+
+∥L2(Ω) h|B|W 1,∞(Ω) ∥eu 
+
+> I
+
+∥L2(Ω) 
+
+≲ |B|W 1,∞(Ω) 
+
+
+
+∥eB 
+
+> h
+
+∥2 
+
+> L2(Ω)
+
++ h2k+2 |u|2
+
+> Hk+1 (Ω)
+
+
+
+. (6.14) For M (1 b)5 , we note that ( curl eB 
+
+> h
+
+) × I cont ,1 
+
+> h
+
+B is a (possibly discontinuous) piecewise polynomial of degree k. Therefore, the L2(Ω)-orthogonality of eu 
+
+> I
+
+to Vcurl ,k h , together with the H¨ older inequality, bound (4.4b), and the approximation properties of Π curl ,k h , gives 
+
+M (1 b)5 =  (curl eB 
+
+> h
+
+) × I cont ,1 
+
+> h
+
+B − J av ,g 
+
+> h
+
+(( curl eB 
+
+> h
+
+) × I cont ,1 
+
+> h
+
+B), eu
+
+> I
+
+
+
+26 ≲
+
+s X 
+
+> f∈F I
+> h
+
+h∥I cont ,1 
+
+> h
+
+B∥2 
+
+> L∞(f)
+
+∥Jcurl eB 
+
+> h
+
+K∥2 
+
+> L2(f)
+
+∥eu 
+
+> I
+
+∥L2(Ω) 
+
+≲ δ
+
+2
+
+X 
+
+> f∈F I
+> h
+
+h2∥Jcurl eB 
+
+> h
+
+K∥2  
+
+> L2(f)
+
++ 12δ ∥B∥2
+
+> L∞(Ω)
+
+h−1∥eu 
+
+> I
+
+∥2
+
+> L2(Ω)
+
+≲ δ
+
+2CS
+
+|eB 
+
+> h
+
+|2 
+
+> τ, Bh
+
++ 12δ ∥B∥2
+
+> L∞(Ω)
+
+h2k+1 |u|2
+
+> Hk+1 (Ω)
+
+.
+
+Combining these two estimates, we get 
+
+M (1) 5 ≲  δ−1∥B∥2
+
+> L∞(Ω)
+
+h2k+1 + |B|W 1,∞(Ω) h2k+2 |u|2
+
+> Hk+1 (Ω)
+
++ δ|eB 
+
+> h
+
+|2 
+
+> τ, Bh
+
++ |B|W 1,∞(Ω) ∥eB 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+. (6.15) We now focus on the term M (2) 5 , which can be split as 
+
+M (2) 5 = c(eB 
+
+> h
+
+; eB 
+
+> I
+
+, Πcurl ,k h u − u) + c(eB 
+
+> h
+
+; eB 
+
+> I
+
+, u − I cont ,1 
+
+> h
+
+u) + c(eB 
+
+> h
+
+; eB 
+
+> I
+
+, Icont ,1 
+
+> h
+
+u)=: M (2 a)5 + M (2 b)5 + M (2 c)5 .
+
+The terms M (2 a)5 and M (2 b)5 can be estimated analogously to M (1 a)5 in (6.14), thus obtaining 
+
+M (2 a)5 + M (2 b)5 ≲ |u|W 1,∞(Ω) h2k+2 |B|2 
+
+> Hk+1 (Ω)
+
++ |u|W 1,∞(Ω) ∥eB 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+.
+
+Finally, for M (2 c)5 we adopt the same technique as in M (1 b)5 :
+
+M (2 c)5 ≲ δ
+
+2CS
+
+|eB 
+
+> h
+
+|2 
+
+> τ, uh
+
++ 12δ ∥u∥2
+
+> L∞(Ω)
+
+h2k+1 |B|2
+
+> Hk+1 (Ω)
+
+.
+
+We then conclude that 
+
+M (2) 5 ≲ δ
+
+2CS
+
+|eB 
+
+> h
+
+|2 
+
+> τ, uh
+
++ 12δ ∥u∥2
+
+> L∞(Ω)
+
+h2k+1 |B|2
+
+> Hk+1 (Ω)
+
++ h2k+2 |u|W 1,∞(Ω) |B|2 
+
+> Hk+1 (Ω)
+
++ |u|W 1,∞(Ω) ∥eB 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+.
+
+(6.16) We split M (3) 5 as 
+
+M (3) 5 = −c(eB 
+
+> h
+
+; eB 
+
+> h
+
+, Πcurl ,k h u − u) − c(eB 
+
+> h
+
+; eB 
+
+> h
+
+, u) =: M (3 a)5 + M (3 b)5 .
+
+The term M (3 a)5 can be bounded again as M (1 a)5 in (6.14), so that 
+
+M (3 a)5 ≲ |u|W 1,∞(Ω) ∥eB 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+.
+
+The same bound also holds for M (3 b)5 thanks to the assumed property (6.3) (we also recall Remark 6.3)). Consequently, we conclude that 
+
+M (3) 5 ≲ |u|W 1,∞(Ω) ∥eB 
+
+> h
+
+∥2
+
+> L2(Ω)
+
+. (6.17) Combining the splitting (4.27) with estimates (6.15), (6.16), and (6.17), we obtain the result. 
+
+Lemma 6.8 (Estimates of M6, M8, and M9). If u, B ∈ L2(0 , T ; W k+1 ,4(Ω)) , the following estimates hold for all δ > 0:
+
+M6 ≲ δ−1h2k+1 ∥uh∥L2(Ω) |u|2  
+
+> Wk+1 ,4(Ω)
+
++ δ|eu 
+
+> h
+
+|2 
+
+> es, uh
+
+,M8 ≲ δ−1h2k+1 ∥uh∥L2(Ω) |u|2  
+
+> Wk+1 ,4(Ω)
+
++ δ|eu 
+
+> h
+
+|2 
+
+> σ, uh
+
+,M9 ≲ δ−1h2k+1 ∥Bh∥L2(Ω) |B|2  
+
+> Wk+1 ,4(Ω)
+
++ δ|eB 
+
+> h
+
+|2 
+
+> τ, uh
+
+.
+
+Proof. Since the new term M6 is identical to that in Proposition 4.7 up to a scaling factor h, applying the same argument as in Lemma 4.14, we immediately obtain the first bound above. The remaining two terms are handled similarly. The underlying idea is that, compared to the term M6, the presence of a higher h-scaling factor in M8 and M9 exactly compensates the first-order derivatives appearing in such terms. 27 Once the above modified estimates are derived (recalling the assumed property (6.3)), we can apply the same arguments as in the proof of Theorem 4.18, yielding the following result. 
+
+Theorem 6.9 (A priori error estimates) . Let the solution (u, p isotr , B) to problem (1.1) satisfy the regularity Assumption 4.1. Let also (uh, p h, Bh) be the solution to the semidiscrete formulation (5.1) ,assuming f ∈ C0([0 , T ]; S), where S has sufficient regularity for Icurl ,k h (f ) to be well defined (see Re-mark 3.8). Furthermore, let the mesh Assumptions 2.1 and 2.2 hold, and the parameter α be sufficiently large. If 
+
+u, B ∈ L∞(0 , T ; W 1,∞(Ω)) ,
+
+and the following additional k-dependent regularity conditions hold: 
+
+u, B ∈ H1(0 , T ; Hk+1 (Ω)) , u, B ∈ L2(0 , T ; W k+1 ,4(Ω)) ,
+
+f ∈ L2(0 , T ; Hk+1 (Ω)) , p ∈ L2(0 , T ; Hk+2 (Ω)) ,
+
+with p = pisotr + |u|2/2, then the following estimate holds for a.e. t ∈ (0 , T ):
+
+∥eu∥2 
+
+> L∞(0 ,t ;L2(Ω))
+
++ ∥eB ∥2 
+
+> L∞(0 ,t ;L2(Ω))
+
++ β
+
+Z t
+
+> 0
+
+
+
+νS ∥eu(·, s )∥2# + νM ∥ curl eB (·, s )∥2
+
+> L2(Ω)
+
+
+
++
+
+Z t
+
+> 0
+
+
+
+|eu|2 
+
+> es, uh,Bh
+
++ |eu|2 
+
+> σ, uh,Bh
+
++ |eB |2
+
+> τ, uh,Bh
+
+
+
+≲ (h + νS + νM ) exp( R2t)h2k ,
+
+where the hidden constant is independent of h, νS , and νM , but depends, in particular, on the norms of the continuous solution indicated in the assumptions above and the mesh regularity parameters. Moreover, the constant R2 depends on ∥u∥L∞(0 ,T ;W 1,∞(Ω)) and ∥B∥L∞(0 ,T ;W 1,∞(Ω)) .
+
+Also for the present method, the theoretical estimates in Theorem 6.9 reflect the pressure robustness of the scheme, in the sense of Remark 4.19. 
+
+# 7 Numerical experiments 
+
+In this section, we validate the theoretical results for the three proposed methods: 
+
+Method 1: presented in Section 3, formulation (3.2); 
+
+Method 2: presented in Section 5, formulation (5.1); 
+
+Method 3: presented in Section 6, formulation (6.2) .
+
+We restrict ourselves to two-dimensional problems in space. First, in Sections 7.1 and 7.2, we carry out some convergence tests, where we measure the error in the natural time-discrete version of the following “total” energy norm: 
+
+∥(u, B)∥2tot := ∥u∥2  
+
+> L∞(0 ,T ;L2(Ω))
+
++ ∥B∥2 
+
+> L∞(0 ,T ;L2(Ω))
+
++
+
+Z T
+
+> 0
+
+
+
+νS ∥u(·, t )∥2# + νM ∥ curl B(·, t )∥2 
+
+> L2(Ω)
+
++ |(u, B)|2stab ,uh,Bh
+
+
+
+dt, (7.1) with |(u, B)|stab ,uh,Bh being the seminorm induced by the corresponding stabilization terms, namely, 
+
+|(u, B)|2stab ,uh,Bh := 
+
+
+
+|u|2 
+
+> uh
+
+, for Method 1 ,
+
+|u|2 
+
+> uh
+
++ |B|2 
+
+> uh
+
+, for Method 2 ,
+
+|u|2 
+
+> es, uh,Bh
+
++ |u|2 
+
+> σ, uh,Bh
+
++ |B|2 
+
+> τ, uh,Bh
+
+, for Method 3 .Then, in Sections 7.3 and 7.4, we perform some challenging tests in which νS - and νM -quasi-robustness is crucial to avoid unphysical oscillations. In such a numerical comparison, we also include the unstabilized 
+
+version obtained by removing the stabilization term sh(uh; uh, vh) in Method 1 .For time discretization, we have used the implicit midpoint rule, which is known to exactly conserve quadratic invariants such as energy and cross helicity in the unstabilized inviscid limit. The method parameters are chosen as CS = μs = μb = 0 .1, α = 10, and μσ = μτ = 0 .025 for all numerical experiments. The code is implemented in the open-source finite element library NGSolve [38] ( https://ngsolve. org/ ), and is freely available at https://github.com/EnricoZampa/RobustMHD .28 7.1 Convergence for a smooth solution 
+
+We first consider a manufactured problem on the unit square Ω = (0 , 1) 2 with final time T = 1, augmented by an additional source term g on the right-hand side of (1.3b). The exact solution given by 
+
+u(x, y, t ) = −2πe − 12 t(sin( πx )2 sin( πy ) cos( πy ), − sin( πx ) cos( πx ) sin( πy )2),p(x, y, t ) = −e− 12 t sin(2 πx ) cos(2 πy ),
+
+B(x, y, t ) = −πe − 12 t(sin( πx ) cos( πy ), − cos( πx ) sin( πy )) .
+
+(7.2) Since the implicit midpoint rule is second-order accurate, for a space discretization with polynomial degree k, the time-step is chosen as ∆ t = 110 h k+1 2 to balance the spatial and temporal discretization errors. 
+
+Method 1. We study the convergence errors for k ∈ { 1, 2}, νS ∈ { 1, 10 −4, 10 −8}, and νM = 1 (recalling that this method is only νS -quasi-robust). The results, reported in Figure 1, confirm the convergence rates O(hk) predicted by Theorem 4.18, for all considered values of νS .2 × 10 2 3 × 10 2 4 × 10 2     
+
+> Mesh Size h
+> 10 1
+> Total Error  1.08
+> 1.08
+> 1.05
+> 1.08
+> 1.08
+> 1.05
+> 1.34
+> 1.28
+> 1.21
+> S=1e-08, M=1.0
+> S=0.0001, M=1.0
+> S=1.0, M=1.0
+
+(a) k = 1 10 13 × 10 2 4 × 10 2 6 × 10 2       
+
+> Mesh Size h
+> 10 3
+> 10 2
+> Total Error
+> 2.20
+> 2.10
+> 2.05
+> 2.23
+> 2.18
+> 2.17
+> 2.43
+> 2.23
+> 2.18
+> S=1e-08, M=1.0
+> S=0.0001, M=1.0
+> S=1.0, M=1.0
+
+(b) k = 2 
+
+Figure 1: Convergence errors for Method 1 considering the smooth solution in (7.2). 
+
+Methods 2 and 3. We study the convergence errors for k ∈ { 1, 2} and νS = νM ∈ { 1, 10 −4, 10 −8}. The results for Method 2 and Method 3 , reported in Figures 2 and 3, respectively, confirm the pre-asymptotic convergence rates O(hk) and O(hk+ 12 ) predicted by Theorems 5.6 and 6.9 for the high fluid and magnetic Reynolds number regime. 2 × 10 2 3 × 10 2 4 × 10 2      
+
+> Mesh Size h
+> 10 2
+> 10 1
+> Total Error
+> 1.18
+> 1.20
+> 1.13
+> 1.18
+> 1.20
+> 1.13
+> 1.33
+> 1.27
+> 1.21
+> S=1e-08, M=1e-08
+> S=0.0001, M=0.0001
+> S=1.0, M=1.0
+
+(a) k = 1 10 13 × 10 2 4 × 10 2 6 × 10 2       
+
+> Mesh Size h
+> 10 3
+> 10 2
+> Total Error
+> 2.21
+> 2.07
+> 2.04
+> 2.25
+> 2.17
+> 2.20
+> 2.43
+> 2.23
+> 2.18
+> S=1e-08, M=1e-08
+> S=0.0001, M=0.0001
+> S=1.0, M=1.0
+
+(b) k = 2 
+
+Figure 2: Convergence errors for Method 2 considering the smooth solution in (7.2). 
+
+29 2 × 10 2 3 × 10 2 4 × 10 2                       
+
+> Mesh Size h
+> 10 2
+> 10 1
+> Total Error
+> 1.82
+> 1.80
+> 1.76
+> 1.83
+> 1.81
+> 1.76
+> 1.34
+> 1.28
+> 1.22
+> S=1e-08, M=1e-08
+> S=0.0001, M=0.0001
+> S=1.0, M=1.0 (a) k= 1 10 13 × 10 24 × 10 26 × 10 2
+> Mesh Size h
+> 10 3
+> 10 2
+> Total Error
+> 2.96
+> 2.72
+> 2.64
+> 2.96
+> 2.72
+> 2.64
+> 2.44
+> 2.24
+> 2.19
+> S=1e-08, M=1e-08
+> S=0.0001, M=0.0001
+> S=1.0, M=1.0 (b) k= 2
+
+Figure 3: Convergence errors for Method 3 considering the smooth solution in (7.2). 
+
+7.2 Convergence for a nonsmooth solution on a nonconvex polygonal domain 
+
+To investigate the convergence to nonsmooth solutions, we consider the following benchmark problem on the L-shaped domain ( −1, 1) 2 \ [−1, 0] 2 with the following stationary solution: 
+
+u(x, y ) = (sin 2(πx ) sin( πy ) cos( πy ), − sin( πx ) cos( πx ) sin 2(πy )) ,p(x, y ) = 0 ,
+
+B(x, y ) = ∇
+
+
+
+r(x, y ) 23 sin 
+
+ 23 θ(x, y )
+
+
+
+,
+
+where r(x, y ) := px2 + y2 and θ(x, y ) = atan2( y, x ) are, respectively, the modulus and the principal value of the phase of the standard polar coordinates [35, §1.9.7]. Note that B̸ ∈ H1(Ω). The results for k = 1 and νS = νM ∈ { 1, 10 −4, 10 −8} are reported in Figure 4. The νM -robust Method 2 fails to converge for νM ∈ { 10 −4, 10 −8}, as predicted in Remark 5.1, whereas Method 1 and Method 3 converge. We finally observe that the particularly good performance of all methods for νM = 1 is most likely a pre-asymptotic effect, related to the fact that the term νM ∥ curl (B − Bh)∥2
+
+> L2(Ω)
+
+, c.f. (7.1), still dominates the error. Indeed, in this test case, curl B vanishes, so this error component is not affected by the low Sobolev regularity of the magnetic field, which is responsible for the reduced convergence order (or even the complete lack of convergence, in the case of Method 2 ) of the schemes. 
+
+7.3 Magnetic field loop advection 
+
+Originally introduced by Gardiner and Stone [21, §5.1], the magnetic field loop advection is a challeng-ing test for ideal MHD. On the unit square with periodic boundary conditions, we consider the initial conditions 
+
+u0(x, y ) = (1 , 1) ,
+
+B0(x, y ) = ( ∂y A(x, y ), −∂xA(x, y )) ,
+
+with 
+
+A(x, y ) = 
+
+(
+
+10 −3 · (0 .3 − r(x, y )) , if r(x, y ) < 0.3,
+
+0, otherwise, and r(x, y ) = px2 + y2. To reproduce the ideal case, we take νS = νM = 10 −8. Since |B| is small with respect to |u|, we expect the solution B to be close to the solution of the magnetic advection problem 
+
+∂tB + curl (B × u) = 0 ,
+
+for the corresponding velocity field u. In particular, at time T = 1, it holds B(·, 1) ≈ B0(·), since, under periodic boundary conditions, the solution is a pure transport of the initial profile, which returns to its original position after one period. For this test, we take k = 1, ∆ t = 10 −3, and an unstructured simplicial mesh with 80 partitions along both the x and y axes. The contour lines of the magnetic field 30 2 × 10 2 3 × 10 2 4 × 10 2     
+
+> Mesh Size h
+> 10 1
+> Total Error
+> 1.01
+> 0.86
+> 0.84
+> 1.01
+> 0.86
+> 0.84
+> 1.24
+> 1.05
+> 1.00
+> S=1e-08, M=1e-08
+> S=0.0001, M=0.0001
+> S=1.0, M=1.0
+
+(a) Method 1 2 × 10 2 3 × 10 2 4 × 10 2         
+
+> Mesh Size h
+> 10 1
+> 4 × 10 2
+> 6 × 10 2
+> 2 × 10 1
+> Total Error
+> 0.57
+> -1.76
+> -1.78
+> 0.58
+> -1.63
+> -1.81
+> 1.23
+> 1.03
+> 0.93
+> S=1e-08, M=1e-08
+> S=0.0001, M=0.0001
+> S=1.0, M=1.0
+
+(b) Method 2 2 × 10 2 3 × 10 2 4 × 10 2     
+
+> Mesh Size h
+> 10 1
+> Total Error
+> 0.99
+> 0.74
+> 0.70
+> 0.99
+> 0.74
+> 0.70
+> 1.23
+> 1.05
+> 1.00
+> S=1e-08, M=1e-08
+> S=0.0001, M=0.0001
+> S=1.0, M=1.0
+
+(c) Method 3 
+
+Figure 4: Convergence results for the problem with singular solution on the L-shaped domain. 
+
+strength |Bh| are displayed in Figure 5, where the methods that are not νM -quasi-robust, namely the 
+
+unstabilized method and Method 1 , exhibit spurious oscillations, while the νM -quasi-robust Method 2 and 
+
+Method 3 present some oscillations only in the vicinity of the discontinuity. These residual oscillations can be further reduced by employing a nonlinear limiter; see, e.g., [42, §4.4]. 
+
+7.4 Orszag–Tang vortex 
+
+Finally, we consider the vortex solution proposed by Orszag and Tang in [36]. We consider again the unit square domain with periodic boundary conditions, and specify the initial conditions as 
+
+u0(x, y ) = ( − sin(2 πy ), sin(2 πx )) ,
+
+B0(x, y ) = ( − sin(2 πy ), sin(4 πx )) .
+
+We take νS = νM = 10 −14 . The spatial domain Ω is discretized with an unstructured simplicial mesh with 50 partitions along both the x and y axes, and the time-step is set to ∆ t = 10 −2.The plot of the pressure at the final time T = 0 .4 is shown in Figure 6 for all methods tested in Section 7.3. As in the numerical experiment in Section 7.3, the νM -quasi-robust Method 2 and Method 3 
+
+remain free from spurious oscillations, with the best performance delivered by Method 3 . The Orszag– Tang vortex problem is a particularly challenging test case. Notably, even without a direct pressure stabilization, the νM -quasi-robust methods effectively suppress nonphysical oscillations in the pressure approximation. Although this is not within the main focus of the present contribution, in order to investigate the effect of stabilization on structure preservation, we also plot the evolution of the energy 12
+
+ ∥uh∥2
+
+L2(Ω) +
+
+∥Bh∥2
+
+L2(Ω) 
+
+ and the cross helicity ( uh, Bh)Ω in Figure 7. The results obtained show that only the unstabilized method exactly conserves these quantities, while all stabilized variants introduce some energy dissipation and fail to preserve cross helicity. 31 (a) Unstabilized method (b) Method 1            
+
+> (c) Method 2 (d) Method 3
+> Figure 5: Strength |Bh|for the magnetic field loop advection problem: 17 equispaced contour lines from 2 .5×10 −5to 1.325 ×10 −3.
+
+# Acknowledgments 
+
+LBDV and SG have been partially funded by the European Union (ERC Synergy, NEMESIS, project number 101115663). Views and opinions expressed are however those of the authors only and do not necessarily reflect those of the European Union or the ERC Executive Agency. This research was also funded in part by the Austrian Science Fund (FWF) 10.55776/F65. LBDV, SG, and EZ are members of the INdAM-GNCS group. 
+
+# References 
+
+[1] C. Amrouche, C. Bernardi, M. Dauge, and V. Girault. Vector potentials in three-dimensional non-smooth domains. Math. Methods Appl. Sci. , 21(9):823–864, 1998. [2] D. S. Balsara and M. Dumbser. Divergence-free MHD on unstructured meshes using high order finite volume schemes based on multidimensional Riemann solvers. J. Comput. Phys. , 299:687–715, 2015. 32 (a) Unstabilized method (b) Method 1 
+
+(c) Method 2 (d) Method 3 
+
+Figure 6: Pressure approximation for the Orszag–Tang vortex problem at the final time T = 0 .4. 0.00 0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 
+
+> t
+> 0.94
+> 0.95
+> 0.96
+> 0.97
+> 0.98
+> 0.99
+> 1.00
+> Energy
+> Unstabilized method
+> Method 1
+> Method 2
+> Method 3
+
+(a) Evolution of the energy 0.00 0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40  
+
+> t
+> 0.5000
+> 0.5025
+> 0.5050
+> 0.5075
+> 0.5100
+> 0.5125
+> 0.5150
+> 0.5175
+> Cross helicity
+> Unstabilized method
+> Method 1
+> Method 2
+> Method 3
+
+(b) Evolution of cross helicity. 
+
+Figure 7: Evolution of energy and cross helicity for the Orszag–Tang problem. 
+
+[3] L. Beir˜ ao da Veiga, F. Dassi, D. A. Di Pietro, and J. Droniou. Arbitrary-order pressure-robust DDR and VEM methods for the Stokes problem on polyhedral meshes. Comput. Methods Appl. Mech. Engrg. , 397:Paper No. 115061, 31, 2022. [4] L. Beir˜ ao da Veiga, F. Dassi, and G. Vacca. Robust finite elements for linearized magnetohydrody-33 namics. SIAM J. Numer. Anal. , 62(4):1539–1564, 2024. [5] L. Beir˜ ao da Veiga, F. Dassi, and G. Vacca. Pressure and convection robust finite elements for magnetohydrodynamics. Numer. Math. , 157(4):1161–1209, 2025. [6] L. Beir˜ ao da Veiga, K. Hu, and L. Mascotto. Error estimates for a helicity-preserving finite element discretisation of an incompressible magnetohydrodynamics system. ESAIM Math. Model. Numer. Anal. , 59(2):1075–1094, 2025. [7] D. Boffi, F. Brezzi, and M. Fortin. Mixed finite element methods and applications , volume 44 of 
+
+Springer Series in Computational Mathematics . Springer, Heidelberg, 2013. [8] W. M. Boon, R. Hiptmair, W. Tonnon, and E. Zampa. H(curl)-based approximation of the Stokes problem with slip boundary conditions. arXiv:2407.13353, 2024. [9] W. M. Boon, W. Tonnon, and E. Zampa. H(curl)-based approximation of the Stokes problem with weakly enforced no-slip boundary conditions. Comput. Methods Appl. Mech. Engrg. , 448:Paper No. 118484, 2026. [10] S. C. Brenner and L. R. Scott. The mathematical theory of finite element methods , volume 15 of 
+
+Texts Appl. Math. New York, NY: Springer, 3rd ed. edition, 2008. [11] F. Brezzi, J. Douglas, R. Dur´ an, and M. Fortin. Mixed finite elements for second order elliptic problems in three variables. Numer. Math. , 51(2):237–250, 1987. [12] T. Chaumont-Frelet and M. Vohral´ ık. A stable local commuting projector and optimal hp approxi-mation estimates in H(curl). Numer. Math. , 156(6):2293–2342, 2024. [13] M. Costabel. A coercive bilinear form for Maxwell’s equations. J. Math. Anal. Appl. , 157(2):527–541, 1991. [14] D. A. Di Pietro, J. Droniou, and V. Patierno. A Reynolds- and Hartmann-semirobust hybrid method for magnetohydrodynamics. arXiv:2602.09626, 2026. [15] D. A. Di Pietro, J. Droniou, and J. J. Qian. A pressure-robust discrete de Rham scheme for the Navier-Stokes equations. Comput. Methods Appl. Mech. Engrg. , 421:Paper No. 116765, 21, 2024. [16] J. Douglas Jr., T. Dupont, and L. Wahlbin. The stability in Lq of the L2-projection into finite element function spaces. Numer. Math. , 23:193–197, 1974/75. [17] A. Ern and J.-L. Guermond. Finite element quasi-interpolation and best approximation. ESAIM Math. Model. Numer. Anal. , 51(4):1367–1385, 2017. [18] A. Ern and J.-L. Guermond. Finite elements I. Approximation and interpolation , volume 72 of Texts Appl. Math. Cham: Springer, 2020. [19] F. Fambri, E. Zampa, S. Busto, L. R´ ıo-Mart´ ın, F. Hindenlang, E. Sonnendr¨ ucker, and M. Dumbser. A well-balanced and exactly divergence-free staggered semi-implicit hybrid finite volume / finite element scheme for the incompressible MHD equations. J. Comput. Phys. , 493:Paper No. 112493, 48, 2023. [20] G. Fu. An explicit divergence-free DG method for incompressible magnetohydrodynamics. J. Sci. Comput. , 79(3):1737–1752, 2019. [21] T. A. Gardiner and J. M. Stone. An unsplit Godunov method for ideal MHD via constrained transport. J. Comput. Phys. , 205(2):509–539, 2005. [22] E. S. Gawlik and F. Gay-Balmaz. A finite element method for MHD that preserves energy, cross-helicity, magnetic helicity, incompressibility, and div B = 0. J. Comput. Phys. , 450:Paper No. 110847, 20, 2022. [23] J.-F. Gerbeau. A stabilized finite element method for the incompressible magnetohydrodynamic equations. Numer. Math. , 87(1):83–111, 2000. [24] J.-F. Gerbeau, C. Le Bris, and T. Leli` evre. Mathematical methods for the magnetohydrodynamics of liquid metals. Numer. Math. Sci. Comput. Oxford: Oxford University Press, 2006. 34 [25] V. Girault. Incompressible finite element methods for Navier-Stokes equations with nonstandard boundary conditions in R3. Math. Comp. , 51(183):55–74, 1988. [26] V. Girault. Curl-conforming finite element methods for Navier-Stokes equations with nonstandard boundary conditions in R3. In The Navier-Stokes equations (Oberwolfach, 1988) , volume 1431 of 
+
+Lecture Notes in Math. , pages 201–218. Springer, Berlin, 1990. [27] M. He, P. E. Farrell, K. Hu, and B. D. Andrews. Helicity-Preserving Finite Element Discretization for Magnetic Relaxation. SIAM J. Sci. Comput. , 48(2):B165–B183, 2026. [28] R. Hiptmair and C. Pagliantini. Splitting-based structure preserving discretizations for magnetohy-drodynamics. SMAI J. Comput. Math. , 4:225–257, 2018. [29] K. Hu, Y.-J. Lee, and J. Xu. Helicity-conservative finite element discretization for incompressible MHD systems. J. Comput. Phys. , 436:Paper No. 110284, 17, 2021. [30] V. John, A. Linke, C. Merdon, M. Neilan, and L. G. Rebholz. On the divergence constraint in mixed finite element methods for incompressible flows. SIAM Rev. , 59(3):492–544, 2017. [31] F. Laakmann, K. Hu, and P. E. Farrell. Structure-preserving and helicity-conserving finite element approximations and preconditioning for the Hall MHD equations. J. Comput. Phys. , 492:Paper No. 112410, 25, 2023. [32] S. Mao and R. Xi. An incompressibility, div B = 0 preserving, current density, helicity, energy-conserving finite element method for incompressible MHD systems. J. Comput. Phys. , 538:Paper No. 114130, 31, 2025. [33] M. Mitrea and S. Monniaux. The nonlinear Hodge-Navier-Stokes equations in Lipschitz domains. 
+
+Differ. Integral Equ. , 22(3-4):339–356, 2009. [34] J.-C. N´ ed´ elec. Mixed finite elements in R3. Numer. Math. , 35(3):315–341, 1980. [35] F. W. J. Olver, D. W. Lozier, R. F. Boisvert, and C. W. Clark, editors. NIST handbook of mathe-matical functions . Cambridge: Cambridge University Press, 2010. [36] S. A. Orszag and C.-M. Tang. Small-scale structure of two-dimensional magnetohydrodynamic turbulence. J. Fluid Mech. , 90(1):129–143, 1979. [37] A. Prohl. Convergent finite element discretizations of the nonstationary incompressible magnetohy-drodynamics system. M2AN Math. Model. Numer. Anal. , 42(6):1065–1087, 2008. [38] J. Sch¨ oberl. C++11 implementation of finite elements in NGSolve. Technical Report ASC-2014-30, Institute for Analysis and Scientific Computing , September 2014. [39] D. Sch¨ otzau. Mixed finite element methods for stationary incompressible magneto-hydrodynamics. 
+
+Numer. Math. , 96(4):771–800, 2004. [40] B. Wacker, D. Arndt, and G. Lube. Nodal-based finite element methods with local projection stabilization for linearized incompressible magnetohydrodynamics. Comput. Methods Appl. Mech. Engrg. , 302:170–192, 2016. [41] G. A. Wimmer and X.-Z. Tang. Structure preserving transport stabilized compatible finite element methods for magnetohydrodynamics. J. Comput. Phys. , 501:Paper No. 112777, 25, 2024. [42] E. Zampa, S. Busto, and M. Dumbser. A divergence-free hybrid finite volume / finite element scheme for the incompressible MHD equations based on compatible finite element spaces with a posteriori limiting. Appl. Numer. Math. , 198:346–374, 2024. [43] Y. Zhang, A. Palha, M. Gerritsma, and L. G. Rebholz. A mass-, kinetic energy- and helicity-conserving mimetic dual-field discretization for three-dimensional incompressible Navier-Stokes equa-tions, part I: periodic domains. J. Comput. Phys. , 451:Paper No. 110868, 23, 2022. 35
