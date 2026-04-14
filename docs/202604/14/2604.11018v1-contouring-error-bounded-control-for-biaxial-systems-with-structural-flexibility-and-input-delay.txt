@@ -1,0 +1,1123 @@
+Title: Contouring Error Bounded Control for Biaxial Systems with Structural Flexibility and Input Delay
+
+URL Source: https://arxiv.org/pdf/2604.11018v1
+
+Published Time: Tue, 14 Apr 2026 01:45:36 GMT
+
+Number of Pages: 11
+
+Markdown Content:
+> 1
+
+# Contouring Error Bounded Control for Biaxial Systems with Structural Flexibility and Input Delay 
+
+Meng Yuan, Member, IEEE , Tianyou Chai, Life Fellow, IEEE 
+
+Abstract —Precision contouring control is crucial in industrial machining processes, particularly for applications such as laser and water jet cutting, where contouring accuracy directly de-termines product quality. This paper presents a novel control strategy for biaxial machines featuring position-dependent flexi-bility and input delays, ensuring that the end-effector accurately traverses the desired contour within specified contouring error bounds and system constraints. To capture the rotation dynamics for systems with mechanical vibration, we introduce a high-fidelity model and explicitly consider the input delay with augmented system states. The controller design is based on the model predictive control scheme to enforce system states staying in robust control invariant sets defined by the reference model and switched linear time-invariant control-oriented models. The proposed algorithm is not restricted to a specific shape of the curve that is being traversed. The effectiveness of the proposed control algorithm is demonstrated in an experimental environ-ment with discretizations and input delay. The results show that a bounded contouring error can be achieved by the proposed method in a performance degradation environment with a low commissioning effort. 
+
+Index Terms —Motion control, contouring control, model pre-dictive control, biaxial system 
+
+I. I NTRODUCTION 
+
+# CONTOURING error is defined as the shortest distance between the actual motion path and the prescribed ref-erence trajectory, representing the degree to which the end-effector deviates from the ideal path during operation [1], [2]. Such deviation directly affects machining precision, leading to over-cutting, undercutting, or surface quality issues, and can further result in severe assembly and functional fail-ures, ultimately reducing product consistency and production efficiency. Therefore, precise control of contouring error is crucial as it forms the cornerstone for achieving high-precision manufacturing and efficient automation [1]. The dual-drive gantry machine, with relatively higher struc-tural rigidity and larger operating envelopes, has seen in-creasing interest in precision engineering applications [3]. Although the intensive usage of finite-element optimisation in the mechanical design process enhances the rigidity of structural parts in machines, the non-synchronized movement 
+
+This work was supported in part by European Union (EU)-funded Marie Sklodowska-Curie Actions (MSCA) Postdoctoral Fellowship under grant number 101110832 and in part by the Research Program of the Liaoning Liaohe Laboratory under number LLL23ZZ-05-01. Meng Yuan is with the School of Engineering and Computer Science, Victoria University of Wellington, Kelburn 6012, New Zealand (emails: meng.yuan@vuw.ac.nz). Tianyou Chai is with the State Key Laboratory of Synthetical Automation for Process Industries, Northeastern University, Shenyang 110819, China (email: tychai@mail.neu.edu.cn). 
+
+of dual drives can still happen due to the flexible linkages in machines. The resulting rotational dynamics lead to the position discrepancy between actuators and end-effector, thus deteriorating the contouring accuracy [4]. This highlights the need of considering the flexible structure in the controller design to refine contouring performance. A range of work has been conducted to improve the contouring performance. The first category covers the cross-coupled control (CCC) based on estimated contour error [5], [6]. The CCC was proposed to minimise the contouring error by correcting the input command and forcing the axial tool position onto the path. In the original version of CCC, the cor-rective command is calculated from the weighted contour error and forwarded equally to axis controllers with individual axis controllers unchanged. However, the constant compensator value and cross-coupling gains make the conventional CCC ineffective in dealing with nonlinear contours and even lead to oscillation for linear contours when steady-state error tends to zero [7], [8]. To deal with these drawbacks, methods such as introducing variable cross-coupling gains were proposed [9]. The cross-coupled control based approach is still prevalent in contouring control and the variants of CCC are related to the choice of contour error model and the control laws [10]–[12]. Another category of contouring control is based on the coordinate transformation where decoupled controllers are designed to minimise the transformed errors [13], [14]. The coordinate transformation-based frames simplify the controller design by decoupling the tangential and contour dynamics and its application can be found in biaxial applications including robotics [15] and XY tables [16]–[18]. However, the difficulty in obtaining the coordinate transformation matrix for free-form contour and the assumption that the dynamics of two axes should be small limits the applicability of the coordinate transformation based methods. As a controller that explicitly considers operating con-straints, model predictive control (MPC) has been widely applied in contouring control scenarios where such constraints are of critical importance [19]–[21]. In [19], a model pre-dictive contouring control method was proposed to deal with competing objectives, improving the contouring accuracy and minimising the traverse time. In [20], an MPC framework was introduced to pre-compensate servo contour errors by incorporating predicted contour deviations into the reference trajectory, minimising their squared sum under kinematic constraints. To enhance contour accuracy and tracking per-formance in a biaxial permanent magnet linear synchronous motor system, [21] presents a strategy that integrates MPC with a model reference adaptive system and variable gain 
+
+> arXiv:2604.11018v1 [eess.SY] 13 Apr 2026 2
+
+cross-coupling, effectively reducing dynamic mismatches and improving the robustness of system. However, neither [20] nor [21] provides a formal guarantee on the contouring error bound, nor do they account for structural flexibility or input delays, which motivates the present work. Despite numerous works aimed at reducing the contouring error, several critical research gaps remain. From a practical standpoint, industrial processes such as laser and water jet cutting impose strict contouring tolerances, where even small violations can result in defective products. From a theoretical perspective, existing contouring control methods primarily fo-cus on error minimisation without providing formal guarantees that the contouring error remains within a specified bound. First, achieving bounded contouring error while respecting system state and input constraints remains a challenge, par-ticularly for systems with position-dependent flexibility and input delays. Second, input delays commonly encountered in industrial systems complicate controller design and may compromise system stability. Third, in flexible systems lacking real-time end-effector feedback, contouring performance vali-dation typically relies on post-process product quality, making real-time algorithm verification challenging. To address these challenges, this work focuses on a biaxial system with structural flexibility and input delay. To the best of the authors’ knowledge, no existing contouring control method provides a formal guarantee on the contouring error bound for systems with position-dependent structural flexibility and input delay. The main contributions are summarised as follows: 1) High-fidelity modelling: A high-fidelity system model is developed to capture position-dependent flexibility and end-effector dynamics, with explicit incorporation of in-put delays. The model is validated for both accuracy and applicability in systems with limited structural rigidity. 2) Guaranteed contouring performance: An MPC-based control strategy is developed, in which robust control invariant (RCI) sets are employed to ensure that con-touring errors remain bounded while meeting system constraints. The proposed method provides guarantees of stability and feasibility, and consistently satisfies con-touring accuracy specifications in real-time operation. 3) Experimental validation for industrial relevance: To ad-dress the absence of real-time end-effector feedback in practical applications, a back-to-back motor-based hardware-in-the-loop (HIL) platform is developed. This platform emulates realistic industrial conditions, includ-ing discretisation effects and input delays, thereby en-abling rigorous evaluation of the proposed algorithm’s effectiveness under practical digital control scenarios. 
+
+Notation : R is the set of real numbers. Z0+ and Z[m,n ] are the set of non-negative integers and integer intervals with m
+
+and n included. A m × n zero matrix is denoted by 0m,n .Consider a ∈ Rna , b ∈ Rnb , the stacked vector is represented as (a, b ) ≜ [aT , b T ]T ∈ Rna+nb . The set Bn(ρ) is a closed ball in Rn with ρ radius in infinity norm. The vector x(k) is the value measured at time instant k and vector x(i|k) represents the predicted value of x at time instant k + i based on the data sampled at k. For two sets X and Y, X − Y represents the Cutting base 
+
+> ·
+> ·
+
+·
+
+> O
+> End effector
+
+# ·DY1 DY2                              
+
+> Linear guide Y1 Linear guide Y2 Gantry beam
+> Fig. 1. Schematic diagram of industrial gantry machine. TABLE I NOMENCLATURE OF DUAL DRIVE SYSTEM
+> Symbol Description Unit
+> M1Mass of drive DY1 kg
+> M2Mass of drive DY2 kg
+> MeMass of end-effector kg
+> MnMass of gantry beam kg
+> LHalf length of beam m
+> WHalf width of beam m
+> DProjection distance from end-effector onto X ′m
+> kx,kyForce constants of X, Y-axis motors N/A
+> bxViscous friction coefficient on gantry Ns/m
+> byViscous friction coefficient on linear guides Ns/m
+> krTorsional spring constant N/m
+> ksLinear spring constant N/m
+
+Minkowski difference. II. S YSTEM DESCRIPTION AND PROBLEM FORMULATION 
+
+A. Configuration and modelling 
+
+The structural parts of machines tend to have more rigidity than joints when finite-element optimisation is applied to the design of industrial machines [22]. This motivates the proposition of a physics-based model with linear and torsional springs for systems with limited stiffness joints. The investigated gantry machine is shown in Fig. 1, demon-strating the dual drives in synchronized and non-synchronized conditions. The torsional springs represent the flexible struc-tural parts that link the drive and crossbeam. The lateral deformation in the X-axis is applicable with the introduction of linear springs. The position of end-effector along the X ′ direction is xh,which is measurable using linear encoder. The position of dual drives DY1 and DY2 on Y-axis is denoted by y1 and y2. The centre of gantry beam is yn = ( y1 + y2)/2 and the angle of rotation is approximated by θ = ( y2 − y1)/2L based on small angle approximation. The parameters for system of interest are summarised in Table I. 3
+
+By choosing the generalised coordinate as s = {xh, y n, θ },the end-effector position (xe, y e) is represented as: 
+
+xe = xh cos θ + D sin θ, (1) 
+
+ye = yn + xh sin θ − D cos θ. (2) The derivation of system dynamics is conducted based on Lagrangian modelling as [23]: 
+
+ddt 
+
+ ∂L
+
+∂ ˙s
+
+
+
+− ∂L
+
+∂s = Qs, (3) where L is the Lagrangian function; Qs are the external generalised forces. Denote the current of end-effector and dual-drive motors as ix, i1 and i2, respectively. The governing equations of the mechanism are given as: 
+
+Me(−xh ˙θ2 + ¨ xh + D ¨θ + ¨ yn sin θ) = kxix − bx ˙xh, (4) 
+
+Me sin θ¨xh + Mt ¨yn + Γ ¨θ + Me(−xh sin θ ˙θ2 + 2 ˙ xh cos θ ˙θ
+
++ D ˙θ2 cos θ) + MdL ˙θ2 sin θ = ky (i1 + i2) − by ( ˙ y1 + ˙ y2),
+
+(5) 
+
+MeD¨xh + Γ¨ yn + Λ ¨θ + 2 kr θ + 2 L2ks sin θ (1 − cos θ)+ 2 Me ˙θ ˙xhxh = ( ky (i2 − i1) − by ( ˙ y2 − ˙y1)) L cos θ, (6) where Md = M1 − M2 is the mass difference; Mt = M1 +
+
+M2 + Me + Mn is the total mass of system; Γ = MeD sin θ −
+
+MdL cos θ + Mexh cos θ and Λ = ( M1 + M2) L2 + Mn(L2 +
+
+W 2)/3 + Me
+
+ D2 + x2
+
+> h
+
+ are lumped terms. The measured and model-predicted frequency-response comparisons for this high-fidelity model are reported in [23]. 
+
+B. Control oriented model 
+
+To derive the control-oriented model for the X-axis move-ment, the dynamics (4) is reformulated by lumping all terms involving yn, θ into a disturbance term as: 
+
+¨xh + bx
+
+Me
+
+˙xh = kx
+
+Me
+
+ix + dx, (7) where the disturbance term is dx ≜ xh ˙θ2 − d¨θ − ¨yn sin θ.To simplify the Y-axis controller design and eliminate the vibration, the dynamics (5) and (6) are approximated at different operating points ¯xh and rearranged as follows by applying a small angle approximation: 
+
+Mt ¨yn + 2 by ˙yn + Me ¯xh ¨θ = ky (i1 + i2) + d1, (8) 
+
+Me ¯xh ¨yn +Λ(¯ xh)¨θ+2 by L2 ˙θ+2 kr θ = ky L (i2 − i1)+ d2, (9) where reasonable assumption M1 = M2 holds; the lumped nonlinear terms are d1 = Me(¯ xhθ ˙θ2 − θ¨xh − Dθ ¨θ − 2 ˙ xh ˙θ −
+
+D ˙θ2) and d2 = −Me(2 ˙θ ˙xh ¯xh + Dθ ¨yn + D¨xh).The switched LTI linearisation is adopted because the Y-axis dynamics depend on xh, making a single LTI model insufficient. Compared with nonlinear MPC, which requires solving non-convex optimisation problems at each time step, the switched LTI approach enables the use of efficient convex optimisation for real-time implementation. In [24], a switched linear system framework with control invariant (CI) sets was developed for contouring control with structural flexibility. The present work differs by employing robust CI sets to handle bounded disturbances, incorporating input delay into the model and controller design, and providing hardware-in-the-loop experimental validation. With sampling time Ts, the discrete-time state space model for the system is derived from (7), (8) and (9) as: 
+
+ξx(k + 1) = Axξx(k) + Bxix(k) + Exdx(k), (10) 
+
+ξy (k + 1) = Ay (¯ xh)ξy (k) + By (¯ xh)iy (k) + Ey (¯ xh)dy (k),
+
+(11) where ξx ≜ (xh, ˙xh), ξy ≜ (yn, ˙yn, θ, ˙θ) are the states, ix,
+
+iy ≜ (i1, i 2) are the inputs; dy ≜ (d1, d 2) is the lumped nonlinearity vector. The system coefficient matrices of (10) and (11) can be inferred from (7), (8) and (9). The states and inputs of the system are required to stay within constraints as: 
+
+ξx ∈ X x ⊆ R2, ξ y ∈ X y ⊆ R4, i x ∈ U x ⊆ R, i y ∈ U y ⊆ R2.
+
+(12) With the explicit form of dx and dy , the state constraints lead to compact disturbance sets as 
+
+dx ∈ W x ⊆ R, d y ∈ W y ⊆ R2.
+
+In practice, the bounds Wx and Wy are obtained by evaluating the explicit disturbance expressions dx, d1 and d2 over the constrained state operating region Xx and Xy , yielding con-servative polytopic sets used for the offline RCI computation. The RCI sets are computed to handle all disturbance re-alisations within Wx and Wy . If unmodelled dynamics or parameter uncertainties are present, they can be absorbed into the disturbance sets, and the proposed framework remains effective as long as the total disturbance is bounded within these sets. Fixed time delay can happen in practical motion control due to communication issue between servo drives and motors. To guarantee the contouring error bound, the state of system should be augmented to explicitly consider the input delay. If 
+
+Tdx step and Tdy step input delay exist in X-axis and Y-axis of system, respectively, the dynamics becomes: 
+
+ξx(k + 1) = Axξx(k) + Bxix(k − Tdx ) + Exdx(k). (13) 
+
+ξy (k+1) = Ay (¯ xh)ξy (k)+ By (¯ xh)iy (k−Tdy )+ Ey (¯ xh)dy (k),
+
+(14) 
+
+C. Problem statement 
+
+The following model is used to characterise the class of references with operating constraints: 
+
+rα(k + 1) = Ar rα(k) + Br uα(k), α = {x, y } , (15) where rα and uα are the state and input of reference model. The operating constraints are given as: 
+
+rα ∈ X r ⊆ Rnr , u α ∈ U r ⊆ R (16) where Xr and Ur are the compact sets for state and input con-straints. For reference with position, velocity and acceleration 4
+
+constraints, the discrete-time system matrices Ar and Br with sampling time Ts are approximated based on Euler forward method as: 
+
+Ar =
+
+ 1 Ts
+
+0 1
+
+
+
+, B r =
+
+ 0
+
+Ts
+
+
+
+.
+
+For X-axis reference, rx ≜ (x∗ 
+
+> e
+
+, v ∗
+
+> x
+
+) stands for the desired position and velocity and ax is the desired acceleration. The state ry ≜  y∗ 
+
+> e
+
+, v ∗
+
+> y
+
+ represents the Y-axis desired position, velocity and ay is the acceleration. 
+
+Remark 1. The model (15) is used to characterise the reference with operating constraints, which can be represented by control invariant (CI) set. It has to be noticed that model 
+
+(15) is not a path planner, but the admissible reference is assumed within the reference CI set computed based on (15) .
+
+With the above definition, the problem investigated in this work is represented as: 
+
+Problem 1. Given a desired contouring error bound ϵc, for systems with dynamics (13) and (14) , and reference char-acterised by constraint (16) , design a control law u(k) = (ix(k), i y (k)) such that the contouring error ϵ(k) ≤ ϵc holds for all k ∈ Z0+ .
+
+Remark 2. Although the proposed method is investigated in the context of a biaxial system, it is worth noting that the control algorithm can be extended to handle contouring errors in Euclidean spaces and systems with higher dimensions. This is because the controller is designed based on a general linear time-varying system model, making it applicable to more complex multi-axis systems. 
+
+III. C ONTROL ARCHITECTURE 
+
+A. Contouring error guarantee via axis-wise tracking bounds 
+
+Conventionally, the contouring control involves the cal-culation or estimation of the contouring error. The existing algorithms for estimating the contouring error can only provide a lower bound of the actual value [16]. A control algorithm designed to bound this estimated error does not necessarily guarantee the actual contouring error tolerance is satisfied. Moreover, the estimation algorithms tend to have requirements for the specific shape of the path. To address the limitations of shape-dependent contouring error estimation in conven-tional methods, we propose a path-agnostic control framework that guarantees contouring error bounds for arbitrary-shape contours. The key theoretical foundation is provided by the following lemma: 
+
+Lemma 1. Given the desired tolerance of the contouring error 
+
+ϵc, the bounded contouring error ϵ(k) ≤ ϵc, ∀k ∈ Z0+ can be guaranteed by bounding the X-axis tracking error ∥ex∥∞ ≤ ϵx
+
+and Y-axis tracking error ∥ey ∥∞ ≤ ϵy with ϵx +ϵy ≤ ϵc, where 
+
+ϵx and ϵy are the upper bound of tracking errors on X and Y-axis, respectively, and tracking errors are ex ≜ x∗ 
+
+> e
+
+− xe and 
+
+ey ≜ y∗ 
+
+> e
+
+− ye.Proof. Since the contouring error ϵ(k) is the shortest distance from the actual position to the desired path, it satisfies ϵ(k) ≤
+
+e(k), where e(k) ≜ ∥(ex(k), e y (k)) ∥2 is the Euclidean track-ing error. Applying the standard norm inequality ∥·∥ 2 ≤ ∥·∥ 1
+
+gives e(k) ≤ | ex(k)| + |ey (k)|. Taking the supremum over all 
+
+k yields |ex(k)| + |ey (k)| ≤ ∥ ex∥∞ + ∥ey ∥∞. Therefore, the inequality chain ϵ(k) ≤ ∥ ex∥∞ + ∥ey ∥∞ ≤ ϵx + ϵy ≤ ϵc holds for all k ∈ Z0+ .This lemma ensures path-agnostic performance, as the track-ing error bounds ϵx and ϵy are independent of the contour geometry. 
+
+B. Controller formulation 
+
+Let ¯ξy (k) ≜ (ξy (k), i y (k − 1) , · · · , i y (k − Tdy )) be the state of Y-axis augmented system, to account for the input delay, the Tdy step delay is incorporated into the system dynamics (14) as: 
+
+¯ξy (k + 1) = 
+
+
+
+Ay (¯ xh) 0 · · · 0 By (¯ xh)0 0 · · · 0 00 1 · · · 0 0
+
+... . . . ...
+
+0 0 · · · 1 0
+
+
+
+¯ξy (k)+
+
+
+
+010
+
+...
+
+0
+
+
+
+iy (k) + 
+
+
+
+Ey (¯ xh)00
+
+...
+
+0
+
+
+
+dy (k)
+
+≜ ¯Ay (¯ xh) ¯ξy (k) + ¯By iy (k) + ¯Ey (¯ xh)dy (k) (17) Then, the design of iy focuses on achieving ∥ey ∥∞ =
+
+∥y∗ 
+
+> e
+
+− yn − ¯xhθ − D∥∞ ≤ ϵy based on (17). The dependence on the dynamics xh is avoided by multiple linearisation at different ¯xh. The resulted switched LTI model decouples and simplifies the controller design between axes. However, for 
+
+∥ex∥∞ = ∥x∗ 
+
+> e
+
+− xh − Dθ ∥ ≤ ϵx, the state θ appears in the control objective for X-axis movement. The Remark 3 is presented to ensure ∥ex∥∞ ≤ ϵx with extra constraints enforced when designing iy .
+
+Remark 3. Given a desired X-axis tracking error bound 
+
+ϵx that the system is initialized within, the tracking error 
+
+∥ex∥∞ ≤ ϵx can be guaranteed if ∥x∗ 
+
+> e
+
+− xh∥∞ ≤ ¯ϵx =
+
+ϵx − Dθ max is satisfied, where θmax is the constraint on rotation angle and the value is chosen to satisfy ∥θ∥∞ ≤
+
+θmax ≤ ϵx/D .
+
+Remark 4. The Dθ term in the X-axis tracking error intro-duces an asymmetry between the X and Y-axis error bound. A tightening value of θmax leads to a loose constraint ¯ϵx for the X-axis controller but imposes a more strict tolerance ϵy when designing control input iy .
+
+It is noted that the small-angle approximation is applied only in the control-oriented model (8)–(9), while the full nonlinear dynamics (4)–(6) retain the complete trigonometric terms. The validity of this approximation is ensured by the hard constraint 
+
+∥θ∥∞ ≤ θmax enforced via the RCI sets so that the system always operates within the valid linearisation range. 5
+
+The controller design starts with the control law iy to ensure the following operating constraint: 
+
+∥y∗ 
+
+> e
+
+− ye∥∞ ≤ ϵy , ∥θ∥∞ ≤ θmax (18) The control-oriented model (17) is assumed approximated at different operating points as ¯xjh = {¯x1
+
+> h
+
+, · · · , ¯xNl 
+
+> h
+
+}, for 
+
+j ∈ Z[1 ,N l], where Nl is the total number of linearisation points. Let ∆xh be the interval of the system been linearised, the actual position xh falls in the range between linearisation points as xh = ¯ xjh + δx h, j ∈ Z[1 ,N l] with |δx h| ≤ ∆xh.Following the algorithm in [25] to achieve error bounded tracking for system with disturbance, the reference charac-terised by constraint (16) is assumed staying within a CI set ry ∈ R ry 
+
+> ∞
+
+which can be computed offline based on set iteration using model (15) and constraints (16). To ensure the tracking error bound and rotation angle constraints are satisfied at different operating point ¯xjh, the augmented states ( ¯ξy , r y )
+
+are required to stay in a group of RCI sets R¯ξy ,r y
+
+> ¯xjh
+
+, j ∈ Z[1 ,N l].Conventional methods for computing the RCI set rely on the iteration of particular sets until two consecutive sets are equal. For systems with external disturbance, the corresponding max-imal RCI set is defined by an infinite number of inequalities and the stopping criterion based on two equal sets becomes numerically difficult and intractable. Here, we follow the RCI set computation algorithm in [25] and extend it for ensuring angle constraint and bounded tracking error with finite step termination. The RCI sets R¯ξy ,r y
+
+> ¯xjh
+
+at different operating points 
+
+¯xjh are computed based on Algorithm 1. 
+
+Algorithm 1 RCI set computation for switched LTI system  
+
+> 1:
+
+Initialization:  
+
+> 2:
+
+m ← 0, R0 ← R s ∩ ¯R0, where  
+
+> 3:
+
+Rs ← ( ¯ξy , r y ) ∈ R6+2 Tdy | ¯ξy ∈ R4+2 Tdy , r y ∈ R ry 
+
+> ∞
+
+,
+
+¯R0 ← { ( ¯ξy , r y ) ∈ R6+2 Tdy | ¯ξy ∈ X y × U Tdy  
+
+> y
+
+, ∥θ∥∞ ≤
+
+θmax , y∗ 
+
+> e
+
+− yN − ¯xjhθ + D ∞
+
+≤ ϵy }, j = 1 , · · · , N l. 
+
+> 4:
+
+Iteration:  
+
+> 5:
+
+Rm+1 ← R s ∩ ¯Rm+1 , where ¯Rm+1 ← ˆP   ¯Rm, ρ ∩ ¯Rm,
+
+ˆP   ¯Rm, ρ  ← { ( ¯ξy , r y ) ∈ R4+2 Tdy | ∃ iy ∈ U y ,
+
+ ¯Ay (¯ xjh) ¯ξy + ¯By iy + ¯Ey (¯ xh)dy , A r ry + Br uy
+
+
+
+∈ ¯Rm,
+
+− B6(ρ)∀(dy × uy ) ∈ (Wy × U r )}. 
+
+> 6:
+
+if Rm − B6(ρ) ⊆ R m+1 then  
+
+> 7:
+
+return R¯ξy ,r y
+
+> ¯xjh
+
+← R m+1  
+
+> 8:
+
+else  
+
+> 9:
+
+m ← m + 1  
+
+> 10:
+
+go to 4 
+
+> 11:
+
+end if Remark 5. There is a trade-off in that using finer intervals 
+
+∆xh means a better approximation of xh, but leads to more controller switching and requires more off-line calculation and storage of the RCI sets. 
+
+Algorithm 1 computes the RCI sets offline for the Y-axis linearised models. For each linearisation point j ∈ Z[1 ,N l], let 
+
+Mj be the number of set-iteration updates until termination. Since each update is carried out in the augmented space 
+
+( ¯ξy , r y ) ∈ R6+2 Tdy , the offline complexity is O
+
+PNl 
+
+> j=1
+
+Mj
+
+
+
+set updates with fixed problem size per update. The X-axis case is obtained in the same way. Based on the feedback xh at time instant k, the value of 
+
+j and the linearisation point ¯xjh are determined following 
+
+¯xjh − ∆xh 
+
+> 2
+
+≤ xh ≤ ¯xjh + ∆xh 
+
+> 2
+
+. With N ∈ Z0+ step future reference γNy (k) = ( ry (k), · · · , r y (k + N − 1)) , the predictive controller solves the below optimisation: 
+
+U ∗ 
+
+> y
+
+(k) = arg min   
+
+> Uy(k)
+> N−1
+
+X
+
+> i=0
+
+
+
+Qy
+
+ y∗ 
+
+> e
+
+(k + i) − ye(i|k)
+
+2
+
++ iy(i|k)
+
+> 2
+> Ry
+
+
+
+s.t. ¯ξy(i+1 |k) = ¯Ay (¯ xjh) ¯ξy(i|k) + ¯By iy(i|k),ye(i|k) =  1 0 ¯xjh 0 01,2Tdy 
+
+ ¯ξy(i|k) − D, y∗ 
+
+> e
+
+(k + i) =  1 0  ry (k + i),
+
+¯ξy(i|k) ∈ R ¯ξy ,r y
+
+> ¯xjh
+
+( ¯ξy , r y (k + i)) , i ∈ Z[0 ,N −1] ,j ∈ Z[1 ,N l],
+
+¯ξy(0 |k) = ¯ξy (k), (19) where iy(i|k)
+
+> 2
+> Ry
+
+= iTy(i|k)Ry iy(i|k), Qy and Ry are the tuning weights on the Y-axis position tracking error and control input, respectively. The optimal control input set is 
+
+U ∗ 
+
+> y
+
+(k) ≜
+
+
+
+i∗
+
+> y(0 |k)
+
+, · · · , i ∗ 
+
+> y(N−1|k)
+
+
+
+. At each time instant, the optimal control iy (k) = i∗ 
+
+> y(0 |k)
+
+is applied to the plant. The constraint of rotation angle θ, that is required in Remark 3, is guaranteed by enforcing the state ¯ξy within the calculated RCI set. The state of reference for X-axis is assumed within the control invariant set rx ∈ R rx
+
+> ∞
+
+. The design of control law for ix is to ensure the following error bound: 
+
+∥x∗ 
+
+> e
+
+− xh∥∞ ≤ ¯ϵx (20) Then, let ¯ξx(k) ≜ (ξ(k), i x(k − 1) , · · · , i x(k − Tdx )) be the state of X-axis augmented system, to account for the input delay, the Tdx step delay is incorporated into the system dynamics (13) as: 
+
+¯ξx(k + 1) = 
+
+
+
+Ax 0 · · · 0 Bx
+
+0 0 · · · 0 00 1 · · · 0 0
+
+... . . . ...
+
+0 0 · · · 1 0
+
+
+
+¯ξx(k) + 
+
+
+
+010
+
+...
+
+0
+
+
+
+ix(k)+
+
+
+
+Ex
+
+00
+
+...
+
+0
+
+
+
+dx(k)
+
+≜ ¯Ax ¯ξx(k) + ¯Bxix(k) + ¯Exdx(k) (21) To ensure the constraint (20) is satisfied, the Algorithm 1 is modified with Rs =6
+
+( ¯ξx, r x) ∈ R6+2 Tdx | ¯ξx ∈ R4+2 Tdx , r x ∈ R rx 
+
+> ∞
+
+and ¯R0 =( ¯ξx, r x) ∈ R6+2 Tdy | ¯ξx ∈ X x, ∥x∗ 
+
+> e
+
+− xh∥∞ ≤ ¯ϵx to initialize the iteration and the following set computation is utilised for the RCI set Rrx 
+
+> ∞
+
+computation: 
+
+ˆP   ¯Rm, ρ  ← { ( ¯ξx, r x) ∈ R6+2 Tdx | ∃ ix ∈ U x,
+
+  ¯Ax ¯ξx + ¯Bxix + ¯Exdx, A r rx + Br ux
+
+ ∈ ¯Rm − B6+2 Tdx (ρ),
+
+∀(dx × ux) ∈ (Wx × U r )}.
+
+Based on the computed RCI set R¯ξx,r x and N steps ref-erence trajectory, i.e., γNx (k) = ( rx(k), · · · , r x(k + N − 1)) ,the control law ix is computed by solving the following optimisation problem: 
+
+U ∗ 
+
+> x
+
+(k) = arg min  
+
+> Ux(k)
+> N−1
+
+X
+
+> i=0
+
+
+
+Qx
+
+ x∗ 
+
+> e
+
+(k + i) − xh(i|k)
+
+2
+
++ Rxi2
+
+> x(i|k)
+
+
+
+s.t. ¯ξx(i+1 |k) = ¯Ax ¯ξx(i|k) + ¯Bxix(i|k),xh(i|k) =  1 0  ¯ξx(i|k),x∗ 
+
+> e
+
+(k + i) =  1 0  rx(k + i),
+
+¯ξx(i|k) ∈ R ¯ξx,r x ( ¯ξx, r x(k + i)) , i ∈ Z[0 ,N −1] ,
+
+¯ξx(0 |k) = ¯ξx(k), (22) where Qx and Rx are the cost function weight on X-axis position error and control input respectively; U ∗ 
+
+> x
+
+(k) = 
+
+i∗
+
+> x(0 |k)
+
+, · · · , i ∗ 
+
+> x(N−1|k)
+
+
+
+. At each time instant, the optimal control input ix(k) ≜ i∗ 
+
+> x(0 |k)
+
+is applied to the plant. 
+
+C. Analysis of closed-loop property 
+
+The following theorem presents the recursive feasibility of the proposed control law (19) and (22). 
+
+Theorem 1. Consider the reference subject to (16) , system 
+
+(10) and (11) subject to (12) , and operating constraint (18) 
+
+and (20) hold. If the control law (19) and (22) is feasible at time instant k ∈ Z0+ , then they are feasible for all ¯k, ¯k ≥ k,and the closed-loop system satisfies (12) , (18) and (20) .Proof. For the recursive feasibility of (22), it means given the optimal solution U ∗ 
+
+> x
+
+(k) = ( i∗
+
+> x(0 |k)
+
+, · · · , i ∗ 
+
+> x(N−1|k)
+
+) at any time instant k ∈ Z0+ , there exists a feasible solution ˜Ux(k + 1) = (˜ ix(0 |k+1) , · · · ,˜ix(N −1|k+1) ) at time k + 1 .At time instant k, ix(k) = i∗ 
+
+> x(0 |k)
+
+applies to the plant and 
+
+( ¯ξx(1 |k), r x(k + 1)) ∈ R ¯ξx,r x holds for every ax(k) ∈ U r .Since rx(k) ∈ X r , at k + 1 time instant ( ¯ξx(k + 1) , r (k +1)) ∈ R ¯ξx,r x holds, which means there exists ˜ix(0 |k+1) such that ( ¯ξx(1 |k+1) , r (k + 1 + 1)) ∈ R ¯ξx,r x for r(k + 1) ∈ X r .Since reference r(k + 1 + i) for i = 0 , · · · , N − 1 satisfies the reference constraint (16), control input ˜Ux(k + 1) can be constructed and ˜Ux(k + 1) is feasible. The proof for (19) is similar and is thus omitted. 
+
+Remark 6. Under the condition of Theorem 1, the control input u(k) = ( i∗
+
+> x(0 |k)
+
+, i ∗
+
+> y(0 |k)
+
+) for k ∈ Z0+ is the solution of Problem 1. 
+
+Remark 7. The Theorem 1 and Remark 6 hold for systems with input delay if the augmented system is used in RCI set computation and MPC formulation. D. Procedure of implementing proposed algorithm 
+
+The control architecture consists of two main stages, as illustrated in Fig. 2. In the offline stage, the RCI sets are computed for each linearisation point using the switched LTI models and the disturbance sets. In the online stage, the feedback xh determines the active linearisation point, the corresponding RCI set is selected, and the MPC optimisation is solved to compute the control inputs ix and iy while enforcing the RCI set constraints. To obtain a clear overview of implementing the proposed control algorithm, the procedure is summarised as: 
+
+Offline: 
+
+1) Choose the value of tracking error bound ϵx, ϵy based on the given contouring error bound ϵc and ϵx +ϵy ≤ ϵc.2) Choose the value of the maximum rotation angle con-straint θmax based on θmax ≤ ϵx/D and compute the 
+
+¯ϵx using ¯ϵx = ϵx − Dθ max .3) Determine the linearisation point ¯xjh, j ∈ Z[1 ,N l] based on the operation range ξx ∈ X x.4) Obtain the augmented control-oriented models as shown in (17) and (21). 5) Compute the reference CI set Rrx 
+
+> ∞
+
+and Rry 
+
+> ∞
+
+based on the requirements of path been traced, i.e., sets of Xr and Ur .6) Compute the RCI sets R¯ξx,r x and R¯ξy ,r y
+
+> ¯xjh
+
+using the proposed algorithm. 
+
+Online: 
+
+1) Obtain the current states ¯ξx(k) and ¯ξy (k) based on feedback xh(k), y1(k) and y2(k).2) Determine the value of j in ¯xjh based on the feedback of xh, and update the R¯ξy ,r y
+
+> ¯xjh
+
+in (19). 3) Compute U ∗ 
+
+> y
+
+(k) and U ∗ 
+
+> x
+
+(k) using (19) and (22) respec-tively. 4) Implement control input u(k) = ( i∗
+
+> x(0 |k)
+
+, i ∗
+
+> y(0 |k)
+
+).IV. R ESULTS 
+
+Ideally, the contouring performance of the proposed con-troller should be tested on the laser machine described in Section II. However, due to positional discrepancies between the actuators and the end-effector, and the lack of direct positional feedback from the end-effector, the performance can only be evaluated indirectly through post-process product quality. To address this limitation, a platform is designed that replicates the biaxial system dynamics while incorporating input delay and discretisation conditions. This section details the design of the test bench, the replication of the biaxial system, and the performance validation results of the proposed controller. 7Switched LTI models Disturbance set Switched LTI models                  
+
+> RCI set computation
+> +
+> +
+> Position-dependent LTI RCI set Database
+> Offline Stage
+> ¯R0
+> User input Generator
+> State Augmentation
+> Point Selection
+> Select active linearisation point
+> kk+ 1 k+ 2 . . . k+p
+> PAST FUTURE
+> Prediction Horizon
+> Sample Time
+> MPC Optimisation
+> kk+ 1 k+ 2 . . . k+p
+> PAST FUTURE
+> Prediction Horizon
+> Sample Time
+> X axis solver Y axis solver
+> Online Stage
+> Feedback
+> Baxial System (Plant)
+> Control input
+> Active RCI set
+> Augmented states
+
+Fig. 2. Block diagram of the proposed contouring error-bounded control architecture. Simulink real-time output 
+
+MT1 MT2 
+
+Development computer 
+
+Back-to-back motor 
+
+Target computer 
+
+Fig. 3. Experimental test bench for contouring control. 
+
+A. System identification 
+
+To parameterize the proposed model, data were collected from a commercial laser machine with a moving distance of 
+
+1.5 m and 3 m for the X and Y-axis, respectively. Analogue incremental encoders ERN1387 with 2048 line resolution are used to measure the position of actuators. A 4 A peak amplitude chirp-signal current is implemented on the Y-axis motor to excite the system when the X-axis motor is held constant at different positions. The parameters are identified based on the frequency response from the Y-axis current to the dual-drive velocities using the collected data. The physical system exhibits changes in anti-resonance frequency when the X-axis motor moves along the gantry beam, exhibiting a state-dependence of this motor on the resulting dynamics and validated results are demonstrated in [23], which is omitted here. 
+
+B. Experiment setup and configuration 
+
+To replicate the biaxial system, a hardware-in-the-loop test bench was developed, as illustrated in Fig. 3. It comprises a development computer, a target computer, and two identical rotary motors arranged in a back-to-back configuration. The controller is implemented online using the Simulink Real-Time environment. The target computer is a Dell Embedded Box PC 5000 equipped with an Intel Core i7-6820EQ processor. 27.498 27.5 27.502 27.504 27.506 
+
+Time (s) 
+
+> -0.5 00.5
+> Current (A)
+> Command sent by target PC
+> Command received by drive
+> Current feedback
+> Ideal response time
+> Actual response time
+> Communication delay
+
+Fig. 4. Closed-loop response of current loop on motor MT1. 
+
+The motors are equipped with two independent servo drives, identical to those used in actual industrial applications. Prior to the deployment of the proposed contouring control algorithms, the current loop response was analysed, and the results are shown in Fig. 4. The communication rate between the target PC and the servo drive is first configured at a fast sampling rate with 4 kHz, with a proportional-integral (PI) controller embedded at the drive level for current tracking. Although the servo drive has an intrinsic control cycle of 1 ms, an additional 1 ms delay is observed in the closed-loop response due to communication latency between the target PC and the drive. The controller is therefore configured to operate at a 2 ms update rate, and a one-sample input delay is effectively introduced. This delay is taken into account in the subsequent modelling and control design. By properly generating the load torque for motor MT2 and applying a rotary-to-translational motion conversion, the movement of motor MT1 can represent the dynamics of the 
+
+xh coordinate. The configuration begins with the dynamics of motor MT1, described as follows: 
+
+JA ¨θh = kAix − br ˙θh − FL − Fn, (23) where JA is the total moment of inertial including the con-8
+
+tributions from both motors and the coupling mechanism, θh
+
+is the rotary angle of motor MT1, kA is the torque constant of the motors, br is the rotary viscous-friction coefficient, FL
+
+is the load torque imposed on motor MT1 with expression 
+
+FL = kAiT and iT is the current of the motor MT2, Fn is the unmodeled nonlinear effects. With the unit conversion θh ≜ xh 
+
+> rA
+
+, where rA is the radius of the motor shaft, the dynamics (23) is rewritten as: 
+
+¨xh = kA
+
+MA
+
+ix − bA
+
+MA
+
+˙xh − FL
+
+MA
+
+− Fn
+
+MA
+
+, (24) where MA ≜ JA 
+
+> rA
+
+is the equivalent total mass and bA ≜ br 
+
+> rA
+
+is the viscous friction coefficient for the translational movement. By choosing the torque command of motor MT2 as 
+
+FL = MA
+
+
+
+( kA
+
+MA
+
+− kx
+
+Me
+
+)ix − ( bA
+
+MA
+
+− bx
+
+Me
+
+) ˙ xh − dx
+
+
+
+,
+
+(25) where Me, kx and bx are the parameters of the industrial laser machine, the dynamics of system (24) becomes: 
+
+¨xh = kx
+
+Me
+
+ix − bx
+
+Me
+
+˙xh + dx − Fn
+
+MA
+
+. (26) With the consideration of one-sample delay in the current loop, the dynamics of the test bench in discrete time with sampling Ts becomes: 
+
+˙xh(k + 1) = TskA
+
+MA
+
+ix(k − 1) + 
+
+
+
+1 − TsbA
+
+MA
+
+
+
+˙xh(k)
+
+− TsFL(k − 1) 
+
+MA
+
+− TsFn(k)
+
+MA
+
+.
+
+The delay of current leads to a delayed torque when implementing the command (25) on motor MT2 as : 
+
+FL(k − 1) = MA
+
+
+
+( kA
+
+MA
+
+− kx
+
+Me
+
+)ix(k − 1) 
+
+− ( bA
+
+MA
+
+− bx
+
+Me
+
+) ˙ xh(k − 1) − dx(k − 1) 
+
+
+
+.
+
+Then the dynamics of system is: 
+
+˙xh(k + 1) = Tskx
+
+Me
+
+ix(k − 1) + 
+
+
+
+1 − TsbA
+
+MA
+
+
+
+˙xh(k) + FN (k)
+
+(27) where FN (k) = Ts
+
+ bA 
+
+> MA
+
+− bx
+
+> Me
+
+
+
+˙xh(k − 1) + Tsdx(k − 1) − 
+
+> TsFn(k)
+> MA
+
+can be considered as the disturbance and is assumed within a bounded set FN ∈ W N .With ξx ≜ (xh, ˙xh) and ix(k − 1) be the state and input respectively, the dynamics (27) is represented in state space form as: 
+
+ξx(k + 1) = Aeξx(k) + Beix(k − 1) + EeFN (k), (28) where the matrix Ae, Be and Ee can be inferred from (27). Following the step in augmenting the system dynamics, let 
+
+¯ξx(k) ≜ (ξx(k), i x(k − 1)) be the state of the augmented system, the one-sample delay is incorporated into the X-axis system dynamics (28) as: 
+
+ ξx(k + 1) 
+
+ix(k)
+
+
+
+=
+
+ Ae Be
+
+01,2 0
+
+  ξx(k)
+
+ix(k − 1) 
+
+
+
++
+
+ 02,1
+
+1
+
+
+
+ix(k) + 
+
+ Ee
+
+0
+
+
+
+FN (k)
+
+≜ ¯A ¯ξx(k) + ¯Bi x(k) + ¯EF N (k). (29) This control-oriented model (29) and bounded disturbance 
+
+FN ∈ W N are used to compute the RCI set R¯ξx,r x based on the proposed algorithm. The nominal model ¯ξx(k + 1) = ¯A ¯ξx(k) + ¯Bi x(k) is used in the MPC based formulation (22) for error bounded tracking. The back-to-back motor configuration is employed to repli-cate the dynamics described in (4), with the nonlinear dis-turbance Fn inherently introduced by this setup. This experi-mental platform is utilised in conjunction with the simulated dynamics (5) and (6), which are executed on the target com-puter to emulate the plant for the biaxial contouring control experiments. 
+
+C. Contouring results 
+
+To validate the efficacy of the proposed algorithm, the end-effector is required to follow a contour consisting of a circular path and a straight line with the maximum velocity at 0.1 m/s and maximum acceleration at 1 m/s 2. The circle has centre at 
+
+(0 , 0) with 0.08 m radius. The desired contouring error bound ϵc is chosen as 4 mm, equivalent to 5% of the circular radius in the desired trajectory. The controller is configured to update at Ts = 2 ms and the data sampling rate is chosen as 4 kHz. The set manipulation is based on MPT3 toolbox [26]. The solver CVXGEN is utilised to ensure the fast computation of the optimisation problem [27]. The CVXGEN solver is implemented with a maximum of 
+
+25 iterations, an optimality tolerance of 10 −4, and a feasibility residual tolerance of 10 −6.In order to guarantee the 4 mm contouring error bound, the upper bound of X and Y-axis tracking error is chosen as 
+
+ϵx = 2 mm, ϵy = 2 mm. The upper bound of rotation angle is chosen as θmax = 0 .0025 rad and this gives ¯ϵx = 1 .5
+
+mm. The selection of these parameters follows directly from the design requirements. The contouring bound ϵc = 4 mm corresponds to a 5% tolerance on the circular path radius, set by the application. Since both axes exhibit comparable dynamic characteristics, the bound is equally partitioned as 
+
+ϵx = ϵy = 2 mm. According to Remark 3, the rotation angle constraint must satisfy θmax ≤ ϵx/D to ensure a positive tightened bound ¯ϵx > 0. The value θmax = 0 .0025 rad is selected conservatively to both satisfy this requirement and maintain the system within the valid small-angle linearisation regime, yielding ¯ϵx = 1 .5 mm as the effective X-axis tracking bound. For the Y-axis control, the switching LTI model (11) is linearised at point ¯xjh = {− 0.075 , −0.025 , 0.025 , 0.075 } mfor j ∈ Z[1 ,4] with ∆xh = 0 .025 m to achieve a trade-off between the accuracy of the control-oriented model and numbers of controller switching. 9
+
+Two sets of tuning parameters in MPC cost function (19) and (22) are chosen to test the effect of tuning on contouring performance using the proposed control algorithm. The first set of parameters (Tuning A) is chosen with values Qx = Qy =10 5, Rx = 0 .1 and Ry = diag (0 .1, 0.1) to put more emphasis on the tracking errors. The second set of tuning parameters (Tuning B) is selected in a less aggressive way with values 
+
+Qx = Qy = 10 3, Rx = 0 .5 and Ry = diag (0 .5, 0.5) . The prediction horizon is set to N = 2 for both axes MPC. This short horizon is chosen to ensure real-time feasibility at the 
+
+2 ms sampling rate. It is worth noting that the contouring error guarantee is determined by the RCI set constraints rather than the MPC tuning weights. The contouring error bound ϵc is specified by the manufacturing requirement, and the axis-wise bounds ϵx,
+
+ϵy are chosen such that ϵx +ϵy ≤ ϵc, which does not affect the guaranteed bound. The linearisation interval ∆xh is a mod-elling choice. A finer interval provides a closer approximation of the feasible set, making the RCI set computation easier to converge, while the guaranteed performance is maintained as long as the RCI sets exist. The MPC cost weights influence the transient behaviour within the bound, as demonstrated by the two tuning sets, but the bound itself is always satisfied. For control performance based on Tuning A, the tracking errors on the X, Y-axis and rotation angle are shown in Fig. 5. The maximum tracking errors of X and Y-axis are 1.35 mm and 1.23 mm, respectively, and both values are within the desired tracking error tolerance. The rotation angle is much smaller compared to the upper bound. The corresponding tracking performance based on Tuning B is given in Fig. 6. The less aggressive tuning results in slightly larger maximum tracking errors on the X and Y-axis as 1.48 mm and 1.27 
+
+mm respectively, but errors are still within the tolerance. It can be seen that although putting more weight on tracking performance may result in a smaller maximum tracking error, at the same time, it results in more oscillation in tracking. The computed contouring errors based on two tuning pa-rameters are shown in Fig. 7. Since the end-effector position is not directly measured on the real machine, the contouring error reported here is computed from the emulated end-effector states (xe, y e), which are reconstructed from the HIL states 
+
+(xh, y n, θ ) using (1) and (2). The maximum contouring errors are 1.65 mm and 1.62 mm for Tuning A and B respectively. Both of the contouring errors are within the desired tolerance, and it shows that by detuning the proposed controller, the con-touring error can still be bounded. Although a larger steady-state contouring error occurs using the detuned controller, this steady-state error can be removed by including the integrator augmentation in the MPC formulation [28]. The comparison of the contouring path achieved by two-different-tuning controllers is shown in Fig. 8. It is clear that putting more penalties on tracking errors results in more obvious vibration along the path and the proposed error bounded control method can ensure the contour error is not violated for different tuning schemes. 0 2 4 6 8                       
+
+> -1 01
+> 02468
+> -1 01
+> 02468
+> Time (s)
+> -2 02
+> 10 -7
+> Fig. 5. Experimental tracking performance based on Tuning A: X-axis error (up), Y-axis error (middle) and rotation angle (down). 02468
+> -1 01
+> 02468
+> -1 01
+> 02468
+> Time (s)
+> -2 0210 -6
+> Fig. 6. Experimental tracking performance based on Tuning B: X-axis error (up), Y-axis error (middle) and rotation angle (down).
+
+V. C ONCLUSION 
+
+In this work, a contouring error-bounded control architec-ture is proposed for dual-drive systems exhibiting position-dependent flexibility and input delay. Experimental results validate the effectiveness of the proposed approach in main-taining prescribed contouring error bounds under input delay and discretisation effects. The presented algorithm shows advantages including its universal applicability for different shapes of desired contour and low commissioning effort. Furthermore, the proposed control framework is extendable to other systems characterised by structural flexibility, en-abling contouring error-bounded performance across a wider 10 0 2 4 6 8
+
+Time (s) 
+
+> 00.5 11.5 2
+> Contouring error (mm)
+
+Fig. 7. Experimental contouring error during the whole process. -0.05 0 0.05 
+
+X-axis (m) 
+
+> -0.08 -0.06 -0.04 -0.02 00.02 0.04 0.06 0.08
+> Y-axis (m)
+> Desired contour
+> Actual contour based on Tuning A
+> Actual contour based on Tuning B
+> Start point
+> End point
+> Moving direction
+
+Fig. 8. Desired and actual contour based on different tuning. 
+
+class of applications. Future work may consider an extension to a linear parameter-varying (LPV) formulation, where the position-dependent dynamics are captured continuously rather than through discrete switching. Combining LPV models with formal contouring error guarantees via RCI sets remains an open theoretical challenge. The generalisation to multi-axis systems is another natural direction for future investigation. ACKNOWLEDGMENTS 
+
+The authors would like to thank Prof Chris Manzie from University of Melbourne and Prof Iman Shames from Aus-tralian National University for their enlightening discussion. We would also like to express our gratitude to Dr Lu Gan at ANCA Motion for his insightful discussion from a practical perspective. REFERENCES [1] M. Yuan, C. Manzie, M. Good, I. Shames, F. Keynejad, and T. Robinette, “Bounded error tracking control for contouring systems with end effector measurements,” in 2019 IEEE Internati onal Conference on Industrial Technology (ICIT) . IEEE, 2019, pp. 66–71. [2] W. Wang, J. Ma, Z. Cheng, X. Li, C. W. de Silva, and T. H. Lee, “Global iterative sliding mode control of an industrial biaxial gantry system for contouring motion tasks,” IEEE/ASME Transactions on Mechatronics ,vol. 27, no. 3, pp. 1617–1628, 2021. [3] C. Li, B. Yao, and Q. Wang, “Modeling and synchronization control of a dual drive industrial gantry stage,” IEEE/ASME Transactions on Mechatronics , vol. 23, no. 6, pp. 2940–2951, 2018. [4] W. Sun, J. Liu, and H. Gao, “A composite high-speed and high-precision positioning approach for dual-drive gantry stage,” IEEE Transactions on Automation Science and Engineering , 2024. [5] Y. Koren, “Cross-coupled biaxial computer control for manufacturing systems,” Journal of Dynamic Systems, Measurement, and Control , vol. 102, no. 4, pp. 265–272, Dec. 1980. [6] L. Aarnoudse, J. Kon, K. Classens, M. van Meer, M. Poot, P. Tacx, N. Strijbosch, and T. Oomen, “Cross-coupled iterative learning control for complex systems: A monotonically convergent and computationally efficient approach,” in 2022 IEEE 61st Conference on Decision and Control (CDC) . IEEE, 2022, pp. 1485–1490. [7] Y. Koren and C.-C. Lo, “Variable-gain cross-coupling controller for contouring,” CIRP annals , vol. 40, no. 1, pp. 371–374, 1991. [8] Z. Kuang, X. Li, H. Wang, H. Gao, and G. Sun, “Precise variable-gain cross-coupling contouring control for linear motor direct-drive table,” in 2019 American Control Conference (ACC) . IEEE, 2019, pp. 5737– 5742. [9] L. Li, N. Cheung, G. Yang, C. Wang, P. Fu, G. Li, and J. Pan, “Design of a variable-gain adjacent cross-coupled controller for coordinated motion of multiple permanent magnet linear synchronous motors,” Computers and Electronics in Agriculture , vol. 192, p. 106561, 2022. [10] N.-T. Hu, L.-Y. Chen, and C.-S. Chen, “Novel cross-coupling position command shaping controller using H ∞ in multiaxis motion systems,” 
+
+IEEE Transactions on Industrial Electronics , vol. 69, no. 12, pp. 13 099– 13 110, 2021. [11] L. Aarnoudse, J. Kon, K. Classens, M. van Meer, M. Poot, P. Tacx, N. Strijbosch, and T. Oomen, “Cross-coupled iterative learning control: A computationally efficient approach applied to an industrial flatbed printer,” Mechatronics , vol. 99, p. 103170, 2024. [12] J. Zhao, S. Gao, Z. Pan, L. Wang, and Z. Yu, “Cross-coupled syn-chronous control of dual linear motor servo system based on disturbance-assignment observer and iterative learning control,” IEEE Transactions on Transportation Electrification , 2024. [13] H. V. Dao, S. Na, D. G. Nguyen, and K. K. Ahn, “High accuracy contouring control of an excavator for surface flattening tasks based on extended state observer and task coordinate frame approach,” Au-tomation in Construction , vol. 130, p. 103845, 2021. [14] Y. Liu, W. Sun, C. Buccella, and C. Cecati, “Robust control of dual-linear-motor-driven gantry stage for coordinated contouring tasks based on feed velocity,” IEEE Transactions on Industrial Electronics , vol. 70, no. 6, pp. 6229–6238, 2022. [15] C.-L. Chen and C.-C. Peng, “Coordinate transformation based contour following control for robotic systems,” in Advances in Robot Manipu-lators . IntechOpen, 2010. [16] B. Yao, C. Hu, and Q. Wang, “An orthogonal global task coordinate frame for contouring control of biaxial systems,” IEEE/ASME Transac-tions on Mechatronics , vol. 17, no. 4, pp. 622–634, 2011. [17] Y. Lou, H. Meng, J. Yang, Z. Li, J. Gao, and X. Chen, “Task polar coordinate frame-based contouring control of biaxial systems,” IEEE Transactions on Industrial Electronics , vol. 61, no. 7, pp. 3490–3501, 2013. [18] X. Yang, R. Seethaler, C. Zhan, D. Lu, and W. Zhao, “A novel contouring error estimation method for contouring control,” IEEE/ASME Transactions on Mechatronics , vol. 24, no. 4, pp. 1902–1907, 2019. [19] D. Lam, C. Manzie, and M. C. Good, “Model predictive contouring control for biaxial systems,” IEEE Transactions on Control Systems Technology , vol. 21, no. 2, pp. 552–559, 2012. [20] S. Yang, A. H. Ghasemi, X. Lu, and C. E. Okwudire, “Pre-compensation of servo contour errors using a model predictive control framework,” 
+
+International Journal of Machine Tools and Manufacture , vol. 98, pp. 50–60, 2015. [21] Z. Li, J. Wang, J. An, Q. Zhang, Y. Zhu, H. Liu, and H. Sun, “Con-trol strategy of biaxial variable gain cross-coupled permanent magnet synchronous linear motor based on mpc-mras,” IEEE Transactions on Industry Applications , vol. 58, no. 4, pp. 4733–4743, 2022. [22] L. Wang, H. Liu, L. Yang, J. Zhang, W. Zhao, and B. Lu, “The effect of axis coupling on machine tool dynamics determined by tool deviation,” 
+
+International Journal of Machine Tools and Manufacture , vol. 88, pp. 71–81, 2015. 11 
+
+[23] M. Yuan, C. Manzie, L. Gan, M. Good, and I. Shames, “Modelling and contouring error bounded control of a biaxial industrial gantry machine,” in 2019 IEEE Conference on Control Technology and Applications (CCTA) . IEEE, 2019, pp. 388–393. [24] M. Yuan, Y. Wang, C. Manzie, Z. Xu, and T. Chai, “Contouring error-bounded control for biaxial switched linear systems,” IEEE Transactions on Systems, Man, and Cybernetics: Systems , 2026. [25] M. Yuan, C. Manzie, M. Good, I. Shames, L. Gan, F. Keynejad, and T. Robinette, “Error-bounded reference tracking mpc for machines with structural flexibility,” IEEE Transactions on Industrial Electronics ,vol. 67, no. 10, pp. 8143–8154, 2019. [26] M. Herceg, M. Kvasnica, C. N. Jones, and M. Morari, “Multi-parametric toolbox 3.0,” in 2013 European control conference (ECC) . IEEE, 2013, pp. 502–510. [27] J. Mattingley and S. Boyd, “Cvxgen: A code generator for embedded convex optimization,” Optimization and Engineering , vol. 13, pp. 1–27, 2012. [28] M. A. Stephens, C. Manzie, and M. C. Good, “Model predictive control for reference tracking on an industrial machine tool servo drive,” IEEE Transactions on Industrial Informatics , vol. 9, no. 2, pp. 808–816, 2012. 
+
+Meng Yuan (Member, IEEE) received the Ph.D. degree in electrical and electronic engineering from the University of Melbourne, Australia in 2020. He was a Research Fellow at the Rehabilitation Research Institute of Singapore, Nanyang Techno-logical University, Singapore. From 2023 to 2025, he was a Researcher and Marie Skłodowska-Curie Fellow at Chalmers University of Technology, Swe-den. He is currently a Lecturer (Assistant Professor) in the School of Engineering and Computer Science at Victoria University of Wellington, New Zealand. His research interests include modeling, learning-based control and model predictive control for batteries, energy systems, mechatronics, and robotics. 
+
+Tianyou Chai (Life Fellow, IEEE) received the Ph.D. degree in control theory and engineering in 1985 from Northeastern University, Shenyang, China, where he became a Professor in 1988. He is the founder and Director of the Center of Au-tomation, which became a National Engineering and Technology Research Center and a State Key Laboratory. He is a member of Chinese Academy of Engineering, IFAC Fellow and IEEE Fellow. He has served as director of Department of Information Science of National Natural Science Foundation of China from 2010 to 2018. His current research interests include modeling, control, optimization and integrated automation and intelligence of complex industrial processes.

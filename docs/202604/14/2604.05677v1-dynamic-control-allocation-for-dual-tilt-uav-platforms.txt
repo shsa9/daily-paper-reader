@@ -1,0 +1,724 @@
+Title: Dynamic Control Allocation for Dual-Tilt UAV Platforms
+
+URL Source: https://arxiv.org/pdf/2604.05677v1
+
+Published Time: Wed, 08 Apr 2026 00:53:25 GMT
+
+Number of Pages: 7
+
+Markdown Content:
+—————————————————————– PREPRINT —————————————————————– 
+
+# Dynamic Control Allocation for Dual-Tilt UAV Platforms 
+
+Marcello Sorge 1, Federico Ciresola 1, Giulia Michieletto 2,1, Angelo Cenedese 1,3
+
+> 1
+
+Department of Information Engineering University of Padova Padova, Italy 
+
+> 2
+
+Department of Management and Engineering , University of Padova Padova, Italy 
+
+> 3
+
+Department of Industrial Engineering , University of Padova Padova, Italy corresponding contact: marcello.sorge@unipd.it 
+
+Abstract —This paper focuses on dynamic control allocation for a hexarotor UAV platform, considering a trajectory tracking task as as case study. It is assumed that the platform is dual-tilting, meaning that it is able to tilt each propeller indepen-dently during flight, along two orthogonal axis. We present a hierarchical control structure composed of a high-level controller generating the required wrench for the tracking task, and a control allocation law ensuring that the actuators produce such wrench. The allocator imposes desired first-order dynamics on the actuators set, and exploits system redundancy to optimize the actuators state with respect to a given objective function. Unlike other studies on the subject, we explicitly model actuator saturation and provide theoretical insights on its effect on control performances. We also investigate the role of propeller tilt angles, by imposing asymmetric shapes in the objective function. Numerical simulations are presented to validate the allocation strategy. 
+
+Index Terms —Tilting Multirotor, Dynamic Control Allocation 
+
+I. I NTRODUCTION 
+
+In the last decades, UAVs have been the subject of many researches, due to the extremely wide range of tasks they allow to perform. Among these, the most relevant include infrastruc-ture inspection, environmental monitoring, aerial manipulation and search and rescue applications. Different from standard (fixed-propellers) multirotors, tilting platforms are actuated by propellers whose spinning axes can change orientation during flight. This enables omnidirectional vehicles capable of generating forces in arbitrary directions, independently of their body orientation. This feature is essential in interactive applications or challenging flights. The redundancy provided by the actuators’ degrees of freedom complicates the control design because the map-ping between the actuator inputs and the desired wrench is nonlinear and configuration-dependent. Furthermore, there are infinitely many control input trajectories that can produce the desired wrench on the platform. To address these challenges, control allocation strategies are often necessary. 
+
+Related works: Several control allocation strategies for tilting multirotors have been developed. In [8], a LQRI controller is proposed for jerk-level input allocation on a tilting multirotor. 
+
+> *The results of this research were obtained in whole or in part as part of the Doctorate of National Interest in Robotics and Intelligent Machines. National PhD DRIM, Genova
+
+The actuator commands are obtained by multiplying the jerk-level commands by the Jacobian pseudo-inverse of the static allocation matrix. Projection onto the null space of such a matrix is exploited to maximize hover efficiency and handle kinematic and rank-reduction singularities. In [9], a static differential allocation approach is proposed, in which actuator dynamics are assumed to be first-order linear. Projection onto the null space of the Jacobian of the static allocation matrix is combined with approximated propeller limit curves to keep the actuators within their saturation limits. While many allocation strategies rely on static optimization, meaning that the optimal control input is computed at each control iteration, recently several dynamic control allocation strategies have been proposed, in which static optimization is replaced with gradient descent-like strategies. For a brief overview on dynamic control allocation, the reader may refer to [7] and [6]. In [4], a dynamic control allocation strategy is proposed for systems subject to periodic reference trajectories. Optimality is considered with respect to a Lagrangian cost function, i.e., the objective function is defined as the integral of the steady-state periodic input signal over a period. A hybrid allocator is proposed, which updates the allocator state only after each period of the control input evolution is completed. This strategy is employed on a tilting quadrotor in [5], where the wrench commanded by a high-level controller is converted into actuator velocities through a static allocator. The resulting control signal is fed to a dynamic allocator, based on a polynomial decomposition of the actuators transfer matrix, to minimize the spinning rate of a single, a priori chosen propeller. However, many works on control allocation for tilting UAVs either neglect actuator dynamics or assume that they obey simple, linear, first-order dynamics. Instead, in [2], a dynamic allocation approach is proposed, in which the actuator system is explicitly modeled as a first-order nonlinear redundant system. In [2], a hierarchical structure is proposed, in which a high-level controller provides the desired wrench for the platform, while the allocator imposes some desired dynamics on the actuators state variables, ensuring that the output of such a system asymptotically converges to the control signal computed by the high-level controller. At the same time, the allocator injects in the actuators control input a component driving the actuators’ state variables to the optimum with 
+
+> arXiv:2604.05677v1 [cs.RO] 7 Apr 2026
+
+—————————————————————– PREPRINT —————————————————————– 
+
+respect to a given objective function. Projection onto the null space of the Jacobian of the actuators output function ensures that optimization does not influence the behavior induced by the high-level controller. The allocation structure in [2] has been applied in [1] and in [3] to the ROtor graSPing Omnidirectional (ROSPO) platform, an overactuated propeller-based ground platform. In these works, the objective function aims at maintaining the actuators state within its saturation limits, while penalizing high propeller spinning rates in order to reduce energy consumption. 
+
+Contributions: In this work, we consider the allocator structure designed for the ROSPO platform and employ it to a double tilting UAV platform. Differently from previous works, we explicitly model saturation in the actuators output function, studying how it affects control performances. We also study the role of the propeller tilt angles, by defining objective func-tions that are asymmetric on tilt angles. The main contributions of this work can be summarized as follows:  
+
+> ‚
+
+we show how the allocator structure presented in [2], [1] and [3] can be adapted to a double-tilting UAV platform, explicitly considering actuator dynamics, and exploiting redundancy to optimize control performances with respect to a given secondary objective function;  
+
+> ‚
+
+we provide theoretical insights on how actuator saturation affects control performance, and how the control structure leverages on the allocator to maintain the actuator state variables within their saturation limits at steady-state;  
+
+> ‚
+
+we investigate the role of the propeller tilt angles in tracking tasks, by defining additional objective functions with asymmetric shapes in α and β, imposing different constraints on how propellers can tilt. The remainder of the paper is organized as follows: Section II presents the dynamic equations describing the UAV plat-form and the actuators set. Section III derives the high-level control law and describes the allocator equations from [1]- [3], highlighting convergence properties and the effect of satura-tion on the allocator performances. Section IV presents and discusses the results obtained through numerical simulations, and Section V summarizes the main results. II. D UAL -T ILT UAV M ODEL 
+
+In this section, we derive the dynamics model for both a dual-tilt platform and the set of its actuators. Note that the UAV equations of motion describe a fully actuated system whose six degrees of freedom (DoFs) are controlled by the 
+
+input wrench uv P R6, while redundancy is provided by the actuator set, which offers an infinite number of configurations compatible with a given reference wrench. 
+
+A. Platform Dynamics 
+
+Let FW “ t OW , pxW , y W , z W qu be the inertial reference frame ( world frame) and FB “ t OB , pxB , y B , z B qu be the reference frame whose origin is located at the UAV center of mass (CoM)( body frame ). Then, adopting the Euler-Newton approach, the dual-tilt platform dynamics is governed by the following equations of motion: 
+
+»–m :pW
+
+J 9ωB
+
+fi fl “
+
+»–RW B pδqf B
+
+τ B
+
+fi fl ´
+
+»– mg ˆe3
+
+ωB ˆ JωB
+
+fi fl (1) where pW “ r x y z sJ P R3 is the position of the CoM of the multirotor in FW , RW B pδq P SO p3q is the rotation matrix describing the relative orientation of FB with respect to FW
+
+and depending on the triplet of roll, pitch and yaw Euler angles 
+
+δ “ r ρ θ ψ sJ P R3, m and J P R3ˆ3 are respectively the multirotor mass and inertia tensor. Furthermore, f B P R3 and 
+
+τ B P R3 are the wrench components induced by the actuators, 
+
+ˆe3 P R3 is the third canonical vector and g “ 9.81 m{s2 is the gravitational acceleration constant. Finally, ωB P R3 is the platform angular velocity expressed in FB that can be expressed as a function of the Euler angles derivatives 9δ as 
+
+ωB “ Wpδq 9δ “
+
+»———–
+
+1 0 ´sθ 
+
+0 cρ cθsρ 
+
+0 ´sρ cθcρ 
+
+fi ffi ffi ffi fl »———–
+
+9ρ
+
+9θ
+
+9ψ
+
+fi ffi ffi ffi fl (2) where c and s is a short notation to represent respectively cos ¨
+
+and sin ¨, and matrix Wpδq P R3ˆ3 is invertible for θ ‰ ˘ π 
+
+> 2
+
+.
+
+B. Actuators Dynamics 
+
+Let Fi “ t Oi, pxi, y i, z iqu the frame whose origin is located in the i-th propeller spinning center and the zi axis is aligned with the propeller spinning axis, i P r 1, 6s. The position pi P
+
+R3 of the i-th propeller center in FB and the orientation of its spinning axes zi P R3 are respectively identified by 
+
+pi “ Rz pγiqℓˆe1 (3) 
+
+zi “ Rz pγiqRy pβiqRxpαiqˆe3 (4) where ℓ P Rą0 is the length of the platform arms, ˆe1 P R3
+
+is the first canonical vector, Rz pγiq, Ry pβiq, and Rxpαiq P 
+
+SO p3q represent canonical rotations of angles γi, βi and αi
+
+around the z, y and x axes of the body frame FB , respectively. More in detail, the cant angle αi P r´ π, π q describes the spinning axes rotations along the arm direction, whereas the 
+
+dihedral angle βi P r0, π q describes rotations along the direction orthogonal to the arm. By rotating at spinning rate ωi P Rě0, any i-th propeller generates a force f Bi P R3 and a torque τ Bi P R3 at the origin of the body frame, expressed as 
+
+f Bi “ kc f ωi|ωi|zi (5) 
+
+τ Bi “ ´ κc τ ωi|ωi|zi ` pi ˆ f Bi (6) where cf and cτ are the force and torque coefficients respec-tively, and κ “ 1 for counter-clockwise rotating propellers, while κ “ ´ 1 for clockwise rotating propellers. Then, the total —————————————————————– PREPRINT —————————————————————– 
+
+High-level Controller Allocator Actuator Dynamics UAV 
+
+δd
+
+pd
+
+u‹ 
+
+> v
+
+ua uv 
+
+> Fig. 1. Hierarchical control architecture showing the high-level controller and the low-level allocator
+
+forces and torques exerted by the propellers on the platform CoM can be expressed as 
+
+f B “
+
+> 6
+
+ÿ
+
+> i“1
+
+f Bi
+
+τ B “
+
+> 6
+
+ÿ
+
+> i“1
+
+τ Bi
+
+(7) In this work, the attention is focused on star-shaped dual-tilt hexarotors, thus we have that γi in (3) is equal to pi ´ 1qπ{3,
+
+i P r 1, 6s and αi and βi in (4) are time-varying parameters and constitute independently controllable inputs of the systems. Let xa “ r α1, ¨ ¨ ¨ , α 6, β 1, ¨ ¨ ¨ , β 6, ω 1, ¨ ¨ ¨ , ω 6sJ P R18 be the 
+
+state of the actuation system whose components are subject to saturation limits, namely 
+
+xa,j ď xa,j ď xa,j , j P r 1, 18 s (8) We assume that it is impossible for the actuators’ state to change instantaneously. Instead, the actuator set obeys first-order nonlinear dynamics ΣA described by 
+
+ΣA :
+
+#
+
+9xa “ fapxaq ` gapxaqua
+
+ya “ hapsat pxaqq “ uv
+
+(9) where ua P R18 is the actuators control signal and uv “pp f B qJ, pτ B qJqJ is the wrench acting on the platform CoM, defined in (7). Moreover, we have that fap¨q : R18 Ñ R18 ,
+
+gap¨q : R18 Ñ R18 ˆ18 , hap¨q : R18 Ñ R6 are suitably defined continuous functions, with gapxaq being full-rank, and sat p¨q : R18 Ñ R18 implements the saturation in (8). Since the dimension of the output vector ya is smaller than the dimension of the input vector ua, the actuators set is a redundant dynamical system, meaning that there exist an infinite number of actuator state configurations compatible with a desired wrench to be exerted. III. C ONTROL 
+
+In this section, the high-level control law and the actuators control and allocation strategies are derived. The high-level controller specifies the wrench so that a given state-space trajectory for the multirotor CoM is tracked, while the allocator drives the actuators state variables to satisfy such request, optimizing the state xa with respect to a given objective function. 
+
+A. High-Level Controller 
+
+Given a reference trajectory specified as pWd , 9pWd , :pWd ,
+
+δd, 9δd, :δd P R3, we define the position tracking error and the orientation tracking error respectively as 
+
+ep “ pWd ´ pW
+
+eδ “ δd ´ δ (10) A control law ensuring asymptotic tracking of the reference trajectory is then given as u‹ 
+
+> v
+
+“ “pf Bc qJ, pτ Bc qJ‰J, where 
+
+f Bc “ mRW B pδqJp :pd ` KD 9ep ` KP ep ` g ˆe3q
+
+τ Bc “ JW pδqp :δd ` KD,δ 9eδ ` KP,δ eδ qqq ` J 9W pδq 9δ
+
+` JW pδq 9δ ˆ JW pδq 9δ
+
+(11) where KD , KP , KD,δ and KP,δ P R3ˆ3 are diagonal and positive definite control gains. Then, by substituting (2) into the dynamic model (1), the tracking error dynamics can be written as :ep ` KD 9ep ` KP ep “ 0
+
+:eδ ` KD,δ 9eδ ` KP,δ eδ “ 0 (12) from which it is clear that “eJ 
+
+> p
+
+, eJ
+
+> δ
+
+‰J “ 0 is a globally asymptotically stable equilibrium. 
+
+B. Allocator 
+
+The goal of the allocator is to drive the wrench induced by the actuators to the wrench required by the high-level controller, while driving the actuators state variables to an optimum value with respect to a given objective function. To this end, the control law for the actuators set is chosen as 
+
+ua “ gpxaq´1` ´ f pxaq ` uy ´ uj
+
+˘ (13) where 
+
+uy “ γpp∇hpsat pxaq∇sat pxaqq :`uv,c ´ uv
+
+˘
+
+uj “ γj p∇hpsat pxaqq ∇sat pxaqq K∇sat pxaqJ∇Jpsat pxaqq 
+
+(14) with ∇p¨q representing the gradient of a function, the sym-bol p¨q : represents the right-pseudoinverse of a matrix, the symbol p¨q K represents the operator projecting vectors onto the null space of a matrix, γp, γj are positive scalars and 
+
+Jpxaq : R18 Ñ R is the objective function to be optimized. The diagonal operator ∇sat pxaq P R18 ˆ18 is defined as 
+
+∇sat pxa,h q :“
+
+#
+
+1 if xa,j ď xa,h ď xa,j 
+
+0 otherwise (15) —————————————————————– PREPRINT —————————————————————– 
+
+Substituting (13) in (9) and taking the derivative with respect to time of uv yields 
+
+˜ΣA :
+
+#
+
+9xa “ uy ´ uj
+
+9uv “ γppuv,c ´ uv q (16) The term uy ensures that the actuators output uv converges to the high-level controller’s output u‹ 
+
+> v
+
+, while the term uj drives the actuators state to the optimum value without affecting the actuators output. For the purpose of this work, f pxaq “ 0,
+
+gpxaq “ I18 , with In indicating the identity matrix in Rnˆn.The term uv,c in (14) is selected as 
+
+uv,c “ B´1` 9u‹ 
+
+> v
+
+´ Au ‹
+
+> v
+
+˘ ` K ˜uv (17) where B “ γpI6, A “ ´ γpI6, ˜uv “ uv ´ u‹ 
+
+> v
+
+and K P R6ˆ6
+
+is a control gain to be chosen so that A ´ BK is Hurwitz. Indeed, by substituting (17) into (16), the resulting wrench error dynamics can be expressed as 
+
+9˜uv “ p A ´ BK q˜uv (18) and clearly ˜uv “ 0 is a globally asymptotically stable equilibrium. The hierarchical control structure is depicted in Figure 1. 
+
+Remark 1. Asymptotic convergence of uv to u‹ 
+
+> v
+
+is not guar-anteed if the actuators state variables reach their saturation limits, due to the matrix ∇sat pxaq not being invertible. This can happen if the desired trajectory is too fast for the actuation capabilities of the robot, or if the high-level controller is too aggressively tuned. In the following, the operator ∇sat pxaq is computed as 
+
+∇sat pxa,h q “ 
+
+#
+
+1 if xa,j ď xa,h ď xa,j 
+
+ϵ otherwise (19) 
+
+with ϵ “ 0.001 to avoid numerical issues in simulations. 
+
+For our application, the objective function to be optimized is defined as 
+
+Jpxaq “ 
+
+> 6
+
+ÿ
+
+> i“1
+
+μα
+
+ˆ ˜αi
+
+∆αi
+
+˙6
+
+` μβ
+
+˜ ˜βi
+
+∆βi
+
+¸6
+
+` μω ω2 
+
+> i
+
+(20) where μα, μβ and μωa are positive scalars, and 
+
+˜xa,h “ xa,h ´ xma,h 
+
+xma,h “ xa,j ` xa,j 
+
+2∆xa,h “ xa,j ´ xa,j 
+
+(21) The first two terms in (20) aim at maximizing the distance between the propeller tilt angles and their saturation limits, while the last term aims at minimizing the propeller spinning rates, in order to minimize the energy consumption of the platform. 
+
+Remark 2. The injection of uj in the actuators con-trol ua provides a sub-optimal solution. Projection of 
+
+γj ∇sat pxaqJ∇Jpsat pxaqq implicitly encodes a soft constraint on the optimality of the control law, in order to ensure that the response induced by the controller is identical with 
+
+γj “ 0 (no optimization) and γj ‰ 0 (optimized control law). As established in Remark 1, in case the state xa reaches saturation, the structure of the projection operator in (14) 
+
+changes, resulting in different optimized and non-optimized responses. In the tests presented in this paper, however, this difference is negligible. 
+
+IV. S IMULATIONS AND RESULTS 
+
+In this section we present the results obtained with nu-merical simulations on a UAV platform, exploiting the hi-erarchical control scheme depicted in Figure 1. The plat-form considered for the tests is a coplanar, star-shaped hexarotor with mass m “ 2kg and inertia tensor J “
+
+diag p0.0217 , 0.0217 , 0.04 qkgm 2. Each propeller arm has length l “ 0.246 m, and all propeller arms are displaced by γ “ 60 ˝, with the first propeller arm aligned with axis 
+
+xB . Odd-numbered propellers are counter-clockwise-spinning, while even-numbered propeller are clockwise-spinning. The force and torque coefficients are respectively cf “ 8.59 ˆ10 ´6
+
+and cτ “ 1.37 ˆ 10 ´7 for all propellers. For simulation purposes, it is assumed that α “ β ´ 30 ˝, α “ β “ 30 ˝ , and finally |ω| “ 100 rad {s, |ω| “ 1000 rad {s for each propeller. We define a circular trajectory to be followed, as: 
+
+$’’’&’’’%
+
+xdptq “ r cos pcdtq
+
+ydptq “ r sin pcdtq
+
+zdptq “ 0
+
+δd “ 0
+
+(22) with r “ 2m and cd “ 0.8s´1.For all simulations, the control parameters are chosen as 
+
+KP “ KP,α “ 2I3, KD “““ KD,α “ 1.5I3, γp “ 5
+
+and K “ 3I6. The objective function parameters are set as 
+
+μα “ μβ “ 750 , μω “ 1200 for all propellers. The platform at time t “ 0s is statically hovering at pW 
+
+> 0
+
+“p2, 0, 0q, with initial orientation δ0 “ 0rad and with all propeller in a collinear configuration ( α0 “ β0 “ 0rad for all propellers), and ωi “ ˘ 
+
+b mg  
+
+> 6cf
+
+, depending on the spinning direction of propeller i.
+
+A. Non-optimized vs Optimized Response 
+
+First, we compare the performance of the control archi-tecture with respect to the cost function defined in (20), setting respectively γj “ 0 and γj “ 10 . The tracking performances can be observed in Figures 2 and 3. Figures 5-6 instead show the tilt angles for each propeller. It can be seen that introducing optimization in the allocator equations leads the propeller tilt angles to oscillate around zero (the middle of their saturation interval, according to the assumptions previously stated). To further analyze the platform behavior, we estimate the amplitude and offset (with respect to the middle of the saturation interval) of the tilt angles for each propeller at steady state (after 10 s), by fitting the data with a cosine function. Table I shows such amplitudes and offsets for opposite propellers. It can be noticed how opposite propellers —————————————————————– PREPRINT —————————————————————– 0 5 10 15 20 25 30 35 40 -2 02                
+
+> x [m]
+> 0510 15 20 25 30 35 40 -2 02
+> y [m]
+> 0510 15 20 25 30 35 40
+
+time [s]  
+
+> 0246
+> z [m]
+> #10 -4
+> .j= 0
+> .j= 10
+> ref
+
+Fig. 2. UAV position tracking 0 5 10 15 20 25 30 35 40 -0.05 00.05                 
+
+> ; [/]
+> 0510 15 20 25 30 35 40 -0.1 00.1
+> 3 [/]
+> 0510 15 20 25 30 35 40
+
+time [s]   
+
+> -5 05
+> A [/]
+> #10 -3
+> .j= 0
+> .j= 10
+> ref
+
+Fig. 3. UAV Euler angles tracking 0 5 10 15 20 25 30 35 40     
+
+> time [s]
+> 44.02 4.04 4.06 4.08 4.1 4.12 4.14 4.16
+> J(xa)
+> #10 4
+> .j= 0
+> .j= 10
+
+Fig. 4. Objective functions 0 10 20 30 40 -10 010 20 
+
+> ,1 [/]
+
+0 10 20 30 40 -20 -10 010 
+
+> ,2 [/]
+
+0 10 20 30 40 -20 -10 010 
+
+> ,3 [/]
+
+0 10 20 30 40 -20 -10 010 
+
+> ,4 [/]
+
+0 10 20 30 40 
+
+time [s]
+
+-10 010 20 
+
+> ,5 [/]
+
+0 10 20 30 40 
+
+time [s]
+
+-10 010 20 
+
+> ,6 [/]
+
+.j = 0 
+
+.j = 10 
+
+Fig. 5. Propeller α angles 0 10 20 30 40 -10 010 20 
+
+> -1 [/]
+
+0 10 20 30 40 -10 010 20 
+
+> -2 [/]
+
+0 10 20 30 40 -10 010 20 
+
+> -3 [/]
+
+0 10 20 30 40 -20 -10 010 
+
+> -4 [/]
+
+0 10 20 30 40 
+
+time [s]
+
+-20 -10 010 
+
+> -5 [/]
+
+0 10 20 30 40 
+
+time [s]
+
+-20 -10 010 
+
+> -6 [/]
+
+.j = 0 
+
+.j = 10 Fig. 6. Propeller β angles TABLE I PROPELLER TILT ANGLES AMPLITUDES AND OFFSETS 
+
+Propellers Amplitude r˝s Amplitude r˝s
+
+Offset r˝s Offset r˝s
+
+γj “ 0 γj “ 10 
+
+rα1, α 4s r7.5115 , ´7.5115 s r7.2708 , ´7.2708 sr6.7093 , ´6.7093 s r0, 0srα2, α 5s r7.5229 , ´7.5229 s r7.413 , ´7.413 sr´ 6.2338 , 6.2338 s r0, 0srα3, α 6s r7.2422 , ´7.2422 s r7.437 , ´7.437 sr´ 12 .3415 , 12 .3415 s r0, 0srβ1, β 4s r7.315 , ´7.315 s r7.4485 , ´7.4485 sr10 .5367 , ´10 .5367 s r0, 0srβ2, β 5s r´ 7.3453 , 7.3453 s r´ 7.4485 , 7.4485 sr11 .4284 , ´11 .4284 s r0, 0srβ3, β 6s r´ 7.3568 , 7.3568 s r´ 7.4427 , 7.4427 sr´ 0.0245 , 0.0245 s r0, 0s0 10 20 30 40 620 625 630 
+
+> !a; 1 [ rad s ]
+
+0 10 20 30 40 -630 -625 -620 
+
+> !a; 2 [ rad s ]
+
+0 10 20 30 40 620 625 630 
+
+> !a; 3 [ rad s ]
+
+0 10 20 30 40 -630 -625 -620 
+
+> !a; 4 [ rad s ]
+
+0 10 20 30 40 
+
+time [s]
+
+620 625 630 
+
+> !a; 5 [ rad s ]
+
+0 10 20 30 40 
+
+time [s]
+
+-630 -625 -620 
+
+> !a; 6 [ rad s ]
+
+.j = 0 
+
+.j = 10 
+
+Fig. 7. Propeller spinning rates 
+
+show an anti-symmetric behavior. Moreover, it is evident that the tilt angles oscillate around the middle of the saturation intervals. From figure 7, it can be notice how the magnitude of the propeller spinning rates reduces when the term uj is —————————————————————– PREPRINT —————————————————————– 
+
+active, namely γj ‰ 0. Consequently, significant performance improvement with respect to the objective function Jpxaq can be observed in Figure 4. We highlight the fact that the objective function for the case γj “ 10 shows a non-periodic behavior, despite the reference trajectory being periodic. This can be attributed to the fact that the objective function in (20) is not integrated over a period of the trajectory. Finally, we notice that there is a small difference between the non-optimized and optimized UAV trajectories. This difference is however negligible for tracking purposes. 
+
+B. Asymmetric optimization on α, β
+
+Next, we investigate the role of the tilt angles α and β,by defining two different objective functions with asymmetric shapes along α and β, namely: 
+
+Jαpxaq “ 
+
+> 6
+
+ÿ
+
+> i“1
+
+μα
+
+ˆ ˜αi
+
+∆αi
+
+˙2
+
+` μβ
+
+˜ ˜βi
+
+∆β
+
+¸6
+
+` μω ω2
+
+> i
+
+Jβ pxaq “ 
+
+> 6
+
+ÿ
+
+> i“1
+
+μα
+
+ˆ ˜αi
+
+∆αi
+
+˙6
+
+` μβ
+
+˜ ˜βi
+
+∆βi
+
+¸2
+
+` μω ω2
+
+> i
+
+(23) The objective function Jαpxaq has a steeper gradient along the α tilt angle compared to Jβ pxaq. Consequently, the signal 
+
+uj will keep the α angle closer to the center of the saturation interval, allowing greater excursions for the β tilt angles. The opposite holds considering Jβ pxaq. Figures 8, 9 and 10 show respectively the α and β tilt angles and the spinning rates of each propellers. We repeat the amplitude estimation process in IV-A. For this analysis, we only estimate amplitudes since the offset with respect to zero is negligible. In table II a significant                              
+
+> TABLE II PROPELLER TILT ANGLES AMPLITUDES
+> Propellers Amplitude r˝sAmplitude r˝s
+> JαJβ
+> rα1, α 4sr5.4786 ,´5.4786 sr9.3793 ,´9.3793 srα2, α 5sr5.4786 ,´5.4786 sr9.385 ,´9.385 srα3, α 6sr5.4826 ,´5.4826 sr9.385 ,´9.385 srβ1, β 4sr9.385 ,´9.385 sr5.4987 ,´5.4987 srβ2, β 5sr´ 9.385 ,9.385 sr´ 5.4981 ,5.4987 srβ3, β 6sr´ 9.385 ,9.385 sr´ 5.4489 ,5.4941 s
+
+difference in the amplitude of the propeller tilt angles can be observed comparing the results with Jpxaq “ Jαpxaq and 
+
+Jpxaq “ Jβ pxaq. We now study the effect of asymmetric optimization of the α and β angles on the propeller spinning rates. Similarly to the previous analyses, the amplitude and offset obtained by fitting the spinning rates of each propeller at steady-state with a cosine wave are reported in table III. It can be noticed that asymmetric optimization on α and β has a minor impact on the propeller spinning rates. This shows that the tilt angles play an equivalent role during flight. Then, if there is any design or control constraint on either α or β,the allocator is able to preserve asymptotic tracking by acting on β or α, respectively, without significantly impacting the propeller spinning rates, and therefore the energy consumption of the platform.                                     
+
+> TABLE III PROPELLER SPINNING RATES AMPLITUDES AND OFFSETS
+> Propellers Amplitude rrad ssAmplitude rrad ss
+> Offset rrad ssOffset rrad ss
+> JαJβ
+> rω1, ω 4sr0.0451 ,0.0451 sr0.0455 ,0.0455 sr621 .1694 ,´621 .1694 sr621 .3834 ,´621 .3834 srω2, ω 5sr´ 0.0454 ,0.0454 sr0.0434 ,´0.0435 sr´ 621 .1664 ,621 .1664 sr´ 621 .387 ,621 .3872 srω3, ω 6sr´ 0.0436 ,0.0436 sr0.046 ,´0.0458 sr621 .4924 ,´621 .4924 sr621 .0602 ,´621 .0602 s
+
+V. C ONCLUSIONS 
+
+In this work, we have shown how the allocation architec-ture presented in [1] can be adapted to an aerial platform, and we demonstrated how such architecture can compensate eventual constraints on the propeller tilt angles with minor effect on the platform energy consumption. We also provided insights on how actuator saturation affects the control per-formance. Indeed, the hierarchical control structure relies on the optimization component uj in order to avoid saturation at steady state. However, due to the dynamic nature of the optimization, saturation may still be reached during transients, as highlighted in remark 1, due to too fast trajectories or too aggressive control parameters tuning, potentially leading to error divergence. To address this issue, it would be necessary to break the independence between the high-level controller and the allocator, to allow the latter to change the control parameters in order to adjust the convergence rate so as to avoid saturation during transients, in a similar fashion to the well-known anti-windup mechanism. REFERENCES [1] Nainer, C., et al. ”Hierarchical control of the over-actuated ROSPO platform via static input allocation.” IFAC-PapersOnLine 50.1 (2017): 12698-12703. [2] Passenbrunner, Thomas E., Mario Sassano, and Luca Zaccarian. ”Optimality-based dynamic allocation with nonlinear first-order redun-dant actuators.” European Journal of Control 31 (2016): 33-40. [3] Furci, Michele, et al. ”Input allocation for the propeller-based over-actuated platform ROSPO.” IEEE Transactions on Control Systems Technology 28.6 (2019): 2720-2727. [4] Akbari, Shima, Sergio Galeani, and Mario Sassano. ”Towards spline-based dynamic input allocation.” 2023 International Conference on Control, Automation and Diagnosis (ICCAD). IEEE, 2023. [5] Akbari, Shima, et al. ”Spline-based Input Allocation On An Overactu-ated Tilting and Twisting Unmanned Aerial Vehicle.” 2024 10th Inter-national Conference on Control, Decision and Information Technologies (CoDIT). IEEE, 2024. [6] Cristofaro, Andrea, Sergio Galeani, and Andrea Serrani. ”Output invisi-ble control allocation with asymptotic optimization for nonlinear systems in normal form.” 2017 IEEE 56th Annual Conference on Decision and Control (CDC). IEEE, 2017. [7] Zaccarian, Luca. ”Dynamic allocation for input redundant control sys-tems.” Automatica 45.6 (2009): 1431-1438. —————————————————————– PREPRINT —————————————————————– 0 10 20 30 40 -20 -10 010                 
+
+> ,1 [/]
+> 010 20 30 40 -20 -10 010
+> ,2 [/]
+> 010 20 30 40 -10 010
+> ,3 [/]
+> 010 20 30 40 -10 010 20
+> ,4 [/]
+> 010 20 30 40
+
+time [s]    
+
+> -10 010 20
+> ,5 [/]
+> 010 20 30 40
+
+time [s]
+
+> -10 010
+> ,6 [/] J,
+> J-
+
+Fig. 8. Propeller α angles 0 10 20 30 40 -10 010                 
+
+> -1 [/]
+> 010 20 30 40 -10 010
+> -2 [/]
+> 010 20 30 40 -10 010 20
+> -3 [/]
+> 010 20 30 40 -10 010
+> -4 [/]
+> 010 20 30 40
+
+time [s]    
+
+> -10 010
+> -5 [/]
+> 010 20 30 40
+
+time [s] 
+
+> -20 -10 010
+> -6 [/]
+> J,
+> J-
+
+Fig. 9. Propeller β angles 0 10 20 30 40 620 625 630                 
+
+> !a; 1 [ rad s ]
+> 010 20 30 40 -630 -625 -620
+> !a; 2 [ rad s ]
+> 010 20 30 40 620 625 630
+> !a; 3 [ rad s ]
+> 010 20 30 40 -630 -625 -620
+> !a; 4 [ rad s ]
+> 010 20 30 40
+
+time [s]    
+
+> 620 625 630
+> !a; 5 [ rad s ]
+> 010 20 30 40
+
+time [s]
+
+> -630 -625 -620
+> !a; 6 [ rad s ]
+> J,
+> J-
+
+Fig. 10. Propeller spinnin rates 0 5 10 15 20 25 30 35 40 
+
+time [s]
+
+44.02 4.04 4.06 4.08 4.1 4.12 4.14 4.16 4.18 4.2 
+
+> J(xa)
+
+#10 4 
+
+> J,
+> J-
+
+Fig. 11. Propeller β angles [8] Allenspach, Mike, et al. ”Design and optimal control of a tiltrotor micro-aerial vehicle for efficient omnidirectional flight.” The International Journal of Robotics Research 39.10-11 (2020): 1305-1325. [9] Cuniato, Eugenio, et al. ”Allocation for Omnidirectional Aerial Robots: Incorporating Power Dynamics.” arXiv preprint arXiv:2412.16107 (2024).

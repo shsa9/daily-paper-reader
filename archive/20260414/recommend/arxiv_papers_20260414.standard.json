@@ -1,0 +1,314 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-14T20:24:35.584567+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 8,
+    "quick_skim_target": 11,
+    "quick_selected": 8
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.10176v1",
+      "title": "Digital Control of Negative Imaginary Systems Using Discrete-Time Multi-HIGS: Application to a Dual-Stage MEMS Force Sensor",
+      "abstract": "In this paper, we propose a digital control approach for multi-input multi-output negative imaginary (NI) systems using discrete-time hybrid integrator-gain systems (HIGS) controllers. We show the NI property of the bimodal and trimodal discrete-time HIGS, as well as the parallel combinations of them, which are referred to as the multi-HIGS. Also, we demonstrate that linear NI systems can be asymptotically stabilized using discrete-time HIGS in digital control. We apply discrete-time bimodal and trimodal multi-HIGS controllers to a two-input two-output dual-stage force sensor with lightly damped resonant modes. To validate the theoretical findings, the closed-loop performance is evaluated in both time and frequency domains. Experimental results show that the discrete-time multi-HIGS effectively suppresses resonances while preserving favorable phase characteristics, which highlights its potential as a robust nonlinear NI controller for the digital control of NI systems.",
+      "authors": [
+        "Kanghong Shi",
+        "Diyako Dadkhah",
+        "Ian R. Petersen",
+        "S. O. Reza Moheimani"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY",
+        "math.OC"
+      ],
+      "published": "2026-04-11T12:09:56+00:00",
+      "link": "https://arxiv.org/pdf/2604.10176v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "digital control for dual-stage force sensor with resonant modes",
+      "llm_evidence_cn": "具有谐振模式的双级力传感器的数字控制",
+      "llm_evidence": "具有谐振模式的双级力传感器的数字控制",
+      "canonical_evidence": "具有谐振模式的双级力传感器的数字控制",
+      "llm_tldr_en": "Proposes a digital control approach for negative imaginary systems applied to a dual-stage MEMS force sensor.",
+      "llm_tldr_cn": "提出一种应用于双级MEMS力传感器的负虚系统的数字控制方法。",
+      "llm_tldr": "提出一种应用于双级MEMS力传感器的负虚系统的数字控制方法。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.05677v1",
+      "title": "Dynamic Control Allocation for Dual-Tilt UAV Platforms",
+      "abstract": "This paper focuses on dynamic control allocation for a hexarotor UAV platform, considering a trajectory tracking task as as case study. It is assumed that the platform is dual-tilting, meaning that it is able to tilt each propeller independently during flight, along two orthogonal axis. We present a hierarchical control structure composed of a high-level controller generating the required wrench for the tracking task, and a control allocation law ensuring that the actuators produce such wrench. The allocator imposes desired first-order dynamics on the actuators set, and exploits system redundancy to optimize the actuators state with respect to a given objective function. Unlike other studies on the subject, we explicitly model actuator saturation and provide theoretical insights on its effect on control performances. We also investigate the role of propeller tilt angles, by imposing asymmetric shapes in the objective function. Numerical simulations are presented to validate the allocation strategy.",
+      "authors": [
+        "Marcello Sorge",
+        "Federico Ciresola",
+        "Giulia Michieletto",
+        "Angelo Cenedese"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-04-07T10:27:47+00:00",
+      "link": "https://arxiv.org/pdf/2604.05677v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Dynamic control allocation for actuators to produce required wrench",
+      "llm_evidence_cn": "执行器产生所需力矩的动态控制分配",
+      "llm_evidence": "执行器产生所需力矩的动态控制分配",
+      "canonical_evidence": "执行器产生所需力矩的动态控制分配",
+      "llm_tldr_en": "Presents a hierarchical control structure for actuator allocation and saturation modeling in tracking tasks.",
+      "llm_tldr_cn": "提出一种用于执行器分配的层级控制结构，并显式建模了执行器饱和问题。",
+      "llm_tldr": "提出一种用于执行器分配的层级控制结构，并显式建模了执行器饱和问题。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.07947v1",
+      "title": "Spectral solution of axisymmetric magnetization problems for thin superconducting shells",
+      "abstract": "Existing numerical methods for modeling magnetization in thin type-II superconducting films have mostly been developed for flat films. This work introduces an efficient spectral method for axisymmetric magnetization problems involving non-flat films. The method is based on the integral thin-shell current-density formulation of the problem, employs Chebyshev polynomial expansions for spatial discretization, and uses the method of lines for time integration. It applies to both open and closed axisymmetric shells and is so accurate that the solutions obtained can serve as benchmarks for numerical methods for general, not necessarily axisymmetric, thin-shell magnetization problems. As one of the examples, we consider magnetic shielding by a superconducting sphere.",
+      "authors": [
+        "Leonid Prigozhin",
+        "Vladimir Sokolovsky"
+      ],
+      "primary_category": "cond-mat.supr-con",
+      "categories": [
+        "cond-mat.supr-con"
+      ],
+      "published": "2026-04-09T08:09:33+00:00",
+      "link": "https://arxiv.org/pdf/2604.07947v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "modeling magnetization and current-density in thin shells",
+      "llm_evidence_cn": "薄壳磁化和电流密度建模",
+      "llm_evidence": "薄壳磁化和电流密度建模",
+      "canonical_evidence": "薄壳磁化和电流密度建模",
+      "llm_tldr_en": "Provides spectral methods for modeling magnetization in shells, useful for eddy current and magnetic field analysis.",
+      "llm_tldr_cn": "提供了薄壳磁化建模的光谱方法，有助于涡流和磁场分析。",
+      "llm_tldr": "提供了薄壳磁化建模的光谱方法，有助于涡流和磁场分析。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "eddy current effects in electromagnetic actuators dynamic modeling",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.09487v1",
+      "title": "Sim-to-Real Transfer for Muscle-Actuated Robots via Generalized Actuator Networks",
+      "abstract": "Tendon drives paired with soft muscle actuation enable faster and safer robots while potentially accelerating skill acquisition. Still, these systems are rarely used in practice due to inherent nonlinearities, friction, and hysteresis, which complicate modeling and control. So far, these challenges have hindered policy transfer from simulation to real systems. To bridge this gap, we propose a sim-to-real pipeline that learns a neural network model of this complex actuation and leverages established rigid body simulation for the arm dynamics and interactions with the environment. Our method, called Generalized Actuator Network (GeAN), enables actuation model identification across a wide range of robots by learning directly from joint position trajectories rather than requiring torque sensors. Using GeAN on PAMY2, a tendon-driven robot powered by pneumatic artificial muscles, we successfully deploy precise goal-reaching and dynamic ball-in-a-cup policies trained entirely in simulation. To the best of our knowledge, this result constitutes the first successful sim-to-real transfer for a four-degrees-of-freedom muscle-actuated robot arm.",
+      "authors": [
+        "Jan Schneider",
+        "Mridul Mahajan",
+        "Le Chen",
+        "Simon Guist",
+        "Bernhard Schölkopf",
+        "Ingmar Posner",
+        "Dieter Büchler"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.LG"
+      ],
+      "published": "2026-04-10T16:52:54+00:00",
+      "link": "https://arxiv.org/pdf/2604.09487v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Modeling and control of complex actuators with nonlinearities and hysteresis",
+      "llm_evidence_cn": "具有非线性和滞后特性的复杂执行器建模与控制",
+      "llm_evidence": "具有非线性和滞后特性的复杂执行器建模与控制",
+      "canonical_evidence": "具有非线性和滞后特性的复杂执行器建模与控制",
+      "llm_tldr_en": "Learns neural network models for complex actuation to bridge the sim-to-real gap in robotics.",
+      "llm_tldr_cn": "学习复杂驱动器的神经网络模型，以弥合机器人仿真与现实之间的差距。",
+      "llm_tldr": "学习复杂驱动器的神经网络模型，以弥合机器人仿真与现实之间的差距。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.10351v1",
+      "title": "Trajectory-based actuator identification via differentiable simulation",
+      "abstract": "Accurate actuation models are critical for bridging the gap between simulation and real robot behavior, yet obtaining high-fidelity actuator dynamics typically requires dedicated test stands and torque sensing. We present a trajectory-based actuator identification method that uses differentiable simulation to fit system-level actuator models from encoder motion alone. Identification is posed as a trajectory-matching problem: given commanded joint positions and measured joint angles and velocities, we optimize actuator and simulator parameters by backpropagating through the simulator, without torque sensors, current/voltage measurements, or access to embedded motor-control internals. The framework supports multiple model classes, ranging from compact structured parameterizations to neural actuator mappings, within a unified optimization pipeline. On held-out real-robot trajectories under identical commands, the proposed torque-sensor-free identification achieves much tighter trajectory alignment than a supervised stand-trained baseline dominated by steady-state data, reducing mean absolute position error from 14.20 mrad to as low as 7.54 mrad (1.88 times). Finally, we demonstrate downstream impact in a real-robot locomotion study: training policies with the refined actuator model increases travel distance by 46% and reduces rotational deviation by 75% relative to the baseline.",
+      "authors": [
+        "Vyacheslav Kovalev",
+        "Ekaterina Chaikovskaia",
+        "Egor Davydenko",
+        "Roman Gorbachev"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-04-11T21:36:34+00:00",
+      "link": "https://arxiv.org/pdf/2604.10351v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "actuator identification and high-fidelity dynamics modeling",
+      "llm_evidence_cn": "执行器识别与高保真动力学建模",
+      "llm_evidence": "执行器识别与高保真动力学建模",
+      "canonical_evidence": "执行器识别与高保真动力学建模",
+      "llm_tldr_en": "A trajectory-based method for identifying high-fidelity actuator dynamics using differentiable simulation.",
+      "llm_tldr_cn": "一种利用可微仿真识别高保真执行器动力学的基于轨迹的方法。",
+      "llm_tldr": "一种利用可微仿真识别高保真执行器动力学的基于轨迹的方法。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.11018v1",
+      "title": "Contouring Error Bounded Control for Biaxial Systems with Structural Flexibility and Input Delay",
+      "abstract": "Precision contouring control is crucial in industrial machining processes, particularly for applications such as laser and water jet cutting, where contouring accuracy directly determines product quality. This paper presents a novel control strategy for biaxial machines featuring position-dependent flexibility and input delays, ensuring that the end-effector accurately traverses the desired contour within specified contouring error bounds and system constraints. To capture the rotation dynamics for systems with mechanical vibration, we introduce a high-fidelity model and explicitly consider the input delay with augmented system states. The controller design is based on the model predictive control scheme to enforce system states staying in robust control invariant sets defined by the reference model and switched linear time-invariant control-oriented models. The proposed algorithm is not restricted to a specific shape of the curve that is being traversed. The effectiveness of the proposed control algorithm is demonstrated in an experimental environment with discretizations and input delay. The results show that a bounded contouring error can be achieved by the proposed method in a performance degradation environment with a low commissioning effort.",
+      "authors": [
+        "Meng Yuan",
+        "Tianyou Chai"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-04-13T05:34:09+00:00",
+      "link": "https://arxiv.org/pdf/2604.11018v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "precision control for systems with structural flexibility and mechanical vibration",
+      "llm_evidence_cn": "具有结构柔性和机械振动系统的精密控制",
+      "llm_evidence": "具有结构柔性和机械振动系统的精密控制",
+      "canonical_evidence": "具有结构柔性和机械振动系统的精密控制",
+      "llm_tldr_en": "Develops a model predictive control strategy for precision contouring in systems with flexibility and input delays.",
+      "llm_tldr_cn": "针对具有柔性和输入延迟的系统，开发了一种用于精密轮廓控制的模型预测控制策略。",
+      "llm_tldr": "针对具有柔性和输入延迟的系统，开发了一种用于精密轮廓控制的模型预测控制策略。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.11640v1",
+      "title": "Micro-Dexterity in Biological Micromanipulation: Embodiment, Perception, and Control",
+      "abstract": "Microscale manipulation has advanced substantially in controlled locomotion and targeted transport, yet many biomedical applications require precise and adaptive interaction with biological micro-objects. At these scales, manipulation is realized through three main classes of platforms: embodied microrobots that physically interact as mobile agents, field-mediated systems that generate contactless trapping or manipulation forces, and externally actuated end-effectors that interact through remotely driven physical tools. Unlike macroscale manipulators, these systems function in fluidic, confined, and surface-dominated environments characterized by negligible inertia, dominant interfacial forces, and soft, heterogeneous, and fragile targets. Consequently, classical assumptions of dexterous manipulation, including rigid-body contact, stable grasping, and rich proprioceptive feedback, become difficult to maintain. This review introduces micro-dexterity as a framework for analyzing biological micromanipulation through the coupled roles of embodiment, perception, and control. We examine how classical manipulation primitives, including pushing, reorientation, grasping, and cooperative manipulation, are reformulated at the microscale; compare the architectures that enable them, from contact-based micromanipulators to contactless field-mediated systems and cooperative multi-agent platforms; and review the perception and control strategies required for task execution. We identify the current dexterity gap between laboratory demonstrations and clinically relevant biological manipulation, and outline key challenges for future translation.",
+      "authors": [
+        "Kangyi Lu",
+        "Lan Wei",
+        "Zongcai Tan",
+        "Dandan Zhang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "eess.SY"
+      ],
+      "published": "2026-04-13T15:50:20+00:00",
+      "link": "https://arxiv.org/pdf/2604.11640v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "field-mediated systems for contactless manipulation forces",
+      "llm_evidence_cn": "用于非接触操纵力的场介导系统",
+      "llm_evidence": "用于非接触操纵力的场介导系统",
+      "canonical_evidence": "用于非接触操纵力的场介导系统",
+      "llm_tldr_en": "Reviews micro-dexterity and contactless force manipulation in biological micromanipulation platforms.",
+      "llm_tldr_cn": "综述了生物微操纵平台中的微操作灵巧性和非接触力操纵技术。",
+      "llm_tldr": "综述了生物微操纵平台中的微操作灵巧性和非接触力操纵技术。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "non-contact electromagnetic shaker force control",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.11645v1",
+      "title": "Performance Characterization of Frequency-Selective Wireless Power Transfer Toward Scalable Untethered Magnetic Actuation",
+      "abstract": "Frequency-selective wireless power transfer provides a feasible route to enable independent actuation and control of multiple untethered robots in a common workspace; however, the scalability remains unquantified, particularly the maximum number of resonators that can be reliably addressed within a given frequency bandwidth. To address this, we formulate the relationship between resonator quality factor (Q-factor) and the number of individually addressable inductor-capacitor (LC) resonant energy harvesters within a fixed radio-frequency (RF) spectrum, and we convert selectively activated harvested energy into mechanical motion. We theoretically proved and experimentally demonstrated that scalability depends primarily on the Q-factor. For this proof-of-concept study, we define effective series resistance as a function of frequency allocating bandwidths to discrete actuators. We provide design equations for scaling untethered magnetic actuation with Q-factor optimization. Resonator networks spanning bandwidths from 100kHz to 1MHz were analyzed to quantify how increasing the number of resonators affects independent addressability. We validated the approach experimentally by fabricating three centimeter-scale untethered actuators that selectively trigger the motion of mechanical beams at 734kHz, 785kHz, and 855kHz. We also characterized the generated mechanical force and the activation bandwidth of each actuator, confirming that no unintended cross-triggering occurred.",
+      "authors": [
+        "Gabriel Cooper",
+        "Xiaolong Liu"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY",
+        "cs.RO"
+      ],
+      "published": "2026-04-13T15:57:20+00:00",
+      "link": "https://arxiv.org/pdf/2604.11645v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "untethered magnetic actuation and control of multiple robots",
+      "llm_evidence_cn": "多机器人的无线磁力驱动与控制",
+      "llm_evidence": "多机器人的无线磁力驱动与控制",
+      "canonical_evidence": "多机器人的无线磁力驱动与控制",
+      "llm_tldr_en": "Explores frequency-selective wireless power for scalable untethered magnetic actuation and mechanical motion.",
+      "llm_tldr_cn": "探索了用于可扩展无线磁力驱动和机械运动的分频无线传能技术。",
+      "llm_tldr": "探索了用于可扩展无线磁力驱动和机械运动的分频无线传能技术。",
+      "llm_tags": [
+        "query:em-force:composite"
+      ],
+      "matched_query_tag": "query:em-force:composite",
+      "matched_query_text": "Papers central to 查找非接触式电磁激振器的力控制方法，特别是精密控制策略, especially work that connects or combines: electromagnetic exciter force control; ddy current magnetic bearing modeling; magnetic bearing flux feedback; non-contact electromagnetic shaker force control; precision force control strategies for electromagnetic actuators; closed-loop force control for electromagnetic shakers; flux feedback linearization zero bias magnetic bearing; non contact electromagnetic exciter precision force control; eddy current effects in electromagnetic actuators dynamic modeling; flux feedback control for magnetic bearing force precision.",
+      "matched_requirement_id": "req-composite-em-force",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

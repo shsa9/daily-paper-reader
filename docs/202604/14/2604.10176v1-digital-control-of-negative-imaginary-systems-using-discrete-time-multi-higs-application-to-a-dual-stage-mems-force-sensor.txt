@@ -1,0 +1,1883 @@
+Title: Digital Control of Negative Imaginary Systems Using Discrete-Time Multi-HIGS: Application to a Dual-Stage MEMS Force Sensor
+
+URL Source: https://arxiv.org/pdf/2604.10176v1
+
+Published Time: Tue, 14 Apr 2026 00:45:25 GMT
+
+Number of Pages: 11
+
+Markdown Content:
+# Digital Control of Negative Imaginary Systems Using Discrete-Time Multi-HIGS: Application to a Dual-Stage MEMS Force Sensor 
+
+Kanghong Shi, Diyako Dadkhah, Ian R. Petersen, S. O. Reza Moheimani 
+
+Abstract —In this paper, we propose a digital control approach for multi-input multi-output negative imaginary (NI) systems using discrete-time hybrid integrator–gain systems (HIGS) con-trollers. We show the NI property of the bimodal and trimodal discrete-time HIGS, as well as the parallel combinations of them, which are referred to as the multi-HIGS. Also, we demonstrate that linear NI systems can be asymptotically stabilized using discrete-time HIGS in digital control. We apply discrete-time bimodal and trimodal multi-HIGS controllers to a two-input two-output dual-stage force sensor with lightly damped resonant modes. To validate the theoretical findings, the closed-loop performance is evaluated in both time and frequency domains. Experimental results show that the discrete-time multi-HIGS effectively suppresses resonances while preserving favorable phase characteristics, which highlights its potential as a robust nonlinear NI controller for the digital control of NI systems. 
+
+Index Terms —Negative imaginary system, hybrid integrator-gain system, discrete-time system, digital control, vibration control, microelectromechanical system force sensor, feedback stability, switched system. 
+
+I. INTRODUCTION Linear time-invariant (LTI) feedback control forms the cor-nerstone of modern control system design due to its rigorous theoretical foundations and the availability of powerful anal-ysis and synthesis tools. However, the performance achiev-able with linear controllers is fundamentally constrained by intrinsic limitations such as the Bode gain–phase relationship, fixed system dynamics, and inherent performance trade-offs [1]. These limitations become particularly pronounced in high-precision control systems for plants with lightly damped reso-nant dynamics, where improving low-frequency disturbance rejection often leads to a reduction in phase margin and increased sensitivity to resonant modes. As a result, purely linear control architectures may face inherent difficulties in simultaneously achieving high tracking accuracy, disturbance attenuation, and robust stability in lightly-damped precision mechatronic systems. Nonlinear and hybrid control strategies have been investi-gated extensively [2]–[6] to introduce additional design flex-ibility. A broad class of nonlinear control relies on state-dependent switching mechanisms, where the control action    
+
+> This work was supported by the Australian Research Council under grant DP230102443. This work was supported in part by the University of Texas at Dallas through the James Von Ehr Distinguished Chair in Science and Technology. (Corresponding author: S. O. Reza Moheimani.)
+> Kanghong Shi is with the Department of Electrical and Computer Systems Engineering, Monash University, VIC, Australia. Diyako Dadkhah and S. O. Reza Moheimani are with the Erik Jonsson School of Engineering and Com-puter Science, The University of Texas at Dallas, Richardson, TX 75080 USA. Ian R. Petersen is with the School of Engineering, College of Systems and So-ciety, Australian National University, Canberra, Acton, ACT 2601, Australia.
+> kanghong.shi@outlook.com ,diyako.dadkhah@utdallas.edu ,
+> ian.petersen@anu.edu.au ,reza.moheimani@utdallas.edu .
+
+changes according to the evolution of the system trajectory. Examples include hysteresis control [7], relay control [8], and sliding mode control [9], which employ discontinuous control laws triggered when the system state crosses prescribed switching surfaces. Hybrid control forms an important subclass of switching-based strategies in which continuous controller dynamics are coupled with discrete switching logic. Notable examples are the Clegg integrator [10], first-order reset element [11], and related hybrid structures whose dynamics change according to the system trajectory. The hybrid integrator gain system (HIGS) is a type of nonlinear hybrid controller that combines the properties of an integrator and a static gain within a sector bounded framework. The controller switches between integrator and gain modes depending on the input-output trajectory relative to a predefined sector [12]. This mechanism preserves the high low-frequency gain of an integrator while significantly reducing the associated phase lag. In contrast to linear integral action which introduces 90 degrees of phase lag, a HIGS only introduces approximately 38 .15 degrees of phase lag while producing a continuous control signal. These characteristics make the HIGS an attractive choice for high performance motion [13], [14] and vibration [15]–[17] control of lightly damped mechanical systems where both strong disturbance rejection and adequate phase margin are required. Implementation of hybrid controllers in practical systems is typically carried out using digital hardware. When con-trollers are designed in continuous-time and subsequently discretized, the resulting sampled implementation may not accurately reproduce the intended hybrid dynamics due to sampling effects and limited interface bandwidth, specially in high-bandwidth systems or systems with multiple resonant modes. Moreover, the stability of such implementations often requires sufficiently high sampling frequencies [18]. This may exceed the capabilities of available control hardware. These considerations motivate the direct development of discrete-time formulations of the HIGS, in which the hybrid switching mechanism is defined explicitly in the discrete domain [19]. The discrete-time HIGS must ensure that the input-output trajectory remains within the prescribed sector under finite sampling intervals. Early formulations [20] employ a bimodal structure that switches between integrator and gain modes depending on whether the predicted integrator update re-mains inside the sector [19]. However, the predicted inte-grator dynamics may leave the sector through either of its two boundaries, namely u = khe or u = 0 , whereas the bimodal HIGS always restores the output to the gain boundary 
+
+u = khe. To address this, the trimodal HIGS is introduced in [21], which has a third operating mode (a zeroing mode) 1
+
+> arXiv:2604.10176v1 [eess.SY] 11 Apr 2026
+
+to project the integrator dynamics to the boundary through which the candidate trajectory exits the sector. This additional mode helps to more accurately capture the intended sector-constrained behavior and prevents large instantaneous jumps in the HIGS output. The stability of HIGS can be analyzed using negative imaginary (NI) systems theory [22], [23], which provides an effective approach for the robust control of mechatronic structures with highly resonant dynamics. The NI property for a continuous-time system is satisfied if the system is dissipative with respect to the supply rate u⊤ ˙y, where u and y
+
+are its input and output, respectively [24]. Such a system can be stabilized using another NI system in positive feedback, given that either of them has some strictness property [25]. This continuous-time NI property can be preserved under a zero-order hold (ZOH) discretization process in the sense that the corresponding discrete-time property, which is referred to as the ZOH-NI property, is fully expressed in terms of system variables at sampling instants [26]. This observation, together with the inherent physical characteristics of the NI property, motivates a digital control framework where a discrete-time controller is directly designed for the ZOH-sampled NI plant [26]. Such a control framework supports the use of the discrete-time HIGS as an NI controller [27], where the HIGS element is designed directly from the sampled-data model without the need to first synthesize a continuous-time HIGS and subsequently discretize it. Compared with the conventional continuous-time design route, this approach is more direct, imposes less restrictive sampling-rate requirements, and avoids mismatch between the intended continuous-time design and its digital implementation. Existing studies on HIGS-based NI control have mainly fo-cused on continuous-time settings [28], [29] or on single-input single-output (SISO) discrete-time systems [20], which limits their applicability to high-speed systems with multivariable dynamics. In this paper, we apply discrete-time multi-HIGS for the digital control of multi-input multi-output (MIMO) NI plants. Specifically, we investigate the NI properties of bimodal and trimodal single-HIGS in discrete-time and extend them for multi-HIGS. Theoretical analysis is presented to establish the asymptotic stability of single-HIGS and multi-HIGS configurations for both bimodal and trimodal implemen-tations. This framework highlights the practical applicability of discrete-time multi-HIGS for the control of NI systems equipped with collocated force actuators and position sensors. As a demonstration, the control framework is applied to a dual-stage microelectromechanical system (MEMS) force sensing device reported in [30], where two parallel HIGS elements are designed to provide resonance damping, stabilize the plant, and mitigate cross-coupling between the stages. Frequency-and time-domain results are also presented to validate the theoretical findings. The remainder of this article is organized as follows. Section II presents preliminaries on HIGS and NI systems. Section III introduces the discrete-time bimodal single-HIGS and multi-HIGS models and establishes their SANI property. Similarly, Section IV presents discrete-time trimodal single-HIGS and multi-HIGS models along with their SANI property. Both Sec-tions III and IV further demonstrate that discrete-time bimodal and trimodal multi-HIGS structures, composed of single-HIGS elements connected in parallel, can asymptotically stabilize linear NI multivariable systems when implemented in positive feedback. In Section V, the proposed discrete-time bimodal and trimodal multi-HIGS structures are experimentally applied to the control of a two-input two-output MEMS force sensor, and their performance is evaluated using frequency- and time-domain results. Finally, Section VI concludes the article. Notation: The notation in this paper is standard. R denotes the field of real numbers. N denotes the set of nonnega-tive integers. Rm×n denotes the space of real matrices of dimension m × n. A⊤ denotes the transpose of a matrix 
+
+A. A−⊤ denotes the transpose of the inverse of A; that is, 
+
+A−⊤ = ( A−1)⊤ = ( A⊤)−1. λmax (A) denotes the largest eigenvalue of a matrix A with real spectrum. ‖ · ‖ denotes the standard Euclidean norm. For a real symmetric or complex Hermitian matrix P , P > 0 ( P ≥ 0) denotes the positive (semi-)definiteness of a matrix P and P < 0 ( P ≤ 0) denotes the negative (semi-)definiteness of a matrix P . A function 
+
+V : Rn → R is said to be positive definite if V (0) = 0 
+
+and V (x) > 0 for all x 6 = 0 . Let θi ∈ Rp denote the standard unit vector; i.e., the i-th element of θi is one and all other elements are zeros. II. PRELIMINARIES In this section, we review some preliminary results on ZOH-NI systems that are introduced in [26]. Such systems naturally arise when an NI physical model undergoes the sample and hold process in digital control, in which typical ZOH devices are used. Consider the discrete-time system 
+
+xk+1 = f (xk, u k), (1a) 
+
+yk = h(xk), (1b) where xk ∈ D ⊆ Rn, uk, y k ∈ Rp are the state, input and output of the system, respectively, at time step k ∈ N. Here, 
+
+D is an open set such that 0 ∈ D . Also, f : D × Rp → D 
+
+is Lipschitz in x, and h : D → Rp is continuous. We assume 
+
+f (0 , 0) = 0 and h(0) = 0 , without loss of generality. 
+
+Definition 1 (ZOH-NI): [26] The system (1) is said to be a zero-order hold negative imaginary (ZOH-NI) system if there exists a positive definite function V : D → R such that for arbitrary xk and uk,
+
+V (xk+1 ) − V (xk ) ≤ u⊤ 
+
+> k
+
+(yk+1 − yk) , (2) for all k.We next recall a necessary and sufficient LMI condition under which Definition 1 is satisfied by a linear system of the form 
+
+Σ : xk+1 = Ax k + Bu k, (3a) 
+
+yk = Cx k, (3b) where uk, y k ∈ Rp and xk ∈ Rn are the input, output, and state of the system, respectively. 
+
+Lemma 1: [26] Suppose the linear system (3) satisfies 
+
+det( I−A) 6 = 0 . Then the system (3) is ZOH-NI with a positive 2definite quadratic storage function satisfying (2) if and only if there exists a real matrix P = P ⊤ > 0 such that 
+
+A⊤P A − P ≤ 0 and C = B⊤(I − A)−⊤ P. 
+
+To stabilize a ZOH-NI system, [26] provides a control framework where a step-advanced negative imaginary (SANI) controller is applied in positive feedback to a ZOH plant. We show later in the present article that discrete-time HIGS are qualified as such controllers. Here, we provide the definition of SANI systems in the following. Consider the system 
+
+˜xk+1 = ˜f (˜xk, ˜uk), (4a) 
+
+˜yk = ˜h(˜xk , ˜uk), (4b) where ˜xk ∈ ˜D ⊆ Rm, ˜uk, ˜yk ∈ Rp are the state, input and output of the system, respectively, at time step k ∈ N. Here, 
+
+D is an open set such that 0 ∈ ˜D. Also, ˜f : ˜D × Rp → ˜D is Lipschitz in ˜x and ˜h : ˜D × Rp → Rp is continuous. We assume 
+
+˜f (0 , 0) = 0 and ˜h(0 , 0) = 0 , without loss of generality. 
+
+Definition 2 (SANI): [26] The system (4) is said to be a step-advanced negative imaginary (SANI) system if there exists a continuous function ̂ h(xk ) such that: 1) ˜h(˜xk, ˜uk) = ̂ h( ˜f(˜xk , ˜uk)) ;2) there exists a continuous positive definite function 
+
+˜V : D → R such that for arbitrary state ˜xk and input 
+
+˜uk,
+
+˜V (˜xk+1 ) − ˜V (˜xk) ≤ ˜u⊤
+
+> k
+
+(̂ 
+
+h(˜xk+1 ) −̂ h(˜xk )
+
+)
+
+for all k.
+
+Remark 1: Definition 2 can be regarded as a variant of Definition 1 in which the system output is taken one step in advance. Specifically, suppose the system (1) is ZOH-NI as per Definition 1. Then a system with the same state equation (1a) and an output equation ˜yk =̂ h(xk+1 ) = ˜h(f (xk, u k)) 
+
+is an SANI system. This does not affect causality because 
+
+˜h(f (xk, u k)) is a function of the state xk and input uk at the current step k.III. BIMODAL DISCRETE-TIME HIGS AND NI CONTROL In this section, we investigate NI control using a discrete-time bimodal HIGS. First, we provide the system model for a single bimodal HIGS and demonstrate that it possesses the SANI property. Next, we introduce the bimodal multi-HIGS architecture and prove its SANI property. Finally, we establish the closed-loop stability for the interconnection of a MIMO ZOH-NI plant and a bimodal multi-HIGS controller. 
+
+A. Bimodal single HIGS model and SANI property 
+
+The discrete-time bimodal HIGS was originally introduced in [19]. Here, we adapt the model presented in [19] to align with the nonlinear state-space description in (1). The discrete-time bimodal HIGS is given by: 
+
+H :
+
+
+
+xh(k + 1) = xint (k), if (e(k), x int (k)) ∈ F ,xh(k + 1) = κhe(k), if (e(k), x int (k)) /∈ F ,yh(k) = xh(k + 1) ,
+
+(5) where e(k), y h(k), x h(k) ∈ R are the system input, output, and state, respectively. The constant parameters ωh ≥ 0 and 
+
+κh > 0 denote the integrator frequency and the gain value, respectively. The quantity 
+
+xint (k) = xh(k) + ωhe(k) (6) represents the candidate state value obtained by applying linear integral action to the input e(k) from the current state xh(k).The HIGS is designed to operate primarily in the integrator mode. This mode is active as long as the candidate value 
+
+xint (k) remains within the sector [0 , κ h] relative to the input 
+
+e(k). Specifically, the integrator region F is defined as: 
+
+F = {(e(k), x int (k)) ∈ R2 ∣∣ xint (k)e(k) ≥ 1 
+
+> κh
+
+xint (k)2}.
+
+(7) If the candidate trajectory tends to leave this sector; i.e., 
+
+(e(k), x int (k)) /∈ F , the HIGS switches to the gain mode, updating the state to xh(k + 1) = κhe(k). This projection en-sures the output strictly satisfies the sector constraint. Because the constraint is enforced directly on the input-output pair 
+
+(e(k), y h(k)) = ( e(k), x h(k + 1)) , we have (e(k), y h(k)) ∈ F 
+
+for all k ≥ 1, regardless of the initial condition xh(0) .To streamline the notation in the subsequent analysis, we will denote the time-dependent variables e(k), xh(k), yh(k),and xint (k) using subscripts as ek, ˜xk, ˜yk, and ˜xk|int , respec-tively. Additionally, note that the parameter ωh used in this paper corresponds to the product ωhTs in [19], [21], where 
+
+Ts is the sampling period. Because our analysis is conducted entirely in the discrete-time domain, we absorb Ts into the integrator frequency ωh.As established in [27], the discrete-time bimodal HIGS is an SANI system. In other words, the system (5) exhibits the ZOH-NI property from the input ek to the state ˜xk.
+
+Theorem 1: [27] The bimodal HIGS of the form (5) is an SANI system with the storage function 
+
+˜V (˜xk ) = 1
+
+2κh
+
+˜x2 
+
+> k
+
+(8) satisfying 
+
+˜V (˜xk+1 ) − ˜V (˜xk) ≤ ek(˜xk+1 − ˜xk), (9) for any input ek and state ˜xk.
+
+B. Multi-HIGS structure and SANI property 
+
+We now introduce the discrete-time multi-HIGS architec-ture, which serves as the foundational MIMO framework for both the bimodal and trimodal HIGS controllers discussed in subsequent sections. Consider p scalar HIGS Hi connected in parallel, as shown in Fig. 1. The input, output and state of the i-th HIGS Hi at time step k ∈ N are denoted by e[i] 
+
+> k
+
+, ˜y[i] 
+
+> k
+
+and ˜x[i] 
+
+> k
+
+, respectively. The stacked input, output and state vectors of the multi-HIGS ̂
+
+H are given by 
+
+Ek =
+
+[
+
+e[1]  
+
+> k
+
+e[2]  
+
+> k
+
+· · · e[p]
+
+> k
+
+]⊤
+
+, (10) 
+
+˜Yk =
+
+[˜y[1]  
+
+> k
+
+˜y[2]  
+
+> k
+
+· · · ˜y[p]
+
+> k
+
+]⊤
+
+, (11) 
+
+˜Xk =
+
+[˜x[1]  
+
+> k
+
+˜x[2]  
+
+> k
+
+· · · ˜x[p]
+
+> k
+
+]⊤
+
+. (12) 3e[1] 
+
+e[2] 
+
+e[p]
+
+...
+
+˜y[1] 
+
+˜y[2] 
+
+˜y[p]
+
+......
+
+H1
+
+H2
+
+Hp̂
+
+H       
+
+> Fig. 1. A discrete-time multi-HIGS ̂Hformed by connecting pscalar HIGS
+> Hiin parallel. It is called a bimodal (resp. trimodal) multi-HIGS if each Hi
+> is a bimodal (resp. trimodal) HIGS.
+
+Each individual HIGS Hi is parameterized by an integrator frequency ωi ≥ 0 and a gain value κi > 0. We compactly represent these gain values using the diagonal matrix: 
+
+K = diag {κ1, · · · , κ p}. (13) Before specifying the bimodal or trimodal cases, we es-tablish a general result demonstrating that any multi-HIGS constructed from parallel SANI scalar channels inherently preserves the overall SANI property. 
+
+Theorem 2: Consider a multi-HIGS ̂ H as shown in Fig. 1, where the i-th scalar channel Hi has the storage function: 
+
+˜Vi
+
+(˜x[i]
+
+> k
+
+)
+
+= 1
+
+2κi
+
+(˜x[i]
+
+> k
+
+)2
+
+(14) and satisfies the SANI dissipation inequality: 
+
+˜Vi
+
+(˜x[i]
+
+> k+1
+
+)
+
+− ˜Vi
+
+(˜x[i]
+
+> k
+
+)
+
+≤ e[i]
+
+> k
+
+(˜x[i] 
+
+> k+1
+
+− ˜x[i]
+
+> k
+
+)
+
+. (15) Then the multi-HIGS ̂ H is an SANI system from the input Ek
+
+to the output ˜Yk with the storage function ̂
+
+V ( ˜Xk) = 1
+
+2 ˜X⊤ 
+
+> k
+
+K−1 ˜Xk (16) satisfying ̂
+
+V ( ˜Xk+1 ) −̂ V ( ˜Xk) ≤ E⊤ 
+
+> k
+
+( ˜Xk+1 − ˜Xk), (17) where K is given by (13), and ˜Yk = ˜Xk+1 .
+
+Proof: By definition, the storage function of the multi-HIGS given by (16) is the sum of all individual HIGS’s storage functions (14); i.e., ̂
+
+V ( ˜Xk) = 
+
+> p
+
+∑
+
+> i=1
+
+˜Vi
+
+(˜x[i]
+
+> k
+
+)
+
+.
+
+Applying the vector definitions (10) and (12) alongside the individual dissipation inequalities (15), we obtain: ̂
+
+V ( ˜Xk+1 ) −̂ V ( ˜Xk) = 
+
+> p
+
+∑
+
+> i=1
+
+[ ˜Vi
+
+(˜x[i]
+
+> k+1
+
+)
+
+− ˜Vi
+
+(˜x[i]
+
+> k
+
+)] 
+
+≤
+
+> p
+
+∑
+
+> i=1
+
+e[i]
+
+> k
+
+(˜x[i] 
+
+> k+1
+
+− ˜x[i]
+
+> k
+
+)
+
+= E⊤ 
+
+> k
+
+( ˜Xk+1 − ˜Xk)
+
+which is (17). Since by construction ˜Yk = ˜Xk+1 , the multi-HIGS is SANI according to Definition 2. 
+
+C. Bimodal multi-HIGS model 
+
+When each scalar channel Hi in Fig. 1 is a bimodal HIGS of the form (5), the resulting composite architecture is termed a bimodal multi-HIGS. The state-space representation of this bimodal multi-HIGS is given by: 
+
+e[i] 
+
+> k
+
+= θ⊤ 
+
+> i
+
+Ek, (18a) 
+
+˜x[i] 
+
+> k+1
+
+= ˜x[i]
+
+> k|int
+
+, if (e[i] 
+
+> k
+
+, ˜x[i]
+
+> k|int
+
+) ∈ F i (18b) 
+
+˜x[i] 
+
+> k+1
+
+= κie[i] 
+
+> k
+
+, if (e[i] 
+
+> k
+
+, ˜x[i]
+
+> k|int
+
+) /∈ F i (18c) 
+
+˜Xk =
+
+[˜x[1]  
+
+> k
+
+, ˜x[2]  
+
+> k
+
+, · · · , ˜x[p]
+
+> k
+
+]⊤
+
+, (18d) 
+
+˜Yk = ˜Xk+1 , (18e) where θi ∈ Rp represents the i-th standard basis vector, 
+
+˜x[i] 
+
+> k|int
+
+= ˜x[i] 
+
+> k
+
++ ωie[i] 
+
+> k
+
+is the candidate integrator state for the 
+
+i-th channel, and the sector boundary set Fi is defined as: 
+
+Fi =
+
+{
+
+(e, x int ) ∈ R2
+
+∣∣∣ xint e ≥ 1 
+
+> κi
+
+x2int 
+
+}
+
+. (19) For each bimodal HIGS Hi, Theorem 1 implies that the storage function (8) with κh replaced by κi satisfies (15). Hence Theorem 2 implies directly that the bimodal multi-HIGS (18) is SANI with storage function (16). 
+
+Corollary 1: The bimodal multi-HIGS given by (18) is an SANI system from the input Ek to the output ˜Yk, with the storage function (16). 
+
+Proof: This result follows directly from Theorems 1 and 2. 
+
+D. Control of NI systems using bimodal multi-HIGS 
+
+We now show that a linear ZOH-NI plant can be stabilized by applying a suitable bimodal discrete-time multi-HIGS con-troller in positive feedback. Consider the interconnection of a linear ZOH-NI system and a multi-HIGS as shown in Fig. 2, with the settings 
+
+uk = ˜Yk; (20) 
+
+Ek = yk. (21) 
+
+uk yk
+
+Ek
+
+˜Yk
+
+G(z)̂
+
+H    
+
+> Fig. 2. Closed-loop interconnection of a linear ZOH-NI system given by (3) with transfer matrix G(z)and a discrete-time multi-HIGS ̂H.
+
+Theorem 3: Consider a system with transfer matrix G(z)
+
+and a minimal realization (3) where det( I − A) 6 = 0 . Suppose 
+
+G(z) is ZOH-NI with a positive definite quadratic storage function. Also, consider a bimodal multi-HIGS ̂ H of the form (18) such that 0 < ω i ≤ κi for all i ∈ { 1, 2, · · · , p } and 4K−1 − G(1) > 0 where K is given by (13). Then the closed-loop interconnection of G(z) and the bimodal multi-HIGS ̂ H
+
+is asymptotically stable. 
+
+Proof: According to Lemma 1, the NI property of the system (3) implies that there exists a matrix P = P ⊤ > 0
+
+such that 
+
+A⊤P A − P ≤ 0 and C = B⊤(I − A)−⊤ P. (22) We construct the following candidate Lyapunov function for the closed-loop interconnection of G(z) and ̂ H shown in Fig. 2: 
+
+W (xk , ˜Xk) = V (xk ) + ̂ V ( ˜Xk) − x⊤ 
+
+> k
+
+C⊤ ˜Xk
+
+= 1
+
+2 x⊤ 
+
+> k
+
+P x k + 1
+
+2 ˜X⊤ 
+
+> k
+
+K−1 ˜Xk − x⊤ 
+
+> k
+
+C⊤ ˜Xk. (23) Writing W (xk , ˜Xk) in matrix form, we have 
+
+W (xk, ˜Xk) = 1
+
+2
+
+[
+
+xk ˜Xk
+
+] [ P −C⊤
+
+−C K−1
+
+] [ xk
+
+˜Xk
+
+]
+
+.
+
+Let ̂ P =
+
+[ P −C⊤
+
+−C K−1
+
+]
+
+. Since P > 0, the Schur complement theorem implies that ̂ P > 0 if and only if 
+
+K−1 − CP −1C⊤ > 0. (24) According to (22), we have B = ( I − A)P −1C⊤. Hence, 
+
+G(1) = C(I − A)−1B = CP −1C⊤.
+
+The condition (24) can be rewritten as 
+
+K−1 − G(1) > 0,
+
+which is equivalent to the given condition G(1) K < I.Therefore, ̂ P > 0 and the function W (xk , ˜Xk) is positive definite. Now we take the difference between W (xk+1 , ˜Xk+1 ) and 
+
+W (xk , ˜Xk) to obtain 
+
+W (xk+1 , ˜Xk+1 ) − W (xk , ˜Xk)= V (xk+1 ) + ̂ V ( ˜Xk+1 ) − x⊤ 
+
+> k+1
+
+C⊤ ˜Xk+1 − V (xk )
+
+−̂ V ( ˜Xk) + x⊤ 
+
+> k
+
+C ˜Xk
+
+≤ u⊤ 
+
+> k
+
+(yk+1 − yk) + E⊤ 
+
+> k
+
+( ˜Xk+1 − ˜Xk) − x⊤
+
+> k+1
+
+C⊤ ˜Xk+1 
+
++ x⊤ 
+
+> k
+
+C ˜Xk
+
+= ˜X⊤
+
+> k+1
+
+(yk+1 − yk) + y⊤ 
+
+> k
+
+( ˜Xk+1 − ˜Xk) − y⊤ 
+
+> k+1
+
+˜Xk+1 
+
++ y⊤ 
+
+> k
+
+˜Xk
+
+= 0 , (25) where (3b), (18e), (20) and (21) are also used. This implies that the closed-loop system is Lyapunov stable. Moreover, the equality in (25) holds only if 
+
+V (xk+1 ) − V (xk ) = u⊤ 
+
+> k
+
+(yk+1 − yk),̂
+
+V ( ˜Xk+1 ) −̂ V ( ˜Xk) = E⊤ 
+
+> k
+
+( ˜Xk+1 − ˜Xk). (26) According to the proof of Theorem 2, if (26) holds, then for all i ∈ { 1, 2, · · · , p }, we have 
+
+˜Vi
+
+(˜x[i]
+
+> k+1
+
+)
+
+− ˜Vi
+
+(˜x[i]
+
+> k
+
+)
+
+= e[i]
+
+> k
+
+(˜x[i] 
+
+> k+1
+
+− ˜x[i]
+
+> k
+
+)
+
+, (27) with 
+
+˜Vi
+
+(˜x[i]
+
+> k
+
+)
+
+= 1
+
+2κi
+
+(˜x[i]
+
+> k
+
+)2
+
+. (28) Substituting (28) in (27), we obtain 
+
+1
+
+2κi
+
+[(˜x[i]
+
+> k+1
+
+)2
+
+−
+
+(˜x[i]
+
+> k
+
+)2]
+
+= e[i]
+
+> k
+
+(˜x[i] 
+
+> k+1
+
+− ˜x[i]
+
+> k
+
+)
+
+. (29) We discuss the conditions required for (29) to hold in the cases of integrator mode and gain mode separately. 
+
+Case 1 (integrator mode): In this case, we have (
+
+e[i] 
+
+> k
+
+, ˜x[i]
+
+> k|int
+
+)
+
+∈ F i, and ˜x[i] 
+
+> k+1
+
+is given by (18b). Substituting (18b) into (29) yields 
+
+(ωi − 2κi)
+
+(
+
+e[i]
+
+> k
+
+)2
+
++ 2 ˜x[i] 
+
+> k
+
+e[i] 
+
+> k
+
+= 0 . (30) We now distinguish the cases e[i] 
+
+> k
+
+6 = 0 and e[i] 
+
+> k
+
+= 0 . If e[i] 
+
+> k
+
+6 = 0 ,then (30) implies 
+
+˜x[i] 
+
+> k
+
+=
+
+(
+
+κi − ωi
+
+2
+
+)
+
+e[i] 
+
+> k
+
+. (31) Substituting (31) in the inequality in (19) yields 
+
+(
+
+κi + ωi
+
+2
+
+) ( 
+
+e[i]
+
+> k
+
+)2
+
+≥ 1
+
+κi
+
+(
+
+κi + ωi
+
+2
+
+)2 (
+
+e[i]
+
+> k
+
+)2
+
+,
+
+which simplifies to ωi ≤ 0 and hence contradicts the fact that ωi > 0. Therefore, the case e[i] 
+
+> k
+
+6 = 0 cannot hold in the integrator mode. Thus, in integrator mode we must have e[i] 
+
+> k
+
+=0. In this case, (30) holds, and substituting e[i] 
+
+> k
+
+= 0 into (19) yields ˜x[i] 
+
+> k
+
+= 0 and hence ˜x[i] 
+
+> k+1
+
+= 0 . We show in the following that in this case, the HIGS channel Hi remains in integrator mode with zero state for all future times, regardless the values of future inputs. Since ˜x[i] 
+
+> k+1
+
+= 0 , then ˜x[i] 
+
+> k+1 |int
+
+= ωi˜e[i]
+
+> k+1
+
+.According to (19), 
+
+(
+
+e[i]
+
+> k+1
+
+, ω i˜e[i]
+
+> k+1
+
+)
+
+∈ F i if ωi
+
+(
+
+e[i]
+
+> k+1
+
+)2
+
+≥ 
+
+> 1
+> κi
+
+ω2
+
+> i
+
+(
+
+e[i]
+
+> k+1
+
+)2
+
+. This holds for any e[i] 
+
+> k+1
+
+because 0 < ω i ≤ κi.
+
+Case 2 (gain mode): In this case, we have 
+
+(
+
+e[i] 
+
+> k
+
+, ˜x[i]
+
+> k|int
+
+)
+
+/∈ F i;that is, 
+
+(˜x[i] 
+
+> k
+
++ ωie[i]
+
+> k
+
+)
+
+e[i] 
+
+> k
+
+< 1
+
+κi
+
+(˜x[i] 
+
+> k
+
++ ωie[i]
+
+> k
+
+)2
+
+. (32) Also, ˜x[i] 
+
+> k+1
+
+is given by (18c). Substituting (18c) into (29) yields 
+
+˜x[i] 
+
+> k
+
+= κie[i] 
+
+> k
+
+. (33) Substituting (33) into (32) shows that e[i] 
+
+> k
+
+6 = 0 . Therefore, we have 
+
+˜x[i] 
+
+> k+1
+
+= κie[i] 
+
+> k
+
+= ˜x[i] 
+
+> k
+
+6 = 0 .
+
+From the analysis of the above two cases, we conclude that when W (xk+1 , ˜Xk+1 ) − W (xk, ˜Xk) = 0 , we have the following conditions. For each HIGS Hi: (i) if e[i] 
+
+> k
+
+= 0 , then it remains in the integrator mode and ˜x[i] 
+
+> k
+
+= 0 for all future k,or (ii) if e[i] 
+
+> k
+
+6 = 0 , it operates in the gain mode and ˜x[i] 
+
+> k
+
+6 = 0 are constant for all future k. According to (18e), e[i] 
+
+> k
+
+also remains constant for all future k. This implies that it will remain in the gain mode for all future k.5Now we consider the case when W (xk+1 , ˜Xk+1 ) −
+
+W (xk , ˜Xk) = 0 for all k ≥ k0. In this case, each individual HIGS Hi will either remain in the integrator mode or remain in the gain mode. Also, according to the conditions in cases (i) and (ii), regardless of the active mode of each individual HIGS, its input and state will remain constant; i.e., 
+
+˜Xk = ˜Xk+1 = ˜Xk+2 = · · · ,Ek = Ek+1 = Ek+2 = · · · ,
+
+˜Xk = KE k.
+
+Using the setting (21), we have 
+
+yk = yk+1 = yk+2 = · · · (34) for all k ≥ k0. Since the system (3) is minimal, it is observable. Therefore, (34) implies that the state of the plant remains constant: 
+
+xk = xk+1 = xk+2 = · · · , ∀k ≥ k0.
+
+Using xk+1 = Ax k + Bu k with uk = ˜Yk = ˜Xk+1 = KE k+1 
+
+and Ek+1 = yk+1 = Cx k+1 = Cx k , we obtain, for all k ≥
+
+k0,
+
+xk = Ax k + BKE k. (35) Solving (35), we get 
+
+xk = ( I − A)−1BKE k.
+
+Hence, 
+
+Ek = yk = Cx k = C(I − A)−1BKE k = G(1) KE k. (36) If Ek 6 = 0 for some k ≥ k0, then (36) implies G(1) K = I,contradicting the fact that K−1 − G(1) > 0. Therefore, the only possible trajectory that remains lossless from some time onward satisfies Ek = 0 and yk = 0 for all k ≥ k0, which by observability implies xk = 0 for all k ≥ k0.Hence, except for the equilibrium, W (xk+1 , ˜Xk+1 ) −
+
+W (xk , ˜Xk) cannot remain zero and it will eventually decrease to zero, where we then have xk = 0 and ˜Xk = 0 . This proves asymptotic stability. 
+
+IV. TRIMODAL DISCRETE-TIME HIGS AND NI CONTROL In this section, we investigate NI control using a discrete-time trimodal HIGS. First, we provide the system model for a single trimodal HIGS and demonstrate that it possesses the SANI property. Next, we introduce the trimodal multi-HIGS architecture and note that it retains the SANI property as a direct consequence of Theorem 2. Finally, we analyze the closed-loop stability for the interconnection of a MIMO ZOH-NI plant and a trimodal multi-HIGS controller. 
+
+A. Trimodal single HIGS model and SANI property 
+
+A trimodal version of discrete-time HIGS is introduced in [21], which provides an alternative model to the bimodal version. The trimodal HIGS differs from the bimodal version by providing a refined way of projection into the sector of operation. Specifically, given an input ek, if the integrator mode dynamics tend to provide an output outside the sector 
+
+[0 , κ h], the bimodal HIGS projects the output to the line 
+
+xh = κhe. However, the sector F has two boundaries: 
+
+xh = κhe and xh = 0 .For a continuous-time HIGS, the dynamics of an integrator can only exit the sector [0 , κ h] by crossing the boundary xh =
+
+κhe. Conversely, in the discrete-time case, a finite integration step can cause the dynamics to land in the second or fourth quadrants of the input-output plane, making the state closer to the zero boundary xh = 0 . To address this, the trimodal HIGS projects such states back to xh = 0 rather than xh = κhe. We formulate the trimodal discrete-time HIGS model below. We adapt the indexing from the model in [21] to align with our nonlinear state-space description in (1), rewriting the operating regions purely in terms of the current state and input: 
+
+H :
+
+
+
+xh(k + 1) = xint (k), if (e(k), x int (k)) ∈ F ,xh(k + 1) = κhe(k), if (e(k), x int (k)) ∈ F a,xh(k + 1) = 0 , if (e(k), x int (k)) ∈ F b,yh(k) = xh(k + 1) ,
+
+(37) where e(k), y h(k), x h(k) ∈ R are the system input, output, and state, respectively, and xint (k) is the candidate integrator value given by the same formula as in (6). The constant parameters ωh ≥ 0 and κh > 0 are the integrator frequency and the gain value, respectively. Here, F remains the same as in (7), and Fa and Fb are given by 
+
+Fa = {(e(k), x int (k)) ∈ R2 | xint (k)e(k) > κ he(k)2},
+
+Fb =
+
+{
+
+(e(k), x int (k)) ∈ R2
+
+∣∣∣
+
+xint (k)e(k) < 0 ∨ (e(k) = 0 ∧ xint (k) 6 = 0 )}
+
+. (38) To streamline the notation in the subsequent analysis, we continue to denote e(k), xh(k), xint (k) and yh(k) by ek, ˜xk,
+
+˜xk|int and ˜yk, respectively. 
+
+Remark 2: The trimodal HIGS model in (37) represents an equivalent state-space realization of the controller presented in [21]. While the original model expresses the switching conditions using both e(k) and e(k − 1) , the representation formulated here defines the operating regions entirely in terms of the current state and input, eliminating the explicit dependence on e(k − 1) . The three defined regions F, Fa,and Fb correspond directly to the three projection operations described in [21]: pure integration, projection onto the gain boundary xh = κhe, and projection onto the zero boundary 
+
+xh = 0 .
+
+Theorem 4: The trimodal HIGS of the form (37) is an SANI system with the storage function (8) satisfying (9). 
+
+Proof: When (e(k), x int (k)) ∈ F ∪ F a, the update law for xh(k + 1) is identical to that of the bimodal HIGS. Consequently, the SANI property for these regions follows directly from Theorem 1. For the zeroing mode where (e(k), x int (k)) ∈ F b, the state update is xh(k + 1) = 0 . In this case, the required SANI inequality (9) simplifies to: 
+
+1
+
+2κh
+
+˜x2 
+
+> k
+
+≥ ek ˜xk. (39) 6If ek = 0 , (39) is always satisfied. If ek 6 = 0 , dividing by e2
+
+> k
+
+allows (39) to be rewritten as a quadratic inequality: 
+
+( ˜xk
+
+ek
+
+)2
+
+− 2κh
+
+( ˜xk
+
+ek
+
+)
+
+≥ 0,
+
+which holds when ˜xk 
+
+> ek
+
+≤ 0 or ˜xk 
+
+> ek
+
+≥ 2κh. The condition 
+
+xint (k)ek < 0 in Fb given by (38) implies that 
+
+˜xkek + ωhe2 
+
+> k
+
+< 0,
+
+which, in the case ek 6 = 0 , implies ˜xk 
+
+> ek
+
++ ωh < 0. Hence,  
+
+> ˜xk
+> ek
+
+< 0, and (39) is satisfied. Therefore, the trimodal HIGS is an SANI system. 
+
+B. Trimodal multi-HIGS model and SANI property 
+
+A trimodal discrete-time multi-HIGS is constructed by connecting p trimodal HIGS of the form (37) in parallel, as shown in Fig. 1. The stacked input, output and state of the multi-HIGS ̂ H are still given by (10)–(12). Assume that the i-th HIGS Hi has an integrator frequency 
+
+ωi ≥ 0 and a gain value κi > 0, with scalar input e[i] 
+
+> k
+
+, output 
+
+˜y[i] 
+
+> k
+
+and state ˜x[i] 
+
+> k
+
+. The associated candidate integrator value for this channel is: 
+
+˜x[i] 
+
+> k|int
+
+= ˜x[i] 
+
+> k
+
++ ωie[i] 
+
+> k
+
+. (40) The operating sector regions for the i-th channel are defined as: 
+
+Fi = {(e, x int ) ∈ R2 | xint e ≥ 1 
+
+> κi
+
+x2int },
+
+Fa,i = {(e, x int ) ∈ R2 | xint e > κ ie2},
+
+Fb,i = {(e, x int ) ∈ R2 | xint e < 0 ∨ (e = 0 ∧ xint 6 = 0) }.
+
+The state-space representation of the trimodal multi-HIGS can then be written as: 
+
+e[i] 
+
+> k
+
+= θ⊤ 
+
+> i
+
+Ek, (41a) 
+
+˜x[i] 
+
+> k+1
+
+= ˜x[i]
+
+> k|int
+
+, if (e[i] 
+
+> k
+
+, ˜x[i]
+
+> k|int
+
+) ∈ F i, (41b) 
+
+˜x[i] 
+
+> k+1
+
+= κie[i] 
+
+> k
+
+, if (e[i] 
+
+> k
+
+, ˜x[i]
+
+> k|int
+
+) ∈ F a,i , (41c) 
+
+˜x[i] 
+
+> k+1
+
+= 0 , if (e[i] 
+
+> k
+
+, ˜x[i]
+
+> k|int
+
+) ∈ F b,i , (41d) 
+
+˜Xk =
+
+[˜x[1]  
+
+> k
+
+, ˜x[2]  
+
+> k
+
+, · · · , ˜x[p]
+
+> k
+
+]⊤
+
+, (41e) 
+
+˜Yk = ˜Xk+1 . (41f) By Theorem 4, each trimodal HIGS Hi has the storage function 
+
+˜Vi
+
+(˜x[i]
+
+> k
+
+)
+
+= 1
+
+2κi
+
+(˜x[i]
+
+> k
+
+)2
+
+(42) and satisfies (15). Thus, the trimodal multi-HIGS (41) is also SANI with the storage (16) by Theorem 2. 
+
+Corollary 2: The trimodal multi-HIGS given by (41) is an SANI system from the input Ek to the output ˜Yk , with the storage function (16). 
+
+Proof: This result follows directly from Theorems 4 and 2. 
+
+C. Control of NI systems using trimodal multi-HIGS 
+
+We now show that a linear ZOH-NI plant can also be stabilized by a trimodal discrete-time multi-HIGS in positive feedback. We consider the same interconnection as in Fig. 2 with the settings (20) and (21). 
+
+Theorem 5: Consider a system with transfer matrix G(z)
+
+and a minimal realization (3) where det( I − A) 6 = 0 . Suppose 
+
+G(z) is ZOH-NI with a positive definite quadratic storage function. Also, consider a trimodal multi-HIGS ̂ H of the form (41) such that 0 < ω i ≤ κi for all i ∈ { 1, 2, · · · , p } and 
+
+K−1 − G(1) > 0 where K is given by (13). Then the closed-loop interconnection of G(z) and the trimodal multi-HIGS ̂ H
+
+is asymptotically stable. 
+
+Proof: We use the same candidate Lyapunov function W
+
+in (23) as in the bimodal case. Its positive definiteness follows exactly as in the proof of Theorem 3. As shown in Corollary 2, the trimodal multi-HIGS is SANI with storage function (16). Conducting the same dissipation calculation as given by (25) in the proof of Theorem 3 yields 
+
+W (xk+1 , ˜Xk+1 ) − W (xk, ˜Xk) ≤ 0
+
+for all k, with equality if and only if both subsystems are lossless at step k; that is: 
+
+V (xk+1 ) − V (xk ) = u⊤ 
+
+> k
+
+(yk+1 − yk),̂
+
+V ( ˜Xk+1 ) −̂ V ( ˜Xk) = E⊤ 
+
+> k
+
+( ˜Xk+1 − ˜Xk). (43) Similar to the analysis in the proof of Theorem 3, (43) implies that each individual HIGS Hi is lossless, i.e., 
+
+˜Vi(˜x[i] 
+
+> k+1
+
+) − ˜Vi(˜x[i] 
+
+> k
+
+) = e[i]
+
+> k
+
+(˜x[i] 
+
+> k+1
+
+− ˜x[i]
+
+> k
+
+), (44) with ˜Vi given by (42). Substituting (42) into (44) yields 
+
+1
+
+2κi
+
+[
+
+(˜x[i] 
+
+> k+1
+
+)2 − (˜x[i] 
+
+> k
+
+)2]
+
+= e[i]
+
+> k
+
+(˜x[i] 
+
+> k+1
+
+− ˜x[i]
+
+> k
+
+). (45) We now analyze (45) for each mode of the trimodal HIGS 
+
+Hi. The integrator mode case (e[i] 
+
+> k
+
+, ˜x[i]
+
+> k|int
+
+) ∈ F i and the gain mode case (e[i] 
+
+> k
+
+, ˜x[i]
+
+> k|int
+
+) ∈ F i,a follow the same analysis as in the proof of Theorem 3. Now, we consider the zeroing mode case where (e[i] 
+
+> k
+
+, ˜x[i]
+
+> k|int
+
+) ∈ F i,b .
+
+Zeroing mode Case: (e[i] 
+
+> k
+
+, ˜x[i]
+
+> k|int
+
+) ∈ F b,i , and 
+
+˜x[i] 
+
+> k+1
+
+= 0 .
+
+In this case, (45) becomes 
+
+− 1
+
+2κi
+
+(˜x[i] 
+
+> k
+
+)2 = e[i] 
+
+> k
+
+(0 − ˜x[i] 
+
+> k
+
+) = −e[i] 
+
+> k
+
+˜x[i] 
+
+> k
+
+,
+
+or equivalently 1
+
+2κi
+
+(˜x[i] 
+
+> k
+
+)2 = e[i] 
+
+> k
+
+˜x[i] 
+
+> k
+
+. (46) If e[i] 
+
+> k
+
+= 0, then Fb,i requires ˜x[i] 
+
+> k|int
+
+6 = 0. This implies 
+
+˜x[i] 
+
+> k
+
+6 = 0 by (40), which contradicts (46). If e[i] 
+
+> k
+
+6 = 0 , then 
+
+Fb,i implies that ˜x[i]
+
+> k|int
+
+e[i] 
+
+> k
+
+< 0. Expanding this using (40) yields e[i] 
+
+> k
+
+˜x[i] 
+
+> k
+
++ ωi
+
+(
+
+e[i]
+
+> k
+
+)2
+
+< 0. Because ωi > 0, this strict inequality necessitates that e[i] 
+
+> k
+
+˜x[i] 
+
+> k
+
+< 0, which contradicts with 7࢓ߤ 
+
+ଵ ଵଵ 
+
+ݎଵ
+
+ଶ 
+
+> ଵଶ ଵଵ ଵଶ
+
+ݎଶ߱
+
+> ଵ
+
+߱
+
+> ଶ
+
+ݕଵ
+
+ݕଶ
+
+ଵ ܩଵଵ ஽
+
+ଶ ܩଶଶ ஽
+
+# ܩ஽
+
+ݕଵ
+
+ݕଶ
+
+# ܥଵଵଵ ܥଶଵଵ 
+
+# ܥଵଶଶ ܥଶଶଶ 
+
+ݎଵ
+
+ݎଶ
+
+ݑଵ
+
+ݑଶ
+
+݅െ ܵܩܫ 
+
+> ଵ
+
+݅ 
+
+> ଶ
+> Inner-Stage Force Sensor Outer-Stage Nanopositioner
+> 500 μm
+> Fig. 3. The testbed with the dual-stage MEMS force sensor mounted on a custom-made PCB with a scanning electron microscopy (SEM) image of the MEMS device reported in [30].
+
+(46). Hence, when W (xk+1 , ˜Xk+1 ) − W (xk, ˜Xk) = 0 , no HIGS channel Hi can operate in the zeroing mode. In other words, whenever the closed-loop system is lossless at step k,each HIGS Hi must be either in the integrator mode or in the gain mode. The remainder of the proof follows identically from the final steps of the proof of Theorem 3. 
+
+V. APPLICATION: A MEMS FORCE SENSOR 
+
+A. Dual-stage MEMS force sensor 
+
+We develop a MIMO HIGS controller for a dual-axis MEMS force sensor featuring collocated electrostatic actuators and electrothermal displacement sensors that generate and detect bidirectional motion along the X-axis. A scanning electron microscope (SEM) image of the device is presented in Fig. 3. The double-stage force sensor integrates nanopo-sitioning and force sensing systems within a total length of 
+
+7.85 mm . The force sensing stage, measuring 3.86 mm in length and 2.82 mm in width, incorporates a shuttle beam with dimensions of 2.37 mm × 0.250 mm , ending in a sharp 
+
+2×25 μm tip. The nanopositioning stage provides a maximum linear displacement of 5.3 μm, while the force sensing stage operates within a linear travel range of 2.29 μm and an open-loop force range of 86 .28 μN. The design and characterization of the device are detailed in [30]. The frequency-domain response of the dual-stage MEMS force sensor is obtained using an Onosokki FFT analyzer (CF-9400). The device is modeled as a two-input two-output (TITO) system, where the inputs correspond to the voltages ap-plied to the electrostatic actuators via a 20 × voltage amplifier, and the outputs are the voltage signals from the inner-stage and 
+
+> ࢓ߤ
+
+ଵ Gଵଵ (s) 
+
+++ݎଵ
+
+ଶ
+
+Gଵଶ (s) 
+
+Gଵଵ (s) Gଵଶ (s) 
+
+## G
+
+++
+
+ݎଶ߱
+
+> ଵ
+
+߱
+
+> ଶ
+
+ݕଵ
+
+ݕଶ
+
+ଵ ܩଵଵ ஽
+
+ଶ ܩଶଶ ஽
+
+## ܩ஽
+
+ݕଵ
+
+ݕଶ
+
+# ܥଵଵଵ ܥଶଵଵ 
+
+# ܥଵଶଶ ܥଶଶଶ 
+
+ݎଵ
+
+ݎଶ
+
+ݑଵ
+
+ݑଶ
+
+݅െ ܵܩܫ 
+
+> ଵ
+
+݅ 
+
+> ଶ
+> Fig. 4. Closed-loop interconnection of a TITO multi-HIGS and the TITO dual-stage MEMS force sensor G(s) for damping.
+
+outer-stage sensors. The frequency response function (FRF) of the TITO MEMS force sensor is defined as: 
+
+G(jω ) = 
+
+[G11 (jω ) G12 (jω )
+
+G21 (jω ) G22 (jω )
+
+]
+
+=
+
+[ Yin  
+
+> Uin
+
+(jω ) Yin  
+
+> Uout
+
+(jω ) 
+
+> Yout
+> Uin
+
+(jω ) Yout  
+
+> Uout
+
+(jω )
+
+]
+
+where Uin,out and Yin,out represent the Fourier transforms of inner-stage force sensor and outer-stage nanopositioner actuation voltages and sensor outputs, respectively. A sinu-soidal chirp signal sweeping across a 10 kHz bandwidth is applied to the actuators, and the corresponding responses are captured from the electrothermal sensors’ trans-impedance readout circuit. Fig. 5 shows the obtained open-loop frequency response of the TITO system. The dominant resonant modes of the inner-stage force sensor and outer-stage nanopositioner occur at 993 Hz and 1326 Hz , respectively. Due to the mechanical coupling between the stages, the coupling terms also appear at these frequencies. A fourth-order state-space model is estimated using the plant frequency response data and the MATLAB n4sid system identification toolbox: 
+
+A =
+
+            
+
+> −104 .10 5622 3693 −1174
+> −5238 −17 .10 596 .60 6212
+> −2765 −461 .60 −37 .94 −7586 646 .40 −3833 5758 −22 .39
+
+,B =
+
+    
+
+> 23 .58 3.81 9.50 −4.25 2.36 4.89 5.69 −14 .11
+
+, C =
+
+    
+
+> 18 .69 6.88
+> −45 .25 −43 .13
+> −50 .40 40 .23 0.23 26 .27
+
+
+
+> ⊤
+
+, D = 0 .
+
+To assess the NI property of the TITO MEMS force sensor, we evaluate the eigenvalues of the matrix j(G(jω ) − G∗ (jω )) 
+
+(see e.g., [22]), showing that the system retains the NI property up to 1004 Hz . As shown in Fig. 5, the phase response remains within the 0 to −180 ◦ range up to this frequency but gradually decreases beyond that point, indicating loss of the NI property. Therefore, within this bandwidth, the system is NI, indicating that it is ZOH-NI under sample-and-hold process in digital control. Thus, the internal stability of the closed-loop system is ensured when a multi-HIGS controller with suitable parameters is applied in positive feedback. Given that the operating frequency range of the MEMS force sensor lies within this range, the stability of the positively fed-back closed-loop system with the multi-HIGS controller is inherently assured. 8-40 -20 020 Magnitude (dB)                  
+
+> 10 110 210 310 4
+> -270 -180 -90 0Phase (deg)
+> From U in to Y in
+> Frequency (Hz)
+> -100 -50 0Magnitude (dB)
+> 10 110 210 310 4
+> -2160 -1440 -720 0720 Phase (deg)
+> From U out to Y in
+> Frequency (Hz)
+> -100 -50 0Magnitude (dB)
+> 10 110 210 310 4
+> -1080 -720 -360 0Phase (deg)
+> From U in to Y out
+> Frequency (Hz)
+> -60 -40 -20 020 Magnitude (dB)
+> 10 110 210 310 4
+> -360 -270 -180 -90 090 Phase (deg)
+> From U out to Y out
+> Frequency (Hz)
+> Fig. 5.
+
+Frequency responses of the MEMS force sensor in open and closed loop with TITO bimodal multi-HIGS in positive feedback. 
+
+B. Discrete-time multi-HIGS controller design 
+
+According to Theorems 3 and 5, discrete-time multi-HIGS of the forms (18) and (41) can guarantee closed-loop stability when interconnected to the dual-stage MEMS force sensor integrator frequencies ω1 and ω2 and gain values κ1 and κ2
+
+are such that 0 < ω i ≤ κi and 
+
+K−1 − G(1) > 0, (47) where K = diag {κ1, κ 2} and G(1) is the DC-gain of the dual-stage MEMS force sensor. Since the condition (47) is a constraint on κi (i = 1 , 2) only, we can tune ωi after the values of κi are determined in order to achieve desired closed-loop performance. Although the controller is designed and implemented di-rectly in discrete time, we refer to the continuous-time HIGS describing function to aid the initial parameter tuning, since it provides an approximate frequency-domain characterization of the HIGS performance. Specifically, the describing function of a HIGS provides a quasi-linear frequency-domain approx-imation relating a sinusoidal input of frequency ω to the fundamental harmonic of the corresponding HIGS output [17]: 
+
+DH(jω ) = ωh
+
+jω [ γ(ω)
+
+π + j e−2jγ (ω) − 1
+
+2π − 4j e−jγ (ω) − 1
+
+2π ]+ kh[ π − γ(ω)
+
+π + j e−2jγ (ω) − 1
+
+2π ],
+
+with γ(ω) = 2 tan −1( kh ω 
+
+> ωh
+
+). As noted earlier, the discrete-time gain parameter κi plays the same sector-defining role as the continuous-time gain kh, while the discrete-time integrator parameter ωi corresponds to the sampled integrator increment and is related to the continuous-time integrator rate through 
+
+ωi ≈ ωhTs, where Ts = 1 /f s is the sampling period. In the experiments, the sampling frequency is fs = 50 kHz , which gives Ts = 20 μs. This correspondence is used here only to guide parameter selection of each diagonal HIGS channel while the controller itself remains the discrete-time multi-HIGS defined in (18) and (41). Using this channel-wise approximation as an initial tuning guide, we selected 
+
+K = diag {0.75 G11 (1) −1, 0.85 G22 (1) −1},
+
+Ω = diag {1.4 ωn1Ts, 3.2 ωn2Ts},
+
+where Gii (1) denotes the DC-gain and ωni denotes the dom-inant natural frequency of the force sensing and nanoposi-tioning stages, respectively. The resulting discrete-time HIGS parameters are 
+
+K =
+
+[2.81 00 6.25 
+
+]
+
+, Ω = 
+
+[0.174 00 0.532 
+
+]
+
+.
+
+These values were then implemented directly in the discrete-time bimodal and trimodal multi-HIGS controllers and vali-dated experimentally. 
+
+C. Closed-loop performance 
+
+The closed-loop control scheme of the TITO dual-stage MEMS force sensor with a TITO multi-HIGS is shown in Fig. 4. In this setup, r represents the reference signal and 
+
+w is the input disturbance to the plant. Since the main goal in damping the resonant modes is to improve input distur-bance rejection rather than to emphasize reference tracking, the analysis centers on the input disturbance to the sensor output. The closed-loop disturbance rejection ( Twy ) frequency response of the MEMS force sensor in positive feedback with the TITO bimodal multi-HIGS is experimentally obtained 90 50 100 150 200 250 300        
+
+> Time (ms)
+> 012
+> Sensor output (V)
+> (a)
+> Open-Loop Force Sensor
+> Damped Force Sensor
+> 050 100 150 200 250 300
+> Time (ms)
+> 012
+> Sensor output (V)
+> (b)
+> Open-Loop Nanopositioner
+> Damped Nanopositioner
+> Fig. 6.
+
+Normalized step responses of the a) inner-stage force sensor and the b) outer-stage nanopositioner in open-loop and closed-loop with TITO bimodal multi-HIGS. 
+
+and shown in Fig. 5. As seen, the HIGS element effectively damps the resonant modes of both stages, thereby eliminating cross-coupling between them, as evident from the closed-loop frequency responses of T12 and T21 in Fig. 5. The HIGS parameters can also be adjusted to achieve a zero closed-loop DC-gain for improved reference tracking. However, this comes at the expense of reduced damping performance. The closed-loop damping performance was further investi-gated through time-domain experiments. For real-time mea-surements, the control scheme depicted in Fig. 4 was digitally implemented using a dSPACE rapid prototyping system with a sampling rate of 50 kHz . Step inputs with an amplitude of 
+
+0.2 V were applied to both open-loop and closed-loop systems, and the corresponding sensor outputs were recorded in real-time. The normalized results confirm the effectiveness of the multi-HIGS approach in stabilizing the MEMS force sensor within the expected stability conditions, which validates the theoretical expectations as long as the system is NI. As depicted in Fig. 6, the TITO multi-HIGS in positive feedback enhances system performance by effectively damping its resonant modes. This leads to reduced overshoot and set-tling time for both the inner-stage force sensor and the outer-stage nanopositioner. However, the closed-loop configuration changes the system’s low-frequency gain by introducing an ad-ditional gain, indicating that the chosen parameters contribute to an increase in the system’s DC-gain. 
+
+D. Discrete-time bimodal and trimodal HIGS 
+
+To compare the stability and performance of the bimodal and trimodal discrete-time HIGS controllers in a positive-feedback interconnection with the MEMS force sensor, both controllers were implemented digitally in real time and eval-uated through closed-loop time-domain experiments. A step input of 0.2 V was applied as a disturbance. Fig. 7 shows the normalized sensor outputs and control signals for each controller. The results indicate that the controllers achieve comparable damping and steady-state response. We observe that the closed-loop systems in both cases are asymptotically stable. The trimodal HIGS, however, demonstrates improved control near the equilibrium point. In this region, the sector constraint Fb in (37) helps avoids large jumps in the control signal, which reduces the noise level relative to the bimodal            
+
+> 050 100 150
+> Time (ms)
+> 012
+> Sensor Output (V)
+> Inner-Stage Open-Loop Response
+> Closed-Loop with Bi-Modal HIGS
+> Closed-Loop with Tri-Modal HIGS
+> 050 100 150
+> Time (ms)
+> -4 -2 0
+> Control Signal (V)
+> 010 20 Time (ms)
+> -0.2 00.2
+> 130 140 150 Time (ms)
+> -4 -3.5
+> Fig. 7.
+
+Closed-loop performance comparison of bimodal and trimodal discrete-time HIGS in positive feedback interconnection with the force sensing system. 
+
+controller. The 1-σ resolution of the control signal is 3 mV for the bimodal HIGS and is reduced to approximately 0.7 mV 
+
+for the trimodal HIGS near the equilibrium point. Away from equilibrium, both controllers operate with similar performance, leading to comparable control effort and noise levels. The closed-loop frequency responses of the force sensor using TITO trimodal multi-HIGS are identical to the bimodal case presented in Fig. 5, and are therefore omitted here to avoid cluttering the figure. VI. CONCLUSION This paper investigates the application of discrete-time bimodal and trimodal multi-HIGS controllers to a TITO NI MEMS force sensor equipped with collocated electrostatic actuators and electrothermal position sensors. Theoretical anal-ysis, supported by experimental validation, demonstrates that the positive-feedback interconnection of a discrete-time multi-HIGS structure with suitable parameters and a MIMO NI system is asymptotically stable. To this end, discrete-time TITO HIGS elements are systematically tuned and digitally implemented. Frequency- and time-domain analyses verify the stability of the closed-loop system and substantiate the effectiveness of the multi-HIGS element as an NI controller. The experimental findings also indicate that the trimodal HIGS provides more precise control compared to the bimodal case. The damping introduced by the HIGS elements attenuate inter-stage cross-coupling leading to decoupling the stage dynamics. As a result, the damped system can be approximated as two cascaded SISO subsystems, which simplifies the subsequent tracking controller design. The development of reference tracking framework is deferred to future work. REFERENCES [1] R. H. Middleton, “Trade-offs in linear control system design,” Automat-ica , vol. 27, no. 2, pp. 281–292, 1991. [2] L. Dong, Q. Zheng, and Z. Gao, “On control system design for the conventional mode of operation of vibrational gyroscopes,” IEEE Sensors Journal , vol. 8, no. 11, pp. 1871–1878, 2008. [3] K. Peng, B. M. Chen, G. Cheng, and T. H. Lee, “Modeling and compensation of nonlinearities and friction in a micro hard disk drive servo system with nonlinear feedback control,” IEEE Transactions on Control Systems Technology , vol. 13, no. 5, pp. 708–721, 2005. 
+
+10 [4] H. M. Ouakad, A. H. Nayfeh, S. Choura, and F. Najar, “Nonlinear feedback controller of a microbeam resonator,” Journal of Vibration and Control , vol. 21, no. 9, pp. 1680–1697, 2015. [5] S. Luo and Y. Song, “Chaos analysis-based adaptive backstepping control of the microelectromechanical resonators with constrained output and uncertain time delay,” IEEE Transactions on Industrial Electronics ,vol. 63, no. 10, pp. 6217–6225, 2016. [6] C. Liguo, S. Lining, R. Weibin, and B. Xinqian, “Hybrid control of vi-sion and force for MEMS assembly system,” in 2004 IEEE International Conference on Robotics and Biomimetics . IEEE, 2004, pp. 136–141. [7] S. R. Weller and G. C. Goodwin, “Hysteresis switching adaptive con-trol of linear multivariable systems,” IEEE Transactions on Automatic Control , vol. 39, no. 7, pp. 1360–1375, 2002. [8] R. Stefanini, M. Chatras, P. Blondy, and G. M. Rebeiz, “Miniature MEMS switches for RF applications,” Journal of Microelectromechan-ical Systems , vol. 20, no. 6, pp. 1324–1335, 2011. [9] Y. Zhang and Q. Xu, “Adaptive sliding mode control with parameter estimation and kalman filter for precision motion control of a piezo-driven microgripper,” IEEE transactions on control systems technology ,vol. 25, no. 2, pp. 728–735, 2016. [10] J. C. Clegg, “A nonlinear integrator for servomechanisms,” Transactions of the American Institute of Electrical Engineers, Part II: Applications and Industry , vol. 77, no. 1, pp. 41–42, 1958. [11] I. Horowitz and P. Rosenbaum, “Non-linear design for cost of feedback reduction in systems with large parameter uncertainty,” International Journal of Control , vol. 21, no. 6, pp. 977–1001, 1975. [12] D. A. Deenen, M. F. Heertjes, W. Heemels, and H. Nijmeijer, “Hybrid integrator design for enhanced tracking in motion control,” in 2017 American Control Conference (ACC) . IEEE, 2017, pp. 2863–2868. [13] D. Dadkhah, E. Khodabakhshi, and S. O. R. Moheimani, “Digital imple-mentation of tracking and damping control based on hybrid integrator-gain system for a MEMS force sensor,” in 2025 American Control Conference (ACC) . IEEE, 2025, pp. 4597–4602. [14] S. Van den Eijnden, M. F. Heertjes, and H. Nijmeijer, “Experimental demonstration of a nonlinear pid-based control design using multiple hybrid integrator-gain elements,” in 2020 American Control Conference (ACC) . IEEE, 2020, pp. 4307–4312. [15] K. Shi and I. R. Petersen, “Hybrid integrator-gain system based integral resonant controllers for negative imaginary systems,” in 2024 IEEE 63rd Conference on Decision and Control (CDC) . IEEE, 2024, pp. 2379– 2384. [16] S. Van den Eijnden, M. F. Heertjes, W. Heemels, and H. Nijmeijer, “Hybrid integrator-gain systems: A remedy for overshoot limitations in linear control?” IEEE Control Systems Letters , vol. 4, no. 4, pp. 1042– 1047, 2020. [17] M. Heertjes, S. Van Den Eijnden, B. Sharif, M. Heemels, and H. Ni-jmeijer, “Hybrid integrator-gain system for active vibration isolation with improved transient response,” IFAC-PapersOnLine , vol. 52, no. 15, pp. 454–459, 2019. [18] G. F. Franklin, J. D. Powell, M. L. Workman et al. , Digital control of dynamic systems . Addison-wesley Menlo Park, CA, 1998, vol. 3. [19] B. Sharif, D. W. Alferink, M. F. Heertjes, H. Nijmeijer, and W. Heemels, “A discrete-time approach to analysis of sampled-data hybrid integrator-gain systems,” in 2022 IEEE 61st Conference on Decision and Control (CDC) . IEEE, 2022, pp. 7612–7617. [20] K. Shi, E. Khodabakhshi, P. Biswas, I. R. Petersen, and S. O. R. Moheimani, “Discrete-time HIGS based digital control of negative imaginary systems,” Control Engineering Practice , vol. 163, p. 106386, 2025. [21] B. Sharif, D. Alferink, M. Heertjes, H. Nijmeijer, and M. Heemels, “Analysis of sampled-data hybrid integrator-gain systems: A discrete-time approach,” Automatica , vol. 167, p. 111765, 2024. [22] A. Lanzon and I. R. Petersen, “Stability robustness of a feedback interconnection of systems with negative imaginary frequency response,” 
+
+IEEE Transactions on Automatic Control , vol. 53, no. 4, pp. 1042–1046, 2008. [23] I. R. Petersen and A. Lanzon, “Feedback control of negative-imaginary systems,” IEEE Control Systems Magazine , vol. 30, no. 5, pp. 54–72, 2010. [24] A. G. Ghallab, M. A. Mabrok, and I. R. Petersen, “Negative imaginary systems theory for nonlinear systems: A dissipativity approach,” IEEE Transactions on Automatic Control , vol. 70, no. 12, pp. 8120–8132, 2025. [25] K. Shi, I. R. Petersen, and I. G. Vladimirov, “Output feedback consensus for networked heterogeneous nonlinear negative-imaginary systems with free-body motion,” IEEE Transactions on Automatic Control , vol. 68, no. 9, pp. 5536–5543, 2023. [26] K. Shi, I. R. Petersen, and I. G. Vladimirov, “Discrete-time negative imaginary systems from ZOH sampling,” IFAC-PapersOnLine , vol. 58, no. 17, pp. 214–219, 2024. [27] K. Shi and I. R. Petersen, “Digital control of negative imaginary systems: a discrete-time hybrid integrator-gain system approach,” in 
+
+2024 European Control Conference (ECC) . IEEE, 2024, pp. 2611– 2616. [28] K. Shi, N. Nikooienejad, I. R. Petersen, and S. O. R. Moheimani, “A negative imaginary approach to hybrid integrator-gain system control,” in 2022 IEEE 61st Conference on Decision and Control (CDC) . IEEE, 2022, pp. 1968–1973. [29] K. Shi, N. Nikooienejad, I. R. Petersen, and S. O. R. Moheimani, “Negative imaginary control using hybrid integrator-gain systems: Ap-plication to MEMS nanopositioner,” IEEE Transactions on Control Systems Technology , vol. 32, no. 3, pp. 718–730, 2023. [30] D. Dadkhah and S. O. R. Moheimani, “Design, fabrication, and control of a double-stage MEMS force sensor,” IEEE/ASME Transactions on Mechatronics , 2024. 
+
+11

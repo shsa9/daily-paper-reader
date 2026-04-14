@@ -1,0 +1,207 @@
+Title: Performance Characterization of Frequency-Selective Wireless Power Transfer Toward Scalable Untethered Magnetic Actuation
+
+URL Source: https://arxiv.org/pdf/2604.11645v1
+
+Published Time: Tue, 14 Apr 2026 02:34:06 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# Performance Characterization of Frequency-Selective Wireless Power Transfer Toward Scalable Untethered Magnetic Actuation 
+
+Gabriel Cooper 
+
+Department of Electrical and Computer Engineering Texas Tech University 
+
+Lubbock, USA 
+
+Xiaolong Liu ∗
+
+Department of Mechanical Engineering Texas Tech University 
+
+Lubbock, USA 
+
+Abstract —Frequency-selective wireless power transfer provides a feasible route to enable independent actuation and control of multiple untethered robots in a common workspace; however, the scalability remains unquantified, particularly the maximum number of resonators that can be reliably addressed within a given frequency bandwidth. To address this, we formulate the relationship between resonator quality factor (Q-factor) and the number of individually addressable inductor-capacitor (LC) resonant energy harvesters within a fixed radio-frequency (RF) spectrum, and we convert selectively activated harvested energy into mechanical motion. We theoretically proved and experimen-tally demonstrated that scalability depends primarily on the Q-factor. For this proof-of-concept study, we define effective series resistance as a function of frequency allocating bandwidths to discrete actuators. We provide design equations for scaling unteth-ered magnetic actuation with Q-factor optimization. Resonator networks spanning bandwidths from 100 kHz to 1 MHz were analyzed to quantify how increasing the number of resonators affects independent addressability. We validated the approach experimentally by fabricating three centimeter-scale untethered actuators that selectively trigger the motion of mechanical beams at 734 kHz, 785 kHz, and 855 kHz. We also characterized the generated mechanical force and the activation bandwidth of each actuator, confirming that no unintended cross-triggering occurred. 
+
+Index Terms —frequency-selective power transfer, LC res-onators, magnetic actuation, radio-frequency spectrum, scalability 
+
+I. I NTRODUCTION 
+
+# SELECTIVE actuation of untethered magnetic robots op-erating in a shared workspace is a fundamental challenge because their actuation is inherently coupled through a common magnetic field source. Prior work has explored two main strategies for achieving selective actuation of magnetic robots, including the use of inhomogeneous magnetic fields to actuate robots at different spatial locations [1]–[5] and rotational step-out behavior in robots with different geometries or configu-rations [6], [7]. For example, global magnetic field dynamics exploit variations in magnetic material composition [6], robot geometry [7], [8], or robot placement in field gradients [1] to produce differentiated responses under a shared input field. Alternative approaches have achieved localized magnetic ma-nipulation using two-dimensional (2-D) electromagnetic coil 
+
+*Corresponding author: Xiaolong Liu (email: xiaolong.liu@ttu.edu). This work was supported in part by the National Science Foundation under Grant No. 2512394, in part by the Texas Tech HEF New Faculty Startup Fund, and in part by the Texas Tech TrUE and McNair Scholar Programs. 
+
+arrays [2]–[4], which generate spatially controllable fields in 2-D spaces and enable independent control based on robot position. Rotational step-out frequency based actuation has also been investigated using rotating magnetic fields to drive robots with different geometries that experience different fluid drag, including helical swimmers [9], [10], and block-shaped robots [7]. These approaches provide important starting points, but they remain difficult to scale and generalize. Beyond approaches that rely on low frequency magnetic fields to achieve selective actuation of magnetic robots, wireless power transfer (WPT) techniques have been used to deliver RF magnetic energy to resonant circuits integrated into robotic devices, enabling actuation through mechanisms such as mag-netic propulsion [11], heating shape memory alloy folding ac-tuators [12], frequency-selective heating of soft actuators using embedded resonant traces [13], selective drive of electrostatic actuators by tuning the transmitter frequency to the receiver LC resonance [14], or wireless actuation of micron-scale piezo-electric resonators at 36 − 120 MHz using RF electric-field coupling [15]. Despite these advances, selectively actuating multiple untethered magnetic robots using RF magnetic energy is challenging due to field coupling, limited spectral separation between robot responses, and the increasing risk of cross actuation as the robot population grows. Additionally, at small scales, robots have limitations for onboard energy storage and power delivery. Actuation requires sufficient harvested energy to perform meaningful work, yet the size constraints of miniature robots restrict the inclusion of large batteries, power electronics, and control systems. As a result, scaling selective actuation to a large number of small-scale robots remains an open problem. In particular, the relationship between Q-factor and the number of individually addressable untethered robots within a shared space has not been systematically studied. In this work, we quantify the scalability of frequency-selective WPT for untethered robotic actuation by deriving and validating how resonator Q-factor sets the maximum number of individually addressable LC resonant harvesters within a fixed RF bandwidth, and by demonstrating selective conversion of harvested energy into mechanical motion. Our approach integrates frequency-selective LC resonators with RF energy harvesting circuits to convert received RF power into on-demand magnetic actuation. We focus on the 100 kHz to 
+
+1 MHz band because it offers improved penetration through 
+
+> arXiv:2604.11645v1 [eess.SY] 13 Apr 2026
+
+surrounding media and reduced eddy current losses relative to higher frequency operation. This lower frequency range also simplifies circuit design by reducing the need for transmission line modeling. To study scalability, we develop a design equation relating resonator losses, circuit topology, and Q-factor to the achiev-able frequency bandwidth for selective actuation. This model provides insight into the maximum number of robots that can be independently addressed within a given frequency spectrum. We experimentally validated the model using centimeter-scale robotic devices containing LC resonator networks designed for energy harvesting and electromagnetic (EM) pulse generation. Three devices were fabricated, each with two LC resonators (one for charging and one for selective triggering), on printed circuit boards (PCBs). The resonators were configured for rapid energy accumulation and triggered the EM pulse actuation of hard-magnetic cantilever beams. Experimental measurements quantify activation bandwidth, triggering selectivity, and force output, and they directly validate the predicted scaling trends from the design equation. The main contributions of this work are as follows: 1) We develop a theoretical framework that relates resonator Q-factor, circuit losses, and topology to the scalability of RF selective actuation for untethered robots. 2) We validate RF energy-harvesting-driven magnetic actu-ation using integrated LC resonator networks. 3) We demonstrate frequency-selective actuation of three individually addressable untethered robots via resonator-triggered EM pulse actuation. 4) We provide design guidelines for scaling RF-driven mag-netic robots toward smaller devices and larger robot populations. II. RF S ELECTIVE ACTUATION MECHANISM 
+
+A. Working Principle 
+
+Fig.1(a) illustrates the working principle of the proposed RF selective actuation mechanism. Each unit includes an energy-harvesting LC circuit (L1, C1) tuned to a common resonant frequency 
+
+f0 = 12π√LC , (1) and the harvested energy is stored in a power bank capacitor (C4) through a rectifier stage (C3, D2, D1). Each unit also incorporates a secondary LC circuit (L2, C2) with a distinct resonant frequency that selectively drives the gate of an NPN transistor Q1, allowing the stored energy to discharge through an onboard EM coil (L3). The resulting coil current generates a magnetic interaction with an integrated mechanical struc-ture to produce actuation. Fig.1(b) shows a fabricated single robotic unit integrating the circuit and mechanical structure, and Fig. 1(c) shows three identical devices with different triggering frequencies. The energy stored in capacitor C4 is determined by its voltage V as 
+
+E = 12 CV 2. (2)  
+
+> Fig. 1. Working principle of the RF selective actuation mechanism and prototype demonstration. (A) Schematic diagram of the circuit design. (B) Prototype next to a quarter for size reference. (C) Three prototypes with different triggering frequencies.
+
+As the mutual inductance between the transmitter ( LT ) and the receivers ( LR) is defined by 
+
+M = kpLT LR (3) where the coupling coefficient k is primarily determined by the coil geometry and relative placement, as well as the materials and electromagnetic environment of the surrounding medium. For experimental convenience to validate our system, the initial surface-mount inductors were swapped with larger induc-tors, as shown in Fig. 1(b), to increase mutual inductance and the coupling coefficient to provide sufficient energy to saturate the transistor. To significantly reduce the design footprint in our future work, we will employ a MOSFET with a high input impedance gate to minimize steady state drive current and reduce loading on the trigger LC resonator. This helps maintain a high loaded Q-factor and keeps more energy in the resonator for triggering, which is important as the device is miniaturized and WPT becomes less efficient. 
+
+B. Role of Q-factor 
+
+Q-factor determines how sharp each trigger resonator’s fre-quency response is. For a lightly damped LC resonator, the half-power bandwidth, also referred to as the −3 dB bandwidth, 
+
+∆f satisfies 
+
+∆f ≈ f0
+
+Q , (4) where f0 is the resonant frequency of the LC circuit [16]. A smaller ∆f corresponds to a larger Q-factor, which is given by 
+
+Qs = 2πf 0LRs
+
+, (5) where Rs is the equivalent series resistance (ESR), and L is the resonator inductance. Fig. 2. Normalized frequency responses of 177 resonators designed with a constant inductor value. The plot shows the resonator magnitude responses across frequency, normalized to each resonator’s peak. The horizontal dashed line indicates the −3 dB threshold used to define the half-power bandwidth and assess spectral overlap. 
+
+As the inductive and capacitive reactances are equal in magnitude at resonance, the resonator Q-factor is primarily limited by dissipative losses and any additional loading from connected circuitry. For a practical LC tank, the loss can be approximated using a series-loss model as the sum of the dominant series contributions [17] 
+
+Rs(f0) ≈ RL(f0) + ESR C (f0) + Rpcb (f0), (6) where RL denotes the inductor series loss, ESR C is the capacitor equivalent series resistance, and Rpcb accounts for interconnect losses in traces, vias, and contacts. In practice, capacitors typically exhibit low ESR C , whereas inductors often dominate Rs due to frequency-dependent winding and core losses, including skin effect, proximity effect, and ohmic loss [18]. Therefore, ∆f determines the approximate maximum num-ber of individually addressable LC resonators, and subsequently robots, within a given frequency band (fmin , f max ). Since resonance frequencies are discretely allocated and Q varies with frequency, we evaluate the achievable count using adiscrete spacing rule. Let fi denote the center frequency of the ith resonator. To avoid significant overlap between adjacent resonators, the spacing between neighboring center frequencies is required to exceed the sum of their half-bandwidths with an additional guard band ef ,
+
+fi+1 − fi ≥ ∆f (fi)2 + ∆f (fi+1 )2 + ef . (7) The number of addressable resonators is then obtained as 
+
+N = max { i | fi ≤ fmax } f1 = fmin . (8) Array design can be carried out computationally by applying (7) across (fmin , f max ) with the frequency-dependent ∆f (f )
+
+obtained from the measured or datasheet-based Q(f ). Non-idealities can be incorporated through the guard band ef
+
+and through uncertainty in resonator loss. Specifically, when 
+
+Q(f ) is computed from the series-loss model, we account for resistance tolerances by using a worst-case effective series resistance Reff  
+
+> s
+
+(f ) = Rs(f ) + es, which yields 
+
+Qeff (f ) = 2πf L Rs(f ) + es
+
+, (9) and consequently ∆f (f ) used in (7) is evaluated using Qeff (f ).In this formulation, ef increases the required spectral separation between adjacent resonators, while es reduces the effective Q
+
+through increased loss, both of which reduce the achievable N .III. C OMPUTATIONAL SCALABILITY ANALYSIS OF 
+
+FREQUENCY -S ELECTIVE RESONATOR NETWORKS 
+
+A. Scalability analysis with Q-Factor and Rs
+
+We analyzed the number of individually addressable res-onators that can be allocated within a given spectrum over bandwidths ranging from 100 kHz to 1 MHz , based on the theory presented in Section II-B. Different actuator behavior is evident in the difference between the lower-impedance transistor base-drive path compared with the rectifier (trigger versus charger), because the bipolar junction transistor (BJT) draws additional current from the trigger resonators, effectively increasing the loaded loss and reducing the Q-factor. In a multi-robot system, operating at a larger frequency inherently widens the resonator bandwidth, reducing the frequency bandwidth for selectivity for a given Q-factor. For example, consider a Q-factor of 50. At 1 MHz and 10 MHz , (4) yields the half-power bandwidths ( ∆f ) of 20 kHz and 200 kHz , respectively. To keep Q-factor constant throughout a frequency band is inherently a difficult task especially in higher RF bands where impedance matching is unforgiving. We shift our focus to the behaviors of an inductor as a key element to magnetic resonance power reception for independent actuator systems by modeling to reflect the equation derived to give further design insights into the capability of our system to be scaled in a variety of ways. 
+
+B. Designing around the inductor 
+
+The inductance is an easy variable to control in this fre-quency range. With the inductor identical, the inductive proper-ties will be congruent from resonator to resonator. All coupling coefficients, coil geometries, can be held constant allowing us to have more insight into the circuit behavior and utilization of resonators for actuation devices. However, the effective series resistance as a function of frequency is a complicated derivation. To accurately model the bandwidth space of each resonator, we chose a commercially available power inductor with an expected Q(f ) curve. Fig. 3. Effective series resistance Rs and corresponding Q-factor versus fre-quency for the selected inductor, showing frequency-dependent series damping of the LC resonator [19]. 
+
+We developed a computational analysis to determine how many selectively addressable robots can be supported for a given set of component values. The results in Fig. 2 show the normalized frequency responses of 177 resonators designed with a constant 10 μH inductor, where the frequency-dependent loss Rs(f ) is incorporated through (5) using the datasheet-derived Q(f ) in [19]. Each response is normalized to its peak, and the −3 dB line indicates the half-power threshold used to extract bandwidth and evaluate spectral overlap across the network. The Q-factor and Rs as functions of frequency are shown in Fig. 3. With the inductor value constant, the capacitor values adjust to set the resonant frequency f0 in (1) and the half-power bandwidth ∆f derived to fulfill it’s portion of the spectrum and provide a numerical result to the number of resonators. The computational method provides a straightforward frame-work for designing large arrays of identical robots with selec-tive operation. The number of resonators in the array scales with inductor size, as larger inductors provide stronger coupling to the transmitter, however it is evident that miniaturizing the robot with a smaller inductor increases the ratio of resistance to inductance which lowers the effective Q-factor. This finding makes miniaturization with smaller inductors more difficult because the effective Q-factor decreases, which broadens the resonator bandwidth and reduces the available spectral space for additional selectively addressable resonators. As the inductance is reduced further, the bandwidth continues to expand and frequency selectivity progressively degrades. The analysis in this section uses a fixed-inductor setup to isolate these spectral effects; the results suggest that maintaining selectivity at smaller scale will require mitigating loss and loading in the resonant network to preserve Q-factor. IV. C ENTIMETER -S CALE RF-T RIGGERED ACTUATOR 
+
+FABRICATION 
+
+A. Prototype design and component selection 
+
+For rapid prototyping and validation of the proposed mech-anism, we fabricated three centimeter-scale prototypes. Table I presents the electronic components and their specifications for the prototypes. We chose the inductor values of 10 μH to design                    
+
+> TABLE I PROTOTYPE ELECTRONIC COMPONENTS AND SPECIFICATIONS
+> Designator Specification
+> C1 2 nF (C0G/NP0) L1, L2 10 μH
+> C2 3.3 nF ,3.9 nF ,4.7 nF (C0G/NP0) C3 1μF
+> D1, D2 BAV21WSA C4 330 μF
+> D3 1N4749A Q1 ZXTN19020CFFTA
+
+around because of the relative feasibility to produce resonators with less than 100 kHz bandwidths while still maintaining strong coupling coefficients. To design and fabricate the three trigger LC resonators, we selected C0G/NP0 capacitors with values of 3.9 nF , 4.7 nF , and 5.6 nF for the three devices, corresponding to designed trigger resonant frequencies of 
+
+734 kHz , 806 kHz , and 876 kHz , respectively. The charging resonant frequency was set to 1.125 MHz for all three devices using identical 2 nF C0G/NP0 capacitors. Each prototype has overall dimensions of 25 mm × 27 mm 
+
+× 13 .5 mm . The rectifier diodes D1 and D2 are high-speed switching diodes (BAV21WSA). The DC-blocking capacitor C3 is 1 μF, and the zener diode D3 has a breakdown voltage of 24 V (1N4749A). The charge bank capacitor C4 is 330 μF,and transistor Q1 (ZXTN19020CFFTA) has β ≈ 300 
+
+and a transition frequency of 150 MHz . The rectifier diodes were selected to minimize forward loss and reduce power consumption. The zener diodes were used to help maintain energy circulation in the LC resonator promoting a prevention of unintended triggering. 
+
+B. Characterization of LC resonators 
+
+We characterized each of the three prototypes’ two LC resonators to experimentally find their resonant frequency, bandwidth, Q-factor, and circulating energy, put together in Table II. Each device was placed within the radius of the the transmitter on the same plane, and the root-mean-square voltage across each resonator was measured with an oscilloscope. The trigger LC circuits were measured from 600 kHz to 1.005 MHz 
+
+in 15 kHz intervals and using the same intervals for the charger LCs, from 1.005 MHz to 1.200 MHz . Measurements from three different positions within the transmitter plane were taken and averaged. The standard deviations (n=3) are shown as error bars in Fig. 4. Deviations from expected resonant frequency in most of the resonators are likely due to component tolerances (inductors 
+
+±20% and capacitors ±20% ) and stray reactive parasitics on the prototype board shifting f0 away from the target value. The Q-factors of the charging and trigger resonators are substantially different from Q ≈ 55 for the rectifier topology and Q ≈ 13 for the transistor gate operation circuit. Two non-linear resistive loading effects are effectively causing energy loss from the resonator tank defined by parrallel resistance TABLE II IN CIRCUIT : LC R ESONATOR MEASURED PARAMETERS                                                        
+
+> L(μH) C(nF) Measured ∆f(kHz) Expected f0Measured f0Q-Factor E at f 0(nJ )Charging LC1 10.0 2.0 ≈20 1.125 MHz 1.140 MHz 57.00 14.89 Charging LC2 10.0 2.0 ≈20 1.125 MHz 1.104 MHz 55.20 14.06 Charging LC3 10.0 2.0 ≈20 1.125 MHz 1.120 MHz 56.00 14.44 Trigger LC1 10.0 4.7 ≈60 734 kHz 734 kHz 12.23 5.29 Trigger LC2 10.0 3.9 ≈55 806 kHz 785 kHz 14.27 4.39 Trigger LC3 10.0 3.3 ≈60 876 kHz 855 kHz 14.25 3.81
+
+600 700 800 900 1,000 1,100 1,200 
+
+0
+
+1
+
+2
+
+3
+
+F requency (kHz )
+
+> Vrms  (V)
+
+In Circuit: LC Resonator Measured Frequency Response 
+
+Trigger 1 734 kHz 
+
+Trigger 2 785 kHz 
+
+Trigger 3 855 kHz 
+
+Charger 1 1.140 MHz 
+
+Charger 2 1.104 MHz 
+
+Charger 3 1.120 MHz 
+
+> Fig. 4. The red, black, and blue lines represent devices 1, 2, and 3 respectively as stated in the legend. The charging LCs are difficult to distinguish due to their close frequency overlap. The trigger LC resonators exhibit significantly lower Q-factor than the charging LC resonators because the NPN transistor base current places a resistive load on the resonator, increasing energy loss and reducing effective Q. Error bars represent standard deviation (n=3).
+
+adding to the effective Rs and influencing Qeff to decrease. The discrepency is due to once C4 stores charge it pulled less energy from the resonator meanwhile as long as the trigger LC is operational, the transistor gate will be operating and using energy. Each of the measured bandwidths are interpolated between the 15 kHz measurement points, approximately 20 kHz for charging resonators and 60 kHz for the triggering resonators were accounted for. The peak circulating energy in each resonator was estimated by using (2) and oscilloscope measurements of the peak voltage across the LC while resonating. This value represents the instantaneous energy stored in the capacitor of the LC tank at the resonant peak, providing a single bound measurement of the total circulating energy. The triggers show smaller energy results resulting from lower Q values. These energy levels however confirm that sufficient energy is circulating to saturate the transistor briefly during cycles to discharge C4.  
+
+> Fig. 5. Experimental setup of a 3D-printed configuring housing the GS0-30 load gram sensor, the transmitter coil, and each prototype as a fixed distance for actuation force characterization.
+
+C. Electromagnetic actuation of a cantilever beam 
+
+We integrated an onboard EM coil (L3), as shown in Fig. 1(a), and a magnetic cantilever beam; when the trigger LC drives the transistor gate, the coil actuates the beam. The EM coil was wound with AWG 38 copper wire around an iron core (Vacoflux 50, maximum permeability μmax ≈ 7,000 )with a height of 7 mm and a diameter of 2 mm ; the coil’s outer diameter was 4.6 mm . A PCB-mounted cantilever beam with an integrated miniature permanent magnet (D11-N52, K&J Magnetics, Inc.) was positioned above the EM coil. The beam was 3D-printed (Form 3, Formlabs Inc.) using Elastic 50A Resin. 
+
+D. Transmitter coil 
+
+The transmitter coil has a 100 mm diameter, 1 mm wire diameter, and 7 turns, with a DC resistance of 0.3 Ω . Its inductance was measured as 10 .5418 μH with a Q-factor of 
+
+32 .85 at 300 kHz (E4980AL, Keysight Technologies, Inc.). A function generator (DG1022, Rigol Technologies, Inc.) drives the coil through a simple matching network: a 40 Ω series resistor and a 3.9 nF tuning capacitor. The capacitor value matches Device 2’s trigger capacitor (expected f0 = 806 kHz )to center the excitation around the trigger frequencies, while the series resistor intentionally lowers the effective Q-factor to provide a broadband response spanning the receiver resonators’ operating range. Fig. 6. EM force measurement for three devices. Each device was set off a function generator to charge for one second and switch to the trigger frequency for one second. 
+
+V. E XPERIMENTAL RESULTS 
+
+This prototype demonstrates the ability to charge in one sec-ond and discharge to produce a significant magnetic force thus exhibiting the creation of an untethered pulsed electromagnetic actuator on the centimeter-scale. The actuator is designed with cantilever arm being pulled down by the coil under triggering frequencies. The resulting mechanical deflection confirms the actuator’s effectiveness for latch-triggering applications. 
+
+A. Electromagnetic actuation force characterization 
+
+Fig. 5 shows the setup used to characterize the EM actuation force, where a permanent magnet (D11-N52, K&J Magnetics, Inc.) mounted on a rod is connected to a load cell (GSO-30, Transducer Techniques, LLC). In the robot units, the PCB-mounted cantilever beams serve as the actuators and exhibit visibly observable deflection upon triggering. Using the resonant charging and triggering frequencies for each device, the EM force was generated and measured. Measurements were taken with a gap distance of 1 mm between the top surface of the EM coil and the permanent magnet. Fig. 6 shows the force measurements of the three de-vices. The peaks of each reading were above 60 mN and below 70 mN . The force traces exhibit noticeable point-to-point fluctuations rather than a smooth plateau. To investigate this behavior, we probed the discharge of C4 (charge bank) using an oscilloscope (DS1102, Rigol Technologies, Inc.). The measurements revealed microsecond-scale voltage oscillations that can repeatedly cross the gate threshold and re-open the transistor, producing multiple closely spaced actuation pulses while progressively discharging C4; this high-speed retrigger-ing is not apparent from visual observation alone. To mitigate this effect, we will add gate damping to suppress ringing and prevent unintended retriggering. To increase the peak actuation force without extending the cycle time, we will boost the charge rate and charge-bank power by using a higher-current charging stage and a low-loss, low-ESR charge/discharge path to deliver a larger current pulse within the same time window. 
+
+B. Selective triggering validation 
+
+To experimentally determine the frequency bandwidth over which a single excitation could trigger more than one actuator,  
+
+> Fig. 7. Selective activation frequency bands for three trigger LC resonators. Solid bars indicate the measured excitation frequency ranges that trigger each device, and tick marks denote the tested frequencies. Hatched regions highlight the overlap between adjacent triggers (10 kHz for Triggers 1–2 and 20 kHz for Triggers 2–3).
+
+we swept the input frequency around each device’s designed resonant frequency and monitored the discharge behavior of the charge bank capacitor (C4). We used the onset of C4 discharge as the triggering criterion to quantify each device’s effective trigger bandwidth, and then analyzed the overlap in triggering frequencies across the three devices. Fig. 7 shows the measured triggerable frequency bands for the three devices and highlights the overlap regions. Trigger 1 (f0 = 735 kHz) was activated over 705 kHz ∼765 kHz ,Trigger 2 (f0 = 785 kHz) over 755 kHz ∼815 kHz , and Trigger 3 (f0 = 855 kHz) over 795 kHz ∼865 kHz . The overlap between Triggers 1 and 2 is limited to 10 kHz 
+
+(755 kHz –765 kHz ), and the overlap between Triggers 2 and 3 is 20 kHz (795 kHz –815 kHz ). These overlap regions reflect the finite resonator bandwidth governed by the Q-factor, as given by (4); increasing Q reduces the bandwidth, thereby reducing spectral overlap and lowering the likelihood of cross-triggering, consistent with the loss mechanisms discussed earlier. 
+
+C. Selective actuation of an integrated mechanical beam 
+
+To demonstrate selective actuation of the integrated mechan-ical beam as a functional unit, Actuators 1, 2, and 3 were arranged in a circular configuration around the transmitter coil, as shown in Fig. 8(a). The transmitter was driven by one second charge and one second discharge times of the resonant charging and triggering frequencies in each device mentioned in Table II. Fig. 8(b), (c), and (d) show deflection of Actuators 1, 2, and 3 captured in a slow-motion video at 240 FPS next to a US Standard System ruler containing 1/64th inch graduations. The visible deflection of about one graduation in each device likely does not capture the true displacement. However, the visual transition between initial, actuated, and recovered states in all three devices demonstrates the capacity of the magnetic force to create flexion in the structure and the elasticity of the structure to recover. Each actuator exhibits a complete latching cycle, deflection under actuation followed by elastic recovery, confirming that the generated magnetic field force exceeds cantilever restoring force threshold. The three devices actuate independently with no observable cross-triggering, consistent to the selectivity measured in Fig. 7 further showing frequency selectivity. The orientation of the Fig. 8. Cantilever beam deflections with one-second charge and one-second discharge cycles. (A) Experimental configuration showing the transmitter coil and three actuators positioned near the transmitter and aligned parallel to the coupling axis. (B)-(D) Time-lapse sequences for each actuator showing the initial state, actuated state, and recovered state, demonstrating selective actuation of individual units. 
+
+devices demonstrates that the proximal arrangement has no negative impact on the individuality of each device. VI. D ISCUSSION 
+
+A primary limitation of the current prototypes is resistive loss in the actuation and triggering pathways. In future PCB designs, lower-resistance actuation paths could be achieved by selecting power transistors with low Rds (on) in the on state. The force output in the current design was limited by the NPN switching characteristics, which introduce additional resistance in the actuation path. Reducing the switch resistance would increase the peak current through L3 and thereby increase force output. The measured triggering Q of 12, compared with the charging Q of 57, reflects resistive loading at the NPN base junction. Replacing the NPN BJT with a high-impedance MOSFET would increase the Q seen by the trigger resonator by reducing loading, thereby lowering the energy threshold required for actuation. This improvement could also enable longer activation distances and make further miniaturization more feasible by reducing the harvested energy required for triggering. Applying the derived scaling relationship to smaller inductor values shows that sustaining selectivity at reduced inductance primarily requires maintaining a high Q-factor. When the inductor is reduced from 10 μH to 1 μH within the same 
+
+100 kHz to 1 MHz band, the predicted addressable count de-creases because the effective resonator bandwidth increases as L decreases and resistive losses become more influential. This behavior points to two primary design factors for smaller-scale designs, reducing the effective series resistance and reducing loading from the surrounding circuitry. Based on these two factors, we identify several directions to improve selectivity at reduced scale. Microelectromechanical inductor fabrication techniques may provide higher inductance density at reduced physical scales, although integration with WPT energy harvesting circuits for robotic actuation remains to be demonstrated. In the current architecture, WPT must support both energy harvesting for actuation and frequency-selective triggering, which places competing demands on inductors, switching paths, and storage elements. Adding onboard energy storage would decouple these functions by allowing frequency selectivity to focus on triggering while actuation energy is supplied from stored charge. This shift can reduce the need for two large inductors, reduce PCB footprint, and improve actuation consistency that is currently sensitive to the fixed one-second charge and discharge timing. REFERENCES [1] D. Wong, E. B. Steager, and V. Kumar, “Independent control of identical magnetic robots in a plane,” IEEE Robotics and Automation Letters ,vol. 1, no. 1, pp. 554–561, 2016. [2] Y. Kantaros, B. V. Johnson, S. Chowdhury, D. J. Cappelleri, and M. M. Zavlanos, “Control of magnetic microrobot teams for temporal micro-manipulation tasks,” IEEE Transactions on Robotics , vol. 34, no. 6, pp. 1472–1489, 2018. [3] T. Inoue, K. Iwatani, I. Shimoyama, and H. Miura, “Micromanipulation using magnetic field,” in Proceedings of 1995 IEEE International Con-ference on Robotics and Automation , vol. 1, 1995, pp. 679–684 vol.1. [4] S. Chowdhury, W. Jing, and D. Cappelleri, “Towards independent control of multiple magnetic mobile microrobots,” Micromachines , vol. 7, no. 1, p. 3, Dec 2015. [5] M. Richter, J. Sikorski, P. Makushko, Y. Zabila, V. K. Venkiteswaran, D. Makarov, and S. Misra, “Locally addressable energy efficient actuation of magnetic soft actuator array systems,” Advanced Science , vol. 10, no. 24, p. e2302077, 2023. [6] S. Floyd, E. Diller, C. Pawashe, and M. Sitti, “Control methodologies for a heterogeneous group of untethered magnetic micro-robots,” The In-ternational Journal of Robotics Research , vol. 30, no. 13, p. 1553–1565, Mar 2011. [7] E. Diller, S. Floyd, C. Pawashe, and M. Sitti, “Control of multiple het-erogeneous magnetic microrobots in two dimensions on nonspecialized surfaces,” IEEE Transactions on Robotics , vol. 28, no. 1, pp. 172–182, 2012. [8] S. Tottori, L. Zhang, K. E. Peyer, and B. J. Nelson, “Assembly, disas-sembly, and anomalous propulsion of microscopic helices,” Nano Letters ,vol. 13, no. 9, p. 4263–4268, Aug 2013. [9] L. Amoudruz and P. Koumoutsakos, “Independent control and path planning of microswimmers with a uniform magnetic field,” Advanced Intelligent Systems , vol. 4, no. 3, Dec 2021. [10] K. Ishiyama, M. Sendoh, and K. Arai, “Magnetic micromachines for medical applications,” Journal of Magnetism and Magnetic Materials ,vol. 242–245, p. 41–46, Apr 2002. [11] R. Narayanamoorthi, A. V. Juliet, and B. Chokkalingam, “Frequency splitting-based wireless power transfer and simultaneous propulsion gen-eration to multiple micro-robots,” IEEE Sensors Journal , vol. 18, no. 13, pp. 5566–5575, 2018. [12] M. Boyvat, J.-S. Koh, and R. J. Wood, “Addressable wireless actuation for multijoint folding robots and devices,” Science Robotics , vol. 2, no. 8, Jul 2017. [13] Y. Song, Z. Li, M. Zadan, J. Wang, S. Kumar, and C. Majidi, “Frequency-selective actuation of liquid crystalline elastomer actuators with radio-frequency,” Nature Communications , vol. 16, no. 1, p. 7292, 2025. [14] S. Takeuchi, N. Futai, and I. Shimoyama, “Selective drive of electrostatic actuators using remote inductive powering,” Sensors and Actuators A: Physical , vol. 95, no. 2-3, pp. 269–273, 2002. [15] F. Mateen, C. Maedler, S. Erramilli, and P. Mohanty, “Wireless actua-tion of micromechanical resonators,” Microsystems & Nanoengineering ,vol. 2, p. 16036, 2016. [16] K. J. Coakley, J. D. Splett, M. D. Janezic, and R. F. Kaiser, “Estimation of Q-factors and resonant frequencies,” IEEE Transactions on Microwave Theory and Techniques , vol. 51, no. 3, pp. 862–868, 2003. [17] I. J. Bahl, Lumped Elements for RF and Microwave Circuits . Artech House, 2003, see Ch. 1 (lumped modeling of interconnects), Ch. 3 Sec. 3.1.1 (inductor conductor loss), and Ch. 5 Sec. 5.2.6 (capacitor ESR). [18] P. A. Kyaw, A. L. F. Stein, and C. R. Sullivan, “Fundamental examination of multiple potential passive component technologies for future power electronics,” IEEE Transactions on Power Electronics , vol. 33, no. 12, pp. 10 708–10 722, 2018. [19] IHLP® Automotive Inductors, Low AC Loss, High Temperature (155 °C) Series , Vishay Dale, 2026, rev. 16-Feb-2026. [Online]. Available: https://www.vishay.com/en/product/34569/
