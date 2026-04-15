@@ -1,0 +1,65 @@
+{
+  "label": "2026-04-15",
+  "date": "2026-04-15",
+  "generated_at": "2026-04-15T20:27:30",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202604/15/2604.05374v1-lmi-net-linear-matrix-inequality--constrained-neural-networks-via-differentiable-projection-layers",
+      "section": "quick",
+      "title_en": "LMI-Net: Linear Matrix Inequality--Constrained Neural Networks via Differentiable Projection Layers",
+      "authors": "Sunbochen Tang, Andrea Goertzen, Navid Azizan",
+      "date": "2026-04-07",
+      "pdf": "https://arxiv.org/pdf/2604.05374v1",
+      "score": "6.0",
+      "evidence": "用于稳定性和鲁棒性的LMI约束控制",
+      "tldr": "针对动力系统稳定性与鲁棒性验证中线性矩阵不等式（LMI）硬约束难以保证的问题，本文提出LMI-Net。该方法通过可微投影层将神经网络输出映射到满足LMI约束的可行域，利用Douglas-Rachford分裂算法进行前向计算，并通过隐式微分实现高效反向传播。实验证明，LMI-Net在保持推理速度的同时，显著提升了模型在分布偏移下的约束满足率，实现了半正定规划与深度学习的有效结合。",
+      "tags": "query:em-force",
+      "abstract_en": "Linear matrix inequalities (LMIs) have played a central role in certifying stability, robustness, and forward invariance of dynamical systems. Despite rapid development in learning-based methods for control design and certificate synthesis, existing approaches often fail to preserve the hard matrix inequality constraints required for formal guarantees. We propose LMI-Net, an efficient and modular differentiable projection layer that enforces LMI constraints by construction. Our approach lifts the set defined by LMI constraints into the intersection of an affine equality constraint and the positive semidefinite cone, performs the forward pass via Douglas-Rachford splitting, and supports efficient backward propagation through implicit differentiation. We establish theoretical guarantees that the projection layer converges to a feasible point, certifying that LMI-Net transforms a generic neural network into a reliable model satisfying LMI constraints. Evaluated on experiments including invariant ellipsoid synthesis and joint controller-and-certificate design for a family of disturbed linear systems, LMI-Net substantially improves feasibility over soft-constrained models under distribution shift while retaining fast inference speed, bridging semidefinite-program-based certification and modern learning techniques.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/15/2604.05633v1-optimality-robustness-in-koopman-based-control",
+      "section": "quick",
+      "title_en": "Optimality Robustness in Koopman-Based Control",
+      "authors": "Yicheng Lin, Bingxian Wu, Nan Bai, Yunxiao Ren, Zhongkui Li, Zhisheng Duan",
+      "date": "2026-04-07",
+      "pdf": "https://arxiv.org/pdf/2604.05633v1",
+      "score": "6.0",
+      "evidence": "数据驱动最优控制中的鲁棒性",
+      "tldr": "本文研究基于Koopman算子的非线性系统最优控制中的鲁棒性问题。针对模型不确定性导致的最优解偏差，提出了“最优性鲁棒性”概念，并构建了统一的分析与设计框架。研究推导了价值函数和控制器偏差的显式上界，开发了鲁棒感知最优控制方法及相应的策略迭代算法，在理论上证明了算法的收敛性，并揭示了标称性能与鲁棒性之间的量化权衡。",
+      "tags": "query:em-force",
+      "abstract_en": "The Koopman operator enables simplified representations for nonlinear systems in data-driven optimal control, but the accompanying uncertainties inevitably induce deviations in the optimal controller and associated value function. This raises a distinct and fundamental question on optimality robustness, specifically, how uncertainties affect the optimal solution itself. To address this problem, we adopt a unified analysis-to-design perspective for systematically quantifying and improving optimality robustness. At the analysis level, we derive explicit upper bounds on the deviations of both the value function and the optimal controller, where uncertainties from multiple sources are systematically integrated into a unified norm-bounded representation. At the design level, we develop a robustness-aware optimal control methodology that provably reduces such optimality deviations, thereby enhancing robustness while explicitly revealing a quantitative trade-off between nominal optimality and robustness. As for practical implementation aspect, we further propose a tractable policy iteration algorithm, whose well-posedness and convergence are established via vanishing viscosity regularization and elliptic partial differential equation (PDE) techniques. Numerical examples validate the theoretical findings and demonstrate the effectiveness of proposed methodology.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/15/2604.07069v1-controller-design-for-structured-state-space-models-via-contraction-theory",
+      "section": "quick",
+      "title_en": "Controller Design for Structured State-space Models via Contraction Theory",
+      "authors": "Muhammad Zakwan, Vaibhav Gupta, Alireza Karimi, Efe C. Balta, Giancarlo Ferrari-Trecate",
+      "date": "2026-04-08",
+      "pdf": "https://arxiv.org/pdf/2604.07069v1",
+      "score": "6.0",
+      "evidence": "非线性系统的输出反馈控制器综合",
+      "tldr": "本文针对非线性系统，提出了一种基于结构化状态空间模型（SSM）的间接数据驱动输出反馈控制设计方法。SSM在处理长序列数据方面具有线性复杂度优势。研究首次分析了SSM的可控性与可观测性，并结合收缩理论利用线性矩阵不等式（LMI）实现了可扩展的控制器设计。此外，建立了SSM的分离原理，确保了闭环系统的指数稳定性，并通过数值仿真验证了该框架在非线性系统辨识与控制中的有效性。",
+      "tags": "query:em-force",
+      "abstract_en": "This paper presents an indirect data-driven output feedback controller synthesis for nonlinear systems, leveraging Structured State-space Models (SSMs) as surrogate models. SSMs have emerged as a compelling alternative in modelling time-series data and dynamical systems. They can capture long-term dependencies while maintaining linear computational complexity with respect to the sequence length, in comparison to the quadratic complexity of Transformer-based architectures. The contributions of this work are threefold. We provide the first analysis of controllability and observability of SSMs, which leads to scalable control design via Linear Matrix Inequalities (LMIs) that leverage contraction theory. Moreover, a separation principle for SSMs is established, enabling the independent design of observers and state-feedback controllers while preserving the exponential stability of the closed-loop system. The effectiveness of the proposed framework is demonstrated through a numerical example, showcasing nonlinear system identification and the synthesis of an output feedback controller.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/15/2604.12905v1-frequency-aware-decomposition-learning-for-sensorless-wrench-forecasting-on-a-vibration-rich-hydraulic-manipulator",
+      "section": "quick",
+      "title_en": "Frequency-aware Decomposition Learning for Sensorless Wrench Forecasting on a Vibration-rich Hydraulic Manipulator",
+      "authors": "Hyeonbeen Lee, Min-Jae Jung, Tae-Kyeong Yeu, Jong-Boo Han, Daegil Park, Jin-Gyun Kim",
+      "date": "2026-04-14",
+      "pdf": "https://arxiv.org/pdf/2604.12905v1",
+      "score": "6.0",
+      "evidence": "富振动机器人交互中的无传感器力矩预测",
+      "tldr": "针对液压机械臂在研磨等高频振动任务中力矩传感器受限的问题，本文提出频率感知分解网络（FDN）。该方法通过对本体感知数据进行频谱分解，结合确定性与概率性预测头，实现了对高频振动力矩的准确预测。通过在大规模机器人数据集上预训练并迁移至下游任务，FDN在处理复杂振动环境下的力矩估计方面表现优异，显著提升了无传感器感知的精度。",
+      "tags": "query:em-force",
+      "abstract_en": "Force and torque (F/T) sensing is critical for robot-environment interaction, but physical F/T sensors impose constraints in size, cost, and fragility. To mitigate this, recent studies have estimated force/wrench sensorlessly from robot internal states. While existing methods generally target relatively slow interactions, tasks involving rapid interactions, such as grinding, can induce task-critical high-frequency vibrations, and estimation in such robotic settings remains underexplored. To address this gap, we propose a Frequency-aware Decomposition Network (FDN) for short-term forecasting of vibration-rich wrench from proprioceptive history. FDN predicts spectrally decomposed wrench with asymmetric deterministic and probabilistic heads, modeling the high-frequency residual as a learned conditional distribution. It further incorporates frequency-awareness to adaptively enhance input spectra with learned filtering and impose a frequency-band prior on the outputs. We pretrain FDN on a large-scale open-source robot dataset and transfer the learned proprioception-to-wrench representation to the downstream. On real-world grinding excavation data from a 6-DoF hydraulic manipulator and under a delayed estimation setting, FDN outperforms baseline estimators and forecasters in the high-frequency band and remains competitive in the low-frequency band. Transfer learning provides additional gains, suggesting the potential of large-scale pretraining and transfer learning for robotic wrench estimation. Code and data will be made available upon acceptance.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

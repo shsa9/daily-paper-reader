@@ -1,0 +1,3469 @@
+Title: Optimality Robustness in Koopman-Based Control
+
+URL Source: https://arxiv.org/pdf/2604.05633v1
+
+Published Time: Wed, 08 Apr 2026 00:49:29 GMT
+
+Number of Pages: 16
+
+Markdown Content:
+# Optimality Robustness in Koopman-Based Control ⋆
+
+# Yicheng Lin a, Bingxian Wu a, Nan Bai b, Yunxiao Ren c, Zhongkui Li a,Zhisheng Duan a
+
+> a
+
+School of Advanced Manufacturing and Robotics, Peking University, Beijing 
+
+> b
+
+Department of Electronic and Computer Engineering, The Hong Kong University of Science and Technology, Hong Kong 
+
+> c
+
+College of Engineering, Peking University, Beijing 
+
+Abstract 
+
+The Koopman operator enables simplified representations for nonlinear systems in data-driven optimal control, but the accompanying uncertainties inevitably induce deviations in the optimal controller and associated value function. This raises a distinct and fundamental question on optimality robustness, specifically, how uncertainties affect the optimal solution itself. To address this problem, we adopt a unified analysis-to-design perspective for systematically quantifying and improving optimality robustness. At the analysis level, we derive explicit upper bounds on the deviations of both the value function and the optimal controller, where uncertainties from multiple sources are systematically integrated into a unified norm-bounded representation. At the design level, we develop a robustness-aware optimal control methodology that provably reduces such optimality deviations, thereby enhancing robustness while explicitly revealing a quantitative trade-off between nominal optimality and robustness. As for practical implementation aspect, we further propose a tractable policy iteration algorithm, whose well-posedness and convergence are established via vanishing viscosity regularization and elliptic partial differential equation (PDE) techniques. Numerical examples validate the theoretical findings and demonstrate the effectiveness of proposed methodology. 
+
+Key words: Data-driven control theory, Koopman operator, nonlinear systems, robustness analysis, robust optimal control. 
+
+1 Introduction 
+
+The Koopman operator has become a powerful frame-work for simplifying nonlinear system representations [19]. Particularly, the linear Koopman operator is able to transform finite-dimensional nonlinear autonomous sys-tems into infinite-dimensional linear ones [22], and trans-form control-affine nonlinear systems into bilinear forms [14]. This has stimulated researchers to apply the well-established control theory of linear or bilinear systems to investigate nonlinear system control problems, e.g., sta-bility analysis [31,32], feedback stabilization [12,29] and optimization [39, 40]. During the past decade, the out-standing potential of Koopman operator in data-driven control settings has been increasingly explored [41], [34]. 
+
+⋆ This paper was not presented at any IFAC meeting. Cor-responding author Z. Duan. 
+
+Email addresses: linyc020709@stu.pku.edu.cn 
+
+(Yicheng Lin), davidwu2003@stu.pku.edu.cn (Bingxian Wu), eenanbai@ust.hk (Nan Bai), renyx@pku.edu.cn 
+
+(Yunxiao Ren), zhongkli@pku.edu.cn (Zhongkui Li), 
+
+duanzs@pku.edu.cn (Zhisheng Duan). 
+
+In data-driven control practice via the Koopman opera-tor, researchers typically use the well-known (extended) dynamic mode decomposition (DMD/EDMD) algo-rithm [20] to approximate the Koopman operator in a finite-dimensional function space, or identify lifted mod-els of nonlinear systems with chosen dictionary func-tions. These models then serve as the basis for controller synthesis, for example, using model predictive control (MPC) [21, 30] or learning-based methods [8, 23]. How-ever, due to intrinsic limitations of finite-dimensional approximation and imperfect data acquisition, various uncertainties are unavoidable in this process. Specifi-cally, uncertainties can be categorized by sources [29,37]. 
+
+• Projection error arising from finite dictionary func-tions , caused by truncating the infinite-dimensional system representation to a finite-dimensional one. 
+
+• Estimation error due to finite data collection , arising from system identification with a finite dataset. 
+
+• Noise or disturbance in data collection , where mea-sured states are corrupted by measurement noise or external disturbances. 
+
+Preprint submitted to Automatica 8 April 2026 
+
+> arXiv:2604.05633v1 [eess.SY] 7 Apr 2026
+
+From the perspective of uncertainty sources, the first two categories originate from intrinsic limitations of the modeling and identification process and are collectively referred to as approximation error , whereas the third category arises from exogenous factors in data acquisi-tion. All these uncertainties are inherent to Koopman-based data-driven control and have a direct impact on the achieved control performance. Recent years have witnessed growing efforts toward re-ducing the approximation error while learning the Koop-man operator [18] and identifying the lifted systems [35]. Meanwhile, several studies on Koopman-based control have investigated the impacts of different uncertainties, but primarily focusing on robust stability. For instance, probabilistic and deterministic bounds on the approxi-mation error have been established in [36,37] and subse-quently used for feedback stabilization. In [29], the im-pacts of approximation error and process disturbance were unified to ensure closed-loop robust stability. Ro-bust Koopman-based MPC (RK-MPC) approaches were developed in [30, 42] to address constraint satisfaction and robust stability under the impacts of approximation error and additive bounded noise in data collection. Despite these advances, existing studies have largely confined robustness analysis to stability-oriented objec-tives, which represent only basic requirements in con-troller design. When optimal controllers are synthesized based on identified models without explicitly accounting for the approximation error and noise in data collection, the resulting control laws effectively solve a surrogate problem rather than the original nonlinear optimal con-trol task. Consequently, the notion of optimality in such settings may become misleading, as there may exist substantial optimality deviations between the obtained policies and the true optimal solutions. Quantitative characterization and mitigation of the optimality devi-ations are therefore essential for reliable performance in data-driven optimal control. Although classical linear-quadratic and H2/H ∞ con-trol theories provide valuable insights into robustness and sensitivity [2], most notably through Riccati-based perturbation and performance analyses, these results are largely restricted to linear systems with specific structural assumptions. For general nonlinear and data-driven settings, particularly in Koopman-based control, a systematic theoretical framework for characterizing the optimality deviations remains largely unexplored. In this work, we shift the focus from stability preserva-tion to optimality robustness , and investigate how the aforementioned uncertainties affect the value function and associated control policy through their deviations from the true optimal solution. This optimality-oriented viewpoint distinguishes our work from conventional robustness analysis and robust optimal control ap-proaches, which have primarily addressed stability or constraint satisfaction. Adopting an analysis-to-design perspective, this paper unifies the quantitative char-acterization of optimality deviations with robustness-aware controller synthesis. Accordingly, the main con-tributions can be summarized along two main lines. 
+
+• Robustness analysis : We introduce a novel and sys-tematic framework to quantify the optimality de-viations induced by the approximation error and noisy data in Koopman-based data-driven control. A key technical contribution is showing that energy-bounded noise in data collection can be transformed into a norm-bounded perturbation ( Theorem 3 ), enabling a unified deviation analysis of diverse uncer-tainty sources. The analysis explicitly characterizes how these uncertainties propagate into deviations of both the value function ( Theorem 1 ) and the opti-mal controller ( Theorem 2 ), yielding quantitative bounds on optimality robustness. 
+
+• Controller design : Building on the robustness anal-ysis, we formulate a robust optimal control method-ology that explicitly accounts for worst-case uncer-tainties and provably reduces optimality deviations (Theorem 5 ). Further, we establish a fundamental trade-off between nominal optimality and robustness (Theorem 4 ), revealing how an acceptable loss of nominal performance yields a guaranteed increase in robustness. For practical implementation, we de-velop a policy iteration algorithm, whose convergence (Theorem 6 ) is established via vanishing viscosity regularization and elliptic PDE theory that overcome the inapplicability of existing results [6, 26]. This paper is an extended version of our prior work [28], which has only focused on the optimality deviation in-duced by the approximation error. All the remaining contributions are novel, including optimality deviation analysis due to noise in data collection (Section IV), ro-bust optimal control methodology that corrects these deviations (Section V-A), and practical implementation algorithm with convergence proof (Section V-B). The remainder of this paper is organized as follows. Sec-tion 2 reviews preliminaries on the Koopman operator and lifted system representations. Section 3 analyzes the optimality deviation caused by the approximation er-ror. Section 4 investigates the impact of energy-bounded noise in data collection. Section 5 presents the robust op-timal controller design methodology for correcting the optimality deviations, covering both theoretical formu-lation and practical algorithm. Section 6 validates the analysis results and proposed design methodology with numerical examples. Section 7 concludes this paper. 
+
+Notations: Throughout this paper, we denote by Rn
+
+the n-dimensional Euclidean space. The norm for real vector v ∈ Rnv is Euclidean norm ‖v‖ = √∑nv 
+
+> i=1
+
+v2 
+
+> i
+
+=√v⊤v, and the norm for real matrix M = ( mij ) ∈
+
+2Rnr ×nc is Frobenius norm ‖M ‖ =
+
+√∑nr
+
+> i=1
+
+∑nc 
+
+> j=1
+
+m2 
+
+> ij
+
+=
+
+√trace( M ⊤M ). The null space and column space of M
+
+are denoted by Nul( M ) and Col( M ) respectively, while the direct sum of subspaces is denoted by ⊕. For a sym-metric M , we denote by λmin (M ) and λmax (M ) its min-imum and maximum eigenvalue. For two symmetric ma-trices M1, M 2, relation M1  M2 (M1  M2) means that matrix M1 − M2 is positive (negative) semidefinite. We denote by C0(·) the space of continuous functions defined on the corresponding domains, Ck(·) the space of functions with continuous (partial) derivatives up to order k, and Ck,α (·) the subspace of Ck(·) consisting of functions whose k-th order (partial) derivatives are uni-formly H¨ older continuous [13] with exponent α ∈ [0 , 1]. For a measurable real-valued function f : Ω → R, Lp-norm is ‖f ‖Lp(Ω) = (∫  
+
+> Ω
+
+|f (x)|p)1/p , 1 ≤ p ≤ ∞ , and the space of functions satisfying ‖f ‖Lp(Ω) < ∞ is denoted by Lp(Ω). In particular, the space of essentially bounded measurable functions on Ω is denoted by L∞(Ω), where 
+
+L∞-norm is ‖f ‖L∞(Ω) = ess sup x∈Ω |f (x)|.The big-O notation is primarily used to characterize how quantities depend on some key parameters (e.g., error bound coefficients), i.e., the relation X = O(Y ) indicates that there exists CXY > 0 such that X ≤ CXY Y holds. 
+
+2 Preliminaries 
+
+Consider the unactuated nonlinear system ˙x(t) = f (x(t)) (1) defined on a state space X ⊆ Rn and f (0) = 0, i.e., the origin is an equilibrium of unactuated system. We define a Banach space F ⊆ C 0(X) of observables ϕ : X → R,and the Koopman operator is defined as follows [33]. 
+
+Definition 1 The continuous time Koopman operator 
+
+Kt : F → F is defined as 
+
+(Ktϕ)( x0 ) = ϕ ◦ S(t, x 0) (2) 
+
+where ◦ denotes the function composition and S(t, x 0)
+
+denotes the flow map (solution) of system (1) at time 
+
+t > 0 with initial state x(0) = x0. Furthermore, assuming 
+
+ϕ(x) ∈ C 1(X) is continuously differentiable, it satisfies 
+
+dϕ(x)
+
+dt = Lf ϕ , lim 
+
+> t→0
+
+(Ktϕ − ϕ)
+
+t = ∇ϕ · f (3) 
+
+where Lf is defined as the infinitesimal generator that equals to the Lie derivative with respect to f .
+
+Notably the Koopman operator is linear even if the sys-tem dynamics is nonlinear since for any α, β ∈ R and 
+
+ϕ1, ϕ 2 ∈ F , Kt(αϕ 1 + βϕ 2) = αKtϕ1 + βKtϕ2. This lin-earity naturally paves the way to its spectral property, characterized by the Koopman eigenvalues and eigen-functions [24, 33]. 
+
+Definition 2 A Koopman eigenfunction corresponding to the unactuated system (1) is an observable φλ ∈ F 
+
+such that 
+
+Ktφλ = eλt φλ (4) 
+
+for some λ ∈ C, which is the associated Koopman eigen-value. Additionally with (3) , we obtain the following prop-erty of eigenfunctions 
+
+Lf φλ = ∇φλ · f = λφ λ. (5) It is known that if φλ1 , φ λ2 are Koopman eigenfunctions with eigenvalues λ1, λ 2 respectively, φk1 
+
+> λ1
+
+φk2 
+
+> λ2
+
+is also an eigenfunction with eigenvalue k1λ1 + k2λ2, which means that there are perhaps infinitely many eigenfunctions. Koopman eigenvalues and eigenfunctions play impor-tant roles in nonlinear system representation. Define a set of dictionary function Ψ( x) = [ ψ1(x) . . . ψ N (x)] ⊤ ∈
+
+RN serving as the transformation function. In order to completely capture nonlinear dynamics, N > n is the usual case, so the system after transformation is often called lifted system. If a set of Koopman eigenfunctions Φ( x) = [ φλ1 (x) . . . φ λN (x)] ⊤ is chosen to be the dictio-nary, (1) is transformed into a totally linear system d
+
+dt Φ( x) = ΛΦ( x)where Λ = diag( λ1, . . . , λ N ). It is simple to prove that if the selected dictionary Ψ( x) is equivalent to Φ( x), i.e., 
+
+∃T ∈ RN ×N , s.t.Ψ( x) = T Φ( x) with matrix T being full rank, the lifted system is also linear. Besides relying on Koopman eigenfunctions, dictionary functions can be selected via different ways, for example, adopting various polynomials [41], or more complicated kernels [37]. Here we make some standard assumptions, which are widely-adopted in the Koopman operator researches [21, 42]. 
+
+Assumption 1 The dictionary functions defined on a compact, forward-invariant state space X satisfy (a) {ψi}Ni=1 are continuously differentiable on X, and nat-urally Ψ( x) is Lipschitz continuous on X with Lipschitz constant Lp.(b) Ψ(0) = 0 , Ψ−1(0) ∩ X = {0}.(c) ∃C ∈ Rn×N , s.t. x = CΨ( x) = Cz .
+
+Now we consider the control-affine nonlinear system ˙x(t) = f (x(t)) + 
+
+> m
+
+∑
+
+> i=1
+
+gi (x(t)) ui(t) (6) 3where x ∈ Rn and u = [ u1 . . . u m]⊤ ∈ Rm are the state and control input respectively, f, g i ∈ C 1(Rn), i =
+
+{1, . . . , m }. Strictly defining the Koopman operator for nonlinear systems with input is a nontrivial task, which is discussed in a recent work [16] in detail. But undoubt-edly, the nonlinear system (6) can be simplified via the Koopman operator using the chosen dictionary function Ψ( x), whose dynamics satisfies dΨ 
+
+dt = ∂Ψ
+
+∂x f (x) + 
+
+> m
+
+∑
+
+> i=1
+
+ui
+
+∂Ψ
+
+∂x gi(x) = Lf Ψ + 
+
+> m
+
+∑
+
+> i=1
+
+uiLgi Ψ.
+
+(7) Note that although lifted linear time invariant (LTI) system representations have demonstrated empirical ef-fectiveness in many applications, they are theoretically valid only for restricted classes of nonlinear control sys-tems [16]. However, lifting a control-affine nonlinear sys-tem to a bilinear form has been shown feasible in [14] if the eigenspace of Lf is an invariant subspace of Lgi , i =
+
+{1, . . . , m }. If this is not satisfied, a projection error term can be introduced to guarantee the equivalence with (7), which can be sufficiently small as shown in [14]. There-fore, to preserve the generality of proposed results in this paper, we considered the lifted bilinear form to charac-terize the dynamics of original nonlinear system (6), i.e., dz
+
+dt = Az + B0u +
+
+> m
+
+∑
+
+> i=1
+
+uiBiz + r(z, u ). (8) In data-driven control settings, matrices A, B 0 and 
+
+Bi, i = {1, . . . , m } are identified from data (see Sec-tion 4-A for identification method), and not only projec-tion error but also estimation error resulting from finite data are contained in r(z, u ). The proportional bound of approximation error r(z, u ) given by the following assumption possesses a certain degree of generality. 
+
+Assumption 2 Suppose there exist constants c1, c 2 > 0
+
+such that the approximation error term in (8) , including projection error and estimation error, is bounded by 
+
+‖r(z, u )‖ ≤ c1‖z‖ + c2‖u‖. (9) 
+
+Furthermore, the partial derivative of approximation er-ror ∂r  
+
+> ∂u
+
+is assumed to exist and be continuous. 
+
+The error bound has been investigated in several re-cent papers which indicate that Assumption 2 is not strong also the truth in a large number of cases. For instance, a probabilistic bound for the estimation error 
+
+c1, c 2 ∈ O (1 /√δd 0) was derived by [37, Proposition 5], where δ, d 0 denote the probability tolerance and data amount respectively. Leveraging kernel-based methods, a deterministic bound for the approximation error was established by [36, Theorem 5]. These results ensure the universality of proportional error bound relationship (9), also indicate that c1, c 2 are relatively small (even suffi-ciently small in [14]). In fact, the approximation error term can be represented by 
+
+r(z, u ) = Lf Ψ − AΨ + 
+
+> m
+
+∑
+
+> i=1
+
+ui(Lgi Ψ − B0,i − BiΨ) (10) where B0,i denotes the i-th column of B0, then ∂r  
+
+> ∂u
+
+=∑mi=1 (Lgi Ψ − B0,i − BiΨ) ei where ei denotes the unit vector with the i-th component 1. This illustrates the continuous differentiability of r(z, u ) with respect to u.In data-driven control settings, it is likely to estimate the coefficients c1, c 2 of proportional error bound [28], which be illustrated in Section 6. Hamilton-Jacobi-Bellman (HJB) and Hamilton-Jacobi-Issac (HJI) equations [1,2] serve as fundamental analyt-ical tools throughout this paper. In the analysis of opti-mality deviation and optimality robustness, we assume that the considered Hamilton-Jacobi equations admit sufficiently regular classical solutions, so that associated value functions and their gradients are well defined. Un-der this standing assumption, our focus is on character-izing impacts of uncertainties on optimality rather than analyzing the existance and uniqueness of the solution. 
+
+3 Approximation Error and Optimality Devia-tion 
+
+This paper focuses on the following infinite-horizon op-timal control problem of (6) under the quadratic perfor-mance index, i.e., min  
+
+> u(·)
+
+J(u(·)) = 
+
+∫ ∞
+
+> 0
+
+1
+
+2
+
+[x⊤(t)Qx (t) + u⊤(t)Ru (t)] dt
+
+(11) where Q ≻ 0, R ≻ 0 are positive definite. A common scenario in data-driven control applications is that one has no exact knowledge of the approximation error term 
+
+r(z, u ), making it challenging to design the optimal con-troller for the actual bilinear system (8) that takes the error into consideration, and equivalently for the orig-inal nonlinear system (6). Under this circumstance, an ideal approach is to calculate the optimal controller for (8) without considering the error, i.e., 
+
+V ∗ 
+
+> 0
+
+(z) = min 
+
+> u(·)
+
+∫ ∞
+
+> 0
+
+1
+
+2
+
+[z⊤(t)Qz (t) + u⊤(t)Ru (t)] dt
+
+(12a) s.t. ˙ z(t) = Az (t) + B(z(t)) u(t), z (0) = z
+
+(12b) where for ease of representation we denote 
+
+Q = C⊤QC, B (z) = B0 +
+
+> m
+
+∑
+
+> i=1
+
+Bize ⊤ 
+
+> i
+
+. (13) 4With the well-known HJB equation [1], the nominal op-timal value function V ∗ 
+
+> 0
+
+(z) is calculated with (∇V ∗ 
+
+> 0
+
+)⊤Az + 1
+
+2 z⊤Qz − 1
+
+2 (∇V ∗ 
+
+> 0
+
+)⊤B(z)R−1B⊤(z)∇V ∗ 
+
+> 0
+
+= 0 (14) leading to the nominal optimal controller 
+
+u∗
+
+> 0
+
+(z) = −R−1B⊤(z)∇V ∗ 
+
+> 0
+
+. (15) There exist a considerable number of works on solving HJB equation and optimal control problem for bilinear systems [1, 15]. Further developing suitable and efficient bilinear optimal control methods is a promising direction for Koopman-based data-driven optimal control. Since the actual system dynamics (8) contains an ad-ditional approximation error, applying u∗ 
+
+> 0
+
+to the actual system will result in performance deviation no matter how advanced the calculation method is. Define the set 
+
+R of admissible approximation error satisfying (9), i.e., 
+
+R = {r(z, u )|‖ r(z, u )‖ ≤ c1‖z‖ + c2‖u‖} . (16) Then we make the following standard assumption. 
+
+Assumption 3 The nominal optimal controller u∗
+
+> 0
+
+(z)
+
+given by (15) and the actual optimal controller u∗(z) for the original nonlinear system (6) are admissible, i.e., they asymptotically stabilize the lifted bilinear system (8) 
+
+and yield finite performance indices for admissible un-certainty r(z, u ) ∈ R .
+
+First, we consider the optimality deviation in nominal value function V ∗ 
+
+> 0
+
+(z) starting with the following result. 
+
+Theorem 1 Due to the existence of approximation er-ror, applying the nominal optimal controller u∗ 
+
+> 0
+
+given by 
+
+(14) and (15) to the actual system (8) (equivalently the original nonlinear system (6) ) results in an extra cost, characterized by 
+
+‖V − V ∗ 
+
+> 0
+
+‖ ≤ ∆Vmax = 1
+
+2 C212 
+
+∫ ∞
+
+> 0
+
+‖∇ V ∗ 
+
+> 0
+
+‖2dt
+
++ C12 
+
+2
+
+(∫ ∞
+
+> 0
+
+‖∇ V ∗ 
+
+> 0
+
+‖2dt
+
+) 1
+
+> 2
+
+√
+
+C212 
+
+∫ ∞
+
+> 0
+
+‖∇ V ∗ 
+
+> 0
+
+‖2dt + 4 V ∗ 
+
+> 0
+
+.
+
+(17) 
+
+where C12 = max 
+
+{ 2c1Lp
+
+√λmin (Q) , 2c2√λmin (R)
+
+}
+
+, V (z) denotes the value function corresponding to the closed-loop sys-tem (6) controlled by u∗
+
+> 0
+
+, and the integral term is evalu-ated along the trajectory controlled by u∗ 
+
+> 0
+
+under the worst-case error r∗ 
+
+> 0
+
+given by (20) , i.e., 
+
+˙z(t) = A(z(t))+ B(z(t)) u∗ 
+
+> 0
+
+(z(t))+ r∗ 
+
+> 0
+
+(z(t), u ∗
+
+> 0
+
+), z (0) = z. 
+
+(18) Here we use the notation J(u, z, r ) since J is actually a function of the initial state z(0) = z, the control in-put u(t) and the approximation error term r(z(t), u (t)). Apparently V ∗ 
+
+> 0
+
+(z) = J(u∗
+
+> 0
+
+, z, 0) and V (z) = J(u∗
+
+> 0
+
+, z, r ). In order to bound V − V ∗ 
+
+> 0
+
+, we investigate the worst-case error r∗ 
+
+> 0
+
+= arg max r∈R J(u∗
+
+> 0
+
+, z, r ) that tries to max-imize the quadratic performance index. Using HJI equa-tion [2], the worst-case error r∗ 
+
+> 0
+
+should be solved by max  
+
+> r∈R
+
+{(∇V ∗ 
+
+> r
+
+)⊤[Az + B(z)u∗ 
+
+> 0
+
++ r(z, u ∗
+
+> 0
+
+)] + 1
+
+2 z⊤Qz + 1
+
+2 (u∗
+
+> 0
+
+)⊤Ru ∗
+
+> 0
+
+} = 0 .
+
+(19) Since the inner product ( ∇V ∗ 
+
+> r
+
+)⊤r is linear in r and R is norm-bounded, its maximization is achieved when r ∈ R 
+
+is aligned with ∇V ∗ 
+
+> r
+
+, yielding 
+
+r∗ 
+
+> 0
+
+= c1‖z‖ + c2‖u∗
+
+> 0
+
+‖
+
+‖∇ V ∗ 
+
+> r
+
+‖ ∇V ∗ 
+
+> r
+
+. (20) Based on Theorem 1, we can further analyze the devia-tion in controllers. The complete proofs of Theorems 1 and 2 are omitted due to page limit (see [28] for detail). 
+
+Theorem 2 Due to the existence of approximation er-ror, the nominal optimal controller u∗ 
+
+> 0
+
+given by (14) and 
+
+(15) deviates from the actual optimal controller u∗ cor-responding to the original nonlinear system (6) . Specifi-cally, this deviation is characterized by 
+
+∫ ∞
+
+> 0
+
+(u∗ 
+
+> 0
+
+− u∗)⊤R(u∗ 
+
+> 0
+
+− u∗)d t
+
+≤2∆ Vmax + 2 C12 
+
+[
+
+(V ∗ 
+
+> 0
+
++ ∆ Vmax )
+
+∫ ∞
+
+> 0
+
+‖∇ V ∗ 
+
+> 0
+
+‖2dt
+
+] 1
+
+> 2
+
+(21) 
+
+where the integral term is evaluated along the actual opti-mal trajectory, i.e., (6) controlled by u∗, C12 and ∆Vmax 
+
+are given by Theorem 1. 
+
+Remark 1 (Conservatism of LTI lifting) Although many existing works on Koopman-based data-driven control consider LTI lifted models ˙z = Az + B0u,the theoretical justification of LTI lifting is limited (see [14, 38]). Further, the conservatism of LTI lifting can be illustrated by the above analysis. Suppose the ap-proximation error using lifted bilinear models is bounded by ‖rb(z, u )‖ ≤ cb, 1‖z‖ + cb, 2‖u‖. For LTI lifting, an additional bilinear term rl(z, u ) = ∑mi=1 uiBiz is ab-sorbed into the error, and one may determine coefficients 
+
+cl, 1, c l, 2 such that ‖rl(z, u )‖ ≤ cl, 1‖z‖ + cl, 2‖u‖. The overall error coefficients c1 = cb, 1 + cl, 1, c 2 = cb, 2 + cl, 2
+
+might be substantially enlarged, especially when z or u
+
+is moderately large. In view of Theorem 1 where the op-timality deviation depends on c1, c 2, this accumulation of error indicates that linear lifting may induce signifi-cantly amplified performance degradation compared with bilinear representations. 
+
+5Remark 2 (Underlying novel analytical strategy) 
+
+The proof of Theorem 2 in [28] also confirms that the devi-ation between the actual value function V ∗ = J(z, u ∗, r )
+
+and V ∗ 
+
+> 0
+
+also satisfies V ∗ − V ∗ 
+
+> 0
+
+≤ ∆Vmax . Note that as directly connecting V ∗ 
+
+> 0
+
+(z) and V ∗(z), u∗ 
+
+> 0
+
+and u∗ is rel-atively challenging, the intermediate worst-case value function V ∗ 
+
+> r
+
+(z) serves as a pivotal bridge for the optimal-ity deviation analysis. See [29] for detailed discussions. 
+
+With the above analysis, we have made the abstract no-tion of optimality deviation concrete and numerically computable. The derived upper bounds (17), (21) are explicitly parameterized by the error coefficients ( c1, c 2)and nominal optimal value function V ∗ 
+
+> 0
+
+. As the closed-loop trajectories can be simulated, the resulting bounds can be efficiently computed offline, as demonstrated in Section 6. This structure directly links the approxima-tion error to the resulting performance loss, providing a practical pathway to estimate these deviations when the exact form of the approximation error is unknown. 
+
+4 Bounded Noise and Optimality Deviation 
+
+The Koopman operator has been widely used in data-driven control of nonlinear systems, while the collected data are often corrupted by noise. In this section, we will analyze the impact of noise in data collection on the opti-mality deviation based on the bounded-energy assump-tion. It is quite interesting that the following analysis successfully links the impact of bounded noise with the approximation error coefficient c1, c 2, thereby integrat-ing different kinds of uncertainties into a unified frame-work to analyze and correct the optimality deviation. 
+
+4.1 System Identification with Noisy Data 
+
+First we clarify that the optimal control problem we are interested in remains unchanged, i.e., our objective is still to minimize the quadratic performance index given by (11) for the same unknown system (6). However, noisy data {x(tj ), u (tj ), ˙x(tj )}T −1 
+
+> j=0
+
+are collected from noise-corrupted trajectories, described by ˙x(t) = f (x(t)) + 
+
+> m
+
+∑
+
+> i=1
+
+gi (x(t)) ui(t) + d(t),
+
+where d(t) represents the effect of noise in data collection rather than an external disturbance acting on system dynamics. With the dictionary function Ψ( x), we obtain dz
+
+dt = Az + B0u +
+
+> m
+
+∑
+
+> i=1
+
+uiBiz + r(z, u ) + d(t)where A, B 0, B i, i = {1, . . . , m } are identified from data and d(t) = ∂Ψ( x) 
+
+> ∂x
+
+· d(t) denotes the noise-induced mod-eling residual. The state measurements and correspond-ing time derivatives can also be computed via z(tj ) = Ψ( x(tj )) and ˙ z(tj ) = ∂Ψ( x) 
+
+> ∂x
+
+· ˙x(tj ). Construct matrices 
+
+U0 : = [ u(t0) u(t1) . . . u (tT −1)] 
+
+Z0 : = [ z(t0) z(t1) . . . z (tT −1)] 
+
+V i 
+
+> 0
+
+: = [ ui(t0)z(t0) ui(t1)z(t1) . . . u i(tT −1)z(tT −1)] 
+
+Z1 : = [ ˙ z(t0) ˙ z(t1) . . . ˙z(tT −1)] 
+
+W0 : = [Z⊤ 
+
+> 0
+
+U ⊤ 
+
+> 0
+
+(V 10 )⊤ . . . (V m 
+
+> 0
+
+)⊤]⊤
+
+(22) where ui(tj ) denotes the i-th component of u(tj ). Fur-ther, we arrange the unknown noise sequence as 
+
+D0 := [ d(t0) d(t1) . . . d (tT −1)] . (23) 
+
+Assumption 4 Without loss of generality, we assume: (a) The matrix W0 ∈ RN ×T is of full row rank. (b) D0 ∈ D such that for some matrix ∆,
+
+D := {D ∈ RN ×T : DD ⊤  ∆∆ ⊤} . (24) 
+
+Remark 3 (Reasonability of assumption) Here we make a brief explanation. Assumption 4.(a) is similar to the notion persistence of excitation in data-driven control of linear systems, which promises the quality of data and the uniqueness of least square solution in system identi-fication (see (25) ). Assumption 4.(b) exhibits a general and widely used energy bound of noise or disturbance [7]. 
+
+In Koopman-based data-driven control, EDMD is widely used for system identification, with basic form [20] min  
+
+> A,B 0,B 1,...,B m
+
+‖Z1 − [A B 0 B1 . . . B m] W0‖ (25) which is a least square problem solved by [A B 0 B1 . . . B m] := Z⊤ = Z1W † 
+
+> 0
+
+. (26) The approximation error of EDMD, including projection and estimation error, is interpreted in r(z, u ). When con-sidering the impact of noise, least-square solution (26) deviates from matrices corresponding to the actual lifted dynamics, which should be theoretically solved by 
+
+[ ˜A ˜B0 ˜B1 . . . ˜Bm
+
+]
+
+:= ˜Z⊤ = ( Z1 − D0)W † 
+
+> 0
+
+. (27) Since we have no exact knowledge of D0 but the energy bound ∆∆ ⊤ is known a priori, we should investigate all the system matrices (27) satisfying D0 ∈ D , rather than the single solution (26) ignoring the impact of noise. This leads to the set Z0 of matrices consistent with noisy data 
+
+Z0 := 
+
+{˜Z⊤ = ( Z1 − D0)W † 
+
+> 0
+
+: D0 ∈ D 
+
+}
+
+, (28) i.e., the set of all pairs of matrices [ A B 0 B1 . . . B m]that can generate the noisy data W0, Z 1.64.2 From Noise Bound to Optimality Deviation 
+
+The lifted bilinear system (8) is identified via EDMD al-gorithm (25)-(26), but the solution might be inaccurate due to the existence of noise. However, all of the possible matrices corresponding to the actual lifted dynamics are recorded in Z0. We first introduce the following result. 
+
+Proposition 1 Define the sets 
+
+Z := 
+
+{˜Z⊤ : ( ˜Z − ζ)⊤A(˜Z − ζ)  Q
+
+}
+
+(29a) 
+
+E := 
+
+{
+
+(ζ + A− 1 
+
+> 2
+
+γQ 1 
+
+> 2
+
+)⊤ : ‖γ‖ ≤ 1
+
+}
+
+(29b) 
+
+where A = W0W ⊤ 
+
+> 0
+
+, ζ = ( Z1W † 
+
+> 0
+
+)⊤ = ( W0W ⊤ 
+
+> 0
+
+)−1W0Z⊤
+
+> 1
+
+and Q = ∆∆ ⊤. Then Z0 ⊆ Z = E.
+
+See Appendix A for the proof. Proposition 1 is a further reformulation of the matrix set C0 consistent with noisy data. Subsequently, the impact of noise is interpreted as a bounded perturbation of ζ which corresponds to the least-square solution (26) of bilinear system identifica-tion under noise-free case. Therefore, it is convenient to incorporate the impact of noise into error term r(z, u ). 
+
+Theorem 3 Due to the existence of approximation error and noise in data collection, there is deviation between the identified bilinear system using (26) and the actual lifted bilinear system given by (8) . The overall error r(z, u ) = 
+
+ra(z, u ) + rd(z, u ) captures the impacts of approximation error and noise, while 
+
+‖rd(z, u )‖ ≤ cd (‖z‖ + ‖u‖ + ‖z‖‖ u‖) (30) 
+
+holds where the noise-related coefficient is defined as 
+
+cd =
+
+∥∥∥Q 1
+
+> 2
+
+∥∥∥∥∥∥A− 1
+
+> 2
+
+∥∥∥ =
+
+∥∥∥(∆∆ ⊤) 1
+
+> 2
+
+∥∥∥∥∥∥(W0W ⊤ 
+
+> 0
+
+)− 1
+
+> 2
+
+∥∥∥ .
+
+(31) 
+
+PROOF. We have demonstrated that the impact of noise in data collection lies in the perturbation of iden-tified system matrices Z⊤ = [ A B 0 B1 . . . B m]. Here we use notation [∆ A ∆B0 ∆B1 . . . ∆Bm] for the perturba-tion. Hence, noise-induced deviation between identified and actual lifted bilinear systems is characterized by 
+
+rd(z, u ) = ∆ A · z + ∆ B0 · u + [∆ B1z . . . ∆Bmz]u, 
+
+which can be bounded by 
+
+‖rd(z, u )‖ ≤ ‖ ∆A‖‖ z‖ + ‖∆B0‖‖ u‖
+
++ ‖[∆ B1z . . . ∆Bmz]‖‖ u‖. (32) Since [ A + ∆ A B 0 + ∆ B0 B1 + ∆ B1 . . . B m + ∆ Bm] ∈C0 ⊆ C = E, there exists a γ, such that ‖γ‖ ≤ 1 and [∆ A ∆B0 ∆B1 . . . ∆Bm] = Q 1 
+
+> 2
+
+γ⊤A− 1 
+
+> 2
+
+.
+
+With the definition of Frobenius norm, all three norms, 
+
+‖∆A‖, ‖∆B0‖, ‖[∆ B1 . . . ∆Bm]‖, are no greater than 
+
+‖[∆ A ∆B0 ∆B1 . . . ∆Bm]‖ ≤ 
+
+∥∥∥Q 1
+
+> 2
+
+∥∥∥ ·
+
+∥∥∥A− 1
+
+> 2
+
+∥∥∥ = cd.
+
+Additionally, since 
+
+‖[∆ B1z . . . ∆Bmz]‖2 =
+
+> m
+
+∑
+
+> i=1
+
+‖∆Biz‖2 ≤ ‖ z‖2
+
+> m
+
+∑
+
+> i=1
+
+‖∆Bi‖2
+
+= ‖z‖2 ‖[∆ B1 . . . ∆Bm]‖2 ≤ c2
+
+> d
+
+‖z‖2
+
+together with (32), the upper bound for (30) holds. ✷
+
+In Koopman-based data-driven control practice, we usu-ally consider a compact, forward-invariant state space 
+
+x ∈ X without compromising the existence of optimal controller (or the solution of HJB/HJI equation). Then, (30) can be over-approximated by proportional error bound similar to (9), e.g., 
+
+‖rd(z, u )‖ ≤ cd
+
+(
+
+1 + max  
+
+> x∈X
+
+‖Ψ( x)‖
+
+)
+
+‖z‖ + cd‖u‖. (33) This observation explains why the impact of noise in data collection can be incorporated into the error bound (9). Accordingly, in the following text we will continue our discussions based on the proportional error bound (9), which is assumed to capture the impacts of all un-certainties. This formulation is justified by the existence of ca, 1, c a, 2 > 0 such that 
+
+‖ra(z, u )‖ ≤ ca, 1‖z‖ + ca, 2‖u‖. (34) Let c1 = ca, 1 + cd (1 + max x∈X ‖Ψ( x)‖) and c2 =
+
+ca, 2 + cd, then the impacts of approximation error and noise in data collection are jointly captured by r(z, u )bounded by (9). Nevertheless, this treatment might in-troduce certain conservatism as it relies on a bounded state space and neglects part of the structural infor-mation in [∆ A ∆B0 ∆B1 . . . ∆Bm]. Exploring less conservative characterizations for noise or disturbance is an interesting direction for future work. 
+
+5 Correcting the Optimality Deviation 
+
+Building upon the characterization of optimality devi-ations due to the existence of uncertainties, a natural yet critical question arises: how can such deviations be systematically mitigated at the controller design stage? The analysis in Section 3 has revealed the worst-case 
+
+impact of approximation error, and we have illustrated that noise in data collection can be unified within the same analytical framework. These results motivate a shift from conventional stability robustness to an opti-mality robustness perspective. 7From this viewpoint, robustness is interpreted in terms of the magnitude of optimality deviations and the con-troller’s capability to mitigate them in the presence of uncertainties. Consequently, mitigating optimality de-viations amounts to designing controllers that explic-itly counteract the worst-case impacts of uncertainties, which naturally leads to a robust optimal control formu-lation in a min-max optimization form 
+
+V ∗
+
+> ro
+
+(z) = min  
+
+> u(·)
+
+max 
+
+> r∈R
+
+∫ ∞
+
+> 0
+
+1
+
+2
+
+[z⊤(t)Qz (t) + u⊤Ru ] dt
+
+(35a) s.t. ˙ z(t) = Az (t) + B(z(t)) u + r(z(t), u ), z (0) = z. 
+
+(35b) Using HJI equation [2], the robust optimal value function 
+
+V ∗ 
+
+> ro
+
+should be solved from min  
+
+> u
+
+max  
+
+> r∈R
+
+{(∇V ∗
+
+> ro
+
+)⊤[Az + B(z)u + r(z, u )] + 1
+
+2 z⊤Qz + 1
+
+2 u⊤Ru } = 0 .
+
+Therefore, the worst-case approximation error r∗ (simi-lar to r∗ 
+
+> 0
+
+) and robust optimal controller u∗ 
+
+> ro
+
+satisfy 
+
+r∗(z, u ∗
+
+> ro
+
+) = c1‖z‖ + c2‖u∗
+
+> ro
+
+‖
+
+‖∇ V ∗
+
+> ro
+
+‖ ∇V ∗
+
+> ro
+
+,u∗
+
+> ro
+
+(z) = −R−1B⊤(z)∇V ∗ 
+
+> ro
+
+− c2‖∇ V ∗
+
+> ro
+
+‖
+
+‖u∗
+
+> ro
+
+‖ R−1u∗
+
+> ro
+
+.
+
+(36) where the robust optimal value function is solved by 0 = ( ∇V ∗
+
+> ro
+
+)⊤ Az + 1
+
+2 z⊤Qz − 1
+
+2 (∇V ∗
+
+> ro
+
+)⊤B(z)R−1B⊤(z)∇V ∗
+
+> ro
+
++ ( c1‖z‖ + c2‖u∗
+
+> ro
+
+‖) ‖∇ V ∗
+
+> ro
+
+‖ + c22‖∇ V ∗
+
+> ro
+
+‖2
+
+2‖u∗
+
+> ro
+
+‖2 (u∗
+
+> ro
+
+)⊤ R−1u∗
+
+> ro
+
+.
+
+(37) It should be noted that the robust optimal controller (36) is given in an implicit form and represents the first-order necessary optimality condition. Cases where the optimal control or value function gradient vanishes typically oc-cur at the isolated equilibrium points, hence we impose 
+
+r∗(0 , 0) = 0 to ensure that r∗ is continuous and well-defined. Furthermore, we make the following assumption similar with Assumption 3, which is a routinely adopted admissibility condition in nonlinear robust optimal and data-driven control formulations, see, e.g., [2, 6]. 
+
+Assumption 5 The robust optimal controller u∗
+
+> ro
+
+(z) is admissible in the sense of robust control, i.e., it asymp-totically stabilizes the lifted bilinear system (8) and yields a finite performance index for admissible uncertainty 
+
+r(z, u ) ∈ R .
+
+The remainder of this section addresses two significant aspects. Firstly, we quantify to what extent robust con-troller design u∗ 
+
+> ro
+
+via the above methodology (36)-(37) can correct the optimality deviations, where the analyses are dual to Theorems 1 and 2. Secondly, since it is non-trivial to obtain an analytical solution of (36)-(37), we introduce a policy-iteration algorithm, thereby bridging theoretical guarantees with computational tractability. 
+
+5.1 Theoretical Analysis 
+
+Intuitively speaking, adopting controller u∗ 
+
+> ro
+
+sacrifices the nominal optimality to a certain degree under the ideal case, i.e., r(z, u ) = 0. However, it guarantees the performance improvement to the maximum degree un-der the worst-case uncertainties. Consequently, a trade-off between nominal performance and optimality robust-ness lies in the robust optimal control methodology. 
+
+Theorem 4 Under the ideal error-free case, adopting the robust optimal controller u∗ 
+
+> ro
+
+results in an extra cost 
+
+J(u∗
+
+> ro
+
+, z, 0) −J(u∗
+
+> 0
+
+, z, 0) = 1
+
+2
+
+∫ ∞
+
+> 0
+
+(u∗
+
+> ro
+
+−u∗
+
+> 0
+
+)⊤R(u∗
+
+> ro
+
+−u∗
+
+> 0
+
+)d t
+
+(38) 
+
+where the integral term is evaluated along the nominal trajectory (12b) controlled by u∗
+
+> ro
+
+. Conversely, under the worst-case approximation error given by (36) , adopting the nominal optimal controller u∗ 
+
+> 0
+
+results in an extra cost 
+
+J(u∗
+
+> 0
+
+, z, r ∗) − J(u∗
+
+> ro
+
+, z, r ∗)
+
+≤
+
+∫ ∞
+
+> 0
+
+[(1 + 1
+
+2λmin (R) )( u∗ 
+
+> ro
+
+− u∗
+
+> 0
+
+)⊤R(u∗ 
+
+> ro
+
+− u∗
+
+> 0
+
+)+(1 + 1
+
+λmin (R) ) c22
+
+2 ‖∇ V ∗
+
+> ro
+
+‖2]dt
+
+(39) 
+
+where the integral term is evaluated along the trajectory controlled by u∗ 
+
+> 0
+
+under the worst-case error r∗, i.e., 
+
+˙z(t) = A(z(t))+ B(z(t)) u∗ 
+
+> 0
+
+(z(t))+ r∗(z(t), u ∗
+
+> 0
+
+), z (0) = z. 
+
+(40) 
+
+PROOF. Along the system trajectory (12b) controlled by u∗
+
+> ro
+
+, the time derivative of V ∗ 
+
+> 0
+
+= J(u∗
+
+> 0
+
+, z, 0) is given by dV ∗
+
+> 0
+
+dt = ( ∇V ∗ 
+
+> 0
+
+)⊤ (Az (t) + B(z(t)) u∗
+
+> ro
+
+(z(t))) .
+
+Since V ∗ 
+
+> 0
+
+is solved with (14), we further obtain dV ∗
+
+> 0
+
+dt = − 1
+
+2 z⊤(t)Qz (t) + 1
+
+2 (u∗
+
+> 0
+
+)⊤Ru ∗ 
+
+> 0
+
+− (u∗
+
+> 0
+
+)⊤Ru ∗
+
+> ro
+
+.
+
+With Assumption 5, the extra cost satisfies 
+
+J(u∗
+
+> ro
+
+, z, 0) − J(u∗
+
+> 0
+
+, z, 0) =
+
+∫ ∞
+
+> 0
+
+1
+
+2 z⊤(t)Qz (t) + 1
+
+2 (u∗
+
+> ro
+
+)⊤Ru ∗ 
+
+> ro
+
++ dV ∗
+
+> 0
+
+dt dt
+
+= 1
+
+2
+
+∫ ∞
+
+> 0
+
+(u∗ 
+
+> ro
+
+− u∗
+
+> 0
+
+)⊤R(u∗ 
+
+> ro
+
+− u∗
+
+> 0
+
+)d t. 
+
+8Along (40), the time derivative of V ∗ 
+
+> ro
+
+= J(u∗
+
+> ro
+
+, z, r ∗) is dV ∗
+
+> ro
+
+dt = ( ∇V ∗
+
+> ro
+
+)⊤ (Az (t) + B(z(t)) u∗ 
+
+> 0
+
++ r∗(z(t), u ∗
+
+> 0
+
+)) .
+
+Since V ∗ 
+
+> ro
+
+is solved with (37), we further calculate and simplify the time derivative, obtaining dV ∗
+
+> ro
+
+dt = −‖∇ V ∗
+
+> ro
+
+‖ (c1‖z‖ + c2‖u∗
+
+> ro
+
+‖) + ( ∇V ∗
+
+> ro
+
+)⊤r∗(z(t), u ∗
+
+> 0
+
+)+( ∇V ∗
+
+> ro
+
+)⊤B(z(t)) u∗ 
+
+> 0
+
+− c22‖∇ V ∗
+
+> ro
+
+‖2
+
+2‖u∗
+
+> ro
+
+‖2 (u∗
+
+> ro
+
+)⊤ R−1u∗
+
+> ro
+
++ 1
+
+2 (∇V ∗
+
+> ro
+
+)⊤B(z(t)) R−1B⊤(z(t)) ∇V ∗ 
+
+> ro
+
+− 1
+
+2 z⊤(t)Qz (t)Since Assumption 5 admits that V ∗
+
+> ro
+
+(z(∞)) = 0, the extra cost satisfies 
+
+J(u∗
+
+> 0
+
+, z, r ∗) − J(u∗
+
+> ro
+
+, z, r ∗)=
+
+∫ ∞
+
+> 0
+
+1
+
+2 z⊤(t)Qz (t) + 1
+
+2 (u∗
+
+> 0
+
+)⊤Ru ∗ 
+
+> 0
+
++ dV ∗
+
+> ro
+
+dt dt
+
+=
+
+∫ ∞
+
+> 0
+
+[ 1
+
+2 ∇(V ∗ 
+
+> ro
+
+− V ∗ 
+
+> 0
+
+)⊤B(z(t)) R−1B⊤(z(t)) ∇(V ∗ 
+
+> ro
+
+− V ∗ 
+
+> 0
+
+)+c2‖∇ V ∗
+
+> ro
+
+‖(‖u∗
+
+> 0
+
+‖ − ‖ u∗
+
+> ro
+
+‖) − c22‖∇ V ∗
+
+> ro
+
+‖2
+
+2‖u∗
+
+> ro
+
+‖2 (u∗
+
+> ro
+
+)⊤ R−1u∗
+
+> ro
+
+]dt. 
+
+With the form of u∗ 
+
+> 0
+
+and u∗ 
+
+> ro
+
+in (15) and (36), the extra cost is simplified and bounded with Cauchy-Schwartz inequality by 
+
+J(u∗
+
+> 0
+
+, z, r ∗) − J(u∗
+
+> ro
+
+, z, r ∗)=
+
+∫ ∞
+
+> 0
+
+[ c2‖∇ V ∗
+
+> ro
+
+‖
+
+‖u∗
+
+> ro
+
+‖ (u∗
+
+> ro
+
+)⊤R−1(u∗ 
+
+> ro
+
+− u∗
+
+> 0
+
+)+ 1
+
+2 (u∗ 
+
+> 0
+
+− u∗
+
+> ro
+
+)⊤R(u∗ 
+
+> 0
+
+− u∗
+
+> ro
+
+) + c2‖∇ V ∗
+
+> ro
+
+‖(‖u∗
+
+> 0
+
+‖ − ‖ u∗
+
+> ro
+
+‖)]dt
+
+≤
+
+∫ ∞
+
+> 0
+
+[ 1
+
+2 c22‖∇ V ∗
+
+> ro
+
+‖2 · (u∗
+
+> ro
+
+)⊤ R−1u∗
+
+> ro
+
+‖u∗
+
+> ro
+
+‖2
+
++( u∗ 
+
+> 0
+
+− u∗
+
+> ro
+
+)⊤R(u∗ 
+
+> 0
+
+− u∗
+
+> ro
+
+) + c2‖∇ V ∗
+
+> ro
+
+‖‖ u∗ 
+
+> 0
+
+− u∗
+
+> ro
+
+‖]dt. 
+
+(41) Using Cauchy-Schwartz inequality again, the last term of the integrand in (41) is bounded with 
+
+c2‖∇ V ∗
+
+> ro
+
+‖‖ u∗ 
+
+> 0
+
+− u∗
+
+> ro
+
+‖ ≤ 1
+
+2 c22‖∇ V ∗
+
+> ro
+
+‖2 + 1
+
+2 ‖u∗ 
+
+> 0
+
+− u∗
+
+> ro
+
+‖2
+
+≤ 1
+
+2 c22‖∇ V ∗
+
+> ro
+
+‖2 + 1
+
+2λmin (R) (u∗ 
+
+> 0
+
+− u∗
+
+> ro
+
+)⊤R(u∗ 
+
+> 0
+
+− u∗
+
+> ro
+
+).
+
+(42) Meanwhile, the first term of the integrand in (41) can be bounded using the smallest eigenvalue of R, since (u∗
+
+> ro
+
+)⊤ R−1u∗
+
+> ro
+
+‖u∗
+
+> ro
+
+‖2 ≤ λmax (R−1) = 1
+
+λmin (R) . (43) Combining (41), (42) and (43) completes the proof. 
+
+Remark 4 (Balancing performance and robustness) 
+
+As stated above, Theorem 4 reveals a clear performance-robustness trade-off inherent in the proposed methodol-ogy. Specifically, the cost of robustness under the error-free case, given by (38) , is solely attributed to the inte-grated deviation between the robust optimal controller 
+
+u∗ 
+
+> ro
+
+and nominal one u∗
+
+> 0
+
+. By contrast, when the approxi-mation error is present, the performance degradation of 
+
+u∗ 
+
+> 0
+
+given by (39) , as well as the performance improve-ment achieved by u∗ 
+
+> ro
+
+under the worst-case error, exhibits a fundamentally different structure. Particularly, it not only amplifies the contribution of controller deviation, but also includes an additional positive term proportional to c22‖∇ V ∗
+
+> ro
+
+‖2. Although the integrals follow different trajectories, this structural gap reveals that the robust controller design deliberately accepts a quantifiable and often small nominal performance loss to secure a guar-anteed and potentially large improvement of optimality robustness in the presence of approximation error. 
+
+Meanwhile, the comparison from another perspective of controller is also necessary, i.e., between u∗ 
+
+> ro
+
+and the actual optimal controller u∗.
+
+Theorem 5 Suppose that the actual optimal controller 
+
+u∗ stabilizes the original nonlinear system (6) . Then, the deviation between u∗ and the robust optimal controller 
+
+u∗ 
+
+> ro
+
+is characterized by 
+
+∫ ∞
+
+> 0
+
+(u∗ 
+
+> ro
+
+− u∗)⊤R(u∗ 
+
+> ro
+
+− u∗)d t
+
+≤ max 
+
+
+
+4c1Lp
+
+√
+
+λmin (Q)
+
+, 4c2
+
+√λmin (R)
+
+(
+
+V ∗
+
+∫ ∞
+
+> 0
+
+‖∇ V ∗
+
+> ro
+
+‖2dt
+
+) 1
+
+> 2
+
+(44) 
+
+where the integral term is evaluated along the actual op-timal trajectory, i.e., (6) controlled by u∗.
+
+PROOF. Along the trajectory (6) (equivalently (8)) controlled by u∗, the time derivative of V ∗ 
+
+> ro
+
+is given by dV ∗
+
+> ro
+
+dt = ( ∇V ∗
+
+> ro
+
+)⊤ (Az (t) + B(z(t)) u∗ + r(z(t), u ∗)) .
+
+The time derivative of V ∗ satisfies a similar form. Since the value function V ∗ 
+
+> ro
+
+is solved with (37), we obtain d
+
+dt (V ∗ 
+
+> ro
+
+− V ∗) = 1
+
+2 (∇V ∗
+
+> ro
+
+)⊤B(z(t)) R−1B⊤(z(t)) ∇V ∗
+
+> ro
+
++( ∇V ∗
+
+> ro
+
+)⊤B(z(t)) u∗ + 1
+
+2 (u∗)⊤Ru ∗ + ( ∇V ∗
+
+> ro
+
+)⊤r(z, u ∗)
+
+−(c1‖z‖ + c2‖u∗
+
+> ro
+
+‖)‖V ∗
+
+> ro
+
+‖ − c22‖∇ V ∗
+
+> ro
+
+‖2
+
+2‖u∗
+
+> ro
+
+‖2 (u∗
+
+> ro
+
+)⊤ R−1u∗
+
+> ro
+
+.
+
+9With (36), we have the following relation 
+
+B⊤(z)∇V ∗ 
+
+> ro
+
+= −R
+
+(
+
+u∗ 
+
+> ro
+
++ c2‖∇ V ∗
+
+> ro
+
+‖
+
+‖u∗
+
+> ro
+
+‖ R−1u∗
+
+> ro
+
+)
+
+,
+
+then the time derivative of V ∗ 
+
+> ro
+
+− V ∗ is written as d
+
+dt (V ∗ 
+
+> ro
+
+− V ∗) = ( ∇V ∗
+
+> ro
+
+)⊤[r(z, u ∗) − c1‖z‖ + c2‖u∗
+
+> ro
+
+‖
+
+‖∇ V ∗
+
+> ro
+
+‖ ∇V ∗
+
+> ro
+
+]+ 1
+
+2 (u∗ − u∗
+
+> ro
+
+)⊤R(u∗ − u∗
+
+> ro
+
+) − c2‖V ∗
+
+> ro
+
+‖ (u∗
+
+> ro
+
+)⊤(u∗ − u∗
+
+> ro
+
+)
+
+‖u∗
+
+> ro
+
+‖
+
+= ( ∇V ∗
+
+> ro
+
+)⊤
+
+r(z, u ∗) − c1‖z‖ + c2 (u∗  
+
+> ro )⊤u∗
+> ‖u∗
+> ro ‖
+
+‖∇ V ∗
+
+> ro
+
+‖ ∇V ∗
+
+> ro
+
+
+
++ 1
+
+2 (u∗ − u∗
+
+> ro
+
+)⊤R(u∗ − u∗
+
+> ro
+
+).
+
+Integrating the above equation along the actual system trajectory (8) controlled by u∗, we obtain 
+
+V ∗ 
+
+> ro
+
+− V ∗ = − 1
+
+2
+
+∫ ∞
+
+> 0
+
+(u∗ − u∗
+
+> ro
+
+)⊤R(u∗ − u∗
+
+> ro
+
+)d t
+
+−
+
+∫ ∞
+
+> 0
+
+(∇V ∗
+
+> ro
+
+)⊤[r(z, u ∗) − c1‖z‖ + c2 (u∗  
+
+> ro )⊤u∗
+> ‖u∗
+> ro ‖
+
+‖∇ V ∗
+
+> ro
+
+‖ ∇V ∗
+
+> ro
+
+]d t
+
+(45) since we assume that the optimal controller u∗ stabilizes the system then V ∗(z(∞)) = V ∗
+
+> ro
+
+(z(∞)) = 0. Recall that u∗ 
+
+> ro
+
+achieves optimality under the worst-case approximation error r∗, in other words, 
+
+V ∗
+
+> ro
+
+(z) = J(u∗
+
+> ro
+
+, z, r ∗) ≥ J(u∗
+
+> ro
+
+, z, r ) ≥ J(u∗, z, r ) = V ∗(z).
+
+(46) Hence with (45), the controller deviation is bounded by 
+
+∫ ∞
+
+> 0
+
+(u∗ − u∗
+
+> ro
+
+)⊤R(u∗ − u∗
+
+> ro
+
+)d t
+
+≤
+
+∫ ∞
+
+> 0
+
+(∇V ∗
+
+> ro
+
+)⊤
+
+ c1‖z‖ + c2 (u∗ 
+
+> ro )⊤u∗
+> ‖u∗
+> ro ‖
+
+‖∇ V ∗
+
+> ro
+
+‖ ∇V ∗ 
+
+> ro
+
+− r(z, u ∗)
+
+ dt
+
+≤
+
+∫ ∞
+
+> 0
+
+‖∇ V ∗
+
+> ro
+
+‖ · 2 ( c1‖z(t)‖ + c2‖u∗(z(t)) ‖) d t
+
+≤2
+
+(∫ ∞
+
+> 0
+
+‖∇ V ∗
+
+> ro
+
+‖2dt
+
+) 1 
+
+> 2
+
+(∫ ∞
+
+> 0
+
+(c1‖z(t)‖ + c2‖u∗‖)2dt
+
+) 1
+
+> 2
+
+.
+
+The last integral term can be 
+
+∫ ∞
+
+> 0
+
+(c1‖z‖ + c2‖u∗‖)2dt ≤
+
+∫ ∞
+
+> 0
+
+2 (c21‖z‖2 + c22‖u∗‖2) dt
+
+≤
+
+∫ ∞
+
+> 0
+
+2 (c21L2
+
+> p
+
+‖x‖2 + c22‖u∗
+
+> 0
+
+‖2) dt ≤ C212 V ∗
+
+where C12 is given in Theorem 1, and the upper bound in (44) holds. 
+
+Remark 5 (Comparing the controller deviation) 
+
+According to the proof of [28, Theorem 7], the optimality deviation for u∗ 
+
+> 0
+
+in (15) is upper-bounded with 
+
+∫ ∞
+
+> 0
+
+(u∗ 
+
+> 0
+
+− u∗)⊤R(u∗ 
+
+> 0
+
+− u∗)d t ≤ 2∆ Vmax 
+
++ max 
+
+
+
+4c1Lp
+
+√
+
+λmin (Q)
+
+, 4c2
+
+√λmin (R)
+
+(
+
+V ∗
+
+∫ ∞
+
+> 0
+
+‖∇ V ∗ 
+
+> 0
+
+‖2dt
+
+) 1
+
+> 2
+
+.
+
+(47) 
+
+In contrast, only the last term of (47) appears in (44) ,the upper bound for optimality deviation of u∗ 
+
+> ro
+
+(definitely 
+
+∇V ∗ 
+
+> 0
+
+is replaced by ∇V ∗
+
+> ro
+
+). Although the two bounds can-not be strictly ordered without further assumptions, this structural comparison intuitively highlights that the ro-bust optimal controller is designed to actively compen-sate for the approximation error within its feedback law, thereby reducing the potentially worst-case optimality de-viation. 5.2 Practical Implementation 
+
+We have demonstrated that the robust optimal control methodology by solving the min-max problem (35) effi-ciently achieves a performance improvement under the worst-case approximation error. However, solving the coupled equations (37) and (36) directly is intractable due to the nonlinear interdependency between u∗ 
+
+> ro
+
+and 
+
+V ∗
+
+> ro
+
+. To bridge this critical gap between theory and prac-tice, we propose a policy iteration algorithm that alter-nates between evaluating the cost of a given policy and improving it, inspired by basic principles of reinforce-ment learning and adaptive dynamic programming [27]. Due to the first-order and nonlinear nature of the HJB equation, classical solutions may fail to exist in general, which poses substantial challenges for the convergence analysis as well as practical computation for iterative al-gorithms. To overcome this difficulty, we adopt a vanish-ing viscosity regularization by introducing a small diffu-sion term. Specifically, in the policy evaluation step dur-ing the k-th iteration, we solve the following equation 
+
+(
+
+∇V (k+1) 
+
+> ε
+
+)⊤
+
+Az − 1
+
+2
+
+(
+
+∇V (k+1) 
+
+> ε
+
+)⊤
+
+B(z)R−1B⊤(z)∇V (k+1) 
+
+> ε
+
++ 1
+
+2 z⊤Qz − ε∇2V (k+1)  
+
+> ε
+
+= −
+
+(
+
+c1‖z‖ + c2‖u(k) 
+
+> ε
+
+‖
+
+)
+
+‖∇ V (k) 
+
+> ε
+
+‖− c22‖∇ V (k) 
+
+> ε
+
+‖2
+
+2‖u(k) 
+
+> ε
+
+‖2
+
+(
+
+u(k)
+
+> ε
+
+)⊤
+
+R−1u(k)
+
+> ε
+
+(48) where diffusion parameter ε > 0 is sufficiently small and 
+
+∇2 denotes the Laplace operator ∇2Vro = ∇ · (∇Vro ). This technique has been explored for analyzing HJB equations to ensure sufficient smoothness while preserv-ing the essential structure of the original problem [3]. In the policy update step, the controller is updated with 10 the newly obtained value function V (k+1)  
+
+> ro
+
+by 
+
+u(k+1)  
+
+> ε
+
+(z) = −R−1B⊤(z)∇V (k+1)  
+
+> ε
+
+− c2‖∇ V (k+1)  
+
+> ε
+
+‖
+
+‖u(k) 
+
+> ε
+
+‖ R−1u(k) 
+
+> ε
+
+.
+
+(49) It is worth noting that the vanishing viscosity term ε∇2V
+
+is introduced mainly for analytical regularization. As 
+
+ε → 0, the corresponding regularized solutions converge to the viscosity solution of HJI equation (37), thereby preserving the structure of underlying robust optimal control methodology (36) and (37). With ε > 0, the policy evaluation equation (48) at each iteration step becomes a quasilinear elliptic PDE, which can be solved using well-established numerical methods [11]. The algorithm maintains full compatibility with classi-cal optimal control settings. In the ideal error-free case 
+
+r(z, u ) = 0 where c1 = c2 = 0, setting ε = 0 recovers the classical HJB equation associated with the nominal op-timal control problem, which can be efficiently solved by existing numerical methods [9,25]. The overall structure of proposed scheme is summarized in Algorithm 1. 
+
+Algorithm 1 Policy Iteration Implementation for Koopman-Based Robust Optimal Control Methodology 
+
+Initialization 
+
+Select sufficiently small parameters ε > 0, ν > 0. Set k = 0, select an initial admissible policy u(0) 
+
+> ε
+
+and corresponding value function V (0)  
+
+> ε
+
+, iterate on k.
+
+Policy Evaluation 
+
+Obtain the value function V (k+1)  
+
+> ε
+
+(or gradient 
+
+∇V (k+1)  
+
+> ε
+
+) by solving (48). 
+
+Policy Improvement 
+
+Obtain the updated policy u(k+1)  
+
+> ε
+
+with (49). 
+
+Convergence Check 
+
+If ‖u(k+1)  
+
+> ε
+
+−u(k) 
+
+> ε
+
+‖ < ν , stop iteration and return the policy u(k+1)  
+
+> ε
+
+. Otherwise, set k = k + 1 and continue the policy evaluation step. 
+
+Remark 6 (Underlying design philosophy) To address the strong coupling between V ∗ 
+
+> ro
+
+and u∗ 
+
+> ro
+
+in 
+
+(37) and (36) , Algorithm 1 is built upon a key insight that, the impact of uncertainty (c1, c 2) is temporarily fixed with calculation results from the previous itera-tion. From a computational perspective, this renders the right-hand side of (48) known, effectively reducing (37) 
+
+to a standard HJB form (with regularization) that can be efficiently solved using existing numerical tools. From a theoretical viewpoint, since a well-identified bilinear lift-ing (8) typically yields small error coefficients (c1, c 2),the associated terms act as mild perturbations. Conse-quently, fixing them with V (k) 
+
+> ε
+
+and u(k) 
+
+> ε
+
+does not signifi-cantly alter the solution at each iteration. This deliberate yet justifiable approximation transforms a challenging problem into a sequence of tractable subproblems, which is later shown convergent to the solution of (37) .
+
+The robust optimal control formulation involves normal-ization terms depending on ‖∇ V ‖ and ‖u‖, which may become ill-defined near the equilibrium point. To avoid potential singularities and ensure the well-posedness of proposed algorithm, we restrict our analysis to a punc-tured domain excluding a small neighborhood of the ori-gin. Specifically, consider a bounded open set Ω ∈ RN
+
+containing the origin, and define a punctured domain Ωρ = Ω \Bρ(0) where ρ > 0 is a small constant and 
+
+Bρ(0) denotes a ball of radius ρ. Further, we assume all of the considered control inputs u belong to Rm\Bρ′ (0). Since the origin is an equilibrium point of closed-loop system and thus the value function is normalized as 
+
+V (0) = 0, additional homogeneous Dirichlet boundary conditions are imposed to ensure the closed-loop stabil-ity, i.e., V = 0 , ∇V = 0 on ∂B ρ.
+
+Remark 7 (Inside small neighborhood of origin) 
+
+Since the proposed algorithm might become ill-defined near the equilibrium, we can implement the algorithm outside Bρ(0) with a sufficiently small ρ > 0. As for 
+
+z ∈ Bρ(0) , one can find a state-feedback design u = Kz 
+
+linearly dependent on the lifted state with a primary ob-jective to ensure the closed-loop robust stability [29, 37]. This thought has been also confirmed effective by existing works on Koopman-based optimal control [17]. 
+
+Now we proceed to establish the well-posedness and con-vergence of proposed algorithm. Define 
+
+H(z, p ) = p⊤Az + 1
+
+2 z⊤Qz − 1
+
+2 p⊤B(z)R−1B⊤(z)p, δ(z, u, p ) = −(c1‖z‖ + c2‖u‖)‖p‖ − c22‖p‖2
+
+2‖u‖2 u⊤R−1u. 
+
+(50) Then the policy evaluation step (48) is written as 
+
+−ε∇2V (k+1)  
+
+> ε
+
++H(z, ∇V (k+1)  
+
+> ε
+
+) = δ(z, u (k) 
+
+> ro
+
+, ∇V (k) 
+
+> ε
+
+) (51) which is an elliptic second-order PDE. Meanwhile, equa-tion (37) is equivalently written as 
+
+H(z, ∇V ∗
+
+> ro
+
+) = δ(z, u ∗
+
+> ro
+
+, ∇V ∗
+
+> ro
+
+). (52) To connect (51) and (52), a natural intermediate is 
+
+−ε∇2V ∗ 
+
+> ε
+
++ H(z, ∇V ∗ 
+
+> ε
+
+) = δ(z, u ∗
+
+> ε
+
+, ∇V ∗ 
+
+> ε
+
+) (53) where u∗ 
+
+> ε
+
+is obtained with (36) substituting V ∗ 
+
+> ro
+
+with V ∗ 
+
+> ε
+
+.We will first prove that the policy iteration algorithm promises the convergence V (k) 
+
+> ε
+
+→ V ∗ 
+
+> ε
+
+, u (k) 
+
+> ε
+
+→ u∗ 
+
+> ε
+
+for any fixed ε > 0, and V ∗ 
+
+> ε
+
+→ V ∗
+
+> ro
+
+, u ∗ 
+
+> ε
+
+→ u∗ 
+
+> ro
+
+when ε → 0. 
+
+Assumption 6 The initial admissible policy and the gradient of corresponding value function are essentially bounded, i.e., u(0)  
+
+> ε
+
+∈ L∞(Ω ρ), ∇V (0)  
+
+> ε
+
+∈ L∞(Ω ρ).
+
+11 Lemma 1 Let Assumption 6 holds. For any fixed ε > 0,there exists a unique classical solution V (k+1)  
+
+> ε
+
+∈ C 2,α (Ω ρ)
+
+for (51) with homogeneous boundary conditions at each iteration. Moreover, there exist Cp, 1, C u, 1 > 0 indepen-dent of k, such that for all iterations ‖∇ V (k) 
+
+> ε
+
+‖L∞(Ω ρ) ≤
+
+Cp, 1 and ‖u(k) 
+
+> ε
+
+‖L∞(Ω ρ ) ≤ Cu, 1 uniformly. 
+
+See Appendix B for the proof. 
+
+Lemma 2 For any fixed ε > 0, there exists a unique classical solution V ∗ 
+
+> ε
+
+∈ C 2,α (Ω ρ) for (53) with homoge-neous boundary conditions, which admits the existence of constants Cp, 2, C u, 2 > 0 such that ‖∇ V ∗ 
+
+> ε
+
+‖L∞(Ω ρ ) ≤ Cp, 2
+
+and ‖u∗
+
+> ε
+
+‖L∞(Ω ρ ) ≤ Cu, 2.
+
+See Appendix C for the proof. Lemma 1 has illustrated the well-posedness of proposed policy iteration algo-rithm, and Lemma 2 has demonstrated properties of our desired limit case. To establish the convergence, we need the following result which characterizes the con-tinuous dependence of PDE solution on the variation of right hand side in (51) and (53). 
+
+Proposition 2 There exists a constant Cε > 0 such that 
+
+‖∇ V (k+1)  
+
+> ε
+
+− ∇ V ∗ 
+
+> ε
+
+‖L∞(Ω ρ ) ≤ Cε‖δ(k) − δ∗‖L∞(Ω ρ ). (54) 
+
+where δ(k) = δ(z, u (k) 
+
+> ro
+
+, ∇V (k) 
+
+> ε
+
+) and δ∗ = δ(z, u ∗
+
+> ro
+
+, ∇V ∗ 
+
+> ε
+
+).
+
+See Appendix D for the proof. Building on the preceding results, we can now establish the convergence of Algo-rithm 1. 
+
+Theorem 6 Let Assumption 6 holds. For any fixed ε > 0
+
+and sufficiently small error bound coefficients c1, c 2 > 0,the sequences of value functions {V (k) 
+
+> ε
+
+}∞ 
+
+> k=0
+
+and corre-sponding controllers {u(k) 
+
+> ε
+
+}∞ 
+
+> k=0
+
+calculated by (48) and 
+
+(49) converge to V ∗ 
+
+> ε
+
+and u∗ 
+
+> ε
+
+respectively. Moreover, as 
+
+ε → 0, V ∗ 
+
+> ε
+
+→ V ∗ 
+
+> ro
+
+where V ∗ 
+
+> ro
+
+is the unique viscosity solu-tion of (52) (equivalently (37) ), and therefore u∗ 
+
+> ε
+
+→ u∗
+
+> ro
+
+.
+
+PROOF. With ‖∇ V (k+1)  
+
+> ro
+
+‖ − ‖∇ V (k) 
+
+> ro
+
+‖ ≤ ‖∇ V (k+1)  
+
+> ro
+
+−∇V (k) 
+
+> ro
+
+‖ and the definition of δ by (50), we can prove that 
+
+‖δ(k) − δ∗‖L∞(Ω ρ ) ≤ L1‖∇ V (k) 
+
+> ε
+
+− ∇ V ∗ 
+
+> ε
+
+‖L∞(Ω ρ )
+
++ L2‖u(k) 
+
+> ε
+
+− u∗ 
+
+> ε
+
+‖L∞(Ω ρ)
+
+where 
+
+L1 =
+
+(
+
+c1‖z‖ + c2‖u(k) 
+
+> ε
+
+‖ + c22(‖∇ V (k) 
+
+> ε
+
+‖ + ‖∇ V ∗ 
+
+> ε
+
+‖)
+
+2λmin (R)
+
+) 
+
+> L∞(Ω ρ)
+
+≤ c1‖z‖L∞(Ω ρ ) + c2Cu, 1 + c22(Cp, 1 + Cp, 2)
+
+2λmin (R) = L1.
+
+and 
+
+L2 =
+
+(
+
+c2‖∇ V ∗ 
+
+> ε
+
+‖ + c22‖∇ V ∗ 
+
+> ε
+
+‖2Lu, 1
+
+2
+
+) 
+
+> L∞(Ω ρ)
+
+≤ c2Cu, 2
+
+(
+
+1 + c2Cu, 2Lu, 1
+
+2
+
+)
+
+= L2.
+
+Here Lu, 1 is the Lipschitz constant of u⊤R−1u/ ‖u‖2
+
+since u ∈ Rm\Bρ′ (0) and we have proved the bounded-ness of u(k) 
+
+> ε
+
+and u∗
+
+> ε
+
+. In addition, the inequality 
+
+u⊤R−1u ≤ λmax (R−1)‖u‖2 = 1
+
+λmin (R) ‖u‖2
+
+is used to obtain L1, L 2. With Proposition 2, we obtain 
+
+‖∇ V (k+1)  
+
+> ε
+
+− ∇ V ∗ 
+
+> ε
+
+‖L∞(Ω ρ ) ≤ CεL1‖∇ V (k) 
+
+> ε
+
+− ∇ V ∗ 
+
+> ε
+
+‖L∞(Ω ρ )
+
++CεL2‖u(k) 
+
+> ε
+
+− u∗
+
+> ε
+
+‖L∞(Ω ρ ).
+
+(55) Combining (49) with (36), we obtain 
+
+u(k+1)  
+
+> ε
+
+− u∗ 
+
+> ε
+
+= −R−1B⊤(z)
+
+(
+
+∇V (k+1)  
+
+> ε
+
+− ∇ V ∗
+
+> ε
+
+)
+
+− c2R−1
+
+(
+
+‖∇ V (k+1)  
+
+> ε
+
+‖ u(k)
+
+> ε
+
+‖u(k) 
+
+> ε
+
+‖ − ‖∇ V ∗ 
+
+> ε
+
+‖ u∗
+
+> ε
+
+‖u∗
+
+> ε
+
+‖
+
+)
+
+.
+
+Denote Lu, 2 as the Lipschitz constant of u/ ‖u‖, then 
+
+‖u(k+1)  
+
+> ε
+
+− u∗
+
+> ε
+
+‖L∞(Ω ρ ) ≤ L4‖u(k) 
+
+> ε
+
+− u∗
+
+> ε
+
+‖L∞(Ω ρ )
+
++L3‖∇ V (k+1)  
+
+> ε
+
+− ∇ V ∗ 
+
+> ε
+
+‖L∞(Ω ρ )
+
+(56) where 
+
+L3 = ‖R−1‖(c2+‖B(z)‖L∞(Ω ρ )), L 4 = c2Cp, 1Lu, 2‖R−1‖.
+
+Define ek = [ ‖∇ V (k) 
+
+> ε
+
+−∇ V ∗ 
+
+> ε
+
+‖L∞(Ω ρ ) ‖u(k) 
+
+> ε
+
+−u∗
+
+> ε
+
+‖L∞(Ω ρ)]⊤.Then (55) and (56) can be written as 
+
+[ 1 0
+
+−L3 1
+
+]
+
+ek+1 ≤
+
+[CεL1 CεL2
+
+0 L4
+
+]
+
+ek,
+
+which is equivalent as 
+
+ek+1 ≤
+
+[ CεL1 CεL2
+
+CεL1L3 CεL2L3 + L4
+
+]
+
+ek , Ee k.
+
+Note that all elements of E are O(c1 + c2), which means that they can be sufficiently small with appropriate 
+
+c1, c 2. When ‖E‖ < 1 (or |λ(E)| < 1), lim k→∞ ek = 0, which further indicates that V (k) 
+
+> ε
+
+→ V ∗ 
+
+> ε
+
+and u(k) 
+
+> ε
+
+→ u∗
+
+> ε
+
+in the sense of L∞ norm. Finally, the convergence lim ε→0 V ∗ 
+
+> ε
+
+= V ∗ 
+
+> ro
+
+follows from the vanishing viscosity theory [10, Section 6] [4], which completes the proof. ✷
+
+12 6 Numerical Examples 
+
+In this section, numerical simulations using MATLAB are conducted to verify the theoretical results developed in the previous sections and to demonstrate the effective-ness of the proposed robust optimal control methodol-ogy as well as corresponding policy iteration algorithm. Consider the optimal control problem of the control-affine nonlinear system 
+
+[ ˙x1
+
+˙x2
+
+]
+
+=
+
+[ −x1 + x2
+
+− 1 
+
+> 2
+
+(x1 + x2) + 1 
+
+> 2
+
+x21x2
+
+]
+
++
+
+[ 0
+
+x1
+
+]
+
+u (57) where the weighting matrices of quadratic index (11) are set as Q = I2×2, R = 1. The analytical optimal value function and corresponding optimal controller are veri-fiable as V ∗(x) = 1 
+
+> 4
+
+x21 + 1 
+
+> 2
+
+x22 and u∗(x) = −x1x2, which serve as the ground truth for performance comparison. The dynamics (57) is only used for collecting time-series data {xj , ˙xj }Tj=1 with total amount T =5000 corrupted by the bounded noise d(t) = 0.01 ·
+
+[cos(2 π0.4t) sin(2 π0.4t)]. The dictionary functions are constructed as monomials up to order 3 of x, i.e., Ψ( x) = [ x1 x2 1 
+
+> 2
+
+x21 x1x2 1 
+
+> 2
+
+x22 . . . ]⊤. The lifted bilin-ear system of dimension N = 9 is identified from the collected data via EDMD algorithm (26). Meanwhile, denote 
+
+R = [ r1 r2 · · · rT ] = Z1 − [A B 0 B1 · · · Bm] W0
+
+which records the approximation error at all data points, and ˜R = [ ‖r1‖ ‖ r2‖ · · · ‖ rT ‖], ˜Z0 = [ ‖z1‖ ‖ z2‖ · · · ‖ zT ‖],
+
+˜U0 = [ ‖u1‖ ‖ u2‖ · · · ‖ uT ‖].
+
+The coefficients of approximation error bound (9) can then be solved from data via linear programming under the constraint ˜R ≤ c1 ˜Z0 + c2 ˜U0, (58) and we obtain the error bound coefficients c1 = c2 =0.1435. To numerically compute the solution of policy evalua-tion PDE (48), the Galerkin method is adopted, which is widely used for solving nonlinear PDE by project-ing the original equation onto a finite-dimensional func-tion space [5]. Specifically, the value function is approxi-mated using a set of linearly independent basis functions 
+
+{ϕi(z)}Mi=1 , i.e., 
+
+V (k+1)  
+
+> ε
+
+(z) ≈
+
+> M
+
+∑
+
+> i=1
+
+θ(k+1)  
+
+> i
+
+ϕi(z) , θ(k+1) ⊤ϕ(z). (59) Substituting (59) into the policy evaluation PDE (48) yields a residual, which is then minimized in a least-squares sense over a set of Nc = 5000 randomly sam-pled collocation points. In this way, solving the nonlin-ear PDE (48) is reduced to a tractable algebraic prob-lem with regard to θ ∈ RM and consequently, Algo-rithm 1 can be effectively implemented. In our simula-tion, the basis functions {ϕi(z)}Mi=1 are chosen as mono-mials of z with order 2. Since the lifted coordinates z
+
+already contain monomials of the original state variable 
+
+x, some candidate basis functions become linearly de-pendent. Such dependencies are removed from ϕ(z) to avoid the algebraic singularity in the least-square regres-sion and ensure the convergence of policy iteration, re-ducing the number of basis function to M = 25. The diffusion parameter for elliptic regularization in (48) is set as ε = 10 −3.         
+
+> 0246810 12 14 16 18
+> Iteration
+> 10 -8
+> 10 -6
+> 10 -4
+> 10 -2
+> 10 0
+> Magnitude
+> Convergence results
+
+Fig. 1. The relative changes of value function coefficients and the control policy at each iteration step, which shows the convergence of Algorithm 1. The entire computation finishes in less than one second. 
+
+Starting from an initial policy, coefficients θ(k) of the value function and the control policy u(k) 
+
+> ε
+
+are iteratively updated according to the proposed policy iteration algo-rithm. As shown in Fig. 1, the solutions converge rapidly within 20 iterations, during which the variations of co-efficients and control policy decrease significantly. As illustrated in Fig. 2, closed-loop trajectories con-trolled by the resulting robust optimal controller u∗
+
+> ro
+
+(u∗ 
+
+> ε
+
+)closely track the actual optimal paths. Meanwhile, closed-loop trajectories generated by the LQR optimal controller based on the extensively utilized LTI lifted models are given for comparison. As discussed in Re-mark 1, the underlying severe modeling error in LTI lifting leads to substantial optimality deviations. Quan-titatively, the performance costs of different control strategies are summarized in Table 1, which shows that our methodology and corresponding algorithm success-fully mitigate the optimality deviations and recover near-optimal performance. 13 -1.5 -1 -0.5 0 0.5 1 1.5 
+
+> -1 -0.5 00.5 1
+> Closed-loop trajectories for comparison
+> Equilibrium
+> Actual Optimal
+> LTI Lifting + LQR
+> Robust Optimal
+
+Fig. 2. Comparison of closed-loop trajectories starting from 6 randomly chosen initial points. Three control strategies are evaluated, i.e., the actual optimal controller u∗ (black solid), standard LTI lifting then LQR (red dotted), and the robust optimal controller u∗
+
+> ro
+
+(u∗ 
+
+> ε
+
+). All trajectories illustrate the convergence behavior toward the equilibrium. Table 1 Comparison of Performance Costs 
+
+Initial State Cumulative Cost J Relative Extra 
+
+Actual Robust LQR Robust LQR 
+
+(−1.5, −1.2) 1.2999 1.3494 3.0609 3.81% 138.67% (−0.5, 1.2) 0.7877 0.8032 0.8487 3.91% 7.74% ( 1.5, −0.6) 0.7511 0.7735 0.9346 2.98% 24.43% ( 1.2, 0.9) 0.7736 0.7776 1.0568 0.05% 36.61% ( 0.2, −1.4) 0.9952 1.0454 1.1131 5.04% 11.85% (−1.2, 0.6) 0.5458 0.5528 0.6371 1.28% 16.73% 
+
+Average – – – 2.85% 39.34% 
+
+In Remark 4, we have demonstrated a trade-off between the nominal performance and optimality robustness in-herent in the proposed robust optimal control methodol-ogy. As visualized in Fig. 3, the left panel indicates a rel-atively minor nominal performance loss, while the right one reveals a significantly larger optimality robustness improvement achieved by u∗
+
+> ro
+
+. In addition, a comparison of optimality deviations associated with u∗ 
+
+> ro
+
+and u∗ 
+
+> 0
+
+is demonstrated in Fig. 4. It is observed that the optimal-ity deviation from the true optimal controller u∗ is effec-tively mitigated by our robust optimal control methodol-ogy, demonstrating an improved optimality robustness. In the present implementation, the Galerkin method is employed to compute the solution of PDE (48). While it provides an effective realization, the integration of more sophisticated numerical techniques may further improve computational efficiency and accuracy, which will be ex-plored in future.          
+
+> Performance loss
+> -1 -0.5 00.5 1
+> -1 -0.5 00.5 1
+> 00.01 0.02 0.03 0.04 0.05 0.06 0.07 0.08 0.09
+> Value Robustness improvement
+> -1 -0.5 00.5 1
+> -1 -0.5 00.5 1
+> 00.1 0.2 0.3 0.4 0.5
+> Value
+
+Fig. 3. Quantification of performance-robustness trade-off described in Theorem 4 and explained in Remark 4. The left panel displays the nominal performance loss of u∗
+
+> ro
+
+, given by (38). The right panel illustrates the potential optimality degradation of u∗ 
+
+> 0
+
+as well as the robustness improvement of 
+
+u∗
+
+> ro
+
+, given by (39). 
+
+Fig. 4. Comparison of the optimality deviations of the robust optimal controller u∗ 
+
+> ro
+
+(u∗ 
+
+> ε
+
+, left) and the nominal one u∗
+
+> 0
+
+(right), respectively characterized in Theorems 2 and 5. 
+
+7 Conclusions 
+
+This paper has systematically studied optimality ro-bustness in Koopman-based data-driven control subject to multi-source uncertainties. By developing a uni-fied analytical framework, we have characterized how heterogeneous uncertainties affect optimal control per-formance and established principled mechanisms for mitigating the resulting optimality deviations. Our re-sults provide a systematic analysis-to-design perspective for Koopman-based control that complements exist-ing stability-oriented robustness theories with explicit optimality-oriented guarantees. Beyond the methodology developed in this work, the un-derlying framework offers a general foundation for in-vestigating optimality robustness in data-driven control. Future research directions include extending the present analysis to more general problem formulations or un-certainty structures, integrating adaptive and learning-based mechanisms for computation, and exploring ap-plications in networked systems. In addition, the intro-duced analytical insights and techniques may facilitate the study of optimality robustness in broader classes of learning-enabled and model-based control architectures. 14 Acknowledgements 
+
+This work was financially supported by the National Natural Science Foundation of China (NSFC) under grants T2121002, U24A20266, and 62173006. 
+
+References 
+
+[1] Zijad Aganovi and Zoran Gaji. Linear optimal control of bilinear systems with applications to singular perturbations and weak coupling . Springer, 1995. [2] MDS Aliyu. Nonlinear H-infinity-control, Hamiltonian systems and Hamilton-Jacobi equations . CRC, 2011. [3] Martino Bardi and Italo Capuzzo-Dolcetta. Optimal Control and Viscosity Solutions of Hamilton-Jacobi-Bellman Equations . Systems & Control: Foundations & Applications. Birkh¨ auser Boston, Boston, MA, 1997. [4] Guy Barles. An Introduction to the Theory of Viscosity Solutions for First-Order Hamilton–Jacobi Equations and Applications , pages 49–109. Springer Berlin Heidelberg, Berlin, Heidelberg, 2013. [5] Dimitri P. Bertsekas. Dynamic Programming and Optimal Control . Athena Scientific, Belmont, MA, 1995. 2 vols. [6] Tao Bian and Zhong-Ping Jiang. Reinforcement learning and adaptive optimal control for continuous-time nonlinear systems: A value iteration approach. IEEE Transactions on Neural Networks and Learning Systems , 33(7):2781–2790, 2022. [7] Andrea Bisoffi, Claudio De Persis, and Pietro Tesi. Data-driven control via Petersen’s lemma. Automatica , 145:110537, 2022. [8] Edoardo Caldarelli, Antoine Chatalic, Adri` a Colom´ e, Cesare Molinari, Carlos Ocampo-Martinez, Carme Torras, and Lorenzo Rosasco. Linear quadratic control of nonlinear systems with Koopman operator learning and the Nystr¨ om method. Automatica , 177:112302, 2025. [9] Xuesong Chen and Xin Chen. An iterative method for optimal feedback control and generalized hjb equation. 
+
+IEEE/CAA Journal of Automatica Sinica , 5(5):999–1006, 2018. [10] Michael G. Crandall, Hitoshi Ishii, and Pierre-Louis Lions. User’s guide to viscosity solutions of second order partial differential equations. Bulletin of the American Mathematical Society , 27(1):1–67, 1992. [11] Xiaobing Feng, Roland Glowinski, and Michael Neilan. Recent developments in numerical methods for fully nonlinear second order partial differential equations. SIAM Review ,55(2):205–267, 2013. [12] Xingyun Fu and Keyou You. Direct data-driven stabilization of nonlinear affine systems via the Koopman operator. In 
+
+2022 IEEE 61st Conference on Decision and Control (CDC) ,pages 2668–2673, 2022. [13] David Gilbarg and Neil S. Trudinger. Elliptic Partial Differential Equations of Second Order . Classics in Mathematics. Springer-Verlag, Berlin, second edition, 2001. [14] Debdipta Goswami and Derek A. Paley. Bilinearization, reachability, and optimal control of control-affine nonlinear systems: A Koopman spectral approach. IEEE Transactions on Automatic Control , 67(6):2715–2728, 2022. [15] Ido Halperin. Solution of the continuous time bilinear quadratic regulator problem by Krotov’s method. IEEE Transactions on Automatic Control , 68(4):2415–2421, 2023. [16] Masih Haseli, Igor Mezi´ c, and Jorge Cort´ es. Two roads to Koopman operator theory for control: Infinite input sequences and operator families, 2025. arXiv:2510.15166 [cs.RO]. [17] Bowen Huang and Umesh Vaidya. A convex approach to data-driven optimal control via perron-frobenius and koopman operators. IEEE Transactions on Automatic Control , 67(9):4778–4785, 2022. [18] Lucian C. Iacob, Roland T´ oth, and Maarten Schoukens. Optimal synthesis of LTI Koopman models for nonlinear systems with inputs. In 5th IFAC Workshop on Linear Parameter Varying Systems (LPVS 2022) , IFAC-PapersOnLine, pages 49–54, 2022. [19] B. O. Koopman. Hamiltonian systems and transformation in Hilbert space. Proceedings of the National Academy of Sciences , 17(5):315–318, 1931. [20] Milan Korda and Igor Mezi´ c. On convergence of extended dynamic mode decomposition to the Koopman operator. 
+
+Journal of Nonlinear Science , 28(2):687–710, 2017. [21] Milan Korda and Igor Mezi´ c. Linear predictors for nonlinear dynamical systems: Koopman operator meets model predictive control. Automatica , 93:149–160, 2018. [22] Milan Korda and Igor Mezi´ c. Optimal construction of Koopman eigenfunctions for prediction and control. IEEE Transactions on Automatic Control , 65(12):5114–5129, 2020. [23] Alexander Krolicki, Sarang Sutavani, and Umesh Vaidya. Koopman-based policy iteration for robust optimal control. In 2022 American Control Conference (ACC) , pages 1317– 1322, 2022. [24] Matthew D. Kvalheim and Shai Revzen. Existence and uniqueness of global Koopman eigenfunctions for stable fixed points and periodic orbits. Physica D: Nonlinear Phenomena ,425:132959, 2021. [25] Jae Young Lee, Jin Bae Park, and Yoon Ho Choi. Integral reinforcement learning for continuous-time input-affine nonlinear systems with simultaneous invariant explorations. 
+
+IEEE Transactions on Neural Networks and Learning Systems , 26(5):916–932, 2015. [26] Jaeyoung Lee and Richard S. Sutton. Policy iterations for reinforcement learning problems in continuous time and space - fundamental theory and methods. Automatica , 126:109421, 2021. [27] Frank L. Lewis, Draguna Vrabie, and Kyriakos G. Vamvoudakis. Reinforcement learning and feedback control: Using natural decision methods to design optimal adaptive controllers. IEEE Control Systems Magazine , 32(6):76–105, 2012. [28] Yicheng Lin, Bingxian Wu, Nan Bai, Yunxiao Ren, and Zhisheng Duan. Optimality deviation using the Koopman operator, 2025. arXiv:2512.10270 [math.OC]. [29] Yicheng Lin, Bingxian Wu, Nan Bai, Zhiyong Sun, Yunxiao Ren, Chuanze Chen, and Zhisheng Duan. Integrating uncertainties for Koopman-based stabilization, 2025. arXiv:2508.11533 [eess.SY]. [30] Giorgos Mamakoukas, Stefano Di Cairano, and Abraham P. Vinod. Robust model predictive control with data-driven Koopman operators. In 2022 American Control Conference (ACC) , pages 3885–3892, 2022. [31] Alexandre Mauroy and Igor Mezi´ c. A spectral operator-theoretic framework for global stability. In 52nd IEEE Conference on Decision and Control , pages 5234–5239, 2013. [32] Alexandre Mauroy and Igor Mezi´ c. Global stability analysis using the eigenfunctions of the Koopman operator. IEEE Transactions on Automatic Control , 61(11):3356–3369, 2016. 
+
+15 [33] Alexandre Mauroy, Y Susuki, and Igor Mezic. Koopman operator in systems and control . Springer, 2020. [34] Jie Pan, Dongyue Li, Jian Wang, Pengfei Zhang, Jinyan Shao, and Junzhi Yu. Autogeneration of mission-oriented robot controllers using Bayesian-based Koopman operator. IEEE Transactions on Robotics , 40:903–918, 2024. [35] Aditya Singh, Rajpal Singh, and Jishnu Keshavan. Deep robust Koopman learning from noisy data, 2026. arXiv:2601.01971 [cs.RO]. [36] Robin Str¨ asser, Manuel Schaller, Julian Berberich, Karl Worthmann, and Frank Allg¨ ower. Kernel-based error bounds of bilinear Koopman surrogate models for nonlinear data-driven control. IEEE Control Systems Letters , 9:1892–1897, 2025. [37] Robin Str¨ asser, Manuel Schaller, Karl Worthmann, Julian Berberich, and Frank Allg¨ ower. Koopman-based feedback design with stability guarantees. IEEE Transactions on Automatic Control , pages 1–16, 2024. [38] Robin Str¨ asser, Karl Worthmann, Igor Mezi´ c, Julian Berberich, Manuel Schaller, and Frank Allg¨ ower. An overview of Koopman-based control: From error bounds to closed-loop guarantees. Annual Reviews in Control , 61:101035, 2026. [39] Umesh Vaidya. When Koopman meets Hamilton and Jacobi. 
+
+IEEE Transactions on Automatic Control , 70(12):7843–7858, 2025. [40] Mario Eduardo Villanueva, Colin N. Jones, and Boris Houska. Towards global optimal control via Koopman lifts. 
+
+Automatica , 132:109610, 2021. [41] Weiwei Zhan, Zhiqiang Miao, Hui Zhang, Yanjie Chen, Zheng-Guang Wu, Wei He, and Yaonan Wang. Resilient formation control with Koopman operator for networked NMRs under denial-of-service attacks. IEEE Transactions on Systems, Man, and Cybernetics: Systems , 54(11):7065– 7078, 2024. [42] Xinglong Zhang, Wei Pan, Riccardo Scattolini, Shuyou Yu, and Xin Xu. Robust tube-based model predictive control with Koopman operators. Automatica , 137:110114, 2022. 
+
+A Proof of Proposition 1 
+
+The full row rank of W0 ensures A = W0W ⊤ 
+
+> 0
+
+≻ 0, whose pseudo-inverse satisfies W † 
+
+> 0
+
+= W ⊤ 
+
+> 0
+
+(W0W ⊤ 
+
+> 0
+
+)−1. For any element in C0, ˜Z⊤ = [ A B 0 B1 . . . Bm] = ( Z1)W † 
+
+> 0
+
+=
+
+ζ⊤ − D0W † 
+
+> 0
+
+, we have the following relation (˜Z − ζ)⊤A(˜Z − ζ) = D0W ⊤ 
+
+> 0
+
+(W0W ⊤ 
+
+> 0
+
+)−1W0D⊤ 
+
+> 0
+
+. (A.1) Define Qp = W ⊤ 
+
+> 0
+
+(W0W ⊤ 
+
+> 0
+
+)−1W0 ∈ RT ×T , which is actu-ally a projection matrix. We can prove that eigenvalues of Qp are 0 and 1. Specifically, for λp = 0, any non-zero vector v ∈ Nul( W0) is an eigenvector of Qp. For 
+
+λp = 1, any non-zero vector v ∈ Col( W ⊤ 
+
+> 0
+
+) is an eigen-vector of Qp, since any 0 6 = v = W ⊤ 
+
+> 0
+
+w ∈ Col( W ⊤ 
+
+> 0
+
+) al-lows Qpv = W ⊤ 
+
+> 0
+
+w = v. Meanwhile, RT = Col( W ⊤ 
+
+> 0
+
+) ⊕
+
+Nul( W0) means that Q has no other eigenvalue except 0 and 1. Then Qp can be bounded with identity matrix, i.e., Qp  I. With (A.1), we obtain (˜Z − ζ)⊤A(˜Z − ζ)  D0D⊤ 
+
+> 0
+
+ ∆∆ ⊤ = Q,
+
+i.e., any ˜Z⊤ ∈ Z 0 belongs to Z. The equivalent rela-tion Z = E follows [7, Proposition 1]. The proof is com-pleted. ✷
+
+B Proof of Lemma 1 
+
+The proof is derived by mathematical induction. For k =0, Assumption 6 implies that δ(z, u (0)  
+
+> ε
+
+, ∇V (0)  
+
+> ε
+
+) ∈ L∞.Further, the definition (50) admits that H(z, p ) can be bounded with ‖p‖. As the elliptic PDE (51) is quasilin-ear after introducing the vanishing viscosity regulariza-tion ε∇2, the elliptic PDE theory [13, Theorem 11.4] en-sures the existence of a unique classical solution V (1)  
+
+> ε
+
+∈C2,α (Ω ρ), and u(1) ∈ L∞ holds with (49). Suppose u(k) 
+
+> ε
+
+∈
+
+L∞ and ∇V (k) 
+
+> ε
+
+∈ L∞, then δ(z, u (k) 
+
+> ε
+
+, ∇V (k) 
+
+> ε
+
+) ∈ L∞.Hence u(k+1)  
+
+> ε
+
+∈ L∞ is similarly ensured together with the uniqueness of classical solution V (k+1)  
+
+> ε
+
+∈ C 2,α (Ω ρ) ⊆
+
+L∞(Ω ρ) and (49). Consequently, the uniform bounded-ness naturally holds. ✷
+
+C Proof of Lemma 2 
+
+We rewrite (53) as 
+
+−ε∇2V ∗ 
+
+> ε
+
++ H(z, ∇V ∗ 
+
+> ε
+
+) − δ(z, u ∗
+
+> ε
+
+, ∇V ∗ 
+
+> ε
+
+) = 0 where H(z, p ) − δ(z, u, p ) is continuously differentiable as ‖u‖ ≥ ρ′. Then the uniqueness of classical solution 
+
+V ∗ 
+
+> ε
+
+∈ C2,α (Ω ρ) is ensured by the elliptic PDE theory [13, Theorem 10.2]. A key observation on the robust optimal controller given by (36) is that u∗ 
+
+> ε
+
+is Lipschitz continuous on ∇V ∗ 
+
+> ε
+
+since we assume u ∈ Rm\B′
+
+> ρ
+
+(0). Hence, there exists Cu, 2 > 0 such that ‖u∗ 
+
+> ε
+
+‖L∞(Ω ρ ) ≤ Cu, 2. ✷
+
+D Proof of Proposition 2 
+
+Denote W (k+1) = V (k+1)  
+
+> ε
+
+− V ∗ 
+
+> ε
+
+. Combining (51) and (53), W (k+1) satisfies 
+
+−ε∇2W (k+1) + b⊤(z) · ∇ W (k+1) = δ(k) − δ∗.
+
+where 
+
+b(z) = 
+
+∫ 10
+
+∂H 
+
+∂p 
+
+(
+
+∇V ∗ 
+
+> ε
+
++ s
+
+(
+
+∇V (k+1)  
+
+> ε
+
+− ∇ V ∗
+
+> ε
+
+)) 
+
+ds 
+
+is obtained by mean value theorem for multivariate func-tions. By Lemmas 1 and 2 together with (50), b(z) is bounded. The dependence of ∇W (k+1) on δ(k) − δ∗ fol-lows from the maximum principle and elliptic estimates [13, Lemma 9.17], which completes the proof. ✷
+
+16

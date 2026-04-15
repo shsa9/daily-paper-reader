@@ -1,0 +1,173 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-15T20:26:58.181129+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.05374v1",
+      "title": "LMI-Net: Linear Matrix Inequality--Constrained Neural Networks via Differentiable Projection Layers",
+      "abstract": "Linear matrix inequalities (LMIs) have played a central role in certifying stability, robustness, and forward invariance of dynamical systems. Despite rapid development in learning-based methods for control design and certificate synthesis, existing approaches often fail to preserve the hard matrix inequality constraints required for formal guarantees. We propose LMI-Net, an efficient and modular differentiable projection layer that enforces LMI constraints by construction. Our approach lifts the set defined by LMI constraints into the intersection of an affine equality constraint and the positive semidefinite cone, performs the forward pass via Douglas-Rachford splitting, and supports efficient backward propagation through implicit differentiation. We establish theoretical guarantees that the projection layer converges to a feasible point, certifying that LMI-Net transforms a generic neural network into a reliable model satisfying LMI constraints. Evaluated on experiments including invariant ellipsoid synthesis and joint controller-and-certificate design for a family of disturbed linear systems, LMI-Net substantially improves feasibility over soft-constrained models under distribution shift while retaining fast inference speed, bridging semidefinite-program-based certification and modern learning techniques.",
+      "authors": [
+        "Sunbochen Tang",
+        "Andrea Goertzen",
+        "Navid Azizan"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-04-07T03:20:44+00:00",
+      "link": "https://arxiv.org/pdf/2604.05374v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "LMI-constrained control for stability and robustness",
+      "llm_evidence_cn": "用于稳定性和鲁棒性的LMI约束控制",
+      "llm_evidence": "用于稳定性和鲁棒性的LMI约束控制",
+      "canonical_evidence": "用于稳定性和鲁棒性的LMI约束控制",
+      "llm_tldr_en": "Enforces LMI constraints in neural networks for formal stability guarantees in dynamical systems.",
+      "llm_tldr_cn": "在神经网络中强制执行LMI约束，为动力系统提供正式的稳定性保证。",
+      "llm_tldr": "在神经网络中强制执行LMI约束，为动力系统提供正式的稳定性保证。",
+      "llm_tags": [
+        "query:em-force:composite"
+      ],
+      "matched_query_tag": "query:em-force:composite",
+      "matched_query_text": "Papers central to 查找非接触式电磁激振器的力控制方法，特别是精密控制策略, especially work that connects or combines: electromagnetic exciter force control; ddy current magnetic bearing modeling; magnetic bearing flux feedback; non-contact electromagnetic shaker force control; precision force control strategies for electromagnetic actuators; closed-loop force control for electromagnetic shakers; flux feedback linearization zero bias magnetic bearing; non contact electromagnetic exciter precision force control; eddy current effects in electromagnetic actuators dynamic modeling; flux feedback control for magnetic bearing force precision.",
+      "matched_requirement_id": "req-composite-em-force",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.05633v1",
+      "title": "Optimality Robustness in Koopman-Based Control",
+      "abstract": "The Koopman operator enables simplified representations for nonlinear systems in data-driven optimal control, but the accompanying uncertainties inevitably induce deviations in the optimal controller and associated value function. This raises a distinct and fundamental question on optimality robustness, specifically, how uncertainties affect the optimal solution itself. To address this problem, we adopt a unified analysis-to-design perspective for systematically quantifying and improving optimality robustness. At the analysis level, we derive explicit upper bounds on the deviations of both the value function and the optimal controller, where uncertainties from multiple sources are systematically integrated into a unified norm-bounded representation. At the design level, we develop a robustness-aware optimal control methodology that provably reduces such optimality deviations, thereby enhancing robustness while explicitly revealing a quantitative trade-off between nominal optimality and robustness. As for practical implementation aspect, we further propose a tractable policy iteration algorithm, whose well-posedness and convergence are established via vanishing viscosity regularization and elliptic partial differential equation (PDE) techniques. Numerical examples validate the theoretical findings and demonstrate the effectiveness of proposed methodology.",
+      "authors": [
+        "Yicheng Lin",
+        "Bingxian Wu",
+        "Nan Bai",
+        "Yunxiao Ren",
+        "Zhongkui Li",
+        "Zhisheng Duan"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY",
+        "math.OC"
+      ],
+      "published": "2026-04-07T09:36:02+00:00",
+      "link": "https://arxiv.org/pdf/2604.05633v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "robustness in data-driven optimal control",
+      "llm_evidence_cn": "数据驱动最优控制中的鲁棒性",
+      "llm_evidence": "数据驱动最优控制中的鲁棒性",
+      "canonical_evidence": "数据驱动最优控制中的鲁棒性",
+      "llm_tldr_en": "Analyzes and improves the optimality robustness of controllers for nonlinear systems under uncertainty.",
+      "llm_tldr_cn": "分析并提高了不确定性下非线性系统控制器的最优鲁棒性。",
+      "llm_tldr": "分析并提高了不确定性下非线性系统控制器的最优鲁棒性。",
+      "llm_tags": [
+        "query:em-force:composite"
+      ],
+      "matched_query_tag": "query:em-force:composite",
+      "matched_query_text": "Papers central to 查找非接触式电磁激振器的力控制方法，特别是精密控制策略, especially work that connects or combines: electromagnetic exciter force control; ddy current magnetic bearing modeling; magnetic bearing flux feedback; non-contact electromagnetic shaker force control; precision force control strategies for electromagnetic actuators; closed-loop force control for electromagnetic shakers; flux feedback linearization zero bias magnetic bearing; non contact electromagnetic exciter precision force control; eddy current effects in electromagnetic actuators dynamic modeling; flux feedback control for magnetic bearing force precision.",
+      "matched_requirement_id": "req-composite-em-force",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.07069v1",
+      "title": "Controller Design for Structured State-space Models via Contraction Theory",
+      "abstract": "This paper presents an indirect data-driven output feedback controller synthesis for nonlinear systems, leveraging Structured State-space Models (SSMs) as surrogate models. SSMs have emerged as a compelling alternative in modelling time-series data and dynamical systems. They can capture long-term dependencies while maintaining linear computational complexity with respect to the sequence length, in comparison to the quadratic complexity of Transformer-based architectures. The contributions of this work are threefold. We provide the first analysis of controllability and observability of SSMs, which leads to scalable control design via Linear Matrix Inequalities (LMIs) that leverage contraction theory. Moreover, a separation principle for SSMs is established, enabling the independent design of observers and state-feedback controllers while preserving the exponential stability of the closed-loop system. The effectiveness of the proposed framework is demonstrated through a numerical example, showcasing nonlinear system identification and the synthesis of an output feedback controller.",
+      "authors": [
+        "Muhammad Zakwan",
+        "Vaibhav Gupta",
+        "Alireza Karimi",
+        "Efe C. Balta",
+        "Giancarlo Ferrari-Trecate"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY",
+        "cs.LG",
+        "math.DS"
+      ],
+      "published": "2026-04-08T13:19:54+00:00",
+      "link": "https://arxiv.org/pdf/2604.07069v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "output feedback controller synthesis for nonlinear systems",
+      "llm_evidence_cn": "非线性系统的输出反馈控制器综合",
+      "llm_evidence": "非线性系统的输出反馈控制器综合",
+      "canonical_evidence": "非线性系统的输出反馈控制器综合",
+      "llm_tldr_en": "Proposes a data-driven output feedback control design for nonlinear systems using state-space models.",
+      "llm_tldr_cn": "提出了一种基于状态空间模型的非线性系统数据驱动输出反馈控制设计方法。",
+      "llm_tldr": "提出了一种基于状态空间模型的非线性系统数据驱动输出反馈控制设计方法。",
+      "llm_tags": [
+        "query:em-force:composite"
+      ],
+      "matched_query_tag": "query:em-force:composite",
+      "matched_query_text": "Papers central to 查找非接触式电磁激振器的力控制方法，特别是精密控制策略, especially work that connects or combines: electromagnetic exciter force control; ddy current magnetic bearing modeling; magnetic bearing flux feedback; non-contact electromagnetic shaker force control; precision force control strategies for electromagnetic actuators; closed-loop force control for electromagnetic shakers; flux feedback linearization zero bias magnetic bearing; non contact electromagnetic exciter precision force control; eddy current effects in electromagnetic actuators dynamic modeling; flux feedback control for magnetic bearing force precision.",
+      "matched_requirement_id": "req-composite-em-force",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.12905v1",
+      "title": "Frequency-aware Decomposition Learning for Sensorless Wrench Forecasting on a Vibration-rich Hydraulic Manipulator",
+      "abstract": "Force and torque (F/T) sensing is critical for robot-environment interaction, but physical F/T sensors impose constraints in size, cost, and fragility. To mitigate this, recent studies have estimated force/wrench sensorlessly from robot internal states. While existing methods generally target relatively slow interactions, tasks involving rapid interactions, such as grinding, can induce task-critical high-frequency vibrations, and estimation in such robotic settings remains underexplored. To address this gap, we propose a Frequency-aware Decomposition Network (FDN) for short-term forecasting of vibration-rich wrench from proprioceptive history. FDN predicts spectrally decomposed wrench with asymmetric deterministic and probabilistic heads, modeling the high-frequency residual as a learned conditional distribution. It further incorporates frequency-awareness to adaptively enhance input spectra with learned filtering and impose a frequency-band prior on the outputs. We pretrain FDN on a large-scale open-source robot dataset and transfer the learned proprioception-to-wrench representation to the downstream. On real-world grinding excavation data from a 6-DoF hydraulic manipulator and under a delayed estimation setting, FDN outperforms baseline estimators and forecasters in the high-frequency band and remains competitive in the low-frequency band. Transfer learning provides additional gains, suggesting the potential of large-scale pretraining and transfer learning for robotic wrench estimation. Code and data will be made available upon acceptance.",
+      "authors": [
+        "Hyeonbeen Lee",
+        "Min-Jae Jung",
+        "Tae-Kyeong Yeu",
+        "Jong-Boo Han",
+        "Daegil Park",
+        "Jin-Gyun Kim"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.LG"
+      ],
+      "published": "2026-04-14T15:54:29+00:00",
+      "link": "https://arxiv.org/pdf/2604.12905v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "sensorless wrench forecasting for vibration-rich robotic interactions",
+      "llm_evidence_cn": "富振动机器人交互中的无传感器力矩预测",
+      "llm_evidence": "富振动机器人交互中的无传感器力矩预测",
+      "canonical_evidence": "富振动机器人交互中的无传感器力矩预测",
+      "llm_tldr_en": "Predicts high-frequency forces in vibration-rich environments using frequency-aware learning.",
+      "llm_tldr_cn": "利用频率感知学习预测富振动环境中的高频力，适用于精密力控制。",
+      "llm_tldr": "利用频率感知学习预测富振动环境中的高频力，适用于精密力控制。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "closed-loop force control for electromagnetic shakers",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
