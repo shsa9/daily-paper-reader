@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-04-16 <!--dpr-date:20260416-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202604/16/2604.13920v1-experimental-quantification-of-nonlinear-mode-coupling-in-nanomechanical-resonators-using-multi-tone-excitation" data-sidebar-item="{&quot;title&quot;: &quot;Experimental Quantification of Nonlinear Mode Coupling in Nanomechanical Resonators using Multi-tone Excitation&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2604.13920v1-experimental-quantification-of-nonlinear-mode-coupling-in-nanomechanical-resonators-using-multi-tone-excitation&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;em-force&quot;}], &quot;evidence&quot;: &quot;谐振器模态耦合的多频激励&quot;}">Experimental Quantification of Nonlinear Mode Coupling in Nanomechanical Resonators using Multi-tone Excitation</a>
   * 2026-04-15 <!--dpr-date:20260415-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202604/15/2604.05374v1-lmi-net-linear-matrix-inequality--constrained-neural-networks-via-differentiable-projection-layers" data-sidebar-item="{&quot;title&quot;: &quot;LMI-Net: Linear Matrix Inequality--Constrained Neural Networks via Differentiable Projection Layers&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2604.05374v1-lmi-net-linear-matrix-inequality--constrained-neural-networks-via-differentiable-projection-layers&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;em-force&quot;}], &quot;evidence&quot;: &quot;用于稳定性和鲁棒性的LMI约束控制&quot;}">LMI-Net: Linear Matrix Inequality--Constrained Neural Networks via Differentiable Projection Layers</a>

@@ -1,0 +1,56 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-16T20:26:59.239037+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.13920v1",
+      "title": "Experimental Quantification of Nonlinear Mode Coupling in Nanomechanical Resonators using Multi-tone Excitation",
+      "abstract": "Nonlinear modal interactions in resonant systems govern a wide range of phenomena, with broad relevance across modern physics and engineering. Yet, experimentally determining the strength of nonlinear coupling in multimode resonators remains highly challenging. Here, we introduce a multi-tone spectroscopy method for identifying nonlinear coupling coefficients directly from experimental data. Our approach employs dual-tone excitation near selected resonances which, in combination with additional probing tones at higher-order modes, generates sideband responses associated with specific modal couplings. These spectral signatures are analyzed using an inverse reconstruction procedure to quantitatively determine the corresponding nonlinear coupling strengths in the frequency domain. Using this method, we determine ten pairwise nonlinear coupling parameters across five modes of highly tensioned nanostrings, enabling the reconstruction of fully experimental, device-specific nonlinear reduced-order models. Our experimentally derived models show excellent agreement with values obtained numerically using finite element based nonlinear reduced-order models. Our method is generic and can be used for the characterization of diverse modal and intermodal couplings in mechanical and hybrid resonant systems.",
+      "authors": [
+        "Chris F. D. Wattjes",
+        "Zichao Li",
+        "Minxing Xu",
+        "Richard A. Norte",
+        "Peter G. Steeneken",
+        "Farbod Alijani"
+      ],
+      "primary_category": "cond-mat.mes-hall",
+      "categories": [
+        "cond-mat.mes-hall"
+      ],
+      "published": "2026-04-15T14:30:35+00:00",
+      "link": "https://arxiv.org/pdf/2604.13920v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "multi-tone excitation for resonator mode coupling",
+      "llm_evidence_cn": "谐振器模态耦合的多频激励",
+      "llm_evidence": "谐振器模态耦合的多频激励",
+      "canonical_evidence": "谐振器模态耦合的多频激励",
+      "llm_tldr_en": "Introduces a multi-tone spectroscopy method to quantify nonlinear coupling in resonators, useful for shaker analysis.",
+      "llm_tldr_cn": "引入多频光谱法量化谐振器中的非线性耦合，可用于激振器分析。",
+      "llm_tldr": "引入多频光谱法量化谐振器中的非线性耦合，可用于激振器分析。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "non-contact electromagnetic shaker force control",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
