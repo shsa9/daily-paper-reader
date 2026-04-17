@@ -1,0 +1,288 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-17T19:55:14.267339+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 7,
+    "quick_skim_target": 11,
+    "quick_selected": 7
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.13790v1",
+      "title": "Spatial deformation of a ferromagnetic elastic rod",
+      "abstract": "Ferromagnetic elastic slender structures offer the potential for large actuation displacements under modest external magnetic fields, due to the magneto-mechanical coupling. This paper investigates the phase portraits of the Hamiltonian governing the three-dimensional deformation of inextensible ferromagnetic elastic rods subjected to combined terminal tension and twisting moment in the presence of a longitudinal magnetic field. The total energy functional is formulated by combining the Kirchhoff elastic strain energy with micromagnetic energy contributions appropriate to soft and hard ferromagnetic materials: magnetostatic (demagnetization) energy for the former, and exchange and Zeeman energies for the latter. Exploiting the circular cross-sectional symmetry and the integrable structure of the governing equations, conserved Casimir invariants are identified and the Hamiltonian is reduced to a single-degree-of-freedom system in the Euler polar angle. Analysis of the resulting phase portraits reveals that purely elastic and hard ferromagnetic rods undergo a supercritical Hamiltonian Hopf pitchfork bifurcation, whereas soft ferromagnetic rods exhibit this bifurcation only within a restricted range of the magnetoelastic parameter, $0<\\tilde{K}_{dM}<1/8$. Both helical and localized post-buckling configurations are analyzed, and the corresponding load-deformation relationships are systematically characterized across a range of loading scenarios. Localized buckling modes, corresponding to homoclinic orbits in the Hamiltonian phase space, are constructed numerically. In contrast to the purely elastic case, the localized configurations of soft ferromagnetic rods exhibit non-collinear extended straight segments, a geometrically distinctive feature arising directly from the magnetoelastic coupling.",
+      "authors": [
+        "G. R. Krishna Chand Avatar",
+        "Vivekanand Dabade"
+      ],
+      "primary_category": "cond-mat.mtrl-sci",
+      "categories": [
+        "cond-mat.mtrl-sci",
+        "cond-mat.soft",
+        "math-ph",
+        "math.DS"
+      ],
+      "published": "2026-04-15T12:31:03+00:00",
+      "link": "https://arxiv.org/pdf/2604.13790v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "magneto-mechanical coupling and ferromagnetic actuation modeling",
+      "llm_evidence_cn": "磁机耦合与铁磁驱动建模",
+      "llm_evidence": "磁机耦合与铁磁驱动建模",
+      "canonical_evidence": "磁机耦合与铁磁驱动建模",
+      "llm_tldr_en": "Investigation of the deformation of ferromagnetic elastic rods under magnetic fields.",
+      "llm_tldr_cn": "研究磁场作用下铁磁弹性杆的变形特性。",
+      "llm_tldr": "研究磁场作用下铁磁弹性杆的变形特性。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "eddy current effects in electromagnetic actuators dynamic modeling",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.12938v1",
+      "title": "Inverse design of a magneto-elastica for shape-morphing",
+      "abstract": "Slender magnetic elements provide a versatile platform for programmable shape-morphing under remote magnetic actuation. However, a general and physically interpretable framework for the inverse design of a `magneto-elastica' under prescribed boundary conditions remains lacking. In this work, we develop an explicit analytical formulation for the inverse design of a magneto-elastica based on the integral form of the moment equilibrium equations. This approach yields direct constraints on the admissible curvature and rotation fields, enabling a systematic characterization of the feasible design space. We identify the key dimensionless parameters that govern the competition between magnetic torques and elastic restoring moments and show that the applied boundary conditions are an essential ingredient. We obtain closed-form solutions for the beam tapering profiles required to generate desired actuated shapes in the cases of clamped--free and clamped--clamped configurations; in the latter case, this includes analytical expressions for the boundary reactions. The formulation recovers the classical inverse elastica in the absence of magnetic fields and reveals a linear scaling between curvature deviation and magnetic mismatch. A tessellation strategy based on stiffness tailoring is further proposed for the design of discretized morphing surfaces. The theoretical predictions are validated against discrete elastic rod simulations and experiments across representative geometries. This work establishes a consistent analytical framework for the inverse design of a magneto-elastica and provides new insight into magnetically-induced shape programming in slender structures.",
+      "authors": [
+        "JiaHao Li",
+        "Yingchao Zhang",
+        "Weicheng Huang",
+        "Shenghao Ye",
+        "HengAn Wu",
+        "Dominic Vella",
+        "Mingchao Liu"
+      ],
+      "primary_category": "cond-mat.soft",
+      "categories": [
+        "cond-mat.soft"
+      ],
+      "published": "2026-04-14T16:27:56+00:00",
+      "link": "https://arxiv.org/pdf/2604.12938v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "remote magnetic actuation and competition between magnetic torques and elastic moments",
+      "llm_evidence_cn": "远程磁驱动以及磁力矩与弹性力矩的竞争关系",
+      "llm_evidence": "远程磁驱动以及磁力矩与弹性力矩的竞争关系",
+      "canonical_evidence": "远程磁驱动以及磁力矩与弹性力矩的竞争关系",
+      "llm_tldr_en": "Develops an analytical framework for the inverse design of structures under remote magnetic actuation.",
+      "llm_tldr_cn": "为远程磁驱动下的结构逆向设计开发了一个解析框架。",
+      "llm_tldr": "为远程磁驱动下的结构逆向设计开发了一个解析框架。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.14730v1",
+      "title": "Sensitivity Improvement by Sample Vibration Excitation in Resistivity Measurement for Non-Magnetic Material Using MFM",
+      "abstract": "A novel approach for measuring the electrical resistivity of non-magnetic materials using magnetic force microscopy (MFM) is discussed. In this method, MFM detects magnetic fields generated by eddy currents induced by the oscillation of a magnetized probe tip. To enhance measurement sensitivity, it is essential to increase the magnitude of these eddy currents. It is discussed that introducing controlled sample vibration amplifies eddy current generation by increasing the relative velocity between the probe tip and the sample surface. Theoretical analysis predicts increase of the phase shift by sample vibration, and experimental validation using a modified MFM system confirms the improvement in sensitivity. The calculated and experimental results exhibit relatively good agreement, establishing that sample vibration excitation is an effective strategy for high-sensitivity resistivity measurements.",
+      "authors": [
+        "Kazuma Okamoto",
+        "Takumi Imura",
+        "Naruto Nakamura",
+        "Satoshi Abo",
+        "Katsuhisa Murakami",
+        "Masayoshi Nagao",
+        "Fujio Wakaya"
+      ],
+      "primary_category": "physics.app-ph",
+      "categories": [
+        "physics.app-ph"
+      ],
+      "published": "2026-04-16T07:42:27+00:00",
+      "link": "https://arxiv.org/pdf/2604.14730v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "eddy currents induced by oscillation and controlled vibration excitation",
+      "llm_evidence_cn": "振荡感应涡流与受控振动激励分析",
+      "llm_evidence": "振荡感应涡流与受控振动激励分析",
+      "canonical_evidence": "振荡感应涡流与受控振动激励分析",
+      "llm_tldr_en": "Analyzes eddy currents induced by vibration to improve sensitivity in magnetic force microscopy.",
+      "llm_tldr_cn": "分析了振动感应的涡流效应，以提高磁力显微镜的测量灵敏度。",
+      "llm_tldr": "分析了振动感应的涡流效应，以提高磁力显微镜的测量灵敏度。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "eddy current effects in electromagnetic actuators dynamic modeling",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.13615v1",
+      "title": "Nonlinear scalings emerge in a linear regime: an observation in electrokinetic flow",
+      "abstract": "In nonlinear systems, small perturbations are conventionally attributed to negligible nonlinearity, justifying linear approximations. Here, we uncover a notable exception to this paradigm in an electrokinetic (EK) flow. Using a novel dual frequency excitation scheme with two high frequency AC electric fields ($> 10^{5}$ Hz), we efficiently excite flow perturbations at a difference frequency ($Δf$) four orders of magnitude lower. This approach reveals a strong nonlocal energy transfer mechanism mediated purely by the nonlinearity of the electric body force, enabling precise, clean flow control free from electrode polarization artifacts. Unexpectedly, these small, nominally linear velocity and electric conductivity fluctuations exhibit power law spectra. With increasing electric Rayleigh number, the scaling exponents agree quantitatively with predictions for fully developed EK turbulence by the Quad cascade process theory. This observation not only implies multiple flow state transitions even at low excitations, but also indicates that intrinsic nonlinearity regulates perturbations even in the linear regime, necessitating a fundamental re examination of linear approximations in electrohydrodynamics and other nonlinear systems.",
+      "authors": [
+        "Jin'an Pang",
+        "Guangyin Jing",
+        "Xiaoqiang Feng",
+        "Kaige Wang",
+        "Wei Zhao"
+      ],
+      "primary_category": "physics.flu-dyn",
+      "categories": [
+        "physics.flu-dyn",
+        "cond-mat.stat-mech"
+      ],
+      "published": "2026-04-15T08:28:44+00:00",
+      "link": "https://arxiv.org/pdf/2604.13615v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "dual frequency excitation for precise flow control via electric body force",
+      "llm_evidence_cn": "利用电体力的双频励磁实现精确流体控制",
+      "llm_evidence": "利用电体力的双频励磁实现精确流体控制",
+      "canonical_evidence": "利用电体力的双频励磁实现精确流体控制",
+      "llm_tldr_en": "Explores a dual-frequency excitation scheme for precise flow control using nonlinear electric body forces.",
+      "llm_tldr_cn": "探索了一种利用非线性电体力进行精确流体控制的双频励磁方案。",
+      "llm_tldr": "探索了一种利用非线性电体力进行精确流体控制的双频励磁方案。",
+      "llm_tags": [
+        "query:em-force:composite"
+      ],
+      "matched_query_tag": "query:em-force:composite",
+      "matched_query_text": "Papers central to 查找非接触式电磁激振器的力控制方法，特别是精密控制策略, especially work that connects or combines: electromagnetic exciter force control; ddy current magnetic bearing modeling; magnetic bearing flux feedback; non-contact electromagnetic shaker force control; precision force control strategies for electromagnetic actuators; closed-loop force control for electromagnetic shakers; flux feedback linearization zero bias magnetic bearing; non contact electromagnetic exciter precision force control; eddy current effects in electromagnetic actuators dynamic modeling; flux feedback control for magnetic bearing force precision.",
+      "matched_requirement_id": "req-composite-em-force",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.15181v1",
+      "title": "One-shot learning for the complex dynamical behaviors of weakly nonlinear forced oscillators",
+      "abstract": "Extrapolative prediction of complex nonlinear dynamics remains a central challenge in engineering. This study proposes a one-shot learning method to identify global frequency-response curves from a single excitation time history by learning governing equations. We introduce MEv-SINDy (Multi-frequency Evolutionary Sparse Identification of Nonlinear Dynamics) to infer the governing equations of non-autonomous and multi-frequency systems. The methodology leverages the Generalized Harmonic Balance (GHB) method to decompose complex forced responses into a set of slow-varying evolution equations. We validated the capabilities of MEv-SINDy on two critical Micro-Electro-Mechanical Systems (MEMS). These applications include a nonlinear beam resonator and a MEMS micromirror. Our results show that the model trained on a single point accurately predicts softening/hardening effects and jump phenomena across a wide range of excitation levels. This approach significantly reduces the data acquisition burden for the characterization and design of nonlinear microsystems.",
+      "authors": [
+        "Teng Ma",
+        "Luca Rosafalco",
+        "Wei Cui",
+        "Lin Zhao",
+        "Attilio Frangi"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "math.DS"
+      ],
+      "published": "2026-04-16T16:10:44+00:00",
+      "link": "https://arxiv.org/pdf/2604.15181v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Identification of nonlinear dynamics for forced oscillators in MEMS",
+      "llm_evidence_cn": "MEMS受迫振荡器的非线性动力学辨识",
+      "llm_evidence": "MEMS受迫振荡器的非线性动力学辨识",
+      "canonical_evidence": "MEMS受迫振荡器的非线性动力学辨识",
+      "llm_tldr_en": "Identifies governing equations for nonlinear forced oscillators using one-shot learning and harmonic balance.",
+      "llm_tldr_cn": "利用单次学习和调和平衡法识别非线性受迫振荡器的动力学方程。",
+      "llm_tldr": "利用单次学习和调和平衡法识别非线性受迫振荡器的动力学方程。",
+      "llm_tags": [
+        "query:em-force:composite"
+      ],
+      "matched_query_tag": "query:em-force:composite",
+      "matched_query_text": "Papers central to 查找非接触式电磁激振器的力控制方法，特别是精密控制策略, especially work that connects or combines: electromagnetic exciter force control; ddy current magnetic bearing modeling; magnetic bearing flux feedback; non-contact electromagnetic shaker force control; precision force control strategies for electromagnetic actuators; closed-loop force control for electromagnetic shakers; flux feedback linearization zero bias magnetic bearing; non contact electromagnetic exciter precision force control; eddy current effects in electromagnetic actuators dynamic modeling; flux feedback control for magnetic bearing force precision.",
+      "matched_requirement_id": "req-composite-em-force",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.13921v1",
+      "title": "A higher-order dual cell method for time-domain Maxwell equations",
+      "abstract": "We present a higher-order extension of the dual cell method for the time-domain Maxwell equations in three spatial dimensions. The approach builds upon a variational reinterpretation of the Finite Integration Technique on dual meshes and generalises a previously developed two-dimensional high-order formulation. The electric and magnetic fields are discretised on mutually dual barycentric grids using curl-conforming polynomial spaces constructed via tensor-product Gauss--Radau interpolation. The resulting semi-discrete formulation yields block-diagonal mass matrices and sparse discrete curl operators, enabling explicit time integration while preserving a discrete energy identity. Special attention is devoted to the construction of compatible approximation spaces on the three-dimensional primal and dual meshes, the reference-to-physical element mappings, and the preservation of tangential continuity. We show that the method achieves arbitrary-order convergence, avoids spurious modes, and maintains optimal sparsity properties. Numerical experiments confirm spectral correctness, high-order accuracy, and computational efficiency on unstructured tetrahedral meshes.",
+      "authors": [
+        "Lorenzo Codecasa",
+        "Bernard Kapidani",
+        "Joachim Schöberl",
+        "Markus Wess"
+      ],
+      "primary_category": "math.NA",
+      "categories": [
+        "math.NA"
+      ],
+      "published": "2026-04-15T14:31:43+00:00",
+      "link": "https://arxiv.org/pdf/2604.13921v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "higher-order dual cell method for time-domain Maxwell equations",
+      "llm_evidence_cn": "时域麦克斯韦方程的高阶双胞腔方法",
+      "llm_evidence": "时域麦克斯韦方程的高阶双胞腔方法",
+      "canonical_evidence": "时域麦克斯韦方程的高阶双胞腔方法",
+      "llm_tldr_en": "Develops a high-order numerical method for Maxwell equations, relevant to electromagnetic field modeling.",
+      "llm_tldr_cn": "开发了麦克斯韦方程的高阶数值方法，适用于电磁场建模。",
+      "llm_tldr": "开发了麦克斯韦方程的高阶数值方法，适用于电磁场建模。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "eddy current effects in electromagnetic actuators dynamic modeling",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.15028v1",
+      "title": "Nonlinear backstepping with saturation for low-thrust station-keeping of libration point orbits",
+      "abstract": "This paper presents a novel nonlinear backstepping control law for continuous, low-thrust station-keeping in the Earth-Moon system. Quasi-periodic libration point orbits are targeted under a high-fidelity model of the dynamics. Almost global uniform exponential stability guarantees are attained, as shown through Lyapunov's stability theory. Saturation of the actuators is formally included in the controller design, such that these guarantees hold even in the event of saturation. The relationship between saturation threshold, control gains, and deviation is studied and an optimal procedure for gain selection is discussed. The control solution is tested numerically through a Monte Carlo analysis over representative application cases, subject to operational errors, constraints, and external perturbations. Station-keeping under actuation saturation is validated considering a conservative threshold for typical electric propulsion systems.",
+      "authors": [
+        "António Nunes",
+        "Sérgio Brás",
+        "Pedro Batista"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY",
+        "astro-ph.EP",
+        "astro-ph.IM"
+      ],
+      "published": "2026-04-16T13:58:14+00:00",
+      "link": "https://arxiv.org/pdf/2604.15028v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Nonlinear backstepping with actuator saturation",
+      "llm_evidence_cn": "考虑执行器饱和的非线性反步控制",
+      "llm_evidence": "考虑执行器饱和的非线性反步控制",
+      "canonical_evidence": "考虑执行器饱和的非线性反步控制",
+      "llm_tldr_en": "Presents a nonlinear backstepping control law that formally accounts for actuator saturation.",
+      "llm_tldr_cn": "提出一种正式考虑执行器饱和的非线性反步控制律。",
+      "llm_tldr": "提出一种正式考虑执行器饱和的非线性反步控制律。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

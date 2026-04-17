@@ -1,0 +1,2790 @@
+Title: Spatial deformation of a ferromagnetic elastic rod
+
+URL Source: https://arxiv.org/pdf/2604.13790v1
+
+Published Time: Thu, 16 Apr 2026 01:03:50 GMT
+
+Number of Pages: 50
+
+Markdown Content:
+# Spatial deformation of a ferromagnetic elastic rod 
+
+## G R Krishna Chand Avatar 1* and Vivekanand Dabade 1* 
+
+1Department of Aerospace Engineering, Indian Institute of Science, C V Raman Road, Bengaluru, 560012, Karnataka, India. *Corresponding author(s). E-mail(s): krishnaagr@iisc.ac.in; dabade@iisc.ac.in; 
+
+Abstract 
+
+Ferromagnetic elastic slender structures offer the potential for large actua-tion displacements under modest external magnetic fields, due to the mag-neto–mechanical coupling. This paper investigates the phase portraits of the Hamiltonian governing the three-dimensional deformation of inextensible fer-romagnetic elastic rods subjected to combined terminal tension and twisting moment in the presence of a longitudinal magnetic field. The total energy functional is formulated by combining the Kirchhoff elastic strain energy with micromagnetic energy contributions appropriate to soft and hard ferromagnetic materials: magnetostatic (demagnetization) energy for the former, and exchange and Zeeman energies for the latter. Exploiting the circular cross-sectional sym-metry and the integrable structure of the governing equations, conserved Casimir invariants are identified and the Hamiltonian is reduced to a single-degree-of-freedom system in the Euler polar angle. Analysis of the resulting phase portraits reveals that purely elastic and hard ferromagnetic rods undergo a supercrit-ical Hamiltonian Hopf pitchfork bifurcation, whereas soft ferromagnetic rods exhibit this bifurcation only within a restricted range of the magnetoelastic parameter, 0 < ˜KdM < 1/8. Both helical and localized post-buckling con-figurations are analyzed, and the corresponding load–deformation relationships are systematically characterized across a range of loading scenarios. Localized buckling modes, corresponding to homoclinic orbits in the Hamiltonian phase space, are constructed numerically. In contrast to the purely elastic case, the localized configurations of soft ferromagnetic rods exhibit non-collinear extended straight segments, a geometrically distinctive feature arising directly from the magnetoelastic coupling. 
+
+Keywords: Ferromagnetic rod, Hamiltonian, Spatial buckling, Micromagnetics 
+
+1
+
+> arXiv:2604.13790v1 [cond-mat.mtrl-sci] 15 Apr 2026
+
+# 1 Introduction 
+
+Ferromagnetic elastic rods are slender structures capable of undergoing large defor-mations in response to external magnetic fields, making them attractive candidates for magnetically actuated robotic systems and adaptive structures. Under combined axial and torsional loading, geometric nonlinearities become the dominant governing mechanisms, causing such slender structures to exhibit post-buckling responses that differ markedly from the classical planar behavior predicted by Euler’s theory [1]. Earlier work by the present authors [2, 3] addressed the planar deformation of fer-romagnetic rods and ribbons. Such planar configurations, characterized by a single nonzero curvature component, admit only in-plane buckling modes. To capture the full spectrum of instabilities in slender ferromagnetic structures, their three-dimensional spatial deformation must be considered. Extending the analysis to three-dimensional configurations introduces coupling between bending and torsion, revealing a variety of instability routes inaccessible in planar models. The coupling between twisting and bending is a key feature underlying deformation phenomena of elastic rods across vastly different length scales: from the supercoiling of DNA and protein filaments at the nanoscale to the coiling and helical perversions observed in plant tendrils and engineered filaments at the macroscale [4, 5], and the buckling of drilling cables [6]. Experiments and theory have shown that soft elastic rods subjected to external loading undergo bending and twisting, and beyond critical thresholds, transition through successive buckled configurations. These include helical and solenoidal modes, localized helices, hockles [7], loops, plectonemes, and even phys-ical knots [5, 8, 9]. As twist and tension are applied at the rod terminals, this evolution proceeds through several stages: an initial small-amplitude helical bifurcation from the trivial straight configuration, followed by gradual localization, a dynamic transi-tion to a self-contacted state, and eventual writhing to a plectonemic state [10, 11], a sequence confirmed experimentally by Thompson and Champneys [10] (see Fig. 2). In localized buckling, deformation is spatially confined, concentrating the strain energy in finite segments and breaking the global symmetry of uniform buckling modes [12, 13]. Unlike the periodic or helical configurations predicted by linear the-ory, localised buckling manifests as discrete high-curvature regions separated by nearly straight segments [14]. This behaviour arises across diverse physical systems, from ten-dril perversions [4, 5] to DNA supercoiling and collagen fibril mechanics [15], and is a hallmark of strongly nonlinear rod mechanics, arising when the governing equations admit multiple coexisting equilibria. To analyze these complex deformations systematically, a dynamical systems formu-lation is particularly effective. Kirchhoff’s kinetic analogy maps the spatial deformation of a rod onto an equivalent dynamical problem in phase space [10, 16], in which the shape of a deformed rod corresponds to a trajectory in Hamiltonian phase space. Localised buckling modes appear as homoclinic or heteroclinic orbits between equilibria [12, 13]. van der Heijden et al. [17] showed that geometric constraints fundamentally reshape the buckling landscape, with spatial localisation arising via het-eroclinic connections between equilibrium branches. Champneys and van der Heijden [12] demonstrated that twisted rods admit a countably infinite family of localised solu-tions, each linked to distinct homoclinic orbits of increasing spatial complexity. The 2Fig. 1 : Spatial localization of a stretched and twisted rod: (a) trivial straight configu-ration, (b) an initial small-amplitude helical bifurcation from the trivial configuration, (c-d) gradual localization, (e) dynamic transition to a self-contacted state, and (f) eventual writhing to a plectonemic state. Reproduced from [10, Fig. 1]. 
+
+Fig. 2 : Experiments showing modes of deformation of a circular rubber rod. [10, Fig. 3]. 3shift from globally periodic helices to localised writhing marks a critical breakdown of spatial periodicity while preserving topological properties [10]. In magnetoelastic rods, applied magnetic fields enrich the buckling landscape by introducing additional instability mechanisms arising from magneto–mechanical coupling. Sinden and van der Heijden [18] found that magnetic coupling alters the integrable structure of rod equations, producing chaotic configurations and Hamil-tonian–Hopf bifurcations absent in purely mechanical systems. Magneto-mechanical interactions reorganize phase-space topology, opening new pathways to localized and spatially complex buckling. Furthermore, curvature and torsion also influence the magnetic response of rigid ferromagnetic nanostructures [19, 20]. At these smaller scales, the exchange energy becomes the dominant contribution to the micromagnetic functional, giving rise to curvature-induced anisotropy and effective Dzyaloshinskii–Moriya–type interactions. The geometry thereby stabilizes topologically nontrivial magnetic configurations, including vortex states on spherical shells and curvature-induced domain walls on M¨ obius strips [21]. Studies on ferromagnetic nanowires [22, 23] and narrow ribbons [24] have demonstrated that geometric characteristics, such as curvature and torsion, critically determine equilibrium magnetization configurations, thereby establishing geometry as a fundamental mediator of magneto–mechanical coupling. In the present work, we address the complementary perspective by examining how magnetization, in turn, alters the deformation and mechanical response. Specifically, we analyze the deformation of magnetic wires subjected to end loading to elucidate the role of magne-tization in governing the onset and character of mechanical instabilities, the emergence of localized deformation, and the overall mechanical response. Despite the extensive literature on rigid ferromagnetic nanostructures and the spatial buckling of purely elastic rods, a Hamiltonian framework characterizing the three-dimensional magnetoelastic buckling and localization of ferromagnetic elastic rods under combined mechanical and magnetic loading has not previously been devel-oped. The present work addresses this gap. The analysis is restricted to two integrable configurations: a soft ferromagnetic rod with magnetization saturated and aligned with a longitudinal external magnetic field, and a hard ferromagnetic rod with tangential magnetization aligned with the rod axis, also subjected to a longitudinal field, see Section 3.3. In both cases, the rod is loaded by a combination of terminal tension T and twisting moment M applied at its ends. Employing Kirchhoff’s phase-space analogy [13], conserved Hamiltonians are derived for each case and exploited to systematically characterize magnetoelastic buckling and spatial localization. The principal findings are as follows. First, the hard ferromagnetic rod is shown to be structurally equivalent to a purely elastic rod with renormalized bending stiffness and effective tension, and both exhibit a supercritical Hamiltonian Hopf pitchfork bifurcation. Second, the soft ferromagnetic rod exhibits this bifurcation only within the restricted magnetoelastic parameter regime 0 < ˜KdM < 1/8, outside this range, the phase portrait topology is qualitatively different and no bifurcation from the straight configuration is observed. Third, the localized buckling configurations of the soft ferromagnetic rod possess a geo-metrically distinctive feature absent in the purely elastic case: the extended straight segments on either side of the localized region are no longer collinear with each other 4as a consequence of the magnetoelastic coupling. Fourth, closed-form expressions are derived relating the end displacement of the rod to the composite load parameter, extending the analysis of [8] to the magnetoelastic setting. Throughout this paper, the method and style of analysis follow those of the landmark study by [10], which established the Hamiltonian phase-space framework for the torsional post-buckling of purely elastic rods; the present work extends that framework to the magnetoelastic setting. 
+
+## 1.1 Organisation of the paper 
+
+The paper is organised as follows. Section 2 formulates the total energy functional of a ferromagnetic elastic rod subjected to combined terminal tension and twisting moment, for both soft and hard ferromagnetic materials. Section 3 derives the equilib-rium equations from the energy functional, identifies the conserved Casimir invariants arising from the circular cross-sectional symmetry and the applied loading, and con-structs the Hamiltonian for both material cases via the Legendre transform. The integrable loading configurations, those for which the Hamiltonian admits reduction to a single-degree-of-freedom system in the primary Euler angle are identified and dis-cussed. Section 4 analyses the critical points, bifurcation structure, and phase portraits of the resulting Hamiltonian, contrasting the behaviour of purely elastic, soft ferro-magnetic, and hard ferromagnetic rods. Section 5 studies the post-buckling response of the rod into a helical configuration, deriving load–deformation relationships under three distinct loading sequences. Section 6 examines localized buckling modes, which correspond to homoclinic orbits in the Hamiltonian phase space; closed-form expres-sions for the maximum lateral deflection and the end displacement are derived and compared between the purely elastic and soft ferromagnetic cases. The conclusions are summarized in Section 7. 
+
+# 2 Energy functional of a space rod 
+
+In this section, we present the total energy of the ferromagnetic rod subjected to a combination of terminal tension T and twisting moment M [10, 25], along with its energy density, represented by the Lagrangian L. The associated Hamiltonian is derived using the Legendre transform of L.
+
+## 2.1 Kinematics 
+
+We briefly review the kinematics of the space Kirchhoff rod as shown in Fig. 3. The rod has a uniform circular cross section of diameter a and it is assumed to be unshearable while its centerline is inextensible. The centerline-based representation of the rod is given as: 
+
+x(x, a 1, a 2) = r(s) + a1d1(s) + a2d2(s), (1) where r(s) denotes the deformed centerline, ( d1(s), d2(s), d3(s)) is the orthonormal director frame, s is the centerline arc length coordinate, and the coordinates ( a1, a 2)parametrize the cross section. Here, s ∈ [0 , L ] and a1, a 2 ∈ [0 , a/2); L denote the 5Fig. 3 : Schematic of a spatial Kirchhoff rod. characteristic length of the rod. The unshearability condition implies r′(s) · di(s) = 0, i = 1 , 2, inextensibility constraint enforces r′(s) · d3(s) = 1, and thus r′(s) = d3(s). The standard Cartesian basis (e1, e2, e3) is mapped to the director basis (d1(s), d2(s), d3(s)) utilizing Euler angles ( ψ(s), θ (s), ϕ (s)), such that 
+
+d1 = ( − sin ψ sin ϕ + cos ψ cos ϕ cos θ)e1 + (cos ψ sin ϕ + sin ψ cos ϕ cos θ)e2 − cos ϕ sin θe3,
+
+d2 = ( − sin ψ cos ϕ − cos ψ sin ϕ cos θ)e1 + (cos ψ cos ϕ − sin ψ sin ϕ cos θ)e2 + sin ϕ sin θe3,
+
+d3 = cos ψ sin θe1 + sin ψ sin θe2 + cos θe3,
+
+(2) where θ is the angle between d3 and e3, ψ is the azimuthal angle between e2 and the normal to the d3 − e3 plane, that is v2-axis, and ϕ is the angle between the normal v2
+
+and d2 axis, see Fig. 4 for visual representation. The Euler angle convention employed here is in accordance with [26, 27]. 
+
+Fig. 4 : Representation of Euler angles ( ψ, θ, ψ ) where ( ψ, ϕ ) ∈ [0 , 2π[ and θ ∈ [0 , π ]. (Adapted from [26]) We define ψ′(s) and ϕ′(s) as the angular spatial velocities about vertical axis e3
+
+and body axis d3 respectively while θ′(s) denotes the angular spatial velocity about an intermediate axis v2. The evolution of the director frame is explained by 
+
+d′
+
+> i
+
+(s) = κ(s) × di(s), i = 1 , 2, 3. (3) 6where, the components of the curvature vector or rotation gradient κ(s) in the direc-tor basis are ( κ1, κ 2, κ 3) or ( κ1(s), κ 2(s), τ (s)). Here, κ1 and κ2 denote the bending curvatures about d1 and d2 axes respectively, and τ is called the (local) twist or tor-sion and measures the rate of rotation of the circular cross section about the body axis of the rod d3. The strain components κi are expressed in terms of the Euler angles by using the following identity: 
+
+κi = 12 εijk d′ 
+
+> j
+
+· dk, i, j, k = 1 , 2, 3. (4) resulting in 
+
+κ1 = θ′ sin ϕ − ψ′ sin θ cos ϕ, κ2 = θ′ cos ϕ + ψ′ sin θ sin ϕ, τ = ϕ′ + ψ′ cos θ. 
+
+(5) The Cartesian description of the centerline: 
+
+r(s) = x(s)e1 + y(s)e2 + z(s)e3 (6) is obtained from the inextensibility condition: 
+
+r′(s) = d3(s) = ⇒
+
+
+
+x′(s) = cos ψ sin θ, y′(s) = sin ψ sin θ, z′(s) = cos θ. 
+
+(7) 
+
+## 2.2 Total energy 
+
+We formulate the total energy functional E of the ferromagnetic rod as the sum of its elastic strain energy Eelastic , magnetic energy Emagnetic , and work potential W due to applied end loads, yielding 
+
+E = Eelastic − W 
+
+| {z }
+
+> Mechanical energy
+
++Emagnetic . (8) The mechanical contribution consists of the elastic strain energy and work potential terms alone. Fig. 5 illustrates the setup: a spatial ferromagnetic elastic rod subjected to combined tension T , twisting moment M , and immersed in a uniform external magnetic field he.
+
+2.2.1 Mechanical energy 
+
+We consider a uniform, initially straight Kirchhoff rod with circular cross-section, so that the principal bending stiffnesses satisfy EI 1 = EI 2. In this setting, the circular symmetry of the cross-section ensures that the corresponding Hamiltonian formulation of the rod equations is completely integrable, as shown in [13, 28]. The elastic energy 7Fig. 5 : Schematic of a spatial ferromagnetic elastic rod subjected to terminal load T
+
+and twisting moment M placed in a uniform external magnetic field he.of a linearly elastic, uniform, and isotropic rod of circular cross-section can be written as [3, 29] 
+
+Eelastic =
+
+Z L
+
+> 0
+
+ 12 EI 1κ21 + 12 EI 2κ22 + 12 GJτ 2
+
+
+
+ds, (9) where E denotes Young’s modulus, G the shear modulus, I1 = I2 = I = πa 4
+
+/64 are the principal area moments of inertia, J = πa 4
+
+/32 is polar area moment of inertia, and GJ 
+
+is the torsional stiffness of the cross section. We now introduce an axial dead load by applying a constant axial tension T e3 at the terminal of the rod, where e3 is the fixed unit vector along the undeformed rod axis. We also apply a twisting moment M e3 at the end terminal which generates a twist rotation Re3 of the end cross section. The corresponding work potential is expressed as 
+
+W = T e3 ·
+
+Z L
+
+> 0
+
+d3 ds − Le3
+
+!
+
++ M e3 · Re3 = T
+
+Z L
+
+> 0
+
+d3 · e3 ds − L
+
+!
+
++ M R 
+
+= T
+
+Z L
+
+> 0
+
+(d3 · e3 − 1) ds + M R. (10) 
+
+2.2.2 Magnetic energy 
+
+The magnetic energy of a ferromagnetic rod is derived using the theory of micro-magnetics. Micromagnetics is based on a variational principle of the micromagnetic functional that successfully predicts the domain structures in a ferromagnet [30]. The total micromagnetic energy is a sum of four contributions: the exchange energy, which penalizes spatial variations in the magnetization direction; the magnetocrys-talline anisotropy energy, which reflects the preference of the magnetization to align along crystallographic easy axes; the magnetostatic energy, which accounts for the long-range dipolar interactions arising from the divergence of the magnetization field; and the Zeeman energy, which captures the interaction of the magnetization with an externally applied magnetic field. For a detailed exposition of each of these energy contributions in the context of a ferromagnetic rod, we refer the reader to Avatar and Dabade [2] and to Appendices A and B of the present paper, where these terms are derived and discussed systematically. Here, we will use this micromagnetic functional to find the magnetic energy of a ferromagnetic rod. The magnetic energy expressions for both soft and hard ferromagnetic rods are derived in Appendix A and Appendix B. 8In the present work, for a soft ferromagnetic rod, we examine the influence of magnetization on the mechanical deformation of the rod, and not the converse; that is, the magnetization distribution is prescribed and held fixed. The magnetization is assumed to be aligned with the applied external magnetic field, which is taken to be sufficiently large to saturate the sample irrespective of its deformed configuration. With the magnetization thus fixed, and the anisotropy energy being negligibly small for a soft ferromagnetic material, the magnetic energy contribution in the soft ferro-magnetic case arises solely from the magnetostatic energy. For a soft ferromagnetic rod, the magnetostatic energy is given as: 
+
+Emag,soft = Kdπa 2
+
+4
+
+Z L
+
+> 0
+
+(m · d1)2 + ( m · d2)2 ds. (11) For a hard ferromagnetic rod, the anisotropy energy is very large compared to the magnetostatic energy, and consequently dominates the magnetic response. We assume that the magnetization vector remains aligned with the easy axis of the magnet, which is taken to coincide with the axial direction of the rod, so that the magnetization is everywhere tangential to the centerline. For a hard ferromagnetic rod with tangential magnetization, the magnetostatic energy reduces to a constant, which in fact vanishes identically, as shown in Eqn. 11. Consequently, the total magnetic energy of a hard ferromagnetic rod is given by the sum of its exchange energy and Zeeman energy, the former penalizing spatial variations in the magnetization direction induced by the deformation of the rod, and the latter capturing the interaction of the magnetization with the applied external magnetic field. For hard ferromagnetic rods, the magnetic energy takes the following general form: 
+
+Emag,hard = Aπa 2
+
+4
+
+Z L
+
+> 0
+
+Eex ds 
+
+| {z }
+
+> Exchange energy
+
++ Kaπa 2
+
+4
+
+Z L
+
+> 0
+
+(m · p)2ds 
+
+| {z }
+
+> Anisotropy energy
+
+− Kdπa 2
+
+2
+
+Z L
+
+> 0
+
+m · he ds 
+
+| {z }
+
+> Zeeman energy
+
+, (12) where Eex is the exchange energy density and p is the anisotropy easy axis. The exchange energies for special magnetization distributions m = di (i = 1 , 2, 3) are derived in Appendix B and reproduced as 
+
+m = d1(s) : Eex = κ22 + κ23
+
+m = d2(s) : Eex = κ21 + κ23
+
+m = d3(s) : Eex = κ21 + κ22
+
+(13) As discussed previously, for a uniaxially hard ferromagnetic circular rod with tangen-tial magnetization m(s) = d3(s) and easy axis p = d3(s), the exchange and Zeeman energies constitute the total magnetic energy, which has been derived in Eqn. B41 as 
+
+Emag,hard (m) = Aπa 2
+
+4
+
+Z L
+
+> 0
+
+(κ21 + κ22)ds 
+
+| {z }
+
+> Exchange energy
+
+− Kdπa 2
+
+2
+
+Z L
+
+> 0
+
+d3 · heds 
+
+| {z }
+
+> Zeeman energy
+
+. (14) 9Next, we construct the total energy functionals for both soft and hard ferromagnetic rods. 
+
+2.2.3 Total energy functional 
+
+Soft ferromagnetic rod: 
+
+Combining Eqns. 9, 10 and 11, we obtain the total energy functional for the soft ferromagnetic rod: 
+
+E =
+
+Z L
+
+> 0
+
+"
+
+12 EIκ 21 + 12 EIκ 22 + 12 GJτ 2
+
+| {z }
+
+> Elastic energy
+
++ Kdπa 2
+
+4
+
+(m · d1)2 + ( m · d2)2| {z }
+
+> Magnetostatic energy
+
+− T (d3 · e3 − 1) 
+
+| {z } 
+
+> Work due to T
+
+#
+
+ds − M R |{z}  
+
+> Work due to M
+
+. (15) 
+
+Hard ferromagnetic rod: 
+
+The total energy of the hard ferromagnetic rod with tangential magnetization distri-bution ( m = d3) is obtained by summing Eqns. 9, 10 and 14. Dropping the constant term, the energy expression is 
+
+E =
+
+Z L
+
+> 0
+
+"
+
+12
+
+
+
+EI + Aπa 2
+
+4
+
+
+
+κ21 + 12
+
+
+
+EI + Aπa 2
+
+4
+
+
+
+κ22 + 12 GJτ 2
+
+| {z }
+
+> Elastic + Exchange energies
+
+− Kdπa 2
+
+2 d3 · he
+
+| {z }
+
+> Zeeman energy
+
+− T (d3 · e3 − 1) 
+
+| {z } 
+
+> Work due to T
+
+#
+
+ds − M R |{z}  
+
+> Work due to M
+
+. (16) We next derive the associated Euler-Lagrange (equilibrium) equations for both soft and hard ferromagnetic rods. 
+
+## 2.3 Equilibrium equations 
+
+Soft ferromagnetic rod: 
+
+Following the variational procedure of [29, Chapter 3], we set the first variation of the total energy functional E from Eqn. 15 to zero. This yields the Euler-Lagrange equations expressing the balance of forces and moments along the rod respectively: 
+
+F ′ = 0 =⇒ F = constant ,
+
+M ′ + d3 × F + Kdπa 2
+
+2 (d3 · m)( d3 × m) = 0 (17) where F is the internal contact force and M is the internal moment, expressed in the director basis as M = M1d1 + M2d2 + M3d3. From Kirchhoff constitutive relations, 10 these internal moment components relate linearly to the kinematic strains: 
+
+M1 = EIκ 1, M 2 = EIκ 2, M 3 = GJτ. (18) Given the applied end tension T e3, the constant force takes the value 
+
+F = T e3. (19) Substituting into the moment balance equation thus yields 
+
+M ′ + T d3 × e3 + Kdπa 2
+
+2 (d3 · m)( d3 × m) = 0. (20) 
+
+Hard ferromagnetic rod: 
+
+Repeating the variational procedure for Eqn. 16, the balance of forces and moments for a hard ferromagnetic circular rod with m(s) = d3(s) are obtained as 
+
+F ′ = 0 =⇒ F = T e3,
+
+M ′ + d3 × F + qmag,hard = 0 (21) where, the distributed magnetic couple derived in Eqn. B42 is 
+
+qmag,hard (s) = Aπa 2
+
+2 (κ1(s)d1(s) + κ2(s)d2(s)) ′ + Kdπa 2
+
+2 d3(s) × he. (22) Substituting M = EIκ 1d1 + EIκ 2d2 + GJτ d3, the moment balance equation for the rod subjected to a longitudinal field he = hee3 reads 
+
+M ′ 
+
+> h
+
++
+
+
+
+T + Kdπa 2
+
+2 he
+
+
+
+d3 × e3 = 0, (23) where M h denotes the augmented internal moment and is expressed as 
+
+M h =
+
+
+
+EI + Aπa 2
+
+2
+
+
+
+κ1d1 +
+
+
+
+EI + Aπa 2
+
+2
+
+
+
+κ2d2 + GJτ d3. (24) In the next section, the Hamiltonian formulations are constructed for soft and hard ferromagnetic cases. 
+
+# 3 Hamiltonian formulation 
+
+In this section, the static spatial deformation of the rod is placed in correspondence with the dynamics of a spinning top through Kirchhoff’s static–dynamic analogy [25]. The Euler–Lagrange equations are derived from the total energy functionals (Eqns. 15 and 16), and the associated conserved quantities, the Casimir invariants, are identified. The Hamiltonian formulation is subsequently obtained via the Legendre transform of 11 the energy density (Lagrangian). Completely integrable forms of the Hamiltonian are identified for both soft and hard ferromagnetic rods under the loading configurations specified in Section 3.3, and the Hamiltonian is reduced to a one-degree-of-freedom system expressed solely in terms of the primary Euler angle θ. The resulting Hamil-tonian structure is then employed to systematically analyze the spatial buckling and localized deformation of the ferromagnetic rod. The Lagrangian or energy density L is defined as the integrand of the total energy functionals E in Eqns. 15 and 16. Following the standard Legendre transform as prescribed in [3, 31, 32], the Hamiltonian H is given by 
+
+H = ∂L
+
+∂κ 1
+
+κ1 + ∂L
+
+∂κ 2
+
+κ2 + ∂L
+
+∂τ τ − L = constant . (25) Since L does not depend explicitly on the arc-length coordinate s, i.e. ∂L 
+
+> ∂s
+
+= 0, it follows that dH 
+
+> ds
+
+= 0 along any solution of the Euler-Lagrange equations, see [3, Equations 18 and 19]. Consequently, H is a first integral of the equilibrium equations and is conserved along the rod centerline. The Hamiltonian formulations for the soft and hard ferromagnetic rods are derived in the following sections. 
+
+## 3.1 Soft ferromagnetic rod 
+
+From the total energy functional E in Eqn. 15, the Lagrangian or energy density is 
+
+L = 12 EIκ 21 + 12 EIκ 22 + 12 GJτ 2 + Kdπa 2
+
+4
+
+(m · d1)2 + ( m · d2)2 − T d3 · e3 (26) The Hamiltonian can be derived and written as follows: 
+
+H = ∂L
+
+∂κ 1
+
+κ1 + ∂L
+
+∂κ 2
+
+κ2 + ∂L
+
+∂τ τ − L 
+
+= 12 EIκ 21 + 12 EIκ 22 + 12 GJτ 2 − Kdπa 2
+
+4
+
+(m · d1)2 + ( m · d2)2 + T d3 · e3. (27) Using the moment balance equation, Eqn. 20, together with the circular symmetry and specific loading conditions, we now derive additional conserved quantities, also known as Casimir invariants in classical mechanics literature [33], that enable explicit reduction of the Hamiltonian. For the soft ferromagnetic rod, the moment balance equation reads: 
+
+M ′ + T d3 × e3 + Kd
+
+πa 2
+
+2 (d3 · m)( d3 × m) = 0. (28) Taking dot product with d3 produces M ′ · d3 = 0, or equivalently, d( M · d3)ds − M · d′ 
+
+> 3
+
+= 0 . (29) 12 Now, utilizing EI 1 = EI 2 = EI for the circular cross-section, we have 
+
+M · d′ 
+
+> 3
+
+= M · (κ × d3) = M · (−κ1d2 + κ2d1) = −M2κ1 + M1κ2
+
+= −EI 2κ2κ1 + EI 1κ1κ2 = 0 , (30) resulting in the first Casimir invariant [18]: 
+
+M (s) · d(s) = M3(s) = GJτ = β (constant) . (31) The analysis is henceforth restricted to the case in which the applied longitudinal magnetic field he = hee3 is sufficiently large to saturate the magnetization, so that 
+
+m = e3 uniformly along the rod, irrespective of the deformed configuration of the centerline. The moment balance equation simplifies to: 
+
+M ′ +
+
+ Kdπa 2
+
+2 (d3 · e3) + T
+
+
+
+(d3 × e3) = 0. (32) Projecting this onto e3 gives the second Casimir invariant: d( M (s) · e3)ds = 0 = ⇒ M (s) · e3 = α = M, (33) where M prescribes the applied end twisting moment. We now expand the conserved quantity α in terms of the Euler angles as follows: 
+
+α = M (s) · e3 = EIκ 1d1 · e3 + EIκ 2d2 · e3 + GJτ d3 · e3
+
+= −EIκ 1 cos ϕ sin θ + EIκ 2 sin ϕ sin θ + β cos θ. (34) Substituting the strain–angular rate relations from Eqn. 5 and simplifying yields 
+
+α = EIψ ′ sin 2 θ + β cos θ =⇒ ψ′ = α − β cos θEI sin 2 θ , (35) and 
+
+ϕ′ = βGJ − ψ′ cos θ. (36) The curvatures and twist then follow as 
+
+κ1 = θ′ sin ϕ − (α − β cos θ)
+
+EI sin θ cos ϕ, κ2 = θ′ cos ϕ + α − β cos θEI sin θ sin ϕ, τ = βGJ .
+
+(37) 13 With appropriate substitutions, the Hamiltonian for soft ferromagnetic rod subjected to longitudinal magnetic field reduces to 
+
+H = 12 EIθ ′2 + 12(α − β cos θ)2
+
+EI sin 2 θ + 12
+
+β2
+
+GJ − Kdπa 2
+
+4 sin 2 θ + T cos θ. (38) The Hamiltonian is thus expressed solely in terms of the Euler angle θ and its arc-length derivative θ′
+
+, rendering the system amenable to systematic phase-space analysis. For the localized buckling case where d3 is parallel to e3 at certain points along the rod, we set 
+
+α = β = M = GJτ. (39) Dropping the constant term 12 
+
+> β2
+> GJ
+
+, the Hamiltonian simplifies to 
+
+Hsoft = 12 EIθ ′2 + 12
+
+M 2
+
+EI 
+
+(1 − cos θ)(1 + cos θ) − Kdπa 2
+
+4 sin 2 θ + T cos θ. (40) The Euler angle rates ψ′ and ϕ′ correspondingly simplify as 
+
+ψ′ = M (1 − cos θ)
+
+EI sin 2 θ = MEI 
+
+11 + cos θ ,ϕ′ = MGJ − ψ′ cos θ = MEI EI GJ − MEI 
+
+11 + cos θ = MEI 
+
+
+
+ν + 11 + cos θ
+
+
+
+,
+
+(41) where EI GJ = 1 + ν, with shear modulus G = E 
+
+> 2(1+ ν)
+
+, polar area moment J = 2 I, and Poisson’s ratio ν.The Hamiltonian for the purely elastic case is recovered by setting Kd = 0 in Eqn. 40, and is consistent with the expression reported in [25]. 
+
+Helastic = 12 EIθ ′2 + 12
+
+M 2
+
+EI 
+
+(1 − cos θ)(1 + cos θ) + T cos θ. (42) 
+
+Non-dimensionalization of the Hamiltonian 
+
+The Hamiltonian in Eqn. 40 admits two natural non-dimensionalizations, depending on whether the twisting moment M or tension T is held fixed as the primary control parameter. 
+
+Fixed-M scaling: 
+
+We define the following non-dimensional quantities ˜s = s MEI , ˙θ = EI M θ′, ˙ψ = EI M ψ′, ˙ϕ = EI M ϕ′,
+
+˜Kd = Kdπa 2
+
+4M 2/EI , ˜M = M
+
+√EIT , ˜Hsoft = Hsoft 
+
+M 2/EI .
+
+(43) 14 For notational simplicity, we denote ˙() by () ′, where () denotes θ, ψ and ϕ. Under this convention, the non-dimensional Hamiltonian becomes ˜Hsoft = 12 θ′2 + 12(1 − cos θ)(1 + cos θ) − ˜KdM sin 2 θ + cos θ
+
+˜M 2 . (44) with the non-dimensional Euler angle rates 
+
+ψ′ = 11 + cos θ , ϕ′ = ν + 11 + cos θ . (45) 
+
+Fixed-T scaling: 
+
+With the introduction of the following non-dimensional quantities ˜s = s
+
+r TEI , ˙θ =
+
+r EI T θ′, ˙ψ =
+
+r EI T ψ′, ˙ϕ =
+
+r EI T ϕ′,
+
+˜KdT = Kdπa 2
+
+4T , ˜Hsoft = Hsoft 
+
+T ,
+
+(46) the non-dimensional Hamiltonian (where, by a slight abuse of notation, () ′ is used in place of ˙() where () ≡ θ, ψ, ϕ ) takes the form ˜Hsoft = 12 θ′2 + ˜M 2
+
+2(1 − cos θ)(1 + cos θ) − ˜KdT sin 2 θ + cos θ, (47) and the Euler angle rates are 
+
+ψ′ = ˜M
+
+1 + cos θ , ϕ′ = ˜M
+
+
+
+ν + 11 + cos θ
+
+
+
+. (48) Both ˜KdM and ˜KdT represent magnetoelastic parameters, while ˜M = M√EIT is referred to as the composite mechanical load parameter. As remarked by Thompson and Champneys [10], controlling M or 1√T is equivalent and its dynamic similarities has been previously established by Champneys and Thompson [13]. 
+
+## 3.2 Hard ferromagnetic rod 
+
+We now analyze the Hamiltonian of a uniaxial hard ferromagnetic circular rod with tangential magnetization m(s) = d3(s). The Lagrangian L is derived from the total energy expression in Eqn. 16 as 
+
+L = 12
+
+
+
+EI + Aπa 2
+
+4
+
+
+
+κ21+ 12
+
+
+
+EI + Aπa 2
+
+4
+
+
+
+κ22+ 12 GJτ 2− Kdπa 2
+
+2 d3·he−T (d3 · e3 − 1) (49) 15 From Eqn. 23, the moment balance equation is obtained as 
+
+M ′ 
+
+> h
+
++
+
+
+
+T + Kdπa 2
+
+2 he
+
+
+
+d3 × e3 = 0, (50) where M h =  EI + Aπa 2
+
+> 2
+
+(κ1d1 + κ2d2) + GJτ d3.Similar to the procedure for the soft ferromagnetic rod, projecting the above equation onto d3 and e3 produces two Casimir invariants: 
+
+M h(s) · e3 = αh,
+
+M h(s) · d3 = βh. (51) The Hamiltonian is derived as 
+
+H = 12
+
+
+
+EI + Aπa 2
+
+2
+
+
+
+κ21 + 12
+
+
+
+EI + Aπa 2
+
+2
+
+
+
+κ22 + 12 GJτ 2 + Kdπa 2
+
+2 m · he + T d3 · e3.
+
+(52) Substituting the above Casimir invariants ( αh, β h) in the expressions for curvatures (κ1, κ 2, τ ) (Eqns. 37), the Hamiltonian is expressed in terms of the primary Euler angle θ and its derivative θ′
+
+as 
+
+H = 12
+
+
+
+EI + Aπa 2
+
+2
+
+
+
+θ′2 + 12(αh − βh cos θ)2
+
+ EI + Aπa 2
+
+> 2
+
+ sin 2 θ + 12
+
+β2
+
+C + Kdπa 2
+
+2 cos θ+T cos θ. (53) As discussed previously in the localized buckling of a soft ferromagnetic rod, d3 is parallel to e3 at certain points along the rod. This leads us to the condition: αh =
+
+βh = M . Dropping the constant β2
+
+> h
+
+/2GJ , the Hamiltonian reduces to 
+
+Hhard = 12
+
+
+
+EI + Aπa 2
+
+2
+
+
+
+θ′2 + 12
+
+M 2
+
+ EI + Aπa 2
+
+> 2
+
+ (1 − cos θ)(1 + cos θ) +
+
+
+
+T + Kdπa 2
+
+2 he
+
+
+
+cos θ. 
+
+(54) 
+
+3.2.1 Structural equivalence to the purely elastic Hamiltonian 
+
+Although the Hamiltonian for the hard ferromagnetic case preserves the structural form of its purely elastic counterpart (Eqn. 42), magnetic effects induce two key modifications: (i) the exchange energy augments the effective bending stiffness to 
+
+EI + Aπa 2
+
+> 2
+
+
+
+, and (ii) the Zeeman energy enhances the external terminal load to 
+
+
+
+T + Kdπa 2 
+
+> 2
+
+he
+
+
+
+. Accordingly, the bifurcation characteristics of the hard ferromagnetic elastic rod mirror those of a purely elastic rod, provided the parameters in Eqn. 42 are replaced by their renormalized counterparts. 
+
+## 3.3 A short note on integrability 
+
+The subsequent sections present a Hamiltonian analysis for the purely elastic and soft ferromagnetic rods. 16 These reductions highlight the integrable structure preserved under the stated assumptions, as summarized next. It is well established [17, 25, 34] that complete integrable Kirchhoff rod systems admit phase space analysis via conserved quantities. Integrability requires two conditions: (i) an isotropic cross-section with equal prin-cipal bending stiffnesses EI 1 = EI 2 [34], and (ii) mechanical/magnetic loading that preserves the two Casimir invariants of the bending moment (Eqns. 31 and 33). The significance of these two conditions is as follows. When both are satisfied, the two Casimir invariants permit the elimination of the Euler angles ψ and ϕ and their deriva-tives from the Hamiltonian, reducing it to a function of the single primary Euler angle 
+
+θ and its arc-length derivative θ′ alone, that is, H = H(θ, θ ′) = constant. This reduc-tion to a one-degree-of-freedom system is the essential consequence of integrability: the phase space becomes two-dimensional with coordinates ( θ, θ ′), and since H is con-served along every solution trajectory, each trajectory lies on a level curve of H(θ, θ ′). The complete solution structure: equilibria, periodic helical orbits, and homoclinic orbits corresponding to localized buckling modes, is therefore encoded in the topology of these level curves and is directly accessible through phase portrait analysis. With-out integrability, the Hamiltonian would depend on all three Euler angles and their derivatives, yielding a higher-dimensional phase space in which level sets of H alone do not determine solution trajectories, and the phase portrait analysis presented in Section 4 would not be possible. The analyzed scenarios satisfying both conditions are: 
+
+• Case (i): Soft ferromagnetic rod immersed in longitudinal magnetic field he = hee3,with uniform magnetization m(s) = e3;
+
+• Case (ii): Hard ferromagnetic rod with tangential magnetization m3(s) = d3(s)subjected to longitudinal field he = hee3.The subsequent sections present a Hamiltonian analysis for the purely elastic and soft ferromagnetic rods. 
+
+# 4 Analysis of the Hamiltonian 
+
+The analysis that follows is conducted primarily in terms of the non-dimensionalized Hamiltonian under fixed-M scaling, where M denotes the applied end twisting moment. We begin by evaluating the critical points of the Hamiltonian. We then employ a linear local analysis of the equilibrium equations to locate the bifurcation points where the sole trivial configuration of the rod gives rise to additional equilibrium solutions. We then examine the corresponding phase portraits. 
+
+## 4.1 Critical points 
+
+Following the procedure in [3, Section 3], we determine the critical points of the Hamiltonian of a soft ferromagnetic rod immersed in longitudinal magnetic field ˜H =˜Hsoft as given in Eqn. 44 under fixed-M condition and classify their nature. These 17 critical points satisfy ∇ ˜H = 0, or 
+
+∇ ˜H =  
+
+> ∂˜H
+> ∂θ ∂˜H
+> ∂θ ′
+
+!
+
+= 0. (55) For the soft ferromagnetic rod in longitudinal field he, Eqn. 44 gives   
+
+> ∂˜H
+> ∂θ ∂˜H
+> ∂θ ′
+
+!
+
+= 0 =⇒
+
+
+
+sin θ
+
+  
+
+> 1(1+cos θ)2
+
+− 2 ˜KdM cos θ − 1˜M 2
+
+
+
+= 0 ,θ′ = 0 ,
+
+(56) and θ′ 
+
+> c
+
+= 0 for all critical points. The physical constraint sin θ θ=θc = 0 (analogous to the spinning top) admits only the trivial solution θc = 0. Nontrivial solutions θc̸ = 0, if they exist, solve 1(1 + cos θ)2 − 2 ˜KdM cos θ − 1˜M 2 θ=θc
+
+= 0 . (57) The trivial critical point p1 = (0 , 0) exists for all values of ˜M and ˜KdM > 0, and corresponds to the straight, undeformed equilibrium configuration of the rod. Non-trivial critical points, when they exist, appear as the symmetric pair p2,3 = ( ∓θc, 0), each corresponding to a uniformly helically deformed equilibrium state. In the purely elastic limit ˜KdM = 0, the condition in Eqn. 57 yields no real solution for θc when ˜M > 2, and hence the straight configuration is the unique equilibrium of the rod in this regime. The nature of each critical point is determined from the Hessian matrix of ˜H:
+
+∇2 ˜H =
+
+" ∂2 ˜H   
+
+> ∂θ 2
+> ∂2˜H
+> ∂θ∂θ ′
+> ∂2˜H
+> ∂θ∂θ ′
+> ∂2˜H
+> ∂θ ′2
+
+#
+
+=
+
+    
+
+> 1+sin 2θ+cos θ
+> (1+cos θ)3
+
+− 2 ˜KdM cos 2 θ − cos θ 
+
+> ˜M2
+
+
+
+00 1
+
+ . (58) The Hessian is diagonal, and its two eigenvalues are therefore λ1 = ∂2 ˜H 
+
+> ∂θ 2
+
+and 
+
+λ2 = 1. Since λ2 is strictly positive, the character of each critical point is governed entirely by the sign of λ1. A critical point is a center when λ1 > 0, in which case both eigenvalues are positive and the surrounding phase-plane trajectories are closed orbits corresponding to periodic, helical buckling modes. The critical point is a saddle when 
+
+λ1 < 0, in which case the eigenvalues are of opposite sign and the associated phase-plane trajectories are homoclinic orbits corresponding to localized buckling modes. 18 4.2 Bifurcation points of the Hamiltonian 
+
+Having classified the critical points, we analyze the bifurcation characteristics of the Hamiltonian for the soft ferromagnetic rod given in Case (i) (Eqn. 40), given as follows: 12 EIθ ′2 + 12
+
+M 2
+
+EI 
+
+(1 − cos θ)(1 + cos θ) − Kdπa 2
+
+4 sin 2 θ + T cos θ = Hsoft . (59) Since Hsoft is a first integral of the Euler–Lagrange equations [25], differentiating it with respect to s and simplifying yields: 
+
+EIθ ′θ′′ +
+
+ M 2
+
+EI 
+
+sin θ
+
+(1 + cos θ)2 − Kdπa 2
+
+2 sin θ cos θ − T sin θ
+
+
+
+θ′ = 0 , (60) The above equation admits the trivial solution θ′ = 0, which corresponds to the straight, undeformed equilibrium configuration of the rod. Factoring out θ′ and retaining the non-trivial factor recovers the Euler–Lagrange equation: 
+
+EIθ ′′ +
+
+ M 2
+
+EI 
+
+sin θ
+
+(1 + cos θ)2 − Kdπa 2
+
+2 sin θ cos θ − T sin θ
+
+
+
+= 0 . (61) The Euler–Lagrange equation is linearized about the trivial equilibrium θ = 0 by substituting θ = ϵ¯θ, where |ϵ| ≪ 1, yielding 
+
+EI ¯θ′′ +
+
+ M 2
+
+4EI − Kdπa 2
+
+2 − T
+
+
+
+¯θ = 0 . (62) Substituting the ansatz ¯θ ∼ eλs into the above yields the characteristic equation 
+
+EIλ 2 +
+
+ M 2
+
+4EI − Kdπa 2
+
+2 − T
+
+
+
+= 0 , (63) with eigenvalues 
+
+λ1,2 = ± i
+
+s
+
+1
+
+EI 
+
+ M 2
+
+4EI − Kdπa 2
+
+2 − T
+
+
+
+. (64) The trivial equilibrium is stable, and the rod remains straight, when the eigenvalues 
+
+λ1,2 are purely imaginary, which requires 
+
+M 2
+
+4EI − Kdπa 2
+
+2 − T ≥ 0 ⇐⇒ M 2
+
+4EI − T ≥ Kdπa 2
+
+2 . (65) Bifurcation from the trivial equilibrium occurs at the transition point where the eigenvalues become zero, i.e. when 
+
+M 2
+
+4EI − T = Kdπa 2
+
+2 . (66) 19 Expressing this bifurcation condition in non-dimensional form under each scaling yields the following results. 
+
+Fixed-M scaling : The bifurcation condition becomes 14 − 1˜M 2 = 2 ˜KdM =⇒ ˜M 2 = 1 
+
+> 14
+
+− 2 ˜KdM 
+
+. (67) For ˜M 2 to be real and finite, it is necessary that 14 − 2 ˜KdM > 0, which imposes the restriction ˜KdM < 18 . (68) Consequently, the soft ferromagnetic rod exhibits bifurcation only within the magne-toelastic parameter regime 0 < ˜KdM < 18 . For ˜KdM ≥ 18 , the bifurcation is suppressed entirely, as discussed further in Section 4.3.2. 
+
+Fixed-T scaling : The bifurcation condition reduces to ˜M 2
+
+4 − 1 = 2 ˜KdT =⇒ ˜M 2 = 4(1 + 2 ˜KdT ), (69) which admits a real finite bifurcation point for all ˜KdT > − 12 . Since ˜KdT =
+
+Kdπa 2/4T > 0 for all physically admissible parameter values, this condition is always satisfied, and the supercritical Hamiltonian Hopf pitchfork bifurcation is exhibited by the soft ferromagnetic rod for all physically admissible values of the magnetoelastic parameter under fixed-T scaling. 
+
+## 4.3 Hamiltonian phase portraits 
+
+We analyze the Hamiltonian phase portraits for purely elastic, soft ferromagnetic, and hard ferromagnetic rods as the composite mechanical load parameter ˜M varies. 
+
+4.3.1 Purely elastic rod 
+
+We track the evolution of the Hamiltonian phase portrait for the purely elastic case versus the composite mechanical load parameter ˜M in Fig. 6. For ˜M > 2, a single cen-ter exists at p1. As ˜M decreases through the bifurcation point ˜M = 2, p1 undergoes a supercritical Hamiltonian Hopf pitchfork bifurcation [13, 25], forming two additional centers at ( p2, p 3), while tranforming itself into a saddle point. The resulting phase space further features homoclinic orbits connecting the saddle point p1 to itself, repre-senting localized buckling modes. The homoclinic orbits or separatrices delineates the shorter closed loop trajectories encircling each center p2,3 individually and the longer closed loop trajectories enclosing all three critical points. Also, the non-trivial centers (θc̸ = 0) correspond to helical buckling modes. 20 Fig. 6 : Purely elastic case: Evolution of phase portraits as ˜M varies. 
+
+4.3.2 Soft ferromagnetic rod 
+
+The evolution of Hamiltonian phase portraits of a soft ferromagnetic rod for a fixed value of ˜KdM = 0 .1 is illustrated in Fig. 7. The supercritical Hamiltonian Hopf pitch-fork bifurcation originates at ˜M = 11−8 ˜KdM 
+
+= √20 ≈ 4.47. Interestingly, non-trivial branches emerge in a cusp-like manner at the bifurcation point, representing a distinct departure from the behavior observed in the purely elastic case. For ˜KdM > 18 , three critical points persist for all ˜M , as shown in Fig. 8. It is noteworthy that higher values of ˜KdM suppress any bifurcation in the Hamiltonian. The critical points gradually p2 and p3 drifts towards each other with increasing ˜M ,asymptotically approaching the limits ∓θc, asymp , which are determined from the roots of 1(1 + cos θ)2 − 2 ˜KdM cos θ θ=θc, asymp 
+
+= 0 . (70) 21 Fig. 7 : Soft ferromagnetic case: Evolution of phase portraits as ˜M varies for ˜KdM =0.1. 22 Fig. 8 : Soft ferromagnetic case: Evolution of phase portraits as ˜M varies for ˜KdM =10. 23 4.3.3 Hard ferromagnetic rod 
+
+The Hamiltonian phase portraits of the hard ferromagnetic elastic rod closely resem-ble those of the purely elastic rod (Fig. 6). This resemblance is a direct consequence of the structural equivalence established in Section 3.2.1: the hard ferromagnetic Hamil-tonian (Eqn. 54) retains the same mathematical form as its purely elastic counterpart, with the bending stiffness and loading parameter appropriately renormalized by the magnetic contributions. In summary, the phase portraits illustrate a diverse post-buckling landscape. The centers in the phase portraits denote helical deformation mode while the saddle points signify the presence of localized buckling modes. This characterization provides the foundation for the detailed analysis of helical buckling presented in the subsequent section. 
+
+# 5 Post-buckling into a local helix 
+
+We now study the mechanical response of the helically deformed ferromagnetic rod subjected to the combined effect of twisting moment M , tension T , and magnetic loading, as sketched in Fig. 9. 
+
+Fig. 9 : Schematic of a helically deformed ferromagnetic rod. Let us briefly describe the geometry of the helically deformed rod. The centerline of the helical rod of length L is defined by two geometrical parameters: radius ρ and pitch or helix angle β; β = θc is obtained from Eqn. 57. The incorporation of the cross sectional effects of the rod requires an additional geometric (kinematic) parameter called internal twist τi as discussed in equations 75 and 76. The projected length of the helix along its axis is La = L cos β, and the end-shortening length is D. The helix geometry composed of N repeated units satisfies tan β = 2πρ La
+
+=⇒ La = 2πρ 
+
+tan β ,
+
+sin β = 2πρ L/N =⇒ N = L sin β
+
+2πρ ,D = L(1 − cos β) = ⇒ d = DL = 1 − cos β. 
+
+(71) 24 From the theory of space curves, the arc length parametrization of the helix is [35] 
+
+r(s) = ( x(s), y (s), z (s)) ,
+
+where x(s) = ρ cos 
+
+ s sin βa
+
+
+
+, y(s) = ρ sin 
+
+ s sin βa
+
+
+
+, z(s) = s cos β. (72) The corresponding orthonormal Frenet-Seret frame ( t, n, b) is defined as 
+
+t(s) = r′(s), n(s) = t′(s)
+
+|t′(s)| , b(s) = t(s) × n(s), (73) from which the geometric or kinematic torsion τs and the curvature κ, both constants, are derived as 
+
+τs = b′(s) = sin β cos βρ , κ = |t′(s)| = sin 2 βρ . (74) According to Love [27], the total torsion of a helix τ is decomposed as 
+
+τ = τi + τs, (75) where the internal twist τi is the twist when the helical curve is unbent. The end rotation R generated due to the moment M is [10] 
+
+r = RL = τi + 2πL/N = τi + sin βρ . (76) 
+
+## 5.1 Energy analysis of the post-buckled state 
+
+Following the energy analysis in [10], the work potentials due to T and M with the corresponding deflections −D (the negative sign is due to the displacement happening in the opposite direction to T) and R are: 
+
+WT = T (−D) = −T L (1 − cos β),WM = M R = M L 
+
+
+
+τi + sin βρ
+
+
+
+. (77) The strain energies due to bending Eb and due to torsion Et are 
+
+Eb = 12 EIκ 2L = 12 EIL sin 4 βρ2
+
+Et = 12 GJτ 2L = 12 GJL 
+
+
+
+τi + sin β cos βρ
+
+2
+
+.
+
+(78) 25 For soft ferromagnetic rod with longitudinal m = e3, the magnetic energy is 
+
+Emag = Kdπa 4
+
+4
+
+Z L
+
+> 0
+
+(m · d1(s)) 2 + ( m · d2(s)) 2 ds 
+
+= Kdπa 4
+
+4
+
+Z L
+
+> 0
+
+1 − (m · d3(s)) 2 ds = Kdπa 4
+
+4
+
+Z L
+
+> 0
+
+1 − cos 2 β ds 
+
+=⇒ E mag = Kdπa 4L
+
+4 sin 2 β. 
+
+(79) The total potential energy is thus 
+
+E = Eb + Et + Emag − WT − WM
+
+= 12 EIL sin 4 βρ2 + 12 GJL 
+
+
+
+τi + sin β cos βρ
+
+2
+
++ Kdπa 4L
+
+4 sin 2 β
+
++ T L (1 − cos β) − M L 
+
+
+
+τi + sin βρ
+
+ (80) For equilibrium, the derivatives of E with respect to ( ρ, β, τ i) must evaluate to zero. Therefore, 
+
+∂E
+
+∂ρ = 0 = ⇒ M = GJτ cos β + EI sin 3 βρ ,∂E
+
+∂β = 0 = ⇒ T = GJτ sin βρ − EI cos β sin 2 βρ2 − Kdπa 2
+
+2 cos β, ∂E
+
+∂τ i
+
+= 0 = ⇒ M = GJτ, 
+
+(81) The first two equations relate the applied loads ( T, M ) to the kinematic variables of deformation ( ρ, β, τ ) while the third equation acts as a constraint and it is identical to Eqn. 39. The constraint enables us to determine the deformation for a prescribed loading. 
+
+## 5.2 Analysis of the equilibrium equations 
+
+With the helical geometry and energy functional established, we now solve the equi-librium equations to relate loads to deformation. We eliminate τ = MGJ from the first two equations in Eqn. 81 to express the loads ( T, M ) in terms of helix coordinates (ρ, β ) and the parameter Kd as 
+
+T = M sin βρ − EI cos β sin 2 βρ2 − Kdπa 2 cos β
+
+2 ,M (1 − cos β) = EI sin 3 βρ =⇒ M = EI ρ
+
+sin 3 β
+
+(1 − cos β) .
+
+(82) 26 Substituting the expression of M in the equation for T results in 
+
+T = EI ρ2 sin 2 β − Kdπa 2
+
+2 cos β. (83) Fully eliminating ρ using the equation for M in Eqn. 82 gives the load relation 
+
+T + Kdπa 2
+
+2 cos β = M 2
+
+EI (1 + cos β)2 . (84) We now derive the expression of the average rotation per unit length r = RL . Now, 
+
+r = R/L follows from τ = τi + τs and geometry, (see equations 74 and 76): 
+
+r = τi + 2πN ρ = τ − τs + sin βρ
+
+=⇒ r = MGJ − sin β cos βρ + sin βρ = MGJ + (1 − cos β) sin βρ .
+
+(85) From Eqn. 83, sin βρ =
+
+r
+
+> 1
+> EI
+
+
+
+T + Kdπa 2 
+
+> 2
+
+cos β
+
+
+
+, so 
+
+r = MGJ + (1 − cos β)
+
+EI 
+
+s
+
+EI 
+
+
+
+T + Kdπa 2
+
+2 cos β
+
+
+
+. (86) Let us derive r in terms of end-shortening parameter d = DL . Rearranging the third equation in Eqns. 71 gives 
+
+d = 1 − cos β =⇒ cos β = 1 − d (87) which upon substitution in Eqn. 84 produces 
+
+T + Kdπa 2
+
+2 (1 − d) = M 2
+
+EI (2 − d)2
+
+=⇒ M 2 = EIT (2 − d)2 + Kdπa 2
+
+2 EI (1 − d)(2 − d)2
+
+(88) Therefore, 
+
+r =
+
+ (2 − d)
+
+GJ + dEI 
+
+ s
+
+EI 
+
+
+
+T + Kdπa 2
+
+2 (1 − d)
+
+
+
+. (89) Having obtained explicit relations between the applied loads and the kinematic vari-ables of the helical configuration, we now examine the rod’s equilibrium response under distinct loading sequences. 27 5.3 Behaviour under various loading sequences 
+
+We conduct experiments on a helically deformed ferromagnetic rod to determine its equilibrium configurations under different quasi-static loading sequences. As one or more control parameters vary slowly, the rod remains in a given equilibrium state until reaching a critical threshold, where it undergoes a dynamic transition to a distinct equilibrium state, that is qualitatively distinct from the preceding equilibrium state. Before the detailed analysis, it is instructive to revisit the classification of control parameters as outlined by Thompson and Champneys [10]. A fixed parameter denotes a quantity that remains constant throughout the experiment, for example, material properties, geometric characteristics, or a pre-fixed tension or moment. In contrast, a controlled parameter is one that is varied quasi-statically during the course of the experiment, thereby serving as the primary driver of equilibrium response. Finally, a 
+
+passive quantity refers to a variable that is neither fixed nor actively controlled, but instead evolves as a consequence of the equilibrium condition. The applied loads are categorized into two classes. The first class, dead loading, comprises the tension T
+
+and twisting moment M , in which the force and moment resultants are prescribed. The second class, rigid loading, comprises the end rotation R and end-shortening D,in which the corresponding kinematic quantities are prescribed. The three loading sequences analyzed are the following: 
+
+• Scenario 1: Purely dead loading (tension T is fixed, twisting moment M is varied, and M is fixed, T is varied). 
+
+• Scenario 2: Mixed loading where T is pre-fixed and end rotation R is varied. 
+
+• Scenario 3: Mixed loading where end-rotation R is pre-fixed while T is varied. We now analyze these loading scenarios, beginning with Scenario 1. 
+
+Scenario 1: Purely dead loading 
+
+T is fixed, twisting moment M is controlled, β is passive: We prescribe a dead tension load T while controlling the twisting moment M . Eqn. (84) connects the quantities 
+
+Kd, M , T and β:
+
+T + Kdπa 2
+
+2 cos β = M 2
+
+EI (1 + cos β)2 . (90) Normalizing by T and introducing the non-dimensional parameters ˜KdT = Kdπa 2 
+
+> 4T
+
+,˜M = M√EIT gives 1 + 2 ˜KdT cos β = ˜M 2
+
+(1 + cos β)2 . (91) At the onset of bifurcation from a straight configuration ( β → 0) of the rod into a helical state , the condition reduces to 
+
+T + Kdπa 2
+
+2 = M 2
+
+4EI ⇔ 1 + 2 ˜KdT = ˜M 2
+
+4 =⇒ ˜M = 2 
+
+q
+
+1 + 2 ˜KdT . (92) Fig. 10(a) illustrates the variation of ˜M with β for fixed T , comparing purely elastic rods with soft ferromagnetic rods at ˜KdT = 0 .2. The equilibrium curve for the soft 28 ferromagnetic rod is shifted relative to the purely elastic case, exhibiting a higher bifurcation threshold at β = 0 and a higher peak value of ˜M attained over the range of admissible helix angles. -3 -2 -1 0 1 2 3      
+
+> -
+> 0123456
+> ~MTis pre--xed, Mis controlled, -is passive
+> Purely elastic ~KdT = 0.2
+
+(a) T fixed, M controlled: ˜KdT = 0 .2-3 -2 -1 0 1 2 3       
+
+> -
+> 0123456
+> ~MMis pre--xed, Tis controlled, -is passive
+> Purely elastic ~KdM = 0.1
+
+(b) M fixed, T controlled: ˜KdM = 0 .1
+
+Fig. 10 : Totally dead loading: Evolution of ˜M with β for purely elastic and soft ferromagnetic rods. 
+
+M is fixed, tension T is controlled, β is passive: 
+
+For prescribed M , we normalize Eqn. (84) by M 2 
+
+> EI
+
+and introducing the non-dimensional parameter ˜KdM = Kdπa 2EI   
+
+> 4M2
+
+, yielding 1˜M 2 + 2 ˜KdM cos β = 1(1 + cos β)2 ⇔ ˜M 2 = 1  
+
+> 1(1+cos β)2
+
+− 2 ˜KdM cos β (93) The corresponding ˜M − β variation for fixed M is shown in Fig. 10(b) for purely elastic ˜KdM = 0 and soft ferromagnetic rods, considering ˜KdM = 0 .1. In this regime, a supercritical Hamiltonian Hopf bifurcation occurs since ˜KdM < 1/8, see section 4.2. For the soft ferromagnetic rod, the bifurcation from the straight configuration into a helical state occurs at a higher value of the composite load parameter ˜M relative to the purely elastic case, as is evident from the elevated bifurcation threshold ˜M 2 = 1 
+
+> 14−2 ˜KdM
+
+established in Eqn. 93. 29 Scenario 2: Mixed loading where T is pre-fixed and end rotation R
+
+is varied 
+
+We now fix dead tension load T and treat R (= rL ) as the control parameter. From Eqn. 86, we have 
+
+r = MGJ + (1 − cos β)
+
+EI 
+
+s
+
+EI 
+
+
+
+T + Kdπa 2
+
+2 cos β
+
+
+
+. (94) Normalizing by √EIT , we get 
+
+r
+
+√EIT = ˜MGJ + (1 − cos β)
+
+EI 
+
+q
+
+1 + 2 ˜KdT cos β; (95) Since GJ = E 
+
+> 2(1+ ν)
+
+· 2I = EI  
+
+> 1+ ν
+
+, this reduces to 
+
+r
+
+√EIT = 1
+
+EI 
+
+
+
+(1 + ν) ˜M + (1 − cos β)
+
+q
+
+1 + 2 ˜KdT cos β
+
+
+
+. (96) To obtain cos β in terms of ˜M , we divide Eqn. 84 throughout by T , obtaining 1 + Kdπa 2
+
+2T cos β = M 2
+
+EIT (1 + cos β)2 . (97) Rearranging gives the cubic equation (cos β + 1) 2 + 2 ˜KdT cos β(cos β + 1) 2 = ˜M 2. (98) We solve the cubic equation Eqn. 98 numerically for cos β at fixed ˜KdT with ˜M as the variable, and represent the solution as cos β = f ( ˜M ; ˜KdT ). (99) Substituting this functional form, we get 
+
+r
+
+√EIT = 1
+
+EI 
+
+
+
+(1 + ν) ˜M +
+
+
+
+1 − f ( ˜M ; ˜KdT )
+
+ q 
+
+1 + 2 ˜KdT f ( ˜M ; ˜KdT )
+
+
+
+(100) Alternatively, in terms of end-shortening d = 1 − cos β (Eqn. (87)), the above relation becomes 
+
+r
+
+√EIT = [(1 + ν)(2 − d) + d]
+
+q
+
+1 + 2 ˜KdT (1 − d)
+
+EI . (101) Figures 11(a) and 11(b) present the variation of ˜M and d with rpEI/T for both purely elastic and soft ferromagnetic rods ( ˜KdT = 0 .2) respectively. In the soft ferro-magnetic case, the ˜M −rpEI /T response exhibits a noticeably reduced slope compared 30 to the purely elastic case, indicating a diminished sensitivity of r to changes in ˜M .Moreover, the d−rpEI /T response curves show that a larger end rotation r is required in the soft ferromagnetic rod to achieve the same end-shortening d as in the purely elastic case. 1.5 2 2.5 3      
+
+> rpEI=T
+> 00.5 11.5 22.5
+> ~MTis pre--xed: ~Mvaries as Ris controlled
+> Purely elastic ~KdT = 0.2
+
+(a) r varies with ˜M for ˜KdT = 0 .22.2 2.4 2.6 2.8 3 3.2        
+
+> rpEI=T
+> 00.2 0.4 0.6 0.8 1
+> d = DL
+> Tis pre--xed: dvaries as Ris controlled
+> Purely elastic ~KdT = 0.2
+
+(b) r varies with d for ˜KdT = 0 .2
+
+Fig. 11 : Mixed dead/rigid loading: Variation of (a) ˜M and (b) d with rpEI/T for a pre-fixed T for purely elastic and soft ferromagnetic rods. 
+
+Scenario 3: Mixed loading where end-rotation R is pre-fixed while 
+
+T is varied 
+
+In this scenario, the rigid end-rotation R is prescribed, with the initial pre-twist given by τ0 = RL = r. From Eqn. 89, the governing relation is 
+
+r =
+
+ (2 − d)
+
+GJ + dEI 
+
+ s
+
+EI 
+
+
+
+T + Kdπa 2
+
+2 (1 − d)
+
+
+
+. (102) The Hamiltonian-Hopf supercritical pitchfork bifurcation occurs at d = 0 and T = Tc,satisfying the relation M0 = GJτ 0, which implies 
+
+Tc + Kdπa 2
+
+2 = M 20
+
+4EI = G2J2τ 20
+
+4EI ,
+
+=⇒ r = τ0 = 1
+
+GJ 
+
+p4EIT c + 2 Kdπa 2EI. 
+
+(103) Equating Eqns. 102 and 103, and simplifying, we have 
+
+
+
+(2 − d) + GJ EI d
+
+ r 
+
+T + Kdπa 2
+
+2 (1 − d) = p4Tc + 2 Kdπa 2. (104) 31 Dividing throughout by √Tc and introducing the non-dimensional parameters t = TTc
+
+and ˜KdT = Kdπa 2 
+
+> 4Tc
+
+gives 
+
+
+
+(2 − d) + d
+
+(1 + ν)
+
+ q 
+
+t + 2 ˜KdT (1 − d) = 2 
+
+q
+
+1 + 2 ˜KdT . (105) Fig. 12 illustrates the variation of t with d both purely elastic and soft ferromagnetic rods at ˜KdT = 0 .2. The results indicate that, for a given end-shortening d, the soft ferromagnetic rod requires a higher applied tension T compared to the purely elastic case. 0 0.2 0.4 0.6 0.8 1          
+
+> d=DL
+> 11.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8
+> t = TTc
+> Ris pre--xed: t=TTcvaries as dis controlled
+> Purely elastic ~KdT = 0.2
+
+Fig. 12 : End-rotation r is pre-fixed while t = TTc is varied. In summary, across the loading scenarios considered, the soft ferromagnetic rod consistently requires higher values of tension T , moment M , or end rotation R to attain deformation states comparable to those of the purely elastic rod. This reveals that the magnetostatic interaction systematically stiffens the soft ferromagnetic rod relative to its purely elastic counterpart, requiring larger applied loads to achieve compara-ble deformation states. The helical configurations examined in this section, however, represent only the initial stage of the post-buckling response. As established in the Hamiltonian phase portrait analysis of Section 4, homoclinic orbits coexist with the periodic helical orbits in the phase space of the rod equations. These homoclinic orbits correspond to spatially localized deformation modes, in which high-curvature regions are confined to a finite portion of the rod, with the remaining segments approaching a straight configuration. The analysis of such localized buckling modes, is presented in Section 6. We now proceed to analyze the localized buckling of the rods. 32 6 Localized buckling of rods 
+
+The onset of localized buckling in the rod occurs subsequent to the formation of a helical instability, as the composite load parameter ˜M is reduced below the bifurcation threshold. The initial helical deformation evolves into a sinusoidal helical state with reduced applied twisting moment M or increased applied tension T . Upon further reduction in ˜M , the strain energy gradually becomes localized along the rod, marking the transition toward a localized buckled configuration. In the purely elastic case, a closed-form solution for the localized deformation can be derived from the associated Hamiltonian, as demonstrated by Coyne [8]. In contrast, such an analytical formulation is not readily available for the soft ferromagnetic case due to the additional nonlinear magnetic interactions. Therefore, a numerical approach must be employed to determine the localized buckling modes in these systems. The numerical procedure adopted for constructing the deformed shapes is presented in the following section. Purely elastic case: fM = 1.5                 
+
+> 0.444 0.444
+> -3 -2 -1 0123
+> 3
+> -5 -4 -3 -2 -1 012345
+> 30Soft ferromagnetic case: fM= 1.5, eKdM = 10
+> 0.444 0.444 0.444
+> -3 -2 -1 0123
+> 3
+> -5 -4 -3 -2 -1 012345
+> 30
+
+Fig. 13 : Phase portraits for ˜M = 1 .5: (left) purely elastic case, and (right) soft ferromagnetic case with ˜KdM = 10. To determine the deformed buckling configurations, we employ the numerical methodology detailed in [3, Section 4]. Fixed values of the parameters ˜M and ˜KdM 
+
+are prescribed, and a trajectory is selected from the corresponding phase portrait (e.g., Fig. 13) along which the Hamiltonian (Eqn. 44) assumes a constant value C.This Hamiltonian equation is rearranged to relate the differentials d˜s and dθ , which is then used to modify the Euler angle rate equations (Eqns. 45) linking dψ and dϕ to 
+
+dθ . A point θ0 on the θ-axis of the phase portrait is chosen as the starting point for integration. The equations are then integrated concurrently with the initial conditions 33 ˜s(θ0) = 0, ψ(θ0) = ψ0 and ϕ(θ0) = ϕ0 (typically, ψ0 = ϕ0 = 0): ˜s =
+
+Z ˜s
+
+> 0
+
+d˜s =
+
+Z θθ0
+
+dθ 
+
+√2
+
+q
+
+C − 12(1 −cos θ)(1+cos θ) + ˜KdM sin 2 θ − cos θ 
+
+> ˜M2
+
+,
+
+Z ψψ0
+
+dψ =
+
+Z θθ0
+
+dθ 
+
+√2(1 + cos θ)
+
+q
+
+C − 12(1 −cos θ)(1+cos θ) + ˜KdM sin 2 θ − cos θ 
+
+> ˜M2
+
+,
+
+Z ϕϕ0
+
+dϕ =
+
+Z θθ0
+
+
+
+ν + 11 + cos θ
+
+ dθ 
+
+√2
+
+q
+
+C − 12(1 −cos θ)(1+cos θ) + ˜KdM sin 2 θ − cos θ 
+
+> ˜M2
+
+.
+
+(106) This procedure yields the numerical solution (˜ s(θ), ψ (θ), ϕ (θ)), which is subsequently mapped into ( θ(˜ s), ψ (˜ s), ϕ (˜ s)). The centerline coordinates ( x(˜ s), y (˜ s), z (˜ s)) are then reconstructed by integrating Eqns. 7 using trapezoidal quadrature scheme. 
+
+Fig. 14 : Localized buckling configuration of a purely elastic rod for ˜M = 1 .5. The localized buckling deformations are determined by integrating along the homo-clinic orbits present in the Hamiltonian phase portraits, highlighted in pink color in Fig. 13. For a purely elastic rod, such homoclinic orbits exist only when ˜M < 2. In contrast, for a soft ferromagnetic rod, they occur for all ˜M > 0 provided ˜KdM > 18 .As an illustration, Fig. 14 shows the localized deformation of a purely elastic rod at ˜M = 1 .5. The configuration is characterized by a looped shape in which the extended straight segments remain collinear. By comparison, the corresponding localized shape for the soft ferromagnetic rod under the same loading parameter ˜M = 1 .5 with the value ˜KdM = 10 (see Fig. 15), exhibits a shifted configuration, with extended straight segments that are no longer collinear. This contrast highlights the distinct mechanical response imparted by magnetic coupling. 
+
+Fig. 15 : Localized buckling configuration of a soft ferromagnetic elastic rod for ˜M =1.5 and ˜KdM = 10. 34 6.1 Analysis of localized solution 
+
+We now derive an expression for the maximum value θmax of the Euler angle θ, the angle subtended between the rod’s local tangent vector d3(s) and the fixed reference axis e3 as a function of the composite load parameter ˜M , for a fixed value of the magnetoelastic parameter ˜KdM . From Eqn. 44, we have ˜Hsoft = 12 θ′2 + 12(1 − cos θ)(1 + cos θ) − ˜KdM sin 2 θ + cos θ
+
+˜M 2 . (107) The Hamiltonian ˜Hsoft , being a conserved quantity along the rod, takes the constant value ˜Hsoft = 1˜M 2 . (108) Therefore, 12 θ′2 + 12(1 − cos θ)(1 + cos θ) − ˜KdM sin 2 θ + cos θ
+
+˜M 2 = 1˜M 2 . (109) At the location on the centerline where θ attains a maximum θmax , ( = ⇒ θ′ = 0), and so 12(1 − cos θ)(1 + cos θ) − ˜KdM (1 − cos 2 θ) − 1˜M 2 (1 − cos θ)
+
+> θ=θmax
+
+= 0 =⇒ 12(1 − cos θ)(1 + cos θ) − ˜KdM (1 − cos θ)(1 + cos θ) − 1˜M 2 (1 − cos θ)
+
+> θ=θmax
+
+= 0 .
+
+(110) Factoring out (1 − cos θmax ), we have 121(1 + cos θmax ) − ˜KdM (1 + cos θmax ) − 1˜M 2 = 0 =⇒ 2 ˜KdM ˜M 2 cos 2 θmax +
+
+
+
+4 ˜KdM ˜M 2 + 2 
+
+
+
+cos θmax + 2 ˜KdM ˜M 2 + 2 − ˜M 2 = 0 .
+
+(111) The solution to the above quadratic expression gives the value of θmax for a given ( ˜M , ˜KdM ). Figure 16 presents a comparative illustration of the variation of the composite load parameter ˜M with the maximum lateral deflection θmax for purely elas-tic and soft ferromagnetic rods, highlighting the distinct influence of magnetoelastic coupling on the extent of localized deformation. 
+
+## 6.2 Displacement of the end terminals 
+
+Inspired by Coyne [8], we now proceed to obtain the expression relating the end displacement to the composite load factor ˜M and ˜KdM .35 -3 -2 -1 0 1 2 3
+
+3max 
+
+0123456
+
+> ~M
+
+~M versus measure of lateral de .ection 3max  
+
+> Purely elastic ~KdM = 0.1
+
+Fig. 16 : Localized buckling: Variation of ˜M with a measure of lateral deflection θmax 
+
+for purely elastic and soft ferromagnetic rods. In the straight segments of the rod, where θ = θ′ = 0, the Hamiltonian (Eqn. 44) evaluates to ˜Hsoft = 1˜M 2 . Consequently, the first integral along the localized solution satisfies the following: 12 θ′2 + 12(1 − cos θ)(1 + cos θ) − ˜KdM sin 2 θ + cos θ
+
+˜M 2 = 1˜M 2 . (112) Making appropriate trigonometric substitutions, 1 − cos θ = 2 sin 2 θ
+
+2 , 1 + cos θ = 2 cos 2 θ
+
+2 , sin θ = 2 sin θ
+
+2 cos θ
+
+2 ,
+
+36 we now have 12
+
+ dθ
+
+d˜ s
+
+2
+
++ 122 sin 2 θ
+
+> 2
+
+2 cos 2 θ
+
+> 2
+
+− ˜KdM 
+
+
+
+2 sin θ
+
+2 cos θ
+
+2
+
+2
+
+− 2 sin 2 θ
+
+> 2
+
+˜M 2 = 0 =⇒
+
+ dθ
+
+d˜ s
+
+2
+
++ tan 2 θ
+
+2 − 8 ˜KdM sin 2 θ
+
+2 cos 2 θ
+
+2 − 4 sin 2 θ
+
+> 2
+
+˜M 2 = 0 =⇒
+
+ dθ
+
+d˜ s
+
+2
+
+= 8 ˜KdM tan 2 θ
+
+2 cos 4 θ
+
+2 + 4˜M 2 tan 2 θ
+
+2 cos 2 θ
+
+2 − tan 2 θ
+
+2=⇒ dθ
+
+d˜ s = tan θ
+
+2
+
+r
+
+8 ˜KdM cos 4 θ
+
+2 + 4˜M 2 cos 2 θ
+
+2 − 1=⇒ d˜s = cos θ 
+
+> 2
+
+dθ 
+
+sin θ
+
+> 2
+
+q
+
+8 ˜KdM cos 4 θ 
+
+> 2
+
++ 4˜M 2 cos 2 θ 
+
+> 2
+
+− 1(113) Putting t = sin θ 
+
+> 2
+
+and dt = cos θ 
+
+> 2
+> dθ
+> 2
+
+, we have 
+
+d˜s = 2 dt t
+
+q
+
+8 ˜KdM (1 − t2)2 + 4˜M 2 (1 − t2) − 1(114) On solving this using Mathematica ,˜s = − 2 ˜M
+
+q
+
+(1 − 8 ˜KdM ) ˜M 2 − 4tan −1
+
+
+
+˜M
+
+p 8 ˜KdM t2 −
+
+q
+
+8 ˜KdM (1 − t2)2 + 4˜M 2 (1 − t2) − 1
+
+q
+
+(1 − 8 ˜KdM ) ˜M 2 − 4
+
+
+
+(115) or, tan 
+
+− ˜s
+
+q
+
+(1 − 8 ˜KdM ) ˜M 2 − 42 ˜M
+
+ =˜M
+
+p 8 ˜KdM t2 −
+
+q
+
+8 ˜KdM (1 − t2)2 + 4˜M 2 (1 − t2) − 1
+
+q
+
+(1 − 8 ˜KdM ) ˜M 2 − 4
+
+.
+
+(116) For the range 0 < ˜KdM < 18 , the equation assumes the form tanh 
+
+ ˜s
+
+q
+
+4 − (1 − 8 ˜KdM ) ˜M 2
+
+2 ˜M
+
+ =˜M
+
+p 8 ˜KdM t2 −
+
+q
+
+8 ˜KdM (1 − t2)2 + 4˜M 2 (1 − t2) − 1
+
+q
+
+4 − (1 − 8 ˜KdM ) ˜M 2
+
+.
+
+(117) We can express t2 = sin 2 θ 
+
+> 2
+
+explicitly as sin 2 θ
+
+2 =
+
+Q2
+
+p2 ˜KdM ˜M
+
+q
+
+4 − (1 − 8 ˜KdM ) ˜M 2 tanh 
+
+ ˜sQ 
+
+> 2 ˜M
+
+
+
++ 4 ˜KdM ˜M 2 + 1 
+
+
+
+4 ˜KdM ˜M 2((16 ˜KdM − 1) ˜M 2 + 8) + (4 ˜KdM ˜M 2 + 2) cosh 
+
+ ˜sQ 
+
+> 2 ˜M
+
+
+
++ 2 
+
+. (118) 37 where Q =
+
+q
+
+4 − (1 − 8 ˜KdM ) ˜M 2.The displacement of a material point ˜ s of the rod along the e3-axis is ˜ s − ˜z(˜ s), where ˜ z(˜ s) is the non-dimensional z-coordinate of centerline coordinates as given in Eqn. 6. The ˜ s-derivative of the axial displacement is dd˜ s (˜ s − ˜z(˜ s)) = 1 − cos θ = 2 sin 2 θ
+
+2 . (119) 0 5 10 15 
+
+~D 
+
+> 00.5 11.5 22.5 33.5 44.5
+> ~M
+> Purely elastic ~KdM = 0.1
+
+Fig. 17 : Localized buckling: Variation of end displacement ˜D with ˜M for purely elastic and soft ferromagnetic rods as l → ∞ .Centering the origin of the axis at ˜ s = 0 where θ attains its maximum for reasons of symmetry, we have ˜ z(˜ s = 0) = 0. Further, ˜ s varies from − l 
+
+> 2
+
+to l 
+
+> 2
+
+. At the rod terminals ˜s = ± l 
+
+> 2
+
+, ˜ z = ± ˜D 
+
+> 2
+
+, where ˜D = DM EI is the non-dimensional end displacement of the terminals. Therefore, integrating the above equation and exploiting the symmetry ˜D(− l 
+
+> 2
+
+) = − ˜D( l 
+
+> 2
+
+) leads to ˜D =
+
+Z l/ 2
+
+> −l/ 2
+
+d (˜ s − ˜z(˜ s)) = 4 
+
+Z l/ 20
+
+sin 2 θ
+
+2 d˜s. (120) The expression for sin 2 θ 
+
+> 2
+
+is substituted from Eqn. 118 to obtain ˜D. In the limiting case of an infinitely long rod ( l → ∞ ) composed of a purely elastic material ( ˜KdM = 0), the relation reduces to 
+
+˜D
+
+4 ˜M
+
+!2
+
++ ˜M
+
+2
+
+!2
+
+= 1 , (121) 38 which, upon appropriate non-dimensionalization, recovers Equation 32 of Coyne [8]. Figure 17 presents the variation of the total terminal displacement ˜D with the com-posite load parameter ˜M for both purely elastic and soft ferromagnetic rods in this infinite-length limit. This correspondence establishes the present work as a proper analytical extension of Coyne’s loop-formation analysis to the magnetoelastic setting. Whereas Coyne’s result describes the end-displacement of a purely elastic rod under combined tension and torsion, Eqn. 120 generalizes this to a soft ferromagnetic rod by introducing the magnetoelastic parameter ˜KdM , which continuously deforms the ellipse (Eqn. 121) into the family of curves shown in Fig. 17. 
+
+# 7 Conclusions 
+
+The total energy functional of a three-dimensional ferromagnetic elastic rod, incor-porating both elastic strain energy and micromagnetic energy contributions, was rigorously derived. The Hamiltonian was constructed via the Legendre transform of the energy density and, exploiting the conserved Casimir invariants arising from the circular cross-sectional symmetry and the applied loading, was reduced to a single-degree-of-freedom system in the primary Euler angle. This reduction was carried out for purely elastic rods and for both soft and hard ferromagnetic rods subjected to a lon-gitudinal magnetic field. Analysis of the resulting Hamiltonian phase portraits revealed that purely elastic and hard ferromagnetic rods exhibit a supercritical Hamiltonian Hopf pitchfork bifurcation. In contrast, soft ferromagnetic rods exhibit this bifurca-tion only within the restricted magnetoelastic parameter regime 0 < ˜KdM < 1/8; for ˜KdM ≥ 1/8, the number of critical points of the Hamiltonian remains unchanged as the composite mechanical load parameter is varied, and no bifurcation from the straight configuration is observed. The analysis of helical and localised post-buckling behaviour closely follows the framework established by Thompson and Champneys [10] and Coyne [8] for purely elastic rods, extended here to the magnetoelastic setting. A systematic investigation of helical post-buckling under three distinct loading sequences revealed significant differences between purely elastic and soft ferromagnetic rods. In particular, the magneto-mechanical response of the helically deformed soft ferromagnetic rod depends qualitatively on the loading sequence: when the twisting moment M is varied at fixed tension T , the response differs markedly from the case in which T is varied at fixed 
+
+M . Closed-form expressions were derived relating the maximum lateral deflection and the end displacement of the rod to the composite load parameter, extending the loop-formation analysis of Coyne [8] to the soft ferromagnetic case. The localised buckled configurations of the soft ferromagnetic rod exhibit a geometrically distinctive feature absent in the purely elastic case: the extended straight segments lying on either side of the localised deformation zone are mutually non-collinear, a direct consequence of the magnetoelastic coupling. Several directions remain open for future investigation. The force-displacement relationship for a soft ferromagnetic rod subjected to a prescribed twisting moment, specifically, the relation between the applied tension T and the axial end-displacement has not been derived in the present work and constitutes an immediate next step. More 39 broadly, future work will be directed towards the formulation and solution of the full Euler–Lagrange equations characterising three-dimensional deformations of ferromag-netic elastic rods under combined mechanical and magnetic loading, encompassing a range of boundary conditions and loading scenarios relevant to experimental settings. The present Hamiltonian phase-space analysis identifies equilibrium configurations but does not address their stability, a systematic stability analysis of the obtained equilib-ria is needed to determine critical bifurcation thresholds rigorously and to characterise post-buckling behaviour in the presence of perturbations. These investigations aim to provide a deeper theoretical foundation for the mechanics of ferromagnetic elastic rods and to inform the design of magnetically actuated structures. 
+
+Supplementary information. Nil. 
+
+Acknowledgements. The authors acknowledge research funding through Prime Minister Research Fellowship (PMRF ID: 0201857). 
+
+Declarations. 
+
+# Appendix A Magnetostatic energy of a soft ferromagnetic rod 
+
+We present a brief derivation of the magnetic energy of a circular rod, inspired by [36]. For a soft ferromagnetic rod composed of uniaxial ferromagnet, the micromagnetic energy is given as: 
+
+Emag,soft (m) = A
+
+Z L
+
+> −L
+
+|m′(s)|2 + Kd
+
+Z L
+
+> −L
+
+(M m (s), m(s)) , (A1) where M is a constant symmetric matrix defined as 
+
+M = − 12π
+
+Z
+
+> ∂ω
+
+Z
+
+> ∂ω
+
+n(s, x) ⊗ n(s, y) ln |x − y|dxdy, (A2) where n(s, x) is a normal vector to ∂ω ; ∂ω denotes the boundary of the cross section. Thus, 
+
+Emag,soft (m) = A
+
+Z L
+
+> −L
+
+|m′(s)|2 − Kd
+
+2π
+
+Z L
+
+> −L
+
+Z
+
+> ∂ω
+
+Z
+
+> ∂ω
+
+(m(s) · n(s, x))( m(s) · n(s, y)) ln |x − y|dxdyds 
+
+= A
+
+Z L
+
+> −L
+
+|m′(s)|2 − Kd
+
+2π
+
+Z L
+
+> −L
+
+f (s)ds. 
+
+(A3) We ought to determine 
+
+f (s) = 
+
+Z
+
+> ∂ω
+
+Z
+
+> ∂ω
+
+(m(s) · n(s, x))( m(s) · n(s, y)) ln |x − y|dxdy. (A4) 40 Fig. A1 : Cross-section of the circular rod at a location s indicating the director basis, the points x and y on the periphery. We consider a rod of circular cross section of diameter a = 2 r (r is the radius). We parametrize any two arbitrary points x and y lying on the circular boundary with respect to the director basis D = ( d1, d2, d3) (see Fig. A1) along with the corresponding outward normal vectors n(s, x) and n(s, y) as 
+
+x = ( r cos θ, r sin θ, 0) , y = ( r cos ϕ, r sin ϕ, 0) ,
+
+n(s, x) = (cos θ, sin θ, 0) , n(s, y) = (cos ϕ, sin ϕ, 0) , (A5) where, θ, ϕ ∈ [0 , 2π). Likewise, the components of the magnetization vector m(s) in terms of the director basis are 
+
+m(s) = ( m1(s), m 2(s), m 3(s)) . (A6) Now, a few expansions: 
+
+m · n(s, x) = m1(s) cos θ + m2(s) sin θ, 
+
+m · n(s, y) = m1(s) cos ϕ + m2(s) sin ϕ, 
+
+ln |x − y| = ln 
+
+
+
+rp(cos θ − cos ϕ)2 + (sin θ − sin ϕ)2
+
+
+
+= ln r + 12 ln[2(1 − (cos θ cos ϕ + sin θ sin ϕ))] .
+
+(A7) Along the boundary, dx = rdθ, d y = rdϕ . Now, 
+
+f (s) = 
+
+Z
+
+> ∂ω
+
+Z
+
+> ∂ω
+
+(m(s) · n(s, x))( m(s) · n(s, y)) ln |x − y|dxdy
+
+=
+
+Z 2πθ=0 
+
+Z 2πϕ=0 
+
+(m1 cos θ + m2 sin θ)( m1(s) cos ϕ + m2(s) sin ϕ)
+
+
+
+ln r + 12 ln[2(1 − (cos θ cos ϕ + sin θ sin ϕ))] 
+
+
+
+dθdϕ. (A8) 41 On expanding the terms, 
+
+f (s) = r2
+
+Z 2πθ=0 
+
+Z 2πϕ=0 
+
+[m21 cos θ cos ϕ + m22 sin θ sin ϕ + m1m2(cos θ sin ϕ + sin θ cos ϕ)] ln rdθdϕ 
+
+| {z }
+
+> =0
+
++ r2
+
+2
+
+Z 2πθ=0 
+
+Z 2πϕ=0 
+
+[m21 cos θ cos ϕ + m22 sin θ sin ϕ + m1m2(cos θ sin ϕ + sin θ cos ϕ)] ln[2(1 − (cos θ cos ϕ + sin θ sin ϕ))] dθdϕ, 
+
+(A9) and further simplifying, we get 
+
+f (s) = −π2r2[m21(s) + m22(s)] = −π2r2[( m · d1)2 + ( m · d2)2] (A10) Substituting the expression for f (s) in the micromagnetic energy functional, we have 
+
+Emag,soft (m) = A
+
+Z L
+
+> −L
+
+|m′(s)|2 + Kdπr 2
+
+2
+
+Z L
+
+> −L
+
+[( m · d1)2 + ( m · d2)2]ds, 
+
+=⇒ E mag,soft (m) = 2 A
+
+Z L
+
+> 0
+
+|m′(s)|2 + Kdπa 2
+
+4
+
+Z L
+
+> 0
+
+[( m · d1)2 + ( m · d2)2]ds. 
+
+(A11) We now consider the case of a soft ferromagnetic rod subjected to a high external magnetic field he. The magnetization of the rod m(s) becomes saturated and aligns with he, such that m′(s) = 0. Thus, the micromagnetic energy of a soft ferromagnetic rod takes the form 
+
+Emag,soft (m) = Kdπa 2
+
+4
+
+Z L
+
+> 0
+
+[( m · d1)2 + ( m · d2)2]ds. (A12) Let us derive the expression of the distributed magnetic couple by taking the first variation of the above expression: 
+
+δEmag,soft (m) = Kdπa 2
+
+2
+
+Z L
+
+> 0
+
+[( m · d1)( m · δd1) + ( m · d2)( m · δd2)] ds. (A13) As presented in [29, Section 3.6], the perturbations to the director basis vectors are expressed as 
+
+δdi = δϕ × di, i = 1 , 2, 3, (A14) where the infinitesimal rotation vector δϕ(s) is 
+
+δϕ(s) = δϕ 1(s)d1(s) + δϕ 2(s)d2(s) + δϕ 3(s)d3 (A15) 42 Fig. B2 : A segment of a circular ferromagnetic rod depicting the magnetization m
+
+and its angular position with respect to the director basis ( d1, d2, d3) described the coordinates ( θ1, θ 2) at a location s.which denotes the perturbations to the orientation of the director basis. Now, 
+
+m · δd1 = ( m · d2)δϕ 3 − (m · d3)δϕ 2
+
+m · δd2 = −(m · d1)δϕ 3 + ( m · d3)δϕ 1. (A16) Inserting the expressions in the first variation, 
+
+δEmag,soft (m) = Kdπa 2
+
+2
+
+Z L
+
+> 0
+
+[( m · d2)( m · d3)δϕ 1 − (m · d1)( m · d3)δϕ 2]ds 
+
+= Kdπa 2
+
+2
+
+Z L
+
+> 0
+
+[( m(s) · d3(s))( m(s) × d3(s))] · δϕds. (A17) It can be inferred from the above that the distributed magnetic couple due to magnetostatic energy is 
+
+qmag,soft (s) = Kdπa 2
+
+2 (m(s) · d3(s))( m(s) × d3(s)) . (A18) 
+
+# Appendix B Exchange and anisotropy energies of a hard ferromagnetic rod 
+
+We now proceed to deriving expressions for the exchange and anisotropy energies for hard ferromagnetic rods inspired by [19]. The energy formulation considers a general magnetization distribution along the centerline of the rod m(s). In the reference configuration, the magnetization distribution is 
+
+m0(s) = sin θ1(s) cos θ2(s)e1 + sin θ1(s) sin θ2(s)e2 + cos θ1(s)e3, (B19) 43 where θ1(s) ∈ [0 , π ] and θ2(s) ∈ [0 , 2π). The magnetization distribution of the rod in the deformed configuration, as illustrated in Fig. B2, is 
+
+m(s) = sin θ1(s) cos θ2(s)d1(s) + sin θ1(s) sin θ2(s)d2(s) + cos θ1(s)d3(s). (B20) We determine the micromagnetic energy functional of the hard ferromagnetic rod: 
+
+Emag,hard = Aπa 2
+
+4
+
+Z L
+
+> 0
+
+Eex ds + Kaπa 2
+
+4
+
+Z L
+
+> 0
+
+(m · p)2ds − 2Kdπa 2
+
+4
+
+Z L
+
+> 0
+
+m · heds, (B21) where Eex is the exchange energy density and p is the anisotropy easy axis. We derive the exchange energy density in the curvilinear rod frame. Recall that the centerline-based parametrization of the rod is: 
+
+x(s, a 1, a 2) = r(s) + a1d1 + a2d2, ˜a = ( a1, a 2) (B22) such that |˜a| ≤ a/2. Also, the director basis vectors evolve as 
+
+d′
+
+> i
+
+(s) = κ(s) × di(s) = K(s) · di(s), (B23) where κ = κ1d1 + κ2d2 + κ3d3 is the strain gradient vector, while K denotes the corresponding skew-symmetric matrix composed of its components as 
+
+K =
+
+ 0 −κ3 κ2
+
+κ3 0 −κ1
+
+−κ2 κ1 0
+
+ . (B24) The exchange energy density is given in terms of Cartesian frame of reference as: 
+
+Eex = ( ∇mi) · (∇mi), i = 1 , 2, 3, (B25) where the Cartesian components of the magnetization vector, mi, in terms of the curvilinear components mα as follows: 
+
+mi = mα(dα · ei). (B26) We substitute this expression into Eex and apply a del operator in its curvilinear form, 
+
+∇ ≡ e3 ∂∂s . Finally, the energy density in the curvilinear frame is expressed as: 
+
+Eex = ( mαdα)′ · (mβ dβ )′
+
+= ( m′
+
+> α
+
+dα + mαd′
+
+> α
+
+) · (m′ 
+
+> β
+
+dβ + mβ d′ 
+
+> β
+
+)= m′
+
+> α
+
+m′ 
+
+> β
+
+dα · dβ + ( m′
+
+> α
+
+mβ dα · d′ 
+
+> β
+
++ mαm′ 
+
+> β
+
+d′ 
+
+> α
+
+· dbeta ) + mαmβ d′ 
+
+> α
+
+· d′
+
+> β
+
+= m′
+
+> α
+
+m′
+
+> α
+
+| {z } 
+
+> Eo
+> ex
+
++ mαmβ d′ 
+
+> α
+
+· d′
+
+> β
+
+| {z }
+
+> EA
+> ex
+
++ ( m′
+
+> α
+
+mβ dα · d′ 
+
+> β
+
++ mαm′ 
+
+> β
+
+d′ 
+
+> α
+
+· dβ )
+
+| {z }
+
+> ED
+> ex
+
+.
+
+(B27) 44 We further expand each of these terms. Now, 
+
+Eo 
+
+> ex
+
+= m′
+
+> α
+
+m′ 
+
+> α
+
+= |m′(s)|2. (B28) The EA
+
+> ex
+
+-component is 
+
+EA 
+
+> ex
+
+= mαmβ d′ 
+
+> α
+
+· d′ 
+
+> β
+
+= mαmβ (Kd α) · (Kd β ) = mαmβ dα · (KT K)dβ = mαmβ dα · Bd β
+
+= Bαβ mαmβ ,
+
+(B29) where 
+
+B = KT K = −K2 =
+
+κ22 + κ23 −κ1κ2 −κ1κ3
+
+−κ1κ2 κ21 + κ23 −κ2κ3
+
+−κ1κ3 −κ2κ3 κ21 + κ22
+
+ . (B30) The Dzyaloshinskii interaction component is 
+
+ED 
+
+> ex
+
+= m′
+
+> α
+
+mβ dα · d′ 
+
+> β
+
++ mαm′ 
+
+> β
+
+d′ 
+
+> α
+
+· dβ
+
+= m′
+
+> α
+
+mβ dα · Kd β + mαm′ 
+
+> β
+
+Kd α · dβ
+
+= m′
+
+> α
+
+mβ dα · Kd β + mαm′ 
+
+> β
+
+dα · KT dβ
+
+= ( m′
+
+> α
+
+mβ − mαm′ 
+
+> β
+
+)Kαβ .
+
+(B31) It can be further simplified as 
+
+ED 
+
+> ex
+
+= ( m′
+
+> α
+
+mβ − mαm′ 
+
+> β
+
+)Kαβ 
+
+= m′
+
+> α
+
+Kαβ mβ − mαKαβ m′
+
+> β
+
+= m′
+
+> α
+
+Kαβ mβ + mαKβα m′ 
+
+> β
+
+(Kβα = −Kαβ )= m′
+
+> α
+
+Kαβ mβ + m′ 
+
+> β
+
+Kβα m′
+
+> α
+
+= 2 m′
+
+> α
+
+Kαβ mβ .
+
+(B32) Given that 
+
+m(s) = sin θ1(s) cos θ2(s)
+
+| {z }
+
+> m1
+
+d1(s) + sin θ1(s) sin θ2(s)
+
+| {z }
+
+> m2
+
+d2(s) + cos θ1(s)
+
+| {z }
+
+> m3
+
+d3(s). (B33) Now, 
+
+Eo 
+
+> ex
+
+= m′
+
+> α
+
+m′ 
+
+> α
+
+= (cos θ1 cos θ2θ′ 
+
+> 1
+
+− sin θ1 sin θ2θ′
+
+> 2
+
+)2 + (cos θ1 sin θ2θ′ 
+
+> 1
+
++ sin θ1 cos θ2θ′
+
+> 2
+
+)2
+
++ ( − sin θ1θ′
+
+> 1
+
+)2 = cos 2 θ1θ′21 + sin 2 θ1θ′22 + sin 2 θ1θ′21 (B34) Therefore, 
+
+Eo 
+
+> ex
+
+= θ′21 + sin 2 θ1θ′22 . (B35) 45 EA 
+
+> ex
+
+=
+
+sin θ1 cos θ2
+
+sin θ1 sin θ2
+
+cos θ1
+
+ ·
+
+κ22 + κ23 −κ1κ2 −κ1κ3
+
+−κ1κ2 κ21 + κ23 −κ2κ3
+
+−κ1κ3 −κ2κ3 κ21 + κ22
+
+sin θ1 cos θ2
+
+sin θ1 sin θ2
+
+cos θ1
+
+ (B36) 
+
+EA 
+
+> ex
+
+= ( κ21 + κ22) cos 2 θ1 − κ3 sin(2 θ1)( κ1 cos θ2 + κ2 sin θ2)+ 12 sin 2 θ1(κ21 + κ22 + 2 κ23 + ( κ22 − κ21) cos(2 θ2) − 2κ1κ2 sin(2 θ2)) . (B37) Now, 
+
+ED 
+
+> ex
+
+= 2 
+
+cos θ1 cos θ2θ′ 
+
+> 1
+
+− sin θ1 sin θ2θ′
+
+> 2
+
+cos θ1 sin θ2θ′ 
+
+> 1
+
++ sin θ1 cos θ2θ′
+
+> 2
+
+− sin θ1θ′
+
+> 1
+
+ ·
+
+ 0 −κ3 κ2
+
+κ3 0 −κ1
+
+−κ2 κ1 0
+
+sin θ1 cos θ2
+
+sin θ1 sin θ2
+
+cos θ1
+
+ (B38) Therefore, 
+
+ED 
+
+> ex
+
+= 2( κ2 cos θ2 −κ1 sin θ2)θ′ 
+
+> 1
+
++(2 κ3 sin 2 θ1 −sin(2 θ1)( κ1 cos θ2 +κ2 sin θ2)) θ′
+
+> 2
+
+. (B39) Gathering and summing Eo
+
+> ex
+
+, EA 
+
+> ex
+
+and ED
+
+> ex
+
+, we have 
+
+Eex = θ′21 + sin 2 θ1θ′22 + ( κ21 + κ22) cos 2 θ1 − κ3 sin(2 θ1)( κ1 cos θ2 + κ2 sin θ2)+ 12 sin 2 θ1(κ21 + κ22 + 2 κ23 + ( κ22 − κ21) cos(2 θ2) − 2κ1κ2 sin(2 θ2)) + 2( κ2 cos θ2 − κ1 sin θ2)θ′ 
+
+> 1
+
++ (2 κ3 sin 2 θ1 − sin(2 θ1)( κ1 cos θ2 + κ2 sin θ2)) θ′ 
+
+> 2
+
+(B40) We consider that the magnetization vector m is uniformly distributed in the refer-ence (straight, untwisted) configuration, that is, θ′
+
+> 1
+
+(s) = θ′
+
+> 2
+
+(s) = 0. We now analyze the resulting special cases of m which assumes the following forms in the deformed configuration: 
+
+• m = d3(s) = ⇒ θ1 = 0: Eex = κ21 + κ22
+
+• m ⊥ d3(s) = ⇒ θ1 = π 
+
+> 2
+
+: Eex = 12 (κ21 +κ22 +2 κ23 +( κ22 −κ21) cos(2 θ2)−2κ1κ2 sin(2 θ2)); the following are the two special sub-cases: – m = d1 (θ2 = 0): Eex = κ22 + κ23
+
+– m = d2 (θ2 = π 
+
+> 2
+
+): Eex = κ21 + κ23
+
+For a hard ferromagnetic circular rod composed of a uniaxial ferromagnet with tangen-tial magnetization distribution m(s) = d3(s) and easy axis p = d3(s), the magnetic energy is given as 
+
+Emag,hard (m) = Aπa 2
+
+4
+
+Z L
+
+> 0
+
+(κ21 + κ22)ds + Kaπa 2L
+
+4| {z }
+
+> constant
+
+− Kdπa 2
+
+2
+
+Z L
+
+> 0
+
+d3 · heds. (B41) 46 Repeating the steps as followed in Eqns. A13-A17, the corresponding distributed magnetic couple is 
+
+qmag,hard (s) = Aπa 2
+
+2 (κ1(s)d1(s) + κ2(s)d2(s)) ′ + Kdπa 2
+
+2 d3(s) × he. (B42) 
+
+# References 
+
+[1] Timoshenko, S.P., Gere, J.M.: Theory of Elastic Stability. Dover Civil and Mechanical Engineering. Dover Publications, New York (2012). 
+
+https://books.google.co.in/books?id=98B6JOW2HiUC 
+
+[2] Avatar, G.R.K.C., Dabade, V.: Deformation of a planar ferromagnetic elas-tic ribbon. Journal of Elasticity 157 (1) (2024) https://doi.org/10.1007/ s10659-024-10100-w [3] Avatar, G.R.K.C., Dabade, V.: Kirchhoff’s analogy for a planar deformable fer-romagnetic rod. Journal of Applied Mechanics, 1–12 (2025) https://doi.org/10. 1115/1.4068252 [4] Gerbode, S.J., Puzey, J.R., McCormick, A.G., Mahadevan, L.: How the cucumber tendril coils and overwinds. Science 337 (6098), 1087–1091 (2012) https://doi. org/10.1126/science.1223304 [5] Feng, J., Zhang, W., Liu, C., Guo, M., Zhang, C.: Homoclinic and heteroclinic orbits in climbing cucumber tendrils. Scientific Reports 9(1) (2019) https://doi. org/10.1038/s41598-019-41487-5 [6] Wu, Z., Zhang, W., Yuan, R., Liu, J.: Buckling and dynamic analysis of drill string system in horizontal wells. Nonlinear Dynamics 112 (6), 4147–4168 (2024) https://doi.org/10.1007/s11071-023-09100-7 [7] Ermolaeva, N.S., Regelink, J., Krutzen, M.P.M.: Hockling behaviour of single-and multiple-rope systems. Engineering Failure Analysis 15 (1–2), 142–153 (2008) https://doi.org/10.1016/j.engfailanal.2006.11.019 [8] Coyne, J.: Analysis of the formation and elimination of loops in twisted cable. IEEE Journal of Oceanic Engineering 15 (2), 72–83 (1990) https://doi.org/10. 1109/48.50692 [9] Liu, L., Yan, Z., He, Y., Liu, D.: On the configuration evolution of soft filaments under combined tension and torsion. Acta Mechanica Sinica 39 (11) (2023) https: //doi.org/10.1007/s10409-023-22498-x [10] Thompson, J.M.T., Champneys, A.: From helix to localized writhing in the tor-sional post-buckling of elastic rods. Proceedings of the Royal Society of London. Series A: Mathematical, Physical and Engineering Sciences 452 (1944), 117–138 47 (1996) [11] Hu, J., Teng, J., Liu, L., Liu, D.: Toward a further understanding of the loop formation and elimination in twisted filament: experiments and validation. Pro-ceedings of the Royal Society A: Mathematical, Physical and Engineering Sciences 
+
+480 (2282) (2024) https://doi.org/10.1098/rspa.2023.0719 [12] Champneys, A.R., Heijden, G.H.M., Thompson, J.M.T.: The spatial complex-ity of localized buckling in rods with noncircular cross section. SIAM Jour-nal on Applied Mathematics 59 (1), 198–221 (1998) https://doi.org/10.1137/ s0036139996306833 [13] Champneys, A., Thompson, J.M.T.: A multiplicity of localized buckling modes for twisted rod equations. Proceedings of the Royal Society of London. Series A: Mathematical, Physical and Engineering Sciences 452 (1954), 2467–2491 (1996) [14] Audoly, B.: Localized buckling of a floating elastica. Physical Review E 84 (1) (2011) https://doi.org/10.1103/physreve.84.011605 [15] Peacock, C., Lee, E., Beral, T., Cisek, R., Tokarz, D., Kreplak, L.: Buckling and torsional instabilities of a nanoscale biological rope bound to an elastic substrate. ACS Nano 14 (10), 12877–12884 (2020) https://doi.org/10.1021/acsnano.0c03695 [16] Neukirch, S.: Writhing instabilities of twisted rods: from infinite to finite length. Journal of the Mechanics and Physics of Solids 50 (6), 1175–1191 (2002) https: //doi.org/10.1016/s0022-5096(01)00130-2 [17] Heijden, G.H.M., Champneys, A.R., Thompson, J.M.T.: Spatially complex localisation in twisted elastic rods constrained to a cylinder. International Jour-nal of Solids and Structures 39 (7), 1863–1883 (2002) https://doi.org/10.1016/ s0020-7683(01)00234-7 [18] Sinden, D., Heijden, G.H.M.: Integrability of a conducting elastic rod in a mag-netic field. Journal of Physics A: Mathematical and Theoretical 41 (4), 045207 (2008) https://doi.org/10.1088/1751-8113/41/4/045207 [19] Sheka, D.D., Kravchuk, V.P., Gaididei, Y.: Curvature effects in statics and dynamics of low dimensional magnets. Journal of Physics A: Mathematical and Theoretical 48 (12), 125202 (2015) https://doi.org/10.1088/1751-8113/48/ 12/125202 [20] Sheka, D.D., Pylypovskyi, O.V., Volkov, O.M., Yershov, K.V., Kravchuk, V.P., Makarov, D.: Fundamentals of curvilinear ferromagnetism: statics and dynamics of geometrically curved wires and narrow ribbons. Small 18 (12), 2105219 (2022) [21] Streubel, R., Fischer, P., Kronast, F., Kravchuk, V.P., Sheka, D.D., Gaididei, Y., Schmidt, O.G., Makarov, D.: Magnetism in curved geometries. Journal of Physics 48 D: Applied Physics 49 (36), 363001 (2016) [22] Sheka, D.D., Kravchuk, V.P., Yershov, K.V., Gaididei, Y.: Torsion-induced effects in magnetic nanowires. Physical Review B 92 (5) (2015) https://doi.org/10.1103/ physrevb.92.054417 [23] Streubel, R., Tsymbal, E.Y., Fischer, P.: Magnetism in curved geometries. Journal of Applied Physics 129 (21) (2021) https://doi.org/10.1063/5.0054025 [24] Gaididei, Y., Goussev, A., Kravchuk, V.P., Pylypovskyi, O.V., Robbins, J.M., Sheka, D.D., Slastikov, V., Vasylkevych, S.: Magnetization in narrow ribbons: curvature effects. Journal of Physics A: Mathematical and Theoretical 50 (38), 385401 (2017) https://doi.org/10.1088/1751-8121/aa8179 [25] Heijden, G., Thompson, J.: Helical and localised buckling in twisted rods: a unified analysis of the symmetric case. Nonlinear dynamics 21 , 71–99 (2000) https://doi. org/10.1023/a:1008310425967 [26] Ameline, O., Haliyo, S., Huang, X., Cognet, J.A.H.: Classifications of ideal 3d elastica shapes at equilibrium. Journal of Mathematical Physics 58 (6) (2017) https://doi.org/10.1063/1.4989556 [27] Love, A.E.H.: A Treatise on the Mathematical Theory of Elasticity. Courier Corporation, Massachusetts (1944) [28] Mielke, A., Holmes, P.: Spatially complex equilibria of buckled rods. Archive for Rational Mechanics and Analysis 101 (4), 319–348 (1988) https://doi.org/10. 1007/bf00251491 [29] Audoly, B., Pomeau, Y.: Elasticity and Geometry: From Hair Curls to the Non-linear Response of Shells. OUP Oxford, Oxford (2010). 
+
+https://books.google.co.in/books?id=FMQRDAAAQBAJ 
+
+[30] Choksi, R., Kohn, R.V., Otto, F.: Domain branching in uniaxial ferromagnets: a scaling law for the minimum energy. Communications in mathematical physics 
+
+201 (1), 61–79 (1999) [31] Dichmann, D.J., Li, Y., Maddocks, J.H.: Hamiltonian Formulations and Symme-tries in Rod Mechanics, pp. 71–113. Springer, New York (1996). https://doi.org/ 10.1007/978-1-4612-4066-2 6 . http://dx.doi.org/10.1007/978-1-4612-4066-2 6 
+
+[32] Neukirch, S., Bertails-Descoubes, F.: A noetherian approach to invariants for the statics and dynamics of elastic rods. International Journal of Non-Linear Mechan-ics 181 , 105269 (2026) https://doi.org/10.1016/j.ijnonlinmec.2025.105269 [33] Goldstein, H.: Classical Mechanics. Pearson, London (2011). 
+
+https://books.google.co.in/books?id=tVeFlb9tTxgC 
+
+49 [34] Heijden, G.H.M.: The static deformation of a twisted elastic rod constrained to lie on a cylinder. Proceedings of the Royal Society of London. Series A: Mathematical, Physical and Engineering Sciences 457 (2007), 695–715 (2001) https://doi.org/10.1098/rspa.2000.0688 [35] Pressley, A.: Elementary Differential Geometry. Springer, London (2010). https:// doi.org/10.1007/978-1-84882-891-9 . https://doi.org/10.1007/978-1-84882-891-9 
+
+[36] Slastikov, V.V., Sonnenberg, C.: Reduced models for ferromagnetic nanowires. IMA Journal of Applied Mathematics 77 (2), 220–235 (2011) https://doi.org/10. 1093/imamat/hxr019 50

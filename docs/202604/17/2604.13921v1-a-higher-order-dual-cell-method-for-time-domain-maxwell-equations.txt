@@ -1,0 +1,1625 @@
+Title: A higher-order dual cell method for time-domain Maxwell equations
+
+URL Source: https://arxiv.org/pdf/2604.13921v1
+
+Published Time: Thu, 16 Apr 2026 01:03:46 GMT
+
+Number of Pages: 21
+
+Markdown Content:
+# A higher-order dual cell method for time-domain Maxwell equations 
+
+## Lorenzo Codecasa 1, Bernard Kapidani 2, Joachim Sch¨ oberl 3, and Markus Wess 33Institute of Analysis and Scientific Computing, Technische Universit¨ at Wien, A-1040, Vienna, Austria. 
+
+## markus.wess@tuwien.ac.at, joachim.schoeberl@tuwien.ac.at 
+
+> 2
+
+## Institute of Mathematics, ´Ecole Polytechnique F´ ed´ erale Lausanne, CH-1015 Lausanne, Switzerland 
+
+## bernard.kapidani@epfl.ch 
+
+> 1
+
+## Dipartimento di Elettronica, Informatica e Bioingegneria, Politecnico di Milano, I-20133 Milano, Italy 
+
+## lorenzo.codecasa@polimi.it 
+
+## April 16, 2026 
+
+Abstract 
+
+We present a higher-order extension of the dual cell method for the time-domain Maxwell equations in three spatial dimensions. The approach builds upon a variational reinterpretation of the Finite In-tegration Technique on dual meshes and generalises a previously developed two-dimensional high-order formulation. The electric and magnetic fields are discretised on mutually dual barycentric grids using curl-conforming polynomial spaces constructed via tensor-product Gauss–Radau interpolation. The re-sulting semi-discrete formulation yields block-diagonal mass matrices and sparse discrete curl operators, enabling explicit time integration while preserving a discrete energy identity. Special attention is devoted to the construction of compatible approximation spaces on the three-dimensional primal and dual meshes, the reference-to-physical element mappings, and the preservation of tangential continuity. We show that the method achieves arbitrary-order convergence, avoids spurious modes, and maintains optimal sparsity properties. Numerical experiments confirm spectral correctness, high-order accuracy, and computational efficiency on unstructured tetrahedral meshes. 
+
+# 1 Introduction 
+
+The numerical approximation of time-dependent initial boundary value problems for hyperbolic systems such as Maxwell’s equations is traditionally dominated by finite difference schemes, most prominently the second-order staggered grid formulation introduced by Yee [1], commonly referred to as the Finite Difference Time Domain (FDTD) method. The widespread adoption of FDTD is largely due to its algorithmic sim-plicity, structured stencil, and suitability for large-scale parallel implementations [2]. In many engineering applications, however, electromagnetic devices exhibit complex geometrical features that are more naturally described by unstructured tetrahedral meshes. This motivates the use of finite element methods (FEM) for the time-domain Maxwell equations [3]. In particular, edge elements introduced by N´ ed´ elec [4] and their high-order extensions [5] provide curl-conforming discretisations that eliminate spurious gradient modes at the continuous level. A major limitation of standard continuous FEM discretisations in explicit time-domain simulations lies in the presence of non-diagonal mass matrices. The mass matrix associated with edge element spaces is 1
+
+> arXiv:2604.13921v1 [math.NA] 15 Apr 2026
+
+sparse but not diagonal, and its inversion is computationally demanding at every time step. While iterative solvers such as preconditioned conjugate gradient methods may be employed, this increases computational cost and may slightly deteriorate the exact energy conservation property at the semi-discrete level. Discontinuous Galerkin (DG) methods provide an alternative that restores locality and parallel scalability by allowing element-wise discontinuities [6, 7]. However, DG schemes require carefully designed numerical fluxes and stabilisation mechanisms, and may exhibit spurious solutions or instabilities unless stabilisation parameters are appropriately tuned. The present work extends a line of research initiated by the authors, rooted in the Finite Integration Technique (FIT) [8, 9, 10]. In [11], it was shown that the low-order FIT formulation can be interpreted as a variational method on barycentric dual meshes. A numerical analysis of closely related lowest order methods is presented in [12, 13, 14]. In [15, 16], a high-order generalisation was developed in two dimensions using orthogonal polynomial bases to achieve arbitrary-order convergence together with optimally sparse mass matrices. Existing methods based on Discrete Exterior Calculus [17, 18] provide lowest order explicit schemes for hyperbolic systems of equations on unstructured dual grids and more recent research has been published to provide mass lumping schemes for scalar wave equations and Maxwell equations in three dimensions up to second order space accuracy [19, 20, 21], but no general recipe is available to extend these methods to arbitrary order of convergence to render them competitive with full DG schemes in terms of performance. In this work, we extend the high-order dual cell method to three spatial dimensions and unstructured grids (similar ideas for staggered high-order schemes on cuboidal meshes have been investigated, e.g., in [22, 23]). As in the two-dimensional case, the electric and magnetic fields are discretised on mutually dual barycentric grids. One field is defined on the primal tetrahedral mesh, while the other is discretised on the associated polyhedral dual mesh obtained by barycentric subdivision. A central objective of the present formulation is to retain the structural properties of Maxwell’s equations at the discrete level, in particular the absence of spurious modes and the conservation of electromagnetic energy, while at the same time achieving favourable sparsity and explicit time stepping through block-diagonal (lumped) mass matrices. The resulting scheme preserves the key properties of the two-dimensional formulation: arbitrary high-order convergence, freedom from spurious solutions, explicit time stepping, and a discrete energy conservation law. The extension to three dimensions significantly broadens the applicability of the method to realistic electromagnetic configurations. The paper is structured as follows. After recalling the main ingredients of the weak formulation and the construction of barycentric dual meshes in Section 2, we introduce the three-dimensional extension in Section 3.1, detailing the approximation spaces, local mappings, and discrete operators. We then describe our choice of time discretisation in Section 3.2. The numerical behaviour of the method is investigated in Section 4, where convergence studies and benchmark tests confirm arbitrary-order convergence, spectral correctness, and computational efficiency of the extension to three dimensions. We conclude with a short summary and an outlook on future research directions. 
+
+# 2 Weak Formulation on Dual Grids 
+
+Let Ω Ă R3 be a bounded Lipschitz domain. The time-domain Maxwell equations in Ω can be written in the form 
+
+ε BtE “ curl H,
+
+μ BtH “ ´ curl E,
+
+where the electric field E and the magnetic field H are functions of the position vector x “ p x1, x 2, x 3q and time instant t. The electric permittivity ε and the magnetic permeability μ are symmetric positive definite double tensors (i.e., symmetric positive definite matrix-valued functions) and may depend on the position 
+
+x. For the sake of simplicity the boundary BΩ is assumed to be an electric wall (i.e., n ˆ E “ 0 on BΩ). We assume throughout that ε, μ P L8pΩq3ˆ3 and are uniformly positive definite. Let T be a primal simplicial complex covering Ω, and let rT be its dual, obtained by barycentric subdivision of T as follows: 2˜V        
+
+> T(a) Primal cell and dual ver-tex ˜E
+> F
+> (b) Primal face and dual edge ˜F
+> E
+> (c) Primal edge and dual face V
+> ˜K
+> (d) Primal vertex and dual cell
+
+Figure 1: Entities of the primal mesh (red) and their dual counterparts (blue) for a mesh consisting of one single primal cell. 
+
+Figure 2: A primal (tetrahedral) and dual (polyhedral) cell. 
+
+• Each vertex rV of rT is the dual of one cell T of T , located in the barycentre of T (see Fig. 1a). 
+
+• Each edge rE of rT is the dual of one face F of T . In each cell T of T , dual of vertex rV of rT , which has face F in its boundary, rE is the segment joining rV with the barycentre of F (see Fig. 1b). 
+
+• Each face rF of rT is the dual of one edge E of T . Let T be any cell of T , dual of vertex rV of rT ,having E on its boundary, and let F1, F 2 be the two faces of T , dual of edges rE1, rE2 of rT respectively, belonging to T and containing E. The restriction of rF to T is the quadrilateral having rE1, rE2 as edges and the barycentre of E as a vertex (see Fig. 1c). 
+
+• Each cell rT of rT is the dual of one node N of T . Let T be any cell of T , dual of vertex rV of rT ,having N on its boundary, and let E1, E 2, E 3 be the three edges of T , dual of faces rF1, rF2, rF3 of rT
+
+respectively, belonging to T and containing V . The restriction of rT to T is the hexahedron having rF1,
+
+rF2, rF3 as faces and N as a vertex (see Fig. 1d). This construction yields a pair of mutually dual cell complexes satisfying the usual incidence relations of discrete differential geometry. Let H pcurl , T q be the space of square integrable vector functions whose restriction to each cell T of T
+
+has square integrable curl. Similarly let H pcurl , rT q be the space of square integrable vector functions whose restriction to each cell rT of rT has square integrable curl. More precisely, these are broken Sobolev spaces, i.e., Hpcurl , T q “ t v P L2pΩq3 : v|T P Hpcurl , T q @ T P T u,
+
+and analogously for rT . By applying Stokes’ theorem, the following weak formulation of Maxwell equations ensues. Let E and H be square integrable vector functions with square integrable curl. For each e P
+
+3K ˆK
+
+> FK
+
+Figure 3: Reference-to-physical trilinear mapping FK from the cube pK to a generic polyhedral subcell K P K.Hpcurl , rT q it results in 
+
+ÿ  
+
+> rTPrT
+
+ż
+
+> rT
+
+e ¨ εBtE dV “ ÿ  
+
+> rTPrT
+
+˜
+
+´
+
+ż  
+
+> BrTzB Ω
+
+e ˆ H ¨ n dS `
+
+ż
+
+> rT
+
+curl e ¨ H dV 
+
+¸
+
+, (1) where n is the unit vector function outward normal to B rT .Similarly for each h P Hpcurl , T q we obtain 
+
+ÿ 
+
+> TPT
+
+ż
+
+> T
+
+h ¨ μBtH dV “ ´ ÿ 
+
+> TPT
+
+ˆ
+
+´
+
+ż
+
+> BT
+
+h ˆ E ¨ n dS `
+
+ż
+
+> T
+
+curl h ¨ E dV 
+
+˙
+
+. (2) Let now K be the set of all non-empty intersections K “ T X rT , where T is a cell of the primal mesh T
+
+and rT is a cell of the dual mesh rT . For each K P K we further define the boundary portions BT K “ B K X B T
+
+and B rT K “ B K X B rT .Eqs. (1), (2) can then be rewritten in the form 
+
+ÿ
+
+> KPK
+
+ż
+
+> K
+
+e ¨ εBtE dV “ ÿ
+
+> KPK
+
+˜
+
+´
+
+ż
+
+> BKĂT
+
+e ˆ H ¨ n dS `
+
+ż
+
+> K
+
+curl e ¨ H dV 
+
+¸
+
+, (3) 
+
+ÿ
+
+> KPK
+
+ż
+
+> K
+
+h ¨ μBtH dV “ ´ ÿ
+
+> KPK
+
+ˆ
+
+´
+
+ż
+
+> BKT
+
+h ˆ E ¨ n dS `
+
+ż
+
+> K
+
+curl h ¨ E dV 
+
+˙
+
+. (4) Let the position vector x in each hexahedron K of K be a trilinear map x “ FK ppxq of the position vector 
+
+px “ p px1, px2, px3q in the cube pK “ r´ 1, 1s3. Let the vertex of K corresponding to the node of T be the map of px “ p´ 1, ´1, ´1q, and the vertex of K corresponding to the node of rT be the map of px “ p 1, 1, 1q. Let 
+
+JK ppxq “ B FK ppxq{B px be the Jacobean matrix of this map. Vector fields on K are related to reference fields on pK via the covariant Piola transformation 
+
+v “ J´TK pv,
+
+which preserves tangential continuity across element interfaces and yields curl-conforming approximation spaces. Eqs. (3), (4) can then be rewritten in the form 
+
+ÿ
+
+> KPK
+
+ż
+
+> xK
+
+pexK ¨ pεK Bt pExK |JK |d pV “ ÿ
+
+> KPK
+
+˜
+
+´
+
+ż 
+
+> BxKĂT
+
+pexK ˆ xHxK ¨ pn d pS `
+
+ż
+
+> xK
+
+ycurl pexK ¨ xHxK d pV
+
+¸
+
+, (5) 4ÿ
+
+> KPK
+
+ż
+
+> xK
+
+phxK ¨ pμK Bt xHxK |JK |d pV “ ´ ÿ
+
+> KPK
+
+ˆ
+
+´
+
+ż 
+
+> BxKT
+
+phxK ˆ pEK ¨ pn d pS `
+
+ż
+
+> xK
+
+ycurl phxK ¨ pExK d pV
+
+˙
+
+, (6) in which: E “ J´TK pExK , e “ J´TK pexK , H “ J´TK xHxK , h “ J´TK phxK , pεK “ J´1 
+
+> K
+
+εJ´TK and pμK “ J´1 
+
+> K
+
+μJ´TK ; d pV
+
+is an infinitesimal volume, d pS is an infinitesimal area; ycurl is the curl in pK; pn is the unit vector function outward normal to B pK; B pKT and B pK rT are mapped by FK into BKT and BK rT respectively. 
+
+# 3 Discretisation 
+
+In the following we present how the weak formulation (5), (6) are discretised in space and time. For the spatial discretisation we construct in subsection 3.1 finite dimensional subspaces of H pcurl , K q for each hexahedron 
+
+K of arbitrary polynomial order. These subspaces are subsequentially combined to H pcurl q conforming sub spaces on primal and dual cells respectively. In subsection 3.2 we briefly discuss the time discretisation 
+
+## 3.1 Spatial Discretisation 
+
+Let QP pKq with P ą 0 be the set of vector functions whose restriction to each hexahedron K P K corre-sponding to cube pK is v “ J´TK pvK being pvK a polynomial vector function of degree at most P in each of the variables px1, px2, px3.Using the trilinear mapping FK : pK Ñ K and associated Jacobian JK introduced in Section 2, we define the tensor-product polynomial space 
+
+QP pKq “ 
+
+!
+
+v : v|K “ J´TK pv, pv P Q3 
+
+> P
+
+p pKq
+
+)
+
+,
+
+where QP denotes polynomials of degree at most P in each coordinate. For each K we employ tensor-product Gauss–Radau interpolation polynomials associated with nodes ´1 “ pξ0 ă pξ1 ă ¨ ¨ ¨ ă pξP ă 1 on 
+
+r´ 1, 1s in every coordinate direction, which will be used both for defining basis functions and for constructing high-order accurate quadrature rules. Curved geometries can be treated in the usual isoparametric fashion by choosing FK as a higher-order polynomial (or spline) mapping that approximates curved boundaries. Provided that FK is sufficiently smooth and of polynomial degree at least P , the induced Piola mapping preserves the convergence order of the approximation in physical space, in complete analogy with standard high-order isoparametric finite elements [3]. 
+
+3.1.1 HP pcurl , rT q
+
+Let it be HP pcurl , rT q “ Hpcurl , rT q Ş QP pKq. A basis for HP pcurl , rT q is the set of vector functions En, with 
+
+n “ 1, . . . , N , whose restriction to any hexahedron K of K corresponding to cube pK is either identically zero or given by 
+
+En,K “ J´TK pEn, xK ,
+
+pEn, xK “ pℓαppxqpei, (7) in which i P t 1, 2, 3u, pei is the unit vector corresponding to axis pxi, α “ p α1, α 2, α 3q P t 0, . . . , P u3,
+
+pℓαppxq “ pℓα1 ppx1q ¨ pℓα2 ppx2q ¨ pℓα3 ppx3q, in which pℓαppxq, with 0 ď α ď P , is the interpolation polynomial in 
+
+px, equal to one in the interpolation point pξα, having as interpolation points the P ` 1 Gauss-Radau quadra-ture points ´1 “ pξ0 ă pξ1 ă ¨ ¨ ¨ ă pξP ă 1 for interval r´ 1, 1s, corresponding to weights pw0, pw1, ¨ ¨ ¨ , pwP .Three types of basis vector functions follow: 1. Cell-centred basis functions. 
+
+5(a) Support of a cell-centered basis function 
+
+> (b) Support of a face-centered basis function
+> (c) Support of a edge-centered basis function
+
+Figure 4: Support of different types of basis functions on the dual mesh 
+
+> (a) Support of a cell-centered basis function
+> (b) Support of a face-centered basis function
+> (c) Support of a edge-centered basis function
+
+Figure 5: Support of different types of basis functions on the primal mesh A permutation pi j k q of p1 2 3 q exists such that αj ą 0 and αk ą 0. In this case En is zero on the two faces of F belonging to the boundary of K and corresponding to the faces of pK having equations pxj “ ´ 1 and 
+
+pxk “ ´ 1. Besides En is normal to the third face of F belonging to the boundary of K and corresponding to the face of pK having equation pxi “ ´ 1. As a result En has zero tangential trace at all faces of F on BK
+
+and can be uniquely extended H pcurl , rT q conforming by 0 to the all hexahedra K1 P K with K1 ‰ K. The number of vector functions of this kind is 3 pP ` 1qP 2|K|.2. Face-centred basis functions. 
+
+A permutation pi j k q of p1 2 3 q exists such that αj “ 0 and αk ą 0. In this case En is zero on the face of F
+
+belonging to the boundary of K and corresponding to the face of pK having equation pxk “ ´ 1. Besides En
+
+is normal to the face of F belonging to the boundary of K and corresponding to the face of pK of equation 
+
+pxi “ ´ 1. In order to be H pcurl , rT q conforming, En is uniquely extended to all hexahedra K1 P K as follows: if K1 contains the face F P F belonging to the boundary of K and corresponding to the face of pK of equation 
+
+pxj “ ´ 1, then En is extended to K1 by pEn, xK1 “ pei1 pℓα1 ppxq, α1 being a permutation of α; otherwise En is extended by 0 to K1. The number of vector functions of this kind is 2 pP ` 1qP |F|.3. Edge-centred basis functions. 
+
+A permutation pi j k q of p1 2 3 q exists such that αj “ 0 and αk “ 0. In this case En is normal to the face of 
+
+F belonging to the boundary of K and corresponding to the face of pK of equation pxi “ ´ 1. In order to be Hpcurl , rT q conforming, En is uniquely extended to all hexahedra K1 P K as follows: if K1 contains the edge 
+
+E P E belonging to the boundary of K and corresponding to the edge of pK of equations pxj “ ´ 1, pxk “ ´ 1, then En is extended to K1 by pEn, xK1 “ pei1 pℓα1 ppxq, α1 being a permutation of α; otherwise En is extended by 
+
+0 to K1. The number of vector functions of this kind is pP ` 1q| E|.It is noticed that the support of each vector function En in all these three cases is contained in a single cell rT P rT and consists of one, two or three hexahedra. 63.1.2 HP pcurl , T q
+
+In a similar way we define HP pcurl , T q “ Hpcurl , T q Ş QP pKq. A basis for HP pcurl , T q is the set of vector functions Hrn, with rn “ 1, . . . , rN , whose restriction to any hexahedron K of K corresponding to cube pK is either identically zero or given by 
+
+Hrn “ J´TK xHrn, xK ,
+
+xHrn, xK “ pℓαp´ pxqpei. (8) in which α P t 0, . . . , P u3. Three types of basis vector functions follow: 1. Cell-centred basis functions. 
+
+A permutation pi j k q of p1 2 3 q exists such that αj ą 0 and αk ą 0. In this case Hrn is zero on the two faces of rF belonging to the boundary of K and corresponding to the faces of pK having equations pxj “ 1 and 
+
+pxk “ 1. Besides Hrn is normal to the third face of rF belonging to the boundary of K and corresponding to the face of pK having equation pxi “ 1. As a result Hrn has zero tangential trace at all faces of rF on BK and can be uniquely extended H pcurl , T q conforming by 0 to all hexahedra K1 P K with K1 ‰ K. The number of vector functions of this kind is 3 pP ` 1qP 2|K|.2. Face-centred basis functions. 
+
+A permutation pi j k q of p1 2 3 q exists such that αj “ 0 and αk ą 0. In this case Hrn is zero on the face of rF
+
+belonging to the boundary of K and corresponding to the face of pK having equation pxk “ 1. Besides Hrn
+
+is normal to the face of rF belonging to the boundary of K and corresponding to the face of pK of equation 
+
+pxi “ 1. In order to be H pcurl , T q conforming, Hrn is uniquely extended to all hexahedra K1 P K as follows: if 
+
+K1 contains the face rF P rF belonging to the boundary of K and corresponding to the face of pK of equation 
+
+pxj “ 1, then Hrn is extended to K1 by xHrn, xK1 “ pei1 pℓα1 p´ pxq, α1 being a permutation of α; otherwise Hrn is extended by 0 to K1. The number of vector functions of this kind is 2 pP ` 1qP | rF|.3. Edge-centred basis functions. 
+
+A permutation pi j k q of p1 2 3 q exists such that αj “ 0 and αk “ 0. In this case Hrn is normal to the face of 
+
+rF belonging to the boundary of K and corresponding to the face of pK of equation pxi “ 1. In order to be Hpcurl , T q conforming, Hrn is uniquely extended to all hexahedra K1 P K as follows: if K1 contains the edge 
+
+rE P rE belonging to the boundary of K and corresponding to the edge of pK of equations pxj “ 1, pxk “ 1, then Hrn is extended to K1 by xHrn, xK1 “ pei1 pℓα1 p´ pxq, α1 being a permutation of α; otherwise Hrn is extended by 0 to K1. The number of vector functions of this kind is pP ` 1q| rE|.It is noticed that the support of each vector function Hrn in these three cases is contained in a single cell 
+
+T P T .
+
+3.1.3 Semi-Discrete Formulation 
+
+A discrete formulation is provided by (3), (4) assuming that E and e belong to HP pcurl , rT q and that H and 
+
+h belong to HP pcurl , T q. Thus assuming 
+
+E “
+
+> N
+
+ÿ
+
+> n“1
+
+Enen
+
+H “
+
+> ĂN
+
+ÿ
+
+> rn“1
+
+Hrnhrn,
+
+7it results in 
+
+Mε
+
+de
+
+dt “ rCh , (9) 
+
+Mμ
+
+dh
+
+dt “ ´ Ce , (10) in which e is the column vector of the electric field degrees of freedom en, with n “ 1, . . . , N and h is the column vector of the magnetic field degrees of freedom hrn, with rn “ 1, . . . , rN .The N ˆ rN matrix rC has elements 
+
+rcnrn “ ÿ
+
+> KPK
+
+˜
+
+´
+
+ż
+
+> BKĂT
+
+En ˆ Hrn ¨ n dS `
+
+ż
+
+> K
+
+curl En ¨ Hrn dV 
+
+¸
+
+with n “ 1, . . . , N and rn “ 1, . . . , rN . The rN ˆ N matrix C has elements 
+
+crnn “ ÿ
+
+> KPK
+
+ˆ
+
+´
+
+ż
+
+> BKT
+
+Hrn ˆ En ¨ n dS `
+
+ż
+
+> K
+
+curl Hrn ¨ En dV 
+
+˙
+
+,
+
+with rn “ 1, . . . , rN and n “ 1, . . . , N . By applying Stokes’ theorem to this equation it thus follows rcnrn “ crnn 
+
+for n “ 1, . . . , N and rn “ 1, . . . , rN or equivalently rC “ CT . It is noticed that element cnrn of C is determined by vector function En whose support is contained in one cell rT P rT and by vector function Hrn whose support is contained in one cell T P T . Thus cnrn “ 0 only if rT and T are disjoint and matrix C is sparse. Moreover from (5), (6) it ensues 
+
+rcnrn “ ÿ
+
+> KPK
+
+˜
+
+´
+
+ż 
+
+> BxKĂT
+
+pEn, xK ˆ xHrn, xK ¨ pn d pS `
+
+ż
+
+> xK
+
+ycurl pEn, xK ¨ xHrn, xK d pV
+
+¸
+
+,crnn “ ÿ
+
+> KPK
+
+ˆ
+
+´
+
+ż 
+
+> BxKT
+
+xHrn,K ˆ pEn, xK ¨ pn d pS `
+
+ż
+
+> xK
+
+ycurl xHrn, xK ¨ pEn, xK d pV
+
+˙
+
+,
+
+in which all integrals do not depend on the geometry or the materials. As a result all non-zero integrals for each K can be computed only once for the single reference cube pK.The N -order symmetric positive definite matrix Mε has elements 
+
+Mε,mn “ ÿ
+
+> KPK
+
+ż
+
+> K
+
+Em ¨ εE n dV “ ÿ
+
+> KPK
+
+ż
+
+> xK
+
+pEm, xK ¨ pεK pEn, xK |JK |d pV . (11) with m, n “ 1, . . . , N . By ordering the basis functions in such a way that the indexes n of basis functions 
+
+En whose support belong to the same cell rT P rT are consecutive, Mε is block diagonal. The sparsity of Mε
+
+is further increased by using, for the numerical integration of (11), quadrature points pξα “ p pξα1 , pξα2 , pξα3 q
+
+with weights xWα “ pwα1 ¨ pwα2 ¨ pwα3 , being α “ p α1, α 2, α 3q P t 0, . . . , P u3. In fact by assuming that in the reference cube K it is pEm, xK “ pℓβ ppxqpej and pEn, xK “ pℓαppxqpei the integral 
+
+ż
+
+> xK
+
+pEm, xK ¨ pεK pEn, xK |JK |d pV . 
+
+is approximated by 
+
+xWα|JK p pξαq| pεK,ij p pξαq δαβ . (12) 
+
+δ being Kronecker’s symbol. Hence in all hexahedra K1 P K in which both pEm and pEn are not identically zero and thus given by pEm, xK1 “ pℓβ1 ppxqpej1 and pEn, xK1 “ pℓα1 ppxqpei1 , α1 and β1 are the same permutation of α
+
+and β respectively. As a result if α ‰ β in K then α1 ‰ β1 in each K1 and, from (11) and (12), Mε,mn “ 0. 8In the following we refer to Mε and Mμ defined in (11) and (13) as the consistent mass matrices , since they arise from the exact (or highly accurate) numerical integration of the L2 inner products on primal and dual cells. The Gauss–Radau-based tensor-product quadrature rule introduced in (12)–(14) is exact for polynomials up to degree 2 P in each coordinate direction, which is sufficient to preserve the nominal spatial convergence order of the method. When we additionally exploit the Kronecker structure of the basis and quadrature to discard off-diagonal couplings between different interpolation nodes, we obtain lumped mass matrices , which are block-diagonal with small dense blocks corresponding to the supports of basis functions. Unless stated otherwise, the term “mass matrices” refers generically to either the consistent or lumped versions, while “lumped mass matrices” always denotes the block-diagonal approximations used for explicit time stepping and for the direct application of M´1 
+
+> ε
+
+and M´1 
+
+> μ
+
+.The rN -order symmetric positive definite matrix Mμ has elements 
+
+Mμ, Ămrn “ ÿ
+
+> KPK
+
+ż
+
+> K
+
+HĂm ¨ μH rn dV “ ÿ
+
+> KPK
+
+ż
+
+> xK
+
+xHĂm, xK ¨ pμK xHrn, xK |JK |d pV . (13) with rm, rn “ 1, . . . , rN . By ordering the basis functions in such a way that the indexes rn of basis functions 
+
+Hrn whose support belong to the same cell T P T are consecutive Mμ is block diagonal. The sparsity of 
+
+Mμ if further increased by using, for the numerical integration of (13), quadrature points ´ pξα with weights 
+
+pZα “ xWα, being α P t 0, . . . , P u3. In fact by assuming that in the reference cube pK it is xHĂm, xK “ pℓβ p´ pxqpej
+
+and xHrn, xK “ pℓαp´ pxqpei the integral 
+
+ż
+
+> xK
+
+xHĂm, xK ¨ pμK xHrn, xK |JK |d pV
+
+can be approximated by 
+
+pZα|JK p´ pξαq| pμK,ij p´ pξαq δαβ . (14) Hence in all hexahedra K1 P K in which both HĂm and Hrn are not identically zero so that xHĂm, xK1 “ pℓβ1 p´ pxqpej1
+
+and xHrn, xK1 “ pℓα1 p´ pxqpei1 , α1 and β1 are the same permutation of α and β respectively. As a result if α ‰ β
+
+in K then α1 ‰ β1 in each K1, and from (13) and (14), Mμ, Ămrn “ 0. 
+
+## 3.2 Time Discretisation 
+
+For the temporal discretisation of the semi-discrete system (9)–(10) we employ the classical leap-frog scheme. This choice is natural in combination with the skew-adjoint structure of the discrete curl operator and the block-diagonal mass matrices: the method is explicit, second-order accurate in time, and preserves a discrete analogue of the electromagnetic energy in the lossless case. The common leap frog scheme for the time discretisation of (9), (10) is used as a first choice: 
+
+h1{2 “ h0 ´ 12 ∆t M´1 
+
+> μ
+
+Ce 0,
+
+eq`1 “ eq ` ∆t M´1 
+
+> ε
+
+CT hq`1{2,
+
+hq`1{2 “ hq´1{2 ´ ∆t M´1 
+
+> μ
+
+Ce q ,
+
+(15) in which eq is the approximation of e at time instant q ∆t and hq`1{2 is the approximation of h at time instant pq ` 1{2q ∆t, for q “ 0, . . . , Q .In order to guarantee stability, the time step ∆ t is computed in such a way that ∆ t ă 2{?λM , being λM
+
+the maximum of the eigenvalues λ of the eigenvalue problem 
+
+CM ´1 
+
+> ε
+
+CT u “ λMμu (16) for the eigenvectors u.910 1 10 2 10 3 10 4 10 5
+
+10 0
+
+10 1
+
+10 2
+
+10 3
+
+10 4
+
+10 5
+
+10 6
+
+> O(DoFs )
+
+number of DoFs 
+
+> non-zero entries per row
+
+Mε, lumped 
+
+M−1 
+
+> ε
+
+, lumped 
+
+Mμ, lumped 
+
+M−1 
+
+> μ
+
+, lumped 
+
+Mε, exact 
+
+M−1 
+
+> ε
+
+, exact 
+
+Mμ, exact 
+
+M−1 
+
+> μ
+
+, exact Figure 6: Sparsity of the resulting mass matrices for a fixed mesh and increasing polynomial order. 
+
+# 4 Numerical examples 
+
+In this section we present a series of numerical experiments that illustrate the accuracy, spectral properties, and computational efficiency of the proposed three-dimensional dual cell method. We first investigate the spectrum of the discrete curl–curl operator, demonstrating spectral correctness (absence of spurious eigen-values) and high-order convergence of selected eigenvalues and eigenfunctions. We then assess the stability constraint imposed by the CFL condition and study the convergence of time-domain simulations in straight and curved waveguides, including a configuration with a spherical dielectric inclusion and perfectly matched layers (PMLs) [24, 25]. Finally, we analyse the sparsity pattern of the (lumped) mass matrices and verify that the number of non-zero entries per row remains essentially independent of the polynomial order, thereby confirming the expected efficiency gains of the lumped formulation. All experiments are performed using an implementation of the method in the open-source high-order finite element library Netgen/NGsolve [26]. The dual cell method extension is available as an add-on package [27]. Discrete eigenvalue problems are solved using the time-domain Krylov approach from [28], which, in the present setting, only requires repeated applications of the stiffness matrix and of the inverse mass matrices. Owing to the block-diagonal structure of Mε and Mμ produced by our lumping strategy, these inverses are applied by direct inversion of small local blocks rather than by an additional Krylov iteration, in contrast to standard FEM discretisations with globally coupled mass matrices [3, 8]. 
+
+## 4.1 Sparsity of the mass matrices 
+
+The goal of the employed mass-lumping strategy is to obtain lumped mass matrices whose sparsity pattern does not deteriorate with increasing polynomial order. To study this behaviour we consider the unit cube Ω “ p 0, 1q3 discretised by four tetrahedra and construct the associated barycentric dual mesh. For a sequence of polynomial orders P we assemble both the consistent mass matrices Mε, Mμ (as in (11)–(14)) and their lumped counterparts, and we record the number of non-zero entries per row. Figure 6 shows that, for the lumped mass matrices, the number of non-zero entries per row approaches a value close to three as P
+
+increases, reflecting the locality and near-orthogonality of the Gauss–Radau-based basis functions within each dual cell. In contrast, the number of non-zero entries per row in the consistent mass matrices grows essentially linearly with the total number of global degrees of freedom, as expected from a standard high-order edge-element discretisation. 10 0 2 4 6 8 10 12 14 
+
+0
+
+10 
+
+20 
+
+eigenvalue # 
+
+> λ
+
+reference 
+
+P = 2 , h = π/ 4
+
+P = 3 , h = π/ 4
+
+P = 2 , h = π/ 8
+
+P = 3 , h = π/ 8(a) Spectrum for selected discretisations (b) Approximated eigenfunction corresponding to the sec-ond non-trivial eigenvalue λ3 “ 13 of (16) on the domain Ω from (17) on a typical mesh. 
+
+## 4.2 Eigenvalue problem 
+
+We next analyse the discrete eigenvalue problem (16) on the rectangular cavity (see also Figure 7b) Ω “ p 0, π q ˆ p 0, π {2q ˆ p 0, π {4q, (17) with perfectly conducting boundary conditions E ˆ n “ 0 on BΩ. Figure 7a shows the resulting discrete spectra for selected discretisations with different mesh sizes h
+
+and polynomial orders P . All computed discrete eigenvalues approximate analytically known eigenvalues of the continuous cavity problem, and no spurious eigenvalues are observed; this corroborates the spectral correctness of the three-dimensional extension, in agreement with the two-dimensional results of [15]. Figure 8 reports the relative error of the discrete eigenvalues approximating the second non-trivial eigen-value λ2 “ 8 with respect to the total number of unknowns for several polynomial orders P . The corre-sponding eigenmode is depicted in Figure 7b. We observe convergence rates of order O
+
+´
+
+DoFs p2P ´2q{ 3¯
+
+, which translates to O`h2P ´2˘ with respect to the mesh size h, consistent with the pP ´ 1q-degree approximation of the curl-conforming fields. In Figure 9 we show the convergence of the relative errors in the (mass-lumped) L2-norms of the electric and magnetic fields of the eigenfunctions corresponding to λ2 “ 8. The errors are measured in the mass-lumped L2 norms induced by Mε and Mμ, respectively. For both fields we observe convergence of order 
+
+O
+
+´
+
+DoFs pP ´1q{ 3¯
+
+, i.e., O`hP ´1˘ with respect to h, in agreement with the theoretical approximation properties of the underlying spaces. 
+
+## 4.3 The time-domain problem 
+
+In this section we present numerical experiments, examining the fully discretised time-domain problem (15). 
+
+4.3.1 CFL condition 
+
+We first verify the dependence of the CFL stability bound on the mesh size h and on the polynomial order 
+
+P using the cavity problem from the previous subsection. For each pair ph, P q we approximate the largest eigenvalue λM of the generalised eigenvalue problem (16) by a simple power iteration applied to the matrix pencil pCM ´1 
+
+> ε
+
+CT , Mμq and compute the corresponding maximal allowed time step t0 « 2{?λM . Figure 10 displays the resulting stable time steps. We observe that t0 scales linearly with h and decreases like pP `1q´2,in agreement with standard dispersion analyses for high-order explicit time-domain discretisations [6]. 11 10 4 10 5 10 6 10 7 10 8
+
+10 −11 
+
+10 −9
+
+10 −7
+
+10 −5
+
+10 −3
+
+O(DoFs −2/3)
+
+O(DoFs −4/3)
+
+O(DoFs −6/3)
+
+total DoFs 
+
+> relative error
+
+P = 2 
+
+P = 3 
+
+P = 4 (a) Convergence with respect to the total number of DoFs. 10 −1 10 0
+
+10 −11 
+
+10 −9
+
+10 −7
+
+10 −5
+
+10 −3
+
+O(h2)
+
+O(h4)
+
+> O(h6)
+
+h
+
+> relative error
+
+P = 2 
+
+P = 3 
+
+P = 4 (b) Convergence with respect to the mesh size h.
+
+Figure 8: Convergence of the third, non-trivial eigenvalue. 10 4 10 5 10 6 10 7 10 8
+
+10 −7
+
+10 −6
+
+10 −5
+
+10 −4
+
+10 −3
+
+10 −2
+
+10 −1
+
+O(DoFs −1/3)
+
+O(DoFs −2/3)
+
+> O(DoFs −3/3)
+
+total DoFs 
+
+> relative error
+
+E, P = 2 
+
+H, P = 2 
+
+E, P = 3 
+
+H, P = 3 
+
+E, P = 4 
+
+H, P = 4 
+
+(a) Convergence with respect to the total number of DoFs. 10 −1 10 0
+
+10 −7
+
+10 −6
+
+10 −5
+
+10 −4
+
+10 −3
+
+10 −2
+
+10 −1
+
+O(h)
+
+O(h2)
+
+> O(h3)
+
+mesh size h
+
+> relative error
+
+E, P = 2 
+
+H, P = 2 
+
+E, P = 3 
+
+H, P = 3 
+
+E, P = 4 
+
+H, P = 4 (b) Convergence with respect to the mesh size h.
+
+Figure 9: Convergence of the eigenfunctions corresponding to the second, non-trivial eigenvalue 12 10 −1 10 0
+
+10 −4
+
+10 −3
+
+10 −2
+
+10 −1
+
+> O(h)
+
+h
+
+> t0
+
+P = 2 
+
+P = 3 
+
+P = 4 
+
+P = 5 (a) The maximal stable time-step for fixed values of P and varying mesh-size h.2 3 4 5 6 7 8 10 
+
+10 −4
+
+10 −3
+
+10 −2
+
+10 −1 
+
+> O(P+ 1) −2
+
+P + 1 
+
+> t0
+
+h = π/ 4
+
+h = π/ 8
+
+h = π/ 16 
+
+h = π/ 32    
+
+> (b) The maximal stable time-step for fixed mesh-sizes h
+> and varying polynomial order P.
+
+Figure 10: The CFL condition with respect to mesh-size and polynomial order.  
+
+> (a) Empty waveguide (Subsection 4.3.2). (b) Waveguide with spherical inclusion (Subsection 4.3.3).
+
+Figure 11: Typical meshes of the waveguide problems with perfectly matched layers. 
+
+4.3.2 Convergence of the time-domain solution 
+
+To show time-domain convergence we use a waveguide (cf. Figure 11a) Ωint “ p 0, 2q ˆ p 0, 1{2q ˆ p 0, 1{2q,
+
+with attached perfectly matched layers left and right with length l “ 0.5 (for an exact formulation of the PML problem see the Appendix). We pick constant material parameters ε ” μ ” 1. We propagate a wave 
+
+E0pt, y, z q “ `0, 0, exp p´ 5p1 ´ tq2q sin p10 tq sin p2πy q˘ , (18) from the left side Γ in “ t 0u ˆ p 0, 1{2q ˆ p 0, 1{2q of the waveguide. In all time-domain examples we choose the time-step size ∆ t according to the CFL bound of the finest discretisation under consideration. This guaran-tees stability for all coarser meshes and ensures that the temporal error remains subdominant compared to the spatial discretisation error. Figure 12 shows snapshots of the electric field magnitude in the interior waveguide region at selected times. A semi-analytic reference solution for this configuration can be computed by Laplace-domain techniques (see Appendix 5.2); the resulting convolution in time is evaluated numerically. In Figure 13 we report the 
+
+L2pΩint q-error of the electric field over time for polynomial order P “ 2 and several mesh sizes h. The plots 13 Γin  
+
+> Ωint Ωpml Ωpml
+
+(a) t “ 0.5Γin   
+
+> Ωint Ωpml Ωpml
+
+(b) t “ 1.0Γin  
+
+> Ωint Ωpml Ωpml
+
+(c) t “ 1.5Γin   
+
+> Ωint Ωpml Ωpml
+
+(d) t “ 2.0Γin  
+
+> Ωint Ωpml Ωpml
+
+(e) t “ 2.5Γin   
+
+> Ωint Ωpml Ωpml
+
+(f) t “ 3.0Γin  
+
+> Ωint Ωpml Ωpml
+
+(g) t “ 3.5Γin   
+
+> Ωint Ωpml Ωpml
+
+(h) t “ 4.0
+
+Figure 12: Snapshots of the plain waveguide problem. confirm a monotone decrease of the error as the mesh is refined and show that no additional oscillations or instabilities are introduced by the explicit time stepping. Figure 14 shows the convergence of the relative space–time L2pr 0, 1s; Ω int q-error of the electric field for various orders P . In accordance with the eigenfunction convergence results, we observe rates of order 
+
+O
+
+´
+
+DoFs pP ´1q{ 3¯
+
+, i.e., O`hP ´1˘ with respect to the mesh size. This indicates that, for the chosen ∆ t, the overall error is dominated by the spatial approximation. 
+
+4.3.3 Time domain problem in curved geometry 
+
+To show that our method is also applicable to non-constant material parameters and curved geometries, we enhance the waveguide problem above by adding a dielectric sphere with ε ” 9 in the center of the waveguide (cf. Figure 11b). Outside of the sphere we pick ε ” 1 and μ ” 1 everywhere. Figure 15 shows snapshots of the time-domain solution and illustrates the interaction of the guided wave with the dielectric inclusion and the subsequent scattering pattern. 
+
+# 5 Conclusion 
+
+In this work we have extended the high-order dual cell method for time-domain Maxwell equations from two to three spatial dimensions. The construction relies on barycentric dual meshes and on pairs of mutually dual curl-conforming spaces, defined via tensor-product Gauss–Radau interpolation polynomials and mapped from a reference cube by trilinear covariant Piola transformations within each hexahedral subcell of primal and dual mesh elements. A key feature of the approach is the block-diagonal structure of the mass matrices, which allows for explicit time integration by a leap-frog scheme while preserving a discrete electromagnetic energy identity. Through a series of numerical experiments we have demonstrated that the three-dimensional dual cell method inherits the favourable properties previously observed in two dimensions. In particular, the sparsity 14 0 1 2 3 4
+
+10 −8
+
+10 −6
+
+10 −4
+
+10 −2
+
+time 
+
+> absolute error
+
+P = 2 , h = 1 /4
+
+P = 2 , h = 1 /8
+
+P = 2 , h = 1 /16 (a) P “ 20 1 2 3 4
+
+10 −8
+
+10 −6
+
+10 −4
+
+10 −2
+
+time 
+
+> absolute error
+
+P = 3 , h = 1 /4
+
+P = 3 , h = 1 /8
+
+P = 3 , h = 1 /16 (b) P “ 3
+
+Figure 13: L2pΩint q-error of the E field (cf. Figure 12) over time for fixed polynomial order and different mesh-sizes h.10 3 10 4 10 5 10 6 10 7 10 8
+
+10 −7
+
+10 −6
+
+10 −5
+
+10 −4
+
+10 −3
+
+10 −2
+
+O(DoFs −1/3)
+
+O(DoFs −2/3)
+
+> O(DoFs −3/3)
+
+total DoFs 
+
+> relative error
+
+P = 2 
+
+P = 3 
+
+P = 4 
+
+(a) Convergence with respect to the total number of DoFs 10 −1 10 0
+
+10 −7
+
+10 −6
+
+10 −5
+
+10 −4
+
+10 −3
+
+10 −2
+
+O(h)
+
+O(h2)
+
+O(h3)
+
+mesh size h
+
+> relative error
+
+P = 2 
+
+P = 3 
+
+P = 4 (b) Convergence with respect to the mesh size h
+
+Figure 14: Convergence of the L2pr 0, 1s; Ω int q-error of the time domain E field (cf. Figure 12) for different polynomial orders P .15 Γin 
+
+ε = 9 Ωint Ωpml Ωpml (a) t “ 0.5Γin 
+
+Ωint Ωpml Ωpml (b) t “ 1.0Γin 
+
+Ωint Ωpml Ωpml 
+
+(c) t “ 1.5Γin 
+
+Ωint Ωpml Ωpml (d) t “ 2.0Γin 
+
+Ωint Ωpml Ωpml 
+
+(e) t “ 2.5Γin 
+
+Ωint Ωpml Ωpml (f) t “ 3.0Γin 
+
+Ωint Ωpml Ωpml 
+
+(g) t “ 3.5Γin 
+
+Ωint Ωpml Ωpml (h) t “ 4.0Γin 
+
+Ωint Ωpml Ωpml 
+
+(i) t “ 4.5Γin 
+
+Ωint Ωpml Ωpml (j) t “ 5.0
+
+Figure 15: Waveguide with spherical inclusion 16 pattern of the lumped mass matrices remains essentially independent of the polynomial order, the discrete spectrum of the curl–curl operator is free of spurious modes and exhibits high-order convergence of eigenvalues and eigenfunctions, and the observed CFL bound scales linearly with the mesh size and quadratically with 
+
+pP ` 1q´1. Time-domain simulations in straight and curved waveguides, including configurations with perfectly matched layers and a spherical dielectric inclusion, confirm high-order convergence of the fields and show that complex geometries and material interfaces can be treated accurately and robustly. Several extensions of the present work are natural directions for future research. An important next step is the treatment of more general boundary conditions and source terms, as well as dispersive or non-linear material laws, within the same dual cell framework. Further topics of interest include adaptive mesh refinement, local time stepping on barycentric dual meshes, and large-scale parallel implementations targeting multi-GPU and exascale architectures. Finally, coupling the dual cell method to circuit or lumped-element models, for instance in the context of microwave devices, appears to be a promising application area. 
+
+# Appendix 
+
+## 5.1 PML formulation 
+
+In the numerical experiments in Sections 4.3.2, and 4.3.3 we use a PML in a three-dimensional waveguide of the following weak formulation. To the interior waveguide Ω int :“ p 0, a q ˆ p 0, b q ˆ p 0, c q we append layers Ω pml :“ pp´ l, 0q Y p a, a ` lqq ˆ p 0, b q ˆ p 0, c q. The usual derivation of time-domain PMLs is done in frequency domain, where a mapping depending on the frequency is introduced. We avoid this detour here and nonchalantly write the frequency-dependency in time-domain as a dependency on Bt. Using the mapping ˜xpxq “ ˜xpx1, x 2, x 3q “ x `
+
+$’&’% 
+
+> σ
+> Bt
+
+px1 ´ aqe1, x1 ą a,  
+
+> σ
+> Bt
+
+x1e1, x1 ă 0,
+
+0, else, and according Jacobian (inverse) matrix and determinant 
+
+Jpxq “ I `
+
+# σ 
+
+> Bt
+
+Π1, x P Ωpml ,
+
+0, else, , Jpxq´1 “
+
+#
+
+p1 ` σ 
+
+> Bt
+
+q´1Π1 ` ΠK 
+
+> 1
+
+, x P Ωpml ,
+
+I, else, det Jpxq “ 1 `
+
+# σ 
+
+> Bt
+
+, x P Ωpml ,
+
+0, else, where Π 1 “ e1eT 
+
+> 1
+
+is the orthogonal projection onto the x-component and Π K 
+
+> 1
+
+“ I ´ Π1. Introducing 
+
+E “ J´T ˜E, H “ J´T ˜H and similarly the test functions ˜ e, ˜h leads to the weak system 
+
+ż
+
+> Ω
+
+´
+
+Bt det pJqJ´1J´T ˜E
+
+¯
+
+¨ ˜e “
+
+ż
+
+> Ω
+
+curl ˜H ¨ ˜e,
+
+ż
+
+> Ω
+
+´
+
+Bt det pJqJ´1J´T ˜H
+
+¯
+
+¨ ˜h “ ´ 
+
+ż
+
+> Ω
+
+curl ˜E ¨ ˜h.
+
+For x P Ωpml we have 
+
+BtJ´1J´T det pJq “ B t
+
+11 ` σ
+
+> Bt
+
+Π1 ` B tp1 ` σ
+
+Bt qq ΠK
+
+> 1
+
+“ B tI ` σpΠK 
+
+> 1
+
+´ Π1q ` σ2
+
+Bt ` σ Π1,
+
+17 Thus, introducing Bt ˆE “ σ ˜E ´ σ ˆE and Bt ˆH “ σ ˜E ´ σ ˆH, defined only on Ω pml leads to the damped system 
+
+ż
+
+> Ω
+
+Bt ˜E ¨ ˜e “ σ
+
+ż
+
+> Ωpml
+
+pΠ1 ´ ΠK 
+
+> 1
+
+q ˜E ¨ ˜e ´ σ
+
+ż
+
+> Ωpml
+
+Π1 ˆE ¨ ˜e `
+
+ż
+
+> Ω
+
+curl ˜H ¨ ˜e,
+
+ż
+
+> Ωpml
+
+Bt ˆE ¨ ˆe “ σ
+
+ż
+
+> Ωpml
+
+˜E ¨ ˆe ´ σ
+
+ż
+
+> Ωpml
+
+ˆE ¨ ˆe,
+
+ż
+
+> Ω
+
+Bt ˜H ¨ h “ σ
+
+ż
+
+> Ωpml
+
+pΠ1 ´ ΠK 
+
+> 1
+
+q ˜H ¨ ˜h ´ σ
+
+ż
+
+> Ωpml
+
+Π1 ˆH ¨ ˜h ´
+
+ż
+
+> Ω
+
+curl ˜E ¨ ˜h,
+
+ż
+
+> Ωpml
+
+Bt ˆH ¨ ˆh “ σ
+
+ż
+
+> Ωpml
+
+˜H ¨ ˆh ´ σ
+
+ż
+
+> Ωpml
+
+ˆH ¨ ˆh.
+
+(19) Now the damped system (19) is discretised in space using the discrete spaces from Section 3.1, where the weak curl operators are discretised verbatim, i.e., by replacing the continuous fields and test functions in (19) with their expansions in the primal and dual curl-conforming bases and by evaluating the resulting bilinear forms with the same quadrature rules as in the non-PML case. Similar to Section 3.2, we denote the fully discrete coefficient vectors of the discretisations of the fields ˜E, ˆE, ˜H, ˆH at time q∆t by ˜ eq , ˆeq , ˜hq , ˆhq . Note that the discrete spaces for the auxiliary fields ˆE, ˆH are defined merely on Ω pml and thus have less components. Using an extension of the leap frog scheme for damped equations we obtain the fully discrete system ˜h1{2 “ ˜h0 ` 12 ∆tM´1
+
+> μ
+
+”
+
+σ ˜Dh ˜h0 ´ σ ˆDh ˆh0 ´ C˜e0
+
+ı
+
+,
+
+ˆh1{2 “ ˆh0 ` 12 ∆tσ 
+
+”
+
+Rh ˜h0 ´ ˆh0
+
+ı
+
+,
+
+˜eq`1 “ ˜eq ` ∆tM´1
+
+> ε
+
+”
+
+σ ˜De˜eq ´ σ ˆDeˆeq ` CT ˜hq`1{2
+
+ı
+
+,
+
+ˆeq`1 “ ˆeq ` ∆tσ rRe˜eq ´ ˆeq s ,
+
+˜hq`1{2 “ ˜hq´1{2 ` ∆tM´1
+
+> μ
+
+”
+
+σ ˜Dh ˜hq´1{2 ´ σ ˆDh ˆhq´1{2 ´ C˜eq
+
+ı
+
+,
+
+ˆhq`1{2 “ ˆhq´1{2 ` ∆tσ 
+
+”
+
+Rh ˜hq´1{2 ´ ˆhq´1{2
+
+ı
+
+,
+
+(20) where the entries of the damping matrices ˜De, ˆDe, ˜Dh, ˆDh are defined similarly to (11) by ˜De,mn :“ ÿ
+
+> KPK,K ĂΩpml
+
+ż
+
+> K
+
+pΠ1 ´ ΠK 
+
+> 1
+
+qEm ¨ En dV, 
+
+ˆDe,mn :“ ÿ
+
+> KPK,K ĂΩpml
+
+ż
+
+> K
+
+Π1Em ¨ En dV, 
+
+˜Dh,mn :“ ÿ
+
+> KPK,K ĂΩpml
+
+ż
+
+> K
+
+pΠ1 ´ ΠK 
+
+> 1
+
+qHm ¨ Hn dV, 
+
+ˆDh,mn :“ ÿ
+
+> KPK,K ĂΩpml
+
+ż
+
+> K
+
+Π1Hm ¨ Hn dV, 
+
+(21) and the matrices Re, Rh are the restriction operators from the whole discrete space defined on Ω to the subspace defined on Ω pml .
+
+## 5.2 Reference solution for the time-domain problem 
+
+We look for solutions of the Maxwell system on the domain Ω “ p 0, l xq ˆ p 0, l y q ˆ p 0, l z q,
+
+18 with homogeneous boundary conditions on the sidewall, the incoming wave condition (18) at Γ in “ t 0u ˆ p0, l y q ˆ p 0, l z q, and no reflections at Γ out “ t lxu ˆ p 0, l y q ˆ p 0, l z q
+
+We make an ansatz ( note that E fulfills the homogeneous boundary condition on the side walls) 
+
+Ept, x, y, z q “ p 0, 0, E z qJ “ `0, 0, e pt, x q sin pyπl ´1 
+
+> y
+
+q˘J ,
+
+Hpt, x, y, z q “ p Hx, H y , 0qJ “ `hxpt, x q cos pyπl ´1 
+
+> y
+
+q, h y pt, x q sin pyπl ´1 
+
+> y
+
+q, 0˘J .
+
+This immediately gives curlcurl E “ curl pB y Ez , 0, ´B xEz qJ “ `0, 0, ´pB 2 
+
+> x
+
+` B 2 
+
+> y
+
+qEz
+
+˘J “ `0, 0, pπ2l´2 
+
+> y
+
+´ B 2
+
+> x
+
+qept, x q sin pyπl ´1 
+
+> y
+
+q˘J .
+
+Thus e solves the one dimensional problem 
+
+B2 
+
+> t
+
+ept, x q “ pB 2 
+
+> x
+
+´ π2l´2 
+
+> y
+
+qept, x q,ep0, x q “ 0,ep0, l xq is propagating ,ept, 0q “ e0ptq.
+
+Above equation can be solved analytically in Laplace domain and using known Laplace transforms it can be written as a convolution in the following way: 
+
+ept, x q “ 
+
+$&%
+
+e0pt ´ xq ´ 
+
+ˆ
+
+e0p¨q ˚ πly x J1  
+
+> ´πly
+> ?¨2´x2
+> ¯
+> ?¨2´x2
+
+Θp¨ ´ xq
+
+˙
+
+ptq, t ě x, 
+
+0, t ă x. 
+
+Here J1 denotes the Bessel function of the first kind of order one. Assuming that e0 vanishes for negative times the convolution for t ą x is given by the integral, 
+
+¨˝e0p¨q ˚ πly
+
+xJ1
+
+´ πly
+
+?¨2 ´ x2
+
+¯
+
+?¨2 ´ x2 Θp¨ ´ xq
+
+˛‚ptq “ πly
+
+x
+
+ż 8´8 
+
+e0pt ´ τ q
+
+J1
+
+´ πly
+
+?τ 2 ´ x2
+
+¯
+
+?τ 2 ´ x2 Θpτ ´ xqdτ 
+
+“ πly
+
+x
+
+ż tx
+
+e0pt ´ τ q
+
+J1
+
+´ πly
+
+?τ 2 ´ x2
+
+¯
+
+?τ 2 ´ x2 dτ, 
+
+and can be approximated using a suitable numerical quadrature rule. 
+
+# References 
+
+[1] K.S. Yee. Numerical solution of initial boundary value problems involving maxwell’s equations in isotropic media. IEEE Transactions on Antennas and Propagation , 14(3):302–307, May 1966. [2] A. Taflove, A. Oskooi, and S. G. Johnson, editors. Advances in FDTD computational electrodynamics: photonics and nanotechnology . Artech House, Boston, 2013. [3] Jian-Ming Jin. The finite element method in electromagnetics . John Wiley & Sons Inc, Hoboken. New Jersey, third edition edition, 2014. [4] J. C. Nedelec. Mixed finite elements in $\mathbbR3 $. Numerische Mathematik , 35(3):315–341, Septem-ber 1980. 19 [5] J. Sch¨ oberl and Sabine Zaglmayr. High order N´ ed´ elec elements with local complete sequence properties. 
+
+COMPEL - The international journal for computation and mathematics in electrical and electronic engineering , 24(2):374–384, January 2005. [6] J.S. Hesthaven and T. Warburton. Nodal Discontinuous Galerkin Methods , volume 54 of Texts in Applied Mathematics . Springer New York, New York, NY, 2008. [7] Douglas N. Arnold, Franco Brezzi, B. Cockburn, and L. Donatella Marini. Unified Analysis of Dis-continuous Galerkin Methods for Elliptic Problems. SIAM J. Numer. Anal. , 39(5):1749–1779, January 2002. [8] T. Weiland. Time Domain Electromagnetic Field Computation with Finite Difference Methods. In-ternational Journal of Numerical Modelling: Electronic Networks, Devices and Fields , 9(4):295–319, 1996. [9] L. Codecasa and M. Politi. Explicit, Consistent, and Conditionally Stable Extension of FD-TD to Tetrahedral Grids by FIT. IEEE Transactions on Magnetics , 44(6):1258–1261, June 2008. [10] L. Codecasa, B. Kapidani, R. Specogna, and F. Trevisan. Novel FDTD Technique Over Tetrahedral Grids for Conductive Media. IEEE Transactions on Antennas and Propagation , 66(10):5387–5396, October 2018. [11] B. Kapidani, L. Codecasa, and R. Specogna. The Time-Domain Cell Method Is a Coupling of Two Explicit Discontinuous Galerkin Schemes With Continuous Fluxes. IEEE Transactions on Magnetics ,56(1):1–4, January 2020. [12] F. Brezzi, M. Fortin, and L. D. Marini. Error analysis of piecewise constant pressure approximations of Darcy’s law. Comput. Methods Appl. Mech. Engrg. , 195(13-16):1547–1559, 2006. [13] Jeonghun J. Lee and Ragnar Winther. Local coderivatives and approximation of Hodge Laplace prob-lems. Math. Comp. , 87(314):2709–2735, 2018. [14] Bogdan Radu and Herbert Egger. A Yee-like finite-element scheme for Maxwell’s equations on unstruc-tured grids. IMA J. Numer. Anal. , 45(2):1028–1053, 2025. [15] B. Kapidani, L. Codecasa, and J. Sch¨ oberl. An arbitrary-order Cell Method with block-diagonal mass-matrices for the time-dependent 2D Maxwell equations. Journal of Computational Physics , 433:110184, May 2021. [16] Markus Wess, Bernard Kapidani, Lorenzo Codecasa, and Joachim Sch¨ oberl. Mass lumping the dual cell method to arbitrary polynomial degree for acoustic and electromagnetic waves. J. Comput. Phys. ,513:Paper No. 113196, 19, 2024. [17] Anil Nirmal Hirani. Discrete exterior calculus . PhD thesis, California Institute of Technology, June 2003. [18] Anil N. Hirani, Kaushik Kalyanaraman, and Evan B. VanderZee. Delaunay Hodge star. Computer-Aided Design , 45(2):540–544, February 2013. [19] S. Geevers, W. A. Mulder, and J. J. W. Van Der Vegt. New Higher-Order Mass-Lumped Tetrahedral Elements for Wave Propagation Modelling. SIAM J. Sci. Comput. , 40(5):A2830–A2857, January 2018. [20] H. Egger and B. Radu. A mass-lumped mixed finite element method for acoustic wave propagation. 
+
+Numer. Math. , 145(2):239–269, June 2020. [21] H. Egger and B. Radu. A Second-Order Finite Element Method with Mass Lumping for Maxwell’s Equations on Tetrahedra. SIAM J. Numer. Anal. , 59(2):864–885, January 2021. 20 [22] E. T. Chung, P. Ciarlet, and T.F. Yu. Convergence and superconvergence of staggered discontinu-ous Galerkin methods for the three-dimensional Maxwell’s equations on Cartesian grids. Journal of Computational Physics , 235:14 – 31, 2013. [23] E. Chung, B. Cockburn, and G. Fu. The Staggered DG Method is the Limit of a Hybridizable DG Method. SIAM J. Numer. Anal. , 52(2):915–932, January 2014. [24] F. Collino and P. B. Monk. Optimizing the perfectly matched layer. Computer Methods in Applied Mechanics and Engineering , 164(1):157–171, October 1998. [25] F. L. Teixeira and W. C. Chew. Complex space approach to perfectly matched layers: a review and some new developments. International Journal of Numerical Modelling: Electronic Networks, Devices and Fields , 13(5):441–455, 2000. [26] J. Sch¨ oberl. C++11 implementation of finite elements in ngsolve. Preprint 30/2014, Institute of Analysis and Scientific Computing, TU Wien, 2014. [27] Joachim Sch¨ oberl and Markus Wess. The dual cell method in ngsolve. https://ngsolve.github.io/dcm. [28] Lothar Nannen and Markus Wess. A Krylov eigenvalue solver based on filtered time domain solutions. 
+
+Comput. Math. Appl. , 176:179–188, 2024. 21
