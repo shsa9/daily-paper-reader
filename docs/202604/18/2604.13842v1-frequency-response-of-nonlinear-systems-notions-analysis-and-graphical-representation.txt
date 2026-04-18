@@ -1,0 +1,1640 @@
+Title: Frequency Response of Nonlinear Systems: Notions, Analysis, and Graphical Representation
+
+URL Source: https://arxiv.org/pdf/2604.13842v1
+
+Published Time: Thu, 16 Apr 2026 00:57:57 GMT
+
+Number of Pages: 17
+
+Markdown Content:
+> 1
+
+# Frequency Response of Nonlinear Systems: Notions, Analysis, and Graphical Representation 
+
+Alessio Moreschini and Matteo Scandella 
+
+Abstract — The invariance principle, through which the steady-state behavior of nonlinear systems was introduced by Isidori and Byrnes, is leveraged in this article to bring forth a unifying characterization of the frequency response of nonlinear systems. We show that, for systems under nonlinear periodic excitations, the frequency response can still be defined as a complex-valued function in a phasor form. However, together with suitable notions of gain and phase functions, we show the existence of another function that completes the frequency response and allows quanti-fying the distortion introduced by the system in the steady-state output. This nonlinear characterization enabled the representation over input frequency and amplitude of the gain, phase, and distortion produced by the system, via a nonlinear enhancement of the Bode diagrams. This graphi-cal representation of the frequency response is well-suited to performance analysis of a nonlinear system and, fur-thermore, allows for the formulation of the loop-shaping problem for nonlinear systems. 
+
+Index Terms — Nonlinear frequency response; Invari-ance principle; Nonlinear Bode diagram; Nonlinear loop-shaping; Periodic excitation; Feedback control design 
+
+I. I NTRODUCTION 
+
+Frequency response methods for analysis and synthesis of control systems carry a century-long tradition [1], and they remain prominent in numerous engineering applications [2], including power systems [3]–[6], systems biology [7]–[10], modern circuit theory [11]–[14], signal processing [15]–[17]. At the very heart of the frequency response of linear time-invariant (LTI) systems lies the harmonic-preserving principle, whereby a system subjected to harmonic excitation produces a harmonic output at the same frequency, differing only in amplitude and phase. This principle enabled quantitative measures of how the system response rolls-off or rolls-up the input ( amplitude response ) and how phase leads or lags (phase response ) across frequencies [18]–[20]. These mea-sures have had a profound influence on analyzing feedback systems through graphical representations such as Bode [21] and Nyquist [22] diagrams, and on control synthesis, which enables the design of feedback systems with guaranteed per-formance directly from the shape of the frequency response. For instance, in loop-shaping controller synthesis, closed-loop specifications can be enforced by feedback control whose 
+
+Alessio Moreschini is with the Department of Electrical and Electronic Engineering, Imperial College London, SW72AZ London, U.K. (e-mails: 
+
+a.moreschini@imperial.ac.uk ). Matteo Scandella is with the De-partment of Management, Information and Production Engineering, University of Bergamo, via Marconi 5, 24044, Dalmine (BG), Italy (email: 
+
+matteo.scandella@unibg.it ). 
+
+Bode magnitude and phase shape the loop frequency response function, see, e.g. , [20], [23]–[25]. Although frequency response and its graphical represen-tations are widespread in LTI systems, their enhancement to nonlinear control systems remains vague [26]. The crux of nonlinear dynamics is that the output response relies on both the input frequency and amplitude, producing complex effects such as harmonic distortion and frequency-dependent nonlinearities. Due to the limitations of the Laplace transform in converting nonlinear systems into the frequency domain, a unifying characterization of the frequency response of non-linear systems remains largely unexplored. However, before exploring the status quaestionis for nonlinear systems, we illustrate how the frequency response of an LTI system can be recast in the time domain. 
+
+Frequency response by an invariance principle: Consider an LTI system governed by the equations 
+
+˙x = Ax + Bu, y = Cx, (1) with state x(t) ∈ Rn, input u(t) ∈ R, output y(t) ∈ R, and matrices A, B, and C of appropriate dimensions, defining a minimal realization. Suppose that A is Hurwitz, i.e. , σ(A) ⊂
+
+C−. Applying the Laplace transform to (1) yields the complex-valued (transfer) function H(s) := C(sI − A)−1B, and the frequency response function H(jϖ ) := H(s)|s=jϖ , with frequency ϖ ∈ R+. When system (1) is driven by a sine wave of the form u(t) = au sin( ϖt + ϕu), with amplitude au ∈ R,and phase ϕu ∈ R, the output response is a sine wave of the form y(t) = ay sin( ϖt +ϕy ), with amplification factor ay ∈ R
+
+and phase-shifted factor ϕy ∈ R given by, see [18, Sec. 2.1], 
+
+ay = au|H(jϖ )|, ϕy = ϕu + arg( H(jϖ )) .
+
+The same frequency response function can be alternatively recast in the time domain by leveraging the notion of steady-state ˜A la Isidori and Byrnes [27]–[29], in which the output response is analyzed through an invariance principle associated with the cascade interconnection of the system and a harmonic oscillator describing the sine wave, see [30, Sec. A.5]. Specif-ically, sine waves of the form u(t) = au sin( ϖt + ϕu), can be alternatively generated by a harmonic oscillator of the form 
+
+˙z = S(ϖ)z, u = Lz, (2) with initial conditions z(0) = ( au sin( ϕu), a u cos( ϕu)) ∈ R2
+
+and matrices 
+
+S(ϖ) = 
+
+ 0 ϖ
+
+−ϖ 0
+
+
+
+, L =  1 0 . (3) 
+
+> arXiv:2604.13842v1 [eess.SY] 15 Apr 2026 2
+
+Since A is Hurwitz and S(ϖ) has purely imaginary eigen-values for every ϖ > 0, it is not hard to establish that, irrespective of the initial condition x(0) , the response of the system (1), driven by the harmonic oscillator (2), converges to the function Y (ϖ) := CΦ( ϖ), where Φ( ϖ) is the unique solution of the Sylvester equation 
+
+AΦ( ϖ) + BL = Φ( ϖ)S(ϖ). (4) The function Y (ϖ), which is determined by the parameterized center eigenspace of the cascade system (1)-(2), is directly related to the frequency response function H(jϖ ), since 
+
+Y (ϖ)ι = H(jϖ ) for ι := [1 , j ]⊤, see Lemma 5 in Appendix. With this in mind, the foundational question that motivated this article is whether this time-domain characterization of the frequency response can be extended to nonlinear systems, en-abling frequency-based tools for analysis and design analogous to those used in linear systems theory.  
+
+> State of the Art:
+
+Significant efforts have been dedicated over the last three decades to the nonlinear enhancements of frequency-domain concepts. One of the earliest extensions of the frequency response to nonlinear systems is provided through generalized frequency response functions . For con-vergent Volterra series representations of its input-output map describing the system, these functions can be deduced from the Fourier transforms of the Volterra kernels. Although they extend the notion of frequency response, the presence of frequency coupling and harmonic interactions makes their interpretation considerably more complex than the linear case, see, e.g. , [31]–[33]. These functions are challenging to com-pute and represent, limiting their practical applicability. From a control-theoretic perspective, the attack on the prob-lem of H∞-control of nonlinear systems, as presented in [34], produced a tool that, based on the steady-state response of a forced system, can be recognized as an early characterization of the frequency response of nonlinear systems. In [34], the gain (or amplitude) of a nonlinear system has been given by the ratio of the L2-induced norm of the steady-state output and that of the periodic input, providing an instrumental tool for extending H∞-control methods to nonlinear systems. In the context of moment matching, [35] characterized the frequency response of a nonlinear system under harmonic excitations as the ratio of the Fourier series (with nonnegative indices) of the steady-state output to that of the output of the harmonic oscillator. As shown in [36], convergent systems driven by harmonic inputs admit a global steady-state behavior, at vari-ous input amplitudes and frequencies. This property led to the definition of gain as the maximum output-to-input amplitude ratio over a finite set of harmonic input amplitudes. The gain in [36] was illustrated via a gain-frequency diagram, offering a Bode-like representation of how a convergent system amplifies sinusoidal inputs across frequencies and amplitudes. Despite significant interest and advancements in gain for nonlinear systems, phase received much less attention in these studies. The first interest in the phase of nonlinear systems was associated with frequency-domain approximations [37]–[39], and operator theory [40]. Recently, there has been a resurgence of interest in the notion of phase for nonlinear systems from an operator perspective. In [41], [42], the phase is defined as the angle between the output of the system and the complex signal constructed using the input and its Hilbert transform as its real and imaginary part, respectively. The Hilbert transform has been the subject of many research areas, such as optics, fluids, and signal processing [43]. A similar operator reasoning is employed in [44], where the concepts of gain and phase are defined using a scaled relative graph [45], which opened to a nonlinear operator generalization of the Nyquist diagram, shedding new light on how the system amplifies the input and how it shifts the signal. However, operator-based repre-sentations can still be less practical than first-order models, as capturing complex nonlinear behavior in operator form is often more challenging.  
+
+> Contributions:
+
+Taking as a point of departure the invariance principle, a characterization of the frequency response function for nonlinear systems is given. For a family of periodic nonlinear inputs parameterized by ω, it is shown that the 
+
+frequency response function associated with the nonlinear system can be given as the complex-valued function 
+
+Γ( ω) = α(ω)r(ω)ejϑ (ω),
+
+where α(ω), ϑ(ω), and r(ω), which are referred to as the 
+
+ω-gain, ω-phase, and ω-radius, respectively, are functions associated with the steady-state relation between input and output. As a result, it is shown that most of the features of the frequency response of an LTI system are expressions of more general nonlinear principles. Indeed, the introduced notion captures amplitude-dependent nonlinear effects in both amplitude and phase by reflecting attenuation or amplification of the input effect ( ω-gain), leads or lags of the input effect (ω-phase), and nonlinear distortion of the input signal through the system ( ω-radius). While ω-gain and ω-phase are enhance-ments of the notions of gain and phase of LTI systems, the ω-radius is a function, purely resulting from nonlinear dynamics, which quantifies the distortion introduced by the system in the steady-state output compared to the periodic input. Together, these frequency response tools allow for graphical representation of input frequency and amplitude. This provides a full picture of the frequency response function in the form of a nonlinear Bode diagram. It also facilitates graphical analysis of nonlinear system dynamics and bridges the gap between linear approximations and true nonlinear behavior. Finally, we propose a nonlinear loop-shaping formulation in terms of a specification set which accounts for desired quantitative requirements on the feedback system. The preliminary prob-lem of shaping only the gain function was initialized in the conference article [46].  
+
+> Organization:
+
+Section II opens with the introduction of basic definitions and the setup of the framework. Section III formal-izes the notion of frequency response, along with the functions 
+
+ω-gain, ω-phase, and ω-radius, before illustrating nonlinear Bode diagrams through examples. Section IV analyzes the frequency response of dissipative systems, before presenting a weak form of the superposition principle. Section V discusses the nonlinear loop-shaping problem and validates it in an example. Final remarks and open challenges are in Section VI.  
+
+> Notation:
+
+The sets of real, natural, integer, and complex numbers are denoted by R, N, Z, and C, respectively, and 3
+
+j ∈ C denotes the imaginary unit. Given a function A
+
+with domain Q mapping into sets, ×q∈Q A(q) denotes the Cartesian product of its values. The set of strictly positive real numbers is denoted by R+, and the set of n × m real matrices by Rn×m. Tuples of real numbers and column vectors are used interchangeably; when clear from the context, 0 denotes the zero matrix of appropriate dimension. For Rn, | · | : Rn → R
+
+denotes the Euclidean norm. The space of square-integrable functions mapping A ⊆ Rn to B ⊆ Rm is denoted by 
+
+L2(A, B), i.e. , the set of measurable functions f : A → B such that R
+
+> A
+
+|f (x)|2dx < ∞. When B is clear from the context, 
+
+L2(A) is used in place of L2(A, B). For f, g ∈ L 2(A, B), the inner product and induced norm are, respectively, defined as 
+
+⟨f, g ⟩L2(A) := 
+
+Z
+
+> A
+
+f (x)⊤g(x)dx , |f |L2(A) := 
+
+q
+
+⟨f, f ⟩L2(A) .
+
+II. B ASIC DEFINITIONS 
+
+Consider a multi-input, multi-output nonlinear system de-scribed in state-space by the equations of the form 
+
+˙x = f (x, u ), y = h(x, u ), (5) with state x(t) ∈ Rn, input u(t) ∈ Rm, and output y(t) ∈ Rp.To guarantee that, for all x0 := x(0) ∈ X ⊆ Rn the solution of (5) exists on some open interval containing t = 0 
+
+and is unique, we assume that f : Rn × Rm → Rn and 
+
+h : Rn × Rm → Rp are locally Lipschitz in x and uniformly continuous in u, and that u(t) is measurable and essentially bounded over any finite interval. Frequency response analysis for linear systems focuses on the steady-state response to harmonic input signals. Hence, characterizing a nonlinear frequency response requires a corresponding notion of steady-state suitable for nonlinear systems. Following Isidori and Byrnes [29], the steady-state response for nonlinear systems of the form (5) can be defined under the assumption that the input u(t) is a periodic signal generated by a signal generator described by the equations 1
+
+˙z = s(ω, z ), u = ℓ(ω, z ), (6) with state z(t) ∈ Rr and parameter vector ω ∈ N ⊂ Rq ,where N is a bounded subset. For each fixed ω ∈ N , the associated initial condition z(0) = z0(ω) are parameterized by ω and are assumed to belong to Zω ⊆ Rr , where Zω
+
+is a compact invariant subset chosen as a periodic orbit for (6). More precisely, for fixed ω, the omega-limit set of 
+
+Zω coincides with Zω itself; see [29]. We assume that the functions s : Rr × Rq → Rr and ℓ : Rr × Rq → Rm
+
+are continuous in both arguments, and that s(z, ω ) is locally Lipschitz in z, uniformly in ω.
+
+Assumption 1. For every ω ∈ N , the state z and output 
+
+u = ℓ(ω, z ) of (6) are continuous and periodic, with period 
+
+Tω ∈ R+ depending on the parameter ω.    
+
+> 1Since frequency and amplitude for nonlinear oscillators might be contin-gent on the initial conditions other than system parameters (see, e.g. , [47], [48]), it is appropriate to parameterize ℓby ω. This is relevant in situations in which (6) can only be initialized within its omega-limit set to induce oscillatory behaviors.
+
+To guarantee nontriviality of the input signal, we assume that u is not identically zero. That is, there exists a ¯t > 0
+
+such that ℓ(ω, z (¯ t)) ̸ = 0 . To streamline the presentation, the compact interval Tω := [0 , T ω ], representing the time domain from 0 to Tω is introduced. 
+
+Lemma 1. For (6) it holds that ˙ℓ(ω, z ), ℓ (ω, z ) L2(Tω ) = 0 .Proof. Since u = ℓ(ω, z ), it follows that ˙u = ˙ℓ(ω, z ). Using integration by parts, we obtain 
+
+⟨ ˙u, u ⟩L2(Tω ) = |u(Tω )|2 − | u(0) |2 − ⟨ u, ˙u⟩L2(Tω ).
+
+Since u is periodic with period Tω , we have that u(Tω ) = 
+
+u(0) . Thus, by symmetry of the inner product, 2⟨ ˙u, u ⟩L2(Tω ) =
+
+|u(Tω )|2 − | u(0) |2 = 0 , which concludes the proof. To make the subsequent derivations well-defined, we intro-duce a key assumption on the interconnected system (5)-(6). 
+
+Assumption 2. For every ω ∈ N and every initial condition 
+
+(z(0) , x (0)) ∈ Z ω × X the subset X of the state space of the system (5) is such that the trajectories of the interconnected system (5) -(6) are ultimately bounded, and remain in Zω × X .Moreover, there exists a (sufficiently) smooth mapping φ : N × 
+
+Rr → Rn such that the submanifold 
+
+M := (ω, z, x ) ∈ N × Z ω × X x = φ(ω, z ) (7) 
+
+is well-defined and invariant under (5) -(6) . That is, if 
+
+(ω, z (¯ t), x (¯ t)) ∈ M , then (ω, z (t), x (t)) ∈ M for all t ≥ ¯t.
+
+Under Assumption 2, for all (ω, z 0, x 0) ∈ M , the steady-state response of the nonlinear system (5) to the class of periodic inputs governed by the signal generator (6) is fully determined by the invariant manifold M, see [29]. Further-more, the invariance of M under the flow of the interconnected system necessitates that the mapping φ satisfies the partial differential equation (PDE), known as the invariance equation ,
+
+f (φ(ω, z ), ℓ (ω, z )) = ∂φ ∂z s(ω, z ). (8) The invariance equation (8) ensures that the vector field is tangent to the manifold M, and is equivalent to requiring that the nonlinear system entrains to the periodic input signal [49]. As a result, its long-term behavior can be captured entirely by the mapping φ from the generator state to the system state. Under suitable stability assumptions on the system (5), the invariant manifold M becomes attractive . Specifically, if the interconnected system (5)-(6) is such that all trajectories origi-nating by initial conditions in Zω ×X converge asymptotically to M, then it is not required for (z(0) , x (0)) to lie exactly on 
+
+M. This property allows the nonlinear framework to capture the asymptotic behavior of a broader class of initial conditions, much like the role of asymptotic stability in LTI systems. Recalling that the input u = ℓ(ω, z ) is continuous and Tω -periodic, it follows that the state trajectories x and output tra-jectories y of the interconnected system (5)-(6) when restricted to the invariant manifold M are likewise Tω -periodic. The state and output restricted on M are given by x = φ(ω, z ) and 
+
+y = h(φ(ω, z ), ℓ (ω, z )) , respectively. Analogous to the case of asymptotically stable LTI systems, the signals u and y on the 4
+
+manifold M share the same fundamental period. In this regard, frequency-domain analysis of the steady-state behavior of the nonlinear interconnected system (5)-(6) may be conducted by restricting attention to the input and output signals u and y on the invariant manifold M, evaluated over Tω .These arguments allow defining the time-domain frequency response of the nonlinear system in (5), when it is driven by (6) with parameter ω ∈ N , as follows. 
+
+Definition 1 (ω-response ). Given the nonlinear system (5) the 
+
+ω-response to the input (6) for all ω ∈ N is given by 
+
+Y (ω, z ) := h(φ(ω, z ), ℓ (ω, z )) . (9) The notion of ω-response is here introduced to formalize the parametric dependence of ω in the steady-state output response of the system (5) under the input signal generated by (6). This ω-response function fully captures the effect of the class of inputs generated by (2), indicating that it can be used to analyze how the system output varies with changes in ω and in the initial conditions z0(ω) ∈ Z ω .The following example illustrates how nonlinearities affect the ω-response of a system driven by an exogenous signal. We illustrate the evolution of the ω-response with respect to its generating input, emphasizing its sensitivity to variations in ω and differing initial conditions z(0) = z0(ω).
+
+Example 1. Let (6) be the harmonic oscillator (2) with parameter ω = ( ϖ, a u) ∈ R2+, state z = ( z1, z 2) ∈ R2, and initial condition z0(ω) = ( au, 0) ∈ R2. This signal generator generates sine waves with amplitude au and angular frequency 
+
+ϖ. The nonlinear system (5) has state x = ( x1, x 2) ∈ R2, and its dynamics are defined as 
+
+f (x, u ) = 
+
+ −a1x1 + u
+
+−a2x21 − a3x2 + b1x1u
+
+
+
+, (10) 
+
+h(x, u ) = x1 + c1x1x2. (11) The local behavior of the nonlinear system (10)-(11) near the hyperbolic equilibrium x = 0 is an LTI system (Hartman-Grobman theorem [50]) that can be obtained by setting 
+
+(a2, b 1, c 1) = (0 , 0, 0) . To compute the ω-response associated with the interconnected system (2)-(10), with respect to the output (11), we seek a mapping φ(ω, z ) = ( φ1, φ 2) that satis-fies the invariance equation (8). In this case, the interconnected system (2)-(10) yields the following quadratic solution 
+
+φ(ω, z ) = 
+
+ d1,ω z1 + d2,ω z2
+
+d3,ω z1z2 + d4,ω z21 + d5,ω z22
+
+
+
+, (12) where the coefficients di,ω , i ∈ { 1, . . . , 5}, are functions of the parameter ω and determined by solving the invariance equation. With the mapping (12) in hand, we can evaluate the ω-response using the composition h ◦ φ, as defined in (9). To illustrate the sensitivity of the ω-response, we consider the specific parameter configuration 
+
+a1 = 0 .5, a2 = 1 , a3 = 1 , b1 = 1 , c1 = 1 . (13) Figure 1a shows the surface of the ω-response for three different input frequencies, i.e. , ω = (0 .01 , 1) , ω = (0 .1, 1) ,and ω = (1 , 1) . The surface exhibits strongly nonlinear behavior for small values of ϖ, as evidenced by its curvature. As ϖ increases, the surface gradually flattens and approaches a planar shape, indicating convergence toward behavior typical of a linear system. This trend suggests that, for large ϖ, the nonlinear effects become negligible, and the system behaves similarly to its linear approximation. Figure 1c displays representative input signals z1, and Figure 1b shows the corresponding ω-response trajectories as a function of au and fixed ϖ = 0 .1. For small amplitudes au,the ω-response closely tracks the input signal, indicating strong signal correlation and validation of the Hartman-Grobman theorem around the origin. However, as the input amplitude approaches 0.8, the response exhibits deviation from the input trajectory. For a small ϖ, such as ω = 0 .1, the output shows both phase inversion and amplitude distortion, with changes in trajectory shape. These phenomena reflect the nonlinear system sensitivity to input magnitude and highlight how the ω-response captures such effects. Therefore, despite its stability, the system performs differently for different excitations. The framework presented in Section III unifies the analysis of all these phenomena and extends them through a suitable frequency response function for nonlinear systems. ◁
+
+III. T HE CONCEPT OF FREQUENCY RESPONSE OF 
+
+NONLINEAR SYSTEMS 
+
+We recall that the continuity and periodicity of ℓ(ω, z ) and 
+
+Y (ω, z ), with period Tω ∈ R+ depending on the parameter ω,imply that both functions are bounded and square-integrable, and thus belong to well-defined function spaces. Specifically, boundedness ensures finite amplitude over the domain, while square integrability guarantees finite energy in the L2 sense. With this in mind, to characterize the behavior of the nonlinear system (5) with respect to the input (6) through the ω-response, we define a series of functions which are instrumental to characterize the frequency response function. 
+
+Definition 2 (ω-gain ). The ω-gain function α : N → R of the system (5) to the input (6) for all ω ∈ N is given by 
+
+α(ω) := Y (ω, z ) L2(Tω )
+
+ℓ(ω, z ) L2(Tω )
+
+. (14) The ω-gain function 2, as defined in (14), quantifies the amplification (or attenuation) of the input signal at every frequency associated with ω. It describes the ratio between the energy ( i.e. , the L2 norm) of the ω-response and that of the reference input signal ℓ(ω, z ), both measured over one period corresponding to ω. However, this function possesses a notable property, which is proved in the following statement. 
+
+Proposition 1. Consider the LTI system (1) with transfer function H : C → C, driven by the harmonic signal generator (2) with parameter ω = ( ϖ, a u, ϕ u) ∈ R2+ × R
+
+and initial condition z0(ω) = ( au sin ϕu, a u cos ϕu) ∈ R2.Then, the associated ω-gain function (14) satisfies 
+
+α(ω) = |H(jϖ )|. (15)        
+
+> 2This gain function was used in [34] in the context of H∞-control, with the difference that here the L2norm is defined over the compact Tω. In [46], a similar gain was given in terms of Lpnorm. 5
+
+(a) (b) (c) 
+
+Fig. 1 : Graphical analysis of the ω-response of the nonlinear system (10)-(11) to the input defined in (2) corresponding to the parameter configuration (13): (a) Surface of Y (ω, z ) with z ∈ [−1, 1] 2 with au = 1 and ϖ ∈ 10 −2, 10 −1, 1 ; (b) Time evolution of the function Y (ω, z (t)) over the domain t ∈ Tω , with ϖ = 0 .1 and au ∈ [0 .1, 0.8] ; (c) Time evolution of the input ℓ(ω, z (t)) under the same conditions as in (b). 
+
+Proof. The state of the harmonic input with initial condi-tion z0(ω) = (au sin ϕu, a u cos ϕu) and parameter ω =(ϖ, a u, ϕ u) is given by z1(t) = au sin( ϖt + ϕu) and z2(t) = 
+
+au cos( ϖt + ϕu) with period Tω = 2πϖ . Thus, we also have 
+
+ℓ(ω, z ) = z1, ˙ℓ(ω, z ) = ϖz 2 and, as shown in Lemma 1, 
+
+⟨z1, z 2⟩L2(Tω ) = ϖ−1 ℓ(ω, z ), ˙ℓ(ω, z ) L2(Tω ) = 0 . (16) Therefore, the input ℓ(ω, z ) = z1 has norm 
+
+|ℓ(ω, z )|L2(Tω ) = au
+
+r πϖ .
+
+Since (5) is also an LTI system of the form (1) we have that Y (ω, z ) = CΦ1(ϖ)z1 + CΦ2(ϖ)z2, where Φ( ϖ) := [Φ 1(ϖ), Φ2(ϖ)] ∈ Rn×2 satisfies the Sylvester equation (4). From Lemma 5, recall that CΦ1(ϖ) + jC Φ2(ϖ) = H(jϖ ).Then, since (16) holds, the L2-norm of Y (ω, z ) over Tω yields 
+
+Y (ω, z ) L2(Tω ) = CΦ1(ϖ)z1 + CΦ2(ϖ)z2 L2(Tω )
+
+= au
+
+r πϖ
+
+q
+
+(CΦ1(ϖ)) 2 + ( CΦ2(ϖ)) 2
+
+= au
+
+r πϖ |H(jϖ )|, (17) and thus the ω-gain function (14) coincides with the amplitude change induced by its frequency response H(jϖ ), that is (15). 
+
+Definition 3 (ω-phase ). The ω-phase function ϑ : N → R of the system (5) to the input (6) for all ω ∈ N is given by 
+
+ϑ(ω) := arg( Re (ω) + jIm (ω)) (18) 
+
+where 
+
+Re (ω) := ℓ(ω, z ), Y (ω, z ) L2(Tω )
+
+ℓ(ω, z ) L2(Tω ) Y (ω, z ) L2(Tω )
+
+,
+
+Im (ω) := 
+
+˙ℓ(ω, z ), Y (ω, z ) L2(Tω )
+
+˙ℓ(ω, z ) L2(Tω ) Y (ω, z ) L2(Tω )
+
+.
+
+The notion of ω-phase function as defined in (18) provides a geometric characterization of the phase angle between the 
+
+ω-response and the subspace spanned by the functions ℓ(ω, z )
+
+and ˙ℓ(ω, z ) at all ω. Specifically, the ω-phase function ϑ(ω)
+
+is defined as the argument (angle) of the resulting complex-valued projection where the real part Re (ω) corresponds to the inner product with the input ℓ(z, ω ), capturing the in-phase component, and the imaginary part Im (ω) corresponds to the inner product with the time derivative ˙ℓ(z, ω ), capturing the orthogonal component. Since ℓ(ω, z ) and ˙ℓ(ω, z ) form an orthogonal pair (see Lemma 1), the functions Im (ω) and 
+
+Re (ω) form an orthogonal basis 3 of a subspace of the function space L2(Tω ). This orthogonality indicates that they represent independent components of Y (ω, z ), guaranteeing that ϑ(ω)
+
+is a well-defined phase angle without cross-term interference. Consequently, the sign and magnitude determine the direction and the exact value of the ω-phase in the complex plane spanned by the function ℓ(ω, z ) and ˙ℓ(ω, z ).
+
+Proposition 2. Consider the LTI system (1) with transfer function H : C → C, driven by the harmonic signal generator (2) with parameter ω = ( ϖ, a u, ϕ u) ∈ R2+ × R
+
+and initial condition z0(ω) = ( au sin ϕu, a u cos ϕu) ∈ R2.Then, the associated ω-phase function (18) satisfies 
+
+ϑ(ω) = arg( H(jω )) . (19) 
+
+Proof. As shown at the beginning of the proof of Proposi-tion 1, in these settings, we have Tω = 2πϖ , ℓ(ω, z ) = z1,
+
+˙ℓ(ω, z ) = ϖz 2, and ⟨z1, z 2⟩L2(Tω ) = 0 . Additionally, the L2-norm of ℓ(ω, z ) and ˙ℓ(ω, z ) over Tω satisfy 
+
+˙ℓ(ω, z ) L2(Tω ) = au
+
+r πϖ , ˙ℓ(ω, z ) L2(Tω ) = au
+
+√πϖ. 
+
+Now, recall that, since the system (5) is LTI, Y (ω, z ) =
+
+CΦ1(ϖ)z1 + CΦ2(ϖ)z2, where Φ( ϖ) := [Φ 1(ϖ), Φ2(ϖ)] ∈ 
+
+> 3A similar argument can be obtained applying the Hilbert transform on the input signal u(t), which produces an orthogonal signal [43]. 6
+
+Rn×2 satisfies the Sylvester equation (4). Then, we have 
+
+ℓ(ω, z ), Y (ω, z ) L2(Tω )
+
+= z1, C Φ1(ϖ)z1 + CΦ2(ϖ)z2 L2(Tω )
+
+= CΦ1(ϖ) z1, z 1 L2(Tω ) = CΦ1(ϖ) πa 2
+
+> u
+
+ϖ ,
+
+and similarly, 
+
+˙ℓ(ω, z ), Y (ω, z ) L2(Tω )
+
+= ϖz 2, C Φ1(ϖ)z1 + CΦ2(ϖ)z2 L2(Tω )
+
+= ϖC Φ2(ϖ) z2, z 2 L2(Tω ) = CΦ2(ϖ)πa 2
+
+> u
+
+.
+
+Then, by definition of Re (ω) and Im (ω), it follows that 
+
+Re (ω) = CΦ1(ϖ)au
+
+Y (ω, z ) L2(Tω )
+
+r πϖ ,
+
+Im (ω) = CΦ2(ϖ)au
+
+Y (ω, z ) L2(Tω )
+
+r πϖ .
+
+Therefore, we obtain 
+
+Re (ω) + jIm (ω) = au
+
+r πϖCΦ1(ϖ) + jC Φ1(ϖ)
+
+Y (ω, z ) L2(Tω )
+
+= au
+
+r πϖH(jϖ )
+
+Y (ω, z ) L2(Tω )
+
+(20) Hence, the ω-phase of the LTI system in response to aharmonic input coincides with the phase shift introduced by its frequency response H(jω ), i.e. ,
+
+ϑ(ω) = arg( Re (ω) + jIm (ω)) = arg( H(jϖ )) ,
+
+that is (19). 
+
+Definition 4 (ω-radius ). The ω-radius function r : N → R of the system (5) to the input (6) for all ω ∈ N is given by 
+
+r(ω) := |Re (ω) + jIm (ω)|. (21) Before discussing the meaning of the ω-radius, let us first introduce the following theorem, which proves important properties of this function. 
+
+Theorem 1. For (21) , it holds that: 
+
+(i) r(ω) ∈ (0 , 1] ,
+
+(ii) the squared ω-radius is equal to 
+
+r(ω)2 = 1 − Y (ω, z ) − Y (ω, z ) 2 
+
+> L2(Tω)
+
+Y (ω, z ) 2 
+
+> L2(Tω)
+
+,
+
+where Y (ω, z ) is the orthogonal projection of Y (ω, z )
+
+onto the subspace L2(Tω ) of L2(Tω ) that spans ℓ(ω, z )
+
+and ˙ℓ(ω, z ).
+
+(iii) r(ω) = 1 if and only if Y (ω, z ) = Y (ω, z ).Proof. For brevity, let us recall that u = ℓ(ω, z ) and ˙u =˙ℓ(ω, z ). For the definition of Y (ω, z ), we know that 
+
+Y (ω, z ) = λ1u + λ2 ˙u, ℓ(ω, z )
+
+˙ℓ(ω, z )
+
+Y (ω, z )
+
+Y (ω, z )
+
+ϑ(ω)λ1ℓ(ω, z ) λ2 ˙ℓ(ω, z )
+
+|Y (ω, z )|L2(Tω )
+
+p1 − r(ω)2
+
+Fig. 2 : Illustration of the space L2(Tω ) that spans ℓ(ω, z ) and 
+
+˙ℓ(ω, z ) in relation with Y (ω, z ), Y (ω, z ), the ϑ(ω), and r(ω).where 
+
+λ1 = ⟨u, Y (ω, z )⟩L2(Tω )
+
+|u|2 
+
+> L2(Tω)
+
+, λ2 = ⟨ ˙u, Y (ω, z )⟩L2(Tω )
+
+| ˙u|2 
+
+> L2(Tω)
+
+.
+
+Then, recalling that ⟨u, ˙u⟩L2(Tω ) = 0 (see Lemma 1), we have 
+
+Y (ω, z ) − Y (ω, z ) 2  
+
+> L2(Tω)
+
+=
+
+Y (ω, z ) 2  
+
+> L2(Tω)
+
++ λ21 u 2  
+
+> L2(Tω)
+
++ λ22 ˙u 2 
+
+> L2(Tω)
+
+− 2λ1 Y (ω, z ), u L2(Tω ) − 2λ2 Y (ω, z ), ˙u L2(Tω ).
+
+From the definitions of λ1, λ2, Re (ω), and Im (ω), we have 
+
+λ21 u 2  
+
+> L2(Tω)
+
+= λ1 Y (ω, z ), u L2(Tω ) = Y (ω, z ) 2 
+
+> L2(Tω)
+
+Re (ω)2,λ22 ˙u 2  
+
+> L2(Tω)
+
+= λ2 Y (ω, z ), ˙u L2(Tω ) = Y (ω, z ) 2 
+
+> L2(Tω)
+
+Im (ω)2.
+
+Thus, since r(ω)2 = Re (ω)2 + Im (ω)2, we have 
+
+Y (ω, z ) − λ1u − λ2 ˙u 2 
+
+> L2(Tω)
+
+= Y (ω, z ) 2 
+
+> L2(Tω)
+
+ 1 − Re (ω)2 − Im (ω)2
+
+= Y (ω, z ) 2 
+
+> L2(Tω)
+
+ 1 − r(ω)2. (22) Recall that r(ω) ≥ 0 by definition; however, since (22) holds, then r(ω) = 0 if and only if u(t) = 0 for all t ∈ Tω , which is not true by assumption. Hence, r(ω) > 0. Moreover, we conclude that (22) holds only for 1 − r(ω)2 ≥ 0, which implies that r(ω) ≤ 1, proving statement (i) . Statement (ii) 
+
+is obtained by manipulating (22). Finally, (ii) readily implies statement (iii) , because the L2(Tω ) norm of a continuous signal is equal to 0 if and only if the signal is identically 0.As represented in Figure 2, by virtue of Theorem 1, the ω-radius shows the fraction of the norm of the ω-response that lies on the finite dimensional subspace L2(Tω ) of L2(Tω ) that spans the input ℓ(ω, z ) and its derivative ˙ℓ(ω, z ). Therefore, the 
+
+ω-radius function takes values between two bounds: r(ω) = 1 
+
+when the ω-response function is an element of L2(Tω ), while 
+
+r(ω) = 0 when the ω-response is orthogonal to both the input and its derivative, which, as stated in Theorem 1, is impossible. Hence, the ω-radius function can be viewed as a quantitative measure of the distortion of the input induced by the system. Indeed, when r(ω) = 1 , the ω-response function differs from the input only in amplitude, as described by the ω-gain, and in 7
+
+phase lag, as described by the ω-phase. In the case of a sine wave input (generated from a harmonic oscillator), r(ω) = 1 
+
+implies that the output is again a sine wave, with a different amplitude and phase. An additional interpretation of r(ω) = 1 
+
+is also provided in Lemma 6 in Appendix. Hence, r(ω) in (21) can thus be used to determine classes of systems that preserve the input class in the output, as studied in [51]. An example of a system that satisfies this property is an LTI system fed with a harmonic oscillator, as shown in the following proposition. 
+
+Proposition 3. Consider the LTI system (1) with transfer function H : C → C, driven by the harmonic signal generator (2) with parameter ω = ( ϖ, a u, ϕ u) ∈ R2+ × R
+
+and initial condition z0(ω) = ( au sin ϕu, a u cos ϕu) ∈ R2.Then, the associated ω-radius function (21) satisfies 
+
+r(ω) = 1 . (23) 
+
+Proof. Recalling (20) in the proof of Proposition 2, we have 
+
+r(ω) = |Re (ω) + jIm (ω)| = au
+
+r πϖ
+
+|H(jϖ )|
+
+Y (ω, z ) L2(Tω )
+
+.
+
+Then, recalling (17) in the proof of Proposition 2, we obtain 
+
+r(ω) = au
+
+r πϖ
+
+|H(jϖ )|
+
+au
+
+p πϖ |H(jϖ )| = 1 ,
+
+which concludes the proof. Using the rationale behind the definition of frequency re-sponse function, we can employ the notion of ω-gain, ω-phase, and ω-radius to define the nonlinear frequency response of the system (5) to the input (6) as follows. 
+
+Definition 5 (Frequency response ). The frequency response 
+
+function Γ : N → C of the system (5) to the input (6) for all 
+
+ω ∈ N is given by 
+
+Γ( ω) := α(ω)r(ω)ejϑ (ω). (24) The nonlinear frequency response function (24) takes the standard phasor form, expressed in terms of the functions 
+
+ω-gain, ω-phase, and ω-radius associated with the nonlinear system (5) and the nonlinear input (6). In the general nonlinear case, the ω-radius function plays a role in balancing the relation between the cosine and sine of the ω-phase and the Euler identity. Specifically, for a given ϑ(ω), the sine and cosine satisfy 
+
+cos( ϑ(ω)) = Re (ω)
+
+r(ω) , sin( ϑ(ω)) = Im (ω)
+
+r(ω) , (25) respectively. Hence, the frequency response function Γ( ω) can be expressed by Euler’s formula in the form 
+
+Γ( ω) = α(ω)r(ω) cos( ϑ(ω)) + jα (ω)r(ω) sin( ϑ(ω)) = α(ω)Re (ω) + jα (ω)Im (ω) . (26) A geometric representation of the frequency response func-tion is illustrated in Figure 2. It should also be noted that the frequency response function satisfies 
+
+|Γ( ω)| = |α(ω)r(ω)| = α(ω)r(ω), (27) which emphasizes that the magnitude of the frequency re-sponse differs from its gain. This is because the magnitude depends not only on the ω-gain function, but also on the effect of the ω-radius, which may attenuates it as r(ω) ∈ (0 , 1] (see Point (iii) of Theorem 1). However, when the input class is preserved by the system, i.e. , r(ω) = 1 , the magnitude and gain coincide, as is typical for an LTI system with sinusoidal inputs. With all the pieces in place, the frequency response function (24) can be finally specialized in the case of LTI systems. 
+
+Proposition 4. Consider the LTI system (1) with transfer function H : C → C, driven by the harmonic signal generator (2) with parameter ω = ( ϖ, a u, ϕ u) ∈ R2+ × R
+
+and initial condition z0(ω) = ( au sin ϕu, a u cos ϕu) ∈ R2.Then, the associated ω-radius function (21) satisfies 
+
+Γ( ω) = H(jω ). (28) 
+
+Proof. Building on Proposition 1, Proposition 2, and Proposition 3, we have Γ( ω) = α(ω)r(ω)ejϑ (ω) =
+
+|H(jω )|ej arg( H(jω )) = H(jω ), that is (28). 
+
+Example 2. We revisit Example 1 and analyze the additional information encoded in the associated frequency response function (24). In particular, we compute α(ω), ϑ(ω), and 
+
+r(ω) from (14), (18), and (21) respectively, and then perform a Bode-like diagram over input frequency and amplitude. Specifically, Figures 3a, 3b and 3c present, respectively, the nonlinear Bode-like gain diagram, the nonlinear Bode-like phase diagram and the nonlinear Bode-like radius diagram, derived using the ω-response function under the same pa-rameter configuration specified in equation (13). Figure 3a shows that for very small input amplitudes, the α(ω) closely matches the magnitude response of the linearized system. As the input amplitude au increases and for low-frequency values ϖ, near au ≈ 0.75 , the ω-gain function α(ω) exhibits attenuation not present in the linear model. For au > 1,amplification increases with input amplitude. As ω increases, the amplitude response converges to that of the linearized system even at higher amplitudes au. Similarly, Figure 3b shows that the phase response matches the linearized model at small amplitudes. However, near au ≈ 0.75 and low ω, a phase shift of about −180 ◦ occurs, consistent with phase inversion and trajectory changes observed in Figure 1b. As ω increases, the phase again aligns with the linearized response over the same amplitude range. Instead, Figure 3c shows that, at low amplitudes au or at large frequencies ϖ, the ω-radius is close to 1, indicating that the nonlinear system does not distort the input. In particular, since the input is a sine wave generated by a harmonic oscillator, the ω-radius shows that the output is a sine wave that differs from the input in amplitude and phase (as shown in 3a and 3b). Instead, around au ≈ 0.75 and low frequencies, the ω-radius significantly decreases, highlighting that the output is a heavily distorted version of the input. This is also confirmed by Figure 1b, where the time series of ω-response is graphically represented. ◁8     
+
+> (a) ω-gain (b) ω-phase (c) ω-radius
+
+Fig. 3 : Bode-like diagram of the nonlinear system (10)-(11), corresponding to the parameter configuration (13), in response to the input (2), with angular frequency ϖ ∈ [10 −2, 10 2] and amplitude au ∈ [10 −2, 10 2]. The red curve corresponds to the 
+
+ω-gain, ω-phase, and ω-radius of the linearized system about the equilibrium x = 0 .     
+
+> (a) ω-gain (b) ω-phase (c) ω-radius
+
+Fig. 4 : Bode-like diagram of the system in Example 3, with angular frequency ϖ ∈ [10 −2, 10 2] and amplitude au ∈ [10 −2, 10 2].     
+
+> (a) ω-gain (b) ω-phase (c) ω-radius
+
+Fig. 5 : Bode-like diagram of the system in Example 4, with angular frequency ϖ ∈ [10 −2, 10 2] and amplitude au ∈ [10 −2, 10 2].The red curve corresponds to the ω-gain, ω-phase, and ω-radius of the linearized system about the equilibrium x = 0 .
+
+Example 3. Consider the nonsmooth nonlinear system (5) with state x = ( x1, x 2) ∈ R2, and 
+
+f (x, u ) = 
+
+ −0.1x1 + u
+
+−10 |sin( x1)| − 3x2 + 2 x1
+
+
+
+,h(x, u ) = 5 x1 + 3 x1x2.
+
+We are interested in analyzing its frequency response when fed with the nonlinear, nonsmooth oscillator analyzed in [52], which can be represented in the form (6) with ω = ( ϖ, a u) ∈
+
+R2, z0(ω) = ( au, 0) ∈ R2 and 
+
+s(ω, z ) = 
+
+z2
+
+−  ϖk α
+
+> 2π
+
+2z1 z1
+
+> au
+> α−1
+
+!
+
+, ℓ(ω, z ) = z1
+
+where kα = 4√2( α+1) B
+
+ 1 
+
+> α+1
+
+, 12
+
+
+
+, α = 30 , and B is the Euler’s beta function [53, Sec 8.17]. Then, the input u has angular frequency equal to ϖ, and it oscillates within the interval [−au, a u]. Note that neither the system nor the signal generator admits a linearization around the origin as they are both non-differentiable, and hence representations by Bode 9
+
+diagrams are not allowed. On the other hand, the ω-gain, ω-phase, and ω-radius are still well-defined quantities that they can be used for system analysis. The system performance at different input angular frequency ϖ and amplitude au are illustrated in the Bode-like diagram of Figure 4. ◁
+
+Example 4. Consider the gene regulatory model in [9, Eq. 6.3], in which a protein x1 binds reversibly to a down-stream promoter p, forming the complex x2 with association and dissociation rates kon > 0 and koff > 0, and total promoter concentration ptot = p + x2. Here, we additionally assume saturation [10, Ch. 1] in both production and degradation of the protein x1. The transcription factor input is given by 
+
+u(t) = ¯ u + ˜ u(t), with ˜u(t) = au sin( ϖt ) and ¯v > a u > 0,and the dynamics of x1 and x2 with saturating production and degradation yields 
+
+˙x1 = w(x1, x 2) − γx 1
+
+K + x1
+
++ ¯u + ˜ uKu + ¯ u + ˜ u ,
+
+˙x2 = −w(x1, x 2),y = x1,
+
+with retroactive effect of the promoter w(x1, x 2) = koff x2 −
+
+kon (ptot − x2)x1, decay rate γ > 0, and saturation weights 
+
+K > 0 and Ku > 0. For zero frequency ( ϖ = 0), the system has a globally asymptotically stable equilibrium given by x∗ 
+
+> 1
+
+= K ¯uγ(Ku+¯ u)−¯u and x∗ 
+
+> 2
+
+= kon ptot x∗ 
+
+> 1
+> koff +kon x∗
+> 1
+
+. However, to perform frequency response analysis we consider a shifted version of the system, so that the equilibrium lies at the origin and the frequency response function can be computed from input ˜u(t) = u(t) − ¯u and output ˜y(t) = x1(t) − x∗
+
+> 1
+
+. In this example, we consider the case with γ = 5 , kon = 1 ,
+
+koff = 0 .5, ptot = 20 , ¯u = 100 .5, K = 0 .05 and Ku = 0 .1.Bode-like diagrams illustrating the performance at vari-ous angular frequency ϖ and amplitude au are reported in Figure 5. Specifically, Figure 5a shows that the ω-gain is consistent with that of the linearized system until the effect of saturation becomes visible and dominates the linear effect. This is consistent with the shape of the ω-radius in Figure 5c, which proves that, at high amplitudes, the system bends the shape of the input, achieving high nonlinearity at high frequencies. Finally, Figure 5b confirms that the phase remains unchanged throughout the input amplitudes. ◁
+
+IV. A NALYSIS OF FREQUENCY RESPONSE OF 
+
+NONLINEAR SYSTEMS 
+
+A. Input-Output Properties of the Frequency Response 
+
+One of the most widely studied input-output properties of nonlinear systems is that of dissipativity . The foundational theory of dissipativity was introduced by Willems [54]. Since then, it has been recognized as a unifying framework for characterizing both input-output and internal qualitative be-haviors of dynamical systems [55]. For the purpose of this section, we consider dissipativity in an input-output sense and adopt a weaker notion that does not require the existence of a storage function. We say that the system (5) is dissipative ,with continuous function s : Rm × Rm → R referred to as the supply rate 4, if for all admissible inputs u ∈ L 2(R, Rm), the corresponding output y ∈ L 2(R, Rm) satisfies the condition 
+
+∀u ∈ L 2(R, Rm), lim inf  
+
+> τ→∞
+
+Z τ
+
+> 0
+
+s(u(t), y (t)) dt > −∞ . (29) This condition ensures that the system does not dissipate an unbounded amount of energy over an infinite time horizon. However, on its own, it does not assume or imply the existence of a storage function that quantifies stored energy, see [56]. In addition to considering dissipativity with respect to all inputs, we introduce an input-dependent notion of dissipativity tailored to the class of inputs generated by (6). 
+
+Definition 6. The system (5) is said dissipative relative to (6) 
+
+if, for all ω ∈ N and inputs of the form u = ℓ(ω, z ), the corresponding output y ∈ L 2(R, Rm) satisfies the condition 
+
+∀ω ∈ N , lim inf  
+
+> τ→∞
+
+Z τ
+
+> 0
+
+s(ℓ(ω, z (t)) , y (t)) dt > −∞ . (30) This notion generalizes the concept of dissipativity with respect to arbitrary inputs, in the sense that (29) implies the input-dependent condition (30), whereas the converse does not necessarily hold. In what follows, we demonstrate how dissipativity implies properties of the ω-response. 
+
+Lemma 2. Let the system (5) be dissipative relative to (6) with supply rate s, and suppose that the invariant submanifold M
+
+in (7) for the interconnected system (5) -(6) is attractive. Then, the ω-response of the system (5) to the input (6) satisfies 
+
+∀ω ∈ N ,
+
+Z
+
+> Tω
+
+s(ℓ(ω, z (t)) , Y (ω, z (t))) dt ≥ 0. (31) 
+
+Proof. By assumption, the system is dissipative relative to (6), that is (30) holds. Note that, over the interval [0 , τ ], the integral in (29) can be equivalently written as 
+
+Z τ
+
+> 0
+
+s(ℓ(ω, z (t)) , y (t)) dt =
+
+> ¯τ
+
+X
+
+> k=0
+
+∆k,
+
+where τ = ¯ τ T ω + τ0, ¯τ is the unique integer such that τ0 ∈
+
+[0 , T ω ), and the sequence ∆k : N → R is defined by 
+
+∆0 := 
+
+Z τ0
+
+> 0
+
+s(ℓ(ω, z (t)) , y (t)) dt, 
+
+∆k := 
+
+Z τ0+kT ω
+
+> τ0+( k−1) Tω
+
+s(ℓ(ω, z (t)) , y (t)) dt, ∀k ≥ 1.
+
+(32) Continuity of the functions s and ℓ, as well as of the trajectories z and y, ensures boundedness of ∆k, that is there exist constants q and q such that q ≤ ∆k ≤ q for all k. Furthermore, by the assumption that the submanifold 
+
+M is invariant and attractive (along the trajectories of the interconnected system (5)-(6)), we have that the sequence ∆k
+
+converges to the constant 
+
+cω := 
+
+Z
+
+> Tω
+
+s(ℓ(ω, z (t)) , Y (ω, z (t))) dt, ∀ω ∈ N . (33)      
+
+> 4A supply rate is such that s(u, y )is a locally Lebesgue integrable function for all admissible input uand initial state x(0) .10
+
+To prove the statement, we need to show that cω ≥ 0 under the given assumptions. Therefore, ex absurdo , consider the case in which cω < 0. Then, since the sequence ∆k converges to 
+
+cω , it follows that 
+
+lim  
+
+> k→∞
+
+∆k = cω < 0.
+
+This implies the existence of a constant b > 0 and an index K ∈ N such that for all k ≥ K we have ∆k <
+
+−b. Consequently, the infinite sum of the series diverges to negative infinity, i.e. ,
+
+lim  
+
+> τ→+∞
+> τ
+
+X
+
+> k=0
+
+∆k = −∞ ,
+
+which contradicts the lower boundedness of the integral (30). On the contrary, for cω ≥ 0, we infer that 
+
+lim  
+
+> k→∞
+
+∆k =
+
+Z
+
+> Tω
+
+s(ℓ(ω, z (t)) , Y (ω, z (t))) dt ≥ 0,
+
+which implies that the infinite sum is lower bounded, and thus proves the claim. 
+
+Lemma 3. Let the system (5) be such that its ω-response to the input (6) satisfies (31) . Suppose that the invariant submanifold 
+
+M in (7) is attractive. Then, the system (5) is dissipative relative to (6) with supply rate s.Proof. Let us recall the sequence ∆ and its limit cω ∈ R as defined in (32) and (33). By assumption that the ω-response to the input (6) satisfies (31), we have that cω ≥ 0. Moreover, following the boundedness of the sequence ∆k, we have that, if cω > 0,
+
+lim  
+
+> τ→∞
+
+Z τ
+
+> 0
+
+s(ℓ(ω, z (t)) , y (t)) dt = lim  
+
+> τ→∞
+> τ
+
+X
+
+> k=0
+
+∆k = ∞,
+
+and, if cω = 0 ,
+
+lim  
+
+> τ→∞
+
+Z τ
+
+> 0
+
+s(ℓ(ω, z (t)) , y (t)) dt = lim  
+
+> τ→∞
+> τ
+
+X
+
+> k=0
+
+∆k < ∞.
+
+Hence, since both the above conditions imply the existence of a lower bound for the cumulative sum, we infer that the inequality (30) holds, thereby proving the claim. Since Lemma 2 establishes that (30) ⇒ (31), and Lemma 3 establishes that (30) ⇐ (31), we infer that (30) ⇔ (31), which yields a necessary and sufficient condition for dissipativity relative to (6), characterized in terms of the ω-response. 
+
+Theorem 2. Consider the system (5) and the input (6) .Suppose that the invariant submanifold M in (7) is attractive. Then, the system (5) is dissipative relative to (6) with supply rate s if and only if the ω-response of the system (5) to the input (6) satisfies (31) .
+
+This characterization of dissipativity in terms of the ω-response forms the foundation for analyzing bounds on the nonlinear frequency response (24) for various supply rate s.
+
+Corollary 2.1 (L2 stability) . The system (5) is L2 stable relative to (6) with γ > 0, i.e. , (30) holds with 
+
+s(u, y ) = γ2u⊤u − y⊤y, (34) 
+
+and u = ℓ(ω, z ), if and only if, for all ω ∈ N , α(ω) ∈ [0 , γ ].Proof. By substituting (34) into (30) and applying Theorem 2, we obtain the following condition in terms of the ω-response 
+
+0 ≤ γ2 ℓ(ω, z ) 2  
+
+> L2(Tω)
+
+− Y (ω, z ) 2 
+
+> L2(Tω)
+
+, which implies 
+
+Y (ω, z ) L2(Tω ) ≤ γ ℓ(ω, z ) L2(Tω ). Since |ℓ(ω, z )|L2(Tω )̸ =0, dividing both sides by |ℓ(ω, z )|L2(Tω ) and using (14), we conclude that the ω-gain is bounded by γ.
+
+Corollary 2.2 (Passivity) . The system (5) is passive relative to (6) , i.e. , (30) holds with 
+
+s(u, y ) = u⊤y, (35) 
+
+and u = ℓ(ω, z ), if and only if for all ω ∈ N , α(ω) = 0 , or 
+
+ϑ(ω) ∈
+
+h
+
+− π
+
+2 , π
+
+2
+
+i
+
+.
+
+Proof. Applying (35) in (30) and invoking Theorem 2, we obtain the necessary and sufficient condition 
+
+ℓ(ω, z ), Y (ω, z ) L2(Tω ) ≥ 0. (36) If α(ω) = 0 , then Y (ω, z ) = 0 and (36) holds. In all the other cases, |Y (ω, z )| > 0 and the ω-phase is well-defined. Recalling (25) and the definition of Re (ω), (36) holds if and only if cos( ϑ(ω)) ≥ 0. Then, we conclude the proof by noting that the cosine is non-negative if and only if ϑ(ω) ∈ [− π 
+
+> 2
+
+, π 
+
+> 2
+
+].
+
+Corollary 2.3 (Counterclockwise dynamics) . The system (5) 
+
+is with counterclockwise input-output dynamics relative to (6) ,
+
+i.e. , (30) holds with 
+
+s(u, y ) = u⊤ ˙y, (37) 
+
+and u = ℓ(ω, z ), if and only if for all ω ∈ N , α(ω) = 0 , or 
+
+ϑ(ω) ∈ [−π, 0] .
+
+Proof. Substituting (37) into (30) and applying Theorem 2, we obtain the following necessary and sufficient condition 
+
+ℓ(ω, z ), ˙Y (ω, z ) L2(Tω ) ≥ 0. Since ℓ(ω, z (t)) and Y (ω, z (t)) 
+
+are Tω -periodic, integration by parts over Tω yields 
+
+ℓ(ω, z ), ˙Y (ω, z ) L2(Tω ) = − ˙ℓ(ω, z ), Y (ω, z ) L2(Tω )
+
++ ℓ(ω, z (Tω )) ⊤Y (ω, z (Tω )) 
+
+− ℓ(ω, z (0)) ⊤Y (ω, z (0)) .
+
+Due to periodicity, the boundary terms cancel, and thus 
+
+ℓ(ω, z ), ˙Y (ω, z ) L2(Tω ) = − ˙ℓ(ω, z ), Y (ω, z ) L2(Tω ),
+
+which implies 
+
+˙ℓ(ω, z ), Y (ω, z ) L2(Tω ) ≤ 0. (38) If α(ω) = 0 , then Y (ω, z ) = 0 and (36) holds. In all the other cases, |Y (ω, z )| > 0 and the ω-phase is well-defined. Recalling (25) and the definition of Im (ω), (38) holds if and only if sin( ϑ(ω)) ≤ 0. Then, we conclude the proof by noting that the sine is non-positive if and only if ϑ(ω) ∈ [−π, 0] .11 
+
+Corollary 2.4 (Output strict passivity) . The system (5) is output strictly passive relative to (6) with γ1 > 0, i.e. , (30) 
+
+holds with 
+
+s(u, y ) = u⊤y − γ1y⊤y, (39) 
+
+and u = ℓ(ω, z ), if and only if, for all ω ∈ N , α(ω) = 0 or 
+
+α(ω) ∈
+
+
+
+0, r(ω) cos( ϑ(ω)) 
+
+γ1
+
+
+
+∧ ϑ(ω) ∈
+
+
+
+− π
+
+2 , π
+
+2
+
+
+
+.
+
+Proof. Substituting (39) into (30) and using Theorem 2 yields 
+
+⟨ℓ(ω, z ), Y (ω, z )⟩L2(Tω ) ≥ γ1|Y (ω, z )|2 
+
+> L2(Tω)
+
+. (40) If α(ω) = 0, then Y (ω, z ) = 0 and the inequality (40) becomes ⟨ℓ(ω, z ), 0⟩L2(Tω ) ≥ 0 which is true. In all the other cases, |Y (ω, z )| > 0 and the ω-phase is well-defined. Therefore, we can divide both side of (40) by 
+
+|ℓ(ω, z )|L2(Tω )|Y (ω, z )|L2(Tω ), obtaining 
+
+γ1
+
+|Y (ω, z )|L2(Tω )
+
+|ℓ(ω, z )|L2(Tω )
+
+≤ ⟨ℓ(ω, z ), Y (ω, z )⟩L2(Tω )
+
+|ℓ(ω, z )|L2(Tω )|Y (ω, z )|L2(Tω )
+
+= Re (ω) = r(ω) cos( ϑ(ω)) , (41) where we used the definition of Re (ω) and (25). Since γ1 and 
+
+r(ω) are positive, we note that (41) holds only if cos( ϑ(ω)) >
+
+0, and thus ϑ(ω) =  − π 
+
+> 2
+
+, π
+
+> 2
+
+, see Corollary 2.2. Finally, recalling the definition of α(ω) and that γ1 > 0, we end the proof by noting (41) holds if and only if 
+
+0 < α (ω) = |Y (ω, z )|L2(Tω )
+
+|ℓ(ω, z )|L2(Tω )
+
+≤ r(ω) cos( ϑ(ω)) 
+
+γ1
+
+.
+
+Corollary 2.5 (Input strict passivity) . The system (5) is input strictly passive relative to (6) with γ2 > 0, i.e. , (30) holds with 
+
+s(u, y ) = u⊤y − γ2u⊤u, (42) 
+
+and u = ℓ(ω, z ), if and only if, for all ω ∈ N ,
+
+α(ω) ∈
+
+ γ2
+
+r(ω) cos( ϑ(ω)) , ∞
+
+
+
+∧ ϑ(ω) ∈
+
+
+
+− π
+
+2 , π
+
+2
+
+
+
+.
+
+Proof. Substituting (42) into (30) and using Theorem 2 yields 
+
+⟨ℓ(ω, z ), Y (ω, z )⟩L2(Tω ) ≥ γ2|ℓ(ω, z )|2 
+
+> L2(Tω)
+
+. (43) If α(ω) = 0, then Y (ω, z ) = 0 and the inequality (40) becomes ⟨ℓ(ω, z ), 0⟩L2(Tω ) ≥ γ2|ℓ(ω, z )|2  
+
+> L2(Tω)
+
+> 0 which does not hold, because, by assumption, |ℓ(ω, z )|L2(Tω ) > 0.In all the other cases, |Y (ω, z )| > 0 and the ω-phase is well-defined. Therefore, we can divide both side of (43) by 
+
+|ℓ(ω, z )|L2(Tω )|Y (ω, z )|L2(Tω ), obtaining 
+
+γ2
+
+|ℓ(ω, z )|L2(Tω )
+
+|Y (ω, z )|L2(Tω )
+
+≤ ⟨ℓ(ω, z ), Y (ω, z )⟩L2(Tω )
+
+|ℓ(ω, z )|L2(Tω )|Y (ω, z )|L2(Tω )
+
+= Re (ω) = r(ω) cos( ϑ(ω)) , (44) where we used the definition of Re (ω) and (25). Since 
+
+γ2 and r(ω) are positive, we note that (44) holds only if 
+
+cos( ϑ(ω)) > 0, and thus ϑ(ω) =  − π 
+
+> 2
+
+, π
+
+> 2
+
+, see Corollary 2.2. Then, recalling the definition of α(ω) and that γ2 > 0, we end the proof by noting that (44) holds if and only if 
+
+0 < |ℓ(ω, z )|L2(Tω )
+
+|Y (ω, z )|L2(Tω )
+
+≤ r(ω) cos( ϑ(ω)) 
+
+γ2
+
+=⇒ α(ω) ∈
+
+ γ2
+
+r(ω) cos( ϑ(ω)) , ∞
+
+
+
+.
+
+Corollary 2.6 (Very strict passivity) . The system (5) is very strictly passive relative to (6) with γ2 > 0 and γ1 > 0, i.e. , (30) 
+
+holds with 
+
+s(u, y ) = u⊤y − γ1y⊤y − γ2u⊤u, (45) 
+
+and u = ℓ(ω, z ), if and only if for all ω ∈ N ,
+
+α(ω) ∈
+
+"
+
+r(ω) cos( ω)2γ1
+
+−
+
+pδ(ω)2γ1
+
+, r(ω) cos( ω)2γ1
+
++
+
+pδ(ω)2γ1
+
+#
+
+,ϑ(ω) ∈
+
+
+
+− π
+
+2 , π
+
+2
+
+
+
+,
+
+where δ(ω) := r(ω)2 cos( ω)2 − 4γ2γ1 ≥ 0.Proof. Substituting (45) into (30) and using Theorem 2 yields 
+
+⟨ℓ(ω, z ), Y (ω, z )⟩L2(Tω ) ≥
+
+γ1|Y (ω, z )|2  
+
+> L2(Tω)
+
++ γ2|ℓ(ω, z )|2 
+
+> L2(Tω)
+
+. (46) If α(ω) = 0, then Y (ω, z ) = 0 and the inequality (40) becomes ⟨ℓ(ω, z ), 0⟩L2(Tω ) ≥ γ2|ℓ(ω, z )|2  
+
+> L2(Tω)
+
+> 0 which does not hold, because, by assumption, |ℓ(ω, z )|L2(Tω ) > 0.In all the other cases, |Y (ω, z )| > 0 and the ω-phase is well-defined. Therefore, we can divide both side of (43) by 
+
+|ℓ(ω, z )|L2(Tω )|Y (ω, z )|L2(Tω ), obtaining 
+
+γ1
+
+|Y (ω, z )|L2(Tω )
+
+|ℓ(ω, z )|L2(Tω )
+
++ γ2
+
+|ℓ(ω, z )|L2(Tω )
+
+|Y (ω, z )|L2(Tω )
+
+≤ r(ω) cos( ϑ(ω)) ,
+
+(47) where we used the definition of Re (ω) and (25). Since γ1,
+
+γ2 and r(ω) are positive, we note that (47) holds only if 
+
+cos( ϑ(ω)) > 0, and thus ϑ(ω) =  − π 
+
+> 2
+
+, π
+
+> 2
+
+, see Corollary 2.2. Then, by multiplying each side of (47) by α(ω), we obtain the second order inequality 
+
+γ1α(ω)2 − r(ω) cos( ϑ(ω)) α(ω) + γ2 ≤ 0
+
+to be satisfied for real α(ω) > 0 with cos( ϑ(ω)) > 0. Then, the inequality gives real solutions within the set 
+
+"
+
+r(ω) cos( ϑ(ω)) 2γ1
+
+−
+
+pδ(ω)2γ1
+
+, r(ω) cos( ϑ(ω)) 2γ1
+
++
+
+pδ(ω)2γ1
+
+#
+
+provided that δ(ω) ≥ 0, hence the claim. 
+
+B. A Weak Form of the Superposition Principle for Nonlinear Frequency Response 
+
+The nonlinear frequency response (24) allows the exact characterization of the ω-gain, ω-phase, and ω-radius of a nonlinear system under the input generated by (6) for each 
+
+ω ∈ N . A defining trait of the frequency response in an LTI system is that its response to a sum of harmonic inputs 12 
+
+can be determined from the response to each harmonic, due to the superposition principle. Consequently, the magnitude and phase response to multiple inputs can be obtained by summing the individual magnitude and phase contributions of each harmonic component. Yet, for nonlinear systems, the superposition principle breaks down. As a result, extending the analysis to sums of inputs of the form (6), each at a distinct 
+
+ω ∈ N , requires a more in-depth analysis. A formal nonlinear multi-input frequency response analysis necessitates lifting the state of the signal generator to ahigher-dimensional space. To begin with, we rewrite the signal generator (6) introducing a state indexed by ω ∈ N , that is 
+
+˙zω = s(ω, z ω ), zω (0) ∈ Z ω , (48) where the trajectory zω (t) evolves independently according to the associated ω ∈ N and the mapping s is the same as in (6). The resulting state obtained for every ω ∈ N yields a lifted system over the space ZN := ×ω∈N Zω where the state is the collection of all individual states of (48). Therefore, the state is defined as zN := ( zω )ω∈N ∈ Z N whereas the lifted system is described by the mapping S(zN ) := ( s(ω, z ω )) ω∈N .To restrict the analysis relative to a finite weighted sum of multiple inputs, where each input corresponds to a specific ω ∈N and weight M ∈ Rr×r, we introduce the finite subset A ⊂ N × Rr×r containing the parameters and the corresponding weights under analysis. To streamline the notation, we define 
+
+¯A := {ω : ( ω, M ) ∈ A} ⊂ N . Then, the restriction of the full lifted system over A gives rise to a multi-signal generator on the space ZA =×ω∈ ¯A Zω described by 
+
+˙zA = S(zA), zA(0) ∈ Z A
+
+uA = X 
+
+> (ω,M )∈A
+
+M ℓ (ω, z ω ). (49) The multi-signal generator (49) formally characterizes the finite sum of multiple weighted inputs of the family (48), where each input ℓ(ω, z ω ) of parameter ω is weighted by M ,where (ω, M ) ∈ A . To proceed with the multi-input analysis, we first need to extend Assumptions 1 and 2 to establish guarantees for the interconnected system (49)-(5). 
+
+Assumption 3. The set A ∈ N × R is such that the state 
+
+zA and output uA of (49) are continuous and periodic, with period TA ∈ R+.
+
+Assumption 4. The set A ∈ N × R is such that, for every initial condition (zA(0) , x (0)) ∈ Z A × X the subset X of the state space of the system (5) , the trajectories of the interconnected system (49) -(5) are ultimately bounded, and remain in ZA × X . Moreover, there exists a (sufficiently) smooth mapping φA : ZA → Rn such that the submanifold 
+
+MA := (zA, x ) ∈ Z A × X x = φA(z) (50) 
+
+is well-defined and invariant under (49) -(5) . That is, if 
+
+(zA(¯ t), x (¯ t)) ∈ M A, then (zA(t), x (t)) ∈ M A for all t ≥ ¯t.
+
+Building on the preceding rationale and under these assump-tions, we now introduce a definition of multi ω-response that explicitly captures the finite sums of inputs in the sense of (49). 
+
+Definition 7 (Multi ω-response ). Given the nonlinear sys-tem (5) the multi ω-response to the input (49) is given by 
+
+YA(zA) := h(φA(zA), u A). (51) Recall that, by Assumptions 3 and 4, zA, uA and YA(zA)
+
+are continuous TA-periodic functions. Hence, uA and YA(zA)
+
+are bounded and square-integrable. Then Theorem 3 formal-izes a relation between the L2-norm over TA and the ω-gain 
+
+α(ω) associated with every ω ∈ ¯A.
+
+Theorem 3. Let A ⊂ N × Rr×r be such that there exists a 
+
+¯ω ∈ ¯A such that α(¯ ω) > 0. Then, there exist one bω,M ∈ R
+
+for each (ω, M ) ∈ A such that 
+
+YA(zA) L2(TA) ≤ X 
+
+> (ω,M )∈A
+
+bω,M |M |α(ω). (52) 
+
+Proof. By the boundedness of the multi ω-response, there always exists a Kω,M , for every (ω, M ) ∈ A , such that 
+
+−ςA ≤ YA(zA) ≤ ςA (53) where 
+
+ςA := X 
+
+> (ω,M )∈A
+
+Kω,M |M |Y (ω, z ω ) ∈ L 2(TA, Rr ).
+
+For all ω ∈ ¯A, there exist a positive Wω ∈ R+ such that 
+
+|Y (ω, z ω )|L2(TA) = Wω |Y (ω, z ω )|L2(Tω ),
+
+because YA(zA) and Y (ω, z ω ) are bounded by assumptions. By using the matrix induced 2-norm, we define Qω,M := 
+
+Kω,M . By applying the triangle inequality and then invoking the Cauchy-Schwarz inequality, we deduce that the L2-norm of YA(zA) over TA satisfies 
+
+YA(zA) L2(TA)
+
+≤ X 
+
+> (ω,M )∈A
+
+Kω,M |M |Y (ω, z ω )
+
+> L2(TA)
+
+≤ X 
+
+> (ω,M )∈A
+
+Kω,M M Y (ω, z ω ) L2(TA)
+
+= X 
+
+> (ω,M )∈A
+
+Qω,M Wω M Y (ω, z ω ) L2(Tω ).
+
+By defining σA := sup ω∈ ¯A ℓ(ω, z ω ) L2(Tω ), we have 
+
+Y (ω, z ω ) L2(Tω ) ≤ σA
+
+Y (ω, z ω ) L2(Tω )
+
+ℓ(ω, z ω ) L2(Tω )
+
+= σAα(ω).
+
+Therefore, we conclude that 
+
+YA(zA) L2(TA) ≤ X 
+
+> (ω,M )∈A
+
+σAQω,M Wω M α(ω)
+
+which implies (52) for every bω,M ≥ σAQω,M Wω .
+
+Theorem 4. Let A ⊂ N × Rr×r be such that α(¯ ω) > 0 for all ¯ω ∈ ¯A. Then, there exist one cω,M ∈ R and one dω,M ∈ R
+
+for each (ω, M ) ∈ A such that 
+
+uA, Y A L2(TA) ≤ X 
+
+> (ω,M )∈A
+
+cω,M r(ω) cos( ϑ(ω)) , (54) 
+
+˙uA, Y A L2(TA) ≤ X 
+
+> (ω,M )∈A
+
+dω,M r(ω) sin( ϑ(ω)) , (55) 13 
+
+Proof. Since the proofs of (54) and (55) follow the same ratio-nale, we proceed by proving only (54). Using the bounds (53) on the multi ω-response, we have that the Euclidean norm of 
+
+uA, Y A L2(TA) satisfies 
+
+uA, Y A L2(TA) ≤ uA, X 
+
+> (ω,M )∈A
+
+Kω,M |M |Y (ω, z ω ) L2(TA).
+
+Then, by substituting uA in the series form in (49) and invoking the Cauchy-Schwarz inequality, the right-hand side of the above inequality can be further bounded as follows 
+
+uA, X 
+
+> (ω,M )∈A
+
+Kω,M |M |Y (ω, z ω ) L2(TA)
+
+≤ X 
+
+> (ω,M )∈A
+
+˜Kω,M 
+
+X  
+
+> (˜ ω, ˜M)∈A
+
+˜M ℓ(˜ ω, z ˜ω ), Y (ω, z ω ) L2(TA) ,
+
+where ˜Kω,M := |Kω,M || M |. Since the inner product above is always bounded, then for all (˜ ω, ˜M ) ∈ A there always exists a Pω,M ∈ R such that 
+
+˜M ℓ(˜ ω, z ˜ω ), Y (ω, z ω ) L2(TA)
+
+≤ Pω,M 
+
+˜Kω,M 
+
+ℓ(ω, z ω ), Y (ω, z ω ) L2(TA) .
+
+For all ω ∈ ¯A, there exist a positive Rω ∈ R+ such that 
+
+ℓ(˜ ω, z ˜ω ), Y (ω, z ω ) L2(TA) = Rω ℓ(˜ ω, z ˜ω ), Y (ω, z ω ) L2(Tω ),
+
+because YA(zA) and Y (ω, z ω ) are bounded by assumptions. Therefore, using the properties above, the cardinality |A| , and defining the constant 
+
+σA := sup  
+
+> ω∈¯A
+
+
+
+ℓ(ω, z ω ) L2(Tω ) Y (ω, z ) L2(Tω )
+
+
+
+,
+
+we have that 
+
+uA, Y A L2(TA)
+
+≤ |A| Rω Pω,M ℓ(ω, z ω ), Y (ω, z ω ) L2(Tω )
+
+≤ |A| Rω Pω,M σA|r(ω) cos( ϑ(ω)) |,
+
+which implies (54) for every cω,M ≥ |A| Rω Pω,M σA.
+
+V. L OOP SHAPING DESIGN FOR NONLINEAR SYSTEMS 
+
+The essence of the loop-shaping synthesis in the frequency domain is that closed-loop performances can be attained by designing a feedback law based upon prescribed steady-state characteristics of the open-loop frequency response, see, 
+
+e.g. , [18, Ch. 2] and [25]. Following a similar idea, loop-shaping in the nonlinear setting can be achieved by construct-ing a parameterized feedback law yielding a parameterized 
+
+ω-response. To this end, consider nonlinear systems modeled by equations of the form 
+
+˙xc = fc(xc, u, v ), yc = h(xc, u ), (56) where fc is such that fc(xc, u, 0) = f (x, u ), and v ∈ R ¯m ( ¯m ∈
+
+N) is a control input that is used to model a state feedback controller. The control input can be cast as a dynamic state feedback of the form 
+
+˙xp = fp(xp, x c, u ), v = κ(xp, x c, u ), (57) where fp : R¯n × Rn × Rm → R¯n and κ : R¯n × Rn × Rm →
+
+R ¯m is a nonlinear function used to achieve stabilization with prescribed closed-loop characteristics. The forced response of the feedback system (5) to the input (6) is thus given by the cascade feedback system 
+
+˙z = s(ω, z ),
+
+˙xc = fc(xc, ℓ (ω, z ), v ),
+
+˙xp = fp(xp, x c, ℓ (ω, z )) ,v = κ(xp, x c, ℓ (ω, z )) ,yc = h(xc, ℓ (ω, z )) ,
+
+(58) associated with the invariant manifold given by the graph 
+
+Mc := {(ω, z, x c, x p) | xc = φc(ω, z ), x p = φp(ω, z )}
+
+of (sufficiently) smooth mappings xc = φc(ω, z ) and xp =
+
+φp(ω, z ). Thereby, the ω-response to the input (6) for all ω ∈N is given by 
+
+Yc(ω, z ) := h(φc(ω, z ), ℓ (ω, z )) . (59) The resulting ω-response function (59) associated with the feedback system is then parameterized by the choice of the functions fp and κ. This parameterization gives degrees of freedom in the selection of a desired shape of the closed loop frequency response. The frequency response function of the system (56)-(57) to the input (6) is referred to as Γc(ω) with associated ω-gain, ω-phase, and ω-radius functions denoted for convenience as (αc(ω), ϑc(ω), and rc(ω)) , respectively. To define stabilization with prescribed closed-loop characteristics, we formulate a loop-shaping problem as a constrained design problem on the desired frequency response function. 
+
+The Nonlinear Loop-Shaping Problem. Given system (56) driven by the input (6), and a closed subset of desired specifications SP , design the feedback (57) such that (R1) the origin, (xc, x p) = (0 , 0) , of the dynamics 
+
+˙xc = fc(xc, 0, κ (xp, x c, 0)) ˙xp = fp(xp, x c, 0) 
+
+is an asymptotically stable equilibrium, (R2) the frequency response function Γc : N → C of the system (56)-(57) to the input (6) is such that 
+
+(αc(ω), ϑ c(ω), r c(ω)) ∈ SP , ∀ω ∈ N ,
+
+where SP ⊂ R3 is the specification subset defined as 
+
+SP := [ αmin , α max ] × [ϑmin , ϑ max ] × [rmin , r max ].In addition to (R1), which is the standard asymptotic stabilization requirements [28, Sec. 8.2], the nonlinear loop-shaping problem introduced in (R2) requires a polyhedral set of specifications SP which constrain the shape of the frequency response function through the appropriate selection of the feedback (57). These specifications can be set and validated through the associated nonlinear Bode gain diagram. 14      
+
+> (a) ω-gain (b) ω-phase (c) ω-radius
+
+Fig. 6 : Bode-like diagram of the nonlinear system (60) under state-feedback (61) with K = 10 , angular frequency ϖ ∈
+
+[10 −2, 10 2], and amplitude au ∈ [10 −2, 10 2]. The red curve corresponds to the ω-gain, ω-phase, and ω-radius associated with the linearized system.      
+
+> (a) ω-gain (b) ω-phase (c) ω-radius
+
+Fig. 7 : Bode-like diagram of the nonlinear system (60) under output-feedback (62) with K = 10 , angular frequency ϖ ∈
+
+[10 −2, 10 2], and amplitude au ∈ [10 −2, 10 2]. The red curve corresponds to the ω-gain, ω-phase, and ω-radius associated with the linearized system about the equilibrium x = 0 .This formulation of the loop-shaping problem yields a com-plementary role when combined with other nonlinear control laws, see [57]. For instance, the H∞ control of [34] can be recast in a static loop-shaping synthesis and thus enriched by imposing specific requirements on the shape of the ω-gain function. This complementary role can be achieved by taking advantage of the degrees of freedom in the controller, whether static or dynamic, to provide qualitative performance without compromising stability. 
+
+Example 5. Let (56) be a state-feedback version of the nonlinear system described by (10), that is 
+
+fc(x, u, v ) = 
+
+ x1 + u
+
+−x2 + x1u
+
+
+
++ κ(x, u ), (60) with output function h(x, u ) = x1 + tanh( x1 + x2), and static feedback κ(x, u ) of the form 
+
+κ(x, u ) = 
+
+−Kx 1
+
+Kx 21
+
+
+
+. (61) Note that the feedback system (60) satisfies the stability requirement (R1) for every K > 1. Let the signal generator (6) be of the form (2) with parameters ω = ( ϖ, a u) ∈ R2+, state 
+
+z = ( z1, z 2) ∈ R2, and z0(ω) = (0 , a u) ∈ R2.The design specification requires input attenuation. There-fore, we can choose the parameter K appropriately to guar-antee that the ω-gain is such that the output attenuates the effect of the input, that is αmax < 1. Figure 6 illustrates the Bode-like diagram of the closed-loop system (60) with the feedback (61) relative to the choice of K = 10 . Although this state-feedback modifies the shape of the surface on the amplitude axis, we note that, in both cases, attenuation of the input is achieved. At the same time, the shape of the ω-phase is largely consistent with the linearized model within the bounds of the selected amplitudes, while the ω-radius exhibits a hollow shape for certain amplitudes, indicating high distortion of the output signal compared to the input. However, suppose that achieving stabilization requires only a small distortion in the output, meaning that the ω-radius under study remains close to 1. Hence, we consider analyzing the effect of a negative output feedback of the form 
+
+κ(x, u ) = −K
+
+x1 + tanh( x1 + x2)0
+
+
+
+. (62) Figure 7 illustrates the Bode-like diagram of the closed loop system (60) with the feedback (62) relative to the choice of 
+
+K = 10 . As we can see, the output feedback still guarantees attenuation of the effect of the input, with a similar shape of the ω-phase function of the state-feedback but with an ω-radius function which almost flattens out over all frequencies and amplitudes, providing uniform consistency in the shape of 15 
+
+the output with respect to the input u. ◁
+
+VI. C ONCLUSION AND OUTLOOKS 
+
+Motivated by the question of whether the time-domain interpretation of the frequency response used in linear the-ory could be enhanced analogously for nonlinear systems, this article introduced a framework for nonlinear frequency response. We showed that, to bridge the gap between linear and nonlinear analysis, a quantitative measure of the distortion of the shape of the input through the system is necessary, along with suitable notions of gain and phase defined to deal with nonlinear periodic excitations. Together, these func-tions provide a complete characterization of the frequency response, which can be illustrated graphically by nonlinear enhancement of the Bode diagrams. Additionally, an analysis of the frequency responses of various dissipative systems with different supply rates has been conducted. Then, a nonlinear multi-input frequency response analysis was performed, which was found to be a weak form of the superposition principle for nonlinear systems. Finally, graphical illustrations of the frequency response allow the nonlinear loop-shaping problem to be formulated in terms of a specification set that accounts for desired quantitative requirements on the feedback system. Bode-like diagrams introduced here provide an exact quan-titative measure of the frequency-amplitude relation between input and output, extending beyond linear analysis. The Hartman-Grobman theorem implies the existence of a neigh-borhood of the hyperbolic equilibrium and an input bound such that all trajectories starting in the neighborhood remain in it. Although input bounds are not easily quantifiable, the proposed graphical representation offers a quantitative illustra-tion of the point at which such dynamics transition to nonlinear regimes. The nonlinear frequency domain framework can be seamlessly employed in a data-driven fashion when only input and output measurements are available [58]. This nonlinear frequency response framework comes with several open questions worth addressing in future work. First, we aim to clarify the interrelationship between magnitude and phase of the frequency response, in the spirit of the Kramers-Kronig relations [26], which connect the real and imaginary parts of the frequency response function (26). This would allow giving a one-to-one correspondence between small gain and small phase [59]. Following the line of [60], this framework can be extended to include abstract time domains, allowing for the consideration of other systems, such as discrete time and hybrid settings. Moreover, we aim to relate the ω-response and its Bode-like diagrams with the stability of the system under feedback. In particular, for small amplitudes, stability can be reconnected with the Bode stability criterion. Nevertheless, the theoretical relationship between stability conditions and the properties of the ω-response function for amplitudes beyond the local regime is yet to be understood. In doing so, we should look more closely at how the poles of a nonlinear system [61] are reflected in its frequency response. Finally, the proposed framework enables graphical validation of nonlinear interpolation methods, e.g. ,moment matching [35], [62], [63], and the design of surrogate models with provable performance at different frequencies. Specifically, exploiting the ω-radius function, it is possible to devise approximate realizations that interpolate the system at targeted frequencies, ensuring low complexity in all other operational regimes. 
+
+ACKNOWLEDGMENT 
+
+We would like to thank A. Astolfi for his insightful discus-sions during the initial stages of this research, as well as for his valuable suggestions on the preliminary drafts.                                                         
+
+> [1] A. MacFarlane, “The development of frequency-response methods in automatic control [perspectives],” IEEE Trans. Autom. Control , vol. 24, no. 2, pp. 250–265, 1979. [2] J. Baillieul and T. Samad, Eds., Encyclopedia of Systems and Control .Springer, 2021. [3] L. Huang, D. Wang, X. Wang, H. Xin, P. Ju, K. H. Johansson, and F. D¨ orfler, “Gain and phase: Decentralized stability conditions for power electronics-dominated power systems,” IEEE Trans. Power Syst. , vol. 39, no. 6, pp. 7240–7256, 2024. [4] W. Xu, J. Yong, H. J. Marquez, and C. Li, “Interharmonic power–a new concept for power system oscillation source location,” IEEE Trans. Power Syst. , 2025. [5] M. J. Gibbard, P. Pourbeik, and D. J. Vowles, Small-Signal Stability, Control and Dynamic Performance of Power Systems .Univ. Adelaide Press, 2015. [6] Y. Gu and T. C. Green, “Power system stability with a high penetration of inverter-based resources,” Proc. IEEE , vol. 111, no. 7, pp. 832–853, 2022. [7] N. Olsman, A.-A. Baetica, F. Xiao, Y. P. Leong, R. M. Murray, and J. C. Doyle, “Hard limits and performance tradeoffs in a class of antithetic integral feedback networks,” Cell Systems , vol. 9, no. 1, pp. 49–63, 2019. [8] M. H. Khammash, “Cybergenetics: Theory and applications of genetic control systems,” Proc. IEEE , vol. 110, no. 5, pp. 631–658, 2022. [9] D. Del Vecchio and R. M. Murray, Biomolecular Feedback Systems .Princeton Univ. Press, 2015. [10] J. Keener and J. Sneyd, Mathematical Physiology .Springer, 2025. [11] C. R. Paul, Analysis of Multiconductor Transmission Lines .John Wiley & Sons, 2007. [12] E. Bullmore and O. Sporns, “Complex brain networks: graph theoretical analysis of structural and functional systems,” Nat. Rev. Neurosci. ,vol. 10, no. 3, pp. 186–198, 2009. [13] D. Selvaratnam, A. Moreschini, A. Das, T. Parisini, and H. Sandberg, “Frequency-domain bounds for the multiconductor telegrapher’s equa-tion,” arXiv preprint arXiv:2504.01599 , 2025. [14] L. O. Chua, “Memristors on ‘edge of chaos’,” Nat. Rev. Electr. Eng. ,vol. 1, no. 9, pp. 614–627, 2024. [15] A. Ortega, P. Frossard, J. Kovaˇ cevi´ c, J. M. F. Moura, and P. Van-dergheynst, “Graph signal processing: Overview, challenges, and ap-plications,” Proc. IEEE , vol. 106, no. 5, pp. 808–828, 2018. [16] B. Boashash, Time-Frequency Signal Analysis and Processing: A Com-prehensive Reference .Acad. Press, 2015. [17] X. Dong, D. Thanou, M. Rabbat, and P. Frossard, “Learning graphs from data: A signal representation perspective,” IEEE Signal Process. Mag. , vol. 36, no. 3, pp. 44–63, 2019. [18] S. Skogestad and I. Postlethwaite, Multivariable Feedback Control: Analysis and Design .John Wiley & Sons, 2005. [19] G. F. Franklin, J. D. Powell, and A. Emami-Naeini, Feedback Control of Dynamic Systems .Pearson, 2025. [20] J. C. Doyle, B. A. Francis, and A. R. Tannenbaum, Feedback Control Theory .Courier Corp., 2013. [21] H. W. Bode, Network Analysis and Feedback Amplifier Design .D. Van Nostrand Co., Inc., 1945. [22] H. Nyquist, “Regeneration theory,” Bell Syst. Tech. J. , vol. 11, no. 1, pp. 126–147, 1932. [23] G. Zames, “Feedback and optimal sensitivity: Model reference trans-formations, multiplicative seminorms, and approximate inverses,” IEEE Trans. Autom. Control , vol. 26, no. 2, pp. 301–320, 2003. [24] A. Tannenbaum, “Feedback stabilization of linear dynamical plants with uncertainty in the gain factor,” Int. J. Control , vol. 32, no. 1, pp. 1–16, 1980. 16
+
+[25] D. McFarlane and K. Glover, “A loop-shaping design procedure using 
+
+H∞ synthesis,” IEEE Trans. Autom. Control , vol. 37, no. 6, pp. 759– 769, 1992. [26] J. Bechhoefer, “Kramers–Kronig, Bode, and the meaning of zero,” Am. J. Phys. , vol. 79, no. 10, pp. 1053–1059, 2011. [27] A. Isidori and C. I. Byrnes, “Output regulation of nonlinear systems,” 
+
+IEEE Trans. Autom. Control , vol. 35, no. 2, pp. 131–140, 1990. [28] A. Isidori, Nonlinear Control Systems . Springer, 1995. [29] A. Isidori and C. I. Byrnes, “Steady-state behaviors in nonlinear systems with an application to robust disturbance rejection,” Annu. Rev. Control ,vol. 32, no. 1, pp. 1–16, 2008. [30] A. Isidori, Lectures in Feedback Design for Multivariable Systems .Springer, 2017. [31] D. A. George, “Continuous nonlinear systems,” Massachusetts Institute of Technology. Research Laboratory of Electronics, Tech. Rep., 1959. [32] R. S. Bayma, Y. Zhu, and Z.-Q. Lang, “The analysis of nonlinear systems in the frequency domain using nonlinear output frequency response functions,” Automatica , vol. 94, pp. 452–457, 2018. [33] S. Boyd and L. Chua, “Fading memory and the problem of approximat-ing nonlinear operators with Volterra series,” IEEE Trans. Circuits Syst. ,vol. 32, no. 11, pp. 1150–1161, 2003. [34] A. Isidori and A. Astolfi, “Disturbance attenuation and H∞-control via measurement feedback in nonlinear systems,” IEEE Trans. Autom. Control , vol. 37, no. 9, pp. 1283–1293, 1992. [35] A. Astolfi, “Model reduction by moment matching for linear and nonlinear systems,” IEEE Trans. Autom. Control , vol. 55, no. 10, pp. 2321–2336, 2010. [36] A. Pavlov, N. van de Wouw, and H. Nijmeijer, “Frequency response functions for nonlinear convergent systems,” IEEE Trans. Autom. Con-trol , vol. 52, no. 6, pp. 1159–1165, 2007. [37] L. O. Chua and C.-Y. Ng, “Frequency domain analysis of nonlinear systems: general theory,” IEE J. Electron. Circuits Syst. , vol. 3, pp. 165– 185, 1979. [38] S. Billings and H. Zhang, “Analysing non-linear systems in the fre-quency domain–II. the phase response,” Mech. Syst. Signal Process. ,vol. 8, no. 1, pp. 45–62, 1994. [39] W. J. Rugh, Nonlinear System Theory . Johns Hopkins Univ. Press, 1981. [40] G. Zames, “On the input-output stability of time-varying nonlinear feedback systems–Part II: Conditions involving circles in the frequency plane and sector nonlinearities,” IEEE Trans. Autom. Control , vol. 11, no. 3, pp. 465–476, 1966. [41] C. Chen, D. Zhao, W. Chen, S. Z. Khong, and L. Qiu, “Phase of nonlinear systems,” arXiv preprint arXiv:2012.00692 , 2021. [42] C. Chen, D. Zhao, and S. Z. Khong, “The singular angle of nonlinear systems,” Automatica , vol. 181, p. 112515, 2025. [43] F. W. King, Hilbert Transforms . Cambridge Univ. Press,, 2009. [44] T. Chaffey, F. Forni, and R. Sepulchre, “Graphical nonlinear system analysis,” IEEE Trans. Autom. Control , vol. 68, no. 10, pp. 6067–6081, 2023. [45] E. K. Ryu, R. Hannah, and W. Yin, “Scaled relative graphs: Nonexpan-sive operators via 2D Euclidean geometry,” Math. Program. , vol. 194, no. 1, pp. 569–619, 2022. [46] A. Moreschini, M. Scandella, and A. Astolfi, “On the frequency response and loop shaping for nonlinear systems,” in IFAC WC 2026 , (Accepted). [47] J.-H. He, “Some asymptotic methods for strongly nonlinear equations,” 
+
+Int. J. Mod. Phys. B , vol. 20, no. 10, pp. 1141–1199, 2006. [48] L. Cveticanin, Strong Nonlinear Oscillators: Analytical Solutions .Springer, 2018. [49] J. Carr, Applications of Centre Manifold Theory . Springer, 2012. [50] P. Hartman, Ordinary Differential Equations , 2nd ed. Birkh¨ auser, 1982. [51] T. Chaffey and F. Forni, “Amplitude response and square wave describ-ing functions,” Eur. J. Control. , p. 101310, 2025. [52] L. Cveticanin, “Oscillator with fraction order restoring force,” J. Sound Vib. , vol. 320, no. 4, pp. 1064–1077, 2009. [53] F. W. J. Olver, D. W. Lozier, R. F. Boisvert, and C. W. Clark, NIST Handbook of Mathematical Functions . Cambridge Univ. Press, 2010. [54] J. C. Willems, “Dissipative dynamical systems part I: General theory,” 
+
+Arch. Ration. Mech. Anal. , vol. 45, no. 5, pp. 321–351, 1972. [55] D. J. Hill and P. J. Moylan, “Dissipative dynamical systems: Basic input-output and state properties,” J. Franklin Inst. , vol. 309, no. 5, pp. 327– 357, 1980. [56] B. Brogliato, R. Lozano, B. Maschke, and O. Egeland, Dissipative Systems Analysis and Control: Theory and Applications . Springer, 2020. [57] H. K. Khalil, Nonlinear Control . Pearson Education, 2015. [58] A. Moreschini, M. Scandella, A. Astolfi, and T. Parisini, “Moment matching by kernel-based learning,” IEEE Trans. Autom. Control ,vol. 71, no. 4, pp. 2123–2138, 2026. [59] W. Chen, D. Wang, and L. Qiu, “Small phase theorem,” in Encycl. Syst. Control , 2021, pp. 2082–2086. [60] A. Moreschini, M. Bin, A. Astolfi, and T. Parisini, “A generalized passivity theory over abstract time domains,” IEEE Trans. Autom. Control , vol. 70, no. 1, pp. 2–17, 2025. [61] A. Padoan and A. Astolfi, “Eigenvalues and poles of nonlinear systems: A geometric approach,” in Proc. 56th IEEE Conf. Decis. Control (CDC) ,2017, pp. 2575–2580. [62] A. Moreschini and A. Astolfi, “Closed-loop interpolation by moment matching for linear and nonlinear systems,” IEEE Trans. Autom. Control ,vol. 70, no. 5, pp. 2918–2933, 2025. [63] G. Scarciotti and A. Astolfi, “Interconnection-based model order reduc-tion - a survey,” Eur. J. Control , vol. 75, p. 100929, 2024. [64] V. Kuˇ cera, “The matrix equation AX + XB = C,” SIAM J. Appl. Math. , vol. 26, no. 1, pp. 15–25, 1974. [65] E. de Souza and S. Bhattacharyya, “Controllability, observability and the solution of AX − XB = C,” Linear Algebra Appl. , vol. 39, pp. 167–188, 1981. [66] Q. Hu and D. Cheng, “The polynomial solution to the Sylvester matrix equation,” Appl. Math. Lett. , vol. 19, no. 9, pp. 859–864, 2006. [67] I. M. Gel’fand and G. E. Shilov, Generalized Functions, Volume 1: Properties and Operations . AMS Chelsea Publishing, 1964. 
+
+APPENDIX 
+
+Uniqueness of the solution of the Sylvester equation (4) is ensured by the fact that A and S do not share eigenvalues [64]. Controllability of the pair (A, B ) and observability of the pair 
+
+(S, L ) imply that the solution is full rank [65]. The following result specializes the closed-form solution to the Sylvester given in [66]. 
+
+Lemma 4. Let σ(A) ∩ σ(S) = ∅. For each ϖ ∈ R+, the unique solution of the Sylvester equation (4) is given by 
+
+Φ( ϖ) = −(A2 + ϖ2In)−1(BLS (ϖ) + ABL ). (63) 
+
+Proof. The Sylvester equation (4) has a unique solution by assumption that σ(A) ∩ σ(S) = ∅, [64]. This condition is satisfied by the assumption that ϖ ∈ R+, hence a unique solution Φ( ϖ) exists for all ϖ ∈ R+. By multiplying on the right the Sylvester equation (4) by S(ϖ), and using the fact that S(ϖ)2 = −ϖ2I2m, we have that AΦ( ϖ)S(ϖ) = 
+
+−BLS (ϖ) − ϖ2Φ( ϖ). Similarly, we multiply on the left the Sylvester equation (4) by A so that AΦ( ϖ)S(ϖ) =
+
+A2Φ( ϖ) + ABL . Hence, combining the two expressions through AΦ( ϖ)S(ϖ) we have 
+
+−BLS (ϖ) − ϖ2Φ( ϖ) = A2Φ( ϖ) + ABL. 
+
+Finally, since by assumption ϖ ∈ R+, the matrix (A2 +ϖ2In)
+
+is invertible, we conclude (63). 
+
+Lemma 5. Consider the LTI system (1) with transfer function 
+
+H : C → C, and let Φ( ϖ) = [Φ 1(ϖ), Φ2(ϖ)] ∈ Rn×2 be the unique solution of the Sylvester equation (4) for ϖ ∈ R+.Then, for all ϖ ∈ R+, H(jϖ ) = CΦ1(ϖ) + jC Φ2(ϖ).Proof. Let ι := [1 , j ]⊤. Using S(ϖ)ι = jϖι and Lϖ = 1 ,multiplying (63) on the right by ι gives: 
+
+Φ( ϖ)ι = −(A2 + ϖ2In)−1(BLS (ϖ) + ABL )ι
+
+=  (jϖI n + A)( jϖI n − A)−1(jϖI n + A)B
+
+= ( jϖI n − A)−1B. 17 
+
+Finally, since Φ( ϖ)ι = Φ 1(ϖ) + jΦ2(ϖ) and CΦ( ϖ)ι =
+
+H(jϖ ), the claim follows. 
+
+Lemma 6. Consider the ω-radius r : N → R of the system (5) 
+
+to the input (6) , as defined in 4, for an ω ∈ N . Then, if 
+
+r(ω) = 1 , there exists a generalized function hω : R+ → R
+
+such that 
+
+Y (ω, z ) = 
+
+Z
+
+> Tω
+
+hω (t − τ )ℓ(ω, z (τ )) dτ. (64) 
+
+Proof. For brevity, let us recall that u = ℓ(ω, z ) and ˙u =˙ℓ(ω, z ), and that u(t) = R 
+
+> Tω
+
+δ(t − τ )u(τ ) dτ , where δ is the Dirac delta function. Then, the time-derivative ˙δ of δ (for a formal definition of ˙δ, see [67]), enjoys the property 
+
+Z
+
+> Tω
+
+˙δ(t − τ )u(τ ) dτ 
+
+= δ(t − Tω )u(Tω ) − δ(t)u(0) −
+
+Z
+
+> Tω
+
+δ(t − τ ) ˙ u(τ ) dτ 
+
+= − ˙u(t).
+
+Then, as shown in Theorem 1, we have 
+
+Y (ω, z (t)) = Y (ω, z (t)) = λ1u(t) + λ2 ˙u(t)= λ1
+
+Z
+
+> Tω
+
+δ(t − τ )u(τ ) dτ − λ2
+
+Z
+
+> Tω
+
+˙δ(t − τ )u(τ ) dτ 
+
+=
+
+Z
+
+> Tω
+
+
+
+λ1δ(t − τ ) + λ2 ˙δ(t − τ )
+
+
+
+u(τ ) dτ. 
+
+Finally, (64) holds with hω (t) = λ1δ(t) + λ2 ˙δ(t).

@@ -1,0 +1,51 @@
+{
+  "label": "2026-04-18",
+  "date": "2026-04-18",
+  "generated_at": "2026-04-18T19:45:17",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202604/18/2604.10351v2-trajectory-based-actuator-identification-via-differentiable-simulation",
+      "section": "quick",
+      "title_en": "Trajectory-based actuator identification via differentiable simulation",
+      "authors": "Vyacheslav Kovalev, Ekaterina Chaikovskaia, Egor Davydenko, Roman Gorbachev",
+      "date": "2026-04-11",
+      "pdf": "https://arxiv.org/pdf/2604.10351v2",
+      "score": "6.0",
+      "evidence": "通过可微仿真进行执行器识别和高保真动力学建模",
+      "tldr": "本研究提出一种基于轨迹的可微仿真执行器辨识方法，旨在解决机器人仿真与现实间的动力学差异。该方法仅利用编码器运动数据，通过可微仿真反向传播优化执行器参数，支持结构化和神经网络模型。实验表明，该方法在无需扭矩传感器的情况下显著降低了轨迹误差，并在实际机器人行走任务中大幅提升了策略的迁移性能和稳定性。",
+      "tags": "query:em-force",
+      "abstract_en": "Accurate actuation models are critical for bridging the gap between simulation and real robot behavior, yet obtaining high-fidelity actuator dynamics typically requires dedicated test stands and torque sensing. We present a trajectory-based actuator identification method that uses differentiable simulation to fit system-level actuator models from encoder motion alone. Identification is posed as a trajectory-matching problem: given commanded joint positions and measured joint angles and velocities, we optimize actuator and simulator parameters by backpropagating through the simulator, without torque sensors, current/voltage measurements, or access to embedded motor-control internals. The framework supports multiple model classes, ranging from compact structured parameterizations to neural actuator mappings, within a unified optimization pipeline. On held-out real-robot trajectories for a high-gear-ratio actuator with an embedded PD controller, the proposed torque-sensor-free identification achieves much tighter trajectory alignment than a supervised stand-trained baseline dominated by steady-state data, reducing mean absolute position error from 14.20 mrad to as low as 7.54 mrad (1.88 times). Finally, we demonstrate downstream impact for the same actuator class in a real-robot locomotion study: training policies with the refined actuator model increases travel distance by 46% and reduces rotational deviation by 75% relative to the baseline.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/18/2604.13842v1-frequency-response-of-nonlinear-systems-notions-analysis-and-graphical-representation",
+      "section": "quick",
+      "title_en": "Frequency Response of Nonlinear Systems: Notions, Analysis, and Graphical Representation",
+      "authors": "Alessio Moreschini, Matteo Scandella",
+      "date": "2026-04-15",
+      "pdf": "https://arxiv.org/pdf/2604.13842v1",
+      "score": "6.0",
+      "evidence": "周期激励下非线性系统的频率响应",
+      "tldr": "本研究基于不变性原理，提出了一种统一的非线性系统频率响应表征方法。通过将频率响应定义为包含增益、相位和新增“失真”函数的复值相量形式，研究揭示了非线性系统在稳态下的输出特性。论文进一步提出了一种增强型波特图，可同时展示增益、相位和失真随输入频率及幅度的变化，为非线性系统的性能分析和回路成形设计提供了直观的图形化工具。",
+      "tags": "query:em-force",
+      "abstract_en": "The invariance principle, through which the steady-state behavior of nonlinear systems was introduced by Isidori and Byrnes, is leveraged in this article to bring forth a unifying characterization of the frequency response of nonlinear systems. We show that, for systems under nonlinear periodic excitations, the frequency response can still be defined as a complex-valued function in a phasor form. However, together with suitable notions of gain and phase functions, we show the existence of another function that completes the frequency response and allows quantifying the distortion introduced by the system in the steady-state output. This nonlinear characterization enabled the representation over input frequency and amplitude of the gain, phase, and distortion produced by the system, via a nonlinear enhancement of the Bode diagrams. This graphical representation of the frequency response is well-suited to performance analysis of a nonlinear system and, furthermore, allows for the formulation of the loop-shaping problem for nonlinear systems.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/18/2604.14879v1-solis-physics-informed-learning-of-interpretable-neural-surrogates-for-nonlinear-systems",
+      "section": "quick",
+      "title_en": "SOLIS: Physics-Informed Learning of Interpretable Neural Surrogates for Nonlinear Systems",
+      "authors": "Murat Furkan Mansur, Tufan Kumbasar",
+      "date": "2026-04-16",
+      "pdf": "https://arxiv.org/pdf/2604.14879v1",
+      "score": "6.0",
+      "evidence": "物理信息学习用于非线性系统辨识与代理模型",
+      "tldr": "针对非线性系统辨识中物理可解释性与模型灵活性难以兼顾的问题，本文提出SOLIS框架。该方法通过状态条件的二阶代理模型将系统建模为拟线性参数变化（Quasi-LPV）形式，能够从稀疏数据中提取频率、阻尼等物理参数。通过解耦轨迹重建与参数估计，并引入局部物理提示稳定训练，SOLIS在保持高灵活性的同时实现了极佳的可解释性和鲁棒性。",
+      "tags": "query:em-force",
+      "abstract_en": "Nonlinear system identification must balance physical interpretability with model flexibility. Classical methods yield structured, control-relevant models but rely on rigid parametric forms that often miss complex nonlinearities, whereas Neural ODEs are expressive yet largely black-box. Physics-Informed Neural Networks (PINNs) sit between these extremes, but inverse PINNs typically assume a known governing equation with fixed coefficients, leading to identifiability failures when the true dynamics are unknown or state-dependent. We propose \\textbf{SOLIS}, which models unknown dynamics via a \\emph{state-conditioned second-order surrogate model} and recasts identification as learning a Quasi-Linear Parameter-Varying (Quasi-LPV) representation, recovering interpretable natural frequency, damping, and gain without presupposing a global equation. SOLIS decouples trajectory reconstruction from parameter estimation and stabilizes training with a cyclic curriculum and \\textbf{Local Physics Hints} windowed ridge-regression anchors that mitigate optimization collapse. Experiments on benchmarks show accurate parameter-manifold recovery and coherent physical rollouts from sparse data, including regimes where standard inverse methods fail.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
