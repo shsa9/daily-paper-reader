@@ -1,0 +1,95 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-19T19:46:13.377437+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.14780v1",
+      "title": "Weak Magnetic Sensing via Floquet Driving in an Active Cavity Magnon Coupled System",
+      "abstract": "While significant advancements have been made in weak magnetic field detection, conventional high-sensitivity techniques are often limited by requirements for cryogenic operation or bulky setups. In this work, we develop a sensitive alternating magnetic field sensor based on a coupled system of an active microwave cavity and yttrium iron garnet (YIG), with the components implemented on printed circuit boards (PCBs). By introducing electrically tunable gain to compensate for cavity losses, we substantially improve both the quality factor and the signal intensity. Under the coupled system, Floquet modulation is induced by the alternating magnetic field, allowing for weak field detection by driving a specific hybrid mode and measuring the resulting Floquet sidebands. This miniaturized device operates at room temperature, achieving a detection limit of 121 pT/\\sqrt{Hz}.",
+      "authors": [
+        "Fan Yang",
+        "Xudong Wang",
+        "Lijun Yan",
+        "Yue Zhao",
+        "Jinwei Rao",
+        "Lihui Bai",
+        "Shishen Yan"
+      ],
+      "primary_category": "cond-mat.mes-hall",
+      "categories": [
+        "cond-mat.mes-hall"
+      ],
+      "published": "2026-04-16T08:39:14+00:00",
+      "link": "https://arxiv.org/pdf/2604.14780v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "weak magnetic field detection via active cavity magnon coupled system",
+      "llm_evidence_cn": "通过有源腔磁振子耦合系统进行弱磁场检测",
+      "llm_evidence": "通过有源腔磁振子耦合系统进行弱磁场检测",
+      "canonical_evidence": "通过有源腔磁振子耦合系统进行弱磁场检测",
+      "llm_tldr_en": "Develops a sensitive magnetic field sensor using Floquet modulation, useful for high-precision magnetic feedback.",
+      "llm_tldr_cn": "开发了一种利用Floquet调制的灵敏磁场传感器，可用于高精度磁反馈。",
+      "llm_tldr": "开发了一种利用Floquet调制的灵敏磁场传感器，可用于高精度磁反馈。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "flux feedback control for magnetic bearing force precision",
+      "matched_requirement_id": "req-10",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.15211v1",
+      "title": "3D Finite Element-Based Multiphysics Simulation of a Shape Memory Alloy Hybrid Composite Module",
+      "abstract": "Shape adaptive shape memory alloy hybrid composites (SMAHCs) are composites that incorporate shape memory alloys (SMAs) to realize shape transformation. Despite the availability of numerous analytical and finite element models for predicting the transient response of SMAHCs, many approaches exhibit limitations with respect to the thermomechanical coupling and comprehensive experimental validation. Therefore, this paper presents a coupled, multiphysics, 3D finite element approach for the simulation of a SMAHC actuator, integrating mechanical, thermal and electromagnetic solvers in the Finite Element Code ANSYS LS-DYNA. The proposed approach employs a micromechanical constitutive model implemented in ANSYS LS-DYNA, to accurately capture the complex thermomechanical phase transformation of SMAs. A key feature of the model is the ability to prescribe a defined martensitic pre-strain through a preceding simulation step, in which an initially scaled SMA wire is mechanically loaded and stretched to its nominal length. This procedure enables partial detwinning of the martensitic microstructure and provides a physically motivated initialization of the material state. Joule heating of the SMA wires, as well as varying mechanical loads and ambient temperature conditions, are explicitly considered. The simulation results are validated against experimental data and a fully coupled transient staggered scheme model to assess the predictive capability of the 3D approach. The results show good qualitative agreement, reproducing the characteristic hysteresis of actuator deflection as a function of temperature. Quantitatively, the predicted deflections are of the correct order of magnitude, although marginally outside the 95 % experimental confidence interval. Overall, a consistent trend between simulation and experiment is observed, giving rise to possibility of simulating more complex SMAHC systems.",
+      "authors": [
+        "Lukas Handl",
+        "Max Kaiser",
+        "Miro Duhovic",
+        "Martin Gurka"
+      ],
+      "primary_category": "physics.app-ph",
+      "categories": [
+        "physics.app-ph",
+        "cond-mat.mtrl-sci"
+      ],
+      "published": "2026-04-16T16:41:35+00:00",
+      "link": "https://arxiv.org/pdf/2604.15211v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Multiphysics simulation integrating electromagnetic solvers",
+      "llm_evidence_cn": "集成电磁求解器的多物理场仿真",
+      "llm_evidence": "集成电磁求解器的多物理场仿真",
+      "canonical_evidence": "集成电磁求解器的多物理场仿真",
+      "llm_tldr_en": "Develops a 3D multiphysics FEA approach integrating mechanical, thermal, and electromagnetic solvers.",
+      "llm_tldr_cn": "开发了一种集成机械、热和电磁求解器的三维多物理场有限元方法。",
+      "llm_tldr": "开发了一种集成机械、热和电磁求解器的三维多物理场有限元方法。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "eddy current effects in electromagnetic actuators dynamic modeling",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

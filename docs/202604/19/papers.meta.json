@@ -1,0 +1,37 @@
+{
+  "label": "2026-04-19",
+  "date": "2026-04-19",
+  "generated_at": "2026-04-19T19:46:45",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202604/19/2604.14780v1-weak-magnetic-sensing-via-floquet-driving-in-an-active-cavity-magnon-coupled-system",
+      "section": "quick",
+      "title_en": "Weak Magnetic Sensing via Floquet Driving in an Active Cavity Magnon Coupled System",
+      "authors": "Fan Yang, Xudong Wang, Lijun Yan, Yue Zhao, Jinwei Rao, Lihui Bai, Shishen Yan",
+      "date": "2026-04-16",
+      "pdf": "https://arxiv.org/pdf/2604.14780v1",
+      "score": "6.0",
+      "evidence": "通过有源腔磁振子耦合系统进行弱磁场检测",
+      "tldr": "针对传统高灵敏度磁场探测器依赖低温或体积庞大的局限，本研究开发了一种基于有源微波腔与钇铁石榴石（YIG）耦合系统的微型化交变磁场传感器。通过在PCB上引入电可调增益补偿损耗，利用Floquet调制产生的侧带实现弱磁探测。该设备在室温下运行，探测极限达到121 pT/√Hz，为高灵敏度、小型化磁传感提供了新方案。",
+      "tags": "query:em-force",
+      "abstract_en": "While significant advancements have been made in weak magnetic field detection, conventional high-sensitivity techniques are often limited by requirements for cryogenic operation or bulky setups. In this work, we develop a sensitive alternating magnetic field sensor based on a coupled system of an active microwave cavity and yttrium iron garnet (YIG), with the components implemented on printed circuit boards (PCBs). By introducing electrically tunable gain to compensate for cavity losses, we substantially improve both the quality factor and the signal intensity. Under the coupled system, Floquet modulation is induced by the alternating magnetic field, allowing for weak field detection by driving a specific hybrid mode and measuring the resulting Floquet sidebands. This miniaturized device operates at room temperature, achieving a detection limit of 121 pT/\\sqrt{Hz}.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/19/2604.15211v1-3d-finite-element-based-multiphysics-simulation-of-a-shape-memory-alloy-hybrid-composite-module",
+      "section": "quick",
+      "title_en": "3D Finite Element-Based Multiphysics Simulation of a Shape Memory Alloy Hybrid Composite Module",
+      "authors": "Lukas Handl, Max Kaiser, Miro Duhovic, Martin Gurka",
+      "date": "2026-04-16",
+      "pdf": "https://arxiv.org/pdf/2604.15211v1",
+      "score": "6.0",
+      "evidence": "集成电磁求解器的多物理场仿真",
+      "tldr": "本研究针对形状记忆合金混合复合材料（SMAHC）开发了一种基于ANSYS LS-DYNA的三维多物理场有限元仿真方法。该方法集成了机械、热学和电磁求解器，并采用微观力学本构模型来捕捉复杂的相变过程。通过预应变模拟步骤初始化材料状态，并考虑了焦耳加热和环境影响。实验验证表明，该模型能有效预测致动器的迟滞特性和变形趋势，为复杂SMAHC系统的设计提供了有力工具。",
+      "tags": "query:em-force",
+      "abstract_en": "Shape adaptive shape memory alloy hybrid composites (SMAHCs) are composites that incorporate shape memory alloys (SMAs) to realize shape transformation. Despite the availability of numerous analytical and finite element models for predicting the transient response of SMAHCs, many approaches exhibit limitations with respect to the thermomechanical coupling and comprehensive experimental validation. Therefore, this paper presents a coupled, multiphysics, 3D finite element approach for the simulation of a SMAHC actuator, integrating mechanical, thermal and electromagnetic solvers in the Finite Element Code ANSYS LS-DYNA. The proposed approach employs a micromechanical constitutive model implemented in ANSYS LS-DYNA, to accurately capture the complex thermomechanical phase transformation of SMAs. A key feature of the model is the ability to prescribe a defined martensitic pre-strain through a preceding simulation step, in which an initially scaled SMA wire is mechanically loaded and stretched to its nominal length. This procedure enables partial detwinning of the martensitic microstructure and provides a physically motivated initialization of the material state. Joule heating of the SMA wires, as well as varying mechanical loads and ambient temperature conditions, are explicitly considered. The simulation results are validated against experimental data and a fully coupled transient staggered scheme model to assess the predictive capability of the 3D approach. The results show good qualitative agreement, reproducing the characteristic hysteresis of actuator deflection as a function of temperature. Quantitatively, the predicted deflections are of the correct order of magnitude, although marginally outside the 95 % experimental confidence interval. Overall, a consistent trend between simulation and experiment is observed, giving rise to possibility of simulating more complex SMAHC systems.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
