@@ -1,0 +1,90 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-20T20:23:49.113899+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.12863v1",
+      "title": "Adaptive Tuning of Online Feedback Optimization for Process Control Applications",
+      "abstract": "Online Feedback Optimization leverages properties of optimization algorithms to develop controllers for systems with limited model availability, which is often the case in process control. The interplay between the parameters of the chosen optimization algorithm, as well as lack of direct connection to the characteristics of the underlying process make their tuning challenging. We propose a method for adaptive tuning of Online Feedback Optimization controllers based on scaled projected gradient descent by using sensitivity of the desired objective to the parameters of the algorithm. The proposed adaptive tuning method limits the operator-tunable parameters to scalar values that represent how much the control inputs and the objective can change between iterations without requiring either additional information about the controlled system or repeated experiments. Numerical studies on a gas lift and a continuously-stirred tank reactor processes confirm that our adaptive scheme improves closed-loop performance of Online Feedback optimization compared to standard manual tuning methods.",
+      "authors": [
+        "Marta Zagorowska",
+        "Lukas Ortmann",
+        "Giuseppe Belgioioso",
+        "Lars Imsland"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-04-14T15:15:36+00:00",
+      "link": "https://arxiv.org/pdf/2604.12863v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "online feedback optimization for process control with limited models",
+      "llm_evidence_cn": "模型受限下的过程控制在线反馈优化",
+      "llm_evidence": "模型受限下的过程控制在线反馈优化",
+      "canonical_evidence": "模型受限下的过程控制在线反馈优化",
+      "llm_tldr_en": "Proposes adaptive tuning for feedback optimization, useful for precision control of complex actuators.",
+      "llm_tldr_cn": "提出了一种在线反馈优化的自适应调优方法，适用于复杂执行器的精密控制。",
+      "llm_tldr": "提出了一种在线反馈优化的自适应调优方法，适用于复杂执行器的精密控制。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.16136v1",
+      "title": "Quantum Noise Suppression Beyond the Standard Quantum Limit in a Hybrid Magnonic Optomechanical System",
+      "abstract": "We theoretically study how quantum measurement noise can be engineered in a hybrid cavitymagnomechanical platform for precision force sensing. The proposed configuration consists of a driven optomechanical cavity, with a movable mirror on one side plus a fixed semi-transparent mirror on the other side, coupled to a magnon mode, with an OPA placed inside the cavity. We show that the magnon mediated dynamics reshapes the added-noise spectrum leading to improved sensitivity compared to a conventional optomechanical sensor. In particular, by satisfying the coherent quantum noise cancellation (CQNC) criterion, radiation-pressure back-action can be fully suppressed. In addition, a larger OPA pump gain permits operation beyond the standard quantum limit at substantially reduced laser power, thereby mitigating power-related constraints without sacrificing performance. These combined advantages provide a practical pathway to below-SQL weak force detection and can outperform existing approaches based on squeezing in magnomechanics.",
+      "authors": [
+        "Alolika Roy",
+        "Amarendra K. Sarma"
+      ],
+      "primary_category": "quant-ph",
+      "categories": [
+        "quant-ph",
+        "physics.optics"
+      ],
+      "published": "2026-04-17T15:08:58+00:00",
+      "link": "https://arxiv.org/pdf/2604.16136v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "precision force sensing in hybrid magnonic systems",
+      "llm_evidence_cn": "混合磁振子系统中的精密力传感",
+      "llm_evidence": "混合磁振子系统中的精密力传感",
+      "canonical_evidence": "混合磁振子系统中的精密力传感",
+      "llm_tldr_en": "Studies quantum noise suppression in hybrid magnonic optomechanical systems for precision force sensing.",
+      "llm_tldr_cn": "研究了用于精密力传感的混合磁子光力系统中的量子噪声抑制。",
+      "llm_tldr": "研究了用于精密力传感的混合磁子光力系统中的量子噪声抑制。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "label": "2026-04-20",
+  "date": "2026-04-20",
+  "generated_at": "2026-04-20T20:24:13",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202604/20/2604.12863v1-adaptive-tuning-of-online-feedback-optimization-for-process-control-applications",
+      "section": "quick",
+      "title_en": "Adaptive Tuning of Online Feedback Optimization for Process Control Applications",
+      "authors": "Marta Zagorowska, Lukas Ortmann, Giuseppe Belgioioso, Lars Imsland",
+      "date": "2026-04-14",
+      "pdf": "https://arxiv.org/pdf/2604.12863v1",
+      "score": "6.0",
+      "evidence": "模型受限下的过程控制在线反馈优化",
+      "tldr": "针对过程控制中模型受限且在线反馈优化（OFO）参数调节困难的问题，本文提出了一种基于缩放投影梯度下降的自适应调优方法。该方法利用目标函数对算法参数的敏感性，将复杂的调优过程简化为反映控制输入和目标变化限值的标量参数，无需额外系统信息或重复实验。在气举和连续搅拌反应器过程中的仿真验证表明，该方案显著提升了闭环控制性能。",
+      "tags": "query:em-force",
+      "abstract_en": "Online Feedback Optimization leverages properties of optimization algorithms to develop controllers for systems with limited model availability, which is often the case in process control. The interplay between the parameters of the chosen optimization algorithm, as well as lack of direct connection to the characteristics of the underlying process make their tuning challenging. We propose a method for adaptive tuning of Online Feedback Optimization controllers based on scaled projected gradient descent by using sensitivity of the desired objective to the parameters of the algorithm. The proposed adaptive tuning method limits the operator-tunable parameters to scalar values that represent how much the control inputs and the objective can change between iterations without requiring either additional information about the controlled system or repeated experiments. Numerical studies on a gas lift and a continuously-stirred tank reactor processes confirm that our adaptive scheme improves closed-loop performance of Online Feedback optimization compared to standard manual tuning methods.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/20/2604.16136v1-quantum-noise-suppression-beyond-the-standard-quantum-limit-in-a-hybrid-magnonic-optomechanical-system",
+      "section": "quick",
+      "title_en": "Quantum Noise Suppression Beyond the Standard Quantum Limit in a Hybrid Magnonic Optomechanical System",
+      "authors": "Alolika Roy, Amarendra K. Sarma",
+      "date": "2026-04-17",
+      "pdf": "https://arxiv.org/pdf/2604.16136v1",
+      "score": "6.0",
+      "evidence": "混合磁振子系统中的精密力传感",
+      "tldr": "本研究提出一种混合腔磁力机械系统，旨在实现超越标准量子极限（SQL）的高精度力传感。该系统通过在光力腔中引入磁振子模式和光学参量放大器（OPA），利用磁振子介导的动力学重塑噪声谱。通过满足相干量子噪声抵消（CQNC）准则，成功消除了辐射压力反作用噪声。此外，OPA的引入显著降低了达到超越SQL性能所需的激光功率，为弱力探测提供了一种高效且实用的新方案。",
+      "tags": "query:em-force",
+      "abstract_en": "We theoretically study how quantum measurement noise can be engineered in a hybrid cavitymagnomechanical platform for precision force sensing. The proposed configuration consists of a driven optomechanical cavity, with a movable mirror on one side plus a fixed semi-transparent mirror on the other side, coupled to a magnon mode, with an OPA placed inside the cavity. We show that the magnon mediated dynamics reshapes the added-noise spectrum leading to improved sensitivity compared to a conventional optomechanical sensor. In particular, by satisfying the coherent quantum noise cancellation (CQNC) criterion, radiation-pressure back-action can be fully suppressed. In addition, a larger OPA pump gain permits operation beyond the standard quantum limit at substantially reduced laser power, thereby mitigating power-related constraints without sacrificing performance. These combined advantages provide a practical pathway to below-SQL weak force detection and can outperform existing approaches based on squeezing in magnomechanics.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

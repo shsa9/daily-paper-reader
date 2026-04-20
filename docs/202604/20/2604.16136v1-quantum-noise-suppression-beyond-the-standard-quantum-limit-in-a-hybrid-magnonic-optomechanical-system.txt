@@ -1,0 +1,756 @@
+Title: Quantum Noise Suppression Beyond the Standard Quantum Limit in a Hybrid Magnonic Optomechanical System
+
+URL Source: https://arxiv.org/pdf/2604.16136v1
+
+Published Time: Mon, 20 Apr 2026 01:02:25 GMT
+
+Number of Pages: 10
+
+Markdown Content:
+## Quantum Noise Suppression Beyond the Standard Quantum Limit in a Hybrid Magnonic Optomechanical System 
+
+Alolika Roy , Amarendra K. Sarma 
+
+Department of Physics, Indian Institute of Technology Guwahati, Guwahati 781039, India. 
+
+(Dated: April 20, 2026) We theoretically study how quantum measurement noise can be engineered in a hybrid cavitymag-nomechanical platform for precision force sensing. The proposed configuration consists of a driven optomechanical cavity, with a movable mirror on one side plus a fixed semi-transparent mirror on the other side, coupled to a magnon mode, with an OPA placed inside the cavity. We show that the magnon mediated dynamics reshapes the added-noise spectrum leading to improved sensitivity compared to a conventional optomechanical sensor. In particular, by satisfying the coherent quan-tum noise cancellation (CQNC) criterion, radiation-pressure back-action can be fully suppressed. In addition, a larger OPA pump gain permits operation beyond the standard quantum limit at substantially reduced laser power, thereby mitigating power-related constraints without sacrificing performance. These combined advantages provide a practical pathway to below-SQL weak force detection and can outperform existing approaches based on squeezing in magnomechanics. 
+
+I. Introduction 
+
+Quantum optomechanics has emerged as a power-ful platform for precision sensing and metrology, with important applications in the detection of extremely weak forces and displacements [1–4]. A variety of quantum-optical interference and correlation effects, in-cluding quantum correlations, coherent population trap-ping, electromagnetically induced transparency, and noise squeezing, have played an important role in tai-loring the balance between signal and noise in cavity-based measurements [5–12]. These developments have es-tablished optomechanical systems as versatile platforms for exploring the limits of quantum-enhanced sensing [13, 14]. In standard cavity optomechanics, however, measure-ment sensitivity is fundamentally limited by the compe-tition between shot noise and radiation-pressure back-action noise. Since these two contributions scale oppo-sitely with the driving power, their interplay gives rise to the standard quantum limit (SQL), which remains a cen-tral benchmark in precision measurement [1, 2, 15, 16]. Reaching or surpassing this limit has been a central ob-jective in quantum sensing for several decades [17]. In particular, although increasing the laser power reduces shot noise, it simultaneously enhances radiation-pressure fluctuations, making back-action suppression essential for further improvement in force sensitivity [18–20]. Several strategies have been developed to overcome this limitation, including coherent quantum noise can-cellation (CQNC) [21], back-action-evading measurement schemes [22–24], squeezed-light-enhanced detection [25– 27], inverted atomic-spin systems [28], and negative-mass oscillator approaches [29–31]. These approaches rely on engineering additional interference pathways or measure-ment protocols that suppress radiation-pressure back-action while preserving the signal of interest [32–35]. Among them, CQNC is particularly appealing because it suppresses back-action dynamically through destruc-tive interference with an auxiliary mode possessing an appropriately matched response [21, 36, 37]. Hybrid optomechanical systems are especially well suited for implementing such noise-cancellation strate-gies, since additional degrees of freedom can be intro-duced and engineered to provide the required interference channels [38–42]. In this context, magnon-assisted hybrid systems are particularly appealing. Magnon excitations are bosonic collective spin modes and can serve as coher-ent ancillary degrees of freedom in hybrid quantum plat-forms [43, 44]. Their spectral selectivity and tunability make them promising candidates for interference-based control of measurement back-action. Recent progress in cavity optomagnonics has demonstrated photon–magnon coupling in whispering-gallery-mode and integrated pho-tonic platforms, while related studies have explored microdisk-based geometries and mode engineering for en-hancing optomagnonic interactions [45–48]. These sys-tems offer tunability through magnetic bias, mode se-lection, and device design, which makes magnons at-tractive ancillary modes for interference-based noise en-gineering. These features motivate the exploration of magnon-assisted CQNC in force-sensing architectures. Motivated by these developments, in this work we study a hybrid cavity magnomechanical architecture in which a single optical cavity is coupled simultaneously to a mechanical oscillator through radiation pressure and to a magnon mode, while an intracavity optical para-metric amplifier (OPA) is used to further tailor the mea-surement noise. We show that, by appropriately tun-ing the cavity detuning, the effective linearized couplings, and the magnon linewidth, the system can realize coher-ent quantum noise cancellation [21, 36]. In this regime, the magnon-mediated pathway provides an equal-and-opposite contribution to the measurement back-action, thereby suppressing the added force noise and enabling below-SQL sensitivity near the mechanical resonance 
+
+> arXiv:2604.16136v1 [quant-ph] 17 Apr 2026
+
+2[37, 49–52]. Using a linearized quantum-Langevin treatment and frequency-domain response analysis, we derive analyti-cal expressions for the output field quadratures and the corresponding added-force noise spectrum. We identify the matching conditions required for ideal CQNC and examine the effect of realistic imperfections in coupling strengths and dissipation rates. In addition, we analyze the role of the intracavity OPA and show that phase-sensitive gain can reduce the imprecision background and shift the optimal sensing regime toward lower input laser power [49, 51, 53]. Such low-power operation is exper-imentally attractive because it helps mitigate practical limitations associated with heating, instability, and tech-nical noise in precision optomechanical measurements [54, 55]. Overall, our results show that the combined action of a magnon ancilla and intracavity parametric ampli-fication provides a promising route toward back-action-suppressed, low-power force sensing in hybrid quantum platforms. Compared with standard optomechanical sensing schemes, the proposed cavity magnomechanical CQNC setup achieves substantially improved sensitivity and offers a complementary route to previously stud-ied weak-force sensing strategies based on squeezed mag-nomechanics [56].   
+
+> II. System
+> FIG. 1. Schematic diagram of the hybrid cavity magnome-chanical platform equipped with a magnon mode and an in-tracavity optical parametric amplifier (OPA).
+
+We consider a hybrid cavity magnomechanical system consisting of a single optical cavity mode of resonance fre-quency ωc, a mechanical oscillator of frequency Ω, and a magnon mode of frequency ωM . The cavity field cou-ples to the mechanical oscillator through the standard radiation-pressure interaction and to the magnon mode through a linearized cavity-magnon interaction. In addi-tion, the cavity contains an intracavity optical parametric amplifier (OPA) and is driven coherently by an external laser of frequency ωL and input power PL. A schematic of the setup is shown in Fig. 1. The total Hamiltonian of the system can be written as 
+
+H = HOM + HOPA + HL + HM. (1) The optomechanical part is 
+
+HOM = ℏΩˆb†ˆb + ℏωcˆa†ˆa − ℏg0ˆa†ˆa (ˆb + ˆb†), (2) where ˆ a (ˆ a†) and ˆb (ˆb†) are the annihilation (creation) operators of the cavity and mechanical modes, respec-tively, and g0 denotes the single-photon optomechanical coupling strength. The OPA contribution is 
+
+HOPA = iℏG  ˆa†2eiθ − ˆa2e−iθ  , (3) where G is the parametric gain and θ is the pump phase. For simplicity, we take θ = 0, so that 
+
+HOPA = iℏG  ˆa†2 − ˆa2 . (4) The coherent laser drive is described by 
+
+HL = iℏEL(ˆ a† − ˆa), (5) where EL is the amplitude of the driving field. The magnonic part of the Hamiltonian is written as 
+
+HM = ℏωM ˆM † ˆM + ℏGOM 
+
+2 (ˆ a + ˆ a†)( ˆM + ˆM †), (6) where ˆM ( ˆM †) denotes the annihilation (creation) opera-tor of the magnon mode, and GOM is the cavity-magnon coupling strength. Moving to the frame rotating at the drive frequency 
+
+ωL, and dropping constant terms, the total Hamiltonian becomes 
+
+H = −ℏ∆cˆa†ˆa + ℏΩˆb†ˆb − ℏ∆M ˆM † ˆM + iℏG  ˆa†2eiθ − ˆa2e−iθ 
+
+− ℏg0ˆa†ˆa(ˆb + ˆb†) + ℏGOM 
+
+2 (ˆ a + ˆ a†)( ˆM + ˆM †)+ iℏEL(ˆ a† − ˆa),
+
+(7) where ∆c = ωL − ωc, ∆M = ωL − ωM . (8) We now linearize the dynamics around the semiclassi-cal steady state by writing each system operator as ˆA(t) = ¯A + δ ˆA(t), (9) where ¯A denotes the steady-state mean value and δ ˆA(t)represents the corresponding quantum fluctuation. Re-taining only terms up to first order in the fluctuations yields the linearized description of the system. For each bosonic mode A = a, b, M , we define the am-3plitude and phase quadratures as ˆxA = ˆA + ˆA†
+
+√2 , ˆpA = i ˆA† − ˆA
+
+√2 . (10) Similarly, for the input noise operators ˆAin , we define ˆxA, in = ˆAin + ˆA†
+
+> in
+
+√2 , ˆpA, in = i ˆA† 
+
+> in
+
+− ˆAin 
+
+√2 . (11) The input noises satisfy the Markovian correlations [37, 57–59] 
+
+⟨ˆain (t)ˆ a†
+
+> in
+
+(t′)⟩ = ⟨ˆbin (t)ˆb†
+
+> in
+
+(t′)⟩ = ⟨ ˆMin (t) ˆM †
+
+> in
+
+(t′)⟩ = δ(t−t′).
+
+(12) The resulting linearized quantum Langevin equations are ˙ˆxb = Ωˆ pb, (13) ˙ˆpb = −Ωˆ xb − γm ˆpb − gˆxa + p2γm
+
+  ˆFth + Fext 
+
+, (14) ˙ˆxa =
+
+
+
+− κ
+
+2 + 2 G
+
+
+
+ˆxa + √κ ˆxa, in , (15) ˙ˆpa = −gˆxb +
+
+
+
+− κ
+
+2 − 2G
+
+
+
+ˆpa − GOM ˆxM + √κ ˆpa, in ,
+
+(16) ˙ˆxM = − γM
+
+2 ˆxM − ∆M ˆpM + √γM ˆxM, in , (17) ˙ˆpM = −GOM ˆxa + ∆ M ˆxM − γM
+
+2 ˆpM + √γM ˆpM, in . (18) Here, 
+
+g = √2 g0 α, (19) with α = ⟨ˆa⟩ denoting the steady-state intracavity field amplitude. The parameters γm, κ, and γM are the me-chanical damping rate, cavity decay rate, and magnon damping rate, respectively. The terms ˆFth and Fext de-note the Brownian thermal force and the external force acting on the mechanical oscillator. To obtain the response functions, we move to the fre-quency domain using the Fourier transform ˆO(ω) = 1
+
+√2π
+
+Z
+
+dt ˆO(t)e−iωt . (20) The linearized Langevin equations then take the form ˆXb(ω) = χm(ω)
+
+h
+
+−g ˆXa(ω) + p2γm
+
+  ˆFth (ω) + Fext (ω)i
+
+,
+
+(21) ˆPb(ω) = iω 
+
+Ω ˆXb(ω), (22) ˆXa(ω) = √κ λ +(ω) ˆXa, in (ω), (23) ˆPa(ω) = g2χm(ω)λ−(ω)λ+(ω)√κ ˆXa, in (ω)
+
+− gχ m(ω)λ−(ω)p2γm
+
+  ˆFth (ω) + Fext (ω)
+
+− GOM λ−(ω) ˆXM (ω) + λ−(ω)√κ ˆPa, in (ω),
+
+(24) ˆXM (ω) = −∆M χM (ω) ˆPM (ω) + χM (ω)√γM ˆXM, in (ω),
+
+(25) ˆPM (ω) = −GOM ξM (ω)λ+(ω)√κ ˆXa, in (ω)
+
+− χ′ 
+
+> M
+
+(ω)√γM ˆXM, in (ω) + ξM (ω)√γM ˆPM, in (ω).
+
+(26) Here we have introduced the susceptibilities and auxiliary response functions 
+
+χm(ω) = ΩΩ2 − ω2 + iγ mω , (27) 
+
+χa(ω) = 1
+
+iω + κ/ 2 , (28) 
+
+χM (ω) = 1
+
+iω + γM /2 , (29) 
+
+ξM (ω) = 
+
+
+
+iω + γM
+
+2 + ∆ 2 
+
+> M
+
+χM (ω)
+
+−1
+
+, (30) 
+
+χ′ 
+
+> M
+
+(ω) = −∆M ξM (ω)χM (ω), (31) 
+
+λ±(ω) =  χ−1 
+
+> a
+
+(ω) ∓ 2G−1 . (32) For later convenience, we also define the effective lin-earized cavity-magnon coupling 
+
+G′ 
+
+> OM
+
+= √2 GOM αM , (33) where αM = ⟨ ˆM ⟩ denotes the steady-state magnon am-plitude. The dimensionless external and thermal forces are de-fined as 
+
+Fext = fext 
+
+√ℏmΩγm
+
+, Fth = fth 
+
+√ℏmΩγm
+
+, (34) where fext and fth are the corresponding physical forces [52]. The rescaled Brownian force satisfies 
+
+⟨Fth (t)Fth (t′)⟩ = ¯ n δ (t − t′), (35) with ¯n = kB T
+
+ℏΩ , (36) which is the mean thermal phonon number of the me-chanical mode in the high-temperature limit [37]. The above set of equations forms the starting point for our analysis of force transduction, added-noise spec-tra, and the conditions required for coherent quantum noise cancellation in the hybrid cavity magnomechanical system. 4 
+
+> III. Force sensing with coherent quantum noise cancellation
+
+When a weak external force Fext acts on the mechani-cal resonator, it displaces the movable mirror and thereby modulates the cavity length. This modulation is im-printed onto the phase quadrature of the intracavity field and can therefore be detected through the phase quadra-ture of the output field. To analyze this transduction process, we solve the linearized quantum Langevin equa-tions in the frequency domain and obtain the intracavity phase quadrature ˆPa(ω) (see Appendix VI). The corre-sponding output phase quadrature follows from the stan-dard input-output relation, ˆP out  
+
+> a
+
+(ω) = √κ ˆPa(ω) − ˆPa, in (ω), (37) where κ is the cavity decay rate and ˆPa, in (ω) denotes the input phase quadrature. Substituting the frequency-domain solution for ˆPa(ω)into Eq. (37), we obtain ˆP out  
+
+> a
+
+(ω) = −g χ m(ω) λ−(ω) p2γmκ  ˆFth (ω) + Fext (ω)
+
++ g2χm(ω) + G2 
+
+> OM
+
+χ′ 
+
+> M
+
+(ω)λ+(ω)λ−(ω) κ ˆXa, in (ω)+ λ−(ω)κ − 1 ˆPa, in (ω)
+
+− GOM λ−(ω)√κγ M
+
+h
+
+χM (ω) ∆M χ′ 
+
+> M
+
+(ω) + 1  ˆXM, in (ω)(38) + χ′ 
+
+> M
+
+(ω) ˆPM, in (ω)
+
+i
+
+.
+
+Here, 
+
+χM (ω) = 1
+
+iω + γM /2 , χ′ 
+
+> M
+
+(ω) = −∆M ξM (ω)χM (ω),
+
+(39) with ξM (ω) defined in Sec. II. The first term in Eq. (38) contains the transduced signal and thermal force con-tribution, the second term represents the optical back-action contribution, the third term corresponds to the input phase noise, and the final term arises from the magnon input noise. The back-action term can be cancelled through destructive interference between the mechanical and magnon-mediated pathways. This is the essence of coher-ent quantum noise cancellation (CQNC) [21, 37, 49, 52]. The condition for complete cancellation of the back-action contribution is therefore 
+
+g2χm(ω) + G2 
+
+> OM
+
+χ′ 
+
+> M
+
+(ω) = 0 . (40) This condition implies that the mechanical response to radiation-pressure back-action is exactly compensated by the magnon-induced contribution. Physically, it requires both a matching of susceptibilities and an appropriate balance between the effective optomechanical and cavity-magnon couplings. Under the CQNC condition, Eq. (38) reduces to ˆP out  
+
+> a
+
+(ω) = −g χ m(ω) λ−(ω) p2γmκ  ˆFth (ω) + Fext (ω)
+
++ λ−(ω)κ − 1 ˆPa, in (ω)
+
+− GOM λ−(ω)√κγ M
+
+h
+
+χM (ω) ∆M χ′ 
+
+> M
+
+(ω) + 1  ˆXM, in (ω)(41) + χ′ 
+
+> M
+
+(ω) ˆPM, in (ω)
+
+i
+
+.
+
+It is then convenient to rewrite the output signal in terms of an equivalent added-force operator. Rearrang-ing Eq. (41), we obtain 
+
+Fext (ω) + ˆFadd (ω) = − ˆP out  
+
+> a
+
+(ω)
+
+g χ m(ω) λ−(ω) √2γmκ , (42) where the added force noise is given by ˆFadd (ω) = ˆFth (ω) − λ−(ω)κ − 1
+
+g χ m(ω) λ−(ω) √2γmκ ˆPa, in (ω)+ GOM 
+
+√κγ M
+
+g χ m(ω) √2γmκ
+
+h
+
+χM (ω) ∆M χ′ 
+
+> M
+
+(ω) + 1  ˆXM, in (ω)(43) + χ′ 
+
+> M
+
+(ω) ˆPM, in (ω)
+
+i
+
+.
+
+The spectral density associated with ˆFadd (ω) provides a direct measure of the force sensitivity of the system under CQNC conditions [49]. In the following section, we evaluate this added-force spectrum and compare the sensitivity of the present hybrid cavity magnomechanical scheme with that of conventional optomechanical sens-ing.  
+
+> IV. Results and Discussion
+
+We now turn to a quantitative analysis of the force sen-sitivity of the proposed hybrid system through its added-force spectral density [49]. As a force-sensitivity measure, we use the force-referred noise 
+
+sF (ω) = pℏmΩγm SF (ω), (44) where SF (ω) denotes the dimensionless force-noise spec-trum referred to the input force. A lower value of SF (ω)therefore corresponds to better force sensitivity. To assess the performance of the present scheme, we compare its force-noise spectrum with that of a standard optomechanical sensor. The added-force spectrum of the hybrid system is defined as [37] 
+
+Sadd  
+
+> F
+
+(ω) δ(ω − ω′) = 12
+
+h
+
+⟨ ˆFadd (ω) ˆFadd (−ω)⟩ + c .c.
+
+i
+
+.
+
+(45) Using Eq. (43), the corresponding added-noise power 5spectral density takes the form 
+
+Sadd  
+
+> F
+
+(ω) = kB T
+
+ℏΩ + 121
+
+g2|χm(ω)|2(2 γmκ)
+
+λ−(ω)κ − 1
+
+λ−(ω)
+
+> 2
+
+(46) + 12
+
+ω2 + Ω 2 + γ2 
+
+> M
+
+/4Ω2 .
+
+The first term represents the Brownian thermal contribu-tion, the second term corresponds to optical imprecision noise, and the last term is the residual contribution as-sociated with the magnon-assisted CQNC channel. 
+
+TABLE I. Representative experimentally accessible parame-ters for the hybrid cavity magnomechanical platform with a magnon ancilla.                                       
+
+> Parameter Symbol Typical value
+> Cavity decay rate κ2π×1 MHz Mechanical frequency Ω2π×10 MHz Mechanical damping rate γm2π×100 Hz Magnon linewidth γM2π×200 Hz Single-photon optomechanical coupling g02π×10 Hz Cavity-magnon coupling GOM 2π×10 Hz OPA nonlinear gain G0.3κ
+> OPA phase θ0 – π
+> Laser wavelength λL1064 nm Input power PL10 −3– 10 6pW
+
+In the following, we focus primarily on the measurement-induced contribution and neglect the Brownian term, as is commonly done in CQNC analy-ses when assessing the intrinsic quantum-limited sensi-tivity of the scheme [49, 50]. Under this approximation, minimizing Eq. (46) yields the CQNC-limited noise floor 
+
+SF, CQNC (ω) = 12
+
+ω2 + Ω 2 + γ2 
+
+> M
+
+/4Ω2 . (47) For comparison, the force-noise spectrum of a standard cavity optomechanical sensor is given by [3] 
+
+S(std)  
+
+> F
+
+(ω) = kB T
+
+ℏΩ + 12
+
+κγm
+
+1
+
+g2|χm(ω)|2
+
+14 + 4g2
+
+κγ m
+
+, (48) where the three terms arise from thermal noise, impre-cision noise, and radiation-pressure back-action, respec-tively. Neglecting thermal noise and optimizing with re-spect to the drive strength gives the familiar SQL limit, 
+
+SF, SQL (ω) = 1
+
+γm|χm(ω)| , (49) which is attained for 
+
+gSQL =
+
+√κ
+
+2p|χm(ω)| . (50) Figure 2 compares the spectral densities of the stan-dard optomechanical sensor, the OPA-assisted hybrid configuration, and the CQNC-enabled hybrid system. Around the mechanical resonance ω = Ω, all spectra exhibit a pronounced minimum. Near resonance, the 0.5 1.0 1.5 2.0 2.5 3.0     
+
+> /
+> 10 1
+> 10 3
+> 10 5
+> 10 7
+> 10 9
+> SF (dimensionless)
+> SSQL
+> F
+> SOPA
+> F(G/= 0.10)
+> SOPA
+> F(G/= 0.20)
+> SCQNC
+> F
+
+FIG. 2. Force-referred noise PSD for (i) a standard op-tomechanical sensor (blue), (ii) an OPA-assisted hybrid sen-sor with G/κ = 0 .1 and 0 .3 (orange and green), and (iii) the hybrid CQNC architecture (red). Spectra are normal-ized by ℏmΩγm, so that the plotted quantity is expressed in units of N 2 Hz −1. Parameters are taken from Refs. [37, 51]: 
+
+g0 = 300 × 2π Hz, Ω = 300 × 2π kHz, γm = 30 × 2π Hz, 
+
+κ = 2 π MHz, P = 100 mW, and ωL = 384 × 2π THz. 
+
+FIG. 3. Resonant force-noise PSD at ω = Ω as a function of laser power for the standard optomechanical sensor (blue) and the OPA-assisted hybrid scheme for G/κ = 0 .1 and 0 .3(orange and green). The remaining parameters are the same as in Fig. 2. 
+
+OPA-assisted hybrid system already improves the sen-sitivity relative to the standard optomechanical case. Once the CQNC condition is imposed, the suppression of radiation-pressure back-action becomes much more pronounced, and the resulting noise spectrum lies well below the standard SQL reference over a broad off-resonant frequency range. This demonstrates that the magnon-assisted CQNC channel can significantly extend the beloew-SQL operating bandwidth. The role of the OPA is further illustrated in Fig. 3, which shows the resonant force-noise PSD as a function of laser power. For the standard optomechanical sen-sor, the noise initially decreases with increasing power because of the reduction of imprecision noise, reaches an optimum, and then rises again as radiation-pressure back-action becomes dominant. In contrast, the OPA-6assisted hybrid configuration with CQNC maintains a de-creasing trend up to its optimal operating point, without exhibiting the same pronounced back-action-induced up-turn. Moreover, increasing the OPA gain shifts the min-imum of the noise curve toward lower input power. This indicates that strong force sensitivity can be achieved in a lower-power regime, which is advantageous from an ex-perimental perspective because it reduces the impact of heating and other power-related limitations [60]. Taken together, these results show that the combined action of the magnon ancilla and intracavity OPA yields a substantial reduction of the force-noise spectral den-sity compared with a conventional optomechanical sen-sor. The proposed hybrid scheme therefore provides a vi-able route toward broadband and low-power below-SQL force sensing. 
+
+V. Imperfect Matching 
+
+The ideal CQNC condition requires precise matching of both the relevant susceptibilities and the effective cou-pling strengths. In practice, however, exact matching is difficult to achieve experimentally. The dissipation rates of the mechanical and magnon modes generally cannot be tuned independently with arbitrary precision, and the ef-fective couplings are likewise subject to finite control ac-curacy. It is therefore important to examine the robust-ness of the scheme against realistic parameter mismatch. 
+
+(i) Decay-rate mismatch: γM̸ = γm
+
+We first consider the case in which all CQNC condi-tions are satisfied except for the matching of the decay rates. To quantify the deviation from the ideal case, we introduce the relative mismatch parameter 
+
+δ = γM − γm
+
+γm
+
+. (51) When δ̸ = 0, the magnon linewidth differs from the me-chanical damping rate, and the noise floor is limited by the CQNC, 
+
+SF, CQNC (ω) = 12
+
+ω2 + Ω 2 + γ2 
+
+> M
+
+/4Ω2 (52) + κg 2
+
+γm
+
+|λ+(ω)|2 1 + χ′ 
+
+> M
+
+(ω)
+
+χm(ω)
+
+> 2
+
+. (53) The corresponding spectra are shown in Fig. 4. The ideal CQNC curve and the spectrum obtained in the pres-ence of a moderate decay-rate mismatch remain very close to one another, indicating that the performance degradation is weak. Even for δ = 0 .3, the added-force noise remains near the ideal CQNC benchmark and stays substantially below the SQL over the relevant frequency 0.5 1.0 1.5 2.0 2.5 3.0        
+
+> /
+> 10 1
+> 10 3
+> 10 5
+> 10 7
+> 10 9
+> SF (dimensionless)
+> SSQL
+> F
+> SOPA
+> F(G/= 0.10)
+> SOPA
+> F(G/= 0.20)
+> SCQNC
+> F(ideal)
+> SCQNC
+> F(= 0.3))
+
+FIG. 4. Variation of the force-noise spectral density with frequency in the presence of decay-rate mismatch. The blue solid line denotes the SQL, the orange and green dashed lines show the hybrid model with OPA gains G/κ = 0 .1 and 0 .2, respectively, the red solid line corresponds to ideal CQNC, and the black dashed line represents the mismatched CQNC case with δ = 0 .3. 
+
+range. This shows that the proposed scheme is relatively insensitive to moderate mismatch in the dissipation rates. 
+
+(ii) Coupling mismatch: G′
+
+> OM
+
+̸ = g
+
+We next consider imperfect matching of the effective couplings. Let 
+
+ϵ = G′ 
+
+> OM
+
+− gg , (54) where G′ 
+
+> OM
+
+denotes the effective cavity-magnon coupling introduced in Sec. II. When ϵ̸ = 0, the coupling-matching condition is not exactly satisfied, and the force-noise spectrum acquires a residual back-action contribution. In this case, the CQNC-limited spectrum becomes 
+
+SF, CQNC (ω) = 12
+
+ω2 + Ω 2 + γ2 
+
+> M
+
+/4Ω2 + κg 2
+
+γm
+
+|λ+(ω)|2 1 − G′ 2
+
+> OM
+
+g2
+
+> 2
+
+.
+
+(55) The spectra are plotted in Fig. 5. As expected, the cou-pling mismatch introduces a residual back-action term, so that the imperfectly matched curve lies above the ideal CQNC result. Nevertheless, even in the presence of this mismatch, the hybrid scheme continues to outperform the off-resonant SQL by several orders of magnitude. Thus, although precise coupling matching is beneficial for optimal performance, moderate deviations do not de-stroy the main advantage of the CQNC mechanism. Overall, Figs. 4 and 5 show that the proposed hybrid cavity magnomechanical platform retains the principal advantages of CQNC even when the ideal matching con-ditions are only approximately satisfied. This robustness strengthens the practical relevance of the scheme for ex-70.5 1.0 1.5 2.0 2.5 3.0        
+
+> /
+> 10 1
+> 10 3
+> 10 5
+> 10 7
+> 10 9
+> SF (dimensionless)
+> SSQL
+> F
+> SOPA
+> F(G/= 0.10)
+> SOPA
+> F(G/= 0.20)
+> SCQNC
+> F(ideal)
+> SCQNC
+> F(= 0.1)
+
+FIG. 5. Variation of the force-noise spectral density with frequency in the presence of coupling mismatch. The blue solid line denotes the SQL, the orange and green dashed lines show the hybrid model with OPA gains G/κ = 0 .1 and 0 .2, respectively, the red solid line corresponds to ideal CQNC, and the black solid line represents the mismatched CQNC case with ϵ = 0 .01. 
+
+perimentally realistic implementations. 
+
+Conclusion 
+
+In this work, we have investigated a hybrid cavity magnomechanical system in which the intracavity opti-cal field is coupled simultaneously to a mechanical os-cillator and a magnon mode, with the cavity further assisted by an intracavity optical parametric amplifier (OPA). Within the linearized regime, we derived the quantum Langevin equations, transformed the dynamics into the frequency domain, and obtained the correspond-ing output-field response relevant for force detection. Our analysis shows that the magnon-assisted pathway can be used to realize coherent quantum noise cancel-lation (CQNC), whereby the magnon-induced response destructively interferes with the radiation-pressure back-action of the mechanical mode. As a result, the added-force noise can be significantly suppressed, enabling be-low standard-quantum-limit (sub-SQL) force sensitivity over a broad frequency range. We further found that the presence of the intracavity OPA improves the sens-ing performance by reducing the imprecision background and shifting the optimal operating point toward lower input laser power. This low-power operation is partic-ularly attractive from an experimental perspective as it helps mitigate power-related limitations while preserving enhanced sensitivity. We also examined the robustness of the scheme against imperfect parameter matching. In particular, we showed that moderate mismatch in effective coupling strengths and dissipation rates does not destroy the main advan-tage of the CQNC mechanism. Even away from the ideal matching condition, the hybrid system retains substan-tial back-action suppression and continues to operate be-low the standard quantum limit over an experimentally relevant bandwidth. In general, our results identify the OPA-assisted cav-ity magnomechanical platform as a promising setting for back-action-suppressed weak-force detection. More broadly, the present work highlights how magnonic de-grees of freedom and phase-sensitive optical control can be combined within a hybrid architecture to enhance pre-cision sensing. These features make the proposed system relevant for applications in quantum-limited metrology, weak-force and acceleration sensing, and related hybrid quantum transduction platforms. 
+
+Acknowledgement 
+
+A.R. gratefully acknowledges the support of a research fellowship from UGC, Government of India. A.K.S. ac-knowledges the grant from MoE, Government of India (Grant No. MoESTARS/STARS-2/2023-0161). 
+
+VI. Appendix: Derivation of the cavity phase quadrature ˆPa(ω)
+
+In this appendix, we derive the frequency-domain ex-pression for the intracavity phase quadrature ˆPa(ω), which is used in the main text to obtain the output phase quadrature and the corresponding added-force noise spectrum. Starting from the linearized quantum Langevin equa-tions in the frequency domain, the relevant quadrature equations are ˆXb(ω) = χm(ω)
+
+h
+
+−g ˆXa(ω) + p2γm ˆF (ω)
+
+i
+
+, (56) ˆXa(ω) = √κ λ +(ω) ˆXa, in (ω), (57) ˆPa(ω) = −g χ m(ω)λ−(ω)p2γm ˆF (ω) + g2χm(ω)λ−(ω)(58) 
+
+∗ λ+(ω)√κ ˆXa, in (ω) − GOM λ−(ω) ˆXM (ω) + λ−(ω)√κ ˆPa, in (ω),
+
+(59) ˆXM (ω) = −∆M χM (ω) ˆPM (ω) + χM (ω)√γM ˆXM, in (ω),
+
+(60) ˆPM (ω) = −GOM ξM (ω)λ+(ω)√κ ˆXa, in (ω) − χ′ 
+
+> M
+
+(ω)√γM ˆXM, in (ω)(61) + ξM (ω)√γM ˆPM, in (ω), (62) where ˆF (ω) = ˆFth (ω) + Fext (ω). (63) The susceptibilities and auxiliary response functions 8are defined as 
+
+χm(ω) = ΩΩ2 − ω2 + iγ mω , (64) 
+
+χM (ω) = 1
+
+iω + γM /2 , (65) 
+
+ξM (ω) = 
+
+
+
+iω + γM
+
+2 + ∆ 2 
+
+> M
+
+χM (ω)
+
+−1
+
+, (66) 
+
+χ′ 
+
+> M
+
+(ω) = −∆M ξM (ω)χM (ω), (67) 
+
+λ±(ω) =  χ−1 
+
+> a
+
+(ω) ∓ 2G−1 . (68) To obtain a closed expression for ˆPa(ω), we first sub-stitute Eq. (62) into Eq. (60). This gives ˆXM (ω) = −∆M χM (ω)
+
+
+
+− GOM ξM (ω)λ+(ω)√κ ˆXa, in (ω)
+
+− χ′ 
+
+> M
+
+(ω)√γM ˆXM, in (ω)+ ξM (ω)√γM ˆPM, in (ω)
+
+
+
++ χM (ω)√γM ˆXM, in (ω). (69) Using the definition 
+
+χ′ 
+
+> M
+
+(ω) = −∆M ξM (ω)χM (ω),
+
+this simplifies to ˆXM (ω) = GOM χ′ 
+
+> M
+
+(ω)λ+(ω)√κ ˆXa, in (ω)+ χM (ω)1 + ∆ M χ′ 
+
+> M
+
+(ω)√γM ˆXM, in (ω)
+
+− χ′ 
+
+> M
+
+(ω)√γM ˆPM, in (ω). (70) Substituting Eq. (70) into Eq. (59), we obtain ˆPa(ω) = g2χm(ω)λ−(ω)λ+(ω)√κ ˆXa, in (ω) (71) 
+
+− g χ m(ω)λ−(ω)p2γm ˆF (ω)
+
+− GOM λ−(ω)
+
+h
+
+GOM χ′ 
+
+> M
+
+(ω)λ+(ω)√κ ˆXa, in (ω)+ χM (ω) 1 + ∆ M χ′ 
+
+> M
+
+(ω)√γM ˆXM, in (ω)
+
+− χ′ 
+
+> M
+
+(ω)√γM ˆPM, in (ω)
+
+i
+
++ λ−(ω)√κ ˆPa, in (ω).
+
+(72) Collecting terms finally yields ˆPa(ω) = 
+
+h
+
+g2χm(ω) + G2 
+
+> OM
+
+χ′ 
+
+> M
+
+(ω)
+
+i
+
+λ−(ω)λ+(ω)√κ ˆXa, in (ω)
+
+− g χ m(ω)λ−(ω)p2γm ˆF (ω) + λ−(ω)√κ ˆPa, in (ω)
+
+− GOM λ−(ω)√γM
+
+h
+
+χM (ω) 1 + ∆ M χ′ 
+
+> M
+
+(ω) ˆXM, in (ω) − χ′ 
+
+> M
+
+(
+
+(73) Equation (73) is the required expression for the in-tracavity phase quadrature in terms of the input noise operators and the total force. Using the standard input-output relation, ˆP out  
+
+> a
+
+(ω) = √κ ˆPa(ω) − ˆPa, in (ω), (74) one then obtains the output phase quadrature used in the main text to derive the added-force noise spectrum and the corresponding force-sensing sensitivity. 
+
+[1] C. M. Caves, K. S. Thorne, R. W. P. Drever, V. D. Sand-berg, and M. Zimmermann, On the measurement of a weak classical force coupled to a quantum-mechanical os-cillator. i. issues of principle, Reviews of Modern Physics 
+
+52 , 341 (1980). [2] S. L. Danilishin and F. Y. Khalili, Quantum measure-ment theory in gravitational-wave detectors, Living Re-views in Relativity 15 , 1 (2012). [3] M. Aspelmeyer, T. J. Kippenberg, and F. Marquardt, Cavity optomechanics, Rev. Mod. Phys. 86 , 1391 (2014). [4] B.-B. Li, L. Ou, Y. Lei, and Y.-C. Liu, Cavity optome-chanical sensing, Nanophotonics 10 , 2799 (2021). [5] F. Bemani, R. Roknizadeh, A. Motazedifard, M. H. Naderi, and D. Vitali, Quantum correlations in optome-chanical crystals, Physical Review A 99 , 063814 (2019). [6] H. R. Gray, R. M. Whitley, and C. R. Stroud, Coherent trapping of atomic populations, Opt. Lett. 3, 218 (1978). [7] K.-J. Boller, A. Imamo˘ glu, and S. E. Harris, Observation of electromagnetically induced transparency, Phys. Rev. Lett. 66 , 2593 (1991). [8] C. Liu, Z. Dutton, C. H. Behroozi, and L. V. Hau, Ob-servation of coherent optical information storage in an atomic medium using halted light pulses, Nature 409 ,490 (2001). [9] C. M. Caves, Quantum-mechanical noise in an interfer-ometer, Phys. Rev. D 23 , 1693 (1981). [10] M. Fleischhauer, A. Imamoglu, and J. P. Marangos, Elec-tromagnetically induced transparency: Optics in coher-ent media, Rev. Mod. Phys. 77 , 633 (2005). [11] Y.-J. Zhu, C.-H. Bai, T. Wang, D.-Y. Wang, S. Zhang, and H.-F. Wang, Optomechanically induced trans-parency, amplification, and fast–slow light transitions in an optomechanical system with multiple mechanical driv-ing phases, J. Opt. Soc. Am. B 37 , 888 (2020). [12] A. Dalafi, M. H. Naderi, and A. Motazedifard, Effects of quadratic coupling and squeezed vacuum injection in an optomechanical cavity assisted with a bose-einstein condensate, Physical Review A 97 , 043619 (2018). [13] V. Giovannetti, S. Lloyd, and L. Maccone, Quantum metrology, Phys. Rev. Lett. 96 , 010401 (2006). [14] Y. Chen, Macroscopic quantum mechanics: theory and experimental concepts of optomechanics, Journal of Physics B: Atomic, Molecular and Optical Physics 46 ,104001 (2013). [15] W. P. Bowen and G. J. Milburn, Quantum optomechanics (CRC press, 2015). [16] A. A. Clerk, M. H. Devoret, S. M. Girvin, F. Mar-quardt, and R. J. Schoelkopf, Introduction to quantum noise, measurement, and amplification, Reviews of Mod-ern Physics 82 , 1155 (2010). [17] V. Braginsky, Y. i. vorontsov, and ks thorne, Science 209 ,547 (1980). [18] D. Carney, A. Hook, Z. Liu, J. M. Taylor, and Y. Zhao, Ultralight dark matter detection with mechanical quan-9
+
+tum sensors, New Journal of Physics 23 , 023041 (2021). [19] S. Schreppler, N. Spethmann, N. Brahms, T. Botter, M. Barrios, and D. M. Stamper-Kurn, Optically measur-ing force near the standard quantum limit, Science 344 ,1486 (2014). [20] D. Mason, J. Chen, M. Rossi, Y. Tsaturyan, and A. Schliesser, Continuous force and displacement mea-surement below the standard quantum limit, Nature Physics 15 , 745 (2019). [21] M. Tsang and C. M. Caves, Coherent quantum-noise cancellation for optomechanical sensors, Physical Review Letters 105 , 123601 (2010). [22] S. Ghosh, D. Carney, P. Shawhan, and J. M. Taylor, Back-action evading impulse measurement with mechan-ical quantum sensors, arXiv preprint arXiv:1910.11892 (2019). [23] I. Shomroni, L. Qiu, D. Malz, A. Nunnenkamp, and T. J. Kippenberg, Optical backaction-evading measure-ment of a mechanical oscillator, Nature Communications 
+
+10 , 2086 (2019). [24] V. A. Bittencourt, C. Potts, J. Davis, and A. Metel-mann, Magnon-microwave backaction noise evasion in cavity magnomechanics, Communications Physics 8, 247 (2025). [25] M. Xiao, L.-A. Wu, and H. J. Kimble, Precision mea-surement beyond the shot-noise limit, Physical Review Letters 59 , 278 (1987). [26] U. B. Hoff, G. I. Harris, L. S. Madsen, H. Kerdoncuff, M. Lassen, B. M. Nielsen, W. P. Bowen, and U. L. Ander-sen, Quantum-enhanced micromechanical displacement sensitivity, Optics Letters 38 , 1413 (2013). [27] S. Chelkowski, H. Vahlbruch, B. Hage, A. Franzen, N. Lastzka, K. Danzmann, and R. Schnabel, Experi-mental characterization of frequency-dependent squeezed light, Physical Review A 71 , 013806 (2005). [28] K. Hammerer, M. Aspelmeyer, E. S. Polzik, and P. Zoller, Establishing einstein-poldosky-rosen channels between nanomechanics and atomic ensembles, Physical Review Letters 102 , 020501 (2009). [29] K. Zhang, P. Meystre, and W. Zhang, Back-action-free quantum optomechanics with negative-mass bose-einstein condensates, Physical Review A 88 , 043632 (2013). [30] C. B. Møller, R. A. Thomas, G. Vasilakis, E. Zeuthen, Y. Tsaturyan, M. Balabas, K. Jensen, A. Schliesser, K. Hammerer, and E. S. Polzik, Quantum back-action-evading measurement of motion in a negative mass ref-erence frame, Nature 547 , 191 (2017). [31] F. Y. Khalili and E. S. Polzik, Overcoming the standard quantum limit in gravitational wave detectors using spin systems with a negative effective mass, Phys. Rev. Lett. 
+
+121 , 031101 (2018). [32] K. W. Murch, K. L. Moore, S. Gupta, and D. M. Stamper-Kurn, Observation of quantum-measurement backaction with an ultracold atomic gas, Nature Physics 
+
+4, 561 (2008). [33] T. P. Purdy, R. W. Peterson, and C. A. Regal, Obser-vation of radiation pressure shot noise on a macroscopic object, Science 339 , 801 (2013). [34] H. J. Kimble, Y. Levin, A. B. Matsko, K. S. Thorne, and S. P. Vyatchanin, Conversion of conventional gravitational-wave interferometers into quantum nonde-molition interferometers by modifying their input and/or output optics, Physical Review D 65 , 022002 (2001). [35] Y. Chen, S. L. Danilishin, F. Y. Khalili, and H. M¨ uller-Ebhardt, Qnd measurements for future gravitational-wave detectors, General Relativity and Gravitation 43 ,671 (2011). [36] R. S. Bondurant, Reduction of radiation-pressure-induced fluctuations in interferometric gravity-wave de-tectors, Physical Review A 34 , 3927 (1986). [37] M. H. Wimmer, D. Steinmeyer, K. Hammerer, and M. Heurs, Coherent cancellation of backaction noise in optomechanical force measurements, Physical Review A 
+
+89 , 053836 (2014). [38] S. Barzanjeh, D. Vitali, P. Tombesi, and G. J. Milburn, Entangling optical and microwave cavity modes by means of a nanomechanical resonator, Physical Review A 84 ,042342 (2011). [39] K. Stannigel, P. Rabl, A. S. Sørensen, P. Zoller, and M. D. Lukin, Optomechanical transducers for long-distance quantum communication, Physical Review Let-ters 105 , 220501 (2010). [40] K. Stannigel, P. Rabl, A. S. Sørensen, M. D. Lukin, and P. Zoller, Optomechanical transducers for quantum-information processing, Physical Review A 84 , 042341 (2011). [41] K. Stannigel, P. Komar, S. J. M. Habraken, S. D. Ben-nett, M. D. Lukin, P. Zoller, and P. Rabl, Optomechan-ical quantum information processing with photons and phonons, Physical Review Letters 109 , 013603 (2012). [42] Z.-L. Xiang, S. Ashhab, J. Q. You, and F. Nori, Hybrid quantum circuits: Superconducting circuits interacting with other quantum systems, Reviews of Modern Physics 
+
+85 , 623 (2013). [43] T. Holstein and H. Primakoff, Field dependence of the intrinsic domain magnetization of a ferromagnet, Phys. Rev. 58 , 1098 (1940). [44] P. K. Gupta, S. Kalita, and A. K. Sarma, Quantum-interference-induced magnon blockade and antibunching in a hybrid quantum system, J. Opt. Soc. Am. B 41 , 447 (2024). [45] N. Zhu, X. Zhang, X. Han, C.-L. Zou, and H. X. Tang, Waveguide cavity optomagnonics for microwave-to-optics conversion, Optica 7, 1291 (2020). [46] C. Z. Chai et al., Single-sideband microwave-to-optical conversion in high-q magneto-optical whispering-gallery-mode microcavities, Photonics Research 10 , 820 (2022). [47] X. Y. Wu et al., Optimal photon-magnon mode matching in whispering-gallery microdisk resonator systems, Op-tics Express 29 , 40061 (2021). [48] K. Wang, Y.-P. Gao, R. Jiao, and C. Wang, Recent progress on optomagnetic coupling and optical manipula-tion based on cavity-optomagnonics, Frontiers of Physics 
+
+17 , 42501 (2022). [49] A. Motazedifard, F. Bemani, M. H. Naderi, R. Roknizadeh, and D. Vitali, Force sensing based on coherent quantum noise cancellation in a hybrid optomechanical cavity with squeezed-vacuum injection, New Journal of Physics 18 , 073040 (2016). [50] F. Bariani, H. Seok, S. Singh, M. Vengalattore, and P. Meystre, Atom-based coherent quantum-noise cancel-lation in optomechanics, Physical Review A 92 , 043817 (2015). [51] S. K. Singh, M. Mazaheri, J.-X. Peng, A. Sohail, M. Khalid, and M. Asjad, Enhanced weak force sensing based on atom-based coherent quantum noise cancella-tion in a hybrid cavity optomechanical system, Frontiers 10 
+
+in Physics 11 , 1142452 (2023). [52] H. Allahverdi, A. Motazedifard, A. Dalafi, D. Vitali, and M. H. Naderi, Homodyne coherent quantum noise cancel-lation in a hybrid optomechanical force sensor, Physical Review A 106 , 023107 (2022). [53] V. Peano, H. G. L. Schwefel, C. Marquardt, and F. Mar-quardt, Intracavity squeezing can enhance quantum-limited optomechanical position detection through deam-plification, Physical Review Letters 115 , 243603 (2015). [54] T. Carmon, H. Rokhsari, L. Yang, T. J. Kippenberg, and K. J. Vahala, Temporal behavior of radiation-pressure-induced vibrations of an optical microcavity phonon mode, Physical Review Letters 94 , 223902 (2005). [55] A. Roy and A. K. Sarma, Overcoming the standard quan-tum limit with an electro-optomechanical hybrid sys-tem for enhanced force sensing, Physical Review A 111 ,013509 (2025). [56] Q. Zhang, J. Wang, T.-X. Lu, R. Huang, F. Nori, and H. Jing, Quantum weak force sensing with squeezed mag-nomechanics, Science China Physics, Mechanics & As-tronomy 67 , 100313 (2024). [57] D. F. Walls, Gj milburn, quantum optics (springer, berlin (1994). [58] R. Benguria and M. Kac, Quantum langevin equation, Physical Review Letters 46 , 1 (1981). [59] C. W. Gardiner and M. J. Collett, Input and output in damped quantum systems: Quantum stochastic differen-tial equations and the master equation, Physical Review A 31 , 3761 (1985). [60] E. Gavartin, P. Verlot, and T. J. Kippenberg, A hy-brid on-chip optomechanical transducer for ultrasensi-tive force measurements, Nature nanotechnology 7, 509 (2012).
