@@ -1,0 +1,1344 @@
+Title: Semi-definite programs for online control of nonlinear systems with stability guarantees
+
+URL Source: https://arxiv.org/pdf/2604.16991v1
+
+Published Time: Tue, 21 Apr 2026 00:46:42 GMT
+
+Number of Pages: 11
+
+Markdown Content:
+> 1
+
+# Semi-definite programs for online control of nonlinear systems with stability guarantees 
+
+Xiaoyan Dai 
+
+Abstract —This paper develops a semidefinite-programming-based method for online feedback control of nonlinear systems using a state-dependent representation. We formulate sequences of time-varying SDPs whose optimal solutions jointly yield a stabilizing feedback controller and a Lyapunov certificate satisfy-ing stability conditions and quadratic performance specifications. We further establish compact conditions certifying recursive feasibility of the resulting SDP sequences and derive estimates of the region of attraction. Numerical examples on representative nonlinear systems illustrate the flexibility and effectiveness of the proposed method. 
+
+Index Terms —optimization-based control, nonlinear systems, online control, adaptation and control, recursive feasibility. 
+
+I. I NTRODUCTION 
+
+Computational tools have been extensively used for con-trol design, among which we focus on optimization-based methods. These methods formulate control design problems as optimization programs whose decision variables are control in-puts or feedback control gains that map system measurements to control inputs. The optimization programs incorporate the plant dynamics and performance specifications as (dynamic) constraints and objective functions, respectively. The optimization-based control design has been prevalent, with problems ranging from optimal [1], predictive [2], safe [3], and distributed control [4] to data-driven control [5]. The corresponding formulations are also varied, ranging from linear matrix inequalities (LMIs) [6] and sum of squares [7] to the mixed integer quadratic programming [8]. Among these, LMI-based formulations are particularly attractive for their computational efficiency and flexibility. We refer the reader to [9] and [10] for LMI-based formulations of diverse control design problems for linear systems. The control-oriented LMIs typically incorporate stability guarantees and performance specifications for the closed-loop system behavior. As a result, the solutions provide certifiable controllers. This motivates us to propose novel LMI-based formulations for nonlinear control systems, a much more demanding con-text. Specifically, we focus on the problem of stabilizing input-affine nonlinear systems while minimizing a quadratic cost on state deviation and control effort. The goal is to develop LMIs that shape the closed-loop behaviors to be certifiably stable under performance considerations. The solutions result in provably correct control that stabilizes input-affine nonlinear               
+
+> Xiaoyan Dai is with the Department of Electrical Engi-neering, Tsinghua University, 100084 Beijing, China. Email:
+
+daixiaoyan@tsinghua.edu.cn. 
+
+systems around the desired equilibrium with relatively less control energy. 
+
+Related work. Nonlinear matrix inequalities (NLMIs) have been proposed for H∞ control of a class of nonlinear systems in a state dependent representation [11]. Note that the NLMIs therein are in fact state dependent matrix inequalities. Mean-while, the state dependent representation has been widely used in nonlinear optimal control, where algebraic Riccati equations are solved along the trajectory, as a practical alternative for solving Hamiltonian-Jacobi-Bellman equations, see [12– 17]. We further mention that based on the state dependent representation, [18] performs nonlinear optimal control via policy iteration. More recently, using the state dependent representation, [19] considers a data-driven online control setting where a data-dependent semidefinite program is solved along the trajectory and, if feasible, renders the origin of the closed-loop system asymptotically stable. Despite the progress, see the applications of state depen-dent Riccati equation (SDRE)-based control across industrial practices [20], a major challenge encountered in this line of inquiry is certifying the stability of the system in closed-loop. In addition, recursive feasibility is vital as it determines whether the control scheme can generate a feedback gain at each time step. Nevertheless, the investigation in this respect appears to be sparse. 
+
+Contribution. This paper makes two main contributions. First, we develop semidefinite-programming-based methods for online feedback control of nonlinear systems using state-dependent representations. In particular, we formulate se-quences of time-varying SDPs whose optimal solutions jointly yield feedback controllers and Lyapunov certificates satisfying stability conditions and quadratic performance specifications. Second, we establish compact conditions certifying recursive feasibility of the resulting SDP sequences and derive com-putable estimates of the region of attraction, which character-ize admissible initialization sets for the closed-loop guarantees. More specifically, we first construct a sequence of state-dependent SDPs for scalar input-affine nonlinear systems whose solutions yield a time-varying controller. We show that the closed-loop system is geometrically stable when initialized within a derived RoA estimate. We then develop a related regularized SDP framework for higher-dimensional systems, whose solutions simultaneously provide stabilizing controllers and Lyapunov certificates. Finally, we derive compact con-ditions certifying recursive feasibility of the proposed SDP sequences and demonstrate the effectiveness of the methods 
+
+> arXiv:2604.16991v1 [math.OC] 18 Apr 2026 2
+
+on representative nonlinear systems, including control of a single-machine-infinite-bus power system, stabilization of a jet engine compressor, and an inverted pendulum with a state-dependent input vector field. 
+
+Outline. The structure of the paper is specified as follows. Section II provides preliminaries on the SDP formulation of the LQR problem and introduces the problem under consider-ation. Then we consider the case of scalars in Section III. In Section IV, we investigate the higher-dimensional case. In Sec-tion V, we demonstrate the results on three example systems. Finally, we summarize the paper and draw the conclusions in Section VI. II. P RELIMINARIES AND PROBLEM STATEMENT 
+
+A. Notation 
+
+We denote the set of real numbers and natural numbers including zero by R and N0, respectively. We use ≻ (⪰) and 
+
+≺ (⪯) to denote the positive and negative (semi)definiteness of the involved matrices, respectively. The 2-norm of a vector 
+
+x is denoted by |x| and the induced 2-norm of a matrix A
+
+is denoted by ∥A∥. The notation λm(Q) and λM (Q) are the minimum and maximum eigenvalues of a square matrix Q,respectively. We denote the set of n×n real-valued symmetric matrices by Sn×n. We use M ⊤ to denote the transpose of 
+
+M . For matrices A = A⊤, B, C = C⊤, we abbreviate the symmetric matrix  A BB⊤ C
+
+ as [ A B   
+
+> ∗C
+
+]. For matrices M , N , and 
+
+O of compatible dimensions, we abbreviate M N O (M N )⊤ to 
+
+M N · O(⋆)⊤, where ⋆ clarifies unambiguously that M N is the term to be transformed. 
+
+B. SDP formulation for discrete-time LQR problem 
+
+Consider a discrete-time linear time invariant system 
+
+xt+1 = Ax t + Bu t, x(0) = x0,
+
+with x ∈ Rn the state, u ∈ Rm the control input, x0 ∈ Rn
+
+the initial condition, t ∈ N0; (A, B ) is stabilizable. The linear quadratic regulator (LQR) problem is to design the controller 
+
+u = Kx 
+
+such that the origin of the closed-loop system 
+
+xt+1 = ( A + BK )xt, x(0) = x0
+
+is asymptotically stable while minimizing the cost function 
+
+J(x0, u ) := 
+
+> ∞
+
+X
+
+> t=0
+
+x⊤ 
+
+> t
+
+Qx t + u⊤ 
+
+> t
+
+Ru t (1) with weighting matrices Q ≻ 0 and R ≻ 0. It is well known that the LQR control gain K is unique [21, Sec. 6.4] and can be computed as 
+
+K := −(R + B⊤Pr B)−1B⊤Pr A (2) where Pr is the unique positive definite solution to the discrete-time Riccati equation [21, Thm. 6.3.2] 
+
+A⊤Pr A − Pr − A⊤Pr B(R + B⊤Pr B)−1B⊤Pr A + Q = 0 .
+
+(3) On the other hand, finding the LQR controller K can also be viewed as an H2 problem. To see this, we consider the performance output y := col( Q1/2x, R 1/2u) and the system 
+
+ xt+1 
+
+yt
+
+
+
+=
+
+
+
+A + BK I Q1/2
+
+R1/2K
+
+
+
+0
+
+ xt
+
+dt
+
+
+
+, (4) where d = δdx0 with δd the discrete-time unit pulse applied at time t = 0 [21, Sec. 6.4]. An SDP has been built [5, eq. 9] 
+
+min  
+
+> K,P,L,γ
+
+γ (5a) s.t. 
+
+(A + BK )P (A + BK )⊤ − P + I ⪯ 0 (5b) 
+
+P ⪰ I (5c) 
+
+L − KP K ⊤ ⪰ 0 (5d) 
+
+γ ≥ tr( QP ) + tr( RL ) (5e) whose optimal solution K minimizes the H2 norm of the system in (4). Moreover, the optimal K coincides with the LQR control gain. We summarize below the properties of the SDP-based formulation (5) in relation to the Riccati-based formulation in (2) and (3). 
+
+Proposition 1: The SDP (5) has a unique optimal solution 
+
+(K, P, L, γ ) where K coincides with the one defined in (2) and γ equals to tr( Pr ). □
+
+Proof . See Appendix A. ■
+
+C. Problem formulation 
+
+Consider the input-affine nonlinear system 
+
+xt+1 = f (xt) + B(xt)ut, x(0) = x0, (6) with x ∈ Rn the state, u ∈ Rm the control input, t ∈ N0,
+
+x0 ∈ Rn the initial condition, f : Rn → Rn a continuously differentiable function with f (0) = 0 and B : Rn → Rn×m
+
+a continuous function. The problem we are interested in is to design a state feedback controller in the form of 
+
+ut = K(xt)xt (7) such that the origin of the closed-loop system 
+
+xt+1 = f (xt) + B(xt)K(xt)xt (8) is asymptotically stable. □
+
+Under the continuously differentiable condition on f , we can derive a linear-like representation for the system described in (6). 
+
+Fact 1: Consider the nonlinear system (6). There exists a continuous map A : Rn → Rn×n such that 
+
+f (x) = A(x)x. (9) 3
+
+By Fact 1, the system (6) can be written as 
+
+xt+1 = A(xt)xt + B(xt)ut, (10) with the continuous map A(x) given in (9). Similarly, the closed-loop system (8) reads as 
+
+xt+1 = ( A(xt) + B(xt)K(xt)) 
+
+| {z }
+
+> Acl (xt):=
+
+xt. (11) The linear-like representation in (10) and performance consid-erations suggest designing the controller in (7) by iteratively solving the LQR problem for the linear system (A(xt), B (xt)) 
+
+along the solution of (11). As will be observed, the SDP discussed in Proposition 1 forms the basis of such a controller design. We first specialize the problem to the scalar case to illustrate the findings. III. S CALAR SYSTEM CONTROL DESIGN 
+
+Consider the nonlinear system (10) with xt ∈ R. This gives rise to the scalar nonlinear system 
+
+xt+1 = a(xt)xt + b(xt)ut, (12) with x ∈ R the state, u ∈ R the control input, x0 ∈ R the initial condition, t ∈ N0; a : R → R and b : R → R are continuous functions. We introduce the following assumption: 
+
+Assumption 1: There exist a compact set X ⊆ R including the origin and a positive constant b such that |b(x)| ≥ b for all 
+
+x ∈ X , where b(x) is the input vector field defined in (12). ■
+
+Note that under Assumption 1 and due to the continuity of 
+
+a(x), the state vector field is also bounded as 
+
+|a(x)| ≤ L, ∀x ∈ X . (13) for some L > 0. To find the state-dependent control gain 
+
+k(xt), we consider the SDP (5) for system (12) with Q and 
+
+R being identities, i.e.: 
+
+min  
+
+> k(x),p (x),ℓ (x),γ (x)
+
+γ(x) (14a) subject to 
+
+(a(x) + b(x)k(x)) 2p(x) − p(x) + 1 ≤ 0 (14b) 
+
+p(x) ≥ 1 (14c) 
+
+ℓ(x) − p(x)k2(x) ≥ 0 (14d) 
+
+γ(x) ≥ p(x) + ℓ(x) (14e) with x ∈ X . Note that, for any given x ∈ X , the above program solves the LQ problem for the LTI system xt+1 =(a(x) + b(x)k(x)) xt. The following result establishes feasi-bility of the program (14) and a uniform upper bound on the cost γ(x) for every x ∈ X .
+
+Proposition 2: For any x ∈ R such that b(x)̸ = 0 , the program (14) is feasible and has a unique optimal solution 
+
+(k(x), p (x), ℓ (x), γ (x)) . Moreover, under Assumption 1, γ(x)
+
+is uniformly upper bounded as 
+
+1 ≤ γ(x) ≤ ¯γ, ∀x ∈ X , (15) where 
+
+¯γ := 1 + L2
+
+b2 (16) with the scalar L given by (13). □
+
+Proof . See Appendix B. ■
+
+Next, we analyze stability of the nonlinear system 
+
+xt+1 = ( a(xt) + b(xt)k(xt)) xt, (17) where the feedback controller k(xt) is obtained by recursively solving the program (14) along the solution of the system. We recall the following definition. 
+
+Definition 1: Let the origin be an asymptotically stable equilibrium of the system xt+1 = f (xt). A set R defines an RoA if for every x0 ∈ R we have lim  
+
+> t→∞
+
+xt = 0 .For an arbitrarily chosen r > 0, let 
+
+Br := {x ∈ R : |x| ≤ r}. (18) In addition, let ¯r be the largest value of r such that Br ⊆ X .We then have the following result. 
+
+Theorem 1: Let Assumption 1 hold. For each t, let 
+
+(k(xt), p (xt), ℓ (xt), γ (xt)) be the unique optimal solution to (14) with x = xt. Let ¯γ be given by (16). Then, any solution of closed-loop system (17) initialized in 
+
+Bδ = {x ∈ R : |x| ≤ δ := ¯ γ−1/2 ¯r} (19) geometrically converges to the origin. Moreover, a Lyapunov function certifying stability in the sense specified below 
+
+Vt(xt) ≤ (1 − ¯γ−1)tV0(x0). (20) is given by 
+
+Vt(xt) = x⊤ 
+
+> t
+
+˜p−1(xt)xt, (21) where 
+
+˜p(xt) = max {p(xt), ˜p(xt−1)}, t ≥ 1 (22) and ˜p(x0) = p(x0). □
+
+Proof : Let x0 ∈ Bδ \ { 0}. By Proposition 2, the pro-gram (14) is feasible with x = x0. The optimal solution 
+
+(k(x0), p (x0), ℓ (x0), γ (x0)) satisfies (14b)-(14e). Let 
+
+Vi(xj ) := x⊤ 
+
+> j
+
+˜p−1(xi)xj (23) with i, j ∈ N0. By multiplying both sides of (14b) with 
+
+˜p−2(x0)x20, we have 
+
+˜p−1(x0)( a(x0) + b(x0)k(x0)) 2x20 − ˜p−1(x0)x20
+
+≤ − ˜p−2(x0)x20
+
+(24) namely, V0(x1) ≤ (1 − ˜p−1(x0)) V0(x0). Next, since ˜p(x0) = 
+
+p(x0) where p(x0) satisfies 
+
+1 (14c) 
+
+≤ p(x0) (59) 
+
+≤ γ(x0) (16) 
+
+≤ ¯γ (25) we have 
+
+V0(x1)≤(1 − ¯γ−1)V0(x0). (26) 4
+
+By recalling the definition of V0(x1) and applying the inequal-ity (26), we find that 
+
+|x1|2 (23) 
+
+= ˜ p(x0)V0(x1) (25)(26) 
+
+≤ ¯γ(1 − ¯γ−1)V0(x0). (27) Moreover, since V0(x0) (23) 
+
+= ˜ p−1(x0)|x0|2 = p−1(x0)|x0|2 (25) 
+
+≤|x0|2 and |x0|2 ≤ δ2 with δ = ¯r√¯γ , it follows that 
+
+|x1|2 (27) 
+
+≤ ¯γ(1 − ¯γ−1)V0(x0) ≤ ¯γ(1 − ¯γ−1) ¯r2
+
+¯γ . (28) Since by (16), ¯γ ≥ 1, then we have |x1|2 < ¯r2, which implies 
+
+x1 ∈ B¯r .Next, since B¯r ⊆ X , we have x1 ∈ X . If x1 = 0,then it implies that the solution of the closed-loop system is at the equilibrium and the control input ut for t ≥ 1
+
+will be 0. If x1 ∈ B¯r \ { 0}, then we continue using (14) to find the optimal controller k(x1) and the optimal solution (p(x1), ℓ (x1), γ (x1)) , as analyzed in the proof of Proposition 2. Moreover, since p(x1) (59) 
+
+≤ γ(x1) (16) 
+
+≤ ¯γ and 
+
+˜p(x0) = p(x0) (25) 
+
+≤ ¯γ, it follows that max {p(x1), ˜p(x0)} ≤ ¯γ.Recalling the definition of ˜p(x1) in (22), we have that 
+
+1 ≤ ˜p(x1) = max {p(x1), ˜p(x0)} ≤ ¯γ. (29) Next, by repeating the arguments in (24) with x0 replaced by x1, we again have (26) but one-step forward, namely, 
+
+V1(x2) ≤ (1 − ¯γ−1)V1(x1). Moreover, since ˜p(x1) ≥ ˜p(x0),it gives V1(x1) ≤ V0(x1). Hence, we have V1(x2) ≤ (1 −
+
+¯γ−1)V0(x1) (26) 
+
+≤ (1 − ¯γ−1)2V0(x0). This enables us to repeat the arguments in (27), (28) and to have |x2|2 < ¯r2. By recursively repeating these arguments, it holds that |xt|2 < ¯r2
+
+and thus xt ∈ B¯r ⊆ X . Then, by Proposition 2, feasibility of the program (14) along with the solution xt of the closed-loop system (17) is guaranteed for every t ∈ N0.Next, notice that for every t ∈ N0, the inequalities 
+
+Vt(xt+1 ) ≤ (1 −¯γ−1)Vt(xt) and Vt+1 (xt+1 ) ≤ Vt(xt+1 ) hold. Then, we have Vt+1 (xt+1 ) ≤ (1 − ¯γ−1)Vt(xt) and thus (20) holds. Moreover, note that (29) holds with x0 replaced by xt
+
+and x1 replaced by xt+1 for any t ∈ N0, and thus 
+
+1 ≤ ˜p(xt) ≤ ¯γ, t ∈ N0. (30) Then, it holds that 
+
+|xt|2 (21) 
+
+= ˜ p(xt)Vt(xt) (30) 
+
+≤ ¯γV t(xt) (20) 
+
+≤ ¯γ(1 − ¯γ−1)tV0(x0).
+
+(31) By (30), ˜p−1(x0) satisfies ¯γ−1 ≤ ˜p−1(x0) ≤ 1, which implies V0(x0) ≤ |x0|2. Then by (31), we have |xt|2 ≤
+
+¯γ(1 − ¯γ−1)t|x0|2. This completes the proof. ■
+
+The result shows that under Assumption 1, by recursively solving (14), the solution of the closed-loop system geometri-cally converges to the origin provided that the initial condition is inside the set Bδ defined as in (19). As a result, the set Bδ
+
+defines an RoA estimate for system (17). Moreover, notice that the definition of ˜p(x) in (22) ensures the sequence Vi(xj )
+
+defined as in (23) is monotonically decreasing, as illustrated in Fig. 1.  
+
+> Figure 1. The illustration of the monotonically decreasing sequence.
+
+IV. H IGHER -DIMENSIONAL SYSTEM CONTROL DESIGN 
+
+We continue with the control design for the higher-dimensional system described in (10). To find the sequence 
+
+K(xt) in (7), we generalize (14) to 
+
+min   
+
+> K(x),P (x),L (x),γ (x)
+
+γ(x) (32a) subject to 
+
+(A(x) + B(x)K(x)) I · P (x)( ⋆)⊤ − P (x) + In ⪯ 0 (32b) 
+
+P (x) ⪰ In (32c) 
+
+L(x) − K(x)P (x)K⊤(x) ⪰ 0 (32d) 
+
+γ(x) ≥ tr P (x) + tr L(x) (32e) where K(x) ∈ Rm×n, P (x) ∈ Sn×n, L(x) ∈ Sm×m,
+
+γ(x) ∈ R. Then, for any xt ∈ Rn that makes (A(xt), B (xt)) 
+
+stabilizable, it follows from Proposition 1 that there exists a unique optimal solution (K(xt), P (xt), L (xt), γ (xt)) to (32) with x = xt.We revisit Theorem 1 and use (32) as a basis to design another SDP whose optimal solutions provide us a sequence of feedback control gain K(xt) in (11) and a matrix sequence 
+
+P (xt) ≻ 0 that builds a time-varying Lyapunov function 
+
+Vt(xt) = x⊤ 
+
+> t
+
+P −1(xt)xt (33) to certify the stability of the origin of (11). To this end, inspired by the Lyapunov stability criterion for discrete-time time-varying systems [22, Thm. 23.3], we impose the following Lyapunov stability conditions: 
+
+¯γ−1|xt|2 ≤ Vt(xt) ≤ | xt|2 (34a) 
+
+Vt(xt+1 ) := x⊤
+
+> t+1
+
+P −1(xt)xt+1 < V t(xt) (34b) 
+
+Vt+1 (xt+1 ) ≤ Vt(xt+1 ) (34c) where ¯γ is a positive constant to be defined later. For the case of geometric stability, (34b) is strengthened to 
+
+Vt(xt+1 ) ≤ (1 − ¯γ−1)Vt(xt). (35) 
+
+A. Time-varying SDP-based online nonlinear control 
+
+From t ≥ 1, we modify (32) by setting x = xt and adding the constraint x⊤ 
+
+> t
+
+P −1(xt−1)xt x⊤
+
+> t
+
+∗ P (xt)
+
+
+
+⪰ 0, (36) 5
+
+and a user-defined constant ¯γ that serves as a uniform upper bound for the sequence γ(xt). The solution to the modified SDP is established in the following proposition. 
+
+Proposition 3: Consider the program: 
+
+min    
+
+> Y(xt),P (xt),L (xt),γ (xt)
+
+γ(xt) (37a) subject to 
+
+P (xt) − I A(xt)P (xt) + B(xt)Y (xt)
+
+∗ P (xt)
+
+
+
+⪰ 0 (37b) 
+
+L(xt) Y (xt)
+
+∗ P (xt)
+
+
+
+⪰ 0 (37c) 
+
+γ(xt) ≥ tr P (xt) + tr L(xt) (37d) 
+
+x⊤ 
+
+> t
+
+P −1(xt−1)xt x⊤
+
+> t
+
+∗ P (xt)
+
+
+
+⪰ 0, t ≥ 1 (37e) 
+
+γ(xt) ≤ ¯γ, t ≥ 1 (37f) with t ≥ 1, Y (xt) ∈ Rm×n, P (xt) ∈ Sn×n, L(xt) ∈ Sm×m
+
+and γ(xt) ∈ R. Suppose (37) is feasible for a given point 
+
+xt ∈ Rn and a given matrix P (xt−1) ≻ 0. Then there exists an optimal solution to (37). Moreover, any optimal solution 
+
+(Y (xt), P (xt), L (xt), γ (xt)) is such that 
+
+I ⪯ P (xt) ⪯ ¯γI (38) and 
+
+Lcl (xt) := A⊤
+
+> cl
+
+(xt)P −1(xt)Acl (xt) − P −1(xt) ≺ 0 (39) where Acl (xt) is given by (11) with K(xt) := Y (xt)P −1(xt).Moreover, if P (xt) − I is nonsingular, then 
+
+Lcl (xt) ⪯ − λm(P −1(xt)) P −1(xt) (40) 
+
+Proof . See Appendix C. ■
+
+Note that at t = 0 , (37) boils down to (32) with x = x0
+
+and thus by Proposition 1, stabilizability of (A(x0), B (x0)) 
+
+implies feasibility and existence of a unique optimal solution 
+
+(Y (x0), P (x0), L (x0), γ (x0)) . For t ≥ 1, by assuming feasi-bility of (37) at t−1, (37e) uses an optimal solution P (xt−1) as the given positive definite matrix and thus (37) is well-defined. Moreover, in doing so, we have the following stability result. 
+
+Theorem 2: Assume that (37) is feasible for every t ≥ 0 and a given ¯γ. Then, the origin of the closed-loop system (11) with 
+
+K(xt) := Y (xt)P −1(xt) and (Y (xt), P (xt), L (xt), γ (xt)) 
+
+any optimal solution to (37) is asymptotically stable. Further-more, if the matrix P (xt) − I is nonsingular for all t, then the origin is geometrically stable, namely 
+
+|xt| ≤ √¯γp(1 − ¯γ−1)t|x0|. (41) 
+
+Proof : To prove asymptotic stability of the origin, we show that (33) satisfy (34) and thus serves as a Lyapunov function for the closed-loop system (11). By (38), (34a) holds. By (39), the inequality (34b) holds. Moreover, computing the Schur complement of (37e) yields (34c). This completes the proof for asymptotic stability of the origin. By (38) and under the nonsingulairty condition on P (xt)−I,we have I ≺ P (xt) ⪯ ¯γI . Then, by Proposition 3, (40) holds and λm(P −1(xt)) = λ−1 
+
+> M
+
+(P (xt)) ≥ ¯γ−1. Hence, we have 
+
+Lcl (xt) ⪯ − ¯γ−1P −1(xt) and thus (35) holds, which together with (34a) and (34c), imply geometric stability of the origin as given by (41). ■
+
+A few remarks are in order. 
+
+On the initialization of the time-varying controller. At time 
+
+t = 0 , the constraints (37e) and (37f) are absent from the SDP (37). Hence, the initial controller gain is the same as the one obtained by solving (32) with x = x0.
+
+On the nonsingularity condition of P (xt) − I. The ad-ditional nonsingularity condition in Theorem 2 is equiva-lent to nonsingularity of the closed-loop matrix sequence 
+
+A(xt)+ B(xt)K(xt), which can be interpreted as the function mapping xt to xt+1 is bijective and such that the uniqueness of solutions backward in time holds for the closed-loop system (11) [23, Sec. 13.2]. □
+
+B. Recursive feasibility 
+
+Theorem 2 establishes stability of the SDP-based control scheme under the assumption that (37) remains feasible at each time step. Exploiting the temporal coupling introduced by (37e), we derive conditions under which feasibility at time step t − 1 guarantees feasibility at time step t for t ≥ 1.
+
+1) Condition 1: One possibility for studying recursive feasibility is to frame the changes in the dynamics of (10) as consecutive deviations of the pair (A(xt), B (xt)) from the nominal dynamics (A(xt−1), B (xt−1)) . Intuitively, for a sufficiently small deviation ϵ ≥ 0 with 
+
+max {∥ A(xt) − A(xt−1)∥, ∥B(xt) − B(xt−1)∥} ≤ ϵ (42) the controller K(xt−1) that stabilizes (A(xt−1), B (xt−1)) 
+
+can stabilize (A(xt), B (xt)) . Drawing inspiration from the certainty equivalence-based control design [24], we introduce some additional notation and state the result below. For a given t ∈ N0 and a feasible solution 
+
+(Y (xt), P (xt), L (xt), γ (xt)) to (37), define 
+
+Zt := A(xt) B(xt) , R t := Zt+1 − Zt,Mt := 
+
+P (xt)
+
+Y (xt)
+
+
+
+P −1(xt)
+
+P (xt)
+
+Y (xt)
+
+⊤
+
+Θt := ZtMtZ⊤ 
+
+> t
+
+− P (xt)Ψt := RtMtR⊤ 
+
+> t
+
++ ZtMtR⊤ 
+
+> t
+
++ RtMtZ⊤ 
+
+> t
+
+.
+
+(43) 
+
+Proposition 4: Suppose (37) is feasible at time instant 
+
+t − 1, and let (Y (xt−1), P (xt−1), L (xt−1), γ (xt−1)) be its corresponding optimal solution. If 
+
+Ψt−1 ⪯ (1 − γ(xt−1)¯γ )I, (44) then the solution ηt−1(Y (xt−1), P (xt−1), L (xt−1), γ (xt−1)) 
+
+with 
+
+ηt−1 := ¯γγ(xt−1)
+
+is feasible for (37). □6
+
+Proof. Since (Y (xt−1), P (xt−1), L (xt−1), γ (xt−1)) is fea-sible for (37) at the time step t − 1, then it follows from (37b) and the definition of Θt in (43) that Θt−1 + I ⪯ 0. Hence, 
+
+ηt−1Θt−1 + ηt−1Ψt−1 + I
+
+= ηt−1(Θ t−1 + Ψ t−1) + ηt−1I + (1 − ηt−1)I
+
+= ηt−1(Θ t−1 + I) + ( ηt−1Ψt−1 + (1 − ηt−1)I) ⪯ 0
+
+(45) where the inequality follows from ηt−1(Θ t−1 + I) ⪯ 0
+
+and (44). Hence ηt−1(Y (xt−1), P (xt−1), L (xt−1), γ (xt−1)) 
+
+satisfies (37b) at time step t. Moreover, by construction, 
+
+ηt−1(Y (xt−1), P (xt−1), L (xt−1), γ (xt−1)) with ηt−1 ≥ 1
+
+satisfies all the other constraints of (37). ■
+
+Proposition 4 provides a verifiable condition for the feasi-bility of (37). Yet, this condition only guarantees feasibility one step ahead. We therefore pursue a stronger condition that ensures feasibility for all time. 
+
+2) Condition 2: We specialize the system (10) as 
+
+xt+1 = A(xt)xt + Bu t
+
+to illustrate the finding. Let A(x) be partitioned as 
+
+A(x) = ¯A + ˆA(x)
+
+with ˆA : Rn → Rn×n a matrix-valued function. Given the continuity of A(x) [25], the function ˆA(x) = A(x)− ¯A is also continuous and thus bounded on any compact set X ⊆ Rn.We have the following. 
+
+Proposition 5: Let ∆ ∈ Rn×r be a known matrix and X ⊆ 
+
+Rn a set including the origin such that 
+
+ˆA(x) ˆA(x)⊤ ⪯ ∆∆ ⊤, ∀x ∈ X (46) Consider the following LMI in the decision variables ϵ > 0,
+
+P ∈ Sn×n, and Y ∈ Rm×n:
+
+
+
+P − I − ϵ∆∆ ⊤ ¯AP + BY 0( ¯AP + BY )⊤ P P
+
+0 P ϵI 
+
+ ⪰ 0. (47) Suppose (47) is feasible and let (ϵ, P, Y ) be any feasible solution. Then, for any x0 ∈ R α := {x ∈ Rn : x⊤P −1x ≤
+
+α, α > 0} contained in X , the time-varying SDP (37) with 
+
+¯γ ≥ tr( P ) + tr( Y P −1Y ⊤) (48) is feasible for all t ≥ 0. □
+
+Proof. By Schur complement, (47) implies 
+
+P − I − ϵ∆∆ ⊤ ¯AP + BY 
+
+( ¯AP + BY )⊤ P
+
+
+
+− ϵ−1
+
+ 0
+
+P
+
+ 0 P 
+
+=
+
+ P − I ¯AP + BY 
+
+( ¯AP + BY )⊤ P
+
+
+
+− ϵ
+
+−I
+
+0
+
+
+
+∆∆ ⊤ −I 0
+
+−ϵ−1
+
+ 0
+
+P
+
+ 0 P  ⪰ 0.
+
+Then, by the nonstrict Petersen’s lemma [26, Fact 2], for any matrix ˆA(x) satisfying (46), it holds that 
+
+ P − I ¯AP + BY 
+
+( ¯AP + BY )⊤ P
+
+
+
+−
+
+ 0
+
+P
+
+
+
+ˆA⊤(x) −I 0
+
+−
+
+−I
+
+0
+
+
+
+ˆA(x) 0 P  ⪰ 0
+
+and thus 
+
+ P − I ¯AP + ˆA(x)P + BY 
+
+( ¯AP + ˆA(x)P + BY )⊤ P
+
+
+
+⪰ 0
+
+By another use of Schur complement, we obtain P − I −
+
+( ¯AP + ˆA(x)P + BY )P −1( ¯AP + ˆA(x)P + BY )⊤ ⪰ 0. Let 
+
+K := Y P −1. It holds that P − I − ( ¯A + ˆA(x) + BK )P ( ¯A +ˆA(x) + BK )⊤ ⪰ 0, ∀x ∈ X . By retracing the same steps as in the proof of Proposition 3 with Acl (xt) and P (xt) replaced by ¯A+ ˆA(x)+ BK and P , the inequality (39) holds. Then, the solution to the closed-loop system x+ = ( A(x) + BK )x =( ¯A + ˆA(x) + BK )x with x0 ∈ R α contained in X , satisfies 
+
+V (x+) − V (x) < 0, ∀x̸ = 0 with V (x) = x⊤P −1x. Note that the solution Y (xt) ≡ KP , P (xt) ≡ P , L(xt) ≡ KP K ⊤, and 
+
+γ(xt) ≡ tr( P ) + tr( KP K ⊤) is feasible to the time-varying SDP (47) with x = xt for all t ≥ 0. The thesis is proven. ■
+
+Proposition 5 presents an offline LMI whose solution yields RoA estimates for the closed-loop system 
+
+xt+1 = ( A(xt) + BK (xt)) xt
+
+where K(xt) := Y (xt)P (xt)−1 and (Y (xt), P (xt)) are optimal solutions for (37). Proposition 5 thus complements Theorem 2 by providing a computable RoA estimate from which convergence to the origin is guaranteed. Proposition 5 further extends to systems with state dependent input vector fields B(x), see Appendix D. ■
+
+V. C ASE STUDY 
+
+In this section, three systems with different types of non-linear dynamics are presented to show the effectiveness of the proposed optimization-based online control method. 
+
+A. Single-machine infinite-bus power system 
+
+A classical scenario in the study of the synchronous machine (SM) based power systems is the single-machine infinite bus (SMIB) [27]. The analysis and (learning-based) control design of SMIB is fundamental for SM-based power systems [28–30]. We use a third-order SM model [31, eq. 5.11] and include a power control loop to illustrate the effectiveness of the proposed online nonlinear control method. We consider 
+
+˙δ = ∆ ωM ˙∆ω = Pm − D∆ω + BsE′ 
+
+> q
+
+Vs sin δT ′ 
+
+> do
+
+˙E′ 
+
+> q
+
+= Ef − E′ 
+
+> q
+
++ ( Xd − X′
+
+> d
+
+)( BsE′ 
+
+> q
+
+− BsVs cos δ)˙Pm = − 1 
+
+> TG
+
+Pm − KG∆ω + v
+
+(49) with state variables - δ: rotor angle with respect to (w.r.t.) synchronously rotating reference frame, - ∆ω: frequency deviation w.r.t. synchronous frequency, - E′ 
+
+> q
+
+: the q-axis component of the transient emf, - Pm: mechanical input power, and system parameters 7
+
+- Bs: susceptance of the transmission line between the SM and the infinite bus, - Vs: voltage of infinite bus, - M : moment of inertia, - D: asynchronous damping constant, - Tdo : direct axis transient open-circuit constant, - Xd: direct synchronous reactance, - X′
+
+> d
+
+: direct transient reactance, - Ef : excitation voltage. Next, we denote the steady state as (¯δ, 0, ¯E′ 
+
+> q
+
+, ¯P ) with ¯v the constant input satisfying ¯v = 1
+
+> TG
+
+¯P . Let 
+
+x := col( δ − ¯δ, ∆ω, E ′ 
+
+> q
+
+− ¯E′ 
+
+> q
+
+, P m − ¯P ), u := v − ¯v. 
+
+We refer to the ith state variable as x(i). Then, by using the forward Euler discretization and a sampling time T , we have the discrete-time model in (10) with 
+
+A(x) := 
+
+                      
+
+> 1T00
+> b1T(cos( δ0+x(1) 2) sin( x(1) 2))
+> x(1) 1−b2T b 3Tsin( x(1)+ δ0)b4Tc1Tsin( δ0+x(1) 2) sin( x(1) 2)
+> x(1) 01+ c2T00−d1T01−d2T
+
+
+
+if x(1) ̸ = 0 , and 
+
+A(x) := 
+
+              
+
+> 1T00
+> b1Tcos( δ0)21−b2T b 3Tsin( δ0)b4T
+> c1Tsin( δ0)201+ T c 200−d1T01−d2T
+
+
+
+if x(1) = 0 , where b1 = 2Bs 
+
+> M
+
+¯E′ 
+
+> q
+
+Vs, b2 = DM , b3 = Bs 
+
+> M
+
+Vs,
+
+b4 = 1 
+
+> M
+
+, c1 = 2 (Xd−X′ 
+
+> d)BsVs
+> T′
+> do
+
+, c2 = (Xd−X′ 
+
+> d)Bs−1
+> T′
+> do
+
+, d1 = KG,
+
+d2 = 1 
+
+> TG
+
+. The input vector field is B := col(0 , 0, 0, T ).We set the parameters as follows: Xd = 1 .863 , X′ 
+
+> d
+
+= 0 .257 ,
+
+Bs = −0.404 , T ′ 
+
+> do
+
+= 0 .5s, δ0 = 0 .236 , ω0 = 50 Hz , D =0.5, M = 1 .25 , E′ 
+
+> q0
+
+= 1 , Vs = 1 , KG = 1 , TG = 0 .1,
+
+T = 0 .1. Moreover, we consider weighting matrices Q =diag(10 , 8, 0.1, 0.1) , R = 1 . The initial condition of x(1) is taken as a random variable within [−2( π − δ0), 2( π − δ0)] .The initial conditions of x(2) , x(3) , and x(4) are taken as random variables within [−1, 1] 3. Solving (37) with t = 0 , we obtain the optimal solution γ(x0) and P (x0). We then define 
+
+¯γ := λM (P (x0))   
+
+> λm(P(x0))
+
+γ(x0).We consider 4 scenarios: open-loop (with ut = 0 ), closed-loop with a time-invariant controller, closed-loop with the online controller that solves (32) along the trajectory, and closed-loop with the online controller that solves (37) where (37d) is modified to γ(xt) ≥ tr( QP (xt)) + tr( RL (xt)) . The time-invariant controller used in the second scenario is the LQR controller for the linearized pair. The SDP (32) and (37) are solved using MOSEK [32]. Figure 2 displays the evolution of the state. To compare the performance quantitatively, we consider the performance index 
+
+J =
+
+> Tend −1
+
+X
+
+> t=0
+
+u⊤ 
+
+> t
+
+Ru t + x⊤ 
+
+> t
+
+Qx t (50) with Tend = 200 . The result is as follows: J1 = 955 .1222 ,
+
+J2 = 3 .0122 × 10 3, J3 = 703 .0905 , J4 = 714 .9147 , where the subscript i of J corresponds to the ith scenario. The online controller solving (37) achieves regulation to the origin with mild performance degradation relative to (32), while guaranteeing closed-loop stability. 0 2 4 6 8 10 12 14 16 18 20                               
+
+> time[s]
+> -2 -1 01
+> x(1)[rad]
+> open-loop
+> LQ
+> online-LQ
+> online-regularized-LQ
+> 0246810 12 14 16 18 20
+> time[s]
+> -0.5 00.5
+> x(2)[Hz]
+> open-loop
+> LQ
+> online-LQ
+> online-regularized-LQ 0246810 12 14 16 18 20
+> time[s]
+> -2 -1.5 -1 -0.5 0
+> x(3)[p.u.]
+> open-loop
+> LQ
+> online-LQ
+> online-regularized-LQ
+> 0246810 12 14 16 18 20
+> time[s]
+> -1.5 -1 -0.5 00.5
+> x(4)[p.u.]
+> open-loop
+> LQ
+> online-LQ
+> online-regularized-LQ
+
+Figure 2. The evolution of the state variables with the initial condition 
+
+x0 = col( −0.9644 , −0.5594 , −1.9998 , −1.3953) .
+
+B. Jet Engine 
+
+As a representative polynomial system, we use the jet engine dynamics from [33, eq. 2.208-2.210] to test our SDP-based online control scheme. The continuous system is discretized using forward Euler with sampling time T . Specifically, we have (10) with 
+
+A(x) = 
+
+ 1−σT x (1) −2σT x (1) −σT x (1) x(2) 0    
+
+> −3T1−3T x (1) −1.5T x (2) −0.5T x 2(2) −T
+> 001
+
+
+
+and B = col(0 , 0, −T ).Let σ = 3, T = 0.1. The initial condition of x(1) ,i.e. the mass flow, is taken as a random variable within 
+
+[0 , 1] . The initial conditions of x(2) and x(3) are taken as random variables within [−1, 1] 2. As in the first example, let 
+
+¯γ := λM (P (x0))   
+
+> λm(P(x0))
+
+γ(x0) and apply the result in Theorem 2 to design the controller. Note that the origin of the open-loop system is unstable. To compare the transient performance, we further simulate the evolution of the state of the closed-loop system (11) where (K(xt), P (xt)) is the unique optimal solution for (32) with x = xt and compute the value of 
+
+V1(xt) := x⊤ 
+
+> t
+
+P −1(xt)xt.As shown in Fig. 3, both controllers regulate the state variables to the origin. Consider the performance index J8
+
+defined as in (50) with Tend = 100 . The performance index for the system with the online controller solving (37) is obtained as 4.9483 , whereas that of the online controller solving (32) is computed as 3.5569 . Regarding stability, the controller solving (37) provides a Lyapunov certificate Vt(xt) (defined in (33)) that decreases monotonically along the trajectory, while the controller solving (32) yields V1(xt) which does not exhibit monotonic decrease. 0 1 2 3 4 5 6 7 8 9 10                                
+
+> 00.5 1
+> x(1)
+> online-LQ
+> online-regularized-LQ
+> 012345678910
+> 00.5 1
+> x(2)
+> online-LQ
+> online-regularized-LQ
+> 012345678910
+> time[s]
+> 00.1 0.2 0.3
+> x(3)
+> online-LQ
+> online-regularized-LQ 010 20 30 40 50 60 70 80 90 100
+> 00.2 0.4 0.6 0.8 11.2 1.4 10 -3
+
+Figure 3. Experimental results with x0 = (0 .9727 , 0.9341 , 0.0945) ⊤.
+
+C. Inverted pendulum 
+
+Finally, we consider the Euler discretization of an inverted pendulum represented in (10) with B(x) = col(0 , T cos x(1)  
+
+> mℓ
+
+),
+
+A(x) = 
+
+h 1 T    
+
+> T g sin x(1)
+> ℓx (1) 1−T μ mℓ 2
+
+i
+
+, x(1) ̸ = 0 
+
+where the left-bottom is replaced by T g ℓ if x(1) = 0 . Next, let T = 0.1, g = 9.8, m = 1, ℓ = 1, μ = 0.01 .The initial condition is taken as random variables within 
+
+x1(0) ∈ [− π 
+
+> 2
+
+, π 
+
+> 2
+
+], x2(0) ∈ [−3, 3] . As shown in Fig. 4, the state variables converge to the origin. The simulation demonstrates the effectiveness and flexibility of the time-varying SDP-based online control method. We note that the controller solving (37) guarantees closed-loop geomet-ric stability with mild performance degradation compared to the controller solving (32). VI. C ONCLUSIONS 
+
+This paper presents a time-varying SDP-based method for stabilizing input-affine nonlinear systems with quadratic per-0 0.5 1 1.5 2 2.5 3 3.5 4        
+
+> time[s]
+> 00.1 0.2 0.3 0.4
+> x(1)
+> online-LQ
+> online-regularized-LQ
+> 00.5 11.5 22.5 33.5 4
+> time[s]
+> -0.5 00.5 11.5
+> x(2)
+> online-LQ
+> online-regularized-LQ
+
+Figure 4. Experimental results with x0 = col(0 .1596 , 1.2489) , ¯γ :=     
+
+> λM(P(x0))
+> λm(P(x0))
+
+γ(x0).
+
+formance objectives. The core contributions lie in the formula-tion of SDPs with explicitly imposed time-varying Lyapunov stability conditions and performance specifications, and in the derivation of compact conditions certifying the recursive feasibility of the proposed SDP sequence. The method is generalizable to settings with uncertain model knowledge [34]. Future research includes considering nonlinear optimal control problems, where the value function serves as a control Lyapunov function [35]. ACKNOWLEDGEMENTS 
+
+The author thanks Prof. C. De Persis and Prof. N. Mon-shizadeh for valuable discussions and feedback. APPENDIX 
+
+A. Proof of Proposition 1 
+
+Since (A, B ) is stabilizable, there exists a matrix K that makes A + BK Schur. Then, the matrix 
+
+P := 
+
+> ∞
+
+X
+
+> i=0
+
+(A + BK )i(( A + BK )⊤)i (51) is well-defined. Next, let 
+
+L := KP K ⊤, γ := tr( RL ) + tr( QP ). (52) The solution (K, P, L, γ ) is a feasible solution to (5) since it satisfies the constraints (5b)-(5e). Next, we specialize the stabilizing K to the one defined as in (2), which is well-defined since a unique Pr ≻ 0 in (2) exists as (A, B ) is stabilizable and (Q1/2, A ) is observable [21, Thm. 6.3.2]. We denote this choice of K by K∗, and note that K∗ is the unique minimizer of H2 norm of the system (4) [21, Sec. 6.4]. Consistently, we denote by P∗, L∗, γ∗, the quantities defined in (51) and (52) with K = K∗. Recall that 
+
+(K∗, P ∗, L ∗, γ ∗) is a feasible solution to (5). Next, we show that this feasible solution is optimal. 9
+
+Let (K∗, ¯P , ¯L, ¯γ) be an optimal solution to (5). By (5b), we have (A + BK ∗) ¯P (A + BK ∗)⊤ − ¯P + I + M = 0 for some matrix M ⪰ 0, and thus 
+
+¯P =
+
+> ∞
+
+X
+
+> i=0
+
+(A + BK ∗)i(I + M )(( A + BK ∗)⊤)i ⪰ P∗. (53) Then, we have 
+
+¯γ (5e) 
+
+≥ tr( Q ¯P ) + tr( R ¯L) (5d) 
+
+≥ tr( Q ¯P ) + tr( RK ∗ ¯P K ⊤∗ ) (53) 
+
+≥
+
+tr( QP ∗) + tr( RK ∗P∗K⊤∗ ) (52) 
+
+= tr( QP ∗) + tr( RL ∗) (52) 
+
+= γ∗.
+
+(54) By optimality, we conclude that ¯γ = γ∗. Then, by (54) and noting ¯P ⪰ P∗, it follows that ¯P = P∗, ¯L = L∗. This shows that (K∗, P ∗, L ∗, γ ∗) is the unique optimal solution to (5) with the corresponding cost γ∗.Next, we show that γ∗ = tr( Pr ). By rewriting (3) as (A +
+
+BK ∗)⊤Pr (A + BK ∗) − Pr + Q + K⊤∗ RK ∗ = 0 , we have 
+
+Pr = P∞
+
+> i=0
+
+(( A+BK ∗)i)⊤(Q+K⊤∗ RK ∗))( A+BK ∗)i. Next, by the properties of the tr( ·) operator, it follows that 
+
+tr( Pr ) = tr 
+
+> ∞
+
+X
+
+> i=0
+
+(( A + BK ∗)i)⊤(Q + K⊤∗ RK ∗))( A + BK ∗)i
+
+= tr 
+
+> ∞
+
+X
+
+> i=0
+
+(( A + BK ∗)i)⊤ [ Q1/2 K⊤∗ R1/2 ] · I(⋆)⊤
+
+= tr 
+
+> ∞
+
+X
+
+> i=0
+
+h Q1/2
+
+> R1/2K∗
+
+i
+
+(A + BK ∗)i · I(⋆)⊤
+
+= tr 
+
+h Q1/2
+
+> R1/2K∗
+
+i ∞X
+
+> i=0
+
+(A + BK ∗)i · I(⋆)⊤
+
+| {z }
+
+> =P∗
+
+h Q1/2
+
+> R1/2K∗
+
+i⊤
+
+= tr 
+
+h Q1/2P∗Q1/2 Q1/2P∗K⊤∗ R1/2  
+
+> ∗R1/2K∗P∗K⊤∗R1/2
+
+i
+
+= tr( QP ∗) + tr( RK ∗P∗K⊤∗ ) = γ∗
+
+which establishes the claim. ■
+
+B. Proof of Proposition 2 
+
+Note that the scalar system (a(x), b (x)) is stabilizable for any x ∈ R with b(x)̸ = 0 . By Proposition 1, there exists a unique optimal solution (k(x), p (x), ℓ (x), γ (x)) to (14) satisfying γ(x) = pr (x) where 
+
+pr (x) = a2(x)+ b2(x)−1+ √(a2(x)+ b2(x)−1) 2+4 b2(x)2b2(x) (55) is the unique positive definite solution to the Riccati equation (3) with (A, B ) replaced by (a(x), b (x)) . By the definition of 
+
+pr in (55), we have 
+
+pr (x) (55) 
+
+= a2(x)+ b2(x)−1+ √(a2(x)+ b2(x)−1) 2+4 b2(x)2b2(x)
+
+≤ a2(x)+ b2(x)−1+( a2(x)+ b2(x)+1) 2b2(x)
+
+= 2a2(x)+2 b2(x)2b2(x) = 1 + a2(x)
+
+> b2(x)
+
+(56) By Assumption 1 and (13), for every x ∈ X , we have 
+
+pr (x) (56) 
+
+≤ 1 + a2(x) 
+
+> b2(x)
+
+≤ 1 + L2 
+
+> b2
+
+. Recalling that γ(x) = pr (x),the upper bound in (16) is established. Next, bearing in mind 
+
+k(x) is equal to the control gain in (2) with A, B, P r replaced by a(x), b (x), p r (x), we can rewrite the Riccati equation (3) with coefficients (a(x), b (x)) as (a(x) + b(x)k(x)) 2pr (x) −
+
+pr (x)+1+ k2(x) = 0 . By computing pr (x) from the equation, we observe that pr (x) = 1+ k2(x)1−(a(x)+ b(x)k(x)) 2 . Moreover, by specializing (51) to the scalar case, we have 
+
+p(x) = 11 − (a(x) + b(x)k(x)) 2 (57) and thus 
+
+pr (x) = (1 + k2(x)) p(x). (58) Therefore, we find that 
+
+γ(x) = (1 + k2(x)) p(x) ≥ p(x) ≥ 1, (59) where the second inequality follows from (57) and the fact that a(x) + b(x)k(x) is Schur. This completes the proof. ■
+
+C. Proof of Proposition 3 
+
+First, we show that the feasibility set of (37) is bounded. By (37b), we have P (xt) ⪰ I and thus, from (37d), it follows that γ(xt) ≥ tr( P (xt)) ≥ tr( In) ≥ n. Next, recall that 
+
+∥M ∥ ≤ tr( M ) for any positive semidefinite matrix M . Then, 
+
+∥P (xt)∥ ≤ tr( P (xt)) (37d) 
+
+≤ γ(xt) (37f) 
+
+≤ ¯γ. Analogously, it gives 
+
+∥L(xt)∥ ≤ tr( L(xt)) (37d) 
+
+≤ γ(xt) − tr( P (xt)) (37f) 
+
+≤ ¯γ − n. Next, we show that ∥Y (xt)∥2 ≤ ¯γ(¯ γ − n). By (37c), we have 
+
+Y (xt)P −1(xt)Y ⊤(xt) ⪯ L(xt)
+
+and thus tr( Y (xt)P −1(xt)Y ⊤(xt)) ≤ tr( L(xt)) ≤ ¯γ − n.Moreover, since P −1(xt) ⪰ λm(P −1(xt)) In, this gives 
+
+tr( Y (xt)P −1(xt)Y ⊤(xt)) ≥ λm(P −1(xt)) tr( Y ⊤(xt)Y (xt)) .
+
+Then 
+
+tr( Y (xt)P −1(xt)Y ⊤(xt)) ≥ λm(P −1(xt)) tr( Y ⊤(xt)Y (xt)) = λ−1 
+
+> M
+
+(P (xt)) tr( Y ⊤(xt)Y (xt)) ≥ ¯γ−1 tr( Y ⊤(xt)Y (xt)) .
+
+Hence, tr( Y ⊤(xt)Y (xt)) ≤ ¯γ(¯ γ − n), and thus ∥Y (xt)∥2 ≤
+
+tr( Y ⊤(xt)Y (xt)) ≤ ¯γ(¯ γ − n). This completes the proof of the fact that the feasibility set is bounded. Therefore, bearing in mind that the feasibility set is nonempty by assumption, we find that there exists an optimal solution 
+
+(Y (xt), P (xt), L (xt), γ (xt)) to the convex program (37). Next, we show that any optimal solution 
+
+(Y (xt), P (xt), L (xt), γ (xt)) to (37) has the properties claimed in (38) and (39). By recalling the definition of 
+
+Acl (xt) in (11) and using Schur complement, (37b) implies 
+
+P (xt) ⪰ I and 
+
+Acl (xt)P (xt)A⊤
+
+> cl
+
+(xt) − P (xt) + I ⪯ 0. (60) By applying a congruent transformation, the above matrix inequality can be equivalently expressed as 
+
+P −1(xt)Acl (xt) · P (xt)( ⋆)⊤ − P −1(xt) + P −2(xt) ⪯ 0.
+
+(61) 10 
+
+and thus P −1(xt)Acl (xt) · P (xt)( ⋆)⊤ − P −1(xt) ≺ 0 since 
+
+P −2(xt) ≻ 0. Then, we have 
+
+h −P −1(xt) A⊤    
+
+> cl (xt)P−1(xt)
+> P−1(xt)Acl (xt)−P−1(xt)
+
+i
+
+≺ 0
+
+By Schur complement, the inequality (39) holds. Finally, we show that under the nonsingularity condition on P (xt)−I, (40) holds. By (61), it holds that P −1(xt)Acl (xt) · P (xt)( ⋆)⊤ ⪯
+
+P −1(xt)−P −2(xt) ⪯ (1 −λm(P −1(xt))) P −1(xt). It follows that h −P −1(xt) A⊤    
+
+> cl (xt)P−1(xt)
+> ∗−(1 −λm(P−1(xt))) P−1(xt)
+
+i
+
+⪯ 0 (62) Next, since P (xt) − I is nonsingular and P (xt) ⪰ I, then 
+
+P (xt) ≻ I, and thus 
+
+λm(P −1(xt)) = λ−1 
+
+> M
+
+(P (xt)) < 1. (63) Hence, (1 − λm(P −1(xt))) P −1(xt) is invertible. Then, by Schur complement, (62) implies −P −1(xt) +
+
+A⊤
+
+> cl
+
+(xt)P −1(xt)(1 − λm(P −1(xt))) −1 · P (xt)( ⋆)⊤ ⪯ 0.Multiplying the inequality by (1 − λm(P −1(xt)) , we have 
+
+(1 − λm(P −1(xt))) P −1(xt) − A⊤
+
+> cl
+
+(xt)P −1(xt)Acl (xt) ⪰ 0,which gives (40). This completes the proof. ■
+
+D. A recursive feasibility condition for input affine systems with state dependent input vector fields 
+
+Consider the system (10). Let B(x) be partitioned as 
+
+B(x) = ¯B + ˆB(x) with ˆB : Rn → Rn×m a matrix-valued function. Proposition 5 extends to this case as follows. 
+
+Corollary 1: Let ∆ ∈ Rn×r1 , ∆B ∈ Rn×r2 be known matrices and X ⊆ Rn a compact set including the origin such that 
+
+ˆA(x) ˆA(x)⊤ ⪯ ∆∆ ⊤, ˆB(x) ˆB(x)⊤ ⪯ ∆B ∆⊤ 
+
+> B
+
+, ∀x ∈ X . (64) Consider the following LMI in the decision variables ϵ1 > 0,
+
+ϵ2 > 0, P ∈ Sn×n, and Y ∈ Rm×n:
+
+
+
+P − I − ϵ1∆∆ ⊤ − ϵ2∆B ∆⊤ 
+
+> B
+
+¯AP + ¯BY 0 0( ¯AP + ¯BY )⊤ P Y ⊤ P
+
+0 Y ϵ2I 00 P 0 ϵ1I
+
+ ⪰ 0
+
+(65) Suppose (65) is feasible and let (ϵ1, ϵ 2, P, Y ) be any feasible solution. Then, for any x0 ∈ R α := {x ∈ Rn : x⊤P −1x ≤
+
+α, α > 0} contained in X , the time-varying SDP (37) with 
+
+¯γ ≥ tr( P ) + tr( Y P −1Y ⊤)
+
+is feasible for all t ≥ 0. □
+
+REFERENCES 
+
+[1] E. Feron, V. Balakrishnan, S. Boyd, and L. El Ghaoui, “Numerical methods for H2 related problems,” in 1992 American Control Conference , 1992, pp. 2921–2922. [2] J. Rawlings, “Tutorial overview of model predictive control,” IEEE control systems magazine , vol. 20, no. 3, pp. 38–52, 2002. [3] K. P. Wabersich and M. N. Zeilinger, “Linear model predictive safety certification for learning-based control,” in 2018 IEEE Conference on Decision and Control (CDC) . IEEE, 2018, pp. 7130–7135. [4] F. D¨ orfler, M. R. Jovanovi´ c, M. Chertkov, and F. Bullo, “Sparsity-promoting optimal wide-area control of power networks,” IEEE Transactions on Power Systems , vol. 29, no. 5, pp. 2281–2291, 2014. [5] C. De Persis and P. Tesi, “Formulas for data-driven control: Stabilization, optimality, and robustness,” IEEE Transactions on Automatic Control , vol. 65, no. 3, pp. 909–924, 2020. [6] C. Scherer, G. Pascal, and C. Mahmoud, “Multiobjective output-feedback control via LMI optimization,” IEEE Transactions on Automatic Control , vol. 42, no. 7, pp. 896–911, 2002. [7] S. Prajna, A. Papachristodoulou, and F. Wu, “Nonlinear control synthesis by sum of squares optimization: A Lyapunov-based approach,” in 2004 5th Asian control conference (IEEE Cat. No. 04EX904) , vol. 1. IEEE, 2004, pp. 157–165. [8] A. Bemporad and M. Morari, “Control of systems in-tegrating logic, dynamics, and constraints,” Automatica ,vol. 35, no. 3, pp. 407–427, 1999. [9] S. Boyd, L. El Ghaoui, E. Feron, and V. Balakrishnan, 
+
+Linear matrix inequalities in system and control theory .SIAM, 1994. [10] C. Scherer and S. Weiland, “Linear matrix inequalities in control,” Lecture Notes, Dutch Institute for Systems and Control, Delft, The Netherlands , 2021. [11] W.-M. Lu and J. C. Doyle, “ H∞ control of nonlinear systems: a convex characterization,” IEEE Transactions on Automatic Control , vol. 40, no. 9, pp. 1668–1675, 1995. [12] J. Pearson, “Approximation methods in optimal control i. sub-optimal control,” International Journal of Electron-ics , vol. 13, no. 5, pp. 453–469, 1962. [13] S. C. Beeler and D. E. Cox, “State-dependent Riccati equation regulation of systems with state and control nonlinearities,” Tech. Rep., 2004. [14] J. R. Cloutier, C. N. D’Souza, and C. P. Mracek, “Non-linear regulation and nonlinear H∞ control via the state-dependent Riccati equation technique: Part 1, theory,” in 
+
+Proceedings of the international conference on nonlinear problems in aviation and aerospace . Embry Riddle University Press, Daytona Beach, Florida, 1996, pp. 117– 131. [15] A. S. Dutka, A. W. Ordys, and M. J. Grimble, “Optimized discrete-time state dependent Riccati equation regulator,” in Proceedings of the 2005, American Control Confer-ence, 2005. IEEE, 2005, pp. 2293–2298. [16] M. Sassano and A. Astolfi, “Dynamic approximate so-lutions of the HJ inequality and of the HJB equation for input-affine nonlinear systems,” IEEE Transactions on Automatic Control , vol. 57, no. 10, pp. 2490–2503, 2012. [17] E. Kaiser, J. N. Kutz, and S. L. Brunton, “Data-driven discovery of Koopman eigenfunctions for control,” Ma-11 
+
+chine Learning: Science and Technology , vol. 2, no. 3, p. 035023, 2021. [18] A. Tahirovic and A. Astolfi, “Linear-like policy iteration based optimal control for continuous-time nonlinear sys-tems,” IEEE Transactions on Automatic Control , 2022. [19] T. Dai and M. Sznaier, “Nonlinear data-driven control via state-dependent representations,” in 2021 60th IEEE Conference on Decision and Control (CDC) . IEEE, 2021, pp. 5765–5770. [20] T. C ¸ imen, “State-dependent Riccati equation (SDRE) control: a survey,” IFAC Proceedings Volumes , vol. 41, no. 2, pp. 3761–3775, 2008. [21] T. Chen and B. A. Francis, Optimal sampled-data control systems . Springer, 1995. [22] W. J. Rugh, Linear system theory . Prentice-Hall, Inc., 1996. [23] W. M. Haddad and V. Chellaboina, Nonlinear dynamical systems and control . Princeton university press, 2011. [24] C. De Persis and P. Tesi, “Low-complexity learning of linear quadratic regulators from noisy data,” Automatica ,vol. 128, p. 109548, 2021. [25] J. R. Cloutier, D. T. Stansbery, and M. Sznaier, “On the recoverability of nonlinear state feedback laws by extended linearization control techniques,” in Proceed-ings of the 1999 American Control Conference (Cat. No. 99CH36251) , vol. 3. IEEE, 1999, pp. 1515–1519. [26] A. Bisoffi, C. De Persis, and P. Tesi, “Data-driven control via Petersen’s lemma,” Automatica , vol. 145, p. 110537, 2022. [27] P. Kundur, Power System Stability and Control .McGraw-Hill, USA, 1994, vol. 7. [28] N. Barabanov, J. Schiffer, R. Ortega, and D. Efimov, “Conditions for almost global attractivity of a syn-chronous generator connected to an infinite bus,” IEEE Transactions on Automatic Control , vol. 62, no. 10, pp. 4905–4916, 2017. [29] C. M. Verrelli, R. Marino, P. Tomei, and G. Damm, “Nonlinear robust coordinated PSS-AVR control for a synchronous generator connected to an infinite bus,” 
+
+IEEE Transactions on Automatic Control , vol. 67, no. 3, pp. 1414–1422, 2021. [30] Y. Jiang and Z.-P. Jiang, “Robust adaptive dynamic programming and feedback stabilization of nonlinear systems,” IEEE Transactions on Neural Networks and Learning Systems , vol. 25, no. 5, pp. 882–893, 2014. [31] T. Stegink, C. De Persis, and A. Van Der Schaft, “An energy-based analysis of reduced-order models of (networked) synchronous machines,” Mathematical and Computer Modelling of Dynamical Systems , vol. 25, no. 1, pp. 1–39, 2019. [32] M. ApS, “Mosek optimization toolbox for MATLAB,” 
+
+User’s Guide and Reference Manual, Version , vol. 4, p. 1, 2019. [33] M. Krstic, P. V. Kokotovic, and I. Kanellakopoulos, 
+
+Nonlinear and adaptive control design . John Wiley & Sons, Inc., 1995. [34] X. Dai, C. De Persis, and N. Monshizadeh, “Online adap-tation of data-driven controllers for unknown nonlinear systems,” International Journal of Robust and Nonlinear Control , 2025. [35] R. A. Freeman and P. V. Kokotovic, “Optimal nonlinear controllers for feedback linearizable systems,” in Pro-ceedings of 1995 American Control Conference-ACC’95 ,vol. 4. IEEE, 1995, pp. 2722–2726.

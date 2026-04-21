@@ -1,0 +1,238 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-21T20:44:05.300640+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 6,
+    "quick_skim_target": 11,
+    "quick_selected": 6
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.15918v1",
+      "title": "A Practical Guide to PID Controller Implementation",
+      "abstract": "How difficult can it be to implement a PID controller? The answer is twofold. Implementing the PID control law is simple and computationally inexpensive. However, this basic form will not work in practical applications. The primary reason for this is the various physical limitations of the actuator. Measurement noise, different implementations depending on the various structures (P, PI, PD or PID), bumpless transfer, and varying sampling time also result in problems rendering the basic form inoperable. PID implementation is therefore more difficult than meets the eye. This paper introduces a reference implementation of the PID controller which considers these practical issues. It includes pseudo-code, discussion of the implementation choices and simulation of carefully selected, important test cases.",
+      "authors": [
+        "E. Sundström",
+        "M. Bauer",
+        "J. L. Guzmán",
+        "T. Hägglund",
+        "K. Soltesz"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-04-17T10:17:41+00:00",
+      "link": "https://arxiv.org/pdf/2604.15918v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "practical PID implementation considering actuator physical limitations",
+      "llm_evidence_cn": "考虑执行器物理限制的实用PID实现",
+      "llm_evidence": "考虑执行器物理限制的实用PID实现",
+      "canonical_evidence": "考虑执行器物理限制的实用PID实现",
+      "llm_tldr_en": "A guide to practical PID implementation addressing actuator limitations, noise, and sampling issues.",
+      "llm_tldr_cn": "关于PID控制器实际实现的指南，解决了执行器限制、噪声和采样问题。",
+      "llm_tldr": "关于PID控制器实际实现的指南，解决了执行器限制、噪声和采样问题。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "closed-loop force control for electromagnetic shakers",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.14905v1",
+      "title": "Data-driven Linear Quadratic Integral Control: A Convex Formulation and Policy Gradient Approach",
+      "abstract": "This paper studies the data-driven synthesis of linear quadratic integral (LQI) controllers for continuous-time systems. The objective is to achieve optimal state-feedback control with integral action for reference tracking using only measured data. To this end, we derive a data-driven closed-loop parameterization of the augmented dynamics that incorporates the integral state while relying solely on input-state-output measurements of the underlying system. Based on this parameterization, a data-driven convex optimization problem is formulated whose solution yields the optimal linear quadratic regulator (LQR) feedback gain for the augmented system without explicit knowledge of the system matrices. In addition, a policy gradient flow is derived to compute the optimal controller within the space of stabilizing gains. The proposed approach enables data-driven optimal tracking control while avoiding explicit state augmentation in the data collection phase. The effectiveness of the method is demonstrated through a numerical example involving a distributed generation unit (DGU) in a DC microgrid.",
+      "authors": [
+        "Armin Gießler",
+        "Pol Jané-Soneira",
+        "Sören Hohmann"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-04-16T11:47:54+00:00",
+      "link": "https://arxiv.org/pdf/2604.14905v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "data-driven closed-loop control for reference tracking without system matrices",
+      "llm_evidence_cn": "无需系统矩阵的参考跟踪数据驱动闭环控制",
+      "llm_evidence": "无需系统矩阵的参考跟踪数据驱动闭环控制",
+      "canonical_evidence": "无需系统矩阵的参考跟踪数据驱动闭环控制",
+      "llm_tldr_en": "Develops a data-driven LQI control synthesis for optimal state-feedback and reference tracking.",
+      "llm_tldr_cn": "开发了一种数据驱动的LQI控制综合方法，用于最优状态反馈和参考跟踪。",
+      "llm_tldr": "开发了一种数据驱动的LQI控制综合方法，用于最优状态反馈和参考跟踪。",
+      "llm_tags": [
+        "query:em-force:composite"
+      ],
+      "matched_query_tag": "query:em-force:composite",
+      "matched_query_text": "Papers central to 查找非接触式电磁激振器的力控制方法，特别是精密控制策略, especially work that connects or combines: electromagnetic exciter force control; ddy current magnetic bearing modeling; magnetic bearing flux feedback; non-contact electromagnetic shaker force control; precision force control strategies for electromagnetic actuators; closed-loop force control for electromagnetic shakers; flux feedback linearization zero bias magnetic bearing; non contact electromagnetic exciter precision force control; eddy current effects in electromagnetic actuators dynamic modeling; flux feedback control for magnetic bearing force precision.",
+      "matched_requirement_id": "req-composite-em-force",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.18277v1",
+      "title": "Dissipative Latent Residual Physics-Informed Neural Networks for Modeling and Identification of Electromechanical Systems",
+      "abstract": "Accurate dynamical modeling is essential for simulation and control of embodied systems, yet first-principles models of electromechanical systems often fail to capture complex dissipative effects such as joint friction, stray losses, and structural damping. While residual-learning physics-informed neural networks (PINNs) can effectively augment imperfect first-principles models with data-driven components, the residual terms are typically implemented as unconstrained multilayer perceptrons (MLPs), which may inadvertently inject artificial energy into the system.   To more faithfully model the dissipative dynamics, we propose DiLaR-PINN, a dissipative latent residual PINN designed to learn unmodeled dissipative effects in a physically consistent manner. Structurally, the residual network operates only on unmeasurable (latent) state components and is parameterized in a skew-dissipative form that guarantees non-increasing energy for any choice of network parameters. To enable stable and data-efficient training under partial measurability of the state, we further develop a recurrent rollout scheme with a curriculum-based sequence length extension strategy.   We validate DiLaR-PINN on a real-world helicopter system and compare it against four baselines: a pure physical model (without a residual network), an unstructured residual MLP, a DiLaR variant with a soft dissipativity constraint, and a black-box LSTM. The results demonstrate that DiLaR-PINN more accurately captures dissipative effects and achieves superior long-horizon extrapolation performance.",
+      "authors": [
+        "Youyuan Long",
+        "Gokhan Solak",
+        "Arash Ajoudani"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-04-20T13:52:12+00:00",
+      "link": "https://arxiv.org/pdf/2604.18277v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "modeling electromechanical systems and stray losses using PINNs",
+      "llm_evidence_cn": "使用物理信息神经网络对机电系统和杂散损耗进行建模",
+      "llm_evidence": "使用物理信息神经网络对机电系统和杂散损耗进行建模",
+      "canonical_evidence": "使用物理信息神经网络对机电系统和杂散损耗进行建模",
+      "llm_tldr_en": "Proposes a PINN framework to model dissipative effects like stray losses in electromechanical systems.",
+      "llm_tldr_cn": "提出一种PINN框架，用于模拟机电系统中的杂散损耗等耗散效应。",
+      "llm_tldr": "提出一种PINN框架，用于模拟机电系统中的杂散损耗等耗散效应。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "eddy current effects in electromagnetic actuators dynamic modeling",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.16124v1",
+      "title": "A numerical approach to the co-design of PID controllers and low-pass filters for time-delay systems",
+      "abstract": "This paper addresses the numerical optimization of proportional-integral-derivative (PID) controllers for linear time-invariant systems with delays, where the derivative action is implemented using a low-pass filter. While performance assessment is often based on the spectral abscissa of the ideal PID-controlled system, the inclusion of a derivative filter fundamentally alters the closed-loop spectral properties and cannot be treated as a post-processing step. In particular, the spectral abscissa of the filtered closed-loop system may differ significantly from that of its unfiltered counterpart, potentially affecting both stability and performance. We propose a systematic numerical design framework in which the PID gains and the filter constant are optimized simultaneously by directly minimizing the spectral abscissa of the filtered closed-loop system. Treating the filter as an integral part of the control design allows us to reconcile robustness at high frequencies, in the sense of mitigating fragility issues due to approximate identities, with performance at low frequencies, in addition to counter measurement noise amplification. At the end of the presentation, numerical examples illustrate the proposed approach and highlight the benefits of controller-filter co-design. The results apply to general linear systems with input and/or state delays and are valid for both single-input single-output (SISO) and multi-input multi-output (MIMO) configurations.",
+      "authors": [
+        "Diego Torres-García",
+        "Wim Michiels"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY",
+        "math.OC"
+      ],
+      "published": "2026-04-17T14:59:20+00:00",
+      "link": "https://arxiv.org/pdf/2604.16124v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "PID controller optimization for time-delay systems",
+      "llm_evidence_cn": "时滞系统的PID控制器优化",
+      "llm_evidence": "时滞系统的PID控制器优化",
+      "canonical_evidence": "时滞系统的PID控制器优化",
+      "llm_tldr_en": "Optimizes PID controllers for systems with delays, applicable to closed-loop control of electromagnetic shakers.",
+      "llm_tldr_cn": "针对具有延迟的系统优化PID控制器，可应用于电磁激振器的闭环控制。",
+      "llm_tldr": "针对具有延迟的系统优化PID控制器，可应用于电磁激振器的闭环控制。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "closed-loop force control for electromagnetic shakers",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.16991v1",
+      "title": "Semi-definite programs for online control of nonlinear systems with stability guarantees",
+      "abstract": "This paper develops a semidefinite-programming-based method for online feedback control of nonlinear systems using a state-dependent representation. We formulate sequences of time-varying SDPs whose optimal solutions jointly yield a stabilizing feedback controller and a Lyapunov certificate satisfying stability conditions and quadratic performance specifications. We further establish compact conditions certifying recursive feasibility of the resulting SDP sequences and derive estimates of the region of attraction. Numerical examples on representative nonlinear systems illustrate the flexibility and effectiveness of the proposed method.",
+      "authors": [
+        "Xiaoyan Dai"
+      ],
+      "primary_category": "math.OC",
+      "categories": [
+        "math.OC",
+        "eess.SY"
+      ],
+      "published": "2026-04-18T13:34:41+00:00",
+      "link": "https://arxiv.org/pdf/2604.16991v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "online feedback control for nonlinear systems with stability guarantees",
+      "llm_evidence_cn": "具有稳定性保证的非线性系统在线反馈控制",
+      "llm_evidence": "具有稳定性保证的非线性系统在线反馈控制",
+      "canonical_evidence": "具有稳定性保证的非线性系统在线反馈控制",
+      "llm_tldr_en": "Develops an SDP-based online feedback control method for nonlinear systems with stability and performance guarantees.",
+      "llm_tldr_cn": "开发了一种基于半正定规划的非线性系统在线反馈控制方法，具有稳定性与性能保证。",
+      "llm_tldr": "开发了一种基于半正定规划的非线性系统在线反馈控制方法，具有稳定性与性能保证。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.17165v1",
+      "title": "On the Unification of Optimal Current Reference Theory for Wound Rotor Synchronous Machines",
+      "abstract": "Controllers for motor drives typically require a current reference which will satisfy the requested torque subject to system constraints. This work generalizes existing current reference theory to the case of the Wound Rotor Synchronous Machine (WRSM). By incorporating the additional rotor-current degree-of-freedom, along with magnetic saturation, cross-coupling, and speed-dependent core losses, the problem of finding an optimal current reference is formulated within affine flux regions as a quadratically constrained quadratic program using a piecewise-affine approximation derived from finite-element data. The solution is characterized according to the active constraint regime, yielding closed-form or low-dimensional polynomial solutions in several cases, and a small semidefinite program in the voltage constrained regime. The proposed framework extends unified optimal current reference theory beyond the permanent-magnet setting to three degree-of-freedom WRSMs while remaining computationally tractable. Results on a physical WRSM prototype illustrate the effectiveness of the approach across the torque-speed operating envelope.",
+      "authors": [
+        "Maxfield Parson-Scherban",
+        "Kasra Fallah",
+        "Navid Rahbariasr",
+        "Bernard Steyaert",
+        "James Anderson",
+        "Matthias Preindl"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY",
+        "math.OC"
+      ],
+      "published": "2026-04-18T23:13:34+00:00",
+      "link": "https://arxiv.org/pdf/2604.17165v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "optimal current reference for synchronous machines with magnetic saturation and flux regions",
+      "llm_evidence_cn": "考虑磁饱和与磁通区域的同步电机最优电流参考理论",
+      "llm_evidence": "考虑磁饱和与磁通区域的同步电机最优电流参考理论",
+      "canonical_evidence": "考虑磁饱和与磁通区域的同步电机最优电流参考理论",
+      "llm_tldr_en": "Generalizes current reference theory for synchronous machines, addressing magnetic saturation and flux constraints.",
+      "llm_tldr_cn": "推广了同步电机的电流参考理论，解决了磁饱和与磁通约束下的优化问题。",
+      "llm_tldr": "推广了同步电机的电流参考理论，解决了磁饱和与磁通约束下的优化问题。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

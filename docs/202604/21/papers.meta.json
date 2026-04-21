@@ -1,0 +1,93 @@
+{
+  "label": "2026-04-21",
+  "date": "2026-04-21",
+  "generated_at": "2026-04-21T20:45:04",
+  "count": 6,
+  "papers": [
+    {
+      "paper_id": "202604/21/2604.15918v1-a-practical-guide-to-pid-controller-implementation",
+      "section": "quick",
+      "title_en": "A Practical Guide to PID Controller Implementation",
+      "authors": "E. Sundström, M. Bauer, J. L. Guzmán, T. Hägglund, K. Soltesz",
+      "date": "2026-04-17",
+      "pdf": "https://arxiv.org/pdf/2604.15918v1",
+      "score": "7.0",
+      "evidence": "考虑执行器物理限制的实用PID实现",
+      "tldr": "本文探讨了PID控制器在实际应用中的实现挑战。虽然基础控制律简单，但受限于执行器物理限制、测量噪声、采样时间变化等因素，基础形式往往难以直接运行。文章提出了一种考虑了抗饱和、无扰切换和噪声过滤等实际问题的参考实现方案，并提供了伪代码和仿真测试，为工程实践提供了可靠的指导。",
+      "tags": "query:em-force",
+      "abstract_en": "How difficult can it be to implement a PID controller? The answer is twofold. Implementing the PID control law is simple and computationally inexpensive. However, this basic form will not work in practical applications. The primary reason for this is the various physical limitations of the actuator. Measurement noise, different implementations depending on the various structures (P, PI, PD or PID), bumpless transfer, and varying sampling time also result in problems rendering the basic form inoperable. PID implementation is therefore more difficult than meets the eye. This paper introduces a reference implementation of the PID controller which considers these practical issues. It includes pseudo-code, discussion of the implementation choices and simulation of carefully selected, important test cases.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/21/2604.18277v1-dissipative-latent-residual-physics-informed-neural-networks-for-modeling-and-identification-of-electromechanical-systems",
+      "section": "quick",
+      "title_en": "Dissipative Latent Residual Physics-Informed Neural Networks for Modeling and Identification of Electromechanical Systems",
+      "authors": "Youyuan Long, Gokhan Solak, Arash Ajoudani",
+      "date": "2026-04-20",
+      "pdf": "https://arxiv.org/pdf/2604.18277v1",
+      "score": "7.0",
+      "evidence": "使用物理信息神经网络对机电系统和杂散损耗进行建模",
+      "tldr": "针对机电系统建模中第一性原理模型难以捕捉复杂耗散效应（如摩擦、阻尼）的问题，本文提出了一种耗散潜残差物理信息神经网络（DiLaR-PINN）。该方法通过将残差网络参数化为反对称耗散形式，确保系统能量在物理上的一致性（非增），并结合课程学习策略进行训练。实验证明，该方法在真实直升机系统建模中优于传统残差网络和黑盒模型，具有更强的长时外推能力。",
+      "tags": "query:em-force",
+      "abstract_en": "Accurate dynamical modeling is essential for simulation and control of embodied systems, yet first-principles models of electromechanical systems often fail to capture complex dissipative effects such as joint friction, stray losses, and structural damping. While residual-learning physics-informed neural networks (PINNs) can effectively augment imperfect first-principles models with data-driven components, the residual terms are typically implemented as unconstrained multilayer perceptrons (MLPs), which may inadvertently inject artificial energy into the system.   To more faithfully model the dissipative dynamics, we propose DiLaR-PINN, a dissipative latent residual PINN designed to learn unmodeled dissipative effects in a physically consistent manner. Structurally, the residual network operates only on unmeasurable (latent) state components and is parameterized in a skew-dissipative form that guarantees non-increasing energy for any choice of network parameters. To enable stable and data-efficient training under partial measurability of the state, we further develop a recurrent rollout scheme with a curriculum-based sequence length extension strategy.   We validate DiLaR-PINN on a real-world helicopter system and compare it against four baselines: a pure physical model (without a residual network), an unstructured residual MLP, a DiLaR variant with a soft dissipativity constraint, and a black-box LSTM. The results demonstrate that DiLaR-PINN more accurately captures dissipative effects and achieves superior long-horizon extrapolation performance.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/21/2604.14905v1-data-driven-linear-quadratic-integral-control-a-convex-formulation-and-policy-gradient-approach",
+      "section": "quick",
+      "title_en": "Data-driven Linear Quadratic Integral Control: A Convex Formulation and Policy Gradient Approach",
+      "authors": "Armin Gießler, Pol Jané-Soneira, Sören Hohmann",
+      "date": "2026-04-16",
+      "pdf": "https://arxiv.org/pdf/2604.14905v1",
+      "score": "6.0",
+      "evidence": "无需系统矩阵的参考跟踪数据驱动闭环控制",
+      "tldr": "本文研究连续时间系统的线性二次型积分（LQI）控制的数据驱动合成。针对系统矩阵未知的场景，提出一种仅依赖输入-状态-输出测量数据的增强动力学参数化方法。通过将积分状态纳入闭环参数化，构建了求解最优LQR反馈增益的凸优化问题，并推导了策略梯度流算法。该方法避免了数据采集阶段的显式状态增强，实现了高效的最优跟踪控制，并在直流微网数值示例中验证了其有效性。",
+      "tags": "query:em-force",
+      "abstract_en": "This paper studies the data-driven synthesis of linear quadratic integral (LQI) controllers for continuous-time systems. The objective is to achieve optimal state-feedback control with integral action for reference tracking using only measured data. To this end, we derive a data-driven closed-loop parameterization of the augmented dynamics that incorporates the integral state while relying solely on input-state-output measurements of the underlying system. Based on this parameterization, a data-driven convex optimization problem is formulated whose solution yields the optimal linear quadratic regulator (LQR) feedback gain for the augmented system without explicit knowledge of the system matrices. In addition, a policy gradient flow is derived to compute the optimal controller within the space of stabilizing gains. The proposed approach enables data-driven optimal tracking control while avoiding explicit state augmentation in the data collection phase. The effectiveness of the method is demonstrated through a numerical example involving a distributed generation unit (DGU) in a DC microgrid.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/21/2604.16124v1-a-numerical-approach-to-the-co-design-of-pid-controllers-and-low-pass-filters-for-time-delay-systems",
+      "section": "quick",
+      "title_en": "A numerical approach to the co-design of PID controllers and low-pass filters for time-delay systems",
+      "authors": "Diego Torres-García, Wim Michiels",
+      "date": "2026-04-17",
+      "pdf": "https://arxiv.org/pdf/2604.16124v1",
+      "score": "6.0",
+      "evidence": "时滞系统的PID控制器优化",
+      "tldr": "针对含时滞的线性定常系统，本文提出了一种PID控制器与低通滤波器协同设计的数值优化方法。研究指出，微分环节的滤波器会显著改变闭环系统的频谱特性，因此不能将其视为后期处理。通过同时优化PID增益和滤波器常数以最小化谱半径，该方法在提升低频性能的同时，增强了高频鲁棒性并抑制了测量噪声，适用于SISO和MIMO系统。",
+      "tags": "query:em-force",
+      "abstract_en": "This paper addresses the numerical optimization of proportional-integral-derivative (PID) controllers for linear time-invariant systems with delays, where the derivative action is implemented using a low-pass filter. While performance assessment is often based on the spectral abscissa of the ideal PID-controlled system, the inclusion of a derivative filter fundamentally alters the closed-loop spectral properties and cannot be treated as a post-processing step. In particular, the spectral abscissa of the filtered closed-loop system may differ significantly from that of its unfiltered counterpart, potentially affecting both stability and performance. We propose a systematic numerical design framework in which the PID gains and the filter constant are optimized simultaneously by directly minimizing the spectral abscissa of the filtered closed-loop system. Treating the filter as an integral part of the control design allows us to reconcile robustness at high frequencies, in the sense of mitigating fragility issues due to approximate identities, with performance at low frequencies, in addition to counter measurement noise amplification. At the end of the presentation, numerical examples illustrate the proposed approach and highlight the benefits of controller-filter co-design. The results apply to general linear systems with input and/or state delays and are valid for both single-input single-output (SISO) and multi-input multi-output (MIMO) configurations.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/21/2604.16991v1-semi-definite-programs-for-online-control-of-nonlinear-systems-with-stability-guarantees",
+      "section": "quick",
+      "title_en": "Semi-definite programs for online control of nonlinear systems with stability guarantees",
+      "authors": "Xiaoyan Dai",
+      "date": "2026-04-18",
+      "pdf": "https://arxiv.org/pdf/2604.16991v1",
+      "score": "6.0",
+      "evidence": "具有稳定性保证的非线性系统在线反馈控制",
+      "tldr": "本研究针对非线性系统，提出了一种基于半正定规划（SDP）的在线反馈控制方法。通过状态相关表示法，构建了一系列随时间变化的SDP，其最优解能同时提供稳定反馈控制器和满足二次性能指标的Lyapunov证书。该方法不仅保证了SDP序列的递归可行性，还给出了吸引域的估计，在保证系统稳定性的同时提升了控制性能。",
+      "tags": "query:em-force",
+      "abstract_en": "This paper develops a semidefinite-programming-based method for online feedback control of nonlinear systems using a state-dependent representation. We formulate sequences of time-varying SDPs whose optimal solutions jointly yield a stabilizing feedback controller and a Lyapunov certificate satisfying stability conditions and quadratic performance specifications. We further establish compact conditions certifying recursive feasibility of the resulting SDP sequences and derive estimates of the region of attraction. Numerical examples on representative nonlinear systems illustrate the flexibility and effectiveness of the proposed method.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/21/2604.17165v1-on-the-unification-of-optimal-current-reference-theory-for-wound-rotor-synchronous-machines",
+      "section": "quick",
+      "title_en": "On the Unification of Optimal Current Reference Theory for Wound Rotor Synchronous Machines",
+      "authors": "Maxfield Parson-Scherban, Kasra Fallah, Navid Rahbariasr, Bernard Steyaert, James Anderson, Matthias Preindl",
+      "date": "2026-04-18",
+      "pdf": "https://arxiv.org/pdf/2604.17165v1",
+      "score": "6.0",
+      "evidence": "考虑磁饱和与磁通区域的同步电机最优电流参考理论",
+      "tldr": "本研究针对绕线转子同步电机（WRSM）提出了一种统一的最优电流引用理论。通过引入转子电流自由度，并综合考虑磁饱和、交叉耦合及随转速变化的铁损，将电流优化问题建模为基于分段仿射近似的二次约束二次规划（QCQP）。该方法在不同约束条件下提供了闭式解或低维数值解，显著提升了计算效率。实验结果表明，该框架能有效处理WRSM的复杂非线性特性，在全运行范围内实现了精确的转矩控制。",
+      "tags": "query:em-force",
+      "abstract_en": "Controllers for motor drives typically require a current reference which will satisfy the requested torque subject to system constraints. This work generalizes existing current reference theory to the case of the Wound Rotor Synchronous Machine (WRSM). By incorporating the additional rotor-current degree-of-freedom, along with magnetic saturation, cross-coupling, and speed-dependent core losses, the problem of finding an optimal current reference is formulated within affine flux regions as a quadratically constrained quadratic program using a piecewise-affine approximation derived from finite-element data. The solution is characterized according to the active constraint regime, yielding closed-form or low-dimensional polynomial solutions in several cases, and a small semidefinite program in the voltage constrained regime. The proposed framework extends unified optimal current reference theory beyond the permanent-magnet setting to three degree-of-freedom WRSMs while remaining computationally tractable. Results on a physical WRSM prototype illustrate the effectiveness of the approach across the torque-speed operating envelope.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

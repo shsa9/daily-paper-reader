@@ -1,0 +1,1137 @@
+Title: Data-driven Linear Quadratic Integral Control: A Convex Formulation and Policy Gradient Approach
+
+URL Source: https://arxiv.org/pdf/2604.14905v1
+
+Published Time: Fri, 17 Apr 2026 00:53:04 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# Data-driven Linear Quadratic Integral Control: A Convex Formulation and Policy Gradient Approach 
+
+Armin Gießler, Pol Jan´ e-Soneira, and S¨ oren Hohmann 
+
+Abstract — This paper studies the data-driven synthesis of linear quadratic integral (LQI) controllers for continuous-time systems. The objective is to achieve optimal state-feedback control with integral action for reference tracking using only measured data. To this end, we derive a data-driven closed-loop parameterization of the augmented dynamics that incor-porates the integral state while relying solely on input-state-output measurements of the underlying system. Based on this parameterization, a data-driven convex optimization problem is formulated whose solution yields the optimal linear quadratic regulator (LQR) feedback gain for the augmented system without explicit knowledge of the system matrices. In addition, a policy gradient flow is derived to compute the optimal controller within the space of stabilizing gains. The proposed approach enables data-driven optimal tracking control while avoiding explicit state augmentation in the data collection phase. The effectiveness of the method is demonstrated through a numerical example involving a distributed generation unit (DGU) in a DC microgrid. 
+
+I. I NTRODUCTION 
+
+Recent advances in data-driven control enable the synthe-sis of optimal controllers directly from measurement data, bypassing the need for exact system models [1]. Many data-driven approaches consider the infinite–horizon linear quadratic regulator (LQR) that regulates the state to zero by minimizing an objective that achieves a compromise between transient performance and control effort. To achieve robust output tracking of a reference signal, an integral action can be incorporated to the LQR control law to complement the proportional action, referred to as linear quadratic integral (LQI) control. This paper focuses on data-driven LQI control by utilizing convex optimization and policy gradient meth-ods, aiming to achieve optimal tracking performance while relying solely on input–state–output measurements. 
+
+Literature review: This section reviews relevant literature on LQI and PID synthesis via LQR, as well as data-driven convex optimization and policy gradient methods for LQR. LQI control was first introduced in [2] to achieve asymp-totic tracking of constant reference signals. Since then, it has been widely applied across various domains, including aerospace [3], power grids [4], and process control [5] for tracking time-varying reference signals. At its core, the LQI control law consists of a static state-feedback controller aug-mented with an integral action that accumulates the tracking error between the output and the reference signal [2]. The synthesis of a stabilizing LQI control law can be achieved by  
+
+> A. Gießler, S. Hohmann are with the Institute of Control Systems, Karl-sruhe Institute of Technology (KIT), 76131, Karlsruhe, Germany. P. Jan´ e-Soneira is with ABB Corporate Research Center, Kallstadter Str. 1, 68309. Corresponding author is Armin Gießler, armin.giessler@kit.edu .
+
+augmenting the system dynamics with an integral state and subsequently applying LQR design methods, such as convex optimization [6], [7] or policy gradient approaches [8], [9]. The LQI controller is often compared to the classical proportional-integral-derivative (PID) controller, as both in-volve feedback of the integrated tracking error. A linear system in closed loop with a PID controller can be equiva-lently represented as an augmented linear system controlled by a static state-feedback controller [10] or a static output-feedback controller [11, Chapter 7]. These controllers can then be designed using classical methods, such as the LQR. However, recovering the original PID gains from the feed-back gains of the augmented system is generally challenging, for example, because a corresponding set of PID gains may not exist or may not be unique [10]. The work of [12] shows that, for single-input single-output (SISO) systems, the original PID gains can always be reconstructed if the input and output matrices are orthogonal. The structural constraints inherent to PID control make its synthesis challenging [13]. For instance, there is no convex reparameterization available for PID gain synthesis, and the set of stabilizing PID gains may not be path-connected, which prevents the use of policy gradient methods. We stress that LQI control does not have such restrictions and the design of a stabilizing control law boils down to solving the LQR problem of the augmented system. This, however, comes at the cost of requiring full-state measurements during control. Policy gradient solutions for dynamic output feedback without feedthrough that min-imizes the LQR objective are discussed in [14]. This class of output-feedback controllers includes observer-based state-feedback controllers as a special case, but excludes PID controllers that incorporate a feedthrough term. In the context of data-driven optimal control, [1] presents a parameterization of a linear system in closed loop with state-feedback controller using only input-state data and a matrix satisfying a matrix equality. An advancement of this parameterization is the sample covariance parameterization presented in [15], [16], resulting in data matrices independent of the sample size. These representations laid the foundation for numerous data-driven LQR methods, including convex optimization approaches [1], [17] and policy gradient meth-ods [15], [18]. 
+
+Contributions: The main contributions of this paper are summarized as follows: 1) A data-driven closed-loop parameterization for the synthesis of LQI controllers is introduced, enabling the direct design of optimal tracking controllers from measured data of the underlying system. 
+
+This work has been submitted to the IEEE for possible publication. Copyright may be transferred without notice, after which this version may no longer be accessible. 
+
+> arXiv:2604.14905v1 [eess.SY] 16 Apr 2026
+
+2) Based on this parameterization, a convex optimization problem and a policy gradient flow are derived whose solution yields the optimal LQR feedback gain for the augmented system and, consequently, the stabilizing LQI controller gain. 3) The proposed approach is validated through a rep-resentative numerical example involving a distributed generation unit (DGU) in a DC microgrid. 
+
+Paper Organization: Preliminaries are presented in Sec-tion II. Section III introduces the data-driven parameteri-zation, the convex program, and the policy gradient flow. Simulation results of a DGU are presented in Section IV. Finally, the paper ends with a conclusion in Section V. 
+
+Notation: The set of real numbers is denoted by R. The identity matrix of dimension n × n is given by In, and 0n,p 
+
+denotes the n × p zero matrix. For a matrix A, its transpose, trace, and Frobenius norm are denoted by A⊤, tr (A), and 
+
+∥A∥F , respectively. The operator diag( ·) constructs a block-diagonal matrix from its arguments. A symmetric positive definite (semidefinite) matrix A is denoted by A ≻ 0
+
+(A ⪰ 0). The Moore-Penrose pseudoinverse of a matrix A is denoted by A†, and its nullspace is denoted by ker( A). The eigenvalues of a square matrix A are denoted by λi(A), and their real parts by Re( λi). A square matrix is Hurwitz if all its eigenvalues have strictly negative real parts. II. P RELIMINARIES 
+
+We consider the linear time-invariant system 
+
+˙x(t) = Ax (t) + Bu (t), (1a) 
+
+y(t) = Cx (t), (1b) where x(t) ∈ Rn, u(t) ∈ Rm, and y ∈ Rp.1
+
+A. Linear Quadratic Regulator 
+
+The infinite-horizon linear LQR problem is formulated as 
+
+min 
+
+> x,u
+
+Z ∞
+
+> 0
+
+x⊤Qx + u⊤Ru dt, (2a) s.t. (1a) and x(0) = x0, (2b) where Q ⪰ 0 and R ≻ 0.
+
+Assumption 1: The system (A, B ) is stabilizable and the pair (A, √Q) is detectable. Assumption 1 holds throughout. The optimal solution to (2) is the controller u = −K∗x = −R−1B⊤P ∗x, where P ∗
+
+is the unique positive definite solution of the CARE 
+
+A⊤P + P A − P BR −1B⊤P + Q = 0 . (3) Moreover, the closed-loop matrix A − BK ∗ is Hurwitz. The optimal controller K∗ is also the solution to 
+
+min  
+
+> K,W
+
+tr( QW ) + tr( K⊤RKW ) (4a) s.t. (A − BK )⊤W + W (A − BK ) + In ⪯ 0, W ⪰ 0,
+
+(4b) 
+
+> 1Henceforth, explicit time dependency of variables is omitted for read-ability when clear from the context.
+
+which admits a convex reformulation [6]. The set of Hurwitz stable feedback gains of system (A, B ) is denoted by 
+
+K = {K ∈ Rm×n | Re( λi(A − BK )) < 0 ∀i}, (5) and is open, unbounded, and path-connected [19, Section 3]. The policy gradient flow of the LQR problem is defined as 
+
+˙K = −∇ fK , K(0) = K0 ∈ K , (6a) 
+
+∇fK = 2( RK − B⊤PK )WK (6b) where PK and WK are the solutions to Lyapunov equations 
+
+0 = ( A − BK )⊤P + P (A − BK ) + Q + K⊤RK, (7) 
+
+0 = ( A − BK )W + W (A − BK ) + In, (8) respectively. The gradient flow (6) generates unique trajec-tories K(t) within K that converges to K∗ for t → ∞ [20]. 
+
+B. Linear Quadratic Integral Control 
+
+We present the LQI control from [2]. To enforce asymp-totic tracking of a reference signal r ∈ Rp, the integral state 
+
+˙z = r − y = r − Cx, z(t) = 
+
+Z t
+
+> 0
+
+r(τ ) − y(τ )d τ. (9) is incorporated to the system (1), yielding 
+
+ ˙x
+
+˙z
+
+
+
+=
+
+ A 0n,p 
+
+−C 0p
+
+  xz
+
+
+
++
+
+ B
+
+0p,m 
+
+
+
+u +
+
+0n,p 
+
+Ip
+
+
+
+r. (10) Define the aggregated state as xa := 
+
+xz
+
+
+
+∈ Rn+p. A linear state-feedback control for (10) is 
+
+u = −Kx a = −KPD x − KIz, (11) where K = KPD KI
+
+ ∈ Rm×(n+p), and KPD ∈ Rm×n
+
+and KI ∈ Rm×p denote the proportional and derivative and 
+
+integral feedbacks gains, respectively. Let ¯xa = ¯x⊤ ¯z⊤⊤
+
+be an equilibrium point, and define the error variable ˜xa := 
+
+xa − ¯xa (see [5] for details). In error coordinates, the augmented dynamics (10) can be written as 
+
+˙˜xa =
+
+ A 0n,p 
+
+−C 0p
+
+
+
+˜xa +
+
+B
+
+0
+
+
+
+˜ua = Aa ˜xa + Ba ˜ua. (12) Under ˜u = −K ˜xa, the closed-loop system becomes 
+
+˙˜xa =
+
+A − BK PD −BK I
+
+−C 0p
+
+
+
+˜xa = ( Aa − BaK)˜ xa. (13) If Aa −BaK is Hurwitz and the reference signal is constant, then y(t) → r for t → ∞ . The LQI controller (11) for original system (1) can be synthesized by computing the optimal LQR feedback K∗ for the augmented system (12). C. Data-driven Closed-loop Parameterizations 
+
+We next summarize the continuous-time closed-loop pa-rameterization of [1], adapted to the sampled covariance parameterization in [15]. Consider a sequence of T ∈ N
+
+measurements of state, input, and state derivative trajectories of system (1a), sampled at interval ∆ > 0,
+
+X = x(0) x(∆) . . . x(( T − 1)∆)  ∈ Rn×T , (14a) 
+
+U = u(0) u(∆) . . . u(( T − 1)∆)  ∈ Rm×T , (14b) 
+
+X′ =  ˙x(0) ˙x(∆) . . . ˙x(( T − 1)∆)  ∈ Rn×T . (14c) These matrices satisfy 
+
+X′ = AX + BU = B A UX
+
+
+
+. (15) Define the associated sample covariance matrices to (14) as 
+
+X = 1
+
+T X
+
+UX
+
+⊤
+
+, U = 1
+
+T U
+
+UX
+
+⊤
+
+, X ′ = X′
+
+UX
+
+⊤
+
+, (16) whose dimensions are independent of the sample size T .
+
+Theorem 1: Let rank 
+
+h UX
+
+i
+
+= n + m hold. Then, the closed-loop system ˙x = ( A − BK )x admits the equivalent data-driven representation 
+
+˙x = X′Gx, (17) 
+
+ In
+
+−K
+
+
+
+=
+
+XU
+
+
+
+G, (18) where G ∈ R(n+m)×n.The proof follows from [1, Theorem 2 and Remark 2] together with [15, Lemma 1], and is omitted for brevity. 
+
+Remark 1: Following [21], to avoid state-derivative mea-surements and mitigate noise amplification caused by numer-ical differentiation, the data matrices (14) can be replaced by 
+
+˜X =
+
+hR t1+δt1 x(τ )d τ . . . R tT +δtT x(τ )d τ
+
+i
+
+, (19a) 
+
+˜U =
+
+hR t1+δt1 u(τ )d τ . . . R tT +δtT u(τ )d τ
+
+i
+
+, (19b) 
+
+> ∆
+
+X = x(t1 +δ)−x(t1) . . . x(tT +δ)−x(tT ) , (19c) respectively. These matrices result from integrating the stacked system (15) over each interval [ti, t i + δ] = [∆( i −
+
+1) , ∆( i − 1) + δ], i ∈ { 1, . . . , T }. Hence, the linear relation 
+
+> ∆
+
+X = A ˜X + B ˜U holds, and substituting (14) by (19) to compute (16) does not alter the subsequent results. III. P ROBLEM FORMULATION AND APPROACH 
+
+In this section, we first analyze the augmented system (12) and clarify the relation of LQI control to classical PI(D) control. We then develop a data-driven closed-loop parameterization, followed by the formulation of the convex program and the policy gradient flow. The main objective of the paper is the following. 
+
+Objective 1: Formulate a convex optimization problem and a policy gradient flow, using only data from the original system (1), to synthesize the optimal LQR state-feedback gain for the augmented system (12). Let Qa = diag( Qx, Q z ) be the weighting matrix for the augmented state ˜xa, where Qx ⪰ 0 corresponds to original state ˜x and Qz ≻ 0 to the integral state ˜z. 2
+
+Assumption 2: The system (Aa, B a) is stabilizable and the pair (Aa, √Qa) is detectable. These conditions ensure that the optimal LQR controller stabilizes the augmented system. The following lemmas char-acterize necessary and sufficient conditions on the system matrices of the original system such that Assumption 2 holds. 
+
+Lemma 1: The system (Aa, B a) is stabilizable if and only if (A, B ) is stabilizable and 
+
+rank 
+
+A BC 0p,m 
+
+
+
+= n + p. (20) 
+
+Proof: By the Popov–Belevitch–Hautus (PBH) test [22, Theorem 14.3], (Aa, B a) is stabilizable if and only if for every eigenvalue λ ∈ C of Aa with Re( λ) ≥ 0 the matrix 
+
+M (λ) := λI n+p − Aa Ba
+
+ =
+
+λI n − A 0 BC λI p 0
+
+
+
+(21) has full row rank n+p. Consider the case λ̸ = 0 . Since λI p is nonsingular, rank M (λ) = p + rank λI n − A B. Hence, 
+
+rank M (λ) = n + p if and only if rank λI n − A B = n
+
+which is precisely the condition for stabilizability of (A, B ).For the case λ = 0 , M (0) has full row rank if and only if 
+
+rank M (0) = rank  A B C 0
+
+ = n + p. Combining both cases completes the proof. Condition (20) implies that p ≤ m and that both C and B
+
+must have rank p. Thus, to satisfy Assumption 2, the number of control inputs must be at least as many as the number of outputs to be tracked. 
+
+Lemma 2: The system (Aa, √Q) is detectable if and only if (A, 
+
+h C√(Qx)
+
+i
+
+) is detectable. 
+
+Proof: By the PBH test [22, Theorem 16.6], (Aa, √Q)
+
+is detectable if and only if only if for every eigenvalue λ ∈ C
+
+of Aa with Re( λ) ≥ 0 the matrix 
+
+N =
+
+
+
+A − λI n 0
+
+−C −λI p√Qx 00 √Qz
+
+ (22) has full column rank. Let 
+
+xz
+
+
+
+lie in the nullspace of N . Then, equivalently, (A − λI n)x = 0 , −Cx − λz = 0 , √Qxx = 0 
+
+and √Qz z = 0 . Since Qz ≻ 0, z = 0 , hence Cx = 0 . Thus full column rank of N holds if and only if 
+
+rank 
+
+
+
+A − λI n
+
+C√Qx
+
+ = n (23) for all Re( λ) ≥ 0, i.e., (A, 
+
+h C√(Qx)
+
+i
+
+) is detectable. Note that Lemma 2 states that no eigenvector correspond-ing to an unstable eigenvalue of A must lie simultaneously in the nullspaces of C and Qx.      
+
+> 2Choosing Qz≻0ensures that the zero eigenvalues introduced by the integrator dynamics are observable through √Qzand thus reflected in the cost, which is natural for the LQI problem.
+
+A. Relation to Proportional Integral Derivative Control 
+
+In this subsection, we clarify the relation of LQI control to PI(D) control. The PID control law is 
+
+u = −KP(y − r) − KI
+
+Z t
+
+> 0
+
+r(τ ) − y(τ )d τ − KD
+
+∂∂t (y − r)
+
+(24) where KP ∈ Rm×p, KI ∈ Rm×p, and KD ∈ Rm×p, and falls into the class of dynamic output feedback controllers with feedthrough. In error coordinates, the control law (24) can be rewritten as 
+
+˜u = −KPC ˜x − KI
+
+Z t
+
+> 0
+
+˜ydτ − KDC ˙˜x. (25) Substituting the system dynamics (1a) into (25) yields 
+
+(Im + KDCB )˜ u = −(KPC + KDCA )˜ x − KI
+
+Z t
+
+> 0
+
+˜y(τ )d τ. 
+
+(26) Hence, the PID control law can be represented by a state-feedback controller of the augmented system (12) 
+
+˜u = − ˜KPD ˜x − ˜KI ˜z = ˜K ˜xa, (27) where ˜K =  ˜KPD ˜KI
+
+ ∈ Rm×(n+p), and 
+
+˜KPD = ( Im + KDCB )−1(KPC + KDCA ), (28a) 
+
+˜KI = ( Im + KDCB )−1KI. (28b) Note that the derivative action in the original control law (25) is absorbed into the proportional feedback gain ˜KPD of the augmented system (12). This also explains the presence of the derivative component in KPD in (11). Following [10], stabilizing PID gains can be obtained by first solving the LQR problem for the augmented system to obtain ˜K
+
+and subsequently reconstructing the original PID gains by solving the nonlinear equations (28). However, the nonlinear mapping (28) introduces significant difficulties, as there may exist a finite number, infinitely many, or no PID gains satisfying the equations. We now consider the PI case, obtained by setting KD = 0 .Analogous to (13), the augmented closed-loop system under (24) with KD = 0 in error coordinates is 
+
+˙˜xa = Aa ˜xa − Ba ˆK ˜xa (29) 
+
+=
+
+A − BK PC −BK I
+
+−C 0
+
+
+
+˜xa, (30) where ˆK = KPC KI
+
+ ∈ Rm×(n+p). Hence, PI control can be interpreted as a structurally constrained state-feedback controller for the augmented system (12). The gain block acting on the original state ˜x must factor as KPC, which restricts it to the row space of C. In contrast, the optimal LQI gain K∗ = K∗ 
+
+> PD
+
+K∗
+
+> I
+
+ obtained from the LQR problem for (Aa, B a) generally does not admit such a factorization. 3
+
+Unless K∗ 
+
+> PD
+
+happens to lie in the row space of C, the        
+
+> 3We note that if Cis square and invertible ( p=n), the constraint
+> KPD =KPCimposes no restriction, and PI control recovers full-state feedback LQI control.
+
+achievable performance under PI control is strictly inferior to that of the full-state-feedback LQI design. This structural restriction has significant consequences for controller synthesis. The set of stabilizing PI gains may fail to be path-connected [13, Section 4.3], precluding the usage of policy gradient methods. Moreover, there exists no convex reparametrization of the problem (4) when using the closed-loop matrix of (30). This difficulty is well documented in the literature and reflects the inherent challenge of synthesizing fixed-structure output feedback controllers such as PI(D) control [13]. 
+
+B. Data-driven Parameterization 
+
+Next, we introduce a data-driven closed-loop parameteri-zation of the augmented system (13). Analogous to (14) and (16), we define the data matrices 
+
+Y = y(0) y(∆) . . . y(( T − 1)∆)  ∈ Rp×T , (31) 
+
+Y = 1
+
+T Y
+
+UX
+
+⊤
+
+∈ Rp×(n+m), (32) which satisfy Y = CX . For the integral variant mentioned in Remark 1, Y has to be substituted by 
+
+˜Y =
+
+hR t1+δt1 y(τ )d τ . . . R tT +δtT y(τ )d τ
+
+i
+
+∈ Rp×T . (33) The following assumption ensures that the data fully characterizes the system and holds throughout the paper. 
+
+Assumption 3: The matrix 
+
+UX
+
+
+
+has rank n + m.By [21, Lemma 4], Assumption 3 holds under piece-wise constant inputs that are persistently exciting of order n + 1 ,which requires T ≥ (m + 1) n + m samples. Hence, if the order of the system dynamics is known, Assumption 3 can be enforced a priori through a suitable choice of the excitation input before conducting the experiment. 
+
+Theorem 2: The augmented closed-loop system (13) ad-mits the equivalent data-driven representation 
+
+˙˜xa =
+
+ X′
+
+−Y
+
+
+
+G˜xa, (34a) 
+
+ In 0n,p 
+
+−KPD −KI
+
+
+
+=
+
+ XU
+
+
+
+G, (34b) where G ∈ R(n+m)×(n+p). Particularly, K = −U G .
+
+Proof: The closed-loop matrix of (13) is 
+
+Acl =
+
+ A B
+
+−C 0p,m 
+
+  In 0n,p 
+
+−KP D −KI
+
+
+
+. (35) Moreover, due to (15) and Y = CX , the measured data satisfy 
+
+ X′
+
+−Y
+
+
+
+=
+
+ A B
+
+−C 0p,m 
+
+  XU
+
+
+
+. (36) By Assumption 3 and the Rouch´ e–Capelli theorem [23, Th. 2.38], the linear system (34b) is consistent. Therefore, for any K = KPD KI
+
+ ∈ Rm×(n+p), there exists a G
+
+satisfying (34b). Hence, 
+
+Acl 
+
+> (34b)
+
+=
+
+ A B
+
+−C 0p,m 
+
+  XU
+
+
+
+G (36) 
+
+=
+
+ X′
+
+−Y
+
+
+
+G. (37) Finally, U G = −KPD −KI
+
+ = −K. 
+
+Hence, every closed-loop matrix Aa − BaK admits a data-driven parameterization through some G satisfying In 0n,p 
+
+ = XG .
+
+Remark 2: Note that the augmented closed-loop (13) can be represented by data matrices X, U , X ′, and Y of the underlying system (1) without measuring the integral state 
+
+˜z. Hence, the controller K can be designed based on data, but the control law in original coordinates u = −KPD x −
+
+KI
+
+R t 
+
+> 0
+
+r(τ ) − y(τ )d τ requires an integrator. 
+
+C. Convex Program 
+
+Next, we adapt the convex program (4) to the data-driven representation (34) of the augmented system (12). 
+
+Theorem 3: The optimal LQR feedback gain of system (12) is K∗ = −U Z ∗(W ∗)−1, where Z∗ ∈ R(n+m)×(n+p)
+
+and W ∗ ∈ R(n+p)×(n+p) minimize the convex program 
+
+min  
+
+> W,Z,S
+
+tr ( QaW ) + tr ( S) (38a) s.t. 
+
+" S R1/2U Z Z⊤U ⊤R1/2 W
+
+#
+
+⪰ 0, (38b) 
+
+ X′
+
+−Y
+
+
+
+Z + Z⊤
+
+ X′
+
+−Y
+
+⊤
+
++ In ⪯ 0, (38c) 
+
+In 0n,p 
+
+ W = XZ, (38d) 
+
+W ⪰ 0, (38e) with S = S⊤ ∈ Rm.
+
+Proof: Substituting (34) into (4) and using the cyclic property of the trace operator yields 
+
+min  
+
+> W,G
+
+tr( QW ) + tr( R1/2U GW G ⊤U ⊤R1/2) (39a) s.t. 
+
+ X′
+
+−Y
+
+
+
+GW + W
+
+ X′
+
+−Y
+
+
+
+G
+
+⊤
+
++ In+p ⪯ 0, (39b) 
+
+In 0n,p 
+
+ = XG, (39c) 
+
+W ⪰ 0. (39d) By substituting Z = GW , the constraint (39b) becomes affine in (Z, W ). However, the cost term 
+
+tr  R1/2U ZW −1Z⊤U ⊤R1/2 remains nonconvex. To obtain the convex program (38), we introduce the epigraph variable 
+
+S = S⊤ and upper bound this term as 
+
+tr  R1/2U ZW −1Z⊤U ⊤R1/2 ≤ tr( S),
+
+which is enforced via (38b), obtained by a Schur complement argument. The relation G∗ = Z∗(W ∗)−1 follows from the substitution and W ∗ = ( P ∗)−1 ≻ 0, and the optimal gain is recovered as K∗ = −U Z ∗(W ∗)−1.Note that every feasible solution of the convex program (38) yields a feedback gain such that Aa − BaK is Hurwitz. 
+
+D. Projected Policy Gradient Flow 
+
+In this subsection, we formulate the projected policy gradient flow for the data-driven representation (34). Let G
+
+denote the set of all G ∈ R(n+m)×(n+p) satisfying (34b) and rendering the closed-loop matrix Hurwitz, i.e., 
+
+G := 
+
+G ∈ R(n+m)×(n+p)
+
+XG = In 0n,p 
+
+ ,
+
+ X′
+
+−Y
+
+
+
+G is Hurwitz 
+
+ (40) 
+
+=
+
+n
+
+G ∈ R(n+m)×(n+p) | ∃ K ∈ K s.t. (34b) 
+
+o
+
+. (41) Analogous to the model-based case in [20], the LQR cost function of the system (34) parameterized in terms of G is defined as the matrix function 
+
+fG : G → R, G 7 → tr( PG), (42) where PG ∈ Rn+p is the solution of the Lyapunov Equation 
+
+0 = 
+
+ X′
+
+−Y
+
+
+
+G
+
+⊤
+
+PG + PG
+
+ X′
+
+−Y
+
+
+
+G + Qa + ( U G )⊤R(U G ).
+
+(43) The function fG exhibits favorable analytical properties for the well-definedness of its gradient flow. In particular, over 
+
+G, fG is real analytic and coercive. Real analyticity ensures smoothness of arbitrary order, while coercivity ensures that 
+
+fG → ∞ as G → ∂G, implying compact sublevel sets. 
+
+Proposition 1: Let G ∈ G . Then, the gradient of the LQR cost (42) with respect to G is 
+
+∇fG = 2( U ⊤RU G +
+
+ X′
+
+−Y
+
+⊤
+
+PG)WG, (44) where PG and WG = W ⊤ 
+
+> G
+
+∈ Rn+p satisfy (43) and 
+
+0 = 
+
+X′
+
+Y
+
+
+
+GW G + WG
+
+ X′
+
+Y
+
+
+
+G⊤ + In+p, (45) respectively. 
+
+Proof: The function (42) is a composition of smooth functions, i.e., G 7 → PG 7 → tr( PG). The differential of (43) with respect to G is given by 
+
+0 = 
+
+ X′
+
+−Y
+
+
+
+G
+
+⊤
+
+dP G + dP G
+
+ X′
+
+−Y
+
+
+
+G
+
+
+
++ F ⊤ + F, (46) where F = dG ⊤(U ⊤RU G +
+
+h X′
+
+> −Y
+
+i⊤
+
+PG).4 Since G ∈ G ,the solution to (46) is 
+
+dP G =
+
+Z ∞
+
+> 0
+
+e
+
+ 
+
+> X′
+> −Y
+> 
+> G
+
+⊤
+
+> t
+
+(F + F ⊤)e
+
+> 
+> X′
+> −Y
+> 
+> Gt
+
+dt. (47) Thus, by using the cyclic invariance of the trace operator, the differential of the LQR cost is 
+
+df G = tr( dP G) = 2 tr  F
+
+Z ∞
+
+> 0
+
+e
+
+> 
+> X′
+> −Y
+> 
+> Gt
+
+e
+
+ 
+
+> X′
+> −Y
+> 
+> G
+
+⊤
+
+> t
+
+dt.
+
+(48) The integral in (48) is the solution to (45), yielding df G =2 tr( F W G), implying (44). The following lemma establishes uniqueness of the sta-tionary point of the cost function (42) on its domain. 
+
+> 4For matrix differentials, see [24, Section 1].
+
+Lemma 3: The function fG admits a unique stationary point G∗ on G. The corresponding feedback gain K∗ =
+
+−U G ∗ is the optimal LQR gain of the system (12). 
+
+Proof: By definition (40), 
+
+h X′
+
+> −Y
+
+i
+
+G is Hurwitz for all 
+
+G ∈ G , implying that the solution to the Lyapunov equation (45) is given by 
+
+WG =
+
+Z ∞
+
+> 0
+
+e
+
+> 
+> X′
+> −Y
+> 
+> Gt
+
+e
+
+ 
+
+> X′
+> −Y
+> 
+> G
+
+⊤
+
+> t
+
+dt ≻ 0. (49) Hence, using (49) and inserting (36) into ∇fG = 0 leads to 
+
+0 = U ⊤RU G +
+
+XU
+
+⊤  A B
+
+−C 0
+
+⊤
+
+PG. (50) By Assumption 3, the square matrix 
+
+h XU
+
+i
+
+is invertible. Left-multiplying the inverse of 
+
+h XU
+
+i⊤
+
+to (50) yields 
+
+0
+
+I
+
+
+
+RU G =
+
+ 0
+
+−RK 
+
+
+
+= −
+
+A⊤ −C⊤
+
+B⊤ 0
+
+
+
+PG, (51) where the second block row is RK = B⊤ 
+
+> a
+
+PG. Since PG is the unique solution of the Lyapunov equation (43) for all 
+
+G ∈ G and R ≻ 0, it follows that K∗ = R−1B⊤ 
+
+> a
+
+PG∗ .To ensure that the linear equality constraint XG =In 0n,p 
+
+ is preserved along the gradient flow, we project the gradient ∇fG onto the tangent space of G, i.e., onto 
+
+ker( X), using the orthogonal projection 
+
+Π := In+m − X†X, (52) where X† = X⊤(XX ⊤)−1 is the right inverse of X. As an orthogonal projection, Π is symmetric and idempotent, implying its eigenvalues lie in {0, 1} and Π ⪰ 0 [25, 1.1.P5]. 
+
+Theorem 4: The projected gradient flow 
+
+˙G = −αΠ∇fG, G(0) ∈ G , α > 0 (53) converges to G∗, i.e., G(t) → G∗ for t → ∞ .
+
+Proof: Let V (G) = fG − fG∗ be the Lyapunov candidate. Since PG ⪰ 0, fG = tr( PG) = P 
+
+> i
+
+λi(PG) ≥ 0.This implies with Lemma 3, V (G∗) = 0 and V (G) > 0 for all G ∈ G \ { G∗}. The time derivative of V (G) along (53) is 
+
+˙V (G) = tr( ∇f ⊤ 
+
+> G
+
+˙G) = −α tr( ∇f ⊤ 
+
+> G
+
+Π∇fG) (54) 
+
+= −α∥Π1/2∇fG∥2 
+
+> F
+
+≤ 0. (55) By Lemma 3, ˙V (G) = 0 holds only for G = G∗. Since 
+
+˙V (G) < 0 for all G ∈ G \ { G∗}, V (G) is a Lyapunov function, implying asymptotic stability of G∗. Moreover, 
+
+G(t) remains in the compact sublevel set {G ∈ G | fG ≤
+
+fG(0) } for any G(0) ∈ G , because V (G) is nonincreasing along G(t). It follows that G(t) yields stabilizing feedback gains K(t) for all t ≥ 0. Consequently, the region of attraction of G∗ is G.IV. S IMULATION RESULTS 
+
+We consider a single bus of a DC microgrid that comprises a DGU with a controller and a constant-impedance load, following [26]. The control architecture resembles an LQI controller, where the states are fed back proportionally, and an additional integral state is introduced to ensure asymptotic tracking of the reference voltage. The closed-loop system is depicted in Fig. 1. The objective is to regulate the bus voltage v to a reference voltage r via the input voltage u
+
+of the buck converter. The load is modeled as a constant admittance Y , while the buck converter is represented by an averaged model consisting of a controllable voltage source followed by an RLC filter. Filter and load parameters are 
+
+R = 0 .2 Ω , L = 2 mH , and C = 2 mF , and Y = 0 .02 S .       
+
+> −
+> +u
+> RLi
+> CvY
+> DGU
+> Kzr+-
+> Grid-forming controller
+> Fig. 1. DGU in closed-loop with the LQI controller.
+
+The DGU with the load obeys the open-loop dynamics 
+
+ ˙v
+
+˙i
+
+
+
+=
+
+− 1 
+
+> C
+
+Y 1
+
+> C
+
+− 1 
+
+> L
+
+− 1 
+
+> L
+
+R
+
+  vi
+
+
+
++
+
+ 0
+
+> 1
+> L
+
+
+
+u, (56) where v ∈ R denotes the bus voltage and i ∈ R the filter current. The measured output is the bus voltage, yielding the output matrix C = 1 0. The DGU controller has the LQI structure u = −KPD [ vi ] − KI
+
+R t 
+
+> 0
+
+r(τ ) − v(τ )d τ ,where KPD ∈ R1×2 and KI ∈ R. For the LQR design of the augmented system, the weighting matrices are chosen as 
+
+R = 1 and Qa = diag(1 , 1, 100) to achieve fast tracking of the voltage reference. Since the system parameters are assumed to be unknown, e.g., the load may vary with time, the required data matrices are obtained from input-state-output measurements. To this end, a randomly generated input signal, piecewise constant over intervals of 0.02 s , is applied to the system. A total of 
+
+T = 10 samples are recorded using a sampling interval of 
+
+δ = 0 .1 s . From these measurements, the data matrices (19) and (33) are constructed to compute the sample covariance matrices X, U , X ′, and Y . By Theorem 2, these matrices can be used to parameterize the closed-loop system. For numeri-cal simulation, the system dynamics (56) are integrated using 
+
+ode45 in MATLAB with default settings. As a ground truth, the optimal gain K⋆ is computed from the exact augmented model using the lqr function in MATLAB. Using the proposed data-driven approaches of Theo-rem 3 and Theorem 4, we compute the feedback gain 
+
+K = KPD KI
+
+ that minimizes the LQR objective of 0 1 2 3 4                       
+
+> -400 -200 0200 400 600
+> v(t); r (t)
+> v(t)r(t)
+> 01234
+> Time (s)
+> -200 0200 400 600
+> u(t)Fig. 2. Trajectories of the bus voltage v(t)and input u(t)during open-loop data collection and closed-loop control. 00.2 0.4 0.6 0.8 1
+> Time (s)
+> 10 -4
+> 10 -2
+> 10 0
+> kK(t)!K?kF
+> kK(0) !K?kF
+> K(0) = K1
+> K(0) = K2
+> K(0) = K3
+> Fig. 3. Normalized residuals ∥K(t)−K⋆∥F
+> ∥K(0) −K⋆∥Fof the projected gradient flow for initial gains K(0) ∈ { K1, K 2, K 3}.
+
+the augmented system (12). In Fig. 2, the voltage v(t)
+
+and the input u(t) are shown. Within the first second, data is collected in open loop as described above. After the first second, the problem (38) is solved to obtain K∗ ≈0.409 1.164 −9.997 , where ∥K⋆−K∗∥F = 4 .3×10 −4.From 1 s to 4 s , the system is controlled in closed loop with the gain K∗, where the reference voltage r(t) changes from 
+
+400 V to 600 V to 200 V at the time instances t = 2 s and 
+
+t = 3 s . The trajectory v(t) in Fig. 2 shows that the reference voltage is tracked by the bus voltage. In Fig. 3, the normalized residuals ∥K(t)−K⋆∥F 
+
+> ∥K(0) −K⋆∥F
+
+of the projected policy gradient flow (53) are shown for the initial stabilizing gains K1 = 0.5 0.1 −50 , K2 =5 1 −15 , and K3 = 0 0 −1. The initial values 
+
+G(0) are computed using (34b), while the trajectories G(t)
+
+are obtained form the projected gradient flow (53), yielding the depicted trajectory K(t) = −U G (t). The learning rate 
+
+α is chosen sufficiently large and only scales the time axis. For all initializations, the residuals converge linearly to zero, consistent with the model-based setting [20]. As an outlook, Fig. 4 shows the voltage trajectories for different feedback gains under time-varying loads. The load admittance changes form Y = 0 .02 S to Y = 0 .001 S at 
+
+t = 0 .5 s , and then to Y = 0 .1 S at t = 2 .5 s . Moreover, the reference voltage changes from 400 V to 410 V at t =1.5 s . The LQR gain K∗, computed for the nominal load 0 1 2 3 4
+
+Time (s)     
+
+> 360 370 380 390 400 410 420
+> v(t); r (t)
+> r(t)
+> K1
+> K2
+> K3
+> K$
+> K(t) = !,rfK
+> Fig. 4. Trajectories of the voltage v(t)for a time-varying load and different LQI controllers.
+
+Y = 0 .02 S , achieves fast tracking without overshoot. In contrast, K1 provides fast tracking due to its large integrator gain but results in significant overshoot at t = 0 .5 s and 
+
+t = 2 .5 s . The gain K2 eliminates overshoot but yields slower reference tracking. The gain K3 contains only an integrator term, resulting in slow tracking and insufficient damping of the system dynamics. The final controller in Fig. 4 implements the policy gradient flow in closed loop with (56), yielding a nonlinear dynamic state-feedback controller that adapts the gain toward the LQR optimal gain corresponding to the current load. In the simulations, we used the model-based policy gradient for simplicity, but the data-driven variant can be applied online using the matrices X, U , X ′, and Y collected online with exploration noise. No formal stability guarantees are provided for the considered controllers, as the system is time-varying due to the load changes. A stability analysis of the LQR policy gradient flow in closed loop with a linear time-varying system can be found in [27]. Nevertheless, the piecewise-constant load scenario is well suited for policy-gradient-based adaptation. Each load level corresponds to an associated LQR feedback gain, and with a sufficiently large learning rate, the policy gradient flow quickly adapts the feedback gain to the optimal value cor-responding to the current load. As a result, the controller regulates the new equilibrium with a near-optimal gain for most of the time between load changes, thereby approxi-mately minimizing the infinite-horizon LQR cost over each time interval. V. C ONCLUSION 
+
+This paper introduced a data-driven approach for the synthesis of LQI controllers for continuous-time systems. Using a closed-loop data-driven parameterization, we derived a convex optimization problem that enables the computation of the optimal LQR feedback gain of the augmented system directly from measured data. In addition, a policy gradient flow was introduced to compute the optimal controller within the set of stabilizing gains. The effectiveness of the proposed approach was illustrated using a DGU with an LQI controller in a DC microgrid. Future work will focus on extending the proposed approach to scenarios with process and measure-ment noise, as well as time-varying system dynamics. REFERENCES 
+
+[1] C. De Persis and P. Tesi, “Formulas for data-driven control: Stabilization, optimality, and robustness,” IEEE Transactions on Automatic Control , no. 3, 2020. [2] P. C. Young and J. C. Willems, “An approach to the linear multivariable servomechanism problem,” International Journal of Control , no. 5, 1972. eprint: https://doi. org/10.1080/00207177208932211 .[3] H. Purnawan, Mardlijah, and E. B. Purwanto, “Design of linear quadratic regulator (LQR) control system for flight stability of LSU-05,” in Journal of Physics: Conference Series , IOP Publishing, 2017. [4] B. Kedjar and K. Al-Haddad, “LQR with integral action applied to a wind energy conversion system based on doubly fed induction generator,” in 2011 24th Canadian Conference on Electrical and Computer Engineering(CCECE) , ISSN: 0840-7789, 2011. [5] H. G. Malkapure and M. Chidambaram, “Comparison of two methods of incorporating an integral action in linear quadratic regulator,” IFAC Proceedings Volumes , no. 1, 2014, 3rd International Conference on Advances in Control and Optimization of Dynamical Systems (2014). [6] E. Feron et al. , “Numerical Methods for H2 Related Prob-lems,” in 1992 American Control Conference , 1992. [7] V. Balakrishnan and L. Vandenberghe, “Connections Be-tween Duality in Control Theory and Convex Optimization,” in Proceedings of 1995 American Control Conference -ACC’95 , 1995. [8] M. Fazel et al. , “Global Convergence of Policy Gradient Methods for the Linear Quadratic Regulator,” in Proceedings of the 35th ICML , 2018. [9] B. Hu et al. , “Toward a theoretical foundation of policy optimization for learning control policies,” Annual Review of Control, Robotics, and Autonomous Systems , no. Volume 6, 2023, 2023. [10] S Mukhopadhyay, “PID Equivalent of Optimal Regulator,” 
+
+Electronics Letters , no. 25, 1978. [11] Q.-G. Wang et al. , “PID Control for Multivariable Pro-cesses,” en, [12] B. T. Polyak and M. V. Khlebnikov, “New Criteria for Tuning PID Controllers,” Automation and Remote Control , no. 11, 2022. [13] A. Datta, M.-T. Ho, and S. P. Bhattacharyya, Structure and synthesis of PID controllers . Springer Science & Business Media, 1999. [14] J. Duan et al. , “On the optimization landscape of dynamic output feedback linear quadratic control,” IEEE Transactions on Automatic Control , no. 2, 2024. [15] F. Zhao et al. , “Data-Enabled Policy Optimization for Direct Adaptive Learning of the LQR,” IEEE Transactions on Automatic Control , 2025. [16] F. Zhao, A. Chiuso, and F. D¨ orfler, “Regularization for Covariance Parameterization of Direct Data-Driven LQR Control,” IEEE Control Systems Letters , 2025. [17] V. G. Lopez and M. A. M¨ uller, Data-based control of continuous-time linear systems with performance specifica-tions , 2025. arXiv: 2403.00424 [eess.SY] .[18] F. Zhao, F. D¨ orfler, and K. You, “Data-Enabled Policy Optimization for the Linear Quadratic Regulator,” in 2023 62nd IEEE Conference on Decision and Control (CDC) ,2023. [19] J. Bu, A. Mesbahi, and M. Mesbahi, On Topological and Metrical Properties of Stabilizing Feedback Gains: the MIMO Case , 2019. arXiv: 1904.02737 [cs.SY] .[20] J. Bu, A. Mesbahi, and M. Mesbahi, Policy Gradient-based Algorithms for Continuous-time Linear Quadratic Control ,2020. arXiv: 2006.09178 [eess.SY] .[21] V. G. Lopez and M. A. M¨ uller, “An Efficient Off-Policy Reinforcement Learning Algorithm for the Continuous-Time LQR Problem,” in 2023 62nd IEEE Conference on Decision and Control (CDC) , 2023. [22] J. P. Hespanha, Linear Systems Theory , 2nd ed. Princeton, USA: Princeton University Press, 2018. [23] I. R. Shafarevich and A. O. Remizov, Linear Algebra and Geometry . Springer Science & Business Media, 2013. [24] T. Minka, “Old and New Matrix Algebra Useful for Statis-tics,” 2000. [25] R. A. Horn and C. R. Johnson, Matrix Analysis , 2nd ed. Cambridge University Press, 2012. [26] P. Nahata et al. , “A passivity-based approach to voltage stabilization in dc microgrids with zip loads,” Automatica ,2020. [27] A. Gießler et al. , Dynamic State-Feedback Control for LPV Systems: Ensuring Stability and LQR Performance , 2025. arXiv: 2505.22248 [eess.SY] .

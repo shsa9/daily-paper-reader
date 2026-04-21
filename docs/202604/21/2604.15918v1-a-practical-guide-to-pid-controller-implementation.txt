@@ -1,0 +1,1762 @@
+Title: A Practical Guide to PID Controller Implementation
+
+URL Source: https://arxiv.org/pdf/2604.15918v1
+
+Published Time: Mon, 20 Apr 2026 00:45:25 GMT
+
+Number of Pages: 46
+
+Markdown Content:
+# A Practical Guide to PID Controller Implementation 
+
+E. Sundström a, M. Bauer b, J. L. Guzmán c, T. Hägglund a and K. Soltesz a
+
+> a
+
+Dept. of Automatic Control, Lund University, Box 118 SE-22100 Lund, Sweden (email: {emil.sundstrom, tore.hagglund, kristian.soltesz}@control.lth.se) 
+
+> b
+
+Dept. Process Engineering, Hamburg University of Applied Sciences, Hamburg, Germany (email: margret.bauer@haw-hamburg.de) 
+
+> c
+
+Dept. of Informatics, Universidad de Almería, ceiA3, CIESOL, Ctra. Sacramento s/n, 04120 Almería, Spain; (e-mail: joseluis.guzman@ual.es) 
+
+ARTICLE HISTORY 
+
+Compiled 20th April 2026 
+
+Abstract 
+
+How difficult can it be to implement a PID controller? The answer is twofold. Imple-menting the PID control law is simple and computationally inexpensive. However, this basic form will not work in practical applications. The primary reason for this is the various physical limitations of the actuator. Measurement noise, different im-plementations depending on the various structures (P, PI, PD or PID), bumpless transfer, and varying sampling time also result in problems rendering the basic form inoperable. PID implementation is therefore more difficult than meets the eye. This paper introduces a reference implementation of the PID controller which considers these practical issues. It includes pseudo-code, discussion of the implementation choices and simulation of carefully selected, important test cases. 
+
+KEYWORDS 
+
+PID control, Implementation, Programming code, Incremental form. 
+
+1. Introduction 
+
+The future of PID control was correctly predicted in an article 25 years ago (K. J. Åström & Hägglund, 2001): it is still the most prevalent control strategy in real world applic-ations. PID is a superior strategy when assessed in terms of performance, tuning, ease of use and maintenance, resulting in a good solution for many process dynamics. Then and now, the PID implementation has been buried in proprietary archives of control technology suppliers. From Mathwork’s Matlab implementations to automotive, flight control, process control systems, etc: the PID controller is generally implemented as a black box, and the inside workings are not disclosed to the user. In some instances, the archives are not well maintained and the PID controller is poorly implemented with serious problems. The knowledge of how to implement the PID control law correctly is neither communicated nor developed. 
+
+> This work was partially supported by the Wallenberg AI, Autonomous Systems and Software Program (WASP) funded by the Knut and Alice Wallenberg Foundation. All authors from Lund University are members of the ELLIIT Strategic Research Area.
+> arXiv:2604.15918v1 [eess.SY] 17 Apr 2026
+
+The classical PID control law in the form 
+
+u(t) = K
+
+> (
+
+e(t) + 1
+
+Ti 
+
+> ∫t
+> 0
+
+e(τ ) dτ + Td
+
+de (t)
+
+dt 
+
+> )
+
+(1) is easy to implement in hardware and software (Hägglund & Guzmán, 2024). While it is possible to implement the PID algorithm in analogue electronic circuits, mechan-ics, pneumatics and even biological systems, the most prevalent implementation is in programming code. The ease of implementation may explain why there appears to be only one publication solely dedicated to PID implementation (Clarke, 1984), covering some basic steps focusing on the z-Domain. Several textbooks cover some basic aspects, too, e.g., Shinskey (1994), Shinskey (1996), K. Åström and Hägglund (2006) and Visioli (2006). A quick online search shows that in recent years, the void of PID implementation pub-lications has been filled with a large number of internet educational resources providing implementations of the PID controller in various languages (C, C++, Python or Mat-lab). Unfortunately, these implementation resources realise eq. (1) but rarely include the practical considerations that are required when implementing a real-world PID con-troller. Some publications describe student projects or experimental setups that implement the PID controller, see (Bhandari & Csurcsia, 2022), (Uzunović, Zunic, Badnjević, Mi-oković, & Konjicija, 2010), Krejcar, Spicka, and Frischer (2011). A clear description of how to implement the real-world PID controller is not available. Some efforts have been made to standardise the PID controller. The IEC has pub-lished a standard for evaluating the performance of PID control (IEC, 2010). The Inter-national Society of Automation (ISA) has issued a technical report on PID algorithms and performance that standardises PID control, focusing on nomenclature (ISA, 2023). There currently is no standard covering the implementation of the PID controller. These circumstances make it difficult for control engineering professionals to find a concise and thoroughly explained reference implementation. As a result, PID imple-mentations in commercial solutions are often ad hoc and may not include important features required to deal with practical problems. Anecdotally, the authors have heard of several industrial controllers without anti-windup that could not be used during process startup. There are numerous extensions to the standard controller, including fractional-order controllers (Chen, Petras, & Xue, 2009), PID controllers that additionally consider the second derivative of the error (Huba & Vrančič, 2018), etc. These fall outside the scope of this work. Neither do we consider PID tuning. There are two alternative implementation forms: positional and incremental, the lat-ter also referred to as velocity form (Clarke, 1984). Both are explained in detail in Section 2. Section 3 first describes the most common problems found in practice, extending the basic discretisation of the PID control law to deal with all of them effectively. The res-ult is the reference implementation given in section 4, which combines both positional and incremental form as the solution to all these practical problems, this being the main contribution of this paper . The reference implementation is provided in pseudo-code discussing line-by-line aided by a graphical representation of the code. While this means that the code cannot be taken directly into one development environment such as Matlab, C, or Python, the readability is improved because the code provides a clearer description of the algorithm, without any distractions. Section 5 introduces additional implementation considerations such as the state ini-2tialisation, the execution interval and the runtime environment. The most common problems that were described in Section 3 are then simulated in Section 6 to show the benefit of extending the basic PID algorithm to practical working code. The simulation codes are available in a GitHub repository by Sundström, Bauer, Guzmán, Hägglund, and Soltesz (2026). 
+
+2. Digital PID implementation 
+
+To implement the controller in a computer, eq. (1) must be converted to a discrete time version. The principle of discrete time sampling is explained in this section. Both the integral and the derivative parts of the PID controller must be approximated for the conversion. There are two alternative implementations of the PID controller: the positional form and the incremental form, Clarke (1984). Both will be described in the following. The positional form is more intuitive, but the incremental form has important practical advantages. The implementation presented in this paper will be based on a combination of the two to exploit the advantages of each form. The naming of variables and parameters in this implementation is based on the standard form described in eq. (1) where u(t) is the control signal and e(t) = r(t) − y(t)
+
+is the control error, that is, the difference between the setpoint r(t) and the measured process variable y(t).The basic control loop is depicted in fig. 1. Note that setpoint r(t) and process variable 
+
+y(t) enter the PID block instead of control error e(t). The reason for this depiction will become apparent in the following sections. 
+
+Figure 1.: The basic control loop. The parameters of the PID controller in eq. (1) are controller gain K, integral time 
+
+Ti, and derivative time Td. The equation for the PID controller can be written in several different forms. We have chosen the linear parameterisation of eq. (4), with parameters 
+
+kp = K, ki = K/T i, and kd = K T d, since it is more general in the sense that it allows for Ti = 0 in eq. (1) without causing a division-y-zero error. If other forms are preferred, such as the series implementation (K. Åström & Hägglund, 2006), the implementation codes presented in this paper can be easily adapted. 
+
+2.1. Discrete time sampling 
+
+Time series sampling is the prerequisite for digital implementation of eq. (1). The continuous-time process variable y(t) and the continuous-time setpoint r(t) have to be sampled at discrete time intervals ∆t. The discrete-time control error is then 
+
+e(t) = r(t) − y(t), with t = n∆t. (2) 3where n is the discrete time index. The control signal u(t) is then calculated at discrete times n∆t.Equation (1) contains the integral and the derivative of the control error e(t). A common way of discretising integral and derivative is to approximate the integral with a sum and the derivative with a difference such that  
+
+> ∫t
+> 0
+
+e(τ ) dτ ≈ ∆t
+
+> n∑
+> j=0
+
+e(j∆t)
+
+de (t)
+
+dt ≈ e(t) − e(t − ∆t)∆t = ∆e(t)∆t .
+
+(3) These approximations are illustrated in fig. 2. The integral is approximated using the forward rectangular rule, and the derivative is approximated using the forward difference approximation. Note that also other approximations such as backward difference or tangent line approximation can be considered without affecting the results presented in this paper. 
+
+Figure 2.: Approximations of the integral and the derivative. 
+
+2.2. Positional form 
+
+Introducing the approximations from eq. (3) in eq. (1), the discrete version of the PID controller results in the positional form 
+
+u(t) = kp e(t) + ki∆t
+
+> n∑
+> j=0
+
+e(j∆t) + kd
+
+e(t) − e(t − ∆t)∆t , (4) where the controller parameters kp = K, ki = K/T i, and kd = KT d have been intro-duced and are known as proportional gain kp, integral gain ki, and derivative gain kd.Introducing the following notations for the three terms in the controller, eq. (4) becomes 
+
+u(t) = up(t) + ui(t) + ud(t) (5) 4where up(t), ui(t), and ud(t) represent the proportional, integral, and derivative terms, respectively. A more efficient way to implement the PID controller is to update the integral ui(t) recursively, and rewrite the individual terms as follows 
+
+up(t) = kp e(t),ui(t) = ui(t − ∆t) + ki ∆t e (t),ud(t) = kd
+
+e(t) − e(t − ∆t)∆t = kd
+
+∆e(t)∆t .
+
+(6) PID controllers are often implemented based on the positional discrete representation of eq. (5) and eq. (6). This representation is also sometimes called the direct form. In each iteration, the control signal is computed from the two most recent setpoint and process variable values, with previous value of the error e(t−∆t) and the previous value of the error integral ui(t − ∆t) as controller states. 
+
+2.3. Incremental form 
+
+The incremental form, also called the velocity form (Clarke, 1984), computes the control signal increment since the last iteration, and uses the control signal itself to store the controller state. The control law of the incremental form is 
+
+u(t) = u(t − ∆t) + ∆ u(t), (7) where ∆u(t) represents the increment of the following signal between the indexed time, and an instance ∆t earlier. In general, a signal increment from one time step to the next is denoted with ∆, for example, 
+
+∆u(t) = u(t) − u(t − ∆t). (8) The control signal increment ∆u(t) can be split into the individual terms 
+
+∆u = ∆ up(t) + ∆ ui(t) + ∆ ud(t), (9) which can be obtained from eq. (6) as 
+
+∆up(t) = kp ∆e(t)∆ui(t) = ki ∆t e (t)∆ud(t) = kd 
+
+> (
+
+∆e(t)∆t − ∆e(t − ∆t)∆t
+
+> )
+
+,
+
+(10) where ∆e(t − ∆t) = e(t − ∆t) − e(t − 2∆ t). In each iteration, the term increments are calculated according to eq. (10) from the three most recent error values, with the actual control signal itself, u(t), saved as a controller state between iterations. 52.4. Incremental versus positional form 
+
+The incremental form has two important advantages over the positional form relating to practical implementation: bumpless transfer and clamping antiw-windup strategies can be implemented with ease. Bumpless transfer refers to changing between manual and automatic mode, between tracking and automatic mode, or when changing parameters of the controller, without the controller output u resulting in large jumps. Bumpless transfer is a requirement in most applications. In positional form implementations, this can be achieved by keeping track of when such changes occur, and changing the integrator state to a value that results in bumpless transfer. In the incremental form, the controller output is only changed by increment ∆u and there is therefore no need for such checks and adjustments. The integral part of the PID controller can result in a problem called integral win-dup. Integral windup occurs when the actuator and process cannot achieve the desired setpoint, resulting in a persistent control error. The persistent error may then cause a continued increase of the control signal beyond the physical limitations of the actuat-ors. There are three common ways to avoid integral windup in PID controllers: control signal clamping, back calculation and integrator clamping. In practice, they can both work, but back calculation requires an additional parameter, a tracking-time constant, that has to be tuned. When the incremental form is used, control signal clamping is obtained simply by forcing the control signal to stay inside the control limits. On the other hand, the incremental form requires the use of the integral term, which means that it cannot be used when the controller is a P- or PD-controller. In these cases, the positional form must be implemented. This will be discussed and handled in the implementation presented in section 4. This restriction is a minor drawback, since neither anti-windup nor bumpless transfer are relevant when there is no integral action in the controller. Pseudo-code for the two forms, based on eq. (6) and eq. (10) are presented in listing 1 and listing 2, respectively. In the reference implementation, we drop the index for the current time, replacing u(t) with u, etc. Since some increments manipulate the previous values of variables or signals, we denote these by the prefix x. For example, e(t − ∆t)
+
+is written as xe . In the code, the Greek letter ∆ is denoted by the capital letter D. As a results, ∆e(t) = e(t) − e(t − ∆t) will become De=e-xe . The pseduo-code language is explained in detail in appendix A. Listing 1: Basic positional form.          
+
+> 1function u=control(r,y) % Compute control signal
+> 2e=r-y
+> 3up=kp*e
+> 4ui=xui+ki*Dt*e
+> 5ud=kd*(e-xe)/Dt
+> 6u=u0+up+ui+ud % Update state
+> 7xe=e
+> 8xui=ui
+> 9end
+
+Listing 2: Basic incremental form.             
+
+> 1function u=control(r,y) % Increment control signal
+> 2e=r-y
+> 3De=e-xe
+> 4Dup=kp*De
+> 5Dui=ki*Dt*e
+> 6ud=kd*(e-xe)/Dt
+> 7Dud=ud-xud
+> 8u=xu+Dup+Dui+Dud % Update state
+> 9xe=e
+> 10 xud=ud
+> 11 xu=u
+> 12 end
+
+63. Implementation features 
+
+Implementing the basic form of the PID controller is easy, but practical problems com-plicate the basic code. These problems often only become apparent during development and are usually not taught in a course or included in textbooks. Some but not all problems may occur simultaneously. Conversely, not all adjustments may be necessary. However, there is no major downside in any of the discussed modifications. table 1 gives an overview of the problems that are addressed in the reference implementation presented in section 4 and are discussed in the remainder of this section. 
+
+3.1. Control without integral action 
+
+The PID implementation must be able to handle the situation of a PID control law without integral action, such as pure P- or PD-control. As discussed earlier, the incre-mental form cannot be used for controllers without integral action because the incre-mental form results in a non-changing control signal when the error is constant. To see this phenomenon, observe eqs. (7), (9) and (10) when ki = 0 and the error is constant. Then ∆u(t) is zero, no matter the value of the control signal u(t) and the constant error e(t). We therefore risk to get “stuck” far from e(t) = 0 . Also, consider a parameter update of kp for a P-controller when the error is constant, but non-zero. On incremental form, the control action stays the same after the update, and the stationary error of the P-controller is unaffected, which should not be the case. Therefore, the desired strategy for our PID implementation to handle P- and PD-control is to operate the controller in positional form whenever ki = 0 . This is illustrated in the example given in section 6.2. A bias term u0 must be added to reduce stationary errors, see e.g. (K. Åström & Hägglund, 2006). The bias term is nothing more than a constant control signal, that is normally adjusted to the control signal corresponding to zero error. This is illustrated in fig. 3 for a P-controller, which shows how the value of u0 encodes the offset from u(t) = 0 when the error is zero. The slope in the figure corresponds to the proportional gain kp, and the limits umin and umax represent the actuator limitations. 
+
+Figure 3.: Relationship between control error e(t) and control signal u(t) for a P-controller. 7Table 1.: Overview of practical implementation problems and their solutions addressed in section 3. 
+
+Problem Solution Section 
+
+If the controller has no integral action, ki =0, then the stationary control error is zero only when control signal u = 0 .Add a control signal bias term u0 when ki = 0 .3.1 
+
+Setpoint changes lead to large proportional and derivative control signal terms, potentially damaging the actuator. Setpoint weights 3.2 Adding a feed-forward signal to the control sig-nal of the PID controller results in integral win-dup. Add the feed-forward sig-nal to the control signal before applying the anti-windup strategy. 3.3 Controller signal u may exhibit larger than per-missible jumps from one time step to next. Rate limitation 3.4 
+
+Integral windup : The integral part increases, winding-up the control signal beyond the actu-ator’s saturation limit. Once wound-up, the con-trol signal will take a long time to wind-down again. The control signal will stay saturated dur-ing wind-down. Anti-windup 3.5 Controller in tracking mode , thus control sig-nal is not applied, may lead to integral windup. Controller output track-ing 3.6 Control signal may jump when switching mode or when changing parameter values. Bumpless transfer 3.7 
+
+Execution interval ∆t may vary and the con-trol signal may be computed incorrectly. Jitter compensation 3.8 
+
+High frequency noise of the process variable and in rarer cases the setpoint can lead to un-desired movements of the derivative and propor-tional parts of the control signal. Process variable and set-point filtering 3.9 8Thus, when there is no integral action in the controller, the integral term ui(t) is replaced by u0, such that the control signal in this situation becomes 
+
+u(t) = up(t) + u0 + ud(t). (11) 
+
+3.2. Setpoint handling 
+
+With the position form control laws of eqs. (1) and (4), a step in the setpoint r(t) results in a corresponding step in the control error e(t) = r(t) − y(t) and a therefore a large impulse in the derivative of the control error de (t)/dt = dr (t)/dt − dy (t)/dt . This is illustrated in fig. 4, from which it easily can be seen that we directly after the setpoint change get a large spike in the control signal, sometimes referred to as derivative kick .
+
+Figure 4.: Responses resulting from a step change in the setpoint. This behavior is normally not desired, so to obtain a smoother control signal, it is common to introduce setpoint weights in the proportional and derivative parts, so that the control error in the proportional part is replaced by b r (t) − y(t) and the error in the derivative part by c dr (t)/dt − dy (t)/dt . The setpoint weights b and c are restricted to 0 ≤ b ≤ 1 and 0 ≤ c ≤ 1. With these modifications, eq. (1) becomes 
+
+u(t) = K
+
+> (
+
+b r (t) − y(t) + 1
+
+Ti 
+
+> ∫t
+> 0
+
+e(τ ) dτ + Td
+
+> (
+
+c dr (t)
+
+dt − dy (t)
+
+dt 
+
+> ))
+
+, (12) 9and implementations eq. (6) and eq. (10) are 
+
+up(t) = kp (br (t) − y(t)) ,ui(t) = ui(t − ∆t) + ki ∆t e (t),ud(t) = kd
+
+> (
+
+c ∆r(t)∆t − ∆y(t)∆t
+
+> )
+
+.
+
+(13) for the positional form, and 
+
+∆up(t) = kp (b∆r(t) − ∆y(t)) ,
+
+∆ui(t) = ki ∆t e (t),
+
+∆ud(t) = kd
+
+> (
+
+c ∆r(t) − ∆r(t − ∆t)∆t − ∆y(t) − ∆y(t − ∆t
+
+∆t
+
+> )
+
+.
+
+(14) for the incremental form. Note also that for controllers without integral action there will normally be stationary control errors. To minimise these, the choice b = 1 is recommended to make the P part act on the true control error. When integral action is considered, the parameter b can be used to reduce the impact of sudden changes in the setpoint signal on the control action, mitigating overshoot without compromising the performance of the disturbance rejection. Use of setpoint weighting is illustrated in the example given in section 6.3. For the PID reference implementation proposed in this article, setpoint weights are included, as well as the choice b = 1 when no integral action is present. 
+
+3.3. Feed-forward control 
+
+Feed-forward control is a complementary control strategy to the feedback strategy used in PID-control to compensate measurable load disturbances, as illustrated in fig. 5. For several reasons including anti-windup treatment, the feed-forward control signal should be added to the feedback control signal inside the PID controller, since it should affect anti-windup in the same way as other control signal terms; see (Guzmán & Hägglund, 2024). 
+
+Figure 5.: PID controller with feed-forward from load disturbance v(t).10 The feed-forward input signal can be used for other purposes than load disturb-ance compensation. It can for instance be used for improved setpoint handling and for decoupling in MIMO systems (see Liu et al. (2019)). For a PID implementation on incremental form, the desired behavior is that feed-forward enters with the increments 
+
+∆uf f (t) = uf f (t) − uf f (t − ∆t), (15) such that the total update equation for the control signal becomes 
+
+∆u(t) = ∆ up(t) + ∆ ui(t) + ∆ ud(t) + ∆ uf f (t). (16) In scenarios in which the positional form is used, the feed-forward signal then enters as a direct signal, and not through increments. Feed-forward control is illustrated in the example given in section 6.4. 
+
+3.4. Control signal limitation 
+
+In almost all PID control systems, the controller output is limited due to actuator constraints. In many cases, the lower bound is umin = 0 % , which reflects a motor being turned off or a valve being fully closed, and the upper bound is umax = 100 % , which reflects the motor running at maximum speed or the valve being fully open. The values of these limits depend on the actuator for each particular control problem, and the limitation is expressed as 
+
+umin ≤ u(t) ≤ umax . (17) In some PID control systems, the rate at which the control signal is allowed to change may also be limited due to safety or due to windup, if the actuator is slow. This puts the restriction 
+
+˙umin ≤ ˙u(t) ≤ ˙umax , (18) which is normally referred to as rate limitation. The amplitude and rate constraints can be combined at every sampling instant to form an effective interval for the control signal. The rate limitation implies that the control signal at the current instant must satisfy 
+
+u(t − ∆t) + ∆ t ˙umin ≤ u(t) ≤ u(t − ∆t) + ∆ t ˙umax . (19) This interval is intersected with the actuator saturation limits. The resulting admiss-ible bounds used by the controller are therefore 
+
+us,min = max( umin , u (t − ∆t) + ∆ t ˙umin ) , (20) 
+
+us,max = min( umax , u (t − ∆t) + ∆ t ˙umax ) . (21) 11 The control signal is finally constrained to satisfy 
+
+us(t) = 
+
+> 
+
+us,max if u(t) > u s,max ,us,min if u(t) < u s,min ,u(t) else .
+
+(22) This procedure ensures that the control signal simultaneously respects the actuator saturation limits and the maximum allowed rate of change between consecutive sampling instants. Saturation handling is illustrated in the examples given in section 6.2 and section 6.4. 
+
+3.5. Integrator anti-windup 
+
+Enforcing limits on the control signal means that the saturated control signal us(t)
+
+may differ from the calculated nominal control signal u(t). This gives rise to the well-understood phenomenon of integrator wind-up, as explained in e.g., (K. Åström & Hägglund, 2006). There are several established strategies to address integrator wind-up (Bohn & Atherton, 2002; da Silva, Flesch, & Normey-Rico, 2018; Hoyo, Hägglund, Guzmán, & Moreno, 2023; Visioli, 2003), but since naming of anti-windup strategies is somewhat ambiguous in the literature, we list here the terminology used throughout this article of the most commonly used anti-windup strategies, and what those strategies mean for an incremental form implementation: 
+
+• Control signal clamping : If the calculated control signal falls outside the interval [us,min , us,max ], it is adjusted to the saturated value, i.e., u(t) = us(t).
+
+• Back calculation : The calculated control signal u is dynamically adjusted such that the saturation error u(t) − us(t) decays as a first-order process with a time constant Tt, whenever the control signal is saturated. The time constant Tt is typically set to the integral time Ti.
+
+• Integrator clamping : In its simplest form, integrator clamping entails not updat-ing the integrating part whenever there is saturation. In incremental form, this corresponds to setting ∆ui(t) = 0 whenever the control signal saturates. As stated in section 2.4, control signal clamping results naturally with the incremental form by saturation of the control signal according to eq. (22). However, we propose back calculation for this article due to its flexibility. In this context, flexibility means that with Tt = ∆ t we have control signal clamping, but by adjusting Tt, different anti-windup behaviours can be obtained. As discussed in section 3.4, enforcing the saturation limits achieves both absolute control signal limits and rate limitations. The rate limitations prevent windup inherently. In a large majority of use cases, the suggested anti-windup scheme is an appropriate choice. Nevertheless, an advanced strategy can be implemented to deal with more com-plex cases. This advanced strategy, referred to as combined anti-windup in this work, combines the previously described strategies as follows: 
+
+• Integrate to saturation : Consider the situation where the control signal u(t) is saturated, but not the control signal without ∆ui(t). Then the desired behavior is to integrate to the limit. Thus, ∆ui(t) is reduced. 12 • Allow integration in the right direction : When u(t) > u max then integration further into saturation ( ∆ui(t) > 0) is not allowed, but integration away from saturation (∆ui(t) < 0) is. In this case, ∆ui(t) is not set to zero, but remains as calculated in integration. Of course, the corresponding logic applies to the lower limit umin .
+
+• Back calculation : The saturation error is updated according to the description of 
+
+Back calculation above. Anti-windup is illustrated in the example given in section 6.4. 
+
+3.6. External signal tracking 
+
+There are situations in which the controller output should track an external signal instead of trying to make the process variable follow a setpoint. Examples are override control, where another controller may take over the control, often handled by selectors, and gain scheduling using several controllers. In these instances, the controller, which currently does not affect the process, must enter tracking mode (track) to avoid windup and bumps; see (Hägglund, 2023). A tracking example including a simulation when tracking is desired is provided in section 6.7. In tracking mode, the controller assumes that the control signal currently applied to the actuator was produced by itself, even if it was not. In other words, the controller updates its internal states so that its computed output is consistent with the actual actuator signal. This means that the control signal is calculated by 
+
+u(t) = utrack (t) + ∆ up(t) + ∆ ui(t) + ∆ ud(t) + ∆ uf f (t),
+
+where utrack is the control signal from the controller that was actually in control of the actuator in the last iteration. The reference implementation should inherit this func-tionality. Controller output tracking is illustrated in the examples given in section 6.6 and section 6.7. 
+
+3.7. Bumpless mode and parameter changes 
+
+There are three control modes: automatic or switched on (auto), tracking (track) as described in the previous section, and manual (man), where the control signal is specified by the user. Switching between these modes should not result in a large change or bump 
+
+in the control signal u(t). Bumpless transfer is a fundamental concept in PID control and is therefore a must in a good implementation. Bumpless transfer is desired for all controller mode changes (when possible) and for controller parameter updates. A common implementation of bumpless transfer in positional form is to adjust the integral term to obtain the desired control signal. In incremental form, since the integral state is encoded into the control signal, bumpless transfer results naturally in many situations. However, there are some scenarios where bumpless transfer is not possible without large workarounds. For example, bumpless parameter updates when ki = 0 is usually neither possible nor desired. Table 2 describes when bumpless transfer is desired for the PID reference implementation and when not. Since bumpless transfer from manual mode to auto is desired, the manual control signal uman must enter the controller for this to be implementable; see fig. 6. It is often also desired to have bumpless transfer from automatic mode to manual mode. This can be accomplished outside the controller by setting uman to uauto at these mode transitions. Mode switching between man and auto is illustrated in section 6.1. 13 Table 2.: Bumpless transfer requirements during mode changes and parameter updates for our PID reference implementation. Tracking mode is described in section 3.6. 
+
+Change ki Bumpless 
+
+man → auto ki > 0 Yes auto → man ki > 0 No man ⇄ auto ki = 0 No track ⇄ man — No track → auto ki > 0 Yes auto → track ki = 0 No 
+
+kp or kd update ki > 0 Yes 
+
+kp or kd update ki = 0 No 
+
+ki update to ki > 0 — Yes 
+
+ki update to ki = 0 — No 
+
+3.8. Sampling rate and jitter 
+
+The sampling period ∆t is normally set to a constant value so that periodic sampling is obtained. Jitter is referred to as the deviation from this nominal execution period, whether it was introduced intentionally or accidentally. In most applications, the jitter is small and neglected in the calculations. However, in cases where the jitter is a prob-lem or desired, for instance in event-based control, ∆t can be calculated as the actual time elapsed since the last execution. Therefore, the possibility to run a PID controller with jitter compensation is a required functionality for the reference PID controller im-plementation. Note that a large change in the sampling period ∆t also affects the rate limitations ˙umin and ˙umax .
+
+3.9. Process variable and setpoint filtering 
+
+The process variable y(t) is often corrupted by high-frequency noise or quantisation effects, which may cause undesired variations in the control signal u(t). These variations are to some extent caused by the proportional term, up(t), but more importantly by the derivative term, ud(t). The integral term ui(t) averages the noise across samples, and thus serves as a low-pass filter, blocking noise propagation. Our reference implementation uses the backward difference approximation 
+
+dy dt ≈ y(t) − y(t − ∆t)∆t , (23) with dr/dt approximated in the same way, and used in controllers with setpoint deriv-ative weight c̸ = 0 , as described in section 3.2. 14 Figure 6.: Switching between manual and automatic mode. To illustrate noise amplification of the derivative, let n(t) be the additive noise term in y(t). This means that while we consider y(t) to be the process variable, the true, and unknown, process variable is in fact y(t) − n(t). Letting ∆n = n(t) − v(t − ∆t)
+
+we thus have a noise amplification of ∆n/ ∆t, which is inversely proportional to the sampling period. For this reason, it is often necessary in practice to low-pass filter the noisy process variable y(t) before computing the finite derivative approximation. This becomes increasingly important as the sampling period ∆t decreases. Similarly, while a true step function exhibits an unbounded derivative, a setpoint step of size ∆r results in a spike ∆r/ ∆t in our derivative approximation eq. (23). To limit noise amplification, which may otherwise result in unnecessary actuator wear or excite resonant modes in the dynamics of the process, it is customary to low-pass filter the process variable. In situations where a setpoint weight c > 0 is used in combination with possible abrupt (step) changes in the setpoint r(t), it might also be adequate to low-pass filter r(t).While a first-order low-pass filter is most often used in existing implementations and textbooks alike, a second-order filter is advisable. This is because the latter res-ults in derivative term noise amplification gain asymptotically approaching zero for high frequencies. This desired property is commoly referred to as high-frequency roll-off (K. Åström & Hägglund, 2006). This strongly motivates the use of second-order filters, although they introduce slightly more phase-loss than their first-order counterparts. For our reference implementation, we introduce a simple filter that approximates either of the first-order filter with transfer function 
+
+F1(s) = 1
+
+sT f + 1 , (24) or the second-order filter with transfer function 
+
+F2(s) = 1(sT f + 1) 2 , (25) in discrete time, with a sampling period ∆t. The parameter Tf is the filter time constant, meaning that the magnitude of the filter transfer function breaks down at ωc = T −1 
+
+> f
+
+, and thus effectively attenuates (noise) components in y(t) with angular frequencies larger than ωc.15 We use a discretisation that approximates zero-order-hold (ZOH) well, while being computationally beneficial, and allowing for a filter with bumpless output at changes in either of the filter time constant Tf or the sampling period ∆t. It is based on a cascaded Tustin approximation, further explained in appendix B. The first-order filter eq. (24) then results in an update equation 
+
+yf (t) = yf (t − ∆t) + a(y(t) − yf (t − ∆t)), (26a) with 
+
+a = ∆tTf + ∆ t/ 2 , (26b) where y is the filter input and yf is the filter output. The second-order filter eq. (25) is approximated by cascading two first-order filters, as shown in listing 4. The incremental form of eq. (26a) allows for bumpless changes in Tf and ∆t during operation. Note that there is no formal requirement that the filter run with the same sampling period as the controller. Noise filtering is illustrated in the example given in section 6.5. 
+
+4. The combined form PID controller 
+
+In this section, we propose our reference implementation that implements all function-alities and features described in section 3, comprising of the combined form controller of listing 3, and associated signal filter of listing 4. The code is both generic and general. For example, if a PID controller will never be used in tracking mode, all tracking-specific code can be removed. Similarly, the code can be simplified if, for example, no derivative action or in other words a PI controller, is required. The term ‘combined’ comes from the controller making use of both the positional and incremental forms, described previously in sections 2.2 to 2.4. The essential idea is to use the incremental form whenever the controller has integral action. This ensures bumpless behavior at parameter and mode changes, and facilitates tracking of an exo-genous control signal. However, for controllers without integral action, the positional form is needed to ensure the desired response in the control signal. In the following sub-sections, we cover features of the proposed implementation to deal with the practical problems described in section 3. The pseudo-code language we use is meant to be generic and focus on algorithmic aspects. For an in-depth explanation of it we refer to appendix A. In the following, we go through our proposed implementation of the combined form PID controller (listing 3), and the signal filter (listing 4) that was proposed in section 3.9. We also propose an implementation of the alternative anti-windup strategy that was introduced in section 3.5 (listing 5). With the exception of the filter and alternative anti-windup strategy, we will use the schematic drawing of fig. 7 as a basis for introducing the code. The numbered blocks indicate the order in which the corresponding functionality appears in the implement-ation. Each block is described in a subsection (4. x) correspondingly numbered with x
+
+referring to the block number in the fig. 7(a). The core part of the implementation, including PID with the integral term and anti-windup techniques, is summarized in section 4.7 and depicted in fig. 7(b). In listing 3, the control function itself is invoked on line 1, and takes as its arguments: 16 • setpoint r,
+
+• process variable y,
+
+• feed forward control signal uff ,
+
+• manual control signal uman ,
+
+• tracking control signal utrack ,
+
+• operating mode mode .The process variable y and setpoint r are assumed to be adequately filtered, as dis-cussed in section 3.9, using for example our proposed filter implementation of sec-tion 4.10. The mode variable mode has two defined modes: manual mode "MAN" and external signal tracking mode "TRACK" . It is assumed that the controller is in automatic mode whenever it is not in manual or tracking mode. Encoding of the mode is further discussed in section 5.1.3. If no feed-forward action is desired, uff is simply set to zero. On a similar note, the values of uman and utrack are relevant when the controller is in manual and tracking mode, respectively. The implementation also consists of both states and parameters. The parameters, e.g. controller gains and limits, are set externally by some language-dependent unspecified mechanism, further discussed in section 5. States are used to store controller values between executions. Complete lists of all arguments, parameters, and states are found in appendix C. 17 (a) Schematic representation of listing 3. 
+
+> (b) Schematic representation of the “PID with I” block in fig. 7a.
+
+Figure 7.: Schematic overview of the combined-form PID controller. Block numbers reflect the order of appearance in our implementation and correspond to the numbered subsections referencing the relevant code lines in listing 3. 18 Listing 3: Combined form PID controller.  
+
+> 1
+
+function u=control(r,y,uff,uman,utrack,mode) % 1 Rate limits  
+
+> 2
+
+usmin=max(umin,xus+Dt*dumin)  
+
+> 3
+
+usmax=min(umax,xus+Dt*dumax) % 2 Derivate approximation  
+
+> 4
+
+dr=(r-xr)/Dt  
+
+> 5
+
+dy=(y-xy)/Dt % 3 Tracking mode  
+
+> 7
+
+if mode=="TRACK"  
+
+> 8
+
+xu=utrack  
+
+> 9
+
+end % 4 Manual mode  
+
+> 10
+
+if mode=="MAN"  
+
+> 11
+
+u=uman % 5 Integral switch  
+
+> 12
+
+elseif ki==0 % 6 PID without I  
+
+> 13
+
+u=u0+kp*(r-y)+kd*(c*dr-dy)+uff  
+
+> 14
+
+else % 7 PID with I % Signal increment  
+
+> 15
+
+Dr=r-xr  
+
+> 16
+
+Dy=y-xy  
+
+> 17
+
+Ddr=dr-xdr  
+
+> 18
+
+Ddy=dy-xdy % Control increment  
+
+> 19
+
+Dup=kp*(b*Dr-Dy)  
+
+> 20
+
+Dui=ki*Dt*(r-y)  
+
+> 21
+
+Dud=kd*(c*Ddr-Ddy)  
+
+> 22
+
+Duff=uff-xuff % Nominal control signal  
+
+> 23
+
+u=xu+Dup+Dui+Dud+Duff % Integrator anti-windup  
+
+> 24
+
+us=min(u,usmax)  
+
+> 25
+
+us=max(u,usmin)  
+
+> 26
+
+u=u-Dt/Tt*(u-us)  
+
+> 27
+
+end % 8 Saturate  
+
+> 28
+
+xu=u  
+
+> 29
+
+u=min(u,usmax)  
+
+> 30
+
+u=max(u,usmin) % 9 State update  
+
+> 31
+
+xus=u  
+
+> 32
+
+xr=r  
+
+> 33
+
+xdr=dr  
+
+> 34
+
+xy=y  
+
+> 35
+
+xdy=dy  
+
+> 36
+
+xuff=uff  
+
+> 37
+
+end 
+
+Listing 4: Second-order signal filter.  
+
+> 1
+
+function xf2=filter(y) % Filter parameter  
+
+> 2
+
+a=Dt/(Tf+0.5*Dt) % State update  
+
+> 3
+
+xf1=xf1+a*(y-xf1)  
+
+> 4
+
+xf2=xf2+a*(xf1-xf2)  
+
+> 5
+
+end 
+
+Listing 5: Conditional integration anti-windup.  
+
+> 1
+
+if Dui*(u-us)>0  
+
+> 2
+
+u=u-sign(u-us)*min(abs(Dui),abs(u-us))  
+
+> 3
+
+end  
+
+> 4
+
+u=u-min(Dt/Tt,1)*(u-us) 
+
+19 4.1. Rate limits 
+
+The parameters umin and umax define the interval into which the control signal is sat-urated, cf. section 4.8. The parameters dumin and dumax define a lower and upper rate limit for the change of the control signal. They are used together with the previous value of the saturated control signal, xus and the past sampling interval Dt to compute corresponding saturation bounds xus+Dt*dumin and xus+Dt*dumax (see section 3.4). Note that it is important that the previous saturated control signal xus , and not the previous nominal control signal xu is used to produce a correct rate limitation. The actual saturation limits usmin and usmax are then chosen (using the min and max 
+
+operations) to be the more conservative of the saturation limits umin and umax , and the ones resulting from the rate limitation, as described above as coded on Lines 2–3. 
+
+4.2. Derivative approximation 
+
+The derivatives used by controllers with derivative action are approximated using finite differences, as explained in section 2.1. The difference between the current and previous process variable value y-xy is divided by the execution interval duration Dt , to produce the finite difference approximation dy on line 5. The setpoint derivative approximation  
+
+> dr
+
+is computed in the same way on line 4. To avoid undesired jumps and noise amplification in the control signal, it is important that the process variable is adequately filtered, as described in section 3.9. In the case of nonzero setpoint weight c, the setpoint must also be adequately filtered. 
+
+4.3. Tracking mode 
+
+Tracking of external signals, as explained in section 3.6 is implemented to overwrite the previous output xu with the signal to be tracked, utrack on line 8. Then the control signal increment is computed as normal, cf. section 4.7. Tracking mode is active when 
+
+> mode=="TRACK"
+
+.Note that tracking is only meaningful when there is integral action. In the case of no integral action, tracking mode and manual mode behave identically. In our implementation feed-forward and integrator anti-windup behave the same way in tracking mode, as in automatic mode. 
+
+4.4. Manual mode 
+
+The controller is in manual mode when mode=="MAN" . In manual mode, the nominal control signal u takes on the externally provided value uman , as expressed on line 11. The manual mode control signal is limited as explained in section 4.1. Feed-forward action is disabled in manual mode. Due to incremental form when we have integral action, the bumpless mode switches required in section 3.7 is automatically obtained. 
+
+4.5. Integral switch 
+
+The combined form switches between positional and incremental form based on whether the controller utilises integral action, as specified in section 3.1. This is achieved by checking for ki==0 on line 12. If the condition is true, position form is employed, as explained in section 4.6. Otherwise, the else block starting on line 14 is executed, implementing incremental form as explained in section 4.7. 20 4.6. PID without integral action 
+
+In the absence of integral action ( ki==0 ), the positional form control signal is computed according to line 13. The constant bias term u0 can be used to zero-offset the control signal to match the stationary operating point of consideration. The setpoint weighing with the weight parameters b and c are used for the proportional and derivative terms, respectively, as explained in section 3.2. Feed-forward is enabled, and the control signal is saturated according to section 4.1, but since there is no integral action, no integrator anti-windup is applied. Parameter and mode changes are not bumpless, as there is no integrator state that can be shifted to compensate for bumps. 
+
+4.7. PID with integral action 
+
+With integral action ( ki not zero), an incremental form PID control law is applied, which is summarised in Figure 7(b) according to the code Lines 15–26. The setpoint and process variable increments Dr and Dy are computed on Lines 15–16, followed by increments of their derivative approximations (see section 4.2) on Lines 17– 18. Taking the process variable as example, the increment is simply computed as the current value y minus the previous value xy stored in the previous execution of the  
+
+> control
+
+function. The computed signal increments are then used to compute increments of the indi-vidual control signal termss on Lines 19–22. Since the derivatives are calculated from the actual time between executions, Dt , and that the integral increment also use Dt ,we compensate for possible jitter according to section 3.8. Weight parameters b and c
+
+are used for the proportional and derivative terms, respectively, to account for setpoint weighing as described in section 3.2. The rectangular integral approximation and finite difference derivative approximation utilised in computing Dui and Dud are described in section 2.1. The nominal (i.e., not yet saturated) control signal u is computed on line 23 by adding the increments from Lines 19–22 to the previous nominal control signal xu . Note that the feed-forward signal must enter the signal increment here, as motivated in section 3.3. Note that it is important that it is the nominal previous control signal xu that is used, and not its saturated counterpart. Otherwise, it is not possible to implement integrator anti-windup strategies other than control signal clamping, as both conditional integration and back calculation rely on the possibility for the control signal to go outside of its unsaturated range. As explained in section 3.5, integrator anti-windup relies on knowing the difference between the nominal control signal u, and its saturated counterpart that we call us . To this end, the saturation limits computed on Lines 2–3, as explained in section 4.1 are applied on Lines 24–25 to obtain us .The reference implementation of listing 3 implements the back calculation anti-windup strategy on line 26 (with control signal clamping as a special case when Tt 
+
+equals Dt ). A more general anti-windup implementation, that can serve as an in-place replace-ment line 26 of listing 3 is provided in listing 5. It fulfills the advanced anti-windup behaviours specified at the end of section 3.5. For integrator clamping, it can be used as provided with Tt set to Inf , effectively translating line 4 into u=u . Alternatively line 4 can be removed entirely when integrator clamping is desired. 21 Lines 1–3 in listing 5 have no purpose in control signal clamping, and if no other anti-windup mode needs to be supported, listing 5 can be replaced in its entirety by 
+
+> u=us
+
+. (An even simpler alternative for this case is to move saving of the control signal state ( xu=u ) on line 28 of listing 3 to after saturating the control signal on Lines 29–30, and removing the entire integrator anti-windup block on Lines 29–26; replacing xus by  
+
+> xu
+
+on Lines 2–3, and removing line 31). 
+
+4.8. Saturate 
+
+Upon saving the nominal, unsaturated, control signal as xu on line 28, the control signal is saturated on Lines 29–30, as described in section 4.1. It is this saturated control signal that is eventually returned by the control function. 
+
+4.9. State update 
+
+As a final stage of the control function, the state variables are updated on Lines 31–36 (in addition to xu that was updated on line 28 before saturating the control signal). 
+
+4.10. Process variable and setpoint filtering 
+
+As discussed in section 3.9, the process variable, and sometimes the setpoint, need to be adequately low-pass filtered before being passed to the PID control algorithm of listing 3. To this end, listing 4 implements the low-pass filter introduced in section 3.9 and further explained in appendix B. Line 2 computes the filter parameter a from the filter time constant parameter Tf 
+
+and execution interval Dt , as explained in appendix B. If the filter runs at a constant sampling interval, there is no need to re-compute a at each invocation of the filter 
+
+function. Instead, a can then be considered a parameter, computed outside the filter 
+
+function and provided in the same fashion as other parameters. The cascaded filter is implemented on Lines 3–4. If a first-order filter is desired, line 4 can be removed, and xf2 changed to xf1 on line 1. Note that the filter function must be instantiated separately for every signal being filtered, since each instance requires its own state variables xf1 and xf2 .
+
+5. Closed loop implementation 
+
+The PID control algorithm may be executed in a real-world, run-time environment or in a simulated environment, but always in closed loop. Both scenarios require more code than the function presented in section 4. This section first provides PID function execution details including initialisation, default parameter and discussions relating to the control mode. It then provides the code necessary for closed loop implementation as will be used in section 6. 
+
+5.1. PID function execution 
+
+The PID function call cannot be stand-alone but is embedded in an environment. The environment can take various forms and is usually application specific, but a number of common questions arise relating to the execution: how are states and signals initialised? 22 How are parameters passed to the function? How do we loop the function call with the update of the signal reading? Answers to these questions are given in these sections. 
+
+5.1.1. Initialisation 
+
+The state variables of the controller, as well as any signal filters, must be initialised to appropriate values before the control or filter functions of listing 3 and listing 4 are invoked for the first time. The controller states are xr , xu , xus , xy , xdy , xdr and xuff .The latest available signal values can be used to initialise the controller states, so that, for example, xr=r , etc. If the controller is started in manual mode, the initialisation of xu has no practical effect. If, instead, the controller is started in automatic or tracking mode, it is reasonable to initialise xu to the value that the actuator can be expected to have at startup. For this reason, setting xu=0 and xus=0 is appropriate in many situations. However, other initialisations may be preferable depending on the application context. As with controller parameter tuning, such choices depend more on the specific use case than on the controller implementation itself, and are therefore not discussed further here. A reasonable initialisation of the low-pass filter is to assign xf1 and xf2 the latest available value of the corresponding unfiltered measurement. To avoid transient effects, it is advisable letting filters converge to their steady-state before placing the corres-ponding controller in automatic or tracking mode. In the closed-loop simulation examples of this paper, the initial variables and sub-sequentially the controller states are are all set to zero by default. 
+
+5.1.2. PID parameters 
+
+The parameters, which are orange in colour in the code, are listed in appendix C. If parameters are passed by reference, it is important to prevent them from changing while critical parts of the functions are executing. For example, switching to a new pair 
+
+> kp
+
+, ki should be done in a way that avoids a single invocation of listing 3 using the old kp value together with the new ki value. This can be avoided in several ways. One approach is to pass all parameters by value as arguments to the function that uses them. Another approach is to call an update function that reads parameters from memory at the beginning of the function. A third option is to use thread-safety mechanisms such as locks or mutexes to prevent parameter updates while critical sections of the function are executing. The reference implementation assumes a runtime capable of performing floating-point arithmetic, either natively through a floating-point unit or via emulation. Established methods exist for porting floating-point implementations to fixed-point architectures. We therefore do not delve further into this topic, but refer the interested reader to the introduction provided in Crisp (1991). One important aspect concerns how signals and parameters are passed to the control-ler, and how the computed control signal is actuated. In our reference implementation, signals are passed as arguments to the control and filter functions (see listing 3 and listing 4), while parameters (orange) and state variables (pink) are assumed to be provided through some unspecified mechanism. It should be noted that the distinction between signals and parameters is not always clear-cut. For example, mode could just as well be regarded as a parameter. We deliber-ately refrain from prescribing how values are passed, since this depends on programming language and runtime environment. 23 In an object-oriented setting, it is natural to define a PID object with control and  
+
+> filter
+
+methods, together with appropriate constructors for initialisation, as the Matlab and Python implemenations provided in our GitHub repository (Sundström et al., 2026). However, the proposed algorithms can equally well be implemented without object-oriented constructs. For this reason, we focus on the algorithmic structure rather than on software architectural details. 
+
+5.1.3. Control mode 
+
+The control mode key function is to allow the PID user or operator to switch the con-troller on or off, which is labeled automatic ( "AUTO" ) and manual ( "MAN" ), respectively. As described in section 3.7, the controller can be in tracking mode when the calculated control signal is not applied but the controller tracks another signal. There is a risk that the controller defaults to automatic mode on line 14 if mode holds a value other than "MAN" or "TRACK" . This risk can be eliminated by introducing the fourth mode ‘Disabled’. The ‘Disabled’ mode means that the control signal u is neither calculated nor applied. While strings are used to encode the modes in listing 3 and in our code at GitHub, it may be preferable to use numeric macros in a real implementation. For example, with a two-digit binary number, the following modes could be defined: 
+
+• 0b00: Disabled, 
+
+• 0b01: Manual (corresponding to "MAN" ), 
+
+• 0b10: Automatic, 
+
+• 0b11: Tracking (corresponding to "TRACK" ). This provides a memory-efficient encoding. 
+
+5.2. Basic closed-loop simulation 
+
+To illustrate how the code can be used for simulation purposes, listing 6 shows the code for a basic control loop. Note that the simulation codes for this as well as the the examples in section 6 are available on GitHub. The PID controller parameters, saturation limits, rate limits, sampling time, and filter time constant are set in lines 1 and 2, and the PID controller is created based on those parameters in code line 3. After that, the initial values for the different signals are given in line 4, also setting the controller mode to "AUTO" . Then, these values are used in code line 5 to initialise the PID controller states by calling the initialization 
+
+function according to the ideas described in section 5.1.1. The control loop for a given simulation time Tsim is defined from code lines 6 to 17. Inside the loop, code line 11 simulates the process dynamics, a set-point change is configured in code lines 7-9, the process output is filtered in code line 12 using the filter 
+
+function, and the controller action is calculated in code line 13 by calling the control 
+
+function. The calculated control signal is sent to the plant in line 15, and loop waits for the next sampling time instant in code line 13. Unless otherwise stated, the initial conditions defined in lines 1-5 of listing 6 are used as default values for all examples presented in the example of section 6, and only the specific modifications are described in the corresponding sections. 24 Listing 6: Basic control loop.  
+
+> 1
+
+kp=1.0 ki=0.5 kd=0.1 b=1 c=0 umin=0 umax=100  
+
+> 2
+
+dumin=-10 dumax=10 u0=0 Tt=0.1 Tf=0.1 Dt=0.1 % Creating PID instance with parameter values  
+
+> 3
+
+pid1=PID(kp,ki,kd,b,c,u0,umin,umax,dumin,dumax,Tt,Tf,Dt) % PID states and signals  
+
+> 4
+
+r=0 y=0 dr=0 dy=0 u=0 uff=0 us=0 uman=0 utrack=0 mode="AUTO" % Initialize PID states  
+
+> 5
+
+pid1.initialization(r,y,dr,dy,uff,u,us) % Execution Loop  
+
+> 6
+
+while t < Tsim % Set-point change  
+
+> 7
+
+if t>=2  
+
+> 8
+
+r=1  
+
+> 9
+
+end % Read from sensor  
+
+> 11
+
+y=read_process_variable() % Filtering process output  
+
+> 12
+
+yf=pid1.filter(y,Tf,Dt) % PID control signal caclulation  
+
+> 13
+
+u=pid1.control(r,yf,uff,uman,utrack,mode) % Set control signal  
+
+> 15
+
+set_control(u) % Wait for next iteration  
+
+> 16
+
+wait(Dt)  
+
+> 17
+
+end 
+
+6. Simulation examples 
+
+This section presents seven simulation examples to show how the proposed code handles the different implementation features discussed in Section 3. The first three examples deal with switching between automatic and manual mode, switching the integral action on and off, and showing the effect of rate limitation, respectively. The fourth example is focused on analyzing the combination of the PID controller with a feed-forward com-pensator and different solutions to treat the control signal saturation problem. The measurement noise filtering capabilities are presented in the fifth example. Finally, the last two examples demonstrate the use of the basic PID functionality for the cases that involve tracking a control signal, in particular gain scheduling and selector/override control. For most of the simulation examples, a first-order plus deadtime process model with transfer function 
+
+P (s) = k
+
+1 + sT e−sL = 11 + s e−0.5s (27) is used and controlled with a PI-controller tuned using the Lambda method with 25 λ = T = 1 , resulting in the controller 
+
+C(s) = K
+
+> (
+
+1 + 1
+
+sT i
+
+> )
+
+= 0 .667 
+
+> (
+
+1 + 1
+
+s
+
+> )
+
+= kp + ki
+
+1
+
+s = 0 .667 + 0 .667 1
+
+s (28) When different process dynamics or controller parameters are required for some par-ticular example, new information will be provided. 
+
+6.1. Example 1: Man/Auto switching 
+
+In the proposed simulation, the system starts in manual mode at the beginning of the simulation and then switches to automatic mode in the middle of the simulation time. Figure 8 shows a simulation for this example in which the system starts in manual mode from t = 0 to t = 10 , with a step control signal change from uman = 0 to 
+
+uman = 1 at t = 1 , and switches from manual to automatic mode at time t = 10 . The set-point is fixed to r = 3 from the beginning of the simulation. As observed, the switch between manual and automatic mode is performed properly, and there is no bump at the switching time. 0 2 4 6 8 10 12 14 16 18 20           
+
+> Time (s)
+> 0123
+> Process output
+> Setpoint
+> y
+> 0246810 12 14 16 18 20
+> Time (s)
+> 0123
+> Controller output
+> u
+
+Figure 8.: Switching from manual to automatic mode in Example 6.1. Listing 7 shows the control loop code for this example. Before simulating the control loop, the following changes must be done in the initialisation section for parameters and states: kp=0.667 , ki=0.667 , and kd=0.0 , mode="MAN" , and r=3 . As observed, the step control signal change for manual mode is done in code lines 3-5 setting uman=1 , while the switch between manual and automatic modes is performed in code lines 6-8 setting 
+
+> mode="AUTO"
+
+.26 Listing 7: Example 1 code.  
+
+> 1
+
+while t < Tsim % Simulation of process dynamics  
+
+> 2
+
+y=process_simulation(u,Dt) % Step change on manual input signal  
+
+> 3
+
+if t>=1  
+
+> 4
+
+uman=1;  
+
+> 5
+
+end % Switch to AUTO  
+
+> 6
+
+if t>=10  
+
+> 7
+
+mode="AUTO"  
+
+> 8
+
+end % PID control signal caclulation  
+
+> 9
+
+u=pid1.control(r,y,uff,uman,utrack,mode); % Simulation time update  
+
+> 10
+
+t=t+Dt  
+
+> 11
+
+end 
+
+6.2. Example 2: P- or PD-control, and rate limitation. 
+
+This example shows how the proposed code can be used to implement P- or PD-controllers, that is, controllers without integral action. The rate limitation function is also illustrated. We use the process and controller given by eq. (27) and eq. (28). For the P-controller the integral gain is set to ki = 0 and the bias term u0 is introduced with u0 = 2 . Figure 9 shows the simulation results for this example. 0 5 10 15 20 25 30       
+
+> Time (s)
+> 11.5 22.5 3
+> Process output  Setpoint
+> Process output
+> 0510 15 20 25 30
+> Time (s)
+> 11.5 22.5 3
+> Controller output  Control signal
+
+Figure 9.: Switching between PI- and P-control in Example 6.2. The simulation starts using the PI-controller for an operating point given by y = 1 
+
+and u = 1 , and with a setpoint change from r = 1 to r = 3 at t = 1 .27 At time t = 10 , the controller is switched to a P-controller by setting ki = 0 . Since the control error is zero at time t = 10 , the control signal will jump down to the bias term u0 = 2 , and stay there until the process delay has elapsed. The P-controller will then control the process variable to a new position, but since there is no integral action there will be a control error. At time t = 15 , another setpoint change is made, from r = 3 to r = 1 . The P-controller behaves as expected, and the two setpoint responses are similar, showing that the transitions from PI to P works well. Finally, at time t = 21 we switch back to a PI-controller and the control error is eliminated, obtaining a bumpless transfer response. For this example, the simulation code is not shown since it is similar to the code used in listing 7. The manual part in listing 7 is removed, the variable ki is set to ki=0 
+
+at time t = 10 to introduce the P-controller, and it is set to ki=0.667 at t = 21 to go back to the PI-controller again. At t = 1 and t = 15 setpoint changes are introduces by setting r=3 and r=1 , respectively, in a similar way as shown in listing 6 in code lines 15-18. Moreover, the following changes are required at the initialisation section: y=1.0 ,
+
+> u=1.0
+
+, u0=2.0 , r=1.0 , and mode="AUTO" .This example is also used to evaluate the rate limitation option. Figure 10 shows the same simulation results presented in fig. 9 but for a rate limit of 0.1, which also corresponds to the sampling time used for this simulation. As observed at time instants 
+
+t = 1 , t = 10 , and t = 15 , the changes of the control signal are now limited and thus a slower response is obtained according to the rate limitation imposed. For this simulation, rate limitation variables must be modified in the code by setting dumin=-0.1 
+
+and dumax=0.1 in the initialisation section. 0 5 10 15 20 25 30       
+
+> Time (s)
+> 11.5 22.5 3
+> Process output  Setpoint
+> Process output
+> 0510 15 20 25 30
+> Time (s)
+> 11.5 22.5 3
+> Controller output  Control signal
+
+Figure 10.: Rate limitation effect in Example 6.2 for dumin=-0.1 and dumax=0.1 .
+
+6.3. Example 3: Setpoint handling 
+
+As discussed in section 3.2, the code proposed in this paper include the capabilities for setpoint handling to obtain a smoother control signal when strong changes of setpoints (like step changes) are required. 28 To show this idea, in this example we use the process and controller given by eq. (27) and eq. (28). As the aim of this example is to show the effect of the b parameter on the responses of the control system, fig. 11 shows the simulation results for the cases with b = 0 ,
+
+b = 0 .5, and b = 1 . As observed, the smother control signal is obtained for the case with b = 0 and the more aggressive control signal for b = 1 . The b factor will of course also influence the process variable response, where the slower and faster responses are obtained for b = 0 and b = 1 , respectively. Figure 11 also shows the effect to the disturbance rejection for a step-like disturbance signal of amplitude 1 entering in the control signal at time t = 10 . As expected, identical responses are obtained for any value of b, as the setpoint handling is decoupled of the disturbance rejection problem. For this example, the simulation code is not shown as it is the same code as used in listing 7 skipping the manual part at the beginning of the simulation and using different values for the b parameter. 0 2 4 6 8 10 12 14 16 18 20           
+
+> Time (s)
+> 0123
+> Process output
+> Setpoint
+> b=1
+> b=0.5
+> b=0
+> 0246810 12 14 16 18 20
+> Time (s)
+> 0123
+> Controller output
+> b=1
+> b=0.5
+> b=0
+
+Figure 11.: Setpoint handling in Example 6.3. 
+
+6.4. Example 4: Feed-forward and saturation 
+
+This example focuses on analyzing the anti-windup solutions discussed in section 3.5 for the control signal saturation problem, and also the combination of the PID controller with a feed-forward compensator to deal with measurable disturbances. The effect of anti-windup clamping and tracking solutions implemented in listing 3 will be analyzed and compared. Moreover, the capability of the new PID code that includes the feed-forward control signal inside the PID controller will also be explored. Notice that in classical implementations, the contribution of the feed-forward compensator is added to the output of the PID controller outside the controller code (Guzmán & Hägglund, 2024), and in the proposed code the feed-forward control signal is considered part of the PID controller (see section 3.3). 29 For this example, the following process models are used: 
+
+Pu(s) = ku
+
+1 + sT u
+
+e−sL u = 11 + 3 s e−0.5s (29) 
+
+Pv(s) = kv
+
+1 + sT v
+
+e−sL v = 21 + s e−0.5s (30) where Pu represents the dynamics that relates the control signal with the process output and Pv represents the dynamics that relates the load disturbance with the process output. In this case, a PID controller was designed using the Pade approximation for the time delay and using the Lambda method with λ = 0 .3, resulting in K = 2 .83 , Ti = 3 .25 and 
+
+Td = 0 .23 . The control signal limits are umin = −3 and umax = 3 , and the feed-forward compensator is designed as in the classical manner by dividing Pv over Pu with reversed sign: 
+
+F F (s) = − Pv
+
+Pu
+
+= − 2(1 + 3 s)1 + s (31) Figure 12 shows the simulation results for this example, where the cases without sat-uration limits ( No saturation ) and with saturation limits but without using anti-windup techniques ( No anti-windup ) are included for a better comparison. The simulation starts with a large set-point change from r = 0 to r = 4 .5 at t = 1 . Then, the set-point value is set again to r = 0 at t = 20 and a step-like change is also included for the load disturbance from v = 0 to v = 1 .5 at t = 45 . Notice that for the no-saturation case, the desired closed-loop response is perfectly achieved for the set-point changes, and the effect of the disturbance is completely removed. When actuator saturation is taken into account, differences among the evaluated strategies become evident. Between t = 1 and 
+
+t = 20 , following the first set-point change, no noticeable differences are observed, since the control signal in all simulated cases exceeds the saturation limit. However, after the second step change at t = 20 , the impact for the no anti-windup case becomes apparent. In this case, the system performance is significantly degraded, as the controller requires a longer time to exit the saturation region and reach the new set-point due to the win-dup effect. The performance is also significantly degraded in the disturbance rejection scenario, where an undesirable overshoot is observed in the response due to the same underlying cause. When clamping and back calculation anti-windup techniques are used, the responses are improved in different manners, as observed in the dashed-line and black solid-line curves for clamping and back calculation cases, respectively. As commented in sec-tion 3.5, the PID code is the same for both techniques only changing the value of Tt,with Tt = ∆ t = 0 .01 for clamping and Tt = Ti = 3 .25 for back calculation in this ex-ample. When clamping is used, the saturation time is dramatically reduced as observed in the control signal plot. It can be seen that the control signal leaves the saturation quickly for both the tracking and disturbance rejection responses. However, this ad-vantage from a saturation point of view results in a slow response at the process output for set-point tracking and disturbance rejection, as observed in the process output plot. On the other hand, when anti-windup back calculation is used, the saturation time is only slightly reduced, but the performance on the process output for set-point tracking 30 0 10 20 30 40 50 60 70        
+
+> Time (s)
+> 012345
+> Process output  Setpoint
+> No saturation
+> No anti-windup
+> Control signal clamping
+> Back calculation
+> 010 20 30 40 50 60 70
+> Time (s)
+> -10 -5 0510 15
+> Control signal
+> No saturation
+> No anti-windup
+> Control signal clamping
+> Back calculation
+
+Figure 12.: Feed-forward plus saturation in Example 6.4. and disturbance rejection cases is much closer to the ideal response without satura-tion limits. As discussed in section 3.5, in this paper a third anti-windup approach is proposed as a combination of clamping and tracking. Figure 13 shows the same pre-vious example, where clamping, back calculation, and the combined solution (named 
+
+Combined solution in the figure) are compared. As observed, an intermediate behavior is obtained in this case, where for set-point tracking the result is similar to the clamping solution, and for the disturbance rejection problem it is closest to the tracking solution. The main advantage of this third solution is that the calculated control signal is dy-namically adjusted so that the saturation error decays exactly as a first-order process with a time constant Tt, whenever the control signal is saturated. Thus, three different anti-windup options are available to deal with the saturation problem, clamping allowing to leave the saturation very fast but slowing down the process output response; back calculation allowing to obtain a trade-off between satur-ation time and process output performance; and the combination of the two approaches providing an intermediate behavior according to the trade-off between saturation time and process output performance. Therefore, the user can choose between these two solutions depending on each control problem. 
+
+6.5. Example 5: Noise filtering 
+
+An interesting feature of the implementation presented in this work is that measurement noise filtering is suggested to be combined with the PID controller, as described in section 3.9. This example shows how the control signal can be properly filtered by tuning the Tf
+
+parameter as input to the filter function. The process transfer function and PI-controller given by eq. (27) and eq. (28), respectively, have been used for this simulation, where a white noise signal was added to the process output. Figure 14 shows the simulation result for three cases: without filter, corresponding to Tf = 0 , and with filter for Tf = 0 .01 Ti and Tf = 0 .1Ti, respectively. 31 0 10 20 30 40 50 60 70 
+
+Time (s) 
+
+01234
+
+> Process output
+
+Setpoint 
+
+Combined solution 
+
+Control signal clamping 
+
+Back calculation 
+
+0 10 20 30 40 50 60 70 
+
+Time (s) 
+
+-4 -2 024
+
+> Control signal
+
+Combined solution 
+
+Control signal clamping 
+
+Back calculation Figure 13.: Feed-forward plus saturation in Example 6.4 comparing anti-windup tech-niques. 0 2 4 6 8 10 12 14 16 18 20 
+
+Time (s)           
+
+> -1 01234
+> Process output
+> Setpoint
+> No filter
+> Filter T f=0.1*T i
+> Filter T f=0.01*T i
+> 0246810 12 14 16 18 20
+
+Time (s) 
+
+> 01234
+> Controller output
+> No filter
+> Filter T f=0.1*T i
+> Filter T f=0.01*T i
+
+Figure 14.: Noise filtering in Example 6.5. 32 Table 3.: Process and controller parameters for the gain scheduling Example 6.6. 
+
+Zone 1 Zone 2 Zone 3 Process model parameters 
+
+k [cm/ (cm 3/s )] 0.0420 0.0727 0.0938 
+
+T [s] 16.36 28.34 36.59 
+
+PI-controller parameters 
+
+K [(cm 3/s )/cm ] 14.39 14.39 14.39 
+
+Ti [s] 16.36 28.34 36.59 The simulation starts with the controller in manual mode with u = 0 . The setpoint is change from r = 0 to r = 3 at t = 1 . At time t = 1 .25 the controller is switched to automatic mode. As observed in the bottom plot, for the case with Tf = 0 .01 Ti, the original control signal is mainly kept and only the very high frequency components of the signal are filtered. For the case with Tf = 0 .1Ti, the original control signal is highly filtered by cutting off high- and low-frequency components. Notice that for all three cases, almost the same process output responses are obtained, which means that the filter is mainly affecting only the control signal. 
+
+6.6. Example 6: Gain scheduling 
+
+This example shows how to use the proposed code for the implementation of gain-scheduling approaches. We consider the classical tank level control problem, which pro-cess dynamics is given by the following differential equation: 
+
+dy (t)
+
+dt = − aA
+
+> √
+
+2gy (t) + u(t)
+
+A
+
+where y is the tank level, u is the inlet flow, g = 983 cm/s 2 is the gravity constant, 
+
+a = 2 .15 cm 3 is the cross section of the outlet hole, and A = 390 cm 2 is the cross section of the tank. Since the process is nonlinear, it is divided into three different operating zones, where a linear model approximation is derived in each zone. The following three operating points are considered for this study: 
+
+Zone 1 for y ∈ [4 , 12) cm 
+
+Zone 2 for y ∈ [12 , 20) cm 
+
+Zone 3 for y ∈ [20 , 25] cm 
+
+In each zone, the process is modeled as 
+
+P (s) = k
+
+1 + sT 
+
+The model parameters are given in table 3. 33 The gain-scheduling control scheme can be implemented in two different ways: by running all the controllers in parallel and switching among them based on the current operating point; or by using a single controller and updating its parameters based on the current operating point. Both solutions have been used in this example, and listing 8 and listing 9 show the corresponding codes for the multiple controllers and single controller case, respectively. Notice that the initialisation of the variables was omitted and only the control loop is presented. In both cases, the set-point is initialised with a value of 
+
+r = 22 cm, and the process is initialised with a value of y = 4 cm and u = 190 .66 
+
+cm 3/s .When using multiple controllers as presented in listing 8, the key point is to correctly manage the mode status of the controllers, as observed from code lines 6-21. Once the corresponding controller is selected to be active ( "mode=AUTO" ), the rest of the controllers must be in tracking mode, and thus the corresponding variables mode must be set to 
+
+"TRACK" . Moreover, the tracking signal for all the controllers must be the actual input to the process in order to ensure bumpless transfer when switching among the controllers (see code line 22). In the case of using a single controller as presented in listing 9, the key point is the adaptation of the controller parameters according to the corresponding operating point observed in code lines 4-16. Notice that in this case, the controller mode is set to "AUTO" since the beginning of the simulation. Both implementations provide identical results. Figure 15 shows the simulation results for both cases where the setpoint was changed along the operating points to force the switching among the different controllers. As observed, the same results are obtained in both implementations and the curves in the two upper plots overlap. It can also be seen how the same closed-loop behavior is obtained despite the changes on the operating range. Moreover, note that no bumps are observed in the control signal at the switching moments. The lower plot shows the number of active controllers, representing the switching state. 0 100 200 300 400 500 600             
+
+> Time (s)
+> 510 15 20
+> Tank level (cm)  Setpoint
+> Multiple controllers
+> Single controller
+> 0100 200 300 400 500 600
+> Time (s)
+> 200 300 400 500
+> Flow rate (cm 3/s)
+> Multiple controllers
+> Single controller
+> 0100 200 300 400 500 600
+> Time (s)
+> 123
+> Nº active controller
+> Controller active
+
+Figure 15.: Gain scheduling control results for the tank level control problem in Example 6.6 for codes listing 8 and listing 9. 34 Listing 8: Parallel controllers in Example 6.6.  
+
+> 1
+
+while t < Tsim % Simulation of process dynamics  
+
+> 2
+
+y=process_simulation(u,Dt) % Controller 1  
+
+> 3
+
+u1=pid1.control(r,y,uff,uman,utrack,mode1) % Controller 2  
+
+> 4
+
+u2=pid2.control(r,y,uff,uman,utrack,mode2) % Controller 3  
+
+> 5
+
+u3=pid3.control(r,y,uff,uman,utrack,mode3) % Zone 1  
+
+> 6
+
+if y < 12  
+
+> 7
+
+mode1="AUTO"  
+
+> 8
+
+mode2="TRACK"  
+
+> 9
+
+mode3="TRACK"  
+
+> 10
+
+u=u1 % Zone 2  
+
+> 11
+
+elseif y >=12 && y < 20  
+
+> 12
+
+mode1="TRACK"  
+
+> 13
+
+mode2="AUTO"  
+
+> 14
+
+mode3="TRACK"  
+
+> 15
+
+u=u2 % Zone 3  
+
+> 16
+
+elseif y >=20  
+
+> 17
+
+mode1="TRACK"  
+
+> 18
+
+mode2="TRACK"  
+
+> 19
+
+mode3="AUTO"  
+
+> 20
+
+u=u3;  
+
+> 21
+
+end % Tracking signal  
+
+> 22
+
+utrack=u; % Set-point change  
+
+> 23
+
+if t>=200 && t<400  
+
+> 24
+
+r=3  
+
+> 25
+
+elseif t>=400 && t<600  
+
+> 26
+
+r=15  
+
+> 27
+
+end  
+
+> 28
+
+t=t+Dt  
+
+> 29
+
+end 
+
+Listing 9: Single controller in Example 6.6.  
+
+> 1
+
+while t < Tsim % Simulation of process dynamics  
+
+> 2
+
+y=process_simulation(u,Dt) % Controller  
+
+> 3
+
+u=pid1.control(r,y,uff,uman,utrack,mode) % Zone 1  
+
+> 4
+
+if y < 12  
+
+> 5
+
+pid1.kp=kp1  
+
+> 6
+
+pid1.ki=ki1  
+
+> 7
+
+pid1.kd=kd1 % Zone 2  
+
+> 8
+
+elseif y >=12 && y < 20  
+
+> 9
+
+pid1.kp=kp2  
+
+> 10
+
+pid1.ki=ki2  
+
+> 11
+
+pid1.kd=kd2 % Zone 3  
+
+> 12
+
+elseif y >=20  
+
+> 13
+
+pid1.kp=kp3  
+
+> 14
+
+pid1.ki=ki3  
+
+> 15
+
+pid1.kd=kd3  
+
+> 16
+
+end % Set-point change  
+
+> 17
+
+if t>=200 && t<400  
+
+> 18
+
+r=3  
+
+> 19
+
+elseif t>=400 && t<600  
+
+> 20
+
+r=15  
+
+> 21
+
+end  
+
+> 22
+
+t=t+Dt  
+
+> 23
+
+end 
+
+6.7. Example 7: Selector or override control 
+
+This is an example that shows how to handle the tracking state when using a selector control approach. The important thing here is to keep the P-part of the controllers as we need their current P-contribution to properly select (for instance, with MIN or MAX selectors) the current control signal. To analyze this case, we use the example proposed in fig. 16. The process has one input signal u and two output variables, y1 and y2. The two output variables are input signals to the two controllers C1 and C2. Only one of the controllers is active at a time, in this case the controller with the smallest control signal. The control signal corresponding to the non-active controller is tracking the active control signal. 35 Figure 16.: Selector control scheme This structure is common for handling security constraints. One of the controllers is working in normal operation, but when a certain process variable becomes too small or too large, the other controller takes over, overrides, to ensure that the constraint is not violated. In this example, P1 = P2 and C1 = C2, where we use the process and controller given by eq. (27) and eq. (28). The setpoint values are r1 = 0 .3 and r2 = 0 .5.Figure 17 shows the simulation results for this example. A disturbance signal v is added to the input of P1 to generate variations in the operating conditions. The graphic at the bottom represents the disturbance signal v. As observed from the third graphic from top (representing u1 − u2), the MIN selector works properly. The active control signal is always the smallest one. Moreover, the controller which is in tracking state calculates the control signal as the current control signal plus its P-part. 
+
+Figure 17.: Simulation results for the selector control scheme in Example 6.7 and for code listing 10. 36 Listing 10 shows the code in which the handling of the tracking mode signals is observed based on the selector choice. As happened for the use of parallel controllers in Example 6.6, the tracking signal for the two controllers must be the actual input to the process to ensure bumpless transfer when switching among the controllers (see code line 15). Listing 10: Simulation code for selector control approach.                  
+
+> 1while t < Tsim % Simulation of process 1 dynamics
+> 2y1=process1_simulation(u-v,Dt) % Simulation of process 2 dynamics
+> 3y2=process2_simulation(u,Dt) % Controller 1
+> 4u1=pid1.control(r1,y1,uff,uman,utrack,mode1) % Controller 2
+> 5u2=pid2.control(r2,y2,uff,uman,utrack,mode2) % Selector
+> 6if u1 < u2
+> 7mode1="AUTO"
+> 8mode2="TRACK"
+> 9u=u1;
+> 10 elseif u2 <= u2
+> 11 mode1="TRACK"
+> 12 mode2="AUTO"
+> 13 u=u2
+> 14 end
+> 15 utrack=u
+> 16 t=t+Dt
+> 17 end
+
+7. Conclusions 
+
+This paper can be used as a practical guide to understand and implement a PID con-troller in a software environment. The proposed reference implementation is intended to be used as a standard for many applications from the process industry to medical, aeronautical and automotive applications. The contribution lies in the consideration of practical problems that will be encountered when dealing with real-world problems, all of which have been carefully considered and addressed. The contribution further lies in the discussion of several simulated examples where the different features are tested in closed loop. While we expect that small adjustments will have to be made for most applications, we believe that this reference implementation closes the book on PID implementation of the basic form and opens the next when comparing advanced control strategies. In particular, feed-forward control as well as strategies requiring tracking such as selectors or override, gain scheduling and cascade control can be studied in different ways. We hope that this implementation will also make the use of advanced strategies more popular as these rely on the correct basic implementation, which is not always given in industrial settings. 37 References 
+
+Åström, K., & Hägglund, T. (2006). Advanced PID control . Research Triangle Park, North Carolina, USA: ISA - The Instrumentation, Systems and Automation Society. Åström, K., & Wittenmark, B. (1997). Computer-controlled systems: Theory and design (3rd ed.). Upper Saddle River, New Jersey, USA: Prentice Hall. Åström, K. J., & Hägglund, T. (2001). The future of PID control. Control engineering practice ,
+
+9 (11), 1163–1175. Bhandari, P., & Csurcsia, P. Z. (2022). Digital implementation of the PID controller. Software Impacts , 13 , 100306. Bohn, C., & Atherton, D. (2002). An analysis package comparing PID anti-windup strategies. 
+
+IEEE Control systems magazine , 15 (2), 34–40. Chen, Y., Petras, I., & Xue, D. (2009). Fractional order control - a tutorial. In 2009 american control conference (p. 1397-1411). Clarke, D. (1984). PID algorithms and their computer implementation. Transactions of the Institute of Measurement and Control , 6 (6), 305–316. Crisp, J. (1991). Fixed-point signal processing . Prentice Hall. da Silva, L., Flesch, R., & Normey-Rico, J. (2018). Analysis of anti-windup techniques in PID control of processes with measurement noise. IFAC-PapersOnLine , 51 (4), 948–953. Guzmán, J. L., & Hägglund, T. (2024). Feedforward control: Analysis, design, tuning rules, and implementation . Germany: De Gruyter. Hägglund, T. (2023). Process control in practice . Germany: De Gruyter. Hägglund, T., & Guzmán, J. L. (2024). Give us PID controllers and we can control the world. 
+
+IFAC-PapersOnLine , 58 (7), 103–108. Hoyo, Á., Hägglund, T., Guzmán, J. L., & Moreno, J. C. (2023). A practical solution to the saturation problem in feedforward control for measurable disturbances. Control engineering practice , 139 , 105636. Huba, M., & Vrančič, D. (2018). Comparing filtered PI, PID and PIDD2 control for the FOTD plants. IFAC-PapersOnLine , 51 (4), 954-959. (3rd IFAC Conference on Advances in Proportional-Integral-Derivative Control PID 2018) IEC. (2010). IEC 60546-1:2010,Controllers with analogue signals for use in industrial-process control systems (Tech. Rep.). Geneva, Switzerland: International Electrotechnical Commis-sion. ISA. (2023). ISA-TR5.9-2023, Proportional-Integral-Derivative (PID) Algorithms and Per-formance (Tech. Rep.). Research Triangle Park, NC, USA: International Society of Auto-mation. Krejcar, O., Spicka, I., & Frischer, R. (2011). Implementation of full-featured PID regulator in microcontrollers. Elektronika ir Elektrotechnika , 113 (7), 77–82. Liu, L., Tian, S., Xue, D., Zhang, T., Chen, Y., & Zhang, S. (2019). A review of industrial MIMO decoupling control. International Journal of Control, Automation and Systems ,
+
+17 (5), 1246–1254. Shinskey, F. (1994). Feedback controllers for the process industries . New York, USA: McGraw-Hill. Shinskey, F. (1996). Process-control systems. Application, Design, and Tuning (Fourth ed.). New York, USA: McGraw-Hill. Sundström, E., Bauer, M., Guzmán, J. L., Hägglund, T., & Soltesz, K. (2026). PID.code: Reference implementation of PID controllers. https://github.com/copybit/PID.code .(GitHub repository, accessed February 27, 2026) Uzunović, T., Zunic, E., Badnjević, A., Mioković, I., & Konjicija, S. (2010). Implementation of digital PID controller. In The 33rd international convention MIPRO (pp. 1357–1361). Visioli, A. (2003). Modified anti-windup scheme for PID controllers. IEE Proceedings–control theory and applications , 150 (1), 49–54. Visioli, A. (2006). Practical PID control . Berlin, Germany: Springer. 
+
+38 Appendix A. Pseudo-code language 
+
+listing 1–listing 5 are written in a pseudo-code language similar to Matlab, a program-ming language that many control engineers are familiar with. Comments are green. Keywords are blue. The keywords are: 
+
+• function to signal that the line contains the signature of a function definition; 
+
+• if , else , elseif , and end used for logical branching. (Should the target language dictate, else and elseif can be replaced by using consecutive if -end clauses.) For clarity, we also use the end keyword to delimit functions. Variables are color coded, with state variables in pink. These are variables that must retain their values between function calls. They are managed outside the function to allow multiple controller or filter instances, and may be stored using object-oriented or other mechanisms (e.g., as in the Matlab and Python implementations in our GitHub repository (Sundström et al., 2026)). Parameters of the control (listing 3) and filter (listing 4) functions are orange. They can be set and updated in various ways, such as being passed as arguments (by value or reference) or retrieved from memory within the function. The specific mechanism is left to the implementer. To facilitate readability, block indentation are used, but not strictly needed to avoid ambiguity. Our pseudo-code assumes availability of the standard binary operators == to check equality and > to check ordering. Furthermore, the language is assumed to be equipped with floating point arithmetic operators +, -, *, /, and the absolute value function abs .To facilitate portability, we have intentionally avoided the use of compound data structures such as matrices or lists. Exceptions to this are lists (or tuples) used for arguments and returns of functions. To define values of the mode variable we have used string variables "MAN" and "TRACK" 
+
+for readability. A safer option for encoding the mode is proposed in section 5.1.3. Were it not for readability, we could have used the more memory-efficient option of integers (e.g., 0 for manual and 1 for tracking mode), possibly defined though macros man and 
+
+> TRACK
+
+, language allowing. We also adhere to a list of semantic rules, to facilitate readability: 
+
+• A leading lowercase d in a variable name, represents a time derivative. For example  
+
+> dy
+
+is the time derivative of the measurement y.
+
+• State variables have variable names with a leading x. This is to avoid ambiguity between for example the control signal u and its previous value, stored in xu .
+
+• A leading uppercase D in a variable name represents a difference with respect to the value the variable held in the previous invocation of the function. For example  
+
+> Dy=y-xy
+
+assigns to Dy the difference between the current measurement y and its previous value xy .
+
+• With the exception of uppercase D (explained above), variable names are all lower-case. Typing is not explicit. But all numeric values are assumed to automatically be casted. For example 0 in ki==0 will be casted into a float 0.0 if ki is of type float. 39 Appendix B. Signal filter properties 
+
+This appendix derives the filter update eq. (26a), and discusses how the time constant Tf
+
+should be interpreted in the contexts of a first-order filter eq. (24), and its second-order counterpart eq. (25). If it is assumed that the filter input y(t) is (held) constant between samples, known as zero-order-hold (ZOH), approximation-free closed-form discretisations of eq. (24) and eq. (25) can be obtained. This is done using ZOH discretisation, described in for example (K. Åström & Wittenmark, 1997). Observing that F2(s) in eq. (25) is the series connections of two filters of the type 
+
+F1(s) in eq. (24), it is sufficient to consider discretisation of F1(s), to then cascade two such discretisations. We can think of discretisation as a means to approximate the derivative operator d/dt 
+
+as a function of the shift operator q, where qx (t) = x(t + ∆ t). A simple example is the backward difference approximation, which replaces ˙x(t) by (x(t) − x(t − ∆t)) /∆t. While computationally attractive, this approximation may introduce poor stability and accur-acy when ∆t is not sufficiently small relative to Tf . Therefore, we instead employ the Tustin (bilinear) approximation, which can be interpreted directly in the time domain as applying the trapezoidal rule to the time derivative. For a signal x(t) sampled with period ∆t, the Tustin approximation ˆ˙x of the derivative ˙x(t) can be defined recursively as 
+
+ˆ˙x(t) ≈ 2 ∆x(t)∆t − ˆ˙x(t − ∆t). (B1) In the transform domain, this corresponds to the bilinear mapping 
+
+s ≈ 2∆tz − 1
+
+z + 1 . (B2) between the continuous-time Laplace transform variable s and the discrete-time trans-form variable z.The continuous-time first-order filter eq. (24) can be equivalently written in the time domain as the differential equation 
+
+Tf ˙yf (t) + yf (t) = y(t), (B3) where y(t) is the measured signal and yf (t) denotes the filtered output. Substituting the Tustin approximation eq. (B1) for ˙yf (t) into the continuous-time filter of eq. (B3), and rearranging terms to isolate yf (t), yields the discrete-time recur-sion eq. (B3), relating the current filtered value to its previous value and the current measurement. While being computationally favorable, and bumpless when implemented on incre-mental form, the cascade of two Tustin-approximated filters eq. (26), will have slightly higher noise-amplification in the derivative term than than the ZOH discretisation of a filtered derivative obtained by applying the time-domain counterpart of s/ (sT f + 1) 2 to 
+
+y(t). However, if n(t) is white noise, the difference is negligible for the practically most relevant regimen of ∆t < 0.1Tf (As Tf decreases to approach ∆t, the ZOH filter it can be shown that the noise amplification, in terms of variance, is at most 50 % better for the ZOH filter). 40 It is also worth noting that while Tf is the time constant, in terms of (1 − exp( −1)) ·
+
+100 % ≈ 63 % rise time, of F1 in eq. (24), the same is not true for the relation between 
+
+Tf and rise time of F2 in eq. (25). If one has tuning a first-order filter eq. (24) to have a (rise) time constant T ′ 
+
+> f
+
+, and want to maintain that property for the second order filter eq. (25), the following substitution should be made: 
+
+Tf ≈ 2T ′ 
+
+> f
+
+, (B4) where the factor of two approximates the solution of 
+
+> (
+
+1 + T ′
+
+> f
+
+Tf
+
+> )
+
+exp 
+
+> (
+
+− T ′
+
+> f
+
+Tf
+
+> )
+
+= exp( −1) . (B5) This is of practical importance if employing a tuning method that assumes a first-order filter, when in fact a second-order filter is used, and vice versa. 41 Appendix C. Nomenclature 
+
+The tables in this appendix summarise the nomenclature used throughout the paper. Tables C1 to C4 list variables from the reference implementation of listings 3 to 5, grouped into parameters, states, function arguments, and internal variables. Table C5 lists the mathematical symbols used in the theoretical development. The “Listing”, “Equation”, and “Section” columns indicate where the variable appears. 
+
+> Table C1.: Parameter variables used in our reference implementation. All parameters are type-set in orange.
+
+Parameter Description Listing Section  
+
+> b
+
+Setpoint weight b for proportional term 3 3.2  
+
+> c
+
+Setpoint weight c for derivative term 3 3.2  
+
+> Dt
+
+Execution interval ∆t 3 3.8  
+
+> dumax
+
+Upper control signal rate limit ˙umax 3 3.4  
+
+> dumin
+
+Lower control signal rate limit ˙umin 3 3.4  
+
+> kd
+
+Derivative gain kd = kp Td 3 2.2  
+
+> ki
+
+Integral gain ki = kp/T i 3 2.2  
+
+> kp
+
+Proportional gain kp = K 3 2.2  
+
+> Tf
+
+Filter time constant 4 3.9  
+
+> Tt
+
+Back calculation anti-windup time con-stant 3 3.5  
+
+> u0
+
+Control signal bias term u0 3 3.1  
+
+> umax
+
+Upper control signal saturation limit umax 3 3.4  
+
+> umin
+
+Lower control signal saturation limit umin 3 3.4 
+
+> Table C2.: State variables used in our reference implementation.
+
+State Description Listing Section  
+
+> xdr
+
+Time derivative of setpoint 3 4.2  
+
+> xdy
+
+Time derivative of process variable 3 4.2  
+
+> xf1
+
+Filter state 1 4 4.10  
+
+> xf2
+
+Filter state 2 4 4.10  
+
+> xr
+
+Setpoint 3 4.9  
+
+> xu
+
+Unsaturated control signal 3 4.7  
+
+> xuff
+
+Feed-forward control signal 3 3.3  
+
+> xus
+
+Saturated control signal 3 4.8  
+
+> xy
+
+Process variable 3 4.9 42 Table C3.: Function argument variables passed to the control function. 
+
+Argument Description Listing Section  
+
+> mode
+
+Controller operating mode 3 5.1.3  
+
+> r
+
+Setpoint 3 4 
+
+> uff
+
+Feed-forward control signal 3 3.3  
+
+> uman
+
+Manual control signal 3 4.4  
+
+> utrack
+
+Tracking control signal 3 3.6  
+
+> y
+
+Process variable 3 4
+
+> Table C4.: Other variables used in listings 3 and 4.
+
+Variable Description Listing Section  
+
+> a
+
+Filter coefficient 4 4.10  
+
+> Ddr
+
+Setpoint derivative increment 3 4.7  
+
+> Ddy
+
+Process variable derivative increment 3 4.7  
+
+> Dr
+
+Setpoint increment 3 4.7  
+
+> Duff
+
+Feed-forward increment 3 4.7  
+
+> Dud
+
+Derivative increment 3 4.7  
+
+> Dui
+
+Integral increment 3 4.7  
+
+> Dup
+
+Proportional increment 3 4.7  
+
+> Dy
+
+Process variable increment 3 4.7  
+
+> dr
+
+Setpoint derivative 3 4.2  
+
+> dy
+
+Process variable derivative 3 4.2  
+
+> u
+
+Control signal 3 4.7  
+
+> us
+
+Saturated control signal 3 4.8  
+
+> usmax
+
+Upper saturation bound 3 4.1  
+
+> usmin
+
+Lower saturation bound 3 4.1 43 Table C5.: Mathematical symbols used throughout the paper. 
+
+Symbol Description Equation Section 
+
+a Filter coefficient in discrete-time low-pass filter 26b 3.9 
+
+b Setpoint weight for proportional action 12 3.2 
+
+c Setpoint weight for derivative action 12 3.2 
+
+C(s) Controller transfer function 28 6
+
+∆e(t) Increment of control error 3 2.1 
+
+∆e(t − ∆t) Previous error increment 10 2.3 
+
+∆n Increment of measurement noise 3.9 3.9 
+
+∆r(t) Increment of setpoint 14 3.2 
+
+∆t Execution interval / sampling period 3 2.1 
+
+∆u(t) Control signal increment 7 2.3 
+
+∆ud(t) Derivative contribution increment 10 2.3 
+
+∆ui(t) Integral contribution increment 10 2.3 
+
+∆up(t) Proportional contribution increment 10 2.3 
+
+∆uf f (t) Feed-forward control increment 3.3 3.3 
+
+∆y(t) Increment of process variable 14 3.2 
+
+˙u(t) Time derivative of control signal 3.4 3.4 
+
+˙umax Upper control signal rate limit 3.4 3.4 
+
+˙umin Lower control signal rate limit 3.4 3.4 
+
+˙x(t) Time derivative of signal x(t) B1 B
+
+˙yf (t) Time derivative of filtered process variable B3 B
+
+e(t) Control error 1 2
+
+F1(s) First-order filter transfer function 24 3.9 
+
+F2(s) Second-order filter transfer function 25 3.9 
+
+F F (s) Feed-forward compensator transfer func-tion 31 6.4 
+
+g Gravitational constant 6.6 6.6 
+
+j Summation index 3 2.1 
+
+k Process gain 27 6
+
+kd Derivative gain 4 2.2 
+
+ki Integral gain 4 2.2 
+
+kp Proportional gain 4 2.2 
+
+ku Gain of process from control signal to out-put 29 6.4 
+
+kv Gain of process from disturbance to output 30 6.4 
+
+K Controller gain 1 2
+
+L Process dead time 27 644 Symbol Description Equation Section 
+
+Lu Dead time of process from control signal to output 29 6.4 
+
+Lv Dead time of process from disturbance to output 30 6.4 
+
+n Discrete-time index 2.1 2.1 
+
+n(t) Measurement noise signal 3.9 3.9 
+
+P (s) Process transfer function 27 6
+
+Pu(s) Process transfer function from control sig-nal to output 29 6.4 
+
+Pv(s) Process transfer function from disturbance to output 30 6.4 
+
+q Shift operator B B
+
+r(t) Setpoint signal 1 2
+
+r1 Setpoint for controller 1 6.7 6.7 
+
+r2 Setpoint for controller 2 6.7 6.7 
+
+s Laplace transform variable 24 3.9 
+
+T Process time constant 27 6
+
+Td Derivative time 1 2
+
+Tf Filter time constant 24 3.9 
+
+T ′ 
+
+> f
+
+Equivalent first-order filter time constant B4 B
+
+Ti Integral time 1 2
+
+Tt Anti-windup tracking time constant 3.5 3.5 
+
+Tu Time constant of process from control sig-nal to output 29 6.4 
+
+Tv Time constant of process from disturbance to output 30 6.4 
+
+t Continuous time 1 2
+
+u(t) Control signal 1 2
+
+ud(t) Derivative control signal term 6 2.2 
+
+ui(t) Integral control signal term 6 2.2 
+
+up(t) Proportional control signal term 6 2.2 
+
+u0 Control signal bias term 3.1 3.1 
+
+uf f (t) Feed-forward control signal 3.3 3.3 
+
+uman (t) Manual control signal 4.4 4.4 
+
+utrack (t) Tracking control signal 3.6 3.6 
+
+umax Upper control signal limit 3.4 3.4 
+
+umin Lower control signal limit 3.4 3.4 
+
+us(t) Saturated control signal 22 3.4 
+
+us, max Effective upper saturation limit 3.4 3.4 45 Symbol Description Equation Section 
+
+us, min Effective lower saturation limit 3.4 3.4 
+
+v(t) Load disturbance 3.3 3.3 
+
+x(t) Generic signal used in filter derivation B1 B
+
+y(t) Process variable (measurement) 1 2
+
+yf (t) Filtered process variable 26a 3.9 
+
+y1 First process output 6.7 6.7 
+
+y2 Second process output 6.7 6.7 
+
+z Discrete-time transform variable B B
+
+ˆ˙x(t) Tustin approximation of ˙x(t) B1 B
+
+λ Lambda tuning parameter 28 6
+
+ωc Filter cutoff frequency 24 3.9 46

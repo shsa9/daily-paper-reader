@@ -1,0 +1,1064 @@
+Title: On the Unification of Optimal Current Reference Theory for Wound Rotor Synchronous Machines
+
+URL Source: https://arxiv.org/pdf/2604.17165v1
+
+Published Time: Tue, 21 Apr 2026 00:59:40 GMT
+
+Number of Pages: 13
+
+Markdown Content:
+# ON THE UNIFICATION OF OPTIMAL CURRENT REFERENCE 
+
+# THEORY FOR WOUND ROTOR SYNCHRONOUS MACHINES 
+
+Maxfield Parson-Scherban 
+
+Department of Electrical Engineering Columbia University New York, NY 10027 
+
+m.parson@columbia.edu 
+
+Kasra Fallah 
+
+Department of Electrical Engineering Columbia University New York, NY 10027 
+
+kasra.fallah@columbia.edu 
+
+Navid Rahbariasr 
+
+Department of Electrical Engineering Columbia University New York, NY 10027 
+
+nr3051@columbia.edu 
+
+Bernard Steyaert 
+
+Department of Electrical Engineering Columbia University New York, NY 10027 
+
+bernard.steyaert@columbia.edu 
+
+James Anderson 
+
+Department of Electrical Engineering Columbia University New York, NY 10027 
+
+james.anderson@columbia.edu 
+
+Matthias Preindl 
+
+Department of Electrical Engineering Columbia University New York, NY 10027 
+
+matthias.preindl@columbia.edu 
+
+April 21, 2026 
+
+## ABSTRACT 
+
+Controllers for motor drives typically require a current reference which will satisfy the requested torque subject to system constraints. This work generalizes existing current reference theory to the case of the Wound Rotor Synchronous Machine (WRSM). By incorporating the additional rotor-current degree-of-freedom, along with magnetic saturation, cross-coupling, and speed-dependent core losses, the problem of finding an optimal current reference is formulated within affine flux regions as a quadratically constrained quadratic program using a piecewise-affine approximation derived from finite-element data. The solution is characterized according to the active constraint regime, yielding closed-form or low-dimensional polynomial solutions in several cases, and a small semidefinite program in the voltage constrained regime. The proposed framework extends unified optimal current reference theory beyond the permanent-magnet setting to three degree-of-freedom WRSMs while remaining computationally tractable. Results on a physical WRSM prototype illus-trate the effectiveness of the approach across the torque-speed operating envelope. 
+
+## 1 INTRODUCTION 
+
+Electric motors account for a substantial share of global electricity consumption [1, 2], making efficiency-oriented motor control an important practical problem. In electric vehicle applications, this problem is particularly challenging because traction motors must operate efficiently over a wide range of torque and speed conditions, rather than near a single nominal operating point. This motivates the study of real-time current control strategies that explicitly account for efficiency and feasibility across the operating envelope. A central component in this setting is the optimal current reference generator: for a given torque request and operating speed, it selects stator and rotor current references that satisfy the requested torque, respect current and voltage limits, and minimize electrical losses. This is inherently a constrained decision problem. For a fixed torque-speed pair, the 
+
+> arXiv:2604.17165v1 [eess.SY] 18 Apr 2026
+
+A PREPRINT - A PRIL 21, 2026 
+
+Figure 1: Example synchronous machine (WRSM) control block diagram and schematic. set of feasible current vectors is generally non-unique and, in general, infinite [3]. As illustrated in Fig. 1, current reference generation therefore acts as an optimization layer within the control loop: the reference generator selects the steady-state target, while the lower-level current controller drives the machine to that operating point. The steady-state efficiency of the closed-loop system consequently depends on the quality of this upstream decision. Optimization-based formulations of motor control problems have received growing attention in both the motor drives and control communities [4–7]. For the Permanent Magnet Synchronous Machine (PMSM), the optimal current reference problem is by now well understood: it admits a Quadratically Constrained Quadratic Programming (QCQP) formulation, and analytical characterizations are available for the relevant operating regimes, including field-weakening [3, 8–10]. The Wound Rotor Synchronous Machine (WRSM) has recently re-emerged as a promising alternative for traction applications [11]. By replacing permanent magnets with an externally excited rotor winding, the WRSM reduces dependence on rare-earth materials, improves safety under certain fault scenarios, and enables active flux control over a broad operating range [12]. This additional flexibility, however, significantly complicates the current reference generation problem. In contrast to the PMSM case, the rotor current introduces a third control degree-of-freedom, which enlarges the feasible set and makes the structure of the optimal solution substantially more involved, especially in the presence of magnetic saturation, cross-saturation, and speed-dependent core losses. Existing approaches to WRSM current reference generation are incomplete in complementary ways. Numerical opti-mization methods can provide high-quality solutions offline [13], but their computational cost and runtime variability can limit direct use in embedded real-time implementations. Learning-based surrogates trained on such solutions can improve runtime performance [14], but they generally do not preserve analytical structure or provide certifiable opti-mality properties, and may require retraining when machine characteristics change. On the analytical side, the WRSM current reference problem has been formulated as a QCQP in [15, 16], and KKT-based analysis of selected operat-ing regimes appear in [17, 18]. However, existing analytical treatments either neglect saturation and cross-saturation, or impose assumptions that exclude practically relevant magnetic coupling effects. To the best of our knowledge, a general analytical treatment of the WRSM reference generation problem that simultaneously accounts for saturation, cross-saturation, and core losses across the relevant operating regimes is not yet available. This paper addresses that gap. Using a Piecewise-Affine (PWA) approximation of the nonlinear flux map obtained from finite-element data, we formulate the WRSM current reference generation problem as a QCQP on each affine region. We then characterize the solution structure according to the binding constraints at optimality. This regime-wise decomposition yields closed-form or low-dimensional polynomial solution procedures in several practically relevant cases, and a small semidefinite programming (SDP) relaxation in the voltage-constrained regime. Across the tested operating envelope, the resulting method matches the solution quality of a state-of-the-art nonlinear solver while achieving substantially lower runtime. A comparison with related work is reported in Table 1. 2A PREPRINT - A PRIL 21, 2026 
+
+Contributions. The main contributions of this work are as follows. 
+
+• WRSM reference-generation formulation. We formulate the optimal current reference generation problem for the WRSM as a QCQP on each region of a PWA magnetic model, incorporating saturation, cross-saturation, and a quadratic core-loss model with speed-dependent iron losses. 
+
+• Regime-wise analytical solution structure. We characterize the active-constraint regimes of the problem and derive closed-form or low-dimensional polynomial solution procedures for four of the resulting cases not handled in [9]. The remaining voltage-constrained case is handled through a small SDP relaxation, which is observed to be exact throughout the tested operating envelope. 
+
+• Computationally efficient online reference generation. The proposed regime-aware solution strategy exploits problem structure to avoid relying exclusively on generic nonlinear optimization at runtime, making it well suited for real-time reference generation. 
+
+• Validation on a prototype WRSM. Using finite-element data from a prototype WRSM, we show that the proposed framework reproduces the optimal reference solutions obtained by a state-of-the-art nonlinear solver while reducing median solve time by approximately 95%, with median runtime below 1 ms. Table 1: Comparison of Related Work 
+
+Work Machine Closed form Flux offset Cross-coupling Core loss SDP †
+
+[8] PMSM ✓ ✓ × × —[9] + [19] PMSM ✓ ✓ ✓ ✓ —[18] WRSM ✓ × × × ×
+
+[15] WRSM × ✓ ✓ ✓ ✓
+
+Proposed WRSM ✓ ✓ ✓ ✓ ✓
+
+> †SDP only applicable to WRSM (3-DOF) voltage-constrained regime.
+
+## 2 Problem Formulation 
+
+The WRSM can be thought of as a dynamic system which takes a current vector i = [ ir , i d, i q ]⊤ as an input and produces some torque Tp at a certain electrical speed ωe as an output. The id and iq elements of the current vector represent the direct-axis and quadrature-axis currents respectively and importantly fully represent the balanced 3-phase AC waveform fed to the motor via the Park-Clarke transform. The WRSM, unlike the PMSM, has one additional current input to control the flux induced by the rotor: ir . The constraints on i are a result of the limitations of the coils through which that current flows. There is also a constraint on the voltage induced in those coils by the spinning magnetic field due to the finite voltage supplying those coils. The strength of the magnetic field λ = [ λr , λ d, λ q ]
+
+induced by the current i is unique for each motor and is represented by an inductance model. 
+
+2.1 Local Inductance Model 
+
+For the WRSM, flux linkage and currents are related by the nonlinear map λ = ϕ(i), ϕ : R3 → R3. Let {(ij , λ j )}Nj=1 
+
+denote samples of ϕ. In the neighborhood of the jth current point ij , the nonlinear flux map ϕ(i) is approximated by the affine map 
+
+ϕ(i) ≈ Lj i + ψj , (1) where Lj = ∇ϕ(i) ∈ R3×3 is the local inductance matrix and ψj = ϕ(ij ) − ∇ ϕ(i) i=ij
+
+ij is the flux offset. 1 Lr , Ld
+
+and Lq are the rotor, d-axis and q-axis stator self-inductances respectively, Lrd is the inductance coupling the rotor to the d-axis, Ldq is the cross-coupling inductance and Lδ := Ld − Lq . L is assumed to be symmetric with Lrq = 0 ,giving   
+
+> 1In order to simplify the notation we use ∇to represent the Jacobian operator.
+
+3A PREPRINT - A PRIL 21, 2026 
+
+L =
+
+" Lr Lrd 0
+
+Lrd Ld Ldq 
+
+0 Ldq Lq
+
+#
+
+, ψ =
+
+" ψr
+
+ψd
+
+ψq
+
+#
+
+.
+
+The symmetry of L is guaranteed by the physics governing the motor. Cross-saturation, captured by Ldq , is charac-terized in [20]. The assumption that the coupling between the rotor and the q-axis is zero is justified by the ordering 
+
+Lrq < L dq ≪ Ld, L q , which is typical for WRSMs [9, 20]. 
+
+2.2 Optimal Efficiency Reference Generation Problem 
+
+We consider the following QCQP whose solution provides the optimal reference current: 
+
+(P) [i⋆, λ ⋆] = arg min 
+
+> i, λ ∈R3
+
+i⊤Ri + ω2λ⊤Gλ (O1) s.t. 0 ≤ ir , (C1) 
+
+|ir | ≤ ir, r, (C2) 
+
+∥idq ∥ ≤ is, r, (C3) 
+
+|ωe|∥ λdq ∥ ≤ vmax , (C4) 
+
+τp(i, λ ) = Tp, (C5) 
+
+λ = Li + ψ. (C6) The bounds ir, r, is, r, and vmax denote the rated rotor current, rated stator current magnitude, and maximum phase voltage respectively, and are determined from machine specifications found in Table 2. The torque equation τp(i, λ ) is a nonconvex quadratic as discussed in Section 2.6. The analysis is presented for Tp ≥ 0; the case Tp < 0 is analogous. 
+
+2.3 Saturation Modeling with PWA Flux Maps 
+
+Magnetic saturation and cross-saturation are caused by the nonlinear reluctance of iron in the motor [21]. This means the high currents required for high torque and high-speed operation will drive the iron into a region where a local linearization (1) of the flux map made at i = 0 will result in a large error in the estimate of λ [16]. A high torque high current operating point would have smaller inductances L than a local linearization made at i = 0 . This error in the estimate of λ is a weakness of the single-point Taylor approximation inductance map, which is the solution employed in [8, 9, 22]. This work aims to incorporate magnetic saturation into the motor model by using some other interpolant of ϕ. Of course, ϕ(i) could be interpolated in any number of ways and [20] discusses many standard methods and concludes that PWA provides the most advantages. Most importantly for this work, the PWA map is a continuous interpolant which preserves the quadratic structure of the cost and constraint functions governed by motor physics, and allows the current reference generation problem to be a QCQP within each PWA region. This preservation of the structure allows for the theory of QCQPs in [23, 24] and their SDP relaxations in [25] to be applied. The magnetic saturation of the flux map ϕ(i) is approximated globally by a PWA function by first partitioning the current space I ⊂ R3 into N simplices via Delaunay triangulation of the Finite Element Analysis (FEA) sample points. Each simplex Ij is associated with a halfspace representation Ij = {i : Aj i ≤ bj } and an affine flux map 
+
+λ = Lj i + ψj , where Lj and ψj are obtained by least-squares fit to the FEA data within Ij . The result is a continuous PWA approximation of ϕ(i) that captures saturation and cross-saturation across the full operating envelope. 
+
+2.4 Loss Model 
+
+Total electrical loss (O1) is the sum of copper loss and core loss, each a quadratic form. Matrices R (Ω) and G (1/Ω)are fit to FEA data via least squares [26]. Substituting the local flux map λ = Li + ψ, the total loss is quadratic in i:
+
+π(i) = i⊤Reff i + r⊤ 
+
+> eff
+
+i + c
+
+where Reff = R + ω2L⊤GL ⪰ 0, reff = 2 ω2L⊤Gψ , c = ω2ψ⊤Gψ . The constant c does not affect the minimizer and is neglected. 
+
+2.5 Field Weakening Model 
+
+Substituting (C6) into (C4) yields the quadratic voltage constraint 
+
+i⊤Qv i + q⊤ 
+
+> v
+
+i + cv ≤ 0,
+
+4A PREPRINT - A PRIL 21, 2026 where 
+
+Qv =
+
+
+
+L2 
+
+> rd
+
+Lrd Ld Lrd Ldq 
+
+Lrd Ld L2 
+
+> d
+
++ L2 
+
+> dq
+
+LdLdq + Ldq Lq
+
+Lrd Ldq LdLdq + Ldq Lq L2 
+
+> dq
+
++ L2
+
+> q
+
+ ,qv = 2 
+
+"Lrd 0
+
+Ld Ldq 
+
+Ldq Lq
+
+# ψd
+
+ψq
+
+
+
+, cv =
+
+ψd
+
+ψq
+
+ 2
+
+− ¯v2,
+
+and ¯v = vmax /|ωe|. As Qv ⪰ 0, so the constraint is convex. 
+
+2.6 Torque Model 
+
+The torque per pole pair (C5) is τp(i, λ ) = i⊤Jλ where 
+
+J =
+
+"0 0 00 0 −10 1 0
+
+#
+
+.
+
+Substituting (C6) into (C5) yields the quadratic torque constraint 
+
+i⊤Qτ i + q⊤ 
+
+> τ
+
+i = Tp,
+
+where Qτ = 12 (JL + L⊤J⊤) and qτ = Jψ :
+
+Qτ =
+
+
+
+0 0 Lrd 
+
+> 2
+
+0 −Ldq Lδ 
+
+> 2
+> Lrd
+> 2
+> Lδ
+> 2
+
+Ldq 
+
+ , qτ =
+
+" 0
+
+−ψq
+
+ψd
+
+#
+
+.
+
+The torque equality constraint is a quadratic equality and is therefore nonconvex. Since tr( Qτ ) = 0 and Qτ̸ = 0 , its eigenvalues sum to zero and are not all zero, so Qτ is indefinite. 
+
+## 3 Constraint Activation Regimes and Closed Form Solutions 
+
+The optimal current solution i⋆ from ( P) depends entirely on which constraints bind at a given operating point. Each regime corresponds to a characteristic driving behavior: low-demand steady operation (cruise), high-torque launch from rest (launch control), high-speed operation within the voltage limit (fast driving), and simultaneous current and voltage saturation under aggressive high-speed operation (forceful fast driving). The rotor current-constrained regime, when either (C1) or (C2) is binding, recovers the two degree-of-freedom case of [9] as a special case. The active constraint structure thus admits direct interpretation as driving behavior, connecting the mathematical regime classification to physically meaningful operating conditions encountered in a representative drive cycle. 
+
+3.1 Torque-Only Regime: Cruise 
+
+When all of the inequality constraints are slack, ( P) reduces to: 
+
+min  
+
+> i∈R3
+
+i⊤Reff i + r⊤ 
+
+> eff
+
+i s.t. i⊤Qτ i + q⊤ 
+
+> τ
+
+i = Tp. (2) The KKT stationarity condition [24] yields the 3 × 3 linear system 
+
+A(μ) i = −b(μ), b(μ) := reff + μq τ ,
+
+where μ is the Lagrange multiplier, A(μ) := 2( Reff + μQ τ ) is affine in μ with entries determined by the machine resistance, inductance, and core-loss parameters, and b(μ) is affine in μ with entries determined by the core-loss parameters and flux offset ψ. The optimal current is 
+
+i⋆ = i(μ⋆), i(μ) = −A(μ)−1b(μ),
+
+where μ⋆ is the real root of P6 
+
+> k=0
+
+akμk = 0 (see Appendix A) minimizing i(μ)⊤Reff i(μ) + r⊤ 
+
+> eff
+
+i(μ).5A PREPRINT - A PRIL 21, 2026 
+
+3.2 Stator Current Constrained Regime: Launch Control 
+
+When (C3) is binding and (C1), (C2), (C4), are slack, (P) reduces to: 
+
+min  
+
+> i∈R3
+
+i⊤Reff i + r⊤ 
+
+> eff
+
+i
+
+s.t. i⊤Qτ i + q⊤ 
+
+> τ
+
+i = Tp,i2 
+
+> d
+
++ i2 
+
+> q
+
+= i2
+
+> s, r
+
+.
+
+(3) Parametrizing the stator circle as id = is, r cos θ, iq = is, r sin θ and noting that the (1 , 1) entry of Qτ is zero, substitut-ing into the torque constraint uniquely determines 
+
+ir (θ) = Tp − γ(θ)
+
+Lrd is, r sin θ ,γ(θ) = i2
+
+> s, r
+
+ Ldq (sin 2 θ − cos 2 θ) + Lδ cos θ sin θ
+
++ is, r(ψd sin θ − ψq cos θ),
+
+reducing (3) to univariate optimization in θ. Note that sin θ → 0 implies ir → ∞ , violating the rotor current limit; such θ would be handled by the PMSM case in Section 3.5. The stationarity condition, after clearing denominators, yields a trigonometric polynomial of degree at most 5 in (cos θ, sin θ). The Weierstrass substitution t = tan( θ/ 2) ,with cos θ = (1 − t2)/(1 + t2) and sin θ = 2 t/ (1 + t2), converts this to P10  
+
+> k=0
+
+aktk = 0 (coefficients omitted for brevity). The optimal current is 
+
+i⋆ = i(t⋆), i(t) = ir (θ(t)) , i s, r cos θ(t), i s, r sin θ(t)⊤,
+
+where θ(t) = 2 arctan( t), and t⋆ is the real root minimizing i(t)⊤Reff i(t) + r⊤ 
+
+> eff
+
+i(t), found via companion matrix eigendecomposition. 
+
+3.3 Voltage-Constrained Regime: Fast Driving 
+
+When (C4) is binding and (C1), (C2), (C3), are slack, (P) reduces to: 
+
+min  
+
+> i∈R3
+
+i⊤Reff i + r⊤ 
+
+> eff
+
+i
+
+s.t. i⊤Qτ i + q⊤ 
+
+> τ
+
+i = Tp,i⊤Qv i + q⊤ 
+
+> v
+
+i = ¯ v2.
+
+(4) This is an inhomogeneous QCQP with two quadratic equality constraints in R3. Homogenizing via ˜i = [ i⊤, 1] ⊤ and lifting X = ˜ i˜i⊤ yields the SDP relaxation 
+
+min  
+
+> X⪰0
+
+tr( ˜Reff X)
+
+s.t. tr( ˜Qτ X) = Tp,
+
+tr( ˜Qv X) = ¯ v2,X4,4 = 1 ,
+
+(5) where ˜Reff , ˜Qτ , ˜Qv ∈ S4 are the homogenized forms of the objective, torque, and voltage matrices, respectively. Since 
+
+Reff ≻ 0, the dual is strictly feasible [23]. Rank-1 optimality of the SDP solution, which certifies that the relaxation is exact and recovers a global minimizer of (4), is verified computationally across the operating envelope. This approach was applied to a similar problem in [15] with optimality guarantees coming from [25]. 
+
+3.4 Fully Constrained Regime: Forceful Fast Driving 
+
+When (C3), (C4), are binding and (C1), (C2) are slack, (P) reduces to: 
+
+min  
+
+> i∈R3
+
+i⊤Reff i + r⊤ 
+
+> eff
+
+i
+
+s.t. i⊤Qτ i + q⊤ 
+
+> τ
+
+i = Tp,i⊤Qv i + q⊤ 
+
+> v
+
+i = ¯ v2,i2 
+
+> d
+
++ i2 
+
+> q
+
+= i2
+
+> s, r
+
+.
+
+(6) 6A PREPRINT - A PRIL 21, 2026 
+
+Figure 2: Prototype WRSM. The feasible set is the intersection of three quadric surfaces in R3 — generically a finite set of points — so the problem reduces from constrained optimization to algebraic root-finding. Parametrizing the stator circle as id = is, r cos θ,
+
+iq = is, r sin θ, for fixed θ both constraints are quadratic in ir :
+
+a1(θ) i2 
+
+> r
+
++ b1(θ) ir + c1(θ) = 0 , (torque) 
+
+a2(θ) i2 
+
+> r
+
++ b2(θ) ir + c2(θ) = 0 , (voltage) where aj , b j , c j are trigonometric polynomials in θ. Eliminating ir via the resultant of the two quadratics yields a single trigonometric equation in θ alone. The Weierstrass substitution t = tan( θ/ 2) converts this to a univariate polynomial in t of degree at most 4, whose roots are found via companion matrix eigendecomposition. Coefficients of that polynomial are provided in Appendix B. For each real root tk, the corresponding (id, i q ) are recovered and ir is obtained. The candidate with minimum loss is the solution for this regime, as the procedure exhaustively enumerates all constraint-satisfying points. 
+
+3.5 Rotor Current Constrained Regime: PMSM Case 
+
+When (C1) or (C2) are binding, ir is fixed at its bound. Defining ψeff  
+
+> d
+
+:= Lrd ir +ψd, ( P) reduces to a two-dimensional QCQP in (id, i q ) structurally identical to the PMSM optimal reference generation problem solved in [8] for the case without cross-saturation ie Ldq = 0 . Closed-form solutions with nonzero Ldq for all sub-cases: only (C3) binding, only (C4) binding, and both binding follow directly from [9] with ψeff  
+
+> d
+
+replacing ψpm .
+
+## 4 Results 
+
+4.1 Experimental Setup 
+
+The proposed framework is evaluated on a prototype WRSM whose nameplate parameters are listed in Table 2. The nonlinear flux map ϕ(i) was obtained via FEA of the machine geometry and materials. The current space 
+
+I ⊂ R3 was sampled at a uniform grid of FEA operating points and partitioned into simplices via Delaunay tri-angulation, yielding a continuous PWA approximation of ϕ(i) as described in Section 2.3. The loss matrices are 
+
+R = diag(0 .004 , 0.045 , 0.045) in ( Ω) and G = diag(0 , 0.0033 , 0.0092) in ( 1/Ω), fit to FEA data as in [26]. Rep-resentative inductance values and flux offsets at nameplate and high-torque operating points are reported in Table 3, 7A PREPRINT - A PRIL 21, 2026 Table 2: Prototype WRSM Parameters                        
+
+> Parameter Value Parameter Value
+> Turns ratio Nf/N s39 Pole pairs p2Stator resistance Rs[m Ω]45 Rotor resistance Rr[m Ω]4Max torque [Nm] 130 Base speed [rpm] 3000 Max speed [rpm] 12000 DC-link voltage [V] 325 Max power [kW] 65
+
+Table 3: Flux approximations at nameplate and peak operating points.                                            
+
+> Param. 0 Nm 80 Nm Param. 0 Nm 80 Nm
+> ir[A] 066.9 Lr[mH] 2.1 0.033
+> id[A] 0−39.1 Ld[mH] 2.4 0.331
+> iq[A] 0173.5 Lq[mH] 0.8 0.257
+> ψr[Wb] 00.249 Lrd [mH] 2.1 0.053
+> ψd[Wb] 00.229 Ldq [mH] 0−0.067
+> ψq[Wb] 00.058
+
+illustrating the degree of saturation present at high current: the d-axis inductance Ld drops by an factor of seven be-tween no-load and high torque, confirming that a single-point linearization would introduce substantial error across the operating envelope. All timing experiments were conducted on a 12th Generation Intel Core i7-1255U. The prototype machine is shown in Fig. 2. 
+
+4.2 Constraint Regime Classification 
+
+The five constraint regimes identified in Section 3 partition the torque-speed operating envelope in a physically inter-pretable way, as shown in Fig. 3. At low speed and moderate torque the unconstrained cruise regime dominates, where the optimal solution is determined solely by the torque equality and the loss objective. As torque increases the stator current limit activates, yielding the launch-control regime. Above the base speed of 3000 rpm the voltage constraint engages, transitioning operation into the fast-driving and, at high torque and speed, the forceful-fast-driving regime. At high speeds and low torque the rotor current saturates, recovering the two-degree-of-freedom PMSM subproblem. A feature distinctive to the WRSM is visible near 5000 rpm: the boundary between the cruise and voltage-constrained regimes is not a fixed speed threshold but varies with the requested torque. This torque-dependence arises because the rotor current degree of freedom allows the machine to modulate its air-gap flux, shifting the speed at which the voltage constraint first binds. No analogous behavior exists in the PMSM, where the flux is fixed by the permanent magnet. This confirms that the three degree-of-freedom formulation captures operating characteristics that a two degree-of-freedom model cannot represent. 
+
+4.3 Optimality Validation 
+
+The proposed framework is validated by comparing its solutions to those returned by the state-of-the-art nonlinear QCQP solver Gurobi [27] across n = 101 operating points in a candidate PWA region. Fig. 4a shows the pointwise difference in optimal cost: the proposed method improves upon Gurobi up to 1 W across the entire tested envelope, which is an improvement upon the conventional methods. The regime classification for the same candidate region is shown in Fig. 4b, confirming that the closed-form cruise solution and the SDP-based fast-driving solution are each applied in the correct portion of the operating space. Optimality guarantees differ by regime. In the cruise, launch-control, forceful-fast-driving, and rotor-constrained regimes, global optimality follows from the KKT conditions: the closed-form candidate solutions are derived by sat-isfying stationarity exactly, and the feasible candidate with minimum cost is selected by exhaustive enumeration over the finite root set. In the voltage-constrained (fast-driving) regime, the SDP relaxation (5) is solved via MOSEK [28]. Global optimality is certified by verifying that the returned solution X⋆ has rank one: a rank-1 solution certifies that the relaxation is tight and that a globally optimal primal solution has been recovered [25]. Rank-1 recovery was confirmed at every tested operating point in the voltage-constrained regime. Fig. 5 illustrates the cost and feasibility convergence 8A PREPRINT - A PRIL 21, 2026 5 10 Speed ( ×10 3 rpm) 
+
+> 20
+> 40
+> 60
+> 80
+> 100
+> 120 Torque (Nm)
+> Infeasible Unconstrained Case: Cruise Voltage Constrained Regime: Fast PMSM Case Fully Constrained Regime: Forceful Fast Stator Current Constrained Regime: Launch Control
+
+Figure 3: Constraint regimes across the torque-speed envelope of the prototype WRSM. The torque-dependent cruise-to-voltage boundary near 5000 rpm is characteristic of the WRSM’s active flux control capability. 4 6 8 10 12 Speed ( ×10 3 rpm) 
+
+> 30
+> 40
+> 50
+> 60
+> 70
+> 80 Torque (Nm)
+> −0.08
+> −0.06
+> −0.04
+> −0.02 (PProposed  − Pqcqp ) / P qcqp  (%)
+
+(a) Pointwise cost difference: the proposed method finds points with a lower objective than Gurobi. The difference is below 1 W throughout the tested envelope. 2.5 5.0 7.5 10 .0Speed ( ×10 3 rpm) 
+
+> 20
+> 30
+> 40
+> 50
+> 60
+> 70
+> 80 Torque (Nm)
+> Infeasible Unconstrained Case: Cruise Voltage Constrained Regime: Fast PMSM Case Fully Constrained Regime: Forceful Fast Stator Current Constrained Regime: Launch Control
+
+(b) Constraint regimes active over the candidate PWA region. 
+
+Figure 4: Per-tile optimality validation and regime classification. of a representative MOSEK solve at Tp = 20 Nm, ωe = 500 rad/s, reaching primal-dual convergence in 13 iterations, which is typical for SDPs of this size ( X ∈ S4). Fig. 6 shows the optimal current trajectories across the full torque-speed operating range, with color indicating elec-trical speed. Several physically meaningful trends are visible. In the ir –id plane, the rotor current decreases at high speed as the voltage constraint forces the machine into field weakening: reducing ir lowers the air-gap flux and relaxes the voltage limit, at the cost of requiring larger stator currents to maintain torque. In the id–iq plane, the trajectories shift toward more negative id with increasing speed, consistent with field-weakening operation. As speed increases, the bending of paths within the same regime reflects the increasing influence of the core-loss penalty ω2 
+
+> e
+
+λ⊤Gλ at high electrical frequencies. 9A PREPRINT - A PRIL 21, 2026 0 5 10 Iteration 
+
+## 0
+
+## 2000 
+
+## 4000 Objective (W)  Primal obj. Dual obj. 
+
+> (a) Cost convergence.
+
+## 0 5 10 Iteration 
+
+## 10 −8
+
+## 10 −4
+
+## 10 0 
+
+> Feasibility
+> Primal Dual (b) Feasibility convergence.
+
+Figure 5: MOSEK convergence for a representative fast-driving operating point ( Tp = 20 Nm, ωe = 500 rad/s). Primal-dual convergence is reached in 13 iterations. 
+
+Figure 6: Optimal current trajectories across the operating range of the prototype WRSM. Color encodes electrical speed. The rotor current ir decreases at high speed due to voltage-constraint-driven field weakening. The shift toward negative id with speed is consistent with flux reduction in the field-weakening regime. 
+
+4.4 Runtime Comparison 
+
+The proposed framework achieves a 95.5% reduction in median solve time relative to Gurobi, with a median per-tile solve time of 0.99 ms compared to 22.22 ms for the QCQP baseline (Table 4). This reduction is a direct consequence of the regime-aware solution strategy: in all the active regimes from among cruise, launch-control, fast-driving, forceful-fast-driving, and rotor-constrained regimes, the globally optimal solution is obtained via closed-form expressions or companion-matrix eigendecomposition, with no iterative solver invoked. The SDP solver is called only in the voltage-constrained regime, which corresponds to a subset of the high-speed operating region (Fig. 3). The worst-case MOSEK time of 4.14 ms occurs within this regime and represents the computational ceiling of the proposed approach. Even in the worst case, the proposed framework is more than five times faster than the Gurobi median. The median solve time of 0.99 ms promises future satisfaction of real-time deployment requirements in embedded motor drive hardware, where reference generation must complete within a single control period typically on the order of 10–50 μs at standard switching frequencies. Table 4: Runtime comparison: proposed framework vs. Gurobi QCQP baseline. Solver Method Median [ms] Max [ms] Mean [ms] Gurobi QCQP 22.22 23.49 18.12 Proposed Regime-aware 0.99 4.14 1.09 Reduction 95.5% 82.4% 94.0% 10 A PREPRINT - A PRIL 21, 2026 
+
+## 5 Conclusion 
+
+This work generalizes unified optimal current reference theory to three-degree-of-freedom wound rotor synchronous machines, incorporating magnetic saturation, cross-coupling, and speed-dependent core losses via a piecewise-affine flux map. Closed-form KKT solutions are derived for the cruise, launch control, fast driving, and forceful fast driving regimes, and a verifiably exact SDP relaxation handles the voltage-constrained fast driving regime. Validation on a physical WRSM prototype demonstrates that the proposed framework outperforms a state-of-the-art nonlinear solver by up to 1 W while achieving a 95% reduction in median solve time, with a median per-tile solve time under 1 ms. Future work includes formal exactness certification and finding optimality bounds of the SDP relaxation via rank conditions and extension to online implementation in embedded motor drive hardware. 
+
+## Acknowledgment 
+
+This work was sponsored by Tau Motors. 
+
+## References 
+
+[1] P. Waide and C. U. Brunner, “Energy-Efficiency Policy Opportunities for Electric Motor-Driven Systems,” IEA Energy Papers , vol. 2011, no. 7, Apr. 2011. [2] “Global EV Outlook 2025 – Analysis,” https://www.iea.org/reports/global-ev-outlook-2025, May 2025. [3] S. Morimoto, Y. Takeda, T. Hirasa, and K. Taniguchi, “Expansion of operating limits for permanent magnet motor by current vector control considering inverter capacity,” IEEE Transactions on Industry Applications ,vol. 26, no. 5, pp. 866–871, Sep. 1990. [4] C. Batlle, A. Doria-Cerezo, and G. Espinosa-Perez, “Simultaneous IDA-passivity-based control of a wound rotor synchronous motor,” in 2008 47th IEEE Conference on Decision and Control , Dec. 2008, pp. 3187–3191. [5] N. Moehle and S. Boyd, “Optimal current waveforms for brushless permanent magnet motors,” International Journal of Control , vol. 88, no. 7, pp. 1389–1399, Jul. 2015. [6] ——, “Maximum torque-per-current control of induction motors via semidefinite programming,” in 2016 IEEE 55th Conference on Decision and Control (CDC) , Dec. 2016, pp. 1920–1925. [7] A. D` oria-Cerezo, E. Fossas, R. Mu˜ noz-Aguilar, and V. Utkin, “Sliding mode control of an isolated wound rotor synchronous generator,” in 2009 European Control Conference (ECC) , Aug. 2009, pp. 2728–2733. [8] M. Preindl and S. Bolognani, “Optimal State Reference Computation With Constrained MTPA Criterion for PM Motor Drives,” IEEE Transactions on Power Electronics , vol. 30, no. 8, pp. 4524–4535, Aug. 2015. [9] H. Eldeeb, C. M. Hackl, L. Horlbeck, and J. Kullick, “A unified theory for optimal feedforward torque control of anisotropic synchronous machines,” International Journal of Control , vol. 91, no. 10, pp. 2273–2302, Oct. 2018. [10] T. Englert and K. Graichen, “Nonlinear model predictive torque control and setpoint computation of induction machines for high performance applications,” Control Engineering Practice , vol. 99, p. 104415, Jun. 2020. [11] J. de Santiago, H. Bernhoff, B. Ekerg˚ ard, S. Eriksson, S. Ferhatovic, R. Waters, and M. Leijon, “Electrical Motor Drivelines in Commercial All-Electric Vehicles: A Review,” IEEE Transactions on Vehicular Technology ,vol. 61, no. 2, pp. 475–484, Feb. 2012. [12] C. Rossi, D. Casadei, A. Pilati, and M. Marano, “Wound Rotor Salient Pole Synchronous Machine Drive for Electric Traction,” in Conference Record of the 2006 IEEE Industry Applications Conference Forty-First IAS Annual Meeting , vol. 3, Oct. 2006, pp. 1235–1241. [13] S. M¨ uller and N. Parspour, “Applying a Measurement-Based Iron Loss Model to an Efficiency Optimized Torque Control of an Electrically Excited Synchronous Machine,” in 2020 International Conference on Electrical Ma-chines (ICEM) , vol. 1, Aug. 2020, pp. 779–785. [14] N. Monzen and C. Hackl, “Artificial neural network based optimal feedforward torque control of electrically excited synchronous machines.” [15] M. Parson-Scherban, B. Steyaert, E. Swint, W. W. Pennington, and M. Preindl, “Applying semidefinite relaxation to optimal efficiency reference generation for wound rotor synchronous machines,” in Proceedings of the 2026 American Control Conference (ACC) , New Orleans, Louisiana, USA, 2026, to appear. 11 A PREPRINT - A PRIL 21, 2026 [16] M. Parson-Scherban, B. Steyaert, and M. Preindl, “Effects of Magnetic Saturation on Optimal Efficiency Refer-ence Generation for the Wound Rotor Synchronous Machine,” in IECON 2024 - 50th Annual Conference of the IEEE Industrial Electronics Society , Nov. 2024, pp. 1–6. [17] R. Breda, G. Andrioli, S. Calligaro, and R. Petrella, “Extended MTPA and Flux-Weakening Control with Total Copper Loss Minimisation and Transient Torque Compensation for Wound-Rotor Synchronous Machines,” in 
+
+2023 IEEE Energy Conversion Congress and Exposition (ECCE) , Oct. 2023, pp. 4829–4836. [18] J. Reinhard, K. L¨ ohe, and K. Graichen, “Optimal current setpoint computation for externally excited synchronous machines,” in 2022 IEEE Conference on Control Technology and Applications (CCTA) , Aug. 2022, pp. 1319– 1326. [19] C. Hackl, J. Kullick, and N. Monzen, “Generic loss minimization for nonlinear synchronous machines by ana-lytical computation of optimal reference currents considering copper and iron losses,” in 2021 22nd IEEE Inter-national Conference on Industrial Technology (ICIT) , vol. 1, Mar. 2021, pp. 1348–1355. [20] B. W. Steyaert, E. Swint, W. W. Pennington, and M. Preindl, “Piecewise Affine Modeling of Wound-Rotor Synchronous Machines for Real-Time Motor Control,” IEEE Transactions on Industrial Electronics , vol. 70, no. 6, pp. 5571–5580, Jun. 2023. [21] K. J. Meessen, P. Thelin, J. Soulard, and E. A. Lomonova, “Inductance Calculations of Permanent-Magnet Syn-chronous Machines Including Flux Change and Self- and Cross-Saturations,” IEEE Transactions on Magnetics ,vol. 44, no. 10, pp. 2324–2331, Oct. 2008. [22] T. Englert and K. Graichen, “Optimal Setpoint Computation for Constrained Torque Control of PMSMs,” in 
+
+2018 European Control Conference (ECC) , Jun. 2018, pp. 2671–2677. [23] “Convex Optimization – Boyd and Vandenberghe,” https://web.stanford.edu/˜boyd/cvxbook/. [24] K. Zhou, J. C. Doyle, and K. Glover, Robust and Optimal Control . USA: Prentice-Hall, Inc., 1996. [25] A. I. Barvinok, “A Remark on the Rank of Positive Semidefinite Matrices Subject to Affine Constraints,” Jan. 2001. [26] B. Steyaert, E. Swint, W. W. Pennington, and M. Preindl, “Real Time Core Loss Estimation for the Wound Rotor Synchronous Machine,” in 2023 IEEE 14th International Symposium on Diagnostics for Electrical Machines, Power Electronics and Drives (SDEMPED) , Aug. 2023, pp. 246–250. [27] Gurobi Optimization, LLC, “Gurobi Optimizer Reference Manual,” 2026. [Online]. Available: https://www.gurobi.com [28] MOSEK ApS, The MOSEK Optimization Toolbox for MATLAB Manual. Version 10.0. , 2024. [Online]. Available: https://docs.mosek.com/latest/toolbox/index.html 
+
+## A Polynomial Coefficients for Torque-Only Regime: Cruise 
+
+In the cruise regime the problem reduces to (2). KKT stationarity gives i(μ) = −A(μ)−1b(μ) with A(μ) := 2( Reff + μQ τ ) and b(μ) := [ br , bd − μψ q , bq + μψ d]⊤. Substituting −A(μ)−1b(μ) into the torque constraint yields P6 
+
+> k=0
+
+akμk = 0 with 
+
+a6 = −Ldq L4
+
+> rd
+
+ζ, a5 = 2 L2
+
+> rd
+
+κζ, a4 = −4κ2Tp − Ldq L2
+
+> rd
+
+(L2 
+
+> δ
+
++ 4 L2 
+
+> dq
+
+)b2 
+
+> r
+
++ 2 Lrd (α⊤ψ + β⊤b)br
+
+− 4R2 
+
+> r
+
+Ldq (L2 
+
+> δ
+
++ 4 L2 
+
+> dq
+
+)ψ⊤Dψ + b⊤M1ψ + b⊤M2b + ψ⊤M3ψ, a3 = −8L2
+
+> rd
+
+−L2 
+
+> dq
+
+Rr b⊤Db + Lδ Ldq Rr bdbq + Ldq Lrd Rsbq br
+
++ 4 Ldq Rr R2 
+
+> s
+
+Tp + 2 Ldq Rr Rsb⊤Jψ − 2Rr R2 
+
+> s
+
+ψ2
+
+> q
+
+,a2 = 32 Rr R2 
+
+> s
+
+κT p + 12 Ldq L2
+
+> rd
+
+R2 
+
+> s
+
+b2 
+
+> r
+
++ (4 Rr RsLrd (L2 
+
+> δ
+
++ 4 L2 
+
+> dq
+
+) + 4 R2 
+
+> s
+
+L3
+
+> rd
+
+)bq
+
++ 24 Rr R2 
+
+> s
+
+Lrd (Lδ ψq − 2Ldq ψd)br + 4 R2 
+
+> r
+
+Lδ (L2 
+
+> δ
+
++ 4 L2 
+
+> dq
+
+)bdbq
+
+− 4R2 
+
+> r
+
+Ldq (L2 
+
+> δ
+
++ 4 L2 
+
+> dq
+
+)b⊤Db + 8 R2 
+
+> r
+
+Rs(L2 
+
+> δ
+
++ 4 L2 
+
+> dq
+
+)b⊤Jψ 
+
++ b⊤M4b + b⊤M5ψ + ψ⊤M6ψ, a1 = −8Rs
+
+(L2 
+
+> δ
+
++ 4 L2 
+
+> dq
+
+)R2 
+
+> r
+
+|b|2 + L2
+
+> rd
+
+Rs(Rsb2 
+
+> r
+
++ Rr b2 
+
+> q
+
+) + 4 R2 
+
+> r
+
+R2 
+
+> s
+
+|ψ|2
+
+12 A PREPRINT - A PRIL 21, 2026 
+
+− 4R2 
+
+> r
+
+Rs(Lδ ψ⊤Db + 2 Ldq (bdψq + bq ψd)) + Lrd Rr Rsbr (2 Lδ bd + 4 Ldq bq − 4Rsψd),a0 = 16 Rr R2
+
+> s
+
+−Ldq Rr b⊤Db + Lδ Rr bdbq + Lrd Rsbq br − 4Rr R2 
+
+> s
+
+Tp + 2 Rr Rsb⊤Jψ ,
+
+where κ := Rr (L2 
+
+> δ
+
++ 4 L2 
+
+> dq
+
+) + L2
+
+> rd
+
+Rs, ζ := 4 Ldq Tp − ψ2 
+
+> q
+
+, and 
+
+α = Rr
+
+ 2L2 
+
+> δ
+
+Ldq + 8 L3
+
+> dq
+
+−(L3 
+
+> δ
+
++ 4 Lδ L2 
+
+> dq
+
+)
+
+
+
++ Rs
+
+ 0
+
+−Lδ L2
+
+> rd
+
+
+
+, β =
+
+Lδ Ldq L2
+
+> rd
+
+2L2 
+
+> dq
+
+L2
+
+> rd
+
+
+
+,D := 
+
+1 00 −1
+
+
+
+, J := 
+
+ 0 1
+
+−1 0
+
+
+
+.M1 = L2
+
+> rd
+
+
+
+Rr
+
+−4Lδ Ldq 2L2
+
+> δ
+
+−8L2 
+
+> dq
+
+4Lδ Ldq 
+
+
+
++ Rs
+
+0 20 0
+
+
+
+,M2 = −Ldq L4
+
+> rd
+
+1 00 0
+
+
+
+, M3 = 4 RsRr L2
+
+> rd
+
+0 Lδ
+
+0 2Ldq 
+
+
+
+,M4 = 4 Rr RsL2
+
+> rd
+
+2Ldq Lδ 
+
+> 2
+> Lδ
+> 2
+
+4Ldq 
+
+
+
+, M5 = −8Rr R2 
+
+> s
+
+L2
+
+> rd
+
+0 21 0
+
+
+
+,M6 = 48 R2 
+
+> r
+
+R2
+
+> s
+
+Ldq −Lδ
+
+0 −Ldq 
+
+
+
+.
+
+Real roots {μk} are found via companion matrix eigendecomposition and i⋆ = arg min k{i(μk)⊤Reff i(μk) + 
+
+r⊤ 
+
+> eff
+
+i(μk)}.
+
+## B Polynomial Root-Finding in the Forceful Fast Regime 
+
+We detail the algebraic root-finding procedure for problem (6) which arises in the forceful fast driving regime in which constraints (C3)–(C4) all bind simultaneously. Under the parametrization id = is,r cos θ, iq = is,r sin θ, the torque constraint (C5) is linear in ir . b1(θ) ir + c1(θ) = 0 , with 
+
+b1(θ) = Lrd is,r sin θ, c1(θ) = ( Ld − Lq ) i2 
+
+> s,r
+
+cos θ sin θ − Tp,
+
+both trigonometric polynomials of degree 2. For sin θ̸ = 0 , the rotor current is uniquely determined: ir (θ) = 
+
+−c1(θ)/b 1(θ). Applying t = tan( θ/ 2) and clearing the resulting rational denominator yields a degree-4 univari-ate polynomial p(t) = α0 + α1t + α2t2 + α3t3 + α4t4, with 
+
+a0 = L2
+
+> rd
+
+ω2(Tp + is,r ψq + Ldq i2 
+
+> s,r
+
+)2,a1 = a3 = 4 L2
+
+> rd
+
+Lq ω2i2 
+
+> s,r
+
+(Tp + is,r ψq + Ldq i2 
+
+> s,r
+
+),a2 = 2 L2
+
+> rd
+
+ω2 (Tp − Ldq i2 
+
+> s,r
+
+)2 + i2 
+
+> s,r
+
+ψ2
+
+> q
+
++ 2( L2 
+
+> q
+
+− L2 
+
+> dq
+
+)i4
+
+> s,r
+
+ − 2i2 
+
+> s,r
+
+V 2max 
+
+,a4 = L2
+
+> rd
+
+ω2(Tp − is,r ψq + Ldq i2 
+
+> s,r
+
+)2.
+
+Note a0, a 4 ≥ 0 and a1 = a3; real roots are found via 4 × 4 companion matrix eigendecomposition and i⋆ =arg min k{i(μk)⊤Reff i(μk) + r⊤ 
+
+> eff
+
+i(μk)}.13
