@@ -1,0 +1,51 @@
+{
+  "label": "2026-04-22",
+  "date": "2026-04-22",
+  "generated_at": "2026-04-22T20:47:55",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202604/22/2604.18090v1-muscle-inspired-magnetic-actuators-that-push-pull-crawl-and-grasp",
+      "section": "quick",
+      "title_en": "Muscle-inspired magnetic actuators that push, pull, crawl, and grasp",
+      "authors": "Muhammad Bilal Khan, Florian Hofmann, Kilian Schäfer, Matthias Lutzi, Oliver Gutfleisch",
+      "date": "2026-04-20",
+      "pdf": "https://arxiv.org/pdf/2604.18090v1",
+      "score": "7.0",
+      "evidence": "磁性执行器的磁响应和刚度控制",
+      "tldr": "本研究受肌肉启发，利用激光粉末床熔融（LPBF）技术，将热塑性聚氨酯与钕铁硼复合材料制成磁性执行器（MMA）。通过调节激光能量，实现了对材料刚度和磁响应的精确编程。该执行器具备出色的负载能力（可提升自重32倍的物体）和循环稳定性，能实现线性收缩、爬行、抓取及管道锚定等多种运动，为开发多功能、抗疲劳的远程驱动软体机器人提供了新方案。",
+      "tags": "query:em-force",
+      "abstract_en": "Functional magnetic composites capable of large deformation, load bearing, and multifunctional motion are essential for next-generation adaptive soft robots. Here, we present muscle-inspired magnetic actuators (MMA), additively manufactured from a thermoplastic/permanent magnet polyurethane/Nd2Fe14B (TPU/MQP-S) composite using laser powder bed fusion (LPBF). By tuning the laser-energy scale between 1.0 and 3.0, both mechanical stiffness and magnetic response are precisely controlled: the tensile strength increases from 0.28 to 0.99 MPa while maintaining 30-45% elongation at break. This process enables the creation of 0.5 mm-thick flexural hinges, which reversibly bend and fold under moderate magnetic fields without damage. Two actuator types are reported showing the system versatility. The elongated actuator with self-weight of 1.57 g, magnetized in its contracted state, achieves linear contraction under a 500 mT field, lifting 50 g (32x its own weight) and sustaining performance over at least 50 cycles. Equipped with anisotropic frictional feet, it supports movement of a magnetic crawling robot that achieves up to 100% locomotion success on textured substrates. The expandable actuator exhibits reversible opening and closing under a 300 mT field, reliably grasping and releasing different objects, including soft berries and rigid 3D printed geometries. It can also anchor in a tube while holding suspended 50 g loads. This work demonstrates a LPBF-based strategy to program both stiffness and magnetization within a single material system, enabling remotely driven, reconfigurable, and fatigue-resistant soft actuators. The approach opens new possibilities for force controlled, multifunctional magnetic soft robots for adaptive gripping, locomotion, and minimally invasive manipulation of biomedical tools.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/22/2604.14424v1-non-intrusive-learning-of-physics-informed-spatio-temporal-surrogate-for-accelerating-design",
+      "section": "quick",
+      "title_en": "Non-intrusive Learning of Physics-Informed Spatio-temporal Surrogate for Accelerating Design",
+      "authors": "Sudeepta Mondal, Soumalya Sarkar",
+      "date": "2026-04-15",
+      "pdf": "https://arxiv.org/pdf/2604.14424v1",
+      "score": "6.0",
+      "evidence": "多物理场模拟的物理信息代理模型",
+      "tldr": "针对工程设计中高保真时空动力学模拟计算成本高且纯数据驱动模型泛化性差的问题，本文提出了一种物理增强的时空代理模型框架（PISTM）。该框架利用Koopman自动编码器以非侵入式方式学习底层动力学，并结合物理约束预测未知工况下的系统演化。在二维圆柱绕流问题上的实验证明，该方法在保持物理一致性的同时显著提升了设计效率。",
+      "tags": "query:em-force",
+      "abstract_en": "Most practical engineering design problems involve nonlinear spatio-temporal dynamical systems. Multi-physics simulations are often performed to capture the fine spatio-temporal scales which govern the evolution of these systems. However, these simulations are often high-fidelity in nature, and can be computationally very expensive. Hence, generating data from these expensive simulations becomes a bottleneck in an end-to-end engineering design process. Spatio-temporal surrogate modeling of these dynamical systems has been a popular data-driven solution to tackle this computational bottleneck. This is because accurate machine learning models emulating the dynamical systems can be orders of magnitude faster than the actual simulations. However, one key limitation of purely data-driven approaches is their lack of generalizability to inputs outside the training distribution. In this paper, we propose a physics-informed spatio-temporal surrogate modeling (PISTM) framework constrained by the physics of the underlying dynamical system. The framework leverages state-of-the-art advancements in the field of Koopman autoencoders to learn the underlying spatio-temporal dynamics in a non-intrusive manner, coupled with a spatio-temporal surrogate model which predicts the behavior of the Koopman operator in a specified time window for unknown operating conditions. We evaluate our framework on a prototypical fluid flow problem of interest: two-dimensional incompressible flow around a cylinder.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/22/2604.17199v1-modeling-control-and-self-sensing-of-dielectric-elastomer-soft-actuators-a-review",
+      "section": "quick",
+      "title_en": "Modeling, Control and Self-sensing of Dielectric Elastomer Soft Actuators: A Review",
+      "authors": "Y. Zhao, G. Meng",
+      "date": "2026-04-19",
+      "pdf": "https://arxiv.org/pdf/2604.17199v1",
+      "score": "6.0",
+      "evidence": "非线性执行器的建模与控制",
+      "tldr": "介电弹性体驱动器（DEA）因其轻质、大应变和高能量密度在软体机器人领域备受关注。然而，其固有的非线性弹性、粘弹性蠕变、滞后和振动特性给建模与控制带来了挑战。本文全面综述了DEA的物理和现象学建模方法，涵盖了前馈、反馈及自适应控制策略，并探讨了无需额外传感器的自感测技术，最后总结了该领域的现有问题与未来发展方向。",
+      "tags": "query:em-force",
+      "abstract_en": "Dielectric elastomer actuators (DEAs) have garnered extensive attention especially in soft robotic applications over the past few decades owing to the advantages of lightweight, large strain, fast response and high energy density. However, because the DEAs suffer from nonlinear elasticity, inherent viscoelastic creep, hysteresis and vibrational dynamics, the modeling, control and self-sensing of DEAs are challenging, thereby hindering the practical applications of DEAs. In order to address these challenges, numerous studies have been conducted. In this review, various physics-based modeling methods and phenomenological modeling methods for predicting the electromechanical response of DEAs are presented and discussed. Different control methods for DEAs are reviewed, which are classified into open-loop feedforward control, feedback control, feedforward-feedback control and adaptive feedforward control. Physics-based self-sensing methods and data-driven self-sensing methods for reconstructing the DEA displacement without the need for additional sensors are discussed. Finally, the existing problems and new opportunities for the further studies are summarized.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
