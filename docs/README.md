@@ -6,31 +6,29 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-22
-- 运行时间：2026-04-22 20:47:45 UTC
+- 最新运行日期：2026-04-23
+- 运行时间：2026-04-23 20:46:48 UTC
 - 运行状态：成功
-- 本次总论文数：3
+- 本次总论文数：2
 - 精读区：0
-- 速读区：3
+- 速读区：2
 
 ### 今日简报（AI）
-今日聚焦仿生软体驱动技术前沿，涵盖从肌肉启发式磁控运动到介电弹性体控制的深度综述。
-重点关注能实现
-- 详情：[/202604/22/README](/202604/22/README)
+今日聚焦动力学参数辨识与高精度接触操作，探索复杂环境下的智能控制方案。
+重点推荐利用动态模式分解（DMD）优化参数识别，以及应对不确定性的混合控制策略以提升操作精度。
+建议深入研究物理交互中的鲁棒算法，为机器人精细化作业提供更稳定的技术支撑。
+- 详情：[/202604/23/README](/202604/23/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Muscle-inspired magnetic actuators that push, pull, crawl, and grasp](/202604/22/2604.18090v1-muscle-inspired-magnetic-actuators-that-push-pull-crawl-and-grasp)  
-   标签：评分：7.0/10、query:em-force
-   evidence：磁性执行器的磁响应和刚度控制
-2. [Non-intrusive Learning of Physics-Informed Spatio-temporal Surrogate for Accelerating Design](/202604/22/2604.14424v1-non-intrusive-learning-of-physics-informed-spatio-temporal-surrogate-for-accelerating-design)  
+1. [A Dynamic Mode Decomposition Approach to Parameter Identification](/202604/23/2604.18783v1-a-dynamic-mode-decomposition-approach-to-parameter-identification)  
    标签：评分：6.0/10、query:em-force
-   evidence：多物理场模拟的物理信息代理模型
-3. [Modeling, Control and Self-sensing of Dielectric Elastomer Soft Actuators: A Review](/202604/22/2604.17199v1-modeling-control-and-self-sensing-of-dielectric-elastomer-soft-actuators-a-review)  
+   evidence：控制仿射非线性系统的参数辨识
+2. [Learning Hybrid-Control Policies for High-Precision In-Contact Manipulation Under Uncertainty](/202604/23/2604.19677v1-learning-hybrid-control-policies-for-high-precision-in-contact-manipulation-under-uncertainty)  
    标签：评分：6.0/10、query:em-force
-   evidence：非线性执行器的建模与控制
+   evidence：用于高精度操作的混合位置-力控制
 
 
 <div class="dpr-home-promo-card">

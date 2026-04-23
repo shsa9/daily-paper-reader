@@ -1,0 +1,1061 @@
+Title: A Dynamic Mode Decomposition Approach to Parameter Identification
+
+URL Source: https://arxiv.org/pdf/2604.18783v1
+
+Published Time: Wed, 22 Apr 2026 00:11:26 GMT
+
+Number of Pages: 7
+
+Markdown Content:
+# A Dynamic Mode Decomposition Approach to Parameter Identification 
+
+Moad Abudia 1, Opeyemi Owolabi 2, Joel A. Rosenfeld 3, and Rushikesh Kamalapurkar 2
+
+Abstract — This paper presents a data-driven algorithm for simultaneous system identification and parameter estimation in control-affine nonlinear systems. Parameter estimation is achieved by training a data-driven predictive model using state-action measurements and various known values at the parameters of interest. The predictive model is then used in conjunction with state-action data corresponding to unknown values of the parameters to estimate the said unknown value. Numerical experiments on the controlled Duffing oscillator with unknown damping, stiffness, and nonlinearity coefficients demonstrate accurate recovery of both the system trajectories and the unknown parameter values from data collected under open-loop excitation. 
+
+> Index Terms—Dynamic mode decomposition, Koopman operator, reproduc-ing kernel Hilbert spaces, system identification, parameter identification, control-affine systems, data-driven methods.
+
+I. I NTRODUCTION 
+
+Parameter estimation from data is a mature field, with a variety of well-established techniques for estimation of process parameters and construction of models from input-output data [1]. This groundwork was subsequently formal-ized through gray-box modeling, prediction-error techniques, and recursive estimation [2, Ch. 7]. Simultaneously, adaptive control introduced online update laws for adjusting parame-ters in uncertain systems during regulation and tracking [3, Chs. 1, 6–7]. In nonlinear control, such adaptive parameter update laws had a particularly significant impact in structured settings such as robot manipulator control, where adaptive designs leverage known regressors for uncertain dynamics [4]. Unlike traditional parameter estimation problems where the system dynamics depend on the parameters in a known way( e.g., linearly via known regressors [5] or nonlinearly via known neural network architectures [6] and basis functions [7]), we make no assumptions regarding the relationship between the parameters and the system dynamics beyond continuity Nevertheless, across classical and modern meth-ods alike, prior knowledge of how the unknown parameters enter the dynamics remains a persistent requirement. Many practical systems involve unknown parameters whose coupling to the dynamics is difficult to express in                
+
+> This research was supported in part by the Air Force Research Labo-ratory under contract number FA8651-24-1-0019. Any opinions, findings, or recommendations in this article are those of the author(s), and do not necessarily reflect the views of the sponsoring agencies.
+> 1School of Mechanical and Aerospace Engineering, Oklahoma State Uni-versity, Stillwater, OK, 74074, USA (e-mail: abudia@okstate.edu ).
+> 2Department of Mechanical and Aerospace En-gineering, University of Florida, Gainesville, FL, 32611, USA (e-mail: opeyemi.owolabi@ufl.edu ,
+> rushikesh.kamalapurkar@ufl.edu ).
+> 3Department of Mathematics and Statistics, University of South Florida, Tampa, FL, USA (e-mail: rosenfeldj@usf.edu ).
+
+an explicit form. For example, a drone carrying an unknown payload experiences changes in mass and inertia that alter its flight dynamics in ways that depend nonlinearly on the payload configuration [8]. In robotic and building energy systems, unknown payload dynamics and occupancy-driven thermal loads can similarly modify closed-loop behavior in ways that are difficult to characterize a priori [9]–[11]. These considerations motivate a fully data-driven approach capable of identifying parameters directly from input-output data, without requiring prior knowledge of how those parameters couple with the system dynamics. The data-driven character of operator-theoretic methods makes them a natural candidate to solve this problem, as they construct global representations of nonlinear dynamics directly from trajectory data without requiring an explicit parametric model. Although such methods have matured significantly for control design, parameter identification re-mains largely separate from this framework. Classical system identification [2, Ch. 7], Bayesian estimation [12], [13], and neural inverse-problem methods [6], [14] provide tools for recovering unknown physical parameters from data, but treat parameter recovery as a stage separate from operator-theoretic representations of the closed-loop dynamics. This paper addresses that gap by developing an operator-theoretic method for simultaneous system and parameter identification in control-affine nonlinear systems, while preserving the fully data-driven character of the underlying framework. Among recent operator-theoretic approaches, the Dis-crete Control Liouville Dynamic Mode Decomposition (DCLDMD) framework of [15] provides a particularly strong foundation for controlled nonlinear systems. Building on the operator-theoretic formulations [16]–[19], DCLDMD constructs a finite-rank approximation of the closed-loop control Liouville operator from data collected under arbitrary open-loop excitation, without requiring a separate model-reduction step. This approximation is achieved through a kernel propagation operator together with a multiplication operator that encodes the effect of a feedback law, and the resulting construction inherits strong convergence properties from the underlying RKHS framework [17], [20]. These features make DCLDMD well suited for parameter identification when unknown physical parameters are viewed as latent components of the dynamics. Motivated by this observation, this paper extends DCLDMD to simultaneous system and parameter identification, yielding the so-called Discrete Control Liouville Dynamic Mode Decomposition with Parameter Identification (DCLDMDPID) algorithm. The key idea is to augment the system state with the unknown physical parameters and embed the resulting aug-
+
+> arXiv:2604.18783v1 [math.OC] 20 Apr 2026
+
+mented dynamics directly into the RKHS and vector-valued RKHS operator structure [20]. The resulting model can predict system trajectories corresponding to new values of the parameter starting from new initial conditions within the domain of validity of the model. This predictive capability is exploited to identify the most likely set of parameters given state-action data Numerical results on a controlled Duffing oscillator demonstrate accurate recovery of both the state evolution and the unknown parameter values from open-loop data. This paper is organized as follows. Section III establishes the mathematical background for dynamic mode decompo-sition with discrete control Liouville operators. Section II contains the problem description. Section IV provides the derivation of the finite-rank representation of the control Liouville operator, as well as the DCLDMDPID algorithm. Section VIII presents numerical experiments on the Duffing oscillator with unknown parameters. Section IX concludes this paper. II. O VERVIEW 
+
+A. Problem Statement 
+
+Consider a nonlinear control-affine discrete-time dynami-cal system of the form 
+
+zk+1 = f0(zk, θ ) + g0(zk, θ )uk,
+
+where f0 and g0 are unknown continuous functions and θ
+
+denotes a vector of parameters of interest. Unlike traditional system identification and parameter estimation problems, where the uncertain dynamics are expressed as linear or non-linear combinations of known basis functions and unknown parameters, we do not make any assumptions on the structure of the unknown functions beyond continuity. The objective in this manuscript is to learn the current set of parameters π ∈ Rp using an observer trajectory of the system, i.e., measurements of the system state and the input expressed in the form of a query dataset {ui, z i, w i}Ni=1 ,where 
+
+wi := zi+1 = F (zi, u i, π ) = f0(zi, π ) + g0(zi, π )ui. (1) For example, in the case of a package delivery drone, the parameter of interest θ could correspond to mass of a package, and the current parameter π could be the mass of the package currently being delivered. The objective is then to estimate π, the current mass. 
+
+B. Approach 
+
+In this paper, we solve the problem above by training a model that encodes the structural relationship between the parameters and the dynamical system. To train such a model, we need a training dataset comprised of system trajectories {uji , z ji , w ji , π j }P,M j=1 ,i =1 , where πj are vectors of known values of the parameters of interest, satisfying 
+
+yji := xji+1 = F (xji , u ji , π j ) = f (xji , π j ) + g(xji , π j )uji . (2) For example, in the case of the package delivery drone, we can record a training dataset by flying the drone with packages of varying known masses πj .We then train a model ˆF : Rn × Rm × Rp → Rn to estimate F using the training dataset and use it to infer a new, unknown mass that corresponds to the query dataset described in the previous section. In order to learn the parameters π, we need to solve the following optimization problem 
+
+ˆπ = arg min η∈Π
+
+1
+
+N
+
+> N
+
+X
+
+> i=1
+
+(F (zi, u i, η ) − F (zi, u i, π )) 2, (3) where Π ⊂ Rp is a known set containing π. Since F is unknown a data-driven optimization problem is formulated as 
+
+ˆπ = arg min η∈Π
+
+1
+
+N
+
+> N
+
+X
+
+> i=1
+
+( ˆF (zi, u i, η ) − wi)2. (4) In this paper, we adapt the DCLDMD technique developed in [15], to generate the model ˆF . In particular, [15] consid-ered modeling of closed dynamical systems under feedback control laws, whereas in this paper, we adapt the techniques in [15] to model open dynamical systems. III. B ACKGROUND 
+
+In this section, we provide a brief overview of RKHSs and vvRKHSs and their role in DCLDMD. 
+
+Definition 1: An RKHS ˜H over a set X ⊂ Rn is a Hilbert space of functions f : X → C such that for all x ∈ X the evaluation functional Exf := f (x) is bounded. By the Riesz representation theorem, there exists a function ˜Kx ∈ ˜H such that f (x) = ⟨f, ˜Kx⟩ ˜H for all f ∈ ˜H.The snapshots of a dynamical system are embedded into an RKHS via a kernel map x 7 → ˜K(·, x ) := ˜Kx. Moreover, the span of the set { ˜Kx : x ∈ X} is dense in ˜H.
+
+Proposition 1: If A := { ˜Kx : x ∈ X}, then span A = ˜H.
+
+Proof: To show that the span of the set { ˜Kx : x ∈ X}
+
+is dense in ˜H amounts to showing that (A⊥)⊥ = ˜H. Let 
+
+h ∈ A⊥, then ⟨h, ˜Kx⟩ = h(x) = 0 . Hence h ≡ 0 on X.Thus A⊥ = {0}.In order to account for the effect of control, we make use of a vvRKHS. 
+
+Definition 2: Let Y be a Hilbert space, and let H be a Hilbert space of functions from a set X to Y. The Hilbert space H is a vvRKHS if for every ¯u ∈ Y and x ∈ X, the functional f 7 → ⟨ f (x), ¯u⟩Y is bounded. To each x ∈ X and ¯u ∈ Y , we can associate a linear operator over a vvRKHS given by (x, ¯u) 7 → Kx, ¯u, following [21]. The function Kx, ¯u is known as the kernel operator and the span of these functions constitutes a dense set in the respective vvRKHS [21, Proposition 1]. Given a function f ∈
+
+H, the reproducing property of Kx, ¯u implies ⟨f, K x, ¯u⟩H =
+
+⟨f (x), ¯u⟩Y . For more discussion on vvRKHSs see [20]. Consider the exponential dot product kernel with param-eter ˜ρ, defined as ˜K˜ρ(x, y ) = exp 
+
+ x⊤y
+
+> ˜ρ
+
+
+
+. In the single variable case, the RKHS of this kernel is the restriction of the Bargmann-Fock space to real numbers, denoted by 
+
+F 2˜ρ (R). This space consists of the set of functions of the form h(x) = P∞ 
+
+> k=0
+
+akxk, where the coefficients satisfy 
+
+P∞ 
+
+> k=0
+
+|ak|2 ˜ρkk! < ∞, and the norm is given by ∥h∥2˜ρ =P∞ 
+
+> k=0
+
+|ak|2 ˜ρkk!. Note that the set of polynomials in x is a subset of F 2˜ρ (R). Extension of this definition to the multi-variable case yields the space F 2˜ρ (Rn) where the collection of monomials, xα ˜ρ|α| 
+
+> √α!
+
+, with multi-indices α ∈ Nn forms an orthonormal basis. In this setting, provided ˜ρ2 < ˜ρ1,differential operators from F 2˜ρ1 (Rn) to F 2˜ρ2 (Rn) can be shown to be compact [21, see Proposition 8]. [20]. IV. T HE CONTROL LIOUVILLE OPERATOR AND ITS 
+
+FINITE -RANK REPRESENTATION 
+
+In order to facilitate the description of the controlled dynamical system in terms of Koopman-like operators, the vvRKHS framework is utilized . 
+
+Definition 3: Given an operator Af,g : ˜Hd → H, the tuples {(σi, ϕ i, ψ i)}∞
+
+> i=1
+
+, with σi ∈ Rn, ϕi ∈ ˜Hd, and 
+
+ψi ∈ H, are singular values, left singular vectors, and right singular vectors of Af,g , respectively, if ∀h ∈ span d,
+
+Af,g h =
+
+> ∞
+
+X
+
+> i=1
+
+σiψi ⟨h, ϕ i⟩ ˜Hd . (5) Let hid : Rn → Rn be the identity function. Given singular values, left singular vectors, and right singular vectors of 
+
+Af,g and a control input u, the dynamics of the system can be expressed as 
+
+xk+1 = yk =
+
+
+
+Af,g (hid )1(xk)
+
+...
+
+Af,g (hid )n(xk)
+
+ 1
+
+uk
+
+
+
+=
+
+P∞ 
+
+> i=1
+
+σiψi(xk) ⟨(hid )1, ϕ i⟩ ˜Hd
+
+...P∞ 
+
+> i=1
+
+σiψi(xk) ⟨(hid )M , ϕ i⟩ ˜Hd
+
+ 1
+
+uk
+
+
+
+(6) To facilitate computation, an explicit finite-rank representa-tion of Af,g is needed to determine the dynamic modes of the resultant system. In the following, finite collections of linearly independent vectors, dM and βM are selected to establish the needed finite-rank representation. 
+
+dM = {Kd(·, x i)}Mi=1 ⊂ ˜Hd (7) is selected to be the domain of Af,g . The corresponding Gram matrix is denoted by GdM =
+
+
+
+⟨di, d j ⟩ ˜Hd
+
+Mi,j =1 
+
+. The output of Af,g is projected onto the span of vector valued kernels 
+
+βM = {Kxi,u i }Mi=1 = {diag( K(·, x i) · ui}Mi=1 ⊂ H. (8) The corresponding Gram matrix is denoted by GβM =
+
+ ⟨βi, β j ⟩H
+
+Mi,j =1 .A rank-M (or less) representation of the operator Af,g 
+
+is then given by PβM Af,g PdM : ˜Hd → span βM , where 
+
+PdM and PβM denote projection operators onto span dM and 
+
+span βM , respectively. V. M ATRIX REPRESENTATION OF THE FINITE -RANK 
+
+OPERATOR 
+
+To formulate a matrix representation of the finite-rank operator PβM Af,g PdM , the operator is restricted to span dM
+
+to yield the operator PβM Af,g |dM : span dM → span βM .For brevity of exposition, the superscript M is suppressed hereafter and d and β are interpreted as M −dimensional vectors. The adjoint relationship can be derived as follows, ⟨di, A ∗ 
+
+> f,g
+
+βk⟩ ˜Hd = ⟨Af,g di, β k⟩H =
+
+⟨[Af,g di]( xk),  1 u⊤
+
+> k
+
+)⟩Rm+1 = Kd(xi, x k+1 ) as shown [15]. Therefore, A∗ 
+
+> f,g
+
+βi = A∗ 
+
+> f,g
+
+Kxi,u i = Kd(·, y i), where 
+
+yi = F (xi, u i).
+
+Proposition 2: If h = δ⊤d ∈ span d is a function with coefficients δ ∈ RM and if g = Pβ Af,g h, then g = a⊤β,where a = G+ 
+
+> β
+
+Iδ and (·)+ denotes the Moore-Penrose pseudoinverse. 
+
+Proof: Since A∗ 
+
+> f,g
+
+βj = A∗ 
+
+> f,g
+
+Kxi,u i = Kd(·, y i), where 
+
+yi = F (xi, u i). Note that since g is a projection of Af,g h
+
+onto span β, g = a⊤β for any a that solves 
+
+Gβ a =
+
+
+
+⟨Af,g h, β 1⟩H
+
+...
+
+⟨Af,g h, β M ⟩H
+
+ =
+
+D
+
+h, A ∗ 
+
+> f,g
+
+β1
+
+E
+
+> H
+
+...D
+
+h, A ∗ 
+
+> f,g
+
+βM
+
+E
+
+> H
+
+
+
+=
+
+D
+
+h, A ∗ 
+
+> f,g
+
+Kx1,u 1
+
+E
+
+> H
+
+...D
+
+h, A ∗ 
+
+> f,g
+
+KxM ,u M
+
+E
+
+> H
+
+ (9) Using the adjoint relationship, 
+
+Gβ a =
+
+
+
+⟨h, K d(·, y 1)⟩H
+
+...
+
+⟨h, K d(·, y M )⟩H
+
+ =
+
+
+
+δ⊤d, K d(·, y 1) H
+
+...
+
+δ⊤d, K d(·, y M ) H
+
+ = Iδ, 
+
+(10) where I =  ⟨Kd(·, x i), K d(·, y i)⟩ ˜Hd
+
+Mi,j =1 Selecting the solution 
+
+a = G+ 
+
+> β
+
+I⊤δ (11) of (10), a matrix representation [Pβ Af,g ]βd of the operator 
+
+Pβ Af,g |d is obtained as G+ 
+
+> β
+
+I⊤.Note that matrix representations are generally not unique. Different representations may be obtained by selecting dif-ferent solutions of (9) and (11). In the case where the Gram matrix Gβ is nonsingular, equation (9) has a unique solu-tions, resulting in the unique matrix representation G−1 
+
+> β
+
+I⊤.In the following section, the matrix representation 
+
+[Pβ Af,g ]βd is used to construct a data-driven representation of the singular values and the left and right singular functions of Pβ Af,g |d.VI. P SEUDO -S INGULAR FUNCTIONS OF THE 
+
+FINITE -RANK OPERATOR 
+
+The following proposition states that the SVD-like de-composition of Pβ Af,g |d can be computed using matrices in the matrix representation [Pβ Af,g ]βd derived in the previous section. 
+
+Proposition 3: If (W, Σ, V ) is the SVD of G+ 
+
+> β
+
+I⊤G+ 
+
+> d
+
+with 
+
+W = w1, . . . , wM
+
+, V = v1, . . . , vM
+
+, and Σ = diag   σ1, . . . , σM
+
+ , then for all i = 1 , . . . , M , σi are pseudo-singular values of Pβ Af,g |d with left pseudo-singular functions ϕi := v⊤ 
+
+> i
+
+d and right pseudo-singular functions 
+
+ψi := w⊤ 
+
+> i
+
+β.Proof: Let ϕi = v⊤ 
+
+> i
+
+d and ψi = w⊤ 
+
+> i
+
+β and h = δ⊤d.Then, 
+
+Pβ Af,g h =
+
+> M
+
+X
+
+> i=1
+
+σiψi ⟨h, ϕ i⟩ ˜Hd
+
+⇐⇒ Pβ Af,g δ⊤d =
+
+> M
+
+X
+
+> i=1
+
+σiw⊤ 
+
+> i
+
+β δ⊤d, v ⊤ 
+
+> i
+
+d ˜Hd
+
+Using the finite-rank representation, the collection 
+
+{(σi, ϕ i, ψ i)}Mi=1 , is an SVD of Pβ Af,g |d, if for all 
+
+δ ∈ RM ,
+
+
+
+G+ 
+
+> β
+
+I⊤δ
+
+⊤
+
+β =
+
+> M
+
+X
+
+> i=1
+
+σi δ⊤d, v ⊤ 
+
+> i
+
+d ˜Hd
+
+w⊤
+
+> i
+
+!
+
+β. (12) Simple matrix manipulations yield the chain of implications (12) ⇐= ∀δ ∈ RM , G + 
+
+> β
+
+I⊤δ =
+
+> M
+
+X
+
+> i=1
+
+σi δ⊤d, v ⊤ 
+
+> i
+
+d ˜Hd
+
+wi
+
+⇐⇒ ∀ δ ∈ RM , G + 
+
+> β
+
+I⊤δ =
+
+> M
+
+X
+
+> i=1
+
+σi
+
+ wiv⊤ 
+
+> i
+
+Gd
+
+ δ
+
+⇐= G+ 
+
+> β
+
+I⊤ =
+
+> M
+
+X
+
+> i=1
+
+σi
+
+ wiv⊤
+
+> i
+
+ Gd
+
+⇐= G+ 
+
+> β
+
+I⊤G+ 
+
+> d
+
+=
+
+> M
+
+X
+
+> i=1
+
+σiwiv⊤ 
+
+> i
+
+= W ΣV ⊤,
+
+which proves the proposition. 
+
+Remark 1: The standard usage of the term SVD refers to a decomposition using orthonormal left and right singu-lar vectors. The left singular functions {ϕi}Mi=1 and right singular functions {ψi}Mi=1 are not necessarily orthonormal. Therefore, the decomposition in the previous proposition is not an SVD of the finite-rank operator Pβ Af,g |d.VII. T HE DCLDMDPID A LGORITHM 
+
+A. DCLDMD 
+
+In order to identify the parameters of the system 
+
+zk+1 = f0(zk, π ) + g0(zk, π )uk,
+
+we first consider a modified system of the form 
+
+yk = xk+1 =
+
+zk+1 
+
+πk+1 
+
+
+
+=
+
+f0(zk)
+
+πk
+
+
+
++
+
+g0(zk)0
+
+
+
+uk, (13) where π0 = π. Then we can use the training dataset 
+
+{uji , z ji , y ji , π j }P,M j=1 ,i =1 to learn a control affine discrete time nonlinear system of the form 
+
+xk+1 = f (xk) + g(xk)uk
+
+Motivated by (5), assuming that hid ,j ∈ ˜Hd for j = 1 , · · · , n ,the system dynamics are approximated using the finite-rank representation, with rank at most M , as 
+
+xk+1 ≈ ˆFM (xk, u k) := [ Pβ Af,g Pdhid ]( xk)
+
+ 1
+
+uk
+
+
+
+,
+
+where Pβ Af,g Pdhid denotes row-wise operation of the op-erator Pβ Af,g on the function Pdhid . Using the definition of singular values and singular functions of Pβ Af,g |d,
+
+xk+1 ≈
+
+> M
+
+X
+
+> i=1
+
+σiξiw⊤ 
+
+> i
+
+β(xk)
+
+ 1
+
+uk
+
+
+
+= ξΣW ⊤β(xk)
+
+ 1
+
+uk
+
+
+
+,
+
+(14) where ξi := ⟨Pdhid , ϕ i⟩ ˜Hd and ξ := ξ1, . . . , ξM
+
+.The modes ξ can be computed using ϕi = v⊤ 
+
+> i
+
+d as 
+
+ξ =
+
+
+
+Pdhid ,1, v ⊤ 
+
+> 1
+
+d ˜Hd
+
+, . . . , Pdhid ,1, v ⊤ 
+
+> M
+
+d ˜Hd
+
+... . . . ...
+
+Pdhid ,n , v ⊤ 
+
+> 1
+
+d ˜Hd
+
+, . . . , Pdhid ,n , v ⊤ 
+
+> M
+
+d ˜Hd
+
+
+
+=
+
+
+
+δ⊤ 
+
+> 1
+
+d, d 1 ˜Hd
+
+, . . . , δ⊤ 
+
+> 1
+
+d, d M ˜Hd
+
+... . . . ...
+
+δ⊤ 
+
+> n
+
+d, d 1 ˜Hd
+
+, . . . , δ⊤ 
+
+> n
+
+d, d M ˜Hd
+
+ V = δ⊤GdV, 
+
+where δ := δ1, . . . , δn
+
+. Using the reproducing property of the reproducing kernel of ˜Hd, the coefficients δi in the projection of hid ,i onto d satisfy 
+
+Gdδi=
+
+
+
+⟨(hid )i,d 1⟩ ˜Hd
+
+...
+
+⟨(hid )i,d M ⟩ ˜Hd
+
+=
+
+
+
+(x1)i
+
+...
+
+(xM )i
+
+.
+
+Letting D :=  (xj )i
+
+n,M i,j =1 it can be concluded that δ⊤Gd =
+
+D. Finally, the modes ξ are given by ξ = DV and the estimated open-loop model is given by 
+
+xk+1 ≈ ˆFM (xk, u k) = DV ΣW ⊤β(xk)
+
+ 1
+
+uk
+
+
+
+= D(G+ 
+
+> β
+
+I⊤G+ 
+
+> d
+
+)⊤β(xk)
+
+ 1
+
+uk
+
+
+
+. (15) the approximation ˆfM (x), an approximation of the drift dynamics, f (x), is given by the first column of 
+
+D(G+ 
+
+> β
+
+I⊤G+ 
+
+> d
+
+)⊤β(xk) and ˆgM (x), an approximation of the control-effectiveness matrix, g(x), is given by the last m
+
+columns of D(G+ 
+
+> β
+
+I⊤G+ 
+
+> d
+
+)⊤β(xk).
+
+B. Parameter Identification 
+
+Once the a system ˆF is obtained, we solve for ˆπ as in (4). The specific approach used in this paper uses a grid of candidate parameters in the set Π. Every point in this grid is used as an initial condition for the last p number of states, where p is the dimension of π. Then, the prediction of ˆF is compared with the query dataset as in (4), and the grid point that minimizes the error metric is ˆπ (see Algorithm 1). VIII. N UMERICAL EXPERIMENTS 
+
+As a demonstration of the efficacy of the developed algorithm, we apply the method to the controlled Duffing oscillator. The controlled Duffing oscillator is a nonlinear dynamical system with state-space form 
+
+ ˙x1
+
+˙x2
+
+
+
+=
+
+ x2
+
+−δx 2 − βx 1 − αx 31
+
+
+
++
+
+ 02 + sin( x1)
+
+
+
+u (16) where α, β, δ are coefficients in R, [x1, x 2]⊤ ∈ R2 is the state, and u ∈ R is the control input. For the experiments the parameters are selected to be: δ = 0 , α = 1 , and β = −1.We modify the system to include the parameters as states 
+
+
+
+˙x1
+
+˙x2
+
+˙α
+
+˙β
+
+˙δ
+
+ =
+
+
+
+x2
+
+−δx 2 − βx 1 − αx 31
+
+000
+
+ +
+
+
+
+02 + sin( x1)000
+
+ u, 
+
+(17) then descretize (17) using a time step of 0.1 seconds to yield a discrete-time, control-affine dynamical system of the form xk+1 = F (xk) + G(xk)uk. Using the tuples 
+
+{(xk, x k+1 , u k)}nk=1 generated by the dynamical system, we aim to identfiy the system along with parameters α, β, and 
+
+δ, where α0 = α,β0 = β and δ0 = δ.In the implementation of DCLDMDPID, we select 20000 initial conditions sampled randomly using a uniform distri-bution from the set [−3, 3] × [−3, 3] × [−3, 3] × [−3, 3] ×
+
+[−3, 3] ⊂ R5 and the control inputs are sampled uniformly from the interval [−2, 2] ⊂ R.
+
+Algorithm 1 The DCLDMDPID algorithm 
+
+Input: Training dataset composed of state snapshots 
+
+{zji }Mi=1 , parameter values {πj }Mi=1 , control set {uji }Mi=1 ,a label set {wji }Mi=1 such that wji = F (zji , u ji , π j ),a query dataset composed of state snapshots {zi}Ni=1 ,control set {ui}Ni=1 , a label set {wi}Ni=1 such that wi =
+
+F (zi, u i, π ), and reproducing kernels ˜Kd and K of ˜Hd
+
+and H, respectively, and a mesh of of parameter space 
+
+Πmesh .
+
+Output: {ξj , σ j , φ j , ϕ j }Mj=1 , ˆF and ˆπ. 
+
+> 1:
+
+xi = [ zi; πi] 
+
+> 2:
+
+yi = [ wi; πi] 
+
+> 3:
+
+β ← [Kxi,u i ]Mi=1  
+
+> 4:
+
+Gβ ←   Kxi,u i , K xj ,u j H
+
+Mi,j =1  
+
+> 5:
+
+GdM ←
+
+
+
+⟨Kd(·, x i), K d(·, x j )⟩ ˜Hd
+
+Mi,j =1  
+
+> 6:
+
+I =  ⟨Kd(·, x i), K d(·, y i)⟩ ˜Hd
+
+Mi,j =1  
+
+> 7:
+
+D ←  (xj )i
+
+n,M i,j =1  
+
+> 8:
+
+(W, Σ, V ) ← SVD of G+ 
+
+> β
+
+I⊤G+ 
+
+> d
+> 9:
+
+ξ ← DV  
+
+> 10:
+
+ϕj ← PMi=1 ← (V )i,j (Kd(·, x i))  
+
+> 11:
+
+ψj ← PMi=1 (W )i,j 
+
+ 1 ui(t)⊤ Kxi,u i
+
+ (·) 
+
+> 12:
+
+ˆF (xk, u k) ← DV ΣW ⊤β(xk)
+
+ 1
+
+uk
+
+ 
+
+> 13:
+
+ˆπ ← arg min η∈Πmesh 
+
+PNk=1 (wk − ˆF ([ zk; η], u k)) 2 
+
+> 14:
+
+return {ξj , σ j , φ j , ϕ j }Mj=1 , ˆF and ˆπ.The Gaussian radial basis function kernel ˜K(x, y ) =e −∥ x−y∥22 
+
+> σ
+
+is used for ˜H, with kernel width σ = 20 . For H,we associate to each pair {(xk, u k)}nk=1 a kernel Kxk ,¯uk :=  1 u⊤
+
+> k
+
+ Kxk ∈ H. Here we use the kernel operator Kxi := diag   ˜Kx1 · · · ˜Kxm+1 
+
+ where ˜Kxj (y) = e −∥xj −y∥22 
+
+> σ
+
+for 
+
+j = 1 , . . . , m + 1 , with σ = 20 . Lastly, we select ε = 10 −6
+
+for regularization of the Gram matrices in order to ensure invertibility of both ˜G and G, instead of the pseudoinverse, in the finite-rank representation (see Algorithm 1).                   
+
+> 01234
+> −1
+> −0.5
+> 0
+> 0.5
+> 1
+> 1.5
+> Time [s]
+> x1(t)
+> x2(t)
+> α
+> β
+> δ
+> ˆx1(t)
+> ˆx2(t)
+> ˆα(t)
+> ˆβ(t)
+> ˆδ(t)
+> Fig. 1. A comparison between the true system trajectories x1and x2
+> and the trajectories of the identified system ˆx1and ˆx2. In addition to the comparison of the true system parameters α,β, and δand their corresponding parameters as states ˆα,ˆβ, and ˆδ.
+
+Once a system ˆF is identified, the process of identifying the parameters is conducted by comparing the trajectories of the identified system using permutations of the possible parameters, i.e. different initial conditions for the added states, with the trajectories of the true system in (16). the permutation of the possible parameters are the nodes of an equally spaced mesh in [−3, 3] × [−3, 3] × [−3, 3] ⊂ R3
+
+with a spacing of 0.5 corresponding to the three parameters 
+
+α, β, and δ. The permutation that produces the smallest mean squared error (MSE) 150 
+
+P50 
+
+> i=1
+
+([ x1; x2] − ˆF(1 ,2) (xi, u i)) 2 is determined to be the parameter estimations of π = [ α, β, δ ],where ˆF(1 ,2) (xi, u i) is the first and second state output of 
+
+ˆF .
+
+A. Discussion 
+
+Figure 1 shows the trajectories of the true system and the identified system, along with the true parameters and the corresponding identified parameters as states, where the initial conditions of the parameters as states are determined to be ˆα(0) = 1 , ˆβ(0) = −1, and ˆδ(0) = 0 . Figure 2 shows the trajectory differences between the true system and the identified system, along with the drift of the parameters as states from the true values, all of which are at most in the order of 10 −3 over the span of 5 seconds. Note that naturally, obtaining the exact parameter using this method is not guaranteed. It was only possible in this example because the mesh that was used for parameter identification happened to contain the exact parameter vector. If the true parameter vector is not in the mesh, the algorithm returns the best-fitting parameter vector from the mesh. Figure 3 shows values of the MSE computed using different parameter combinations on the mesh against the Euclidean distance of the vector of parameters [δ, α, β ]⊤
+
+form the vector [0 , 1, −1] ⊤ of true values. As seen in Figure 3, for the case where the true parameter is in the mesh, we 0 1 2 3 4                                                  
+
+> −5
+> 0
+> 5
+> ·10 −3
+> Time [s]
+> x1(t)−ˆx1(t)
+> x2(t)−ˆx2(t)
+> α−ˆα(t)
+> β−ˆβ(t)
+> δ−ˆδ(t)
+> Fig. 2. The difference between the trajectories of the true system and the identified system x1−ˆx1and x2−ˆx2. And the difference between the true parameters α, β, δ and the change in the parameters as states form the identified system ˆα, ˆβ, ˆδ.
+> 00.511.522.53
+> 0
+> 0.1
+> 0.2
+> 0.3
+> 0.4
+> Distance
+> MSE
+> Fig. 3. The MSE computed using different parameter values on the mesh that contains the true parameter values, plotted against the Euclidean distance of the mesh point from the exact values δ= 0 ,α= 1 , and
+> β=−1. The red dot shows the parameter values with the smallest MSE.
+> 0.511.522.53
+> 5·10 −2
+> 0.1
+> 0.15
+> 0.2
+> 0.25
+> 0.3
+> 0.35
+> 0.4
+> Distance
+> MSE
+> Fig. 4. The MSE computed using different parameter values on the mesh that does not contain the true parameter values, plotted against the Euclidean distance of the mesh point from the exact values δ= 0 ,α= 1 , and
+> β=−1. The red dot shows the parameter values with the smallest MSE
+
+see a clear separation between the error generated by the true parameter and those generated by other parameters on the mesh. Note that since the optimization problem in (4) is not expected to be convex in general, we expect such separation only locally, not globally as seen in Figure 3. In order to demonstrate the effect of the choice of the mesh, another parameter identification experiment was con-ducted using the same training and query datasets but using a shifted mesh that does not contain the true parameter values δ = 0 , α = 1 , and β = −1. In this case we use a mesh composed of equally spaced nodes in [−3.3, 2.7] ×
+
+[−3.3, 2.7] × [−3.3, 2.7]] ⊂ R3 with a spacing of 0.5. Figure 4 shows values of the MSE against the Euclidean distance from the true parameter in the parameter space, similar to 3. In this case, it can be seen that the parameter values that produce the smallest MSE ( ˆα = 0 .7, ˆβ = −1.3, and 
+
+ˆδ = −0.3.) is not the closest node in the mesh to the true values in Euclidean distance, but we still see a separation between a cluster of ‘low-error’ parameter vectors and other parameter vectors on the mesh. IX. C ONCLUSION 
+
+This paper introduces a novel approach towards the con-struction of a finite-rank representation of the control Li-ouville operator. New results on the construction of singu-lar values and functions of the finite rank operator using singular values and vectors of a matrix representation are also obtained. Once the singular values and functions are at hand, the drift dynamics and the control effectiveness can be approximated, which facilitates the prediction of the states of the dynamical system in response to an open-loop control signal. Once a predictive model is generated, its predictions can be compared with the trajectory of the true system using different guesses of the parameters as initial conditions of the augmented states. A weakness of the current method is that the parameters identified can only choose between the nodes of the mesh that is defined by the user. If the mesh does not include the exact parameters, it is impossible to identify the exact parameters. A numerical experiment using the Duffing oscillator is presented to demonstrate the performance of the developed technique, while future work will focus on analyzing the effects of integration error and measurement noise on the DCLDMDPID method, incorporating partial system knowl-edge to enhance identification, investigating data-driven sen-sitivity analysis to enable gradient-based parameter identifi-cation and investigating other gradient-free global optimiza-tion techniques in place of the current grid-based approach. REFERENCES [1] K. J. ˚Astr¨ om and P. Eykhoff, “System identification—a survey,” 
+
+Automatica , vol. 7, no. 2, pp. 123–162, 1971. [2] L. Ljung, System identification — theory for the user . Prentice Hall, 1999. [3] P. Ioannou and J. Sun, Robust adaptive control . Prentice Hall, 1996. [4] J.-J. E. Slotine and W. Li, “On the adaptive control of robot manipu-lators,” Int. J. Robot. Res. , vol. 6, no. 3, pp. 49–59, 1987. [5] T. E. Ogri, Z. I. Bell, and R. Kamalapurkar, “State and parameter estimation for affine nonlinear systems,” in Proc. IEEE Conf. Decis. Control , Singapore, 2023, pp. 1517–1522. [6] M. Raissi, P. Perdikaris, and G. E. Karniadakis, “Physics-informed neural networks: a deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations,” 
+
+J. Comput. Phys. , vol. 378, pp. 686–707, 2019. [7] Y. Zhou, Y. Wang, F. Ma, F. Ding, and T. Hayat, “Parameter estimation for a class of radial basis function-based nonlinear time-series models with moving average noises,” J. Franklin Inst. ,vol. 358, no. 4, pp. 2576–2595, 2021. [8] L. J. Alder and S. M. Rock, “Adaptive control of a flexible-link robotic manipulator with unknown payload dynamics,” in Proc. Amer. Control Conf. , San Francisco, CA, USA, 1993, p. 467. [9] S. Dai, T. Lee, and D. S. Bernstein, “Adaptive control of a quadrotor UAV transporting a cable-suspended load with unknown mass,” in 
+
+Proc. IEEE Conf. Decis. Control , Los Angeles, CA, USA, 2014, pp. 6149–6154. [10] P. Klanatsky, F. Veynandt, and C. Heschl, “Grey-box model for model predictive control of buildings,” Energy Build. , vol. 300, no. 1, p. 113624, 2023. [11] T. Wietzke, J. Gall, and K. Graichen, “Occupancy prediction for building energy systems with latent force models,” Energy Build. ,vol. 307, p. 113968, 2024. [12] P. Bisaillon, B. Robinson, M. Khalil, C. L. Pettit, D. Poirel, and A. Sarkar, “Robust Bayesian state and parameter estimation framework for stochastic dynamical systems with combined time-varying and time-invariant parameters,” J. Sound Vib. , vol. 575, p. 118106, 2024. [13] T. Tripura and S. Chakraborty, “A sparse Bayesian framework for discovering interpretable nonlinear stochastic dynamical systems with Gaussian white noise,” Mech. Syst. Signal Process. , vol. 187, p. 109939, 2023. [14] D. Gedon, N. Wahlstr¨ om, T. B. Sch¨ on, and L. Ljung, “Deep state space models for nonlinear system identification,” IFAC-PapersOnLine , vol. 54, no. 7, pp. 481–486, 2021. [15] Z. Morrison, M. Abudia, J. A. Rosenfeld, and R. Kamalapurkar, “Dynamic mode decomposition of control-affine nonlinear systems using discrete control liouville operators,” IEEE Control Systems Letters , vol. 8, pp. 79–84, 2024. [16] A. Mauroy and J. Goncalves, “Koopman-based lifting techniques for nonlinear systems identification,” IEEE Trans. Autom. Control , vol. 65, no. 6, pp. 2550–2565, 2020. [17] J. A. Rosenfeld, R. Kamalapurkar, L. F. Gruss, and T. T. Johnson, “Dynamic mode decomposition for continuous time systems with the Liouville operator,” J. Nonlinear Sci. , vol. 32, no. 1, pp. 1–30, 2022. [18] E. Gonzalez, M. Abudia, M. Jury, R. Kamalapurkar, and J. A. Rosenfeld, “The kernel perspective on dynamic mode decomposition,” 
+
+Trans. Mach. Learn. Res. , 2024. [19] M. Abudia, J. A. Rosenfeld, and R. Kamalapurkar, “On convergent dynamic mode decomposition and its equivalence with occupation kernel regression,” in IFAC-PapersOnLine , vol. 58, no. 17, 2024, pp. 103–108. [20] C. Carmeli, E. De Vito, A. Toigo, and V. Umanit´ a., “Vector valued reproducing kernel Hilbert spaces and universality,” Anal. Appl. ,vol. 08, no. 01, pp. 19–61, 2010. [21] J. A. Rosenfeld and R. Kamalapurkar, “Dynamic mode decomposition with control Liouville operators,” in IFAC-PapersOnLine , vol. 54, no. 9, 2021, pp. 707–712.

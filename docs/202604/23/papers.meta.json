@@ -1,0 +1,37 @@
+{
+  "label": "2026-04-23",
+  "date": "2026-04-23",
+  "generated_at": "2026-04-23T20:46:55",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202604/23/2604.18783v1-a-dynamic-mode-decomposition-approach-to-parameter-identification",
+      "section": "quick",
+      "title_en": "A Dynamic Mode Decomposition Approach to Parameter Identification",
+      "authors": "Moad Abudia, Opeyemi Owolabi, Joel A. Rosenfeld, Rushikesh Kamalapurkar",
+      "date": "2026-04-20",
+      "pdf": "https://arxiv.org/pdf/2604.18783v1",
+      "score": "6.0",
+      "evidence": "控制仿射非线性系统的参数辨识",
+      "tldr": "本研究提出一种基于动态模式分解（DMD）的数据驱动算法，旨在解决控制仿射非线性系统的系统辨识与参数估计问题。该方法通过利用不同已知参数下的状态-动作测量数据训练预测模型，进而利用该模型结合未知参数下的观测数据来推断参数值。实验表明，该算法在受控 Duffing 振子模型上表现优异，能从开环激励数据中准确恢复系统轨迹并识别未知的物理参数，为复杂非线性系统的建模与分析提供了新思路。",
+      "tags": "query:em-force",
+      "abstract_en": "This paper presents a data-driven algorithm for simultaneous system identification and parameter estimation in control-affine nonlinear systems. Parameter estimation is achieved by training a data-driven predictive model using state-action measurements and various known values at the parameters of interest. The predictive model is then used in conjunction with state-action data corresponding to unknown values of the parameters to estimate the said unknown value. Numerical experiments on the controlled Duffing oscillator with unknown damping, stiffness, and nonlinearity coefficients demonstrate accurate recovery of both the system trajectories and the unknown parameter values from data collected under open-loop excitation.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/23/2604.19677v1-learning-hybrid-control-policies-for-high-precision-in-contact-manipulation-under-uncertainty",
+      "section": "quick",
+      "title_en": "Learning Hybrid-Control Policies for High-Precision In-Contact Manipulation Under Uncertainty",
+      "authors": "Hunter L. Brown, Geoffrey Hollinger, Stefan Lee",
+      "date": "2026-04-21",
+      "pdf": "https://arxiv.org/pdf/2604.19677v1",
+      "score": "6.0",
+      "evidence": "用于高精度操作的混合位置-力控制",
+      "tldr": "针对高精度接触式操作（如易碎插接件）中位姿控制难以处理力约束的问题，本文提出了一种混合位置-力控制策略。通过引入MATCH训练方法，使策略能动态选择各维度的控制模式。实验表明，该方法在存在定位不确定性的情况下，显著提高了任务成功率并减少了硬件损坏，在真机实验中表现出优异的鲁棒性和安全性。",
+      "tags": "query:em-force",
+      "abstract_en": "Reinforcement learning-based control policies have been frequently demonstrated to be more effective than analytical techniques for many manipulation tasks. Commonly, these methods learn neural control policies that predict end-effector pose changes directly from observed state information. For tasks like inserting delicate connectors which induce force constraints, pose-based policies have limited explicit control over force and rely on carefully tuned low-level controllers to avoid executing damaging actions. In this work, we present hybrid position-force control policies that learn to dynamically select when to use force or position control in each control dimension. To improve learning efficiency of these policies, we introduce Mode-Aware Training for Contact Handling (MATCH) which adjusts policy action probabilities to explicitly mirror the mode selection behavior in hybrid control. We validate MATCH's learned policy effectiveness using fragile peg-in-hole tasks under extreme localization uncertainty. We find MATCH substantially outperforms pose-control policies -- solving these tasks with up to 10% higher success rates and 5x fewer peg breaks than pose-only policies under common types of state estimation error. MATCH also demonstrates data efficiency equal to pose-control policies, despite learning in a larger and more complex action space. In over 1600 sim-to-real experiments, we find MATCH succeeds twice as often as pose policies in high noise settings (33% vs.~68%) and applies ~30% less force on average compared to variable impedance policies on a Franka FR3 in laboratory conditions.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
