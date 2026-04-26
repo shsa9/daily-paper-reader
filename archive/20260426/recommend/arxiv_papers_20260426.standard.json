@@ -1,0 +1,160 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-26T20:12:54.516220+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.17903v2",
+      "title": "Research on mode transition of micro-newton-level cusped field Hall thruster",
+      "abstract": "The micro-newton cusped field Hall thruster is an electric propulsion device that employs microwave-assisted ionization control. It serves as an actuator in drag-free control systems, ensuring control accuracy and stability by providing continuously adjustable thrust over a wide range. However, a mode transition occurring during the regulation process can lead to a sudden change in anode current, degrading control precision and stability. Therefore, it is necessary to investigate the underlying patterns of mode transition. This study examines the variations in internal plasma parameters and discharge characteristics of the thruster before and after microwave mode transition, primarily through probe diagnostics.Experimental results indicate that before the mode transition, the plasma luminous region is primarily concentrated within the electron cyclotron resonance (ECR) area, approximately 1-3 mm upstream of the anode. After the transition, the luminous region moves further upstream, and the plasma density near the anode exceeds the cutoff density, dropping sharply along the axial direction. The fundamental cause of the change in electron heating mechanism is the alteration in the propagation characteristics of fundamental waves due to this plasma density variation.When the plasma density rises to the cutoff density, the R wave and O wave, which drive ionization, are rapidly attenuated or reflected. At this point, the R-wave cannot reach the resonance layer, causing the dominant ECR ionization to become ineffective. The ionization mechanism shifts from being dominated by the R wave and O wave to being dominated primarily by the O wave. Consequently, the electron heating mechanism transitions from volume heating to surface wave heating......",
+      "authors": [
+        "Jiahao Wu",
+        "Ming Zeng",
+        "Hui Liu",
+        "Daren Yu"
+      ],
+      "primary_category": "physics.plasm-ph",
+      "categories": [
+        "physics.plasm-ph"
+      ],
+      "published": "2026-04-20T07:29:21+00:00",
+      "link": "https://arxiv.org/pdf/2604.17903v2",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "precision thrust control for micro-newton level actuators",
+      "llm_evidence_cn": "微牛级执行器的精密推力控制",
+      "llm_evidence": "微牛级执行器的精密推力控制",
+      "canonical_evidence": "微牛级执行器的精密推力控制",
+      "llm_tldr_en": "Investigates mode transitions in Hall thrusters to ensure precision thrust control for drag-free systems.",
+      "llm_tldr_cn": "研究霍尔推力器的模式切换，以确保无拖曳系统的精密推力控制。",
+      "llm_tldr": "研究霍尔推力器的模式切换，以确保无拖曳系统的精密推力控制。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.19077v1",
+      "title": "High-Order Multi-Scale Method and Its Convergence Analysis for Nonlinear Thermo-Electro-Mechanical Coupling Problems of Composite Structures",
+      "abstract": "This study proposes a high-order multi-scale method tailored for time-dependent nonlinear thermo-electro-mechanical coupling problems of composite structures with highly spatial heterogeneity, which incorporate temperature-dependent material properties and Joule heating effect. By employing the multi-scale asymptotic approach and the Taylor series technique, a high-accuracy multi-scale asymptotic model featuring novel high-order correction terms is established for nonlinear multi-physics simulation of periodic solid structures. A local point-wise error analysis is derived to theoretically and physically illustrate the local balance preserving of heat quantity, electric charge and stress,thereby enabling high-accuracy multi-scale computation. Moreover, a global error estimation is obtained that provides an explicit convergence rate for high-order multi-scale solutions. Furthermore, an efficient numerical algorithm featuring with off-line and on-line stages is presented meticulously, accompanied by a corresponding error analysis. Numerical experiments are conducted to showcase the competitive advantages of the proposed method for simulating the time-dependent nonlinear thermo-electro-mechanical coupling problems with highly oscillatory and discontinuous coefficients, demonstrating superior numerical accuracy and reduced computational cost.",
+      "authors": [
+        "Hao Dong"
+      ],
+      "primary_category": "math.NA",
+      "categories": [
+        "math.NA"
+      ],
+      "published": "2026-04-21T04:40:37+00:00",
+      "link": "https://arxiv.org/pdf/2604.19077v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "thermo-electro-mechanical coupling and Joule heating in composite structures",
+      "llm_evidence_cn": "复合结构中的热-电-机械耦合和焦耳热效应",
+      "llm_evidence": "复合结构中的热-电-机械耦合和焦耳热效应",
+      "canonical_evidence": "复合结构中的热-电-机械耦合和焦耳热效应",
+      "llm_tldr_en": "Models multi-physics coupling including electrical effects, useful for modeling electromagnetic actuator dynamics.",
+      "llm_tldr_cn": "模拟包括电效应在内的多物理场耦合，有助于电磁执行器的动力学建模。",
+      "llm_tldr": "模拟包括电效应在内的多物理场耦合，有助于电磁执行器的动力学建模。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "eddy current effects in electromagnetic actuators dynamic modeling",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.20265v1",
+      "title": "Compressible Navier-Stokes-Landau-Lifshitz-Gilbert system: derivations and well-posedness",
+      "abstract": "In this paper, we first derive the compressible Navier-Stokes/Landau-Lifshitz-Gilbert (NS-LLG) model for magnetoelastic materials via the energetic variational approach (EnVarA). It is important to emphasize that the manner in which the evolution of magnetoelastic materials is influenced by the fluid motion--specifically through the deformation gradient--determines the kinematics of the magnetization and consequently leads to distinct governing equations. Subsequently, we establish the local-in-time existence of solutions to the compressible NS-LLG system under finite initial energy. Finally, near the constant equilibrium for magnetoelasticity in the absence of an external magnetic field, we reformulate the evolutionary model, which allows an additional dissipative term to be identified from the elastic stress. Based on this reformulation, we justify the global well-posedness of the evolutionary magnetoelasticity system with zero external magnetic field, provided the initial data are sufficiently small. In particular, when the magnetic field $M$ vanishes, this model reduces to the viscoelastic model. Our results significantly relax the previous initial data requirements, only assume the most basic structural condition $ρ_{0} \\operatorname{det} F_{0} = 1$.",
+      "authors": [
+        "Boling Guo",
+        "Ning Jiang",
+        "Hui Liu",
+        "Yi-Long Luo",
+        "Teng-Fei Zhang"
+      ],
+      "primary_category": "math.AP",
+      "categories": [
+        "math.AP"
+      ],
+      "published": "2026-04-22T07:10:54+00:00",
+      "link": "https://arxiv.org/pdf/2604.20265v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "modeling of magnetoelastic materials and magnetization kinematics",
+      "llm_evidence_cn": "磁弹性材料建模与磁化运动学",
+      "llm_evidence": "磁弹性材料建模与磁化运动学",
+      "canonical_evidence": "磁弹性材料建模与磁化运动学",
+      "llm_tldr_en": "Derives governing equations for magnetoelastic materials, relevant to the physics of electromagnetic actuators.",
+      "llm_tldr_cn": "推导了磁弹性材料的控制方程，与电磁执行器的物理特性相关。",
+      "llm_tldr": "推导了磁弹性材料的控制方程，与电磁执行器的物理特性相关。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "eddy current effects in electromagnetic actuators dynamic modeling",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.21294v1",
+      "title": "Analytical PI Tuning for Second-Order Plants with Monotonic Response and Minimum Settling Time",
+      "abstract": "Background: Tuning proportional-integral (PI) controllers for second-order plants to achieve monotonic step response with minimum settling time is an important problem in analytical control design. Existing methods address these objectives only partially or require numerical optimization. Methods: A closed-form analytical solution is derived through pole placement in the framework of Astrom and Hagglund. The key insight is that designing the closed-loop poles slower than the fast plant pole forces pole-zero cancellation of the slow plant pole as a consequence, not an assumption. The critically damped condition is then applied to minimize settling time. Results: The optimal PI parameters are K=T1/(4KpT2), Ti=T1, where T1 and T2 are the plant time constants and Kp is the plant gain. No free parameter remains. The resulting closed-loop system possesses universal robustness properties independent of plant parameters: maximum complementary sensitivity Mt = 1, maximum sensitivity Ms = 1.155, and phase margin PM = 76.35 degree. Conclusions: The proposed tuning formulas are explicit, analytically proven, and apply directly to any stable second-order plant with two real poles. Simulation results across six plant configurations confirm the analytical predictions exactly. The notation follows Astrom and Hagglund [5] throughout. Keywords: PI controller; second-order plant; pole placement; critically damped; monotonic response; settling time; robustness",
+      "authors": [
+        "Senol Gulgonul"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-04-23T05:15:10+00:00",
+      "link": "https://arxiv.org/pdf/2604.21294v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "analytical PI tuning for second-order plants with minimum settling time",
+      "llm_evidence_cn": "二阶对象的解析PI调优及最小调节时间控制",
+      "llm_evidence": "二阶对象的解析PI调优及最小调节时间控制",
+      "canonical_evidence": "二阶对象的解析PI调优及最小调节时间控制",
+      "llm_tldr_en": "Provides analytical PI tuning for second-order systems, applicable to electromagnetic shaker control loops.",
+      "llm_tldr_cn": "为二阶系统提供解析PI调优方法，可用于电磁激振器控制回路。",
+      "llm_tldr": "为二阶系统提供解析PI调优方法，可用于电磁激振器控制回路。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "closed-loop force control for electromagnetic shakers",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

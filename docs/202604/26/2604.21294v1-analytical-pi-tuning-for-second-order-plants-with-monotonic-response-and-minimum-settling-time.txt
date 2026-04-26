@@ -1,0 +1,691 @@
+Title: Analytical PI Tuning for Second-Order Plants with Monotonic Response and Minimum Settling Time
+
+URL Source: https://arxiv.org/pdf/2604.21294v1
+
+Published Time: Fri, 24 Apr 2026 00:27:20 GMT
+
+Number of Pages: 9
+
+Markdown Content:
+Analytical PI Tuning for Second -Order Plants with 
+
+# Monotonic Response and Minimum Settling Ti me 
+
+Senol Gulgonul 
+
+Department of Electrical and Electronics Engineering 
+
+Ostim Technical University, Ankara, Turkey 
+
+senol.gulgonul@ostimteknik.edu.tr 
+
+# Abstract 
+
+Background : Tuning proportional -integral (PI) controllers for second -order plants to achieve 
+
+monotonic step response with minimum settling time is an important problem in analytical 
+
+control design. Existing methods address these objectives only partially or require numerical 
+
+optimization. 
+
+Methods : A closed -form analytical solution is derived through pole placement in the 
+
+framework of Astrom and Hagglund . The key insight is that designing the closed -loop poles 
+
+slower than the fast plant pole forces pole -zero cancellation of the slow plant pole as a 
+
+consequence, not an assumption. The critically damped condition is then applied to minimize 
+
+settling time. 
+
+Results : The optimal PI parameters are K=T1/( 4KpT2 ), Ti=T1 , where T1 and T2 are the plant 
+
+time constants and Kp is the plant gain. No free parameter remains. The resulting closed -loop 
+
+system possesses universal robustness properties independent of plant parameters: 
+
+maximum complementary sensitivity Mt = 1, maximum sensitivity Ms = 1.155, and phase 
+
+margin PM = 76.35 degree .
+
+Conclusions : The proposed tuning formulas are explicit, analytically proven, and apply 
+
+directly to any stable second -order plant with two real poles. Simulation results across six plant 
+
+configurations confirm the analytical predictions exactly. The notation follows Astrom and 
+
+Hagglund [5] throughout. 
+
+Keywords: PI controller; second -order plant; pole placement; critically damped; monotonic 
+
+response; settling time; robustness 
+
+# 1. Introduction 
+
+The proportional -integral (PI) controller remains the most widely used feedback controller in 
+
+industrial process control due to its simplicity and effectiveness. Tuning PI controllers to 
+
+achieve satisfactory transient response has been an active research a rea for decades. The 
+
+first systematic tuning method was proposed by Ziegler and Nichols [1], which has since been 
+
+refined by numerous authors [2,3]. 
+
+The plant model considered in this work describes a broad class of physical systems 
+
+encountered in practice. Mass -spring -damper mechanical systems, series RLC electrical 
+
+circuits, and armature -controlled DC motors with negligible armature inductance all yi eld 
+
+transfer functions of this form with two real negative poles [4]. Many higher -order systems are 
+
+also routinely approximated as second -order models to facilitate analysis and controller design 
+
+[4]. The proposed tuning method therefore applies directly t o a wide range of engineering 
+
+applications without requiring model reduction or special treatment. 
+
+A common requirement in many industrial applications, including precision positioning, 
+
+thermal control, and dosing systems, is that the step response must be non -overshooting and 
+
+monotonically non -decreasing. Overshoot can cause damage, quality degradation , or safety 
+
+violations. Settling time must simultaneously be minimized to achieve high throughput. These 
+
+two objectives, zero overshoot and minimum settling time, are competing in general, and no 
+
+analytical solution has been reported for PI control of seco nd -order plants. Astrom and Hagglund show in Example 6.7 of [5] that PI control can achieve any prescribed 
+
+pole configuration (α, ζ), with the scale factor  𝜔 0 determined by the process dynamics. 
+
+However, the optimal selection of α and ζ to achieve monotonic response with minimum 
+
+settling time was not addressed. 
+
+Nguyen and Nguyen [6] proposed a PID controller for first -order and second -order systems 
+
+that guarantees zero overshoot and arbitrary settling time. For second -order plants, their 
+
+method employs a PID controller with both plant poles cancelled, reducing th e closed -loop to 
+
+first order. While effective, the method requires derivative action and does not provide a 
+
+minimum settling time criterion, as the proportional gain remains a free parameter determined 
+
+by the desired settling time specification. 
+
+Albatran et al. [7] proposed explicit PI and PID tuning formulas for underdamped second -order 
+
+systems based on particle swarm optimization and cascaded curve fitting. Near -optimal gains 
+
+are obtained as functions of the plant damping ratio and natural frequ ency, with a maximum 
+
+overshoot below five percent for PI control. While the formulas are explicit, they are 
+
+numerically derived rather than analytically proven, and strict monotonicity of the step 
+
+response is not guaranteed. 
+
+The present work answers the open question of Example 6.7 in [5]. For a second -order plant 
+
+controlled by a PI controller, the optimal α and ζ are derived analytically. The key insight is 
+
+that designing the closed -loop poles slower than the fast plant pole — exactly the condition 
+
+identified by Astrom and Hagglund for the first -order case — forces pole -zero cancellation of 
+
+the slow plant pole as a consequence, not an assumption. Combined with the critically damped 
+
+condition ζ = 1 for minimum settling time, this uniquely determines all controller parameters in 
+
+close d form with no free parameter remaining. It is further shown that the resulting solution 
+
+possesses universal robustness properties independent of plant parameters. 
+
+# 2. Problem Statement 
+
+Consider a stable second -order plant with transfer function 
+
+𝑃 (𝑠 ) = 𝐾 𝑝      
+
+> (1+𝑠 𝑇 1)(1+𝑠 𝑇 2)
+
+(1)
+
+where K p > 0 is the plant gain, and T 1 ≥ T 2 > 0 are the plant time constants, with slow pole at 
+
+s = −1/T 1 and fast pole at s = −1/T 2. The plant is controlled by a PI controller 
+
+𝐶 (𝑠 ) = 𝐾 (1 + 1
+
+𝑠 𝑇 𝑖 
+
+) (2)
+
+in a unity feedback configuration, where K > 0 is the controller gain and T i > 0 is the integral 
+
+time. The closed -loop transfer function is 
+
+𝑇 (𝑠 ) = 𝐶 (𝑠 )𝐺 (𝑠 )
+
+(1 + 𝐶 (𝑠 )𝐺 (𝑠 ))
+
+𝑇 (𝑠 ) =
+
+𝐾 𝐾 𝑝 
+
+𝑇 1𝑇 2𝑇 𝑖 
+
+(1 + 𝑠 𝑇 𝑖 )
+
+𝑠 3 + ( 1
+
+𝑇 1 + 1
+
+𝑇 2) 𝑠 2 + 1 + 𝐾 𝐾 𝑝 
+
+𝑇 1𝑇 2 𝑠 + 𝐾 𝐾 𝑝 
+
+𝑇 1𝑇 2𝑇 𝑖 
+
+(3)
+
+The closed -loop characteristic polynomial is obtained from the denominator of (3) as 
+
+𝑝 (𝑠 ) = 𝑠 3 + ( 1
+
+𝑇 1
+
++ 1
+
+𝑇 2
+
+) 𝑠 2 + 1 + 𝐾 𝐾 𝑝 
+
+𝑇 1𝑇 2
+
+𝑠 + 𝐾 𝐾 𝑝 
+
+𝑇 1𝑇 2𝑇 𝑖 
+
+(4)
+
+Three observations follow directly from (4). First, the coefficient of s² is fixed by the plant time 
+
+constants and cannot be altered by the controller. Second, the controller gain K and integral 
+
+time T i appear only in the last two coefficients. Third, all coefficients are positive for any K > 0 
+
+and T i > 0, guaranteeing stability by the Routh -Hurwitz criterion. The step response y(t) is said to be monotonic if 
+
+𝑑𝑦 
+
+𝑑𝑡 ≥ 0 𝑓𝑜𝑟 𝑎𝑙𝑙 𝑡 ≥ 0 (5)
+
+This condition is stronger than zero overshoot alone, as it excludes responses that dip below 
+
+the final value before recovering. The design problem is stated as follows. Find K and T i such 
+
+that: (i) the step response is monotonic, (ii) the settling time T s is minimized. Zero overshoot 
+
+is a consequence of condition (i) and need not be stated separately. 
+
+# 3. Analytical Solution 
+
+The closed -loop characteristic polynomial (4) has three roots. In the most general case, these 
+
+roots are either three real poles or one real pole and a complex conjugate pair. Both 
+
+configurations are consistent with the Routh -Hurwitz stability conditions f or positive K and T i.
+
+From Vieta's formulas applied to (4), the three closed -loop poles p1, p2, p3 satisfy 
+
+𝑝 1 + 𝑝 2 + 𝑝 3 = − ( 1
+
+𝑇 1
+
++ 1
+
+𝑇 2
+
+) (6)
+
+𝑝 1𝑝 2 + 𝑝 1𝑝 3 + 𝑝 2𝑝 3 = 1 + 𝐾 𝐾 𝑝 
+
+𝑇 1𝑇 2
+
+(7)
+
+𝑝 1𝑝 2𝑝 3 = − 𝐾 𝐾 𝑝 
+
+𝑇 1𝑇 2𝑇 𝑖 
+
+(8)
+
+The sum of poles in (6) is fixed by the plant and cannot be altered by the controller. The 
+
+product KK p appears in the coefficients of s and the constant term, while T i appears only in 
+
+the constant term. 
+
+The closed -loop characteristic polynomial (4) is third order, but the PI controller introduces 
+
+only two tunable parameters ( 𝐾 , 𝑇 𝑖 ). Hence, the zeros of the polynomial cannot be assigned 
+
+arbitrarily. In particular, the coefficient of  𝑠 2is fixed by the plant time constants  𝑇 1, 𝑇 2and cannot 
+
+be influenced by the controller. This limitation prevents full pole placement in the third -order 
+
+case. 
+
+Astrom and Hagglund [5] show that characteristic polynomial for a third -order system can be 
+
+expressed in canonical form as 
+
+(𝑠 + 𝛼 𝜔 0)(𝑠 2 + 2𝜁 𝜔 0𝑠 + 𝜔 0
+
+> 2
+
+) (9)
+
+where  𝛼 , 𝜁 , and  𝜔 0 are design parameters. Matching (4) to this form requires three degrees 
+
+of freedom, but the PI controller provides only two. To reconcile this mismatch, the system 
+
+order must be reduced. 
+
+The PI controller introduces a zero at  𝑠 = −1/𝑇 𝑖 . Choosing  𝑇 𝑖 = 𝑇 1places this zero at the slow 
+
+plant pole, yielding exact pole –zero cancellation. Substituting  𝑇 𝑖 = 𝑇 1into (4) confirms that  𝑠 =
+
+−1/𝑇 1is a closed -loop root. The third -order polynomial thereby collapses to the second -order 
+
+form 
+
+𝑇 (𝑠 ) =
+
+𝐾 𝐾 𝑝 
+
+𝑇 1𝑇 2
+
+𝑠 2 + 𝑠 
+
+𝑇 2 + 𝐾 𝐾 𝑝 
+
+𝑇 1𝑇 2
+
+= 𝑤 𝑛 
+
+> 2
+
+𝑠 2 + 2𝜁 𝑤 𝑛 𝑠 + 𝑤 𝑛  
+
+> 2
+
+(10 )which can now be matched exactly to the canonical second -order polynomial . For this reduced 
+
+system, the damping ratio is 
+
+𝜁 = √𝑇 1𝑇 2
+
+2𝑇 2√𝐾 𝐾 𝑝 
+
+, 𝑤 𝑛 = √𝐾 𝐾 𝑝 
+
+𝑇 1𝑇 2
+
+(11 )
+
+The monotonicity condition requires  𝜁 ≥ 1. Among these values, the minimum settling time is 
+
+uniquely achieved at  𝜁 = 1 (critical damping). This fixes the controller parameters as 
+
+𝐾 = 𝑇 1
+
+4𝐾 𝑝 𝑇 2
+
+, 𝑇 𝑖 = 𝑇 1 (12 )
+
+Substituting the optimal parameters (12) into (10), the closed -loop transfer function reduces 
+
+to 
+
+𝑇 (𝑠 ) = 1
+
+(1 + 2𝑇 2𝑠 )2 (13 )
+
+and the closed -loop poles become 
+
+𝑝 1 = − 1
+
+𝑇 1
+
+, 𝑝 2 = 𝑝 3 = − 1
+
+2𝑇 2
+
+(14)
+
+Thus, pole –zero cancellation is not an arbitrary assumption but the necessary consequence 
+
+of limited controller degrees of freedom. Combined with the critically damped condition, it 
+
+yields the unique closed -form solution that minimizes settling time while guaranteeing 
+
+monotonic response. 
+
+# 4. Universal Robustness Properties 
+
+After cancellation of the slow pole, the loop transfer function becomes 
+
+𝐿 (𝑠 ) = 𝐶 (𝑠 )𝑃 (𝑠 ) = KK p
+
+𝑠 𝑇 1(1 + 𝑠 𝑇 2) (15)
+
+Substituting the optimal PI parameters from (12),  𝐾 = 𝑇 1
+
+> 4𝐾 𝑝 𝑇 2
+
+, 𝑇 𝑖 = 𝑇 1, yields 
+
+𝐿 (𝑠 ) = 1
+
+4𝑇 2𝑠 (1 + 𝑠 𝑇 2) (16)
+
+4.1 Complementary Sensitivity 
+
+The complementary sensitivity is 
+
+𝑇 𝑐 (𝑠 ) = 𝐿 (𝑠 )
+
+1 + 𝐿 (𝑠 ) = 1
+
+4𝑇 2
+
+> 2
+
+𝑠 2 + 4𝑇 2𝑠 + 1 = 1
+
+(1 + 2𝑇 2𝑠 )2 (17)
+
+For the critically damped case, the magnitude of  𝑇 𝑐 (𝑗𝜔 )starts at unity at  𝜔 = 0 and decreases 
+
+monotonically to zero as  𝜔 → ∞. Hence the complementary sensitivity peak is 
+
+𝑀 𝑡 = max ∣ 𝑇 𝑐 (𝑗𝜔 ) ∣ = 1 (18)
+
+4.2 Maximum Sensitivity 
+
+The sensitivity function is 
+
+𝑆 (𝑠 ) = 1
+
+1 + 𝐿 (𝑠 ) = 4𝑇 2 𝑠 (1 + 𝑠 𝑇 2)
+
+4𝑇 2 𝑠 (1 + 𝑠 𝑇 2) + 1 (19)
+
+At  𝑠 = 𝑗𝜔  and i ntroducing the normalized frequency  𝑢 = 𝜔 𝑇 2 gives ∣ 𝑆 (𝑗𝜔 ) ∣= 4𝑢 √1 + 𝑢 2
+
+1 + 4u2 (20 )
+
+Squaring the magnitude, 
+
+∣ 𝑆 (𝑗𝜔 ) ∣2= 16 𝑢 2(1 + 𝑢 2)
+
+(1 + 4𝑢 2)2 (21)
+
+Letting  𝑣 = 𝑢 2,
+
+∣ 𝑆 (𝑗𝜔 ) ∣2= 16 𝑣 (1 + 𝑣 )
+
+(1 + 4𝑣 )2 (22)
+
+The extremum is obtained by setting the derivative with respect to  𝑣  equal to zero. This 
+
+yields  𝑣 = 1
+
+> 2
+
+. Substituting back, 
+
+∣ 𝑆 (𝑗𝜔 ) ∣2= 16 ⋅ 1
+
+2 ⋅ 3
+
+2
+
+(1 + 4 1
+
+2) 
+
+> 2
+
+= 12 
+
+9 (23)
+
+Hence, 
+
+𝑀 𝑠 = √12 
+
+9 = 2
+
+√3 ≈ 1.155 (24)
+
+4.3 Phase Margin 
+
+The phase margin is determined at the gain crossover frequency, where  ∣ 𝐿 (𝑗𝜔 ) ∣= 1. From 
+
+(15), 
+
+𝐿 (𝑗𝜔 ) = 1
+
+4𝑇 2 𝑗𝜔 (1 + 𝑗𝜔 𝑇 2) (2 5)
+
+The magnitude is 
+
+∣ 𝐿 (𝑗𝜔 ) ∣= 1
+
+4𝑇 2 𝜔 √1 + (𝜔 𝑇 2)2 (2 6)
+
+Setting  ∣ 𝐿 (𝑗𝜔 ) ∣= 1gives the gain crossover condition 
+
+4𝑇 2 𝜔 √1 + (𝜔 𝑇 2)2 = 1 (2 7)
+
+Introducing  𝑢 = 𝜔 𝑇 2,
+
+4𝑢 √1 + 𝑢 2 = 1 (2 8)
+
+Squaring both sides, 
+
+16 𝑢 2(1 + 𝑢 2) = 1 (2 9)
+
+This yields 
+
+𝑢 2 = √5 − 2
+
+4 (30 )
+
+At this frequency, the phase of  𝐿 (𝑗𝜔 )is 
+
+∠𝐿 (𝑗𝜔 ) = −90 ∘ − tan −1(𝑢 ) (3 1)
+
+Hence the phase margin is 
+
+𝑃𝑀 = 180 ∘ + ∠𝐿 (𝑗𝜔 ) = 90 ∘ − tan −1(𝑢 ) (3 2)Substituting  𝑢 2 = √2−1 
+
+> 2
+
+,
+
+𝑃𝑀 = 90 ∘ − 𝑡𝑎𝑛 −1 (√√5 − 2
+
+4 ) ≈ 76 .35 ∘ (3 3)
+
+The phase margin PM = 76.35° is also calculated for the stability analysis of RLC low -pass 
+
+filters [8], and the optimum converter phase margin for critically damped response is reported 
+
+as close to 76 degrees in power electronics [9]. The present work show s that this value holds 
+
+universally for any second -order plant under the proposed tuning, as a direct consequence of 
+
+the critically damped design of Section 3. The three universal robustness properties are 
+
+summarized in Table 1. For any second -order plant (1) with T 1 ≥ T 2, the proposed tuning ( 12 )
+
+yields fixed robustness measures independent of K p, T 1 and T 2.      
+
+> Table 1. Universal robustness properties of the proposed tuning.
+> Property Symbol Value
+> Complementary sensitivity peak Mt 1.000
+> Maximum sensitivity Ms
+
+2
+
+√3 ≈ 1.155   
+
+> Phase margin PM 76.35°
+
+# 5. Numerical Verification 
+
+The proposed tuning formulas ( 12 ) are verified on six second -order plants with different time 
+
+constant ratios T 1/T 2. For each plant the controller parameters are computed directly from the 
+
+closed -form expressions without any numerical optimization. The closed -loop step response 
+
+is simulated and the performance metrics are recorded. All simulations are carried out with a 
+
+time step of 0.005 s and a 2% settling band .
+
+Table 2 presents the plant parameters T 1, T 2, K p and the computed controller parameters K, 
+
+Ti, and the resulting closed -loop poles for each case. The pole locations confirm that p1 = -
+
+1/T 1 and p2 = p3 = -1/(2T 2) exactly in all cases, consistent with the analytical prediction ( 13 ). 
+
+> Table 2. Plant parameters, controller parameters and closed -loop poles.
+
+Plant P(s)  T1  T2  Kp  K Ti  p1  p2=p3 
+
+1/((1+s)(1+0.5s))  1.0  0.500  1.0  0.50  1.0  -1 -1.00 
+
+1/((1+s)(1+s/3))  1.0  0.333  1.0  0.75  1.0  -1 -1.50 
+
+1/((1+s)(1+0.2s))  1.0  0.200  1.0  1.25  1.0  -1 -2.50 
+
+1/((1+s)(1+0.1s))  1.0  0.100  1.0  2.50  1.0  -1 -5.00 
+
+1/((1+s)(1+0.05s))  1.0  0.050  1.0  5.00  1.0  -1 -10.00 
+
+1/((1+0.5s)(1+0.1s))  0.5  0.100  1.0  1.25  0.5  -2 -5.00 
+
+Table 3 presents the closed -loop performance metrics for each plant. The results confirm that 
+
+zero overshoot and monotonic step response are achieved in all cases. The maximum 
+
+complementary sensitivity Mt = 1, maximum sensitivity Ms = 1.155 and phase margi n
+
+PM = 76.35° are identical across all plants, confirming the universal robustness properties 
+
+derived in Section 4. Table 3. Closed -loop performance metrics.                                           
+
+> Plant P(s) Ts (s) PO (%) Monotonic Mt Ms PM (°)
+> P=1/((1+s)(1+0.5s)) 5.835 0.000 YES 1.000 1.155 76.35
+> P=1/((1+s)(1+s/3)) 3.890 0.000 YES 1.000 1.155 76.35
+> P=1/((1+s)(1+0.2s)) 2.335 0.000 YES 1.000 1.155 76.35
+> P=1/((1+s)(1+0.1s)) 1.170 0.000 YES 1.000 1.155 76.35
+> P=1/((1+s)(1+0.05s)) 0.585 0.000 YES 1.000 1.155 76.35
+> P=1/((1+0.5s)(1+0.1s)) 1.170 0.000 YES 1.000 1.155 76.35
+
+The settling time scales with T 2, confirming that the dominant dynamics after pole -zero 
+
+cancellation are governed by the repeated pole at -1/(2T 2). The step response of the reduced 
+
+closed -loop system is 
+
+𝑦 (𝑡 ) = 1 − 𝑒 − 𝑡  
+
+> 2𝑇 2
+
+(1 + 𝑡 
+
+> 2𝑇 2
+
+) (34)
+
+which depends only on  𝑇 2. Applying the 2% settling criterion yields  𝑇 𝑠 ≈ 11 .66 𝑇 2, confirmed 
+
+by all entries in Table 3 .
+
+Figure 1 shows the step responses for all six plants. All responses are strictly monotonic with 
+
+no overshoot, and settle within the 2% band. The settling time increases as T 2 increases, 
+
+consistent with the dominant pole at -1/(2T 2). 
+
+Figure 1. Step responses for all six plants under the proposed PI tuning. All responses are 
+
+monotonic with zero overshoot. 
+
+Figure 2 shows the Nyquist diagram of T(jω) for all six plants. All curves lie exactly on the unit 
+
+circle, confirming Mt = 1 universally. The curves are identical in shape and differ only in the 
+
+frequency scale, which is consistent with the closed -loop transfer function (13) depending only 
+
+on T2 .Figure 2. Nyquist diagram of T(jω) for all six plants. All curves lie on the Mt = 1 unit circle, 
+
+> confirming the universal robustness property.
+
+# 6. Conclusion 
+
+A closed -form analytical PI tuning method is presented that guarantees monotonic step 
+
+response with minimum settling time for second -order plants . The optimal controller 
+
+parameters K=T 1/(4K pT2) and T i=T 1 are determined solely by the plant time constants T 1, T 2
+
+and plant gain K p.
+
+A further result is established: the proposed tuning yields universal robustness properties 
+
+independent of the plant parameters K p, T 1 and T 2. The maximum complementary sensitivity 
+
+is Mt = 1, the maximum sensitivity is Ms = 2/√3 ≈ 1.155, and the phase margin is PM = 76.35°. 
+
+# 7. References 
+
+1. Ziegler JG, Nichols NB. Optimum settings for automatic controllers. Trans ASME. 
+
+1942;64:759 -768. 
+
+2. Hang CC, Astrom KJ, Ho WK. Refinements of the Ziegler -Nichols tuning formula. IEE Proc 
+
+D Control Theory Appl. 1991;138(2):111 -118. 
+
+3. Tyreus BD, Luyben WL. Tuning PI controllers for integrator/dead time processes. Ind Eng 
+
+Chem. 1992;31:2625 -2628. 
+
+4. Ogata K. Modern Control Engineering. 5th ed. Prentice Hall; 2010. 
+
+5. Astrom KJ, Hagglund T. Advanced PID Control. ISA; 2006. 6. Nguyen NH, Nguyen PD. Overshoot and settling time assignment with PID for first -order 
+
+and second -order systems. IET Control Theory Appl. 2018;12(17):2407 -2416. 
+
+7. Albatran S, Smadi IA, Bataineh HA. Generalized optimal and explicit PI/PID tuning formulas 
+
+for underdamped second -order systems. Int J Control Autom Syst. 2020;18(4):1023 -1032. 
+
+8. Tran MT, Kuwana A, Kobayashi H. Design of active inductor and stability test for passive 
+
+RLC low -pass filter. Comput Sci Inf Technol. 2020:203 -224. 
+
+9. Basso C. Transient response counts when choosing phase margin. Electronic Design. 
+
+November 2008.

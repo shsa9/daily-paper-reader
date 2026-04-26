@@ -1,0 +1,65 @@
+{
+  "label": "2026-04-26",
+  "date": "2026-04-26",
+  "generated_at": "2026-04-26T20:13:23",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202604/26/2604.17903v2-research-on-mode-transition-of-micro-newton-level-cusped-field-hall-thruster",
+      "section": "quick",
+      "title_en": "Research on mode transition of micro-newton-level cusped field Hall thruster",
+      "authors": "Jiahao Wu, Ming Zeng, Hui Liu, Daren Yu",
+      "date": "2026-04-20",
+      "pdf": "https://arxiv.org/pdf/2604.17903v2",
+      "score": "6.0",
+      "evidence": "微牛级执行器的精密推力控制",
+      "tldr": "本研究针对微牛级尖点场霍尔推力器在推力调节中出现的模式切换问题，通过探针诊断技术分析了其内部等离子体参数及放电特性。研究发现，模式切换源于等离子体密度超过截止密度，导致微波传播特性改变，使电离机制从R波主导的体加热转变为O波主导的表面波加热，为优化推力器控制精度提供了理论依据。",
+      "tags": "query:em-force",
+      "abstract_en": "The micro-newton cusped field Hall thruster is an electric propulsion device that employs microwave-assisted ionization control. It serves as an actuator in drag-free control systems, ensuring control accuracy and stability by providing continuously adjustable thrust over a wide range. However, a mode transition occurring during the regulation process can lead to a sudden change in anode current, degrading control precision and stability. Therefore, it is necessary to investigate the underlying patterns of mode transition. This study examines the variations in internal plasma parameters and discharge characteristics of the thruster before and after microwave mode transition, primarily through probe diagnostics.Experimental results indicate that before the mode transition, the plasma luminous region is primarily concentrated within the electron cyclotron resonance (ECR) area, approximately 1-3 mm upstream of the anode. After the transition, the luminous region moves further upstream, and the plasma density near the anode exceeds the cutoff density, dropping sharply along the axial direction. The fundamental cause of the change in electron heating mechanism is the alteration in the propagation characteristics of fundamental waves due to this plasma density variation.When the plasma density rises to the cutoff density, the R wave and O wave, which drive ionization, are rapidly attenuated or reflected. At this point, the R-wave cannot reach the resonance layer, causing the dominant ECR ionization to become ineffective. The ionization mechanism shifts from being dominated by the R wave and O wave to being dominated primarily by the O wave. Consequently, the electron heating mechanism transitions from volume heating to surface wave heating......",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/26/2604.19077v1-high-order-multi-scale-method-and-its-convergence-analysis-for-nonlinear-thermo-electro-mechanical-coupling-problems-of-composite-structures",
+      "section": "quick",
+      "title_en": "High-Order Multi-Scale Method and Its Convergence Analysis for Nonlinear Thermo-Electro-Mechanical Coupling Problems of Composite Structures",
+      "authors": "Hao Dong",
+      "date": "2026-04-21",
+      "pdf": "https://arxiv.org/pdf/2604.19077v1",
+      "score": "6.0",
+      "evidence": "复合结构中的热-电-机械耦合和焦耳热效应",
+      "tldr": "本研究针对具有高度空间异质性的复合材料结构，提出了一种高阶多尺度方法，用于解决包含温度相关属性和焦耳热效应的非线性热-电-力耦合问题。通过结合多尺度渐近展开和泰勒级数技术，建立了包含新型高阶修正项的高精度模型。该方法不仅在理论上证明了局部守恒性和全局收敛性，还通过离线/在线算法显著提升了计算效率，为复杂多物理场模拟提供了高精度且低成本的解决方案。",
+      "tags": "query:em-force",
+      "abstract_en": "This study proposes a high-order multi-scale method tailored for time-dependent nonlinear thermo-electro-mechanical coupling problems of composite structures with highly spatial heterogeneity, which incorporate temperature-dependent material properties and Joule heating effect. By employing the multi-scale asymptotic approach and the Taylor series technique, a high-accuracy multi-scale asymptotic model featuring novel high-order correction terms is established for nonlinear multi-physics simulation of periodic solid structures. A local point-wise error analysis is derived to theoretically and physically illustrate the local balance preserving of heat quantity, electric charge and stress,thereby enabling high-accuracy multi-scale computation. Moreover, a global error estimation is obtained that provides an explicit convergence rate for high-order multi-scale solutions. Furthermore, an efficient numerical algorithm featuring with off-line and on-line stages is presented meticulously, accompanied by a corresponding error analysis. Numerical experiments are conducted to showcase the competitive advantages of the proposed method for simulating the time-dependent nonlinear thermo-electro-mechanical coupling problems with highly oscillatory and discontinuous coefficients, demonstrating superior numerical accuracy and reduced computational cost.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/26/2604.20265v1-compressible-navier-stokes-landau-lifshitz-gilbert-system-derivations-and-well-posedness",
+      "section": "quick",
+      "title_en": "Compressible Navier-Stokes-Landau-Lifshitz-Gilbert system: derivations and well-posedness",
+      "authors": "Boling Guo, Ning Jiang, Hui Liu, Yi-Long Luo, Teng-Fei Zhang",
+      "date": "2026-04-22",
+      "pdf": "https://arxiv.org/pdf/2604.20265v1",
+      "score": "6.0",
+      "evidence": "磁弹性材料建模与磁化运动学",
+      "tldr": "本研究利用能量变分法推导了描述磁弹性材料的压缩Navier-Stokes-Landau-Lifshitz-Gilbert（NS-LLG）系统，探讨了流体运动对磁化动力学的影响。论文证明了该系统在有限初始能量下的局部解存在性，并在无外部磁场且初始数据较小时，通过识别弹性应力中的额外耗散项，证明了系统的全局适定性。该模型在磁场消失时可退化为粘弹性模型，且显著放宽了对初始数据的结构性限制。",
+      "tags": "query:em-force",
+      "abstract_en": "In this paper, we first derive the compressible Navier-Stokes/Landau-Lifshitz-Gilbert (NS-LLG) model for magnetoelastic materials via the energetic variational approach (EnVarA). It is important to emphasize that the manner in which the evolution of magnetoelastic materials is influenced by the fluid motion--specifically through the deformation gradient--determines the kinematics of the magnetization and consequently leads to distinct governing equations. Subsequently, we establish the local-in-time existence of solutions to the compressible NS-LLG system under finite initial energy. Finally, near the constant equilibrium for magnetoelasticity in the absence of an external magnetic field, we reformulate the evolutionary model, which allows an additional dissipative term to be identified from the elastic stress. Based on this reformulation, we justify the global well-posedness of the evolutionary magnetoelasticity system with zero external magnetic field, provided the initial data are sufficiently small. In particular, when the magnetic field $M$ vanishes, this model reduces to the viscoelastic model. Our results significantly relax the previous initial data requirements, only assume the most basic structural condition $ρ_{0} \\operatorname{det} F_{0} = 1$.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/26/2604.21294v1-analytical-pi-tuning-for-second-order-plants-with-monotonic-response-and-minimum-settling-time",
+      "section": "quick",
+      "title_en": "Analytical PI Tuning for Second-Order Plants with Monotonic Response and Minimum Settling Time",
+      "authors": "Senol Gulgonul",
+      "date": "2026-04-23",
+      "pdf": "https://arxiv.org/pdf/2604.21294v1",
+      "score": "6.0",
+      "evidence": "二阶对象的解析PI调优及最小调节时间控制",
+      "tldr": "本研究针对二阶受控对象，提出了一种旨在实现单调阶跃响应和最短调节时间的解析式PI参数整定方法。通过在极点配置框架下将闭环极点设计为慢于受控对象的快极点，自然实现了慢极点的零极点抵消。该方法无需数值优化，提供了具有通用鲁棒性的显式公式，适用于所有具有两个实极点的稳定二阶系统。",
+      "tags": "query:em-force",
+      "abstract_en": "Background: Tuning proportional-integral (PI) controllers for second-order plants to achieve monotonic step response with minimum settling time is an important problem in analytical control design. Existing methods address these objectives only partially or require numerical optimization. Methods: A closed-form analytical solution is derived through pole placement in the framework of Astrom and Hagglund. The key insight is that designing the closed-loop poles slower than the fast plant pole forces pole-zero cancellation of the slow plant pole as a consequence, not an assumption. The critically damped condition is then applied to minimize settling time. Results: The optimal PI parameters are K=T1/(4KpT2), Ti=T1, where T1 and T2 are the plant time constants and Kp is the plant gain. No free parameter remains. The resulting closed-loop system possesses universal robustness properties independent of plant parameters: maximum complementary sensitivity Mt = 1, maximum sensitivity Ms = 1.155, and phase margin PM = 76.35 degree. Conclusions: The proposed tuning formulas are explicit, analytically proven, and apply directly to any stable second-order plant with two real poles. Simulation results across six plant configurations confirm the analytical predictions exactly. The notation follows Astrom and Hagglund [5] throughout. Keywords: PI controller; second-order plant; pole placement; critically damped; monotonic response; settling time; robustness",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

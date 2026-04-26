@@ -1,0 +1,7976 @@
+Title: High-Order Multi-Scale Method and Its Convergence Analysis for Nonlinear Thermo-Electro-Mechanical Coupling Problems of Composite Structures
+
+URL Source: https://arxiv.org/pdf/2604.19077v1
+
+Published Time: Wed, 22 Apr 2026 00:36:53 GMT
+
+Number of Pages: 39
+
+Markdown Content:
+HIGH-ORDER MULTI-SCALE METHOD AND ITS CONVERGENCE ANALYSIS FOR NONLINEAR THERMO-ELECTRO-MECHANICAL COUPLING PROBLEMS OF COMPOSITE STRUCTURES ∗
+
+HAO DONG †
+
+Abstract. This study proposes a high-order multi-scale method tailored for time-dependent nonlinear thermo-electro-mechanical coupling problems of composite structures with highly spatial heterogeneity, which incorporate temperature-dependent material properties and Joule heating effect. By employing the multi-scale asymptotic approach and the Taylor series technique, a high-accuracy multi-scale asymptotic model featuring novel high-order correction terms is established for nonlinear multi-physics simulation of periodic solid structures. A local point-wise error analysis is derived to theoretically and physically illustrate the local balance preserving of heat quantity, electric charge and stress,thereby enabling high-accuracy multi-scale computation. Moreover, a global error estimation is obtained that provides an explicit convergence rate for high-order multi-scale solutions. Furthermore, an efficient numerical algorithm featuring with off-line and on-line stages is presented meticulously, accompanied by a corresponding error analysis. Numerical experiments are conducted to showcase the competitive advantages of the proposed method for simulating the time-dependent nonlinear thermo-electro-mechanical coupling problems with highly oscillatory and discontinuous coefficients, demonstrating superior numerical accuracy and reduced computational cost. 
+
+Key words. nonlinear multi-scale multi-physics problems, high-order multi-scale method, local balance preserving, explicit error estimates, two-stage numerical algorithm 
+
+MSC codes. 35B27, 80M40, 65M60, 65M15 
+
+1. Introduction. As the integrated circuit industry enters the post-Moore’s Law era, the electronic packaging structures serve as a pivotal bridge connecting chips and external systems, and its importance is gaining increasing prominence. The next-generation integrated circuits have shifted from the traditional technique of continuously reducing structural sizes to advanced three-dimensional (3D) packag-ing technologies, which is regarded as a crucial scheme for extending Moore’s Law. Electronic packaging structures involve a variety of materials with distinct properties, while their components span several orders of magnitude in spatial size. Hence, elec-tronic packaging structure is a complicated three-dimensional composite system with pronounced multi-scale spatial features [24]. In real-world applications, the rising power density necessitates that electronic packaging structures withstand extremely thermo-electro-mechanical coupling environments, whose localized heat flux densities can reach up to 1kW/cm 2. These composite structures will exhibit significant and dominant nonlinear effects, including temperature-dependent material properties and Joule heating effects [35, 39], which cannot be neglected in modeling, simulation, and application, and lead to enormous challenges by use of classical numerical methods. Therefore, high-accuracy and efficient multi-scale computation is of paramount im-portance for simulating and predicting nonlinear thermo-electro-mechanical coupling behaviors of composite structures in electronic packaging industry. Within the continuum mechanics (CM) framework, the following partial differen-
+
+> ∗
+
+Submitted to the editors’ DATE. 
+
+Funding: This work was supported by the National Natural Science Foundation of China (No. 12471387), Xidian University Specially Funded Project for Interdisciplinary Exploration (No. TZJH2024008), the Fundamental Research Funds for the Central Universities (No. QTZX25082), the Innovation Capability Support Program of Shaanxi Province (No. 2024RS-CXTD-88). 
+
+> †
+
+Corresponding author. School of Mathematics and Statistics, Xidian University, Xi’an 710071, China (donghao@mail.nwpu.edu.cn). 1
+
+> arXiv:2604.19077v1 [math.NA] 21 Apr 2026
+
+2 H. DONG 
+
+tial equations (PDEs)-based multi-scale model for time-dependent nonlinear thermo-electro-mechanical coupling problems of composite structures with periodic micro-structures can be formulated on the basis of the first law of thermodynamics, the Fourier’s law and the conservation law of electric charge [39, 32] over domain Ω ⊂
+
+Rn(n = 2 , 3), where Ω is a bounded convex domain with the Lipschitz continuous boundary ∂Ω. (1.1) 
+
+
+
+ρε(x, T ε)cε(x, T ε) ∂T ε(x, t )
+
+∂t − ∂∂x i
+
+
+
+kεij (x, T ε) ∂T ε(x, t )
+
+∂x j
+
+
+
+= λεij (x, T ε) ∂Φε(x, t )
+
+∂x i
+
+∂Φε(x, t )
+
+∂x j
+
+− T ε(x, t )βεij (x, T ε) ∂∂t 
+
+ ∂U εi (x, t )
+
+∂x j
+
+
+
++ fT (x, t ), in Ω × (0 , T ),
+
+− ∂∂x i
+
+
+
+λεij (x, T ε) ∂Φε(x, t )
+
+∂x j
+
+
+
+= fΦ (x, t ), in Ω × (0 , T ),ρε(x, T ε) ∂2U εi (x, t )
+
+∂t 2 − ∂∂x j
+
+
+
+cεijkl (x, T ε) ∂U εk (x, t )
+
+∂x l
+
+
+
+= − ∂∂x j
+
+
+
+βεij (x, T ε)( T ε(x, t ) − eT )
+
+
+
++ fi(x, t ), in Ω × (0 , T ),T ε(x, t ) = bT (x, t ), Φε(x, t ) = bΦ(x, t ), U ε(x, t ) = bU (x, t ), on ∂Ω×(0 , T ),T ε(x, 0) = eT , U ε(x, 0) = eU 0(x), ∂U ε(x, 0) 
+
+∂t = eU 1(x), in Ω .
+
+In the multi-physics coupling model (1.1), the temperature field T ε(x, t ), electric po-tential field Φε(x, t ) and displacement field U ε(x, t ) are targeted and undetermined, in which ε represents the characteristic periodic length. bT (x, t ), bΦ(x, t ) and bU (x, t ) are the prescribed temperature, electric potential and displacement on the domain bound-ary ∂Ω. eT , eU 0(x) and eU 1(x) respectively represents the initial temperature, displace-ment and velocity of domain Ω. fT (x, t ), fΦ (x, t ) and fi(x, t ) denote the internal heat source, electric charge density and body force respectively. Here ρε(x, T ε), cε(x, T ε), 
+
+{kεij (x, T ε)}, {λεij (x, T ε)}, {βεij (x, T ε)} and {cεijkl (x, T ε)} are, respectively, the mass density, the specific heat, the thermal conductivity tensor, the electric conductivity tensor, the thermal modulus and the elastic modulus, which all are temperature-dependent. The multi-physics coupling model (1.1) governs the thermal, electronic and mechanical coupling interactions of composite structures in the field of electronic packaging, whose inherent multi-scale nature stems from the high-frequency oscillating coefficients arising from periodic micro-heterogeneities when 0 < ε ≪ 1. This necessi-tates an extremely fine discretization to achieve high-resolution simulations, thereby rendering the computational burden prohibitive, particularly for time-dependent sce-narios. Furthermore, the Laplace transform technique [33, 20, 4], typically employed for time-dependent linear systems, is inapplicable for the theoretical and numerical investigation of the nonlinear model (1.1) due to its temperature-dependent mate-rial properties (nonlinear equation coefficients) and Joule heating effects (nonlinear product terms of gradient). Over the past few decades, extensive researches have been conducted on the theo-retical analysis and numerical simulation of thermo-electro-mechanical coupling prob-lems. In 2006 and 2009, researchers established the existence theory for solutions to nonlinear thermo-electro-mechanical coupling problems [34, 22]. In 2010, Fern´ andez and Kuttler established a fully discrete numerical scheme for the nonlinear thermo-MULTI-SCALE METHOD FOR THERMO-ELECTRO-MECHANICAL COUPLING PROBLEMS 3electro-mechanical coupling problem based on finite element method and a forward Euler scheme, and also obtained a linear convergence estimate under appropriate regularity assumptions [17]. In 2017, M˚ alqvist and Stillfjord presented a fully dis-crete numerical scheme for the nonlinear thermo-electro-mechanical coupling problem based on finite element method in space and a semi-implicit Euler scheme in time, while proving optimal convergence orders, i.e. second-order in space and first-order in time [28]. In 2023, Jiang et al. established a Galerkin mixed finite element method for the nonlinear thermo-electro-mechanical coupling problem, and employed space-time error splitting technique to obtain optimal error estimate [37]. However, the above-mentioned computational methods are only applicable for the computation of homogeneous materials and don’t consider the impact of microscopic material hetero-geneities on nonlinear multi-physics behaviors of composite structures. The multi-scale nature of composite structures presents inherent challenges in balancing accuracy and efficiency. Moreover, in the context of large-scale composite structures, classical numerical methods suffer from convergence issues caused by the prohibitive mesh refinement. To address these, researchers have developed a variety of multi-scale methodologies, including Asymptotic homogenization method (AHM) [3, 8, 30], Multi-scale finite element method (MsFEM) [19, 16], Heterogeneous multi-scale method (HMM) [1], Variational multi-scale method (VMS) [21], Multi-scale eigenelement method (MEM) [36], Multi-scale finite volume method (MSFV) [26], Localized orthogonal decomposition method (LOD) [18] and Multi-scale spectral gen-eralized finite element method (MS-GFEM) [27], etc. Driven by real-world engineering applications, Cui and his research team systematically established a class of high-order multi-scale approaches for precisely and efficiently simulating the thermal, me-chanical and multi-physics behaviors of composite structures, as shown in references [33, 6, 12, 38, 13] for further details. It is important to recognize, however, that the aforementioned multi-scale approaches are predominantly tailored to linear problems of composite structures in practical applications. As the range of applications for com-posites broadens, their service environments have become increasingly complex and extreme. To accurately characterize the intricate service behavior of these materials, nonlinear mathematical models have been developed. Therefore, research attention of scientists and engineers has naturally shifted towards multi-scale modeling and high-accuracy simulation for nonlinear problems of heterogeneous solids. In reference [16], Efendiev et al. developed multi-scale finite element method for accurately simulating the elliptic and parabolic heat conduction problems of heterogeneous materials with temperature-dependent equation coefficients. Moreover, generalized multi-scale finite element methods are developed by Efendiev et al. for nonlinear elliptic equations in reference [15]. Furthermore, based on the asymptotic homogenization method, re-searchers established effective approaches to simulate static and transient nonlinear heat conduction problems of inhomogeneous solids with temperature-dependent ma-terial coefficients in the existing studies [7, 29, 2, 40]. Besides, the G-convergence and homogenized theory of nonlinear partial differential operators was systematically given in reference [31]. For the nonlinear multi-physics problems of composite struc-tures, Dong et al. first established high-order multi-scale method and obtained corre-sponding convergence analysis for nonlinear thermo-mechanical and thermo-electronic coupling problems of composite structures in [9, 10, 11]. In summary, few stud-ies have addressed nonlinear multi-physics problems of composite structures within the multi-scale modeling and computation. Nevertheless, widespread engineering de-mands strongly necessitate continued research into this challenging issue, especially for nonlinear thermo-electro-mechanical coupling problems in integrated circuit industry. 4 H. DONG 
+
+The remainder of this study is organized as follows. By virtue of multi-scale as-ymptotic expansion and the Taylor series techniques, Section 2 establishes the high-order multi-scale computational model for nonlinear thermo-electro-mechanical cou-pling simulation of composite structures. After introducing the high-order multi-scale computational model, both local and global error analyses are conducted in Section 3 for the proposed multi-scale approximate solutions. With the high-order multi-scale model obtained, in Section 4 a two-stage numerical algorithm with off-line micro-scale computation, and on-line macro-scale and multi-scale computation is provided to effectively compute time-dependent nonlinear thermo-electro-mechanical coupling problems of composite structures. And also, the corresponding error analysis of the two-stage algorithm is obtained in Section 5. Numerical examples and results are presented in Section 6 to validate the numerical accuracy and efficiency of the pro-posed high-order multi-scale approach. Eventually, concluding remarks and potential directions are proclaimed in Section 7. Throughout this study, Einstein summation convention is utilized to streamline repetitive indices. 
+
+2. High-order multi-scale computational model of nonlinear thermo-electro-mechanical coupling problems. 2.1. The statement of multi-scale nonlinear coupling system. Following the theoretical framework of AHM, we introduce the macroscopic coordinates x and corresponding microscopic coordinates y = x/ε = ( x1/ε, · · · , x n/ε ) = ( y1, · · · , y n) of periodic unit cell (PUC) Y = [0 , 1] n. Thereby, the material parameters ρε(x, T ε), 
+
+cε(x, T ε), kεij (x, T ε), λεij (x, T ε), βεij (x, T ε) and cεijkl (x, T ε) in multi-scale nonlin-ear system (1.1) can be reformulated as new forms ρ(y, T ε), c(y, T ε), kij (y, T ε), 
+
+λij (y, T ε), βij (y, T ε) and cijkl (y, T ε), which necessitate these material parameters be 1-periodic functions regarding micro-scale variable y.Inspired by the well-posedness theory in references [34, 22, 17, 28, 37], some assumptions for multi-scale nonlinear equations (1.1) are provided as follows. (A 1) kεij , λεij , βεij and cεijkl are symmetric, and there exist two positive constants 
+
+κ0 and κ1 irrespective of ε for the following uniform elliptic conditions 
+
+kεij = kεji , κ 0|ξ|2 ≤ kεij (x, T ε)ξiξj ≤ κ1|ξ|2,λεij = λεji , κ 0|ξ|2 ≤ λεij (x, T ε)ξiξj ≤ κ1|ξ|2,βεij = βεji , κ 0|ξ|2 ≤ βεij (x, T ε)ξiξj ≤ κ1|ξ|2,cεijkl = cεjikl = cεklij , κ 0|ζ|2 ≤ cεijkl (x, T ε)ζij ζkl ≤ κ1|ζ|2,
+
+where ξ = ( ξ1, · · · , ξ n) is an optional vector with real elements in Rn, ζ =
+
+{ζij } is an arbitrary symmetric matrix with real elements in Rn×n, and x is an optional point within Ω. (A 2) ρε, cε, kεij , λεij , βεij and cεijkl ∈ L∞(Ω); 0 < ρ ∗ ≤ ρε(x, T ε) < ρ ∗, 0 < c ∗ ≤
+
+cε(x, T ε) < c ∗, where ρ∗, ρ∗, c∗ and c∗ are constants irrespective of ε.(A 3) fT (x, t ) ∈ L2(Ω × (0 , T )), fΦ (x, t ) ∈ L2(Ω × (0 , T )), fi(x, t ) ∈ L2(Ω × (0 , T )), 
+
+bT (x, t ) ∈ H 72 , 74 (∂Ω1 × (0 , T )), bΦ(x, t ) ∈ H 72 , 74 (∂Ω2 × (0 , T )), bU (x, t ) ∈
+
+(H 72 , 74 (∂Ω3 × (0 , T ))) n, eU 0(x) ∈ (H1(Ω)) n, eU 1(x) ∈ (L2(Ω)) n.
+
+2.2. High-order multi-scale analysis for nonlinear multi-physics prob-lem. Before establishing high-order multi-scale computational model, we firstly posits that the physical fields T ε(x, t ), Φε(x, t ) and U εi (x, t ) are approximated via two-scale MULTI-SCALE METHOD FOR THERMO-ELECTRO-MECHANICAL COUPLING PROBLEMS 5asymptotic expansion in the forms inspired by [8, 30]. (2.1) 
+
+
+
+T ε(x, t ) = T0(x, y, t ) + εT 1(x, y, t ) + ε2T2(x, y, t ) + O( ε3),
+
+Φε(x, t ) = Φ0(x, y, t ) + εΦ1(x, y, t ) + ε2Φ2(x, y, t ) + O( ε3),U εi (x, t ) = Ui0(x, y, t ) + εU i1(x, y, t ) + ε2Ui2(x, y, t ) + O( ε3).
+
+Among the formula (2.1), the expansion terms with subscript i for i = 0 , 1, 2 represent the i-order expansion terms. Notably, first-order and second-order asymptotic terms are also referred to as low-order and high-order asymptotic terms respectively. Next, the pivotal strategy in tackling the temperature-dependent material param-eters is introduced for multi-scale nonlinear system (1.1). Employing the temperature-dependent material parameter cε(x, T ε) as an example, it can be expanded around leading temperature term T0 by displacing x0 = y, y0 = T0 and δ = εT 1 + ε2T2 +
+
+O(ε3) in multi-index Taylor’s formula f (x0, y 0 + δ) = f (x0, y 0) + D(0 ,1) f (x0, y 0)δ +12 D(0 ,2) f (x0, y 0)δ2 + O(δ3) with D(0 ,1) f (x0, y 0) = fy (x0, y 0) and D(0 ,2) f (x0, y 0) = 
+
+fyy (x0, y 0) as below (2.2) 
+
+cε(x, T ε) = c(y, T ε) = c(y, T 0 + εT 1 + ε2T2 + O( ε3)) = c(y, T 0) + D(0 ,1) c(y, T 0)εT 1 + ε2T2 + O( ε3)
+
++ 12 D(0 ,2) c(y, T 0)εT 1 + ε2T2 + O( ε3)2 + O 
+
+εT 1 + ε2T2 + O( ε3)3
+
+= c(y, T 0) + εT 1D(0 ,1) c(y, T 0)+ ε2T2D(0 ,1) c(y, T 0) + 12 (T1)2D(0 ,2) c(y, T 0) + O( ε3)=: c(0) (y, T 0) + εc (1) (x, y, T 0) + ε2c(2) (x, y, T 0) + O( ε3).
+
+Next, the remaining temperature-dependent material property parameters ρε(x, T ε), 
+
+kεij (x, T ε), λεij (x, T ε), βεij (x, T ε) and cεijkl (x, T ε) successively possess the expansion forms as follows (2.3) 
+
+ρε(x, T ε) = ρ(0) (y, T 0) + ερ (1) (x, y, T 0) + ε2ρ(2) (x, y, T 0) + O( ε3),kεij (x, T ε) = k(0)  
+
+> ij
+
+(y, T 0) + εk (1)  
+
+> ij
+
+(x, y, T 0) + ε2k(2)  
+
+> ij
+
+(x, y, T 0) + O( ε3),λεij (x, T ε) = λ(0)  
+
+> ij
+
+(y, T 0) + ελ (1)  
+
+> ij
+
+(x, y, T 0) + ε2λ(2)  
+
+> ij
+
+(x, y, T 0) + O( ε3),βεij (x, T ε) = β(0)  
+
+> ij
+
+(y, T 0) + εβ (1)  
+
+> ij
+
+(x, y, T 0) + ε2β(2)  
+
+> ij
+
+(x, y, T 0) + O( ε3),cεijkl (x, T ε) = c(0) 
+
+> ijkl
+
+(y, T 0) + εc (1) 
+
+> ijkl
+
+(x, y, T 0) + ε2c(2) 
+
+> ijkl
+
+(x, y, T 0) + O( ε3).
+
+Under the assumption of periodic heterogeneity of composite structures, the chain rule yields the following result for multi-scale asymptotic analysis. (2.4) ∂Θε(x, t )
+
+∂x i
+
+= ∂Θ( x, y, t )
+
+∂x i
+
++ 1
+
+ε∂Θ( x, y, t )
+
+∂y i
+
+, (i = 1 , · · · , n ),
+
+where Θ ε(x, t ) represents a function exhibiting multi-scale features, specifically de-fined as Θ ε(x, t ) = Θ( x, y, t ); see reference [8]. Then substituting (2.1)-(2.3) into the nonlinear initial-boundary problem (1.1) with two-scale features and applying the chain rule (2.4), a sequence of equations is derived by collecting terms of the same order ε−2 as follows. (2.5) O( ε−2) : ∂∂y i
+
+
+
+k(0) 
+
+> ij
+
+∂T 0
+
+∂y j
+
+
+
+= −λ(0) 
+
+> ij
+
+∂Φ0
+
+∂y i
+
+∂Φ0
+
+∂y j
+
+,6 H. DONG 
+
+(2.6) O( ε−2) : ∂∂y i
+
+
+
+λ(0) 
+
+> ij
+
+∂Φ0
+
+∂y j
+
+
+
+= 0 ,
+
+(2.7) O( ε−2) : ∂∂y j
+
+
+
+c(0) 
+
+> ijkl
+
+∂U k0
+
+∂y l
+
+
+
+= 0 .
+
+Analogously, following equations are determined by equating the coefficient ε−1.(2.8) O( ε−1) : ∂∂y i
+
+
+
+k(0) 
+
+> ij
+
+∂T 0
+
+∂x j
+
+
+
++ ∂∂x i
+
+
+
+k(0) 
+
+> ij
+
+∂T 0
+
+∂y j
+
+
+
++ ∂∂y i
+
+
+
+k(0) 
+
+> ij
+
+∂T 1
+
+∂y j
+
+
+
++ ∂∂y i
+
+
+
+k(1) 
+
+> ij
+
+∂T 0
+
+∂y j
+
+
+
+= −λ(0) 
+
+> ij
+
+∂Φ0
+
+∂x i
+
+∂Φ0
+
+∂y j
+
+− λ(0) 
+
+> ij
+
+∂Φ0
+
+∂y i
+
+∂Φ0
+
+∂x j
+
+− λ(1) 
+
+> ij
+
+∂Φ0
+
+∂y i
+
+∂Φ0
+
+∂y j
+
+− λ(0) 
+
+> ij
+
+∂Φ0
+
+∂y i
+
+∂Φ1
+
+∂y j
+
+− λ(0) 
+
+> ij
+
+∂Φ1
+
+∂y i
+
+∂Φ0
+
+∂y j
+
++ T0β(0) 
+
+> ij
+
+∂∂t 
+
+ ∂U i0
+
+∂y j
+
+
+
+,
+
+(2.9) O( ε−1) : ∂∂y i
+
+
+
+λ(0) 
+
+> ij
+
+∂Φ0
+
+∂x j
+
+
+
++ ∂∂x i
+
+
+
+λ(0) 
+
+> ij
+
+∂Φ0
+
+∂y j
+
+
+
++ ∂∂y i
+
+
+
+λ(0) 
+
+> ij
+
+∂Φ1
+
+∂y j
+
+
+
++ ∂∂y i
+
+
+
+λ(1) 
+
+> ij
+
+∂Φ0
+
+∂y j
+
+
+
+= 0 ,
+
+(2.10) O( ε−1) : ∂∂y j
+
+
+
+c(0) 
+
+> ijkl
+
+∂U k0
+
+∂x l
+
+
+
++ ∂∂x j
+
+
+
+c(0) 
+
+> ijkl
+
+∂U k0
+
+∂y l
+
+
+
++ ∂∂y j
+
+
+
+c(0) 
+
+> ijkl
+
+∂U k1
+
+∂y l
+
+
+
++ ∂∂y j
+
+
+
+c(1) 
+
+> ijkl
+
+∂U k0
+
+∂y l
+
+
+
+= ∂∂y j
+
+
+
+β(0)  
+
+> ij
+
+(T0 − eT )
+
+
+
+.
+
+Meanwhile, taking into account the coefficient ε0 yields the following equations. (2.11) O( ε0) : ρ(0) c(0) ∂T 0
+
+∂t − ∂∂x i
+
+
+
+k(0) 
+
+> ij
+
+∂T 0
+
+∂x j
+
+
+
+− ∂∂x i
+
+
+
+k(0) 
+
+> ij
+
+∂T 1
+
+∂y j
+
+
+
+− ∂∂y i
+
+
+
+k(0) 
+
+> ij
+
+∂T 1
+
+∂x j
+
+
+
+− ∂∂y i
+
+
+
+k(0) 
+
+> ij
+
+∂T 2
+
+∂y j
+
+
+
+− ∂∂x i
+
+
+
+k(1) 
+
+> ij
+
+∂T 0
+
+∂y j
+
+
+
+− ∂∂y i
+
+
+
+k(1) 
+
+> ij
+
+∂T 0
+
+∂x j
+
+
+
+− ∂∂y i
+
+
+
+k(1) 
+
+> ij
+
+∂T 1
+
+∂y j
+
+
+
+− ∂∂y i
+
+
+
+k(2) 
+
+> ij
+
+∂T 0
+
+∂y j
+
+
+
+= λ(0) 
+
+> ij
+
+∂Φ0
+
+∂x i
+
+∂Φ0
+
+∂x j
+
++ λ(0) 
+
+> ij
+
+∂Φ0
+
+∂x i
+
+∂Φ1
+
+∂y j
+
++ λ(0) 
+
+> ij
+
+∂Φ1
+
+∂x i
+
+∂Φ0
+
+∂y j
+
++ λ(0) 
+
+> ij
+
+∂Φ0
+
+∂y i
+
+∂Φ1
+
+∂x j
+
++ λ(0) 
+
+> ij
+
+∂Φ0
+
+∂y i
+
+∂Φ2
+
+∂y j
+
++ λ(0) 
+
+> ij
+
+∂Φ1
+
+∂y i
+
+∂Φ0
+
+∂x j
+
++ λ(0) 
+
+> ij
+
+∂Φ1
+
+∂y i
+
+∂Φ1
+
+∂y j
+
++ λ(0) 
+
+> ij
+
+∂Φ2
+
+∂y i
+
+∂Φ0
+
+∂y j
+
++ λ(1) 
+
+> ij
+
+∂Φ0
+
+∂x i
+
+∂Φ0
+
+∂y j
+
++ λ(1) 
+
+> ij
+
+∂Φ0
+
+∂y i
+
+∂Φ0
+
+∂x j
+
++ λ(1) 
+
+> ij
+
+∂Φ0
+
+∂y i
+
+∂Φ1
+
+∂y j
+
++ λ(1) 
+
+> ij
+
+∂Φ1
+
+∂y i
+
+∂Φ0
+
+∂y j
+
++ λ(2) 
+
+> ij
+
+∂Φ0
+
+∂y i
+
+∂Φ0
+
+∂y j
+
+− T0β(0) 
+
+> ij
+
+∂∂t 
+
+ ∂U i0
+
+∂x j
+
+
+
+− T0β(0) 
+
+> ij
+
+∂∂t 
+
+ ∂U i1
+
+∂y j
+
+
+
+− T0β(1) 
+
+> ij
+
+∂∂t 
+
+ ∂U i0
+
+∂y j
+
+
+
+− T1β(0) 
+
+> ij
+
+∂∂t 
+
+ ∂U i0
+
+∂y j
+
+
+
++ fT ,
+
+(2.12) O( ε0) : ∂∂x i
+
+
+
+λ(0) 
+
+> ij
+
+∂Φ0
+
+∂x j
+
+
+
++ ∂∂x i
+
+
+
+λ(0) 
+
+> ij
+
+∂Φ1
+
+∂y j
+
+
+
++ ∂∂y i
+
+
+
+λ(0) 
+
+> ij
+
+∂Φ1
+
+∂x j
+
+
+
++ ∂∂y i
+
+
+
+λ(0) 
+
+> ij
+
+∂Φ2
+
+∂y j
+
+
+
++ ∂∂x i
+
+
+
+λ(1) 
+
+> ij
+
+∂Φ0
+
+∂y j
+
+
+
++ ∂∂y i
+
+
+
+λ(1) 
+
+> ij
+
+∂Φ0
+
+∂x j
+
+
+
++ ∂∂y i
+
+
+
+λ(1) 
+
+> ij
+
+∂Φ1
+
+∂y j
+
+
+
++ ∂∂y i
+
+
+
+λ(2) 
+
+> ij
+
+∂Φ0
+
+∂y j
+
+
+
+= −fΦ ,MULTI-SCALE METHOD FOR THERMO-ELECTRO-MECHANICAL COUPLING PROBLEMS 7(2.13) O( ε0) : ρ(0) ∂2Ui0
+
+∂t 2 − ∂∂x j
+
+
+
+c(0) 
+
+> ijkl
+
+∂U k0
+
+∂x l
+
+
+
+− ∂∂x j
+
+
+
+c(0) 
+
+> ijkl
+
+∂U k1
+
+∂y l
+
+
+
+− ∂∂y j
+
+
+
+c(0) 
+
+> ijkl
+
+∂U k1
+
+∂x l
+
+
+
+− ∂∂y j
+
+
+
+c(0) 
+
+> ijkl
+
+∂U k2
+
+∂y l
+
+
+
+− ∂∂x j
+
+
+
+c(1) 
+
+> ijkl
+
+∂U k0
+
+∂y l
+
+
+
+− ∂∂y j
+
+
+
+c(1) 
+
+> ijkl
+
+∂U k0
+
+∂x l
+
+
+
+− ∂∂y j
+
+
+
+c(1) 
+
+> ijkl
+
+∂U k1
+
+∂y l
+
+
+
+− ∂∂y j
+
+
+
+c(2) 
+
+> ijkl
+
+∂U k0
+
+∂y l
+
+
+
+= − ∂∂x j
+
+
+
+β(0)  
+
+> ij
+
+(T0 − eT )
+
+
+
+− ∂∂y j
+
+
+
+β(1)  
+
+> ij
+
+(T0 − eT )
+
+
+
+− ∂∂y j
+
+
+
+β(0)  
+
+> ij
+
+T1
+
+
+
++ fi.
+
+Next, applying the standard multi-scale asymptotic expansion procedure to the equations of order O(ε−2), O(ε−1) and O(ε0), the low-order multi-scale (LOMS) so-lutions for temperature T ε, electric potential Φε and displacement U εi are derived as follows (2.14) T [1 ε](x, t ) = T0(x, t ) + εMα1 (y, T 0) ∂T 0(x, t )
+
+∂x α1
+
+,
+
+(2.15) Φ[1 ε](x, t ) = Φ0(x, t ) + εHα1 (y, T 0) ∂Φ0(x, t )
+
+∂x α1
+
+,
+
+(2.16) U [1 ε] 
+
+> i
+
+(x, t ) = Ui0(x, t )+ ε
+
+h
+
+N α1 
+
+> im
+
+(y, T 0) ∂U m0(x, t )
+
+∂x α1
+
++Pi(y, T 0)( T0(x, t )− eT )
+
+i
+
+,
+
+where Mα1 , Hα1 , N α1 
+
+> im
+
+and Pi denote the first-order cell functions defined on PUC 
+
+Y, all of which depend on the macroscopic temperature field T0.To effectively improve the computational accuracy, the novel high-order multi-scale (HOMS) solutions for temperature T ε, electric potential Φε and displacement 
+
+U εi are further established as follows (2.17) 
+
+T [2 ε](x, t )= T0(x,t ) + εMα1 (y, T 0) ∂T 0(x, t )
+
+∂x α1
+
++ ε2Q(y, T 0) ∂T 0(x, t )
+
+∂t 
+
++Mα1α2 (y, T 0) ∂2T0(x, t )
+
+∂x α1 ∂x α2
+
++Rα1 (y, T 0) ∂T 0(x, t )
+
+∂x α1
+
++Oα1α2 (y,T 0) ∂T 0(x, t )
+
+∂x α1
+
+∂T 0(x, t )
+
+∂x α2
+
++ Gα1α2 (y,T 0) ∂Φ0(x, t )
+
+∂x α1
+
+∂Φ0(x, t )
+
+∂x α2
+
++ Jα1α2 (y, T 0) ∂2Uα10(x, t )
+
+∂x α2 ∂t 
+
+,
+
+(2.18) 
+
+Φ[2 ε](x, t ) = Φ0(x, t ) + εHα1 (y, T 0) ∂Φ0(x, t )
+
+∂x α1
+
++ ε2Hα1α2 (y, T 0) ∂2Φ0(x, t )
+
+∂x α1 ∂x α2
+
++ Zα1 (y, T 0) ∂Φ0(x, t )
+
+∂x α1
+
++ Wα1α2 (y, T 0) ∂T 0(x, t )
+
+∂x α1
+
+∂Φ0(x, t )
+
+∂x α2
+
+,8 H. DONG 
+
+(2.19) 
+
+U [2 ε] 
+
+> i
+
+(x, t ) = Ui0(x, t )+ ε
+
+h
+
+N α1 
+
+> im
+
+(y, T 0) ∂U m0(x, t )
+
+∂x α1
+
++Pi(y, T 0)( T0(x, t )− eT )
+
+i
+
++ ε2N α1α2 
+
+> im
+
+(y, T 0) ∂2Um0(x, t )
+
+∂x α1 ∂x α2
+
++ Fα1 
+
+> i
+
+(y, T 0) ∂2Uα10(x, t )
+
+∂t 2
+
++ X α1 
+
+> i
+
+(y, T 0) ∂T 0(x, t )
+
+∂x α1
+
++ Aα1
+
+> im
+
+(y, T 0) ∂U m0(x, t )
+
+∂x α1
+
++ Bi(y, T 0)( T0(x, t ) − eT ) + Cα1 
+
+> i
+
+(y, T 0) ∂T 0(x, t )
+
+∂x α1
+
+(T0(x, t ) − eT )+ Dα1α2 
+
+> im
+
+(y, T 0) ∂T 0(x, t )
+
+∂x α1
+
+∂U m0(x, t )
+
+∂x α2
+
+,
+
+where Q, Mα1α2 , Rα1 , Oα1α2 , Gα1α2 , Jα1α2 , Hα1α2 , Zα1 , Wα1α2 , N α1α2 
+
+> im
+
+, Fα1 
+
+> i
+
+, X α1 
+
+> i
+
+,
+
+Aα1
+
+> im
+
+, Bi, Cα1 
+
+> i
+
+and Dα1α2 
+
+> im
+
+denote the second-order cell functions defined on PUC Y,all of which depend on the macroscopic temperature field T0. Furthermore, it is worth emphasizing that only the HOMS solutions (2.17) of temperature field can characterize the mutual coupling impact of electric potential field and displacement field on temperature field owing to the presence of correction terms Gα1α2
+
+∂Φ0
+
+∂x α1
+
+∂Φ0
+
+∂x α2
+
+and Jα1α2
+
+∂2Uα10
+
+∂x α2 ∂t , while only the HOMS solutions (2.18) of electric potential field can characterize the mutual coupling impact of temperature field on electric potential field owing to the presence of correction terms Wα1α2
+
+∂T 0
+
+∂x α1
+
+∂Φ0
+
+∂x α2
+
+. This is one essential trigger to develop high-order multi-scale method for high-accuracy nonlinear thermo-electro-mechanical coupling simulation of composite structures. Inspired by classical multi-scale asymptotic expansion theory, the detailed def-initions of auxiliary cell functions can be obtained. Firstly, leveraging the O(ε−1)-order equations (2.8)-(2.10), the following boundary-value problems subject to peri-odic boundary condition are derived for solving first-order cell functions, which are designated as the first-order cell problems. (2.20) 
+
+
+
+∂∂y i
+
+k(0) 
+
+> ij
+
+∂Mα1
+
+∂y j
+
+ = − ∂k (0) 
+
+> iα 1
+
+∂y i
+
+, y ∈ Y,
+
+Mα1 (y, T 0) is 1 − periodic in y,
+
+Z
+
+> Y
+
+Mα1 dY = 0 .
+
+(2.21) 
+
+
+
+∂∂y i
+
+λ(0) 
+
+> ij
+
+∂Hα1
+
+∂y j
+
+ = − ∂λ (0) 
+
+> iα 1
+
+∂y i
+
+, y ∈ Y,
+
+Hα1 (y, T 0) is 1 − periodic in y,
+
+Z
+
+> Y
+
+Hα1 dY = 0 .
+
+(2.22) 
+
+
+
+∂∂y j
+
+c(0) 
+
+> ijkl
+
+∂N α1
+
+> km
+
+∂y l
+
+ = − ∂c (0) 
+
+> ijmα 1
+
+∂y j
+
+, y ∈ Y,
+
+N α1
+
+> km
+
+(y, T 0) is 1 − periodic in y,
+
+Z
+
+> Y
+
+N α1
+
+> km
+
+dY = 0 .MULTI-SCALE METHOD FOR THERMO-ELECTRO-MECHANICAL COUPLING PROBLEMS 9(2.23) 
+
+
+
+∂∂y j
+
+c(0) 
+
+> ijkl
+
+∂Pk
+
+∂y l
+
+ = ∂β (0) 
+
+> ij
+
+∂y j
+
+, y ∈ Y,
+
+Pk(y, T 0) is 1 − periodic in y,
+
+Z
+
+> Y
+
+PkdY = 0 .
+
+Subsequently, integrating the O(ε0)-order equations (2.11)-(2.13) over microscopic unit cell Y (with volume integration) and applying the Gauss theorem to these equa-tions, the macroscopic homogenized equations associated with the multi-scale nonlin-ear coupling problem (1.1) are derived, which are presented below (2.24) 
+
+bS(T0) ∂T 0
+
+∂t − ∂∂x i
+
+bkij (T0) ∂T 0
+
+∂x j
+
+
+
+= bλ∗ 
+
+> ij
+
+(T0) ∂Φ0
+
+∂x i
+
+∂Φ0
+
+∂x j
+
+− T0 bβ∗ 
+
+> ij
+
+(T0) ∂∂t 
+
+ ∂U i0
+
+∂x j
+
+
+
++ fT , in Ω × (0 , T ),
+
+− ∂∂x i
+
+bλij (T0) ∂Φ0
+
+∂x j
+
+
+
+= fΦ , in Ω × (0 , T ),
+
+bρ(T0) ∂2Ui0
+
+∂t 2 − ∂∂x j
+
+bcijkl (T0) ∂U k0
+
+∂x l
+
+
+
+= − ∂∂x j
+
+ bβij (T0)( T0 − eT )
+
+
+
++ fi, in Ω × (0 , T ),T0(x, t ) = bT (x, t ), Φ0(x, t ) = bΦ(x, t ), U0(x, t ) = bU (x, t ), on ∂Ω×(0 , T ),T0(x, 0) = eT , U0(x, 0) = eU 0(x), ∂U0(x, 0) 
+
+∂t = eU 1(x), in Ω .
+
+Here, the macroscopic homogenized material parameters in (2.24) are computed via the following formulas. (2.25) 
+
+bS(T0) = 1
+
+|Y|
+
+Z
+
+> Y
+
+ ρ(0) c(0) + T0β(0) 
+
+> ij
+
+∂Pi
+
+∂y j
+
+dY,
+
+bkij (T0) = 1
+
+|Y|
+
+Z
+
+> Y
+
+ k(0)  
+
+> ij
+
++ k(0) 
+
+> iα 1
+
+∂Mj
+
+∂y α1
+
+dY,
+
+bλij (T0) = 1
+
+|Y|
+
+Z
+
+> Y
+
+ λ(0)  
+
+> ij
+
++ λ(0) 
+
+> iα 1
+
+∂Hj
+
+∂y α1
+
+dY,
+
+bρ(T0) = 1
+
+|Y|
+
+Z
+
+> Y
+
+ρ(0) dY,
+
+bcijkl (T0) = 1
+
+|Y|
+
+Z
+
+> Y
+
+ c(0)  
+
+> ijkl
+
++ c(0) 
+
+> ijα 1α2
+
+∂N lα1k
+
+∂y α2
+
+dY,
+
+bβij (T0) = 1
+
+|Y|
+
+Z
+
+> Y
+
+ β(0)  
+
+> ij
+
+− c(0) 
+
+> ijkl
+
+∂Pk
+
+∂y l
+
+dY,
+
+bλ∗ 
+
+> ij
+
+(T0) = 1
+
+|Y|
+
+Z
+
+> Y
+
+ λ(0)  
+
+> ij
+
++ λ(0) 
+
+> iα 1
+
+∂Hj
+
+∂y α1
+
++ λ(0) 
+
+> α1j
+
+∂Hi
+
+∂y α1
+
++ λ(0) 
+
+> α1α2
+
+∂Hi
+
+∂y α1
+
+∂Hj
+
+∂y α2
+
+dY,
+
+bβ∗ 
+
+> ij
+
+(T0) = 1
+
+|Y|
+
+Z
+
+> Y
+
+ β(0)  
+
+> ij
+
++ β(0) 
+
+> α1α2
+
+∂N jα1i
+
+∂y α2
+
+dY,
+
+where |Y| denotes the Lebesgue measure of microscopic unit cell Y.
+
+Remark 1. All macroscopic homogenized material parameters of the investigated composites obviously vary with the macroscopic temperature solution T0 because of the 10 H. DONG 
+
+quasi-periodic properties of first-order cell functions with respect to T0. This feature yields a significant difference relative to linear composites. 
+
+Remark 2. Although bλij (T0) and bλ∗ 
+
+> ij
+
+(T0), as well as bβij (T0) and bλ∗ 
+
+> ij
+
+(T0) are defined by formally distinct computational formulas, it can be proved that bλij (T0) = 
+
+bλ∗ 
+
+> ij
+
+(T0) and bβij (T0) = bλ∗ 
+
+> ij
+
+(T0) hold for any fixed T0, with details provided in Appendix A. This result is of considerable interest to physics community. 
+
+Remark 3. Following the approach in [8, 30], ¯S0 ≤ bS(T0) ≤ ¯S1, ¯κ0|ξ|2 ≤
+
+bkij (T0)ξiξj ≤ ¯κ1|ξ|2, ¯κ0|ξ|2 ≤ bλij (T0)ξiξj ≤ ¯κ1|ξ|2, ¯κ0|ξ|2 ≤ bβij (T0)ξiξj ≤ ¯κ1|ξ|2
+
+and ¯κ0|ζ|2 ≤ bcijkl (T0)ζij ζkl ≤ ¯κ1|ζ|2 can be proved, where ¯S0, ¯S1, ¯κ0 and ¯κ1 are positive constants. 
+
+Furthermore, substituting the terms fT (x, t ), fΦ (x, t ) and fi into the O(ε0)-order equations (2.11)-(2.13) with their counterparts in the macroscopic homogenized equa-tions (2.24), the following boundary-value problems subject to the periodic boundary condition are formulated for solving second-order cell functions, which are designated as the second-order cell problems. (2.26) 
+
+
+
+∂∂y i
+
+k(0) 
+
+> ij
+
+∂Q
+
+∂y j
+
+ = ρ(0) c(0) − bS + T0β(0) 
+
+> ij
+
+∂Pi
+
+∂y j
+
+, y ∈ Y,
+
+Q(y, T 0) is 1 − periodic in y,
+
+Z
+
+> Y
+
+QdY = 0 .
+
+(2.27) 
+
+
+
+∂∂y i
+
+k(0) 
+
+> ij
+
+∂Mα1α2
+
+∂y j
+
+ = bkα1α2−k(0)  
+
+> α1α2
+
+− ∂∂y i
+
+ k(0)  
+
+> iα 1
+
+Mα2
+
+− k(0) 
+
+> α1j
+
+∂Mα2
+
+∂y j
+
+, y ∈ Y,
+
+Mα1α2 (y, T 0) is 1 − periodic in y,
+
+Z
+
+> Y
+
+Mα1α2 dY = 0 .
+
+(2.28) 
+
+
+
+∂∂y i
+
+k(0) 
+
+> ij
+
+∂Rα1
+
+∂y j
+
+=∂bkiα 1
+
+∂x i
+
+−∂k (0) 
+
+> iα 1
+
+∂x i
+
+− ∂∂y i
+
+ k(0) 
+
+> ij
+
+∂Mα1
+
+∂x j
+
+− ∂∂x i
+
+ k(0) 
+
+> ij
+
+∂Mα1
+
+∂y j
+
+, y ∈ Y,
+
+Rα1 (y, T 0) is 1 − periodic in y,
+
+Z
+
+> Y
+
+Rα1 dY = 0 .
+
+(2.29) 
+
+
+
+∂∂y i
+
+k(0) 
+
+> ij
+
+∂Oα1α2
+
+∂y j
+
+=− ∂∂y i
+
+
+
+Mα1 D(0 ,1) k(0)  
+
+> iα 2
+
++Mα1 D(0 ,1) k(0) 
+
+> ij
+
+∂Mα2
+
+∂y j
+
+
+
+, y ∈ Y,
+
+Oα1α2 (y, T 0) is 1 − periodic in y,
+
+Z
+
+> Y
+
+Oα1α2 dY = 0 .
+
+(2.30) 
+
+
+
+∂∂y i
+
+k(0) 
+
+> ij
+
+∂Gα1α2
+
+∂y j
+
+ = bλ∗ 
+
+> α1α2
+
+− λ(0)  
+
+> α1α2
+
+− λ(0) 
+
+> iα 2
+
+∂Hα1
+
+∂y i
+
+− λ(0) 
+
+> α1j
+
+∂Hα2
+
+∂y j
+
+− λ(0) 
+
+> ij
+
+∂Hα1
+
+∂y i
+
+∂Hα2
+
+∂y j
+
+, y ∈ Y,
+
+Gα1α2 (y, T 0) is 1 − periodic in y,
+
+Z
+
+> Y
+
+Gα1α2 dY = 0 .
+
+(2.31) 
+
+
+
+∂∂y i
+
+k(0) 
+
+> ij
+
+∂Jα1α2
+
+∂y j
+
+ = T0β(0)  
+
+> α1α2
+
+− T0 bβ∗ 
+
+> α1α2
+
++ T0β(0) 
+
+> ij
+
+∂N α2
+
+> iα 1
+
+∂y j
+
+, y ∈ Y,
+
+Jα1α2 (y, T 0) is 1 − periodic in y,
+
+Z
+
+> Y
+
+Jα1α2 dY = 0 .MULTI-SCALE METHOD FOR THERMO-ELECTRO-MECHANICAL COUPLING PROBLEMS 11 (2.32) 
+
+
+
+∂∂y i
+
+λ(0) 
+
+> ij
+
+∂Hα1α2
+
+∂y j
+
+=bλα1α2 −λ(0)  
+
+> α1α2
+
+− ∂∂y i
+
+ λ(0)  
+
+> iα 1
+
+Hα2
+
+−λ(0) 
+
+> α1j
+
+∂Hα2
+
+∂y j
+
+, y ∈ Y,
+
+Hα1α2 (y, T 0) is 1 − periodic in y,
+
+Z
+
+> Y
+
+Hα1α2 dY = 0 .
+
+(2.33) 
+
+
+
+∂∂y i
+
+λ(0) 
+
+> ij
+
+∂Zα1
+
+∂y j
+
+=∂bλiα 1
+
+∂x i
+
+−∂λ (0) 
+
+> iα 1
+
+∂x i
+
+− ∂∂y i
+
+ λ(0) 
+
+> ij
+
+∂Hα1
+
+∂x j
+
+− ∂∂x i
+
+ λ(0) 
+
+> ij
+
+∂Hα1
+
+∂y j
+
+, y ∈ Y,
+
+Zα1 (y, T 0) is 1 − periodic in y,
+
+Z
+
+> Y
+
+Zα1 dY = 0 .
+
+(2.34) 
+
+
+
+∂∂y i
+
+λ(0) 
+
+> ij
+
+∂Wα1α2
+
+∂y j
+
+=− ∂∂y i
+
+
+
+Mα1 D(0 ,1) λ(0)  
+
+> iα 2
+
++Mα1 D(0 ,1) λ(0) 
+
+> ij
+
+∂Hα2
+
+∂y j
+
+
+
+, y ∈ Y,
+
+Wα1α2 (y, T 0) is 1 − periodic in y,
+
+Z
+
+> Y
+
+Wα1α2 dY = 0 .
+
+(2.35) 
+
+
+
+∂∂y j
+
+c(0) 
+
+> ijkl
+
+∂N α1α2
+
+> km
+
+∂y l
+
+ = bciα 1mα 2 − c(0)  
+
+> iα 1mα 2
+
+− ∂∂y j
+
+ c(0)  
+
+> ijkα 1
+
+N α2
+
+> km
+
+
+
+−c(0) 
+
+> iα 1kj
+
+∂N α2
+
+> km
+
+∂y j
+
+, y ∈ Y,
+
+N α1α2 
+
+> km
+
+(y, T 0) is 1 − periodic in y,
+
+Z
+
+> Y
+
+N α1α2 
+
+> km
+
+dY = 0 .
+
+(2.36) 
+
+
+
+∂∂y j
+
+c(0) 
+
+> ijkl
+
+∂Fα1
+
+> k
+
+∂y l
+
+ = δiα 1
+
+ ρ(0) − bρ, y ∈ Y,
+
+Fα1 
+
+> k
+
+(y, T 0) is 1 − periodic in y,
+
+Z
+
+> Y
+
+Fα1 
+
+> k
+
+dY = 0 .
+
+(2.37) 
+
+
+
+∂∂y j
+
+c(0) 
+
+> ijkl
+
+∂X α1
+
+> k
+
+∂y l
+
+ = β(0)  
+
+> iα 1
+
+− bβiα 1 − c(0) 
+
+> iα 1kl
+
+∂Pk
+
+∂y l
+
+− ∂∂y j
+
+(c(0)  
+
+> ijkα 1
+
+Pk)+ ∂∂y j
+
+(β(0)  
+
+> ij
+
+Mα1 ), y ∈ Y,
+
+X α1 
+
+> k
+
+(y, T 0) is 1 − periodic in y,
+
+Z
+
+> Y
+
+X α1 
+
+> k
+
+dY = 0 .
+
+(2.38) 
+
+
+
+∂∂y j
+
+c(0) 
+
+> ijkl
+
+∂Aα1
+
+> km
+
+∂y l
+
+ = ∂bcijmα 1
+
+∂x j
+
+− ∂c (0) 
+
+> ijmα 1
+
+∂x j
+
+− ∂∂y j
+
+ c(0) 
+
+> ijkl
+
+∂N α1
+
+> km
+
+∂x l
+
+
+
+− ∂∂x j
+
+ c(0) 
+
+> ijkl
+
+∂N α1
+
+> km
+
+∂y l
+
+, y ∈ Y,
+
+Aα1
+
+> km
+
+(y, T 0) is 1 − periodic in y,
+
+Z
+
+> Y
+
+Aα1
+
+> km
+
+dY = 0 .
+
+(2.39) 
+
+
+
+∂∂y j
+
+c(0) 
+
+> ijkl
+
+∂Bk
+
+∂y l
+
+ = ∂β (0) 
+
+> ij
+
+∂x j
+
+− ∂ bβij 
+
+∂x j
+
+− ∂∂y j
+
+ c(0) 
+
+> ijkl
+
+∂Pk
+
+∂x l
+
+− ∂∂x j
+
+ c(0) 
+
+> ijkl
+
+∂Pk
+
+∂y l
+
+, y ∈ Y,
+
+Bk(y, T 0) is 1 − periodic in y,
+
+Z
+
+> Y
+
+BkdY = 0 .12 H. DONG 
+
+(2.40) 
+
+
+
+∂∂y j
+
+c(0) 
+
+> ijkl
+
+∂Cα1
+
+> k
+
+∂y l
+
+ = ∂∂y j
+
+
+
+Mα1 D(0 ,1) β(0)  
+
+> ij
+
+− M α1 D(0 ,1) c(0) 
+
+> ijkl
+
+∂Pk
+
+∂y l
+
+
+
+, y ∈ Y,
+
+Cα1 
+
+> k
+
+(y, T 0) is 1 − periodic in y,
+
+Z
+
+> Y
+
+Cα1 
+
+> k
+
+dY = 0 .
+
+(2.41) 
+
+
+
+∂∂y j
+
+c(0) 
+
+> ijkl
+
+∂Dα1α2
+
+> km
+
+∂y l
+
+=− ∂∂y j
+
+
+
+Mα1D(0 ,1) c(0)  
+
+> ijmα 2
+
++Mα1D(0 ,1) c(0) 
+
+> ijkl
+
+∂N α2
+
+> km
+
+∂y l
+
+
+
+, y ∈ Y,
+
+Dα1α2 
+
+> km
+
+(y, T 0) is 1 − periodic in y,
+
+Z
+
+> Y
+
+Dα1α2 
+
+> km
+
+dY = 0 .
+
+Remark 4. By virtue of the hypotheses (A 1)-(A 2) and Lax-Milgram theorem, the existence and uniqueness of solutions for auxiliary cell problems (2.20)-(2.23) and (2.26)-(2.41) are established for any fixed macroscopic temperature T0.
+
+Remark 5. Based on the definitions (2.20)-(2.23) and (2.26)-(2.41) of cell func-tions, it can be proved that all cell functions are continuous with respect to macroscopic temperature T0, with details provided in Appendix B. 
+
+3. The error analyses of multi-scale asymptotic solutions. 3.1. The proof of local balance preserving by local error analysis. The fundamental motivation for developing high-order multi-scale solutions lies in their capability in local balance preserving, which shall be demonstrated by the local point-wise error analysis. First, the residual functions corresponding to LOMS and HOMS approximate solutions are defined as follows. (3.1) 
+
+
+
+˚T [1 ε](x, t ) = T ε(x, t ) − T [1 ε](x, t ), ˚T [2 ε](x, t ) = T ε(x, t ) − T [2 ε](x, t ),
+
+˚Φ[1 ε](x, t ) = Φε(x, t ) − Φ[2 ε](x, t ), ˚Φ[2 ε](x, t ) = Φε(x, t ) − Φ[2 ε](x, t ),
+
+˚U [1 ε] 
+
+> i
+
+(x, t ) = U εi (x, t ) − U [1 ε] 
+
+> i
+
+(x, t ), ˚U [2 ε] 
+
+> i
+
+(x, t ) = U εi (x, t ) − U [2 ε] 
+
+> i
+
+(x, t ).
+
+Then substituting the aforementioned residual functions ˚T [1 ε], ˚Φ[1 ε] and ˚U [1 ε] 
+
+> i
+
+into (1.1), the residual equations for the LOMS solutions can be derived as below. (3.2) 
+
+
+
+ρεcε ∂ ˚T [1 ε]
+
+∂t − ∂∂x i
+
+
+
+kεij 
+
+∂ ˚T [1 ε]
+
+∂x j
+
+
+
+− λεij 
+
+∂˚Φ[1 ε]
+
+∂x i
+
+∂˚Φ[1 ε]
+
+∂x j
+
++ T εβεij 
+
+∂∂t 
+
+ ∂ ˚U [1 ε]
+
+> i
+
+∂x j
+
+
+
+= H0(x, y, t ) + εH 1(x, y, t ), in Ω × (0 , T ),
+
+− ∂∂x i
+
+
+
+λεij 
+
+∂˚Φ[1 ε]
+
+∂x j
+
+
+
+= E0(x, y, t ) + εE 1(x, y, t ), in Ω × (0 , T ),ρε ∂2 ˚U [1 ε]
+
+> i
+
+∂t 2 − ∂∂x j
+
+
+
+cεijkl 
+
+∂ ˚U [1 ε]
+
+> k
+
+∂x l
+
+− βεij ˚T [1 ε]
+
+= Fi0(x, y, t ) + εF i1(x, y, t ), in Ω × (0 , T ),
+
+where the detailed expressions of functions H0, H1, E0, E1, Fi0 and Fi1 are uncom-plicated to derive and not be exhibited in this study. Similarly, putting the residual functions ˚T [2 ε], ˚Φ[2 ε] and ˚U [2 ε] 
+
+> i
+
+into (1.1) leads to MULTI-SCALE METHOD FOR THERMO-ELECTRO-MECHANICAL COUPLING PROBLEMS 13 the following residual equations for the HOMS solutions. (3.3) 
+
+
+
+ρεcε ∂ ˚T [2 ε]
+
+∂t − ∂∂x i
+
+
+
+kεij 
+
+∂ ˚T [2 ε]
+
+∂x j
+
+
+
+− λεij 
+
+∂˚Φ[2 ε]
+
+∂x i
+
+∂˚Φ[2 ε]
+
+∂x j
+
++ T εβεij 
+
+∂∂t 
+
+ ∂ ˚U [2 ε]
+
+> i
+
+∂x j
+
+
+
+= εH 2(x, y, t ), in Ω × (0 , T ),
+
+− ∂∂x i
+
+
+
+λεij 
+
+∂˚Φ[2 ε]
+
+∂x j
+
+
+
+= εE 2(x, y, t ), in Ω × (0 , T ),ρε ∂2 ˚U [2 ε]
+
+> i
+
+∂t 2 − ∂∂x j
+
+
+
+cεijkl 
+
+∂ ˚U [2 ε]
+
+> k
+
+∂x l
+
+− βεij ˚T [2 ε]
+
+= εF i2(x, y, t ), in Ω × (0 , T ),
+
+where the detailed expressions of functions H2, E2 and Fi2 are also trivial to derive and not be displayed in this study. Observing the above-mentioned pointwise error results, it reveals that LOMS solutions fail to preserve local balance of heat quantity, electric charge and stress; specifically, the ε-independent terms H0, E0 and Fi0 in (3.2) do not vanish as the microstructural parameter ε tends to zero. In contrast, augmented by the high-order correction terms, the HOMS solutions shall yield O(ε)-order pointwise errors, thereby preserving the local heat quantity balance of thermal equation, local electric charge balance of electronic equation, and local stress balance of mechanical equations inher-ent in the original governing equations (1.1). This capability serves as the primary motivation for developing the HOMS solutions that manifest high-fidelity computa-tional performance for the composite structures with highly spatial heterogeneities. 
+
+3.2. The proof of convergence by global error estimate. To ensure the computational reliability of global multi-physics simulations, the global error estimate in the integral sense is obtained for the high-order multi-scale solutions. Firstly, the following additional assumptions are stated for sequel proof. (B 1) Assume that Ω is a union of integral PUCs, namely ¯Ω = ∪z∈Iε ε(z+ ¯Y), where the index set Iε = {z = ( z1, · · · , z n) ∈ Zn, ε (z + ¯Y) ⊂ ¯Ω}. In addition, let 
+
+Ez = ε(z + Y) be the translational unit cell and ∂E z be its boundary. (B 2) Assume that ∂ρ ε(x, T ε)
+
+∂t , ∂c ε(x, T ε)
+
+∂t and ∂c εijkl (x, T ε)
+
+∂t ∈ L∞(Ω × (0 , T )). (B 3) The nonlinear coupling term T ε(x, t )βεij (x, T ε) of thermal equation in multi-scale multi-physics equations (1.1) is simplified as the linear term eT β εij (x, T ε). (B 4) Let kij (y, T ε) = kii (y, T ε)δij , λij (y, T ε) = λii (y, T ε)δij and βij (y, T ε) = 
+
+βii (y, T ε)δij , where δij is a Kronecker symbol. Besides, let ∆ 1, · · · , ∆n be the middle hyperplanes of PUC Y = [0 , 1] n. Then suppose that material param-eters ρ(y, T ε), c(y, T ε), kii (y, T ε), λii (y, T ε), βii (y, T ε) and cijkl (y, T ε) are symmetric with respect to ∆ 1, · · · , ∆n for stationary T ε ∈ [Tmin , T max + C∗]. (B 5) Apply the homogeneous Dirichlet boundary condition to replace the periodic boundary condition for all auxiliary cell functions [33, 6, 5]. Based on the aforementioned assumptions, we further derive the following initial-boundary conditions for the residual equations (3.3) of the HOMS solutions, which 14 H. DONG 
+
+will be employed for global error estimation (3.4) 
+
+
+
+˚T [2 ε](x, t ) = −εMα1
+
+∂T 0
+
+∂x α1
+
+− ε2Q ∂T 0
+
+∂t + Mα1α2
+
+∂2T0
+
+∂x α1 ∂x α2
+
++ Rα1
+
+∂T 0
+
+∂x α1
+
++Oα1α2
+
+∂T 0
+
+∂x α1
+
+∂T 0
+
+∂x α2
+
++Gα1α2
+
+∂Φ0
+
+∂x α1
+
+∂Φ0
+
+∂x α2
+
++Jα1α2
+
+∂2Uα10
+
+∂x α2 ∂t 
+
+ = 0 , on ∂Ω × (0 , T ),
+
+˚Φ[2 ε](x, t ) = −εHα1
+
+∂Φ0
+
+∂x α1
+
+− ε2Hα1α2
+
+∂2Φ0
+
+∂x α1 ∂x α2
+
++ Zα1
+
+∂Φ0
+
+∂x α1
+
++ Wα1α2
+
+∂T 0
+
+∂x α1
+
+∂Φ0
+
+∂x α2
+
+ = 0 , on ∂Ω × (0 , T ),
+
+˚U [2 ε] 
+
+> i
+
+(x, t ) = −ε
+
+h
+
+N α1
+
+> im
+
+∂U m0
+
+∂x α1
+
++ Pi(T0 − eT )
+
+i
+
+− ε2N α1α2
+
+> im
+
+∂2Um0
+
+∂x α1 ∂x α2
+
++ Fα1
+
+> i
+
+∂2Uα10
+
+∂t 2 + X α1
+
+> i
+
+∂T 0
+
+∂x α1
+
++ Aα1
+
+> im
+
+∂U m0
+
+∂x α1
+
++ Bi(T0 − eT )+ Cα1
+
+> i
+
+∂T 0
+
+∂x α1
+
+(T0 − eT ) + Dα1α2
+
+> im
+
+∂T 0
+
+∂x α1
+
+∂U m0
+
+∂x α2
+
+ = 0 , on ∂Ω × (0 , T ),
+
+˚T [2 ε](x, 0) =: εeχ2(x), ˚U [2 ε] 
+
+> i
+
+(x, 0) =: εeη2i(x), ∂ ˚U [2 ε] 
+
+> i
+
+(x, 0) 
+
+∂t =: εeζ2i(x), in Ω ,
+
+Furthermore, based on the above assumptions, the following lemma is obtained, which will be utilized to implement the global error estimate of the HOMS solutions. 
+
+Lemma 3.1. Define the differential operators σT Y (χ) = nikij (y, T ε) ∂χ ∂y j
+
+for tem-perature field, σΦY (η) = nikij (y, T ε) ∂η ∂y j
+
+for electric potential field and σiY (ϕ) = 
+
+nj cijkl (y, T ε) ∂ϕ k
+
+∂y l
+
+for displacement field, respectively. Under the assumptions (A 1)-(A 2) and (B 4)-(B 5), the normal derivatives of all microscopic cell functions are proved to be continuous on the boundary of PUC Y, following the identical approach in ref-erences [33, 6, 5]. Furthermore, σT Y (T [2 ε]), σΦY (Φ[2 ε]) and σiY (U [2 ε]) are proved to be continuous on the boundary of PUC Y.
+
+Next, the global error estimate with explicit convergence order for the HOMS solutions of the time-varying multi-scale nonlinear multi-physics equations (1.1) is established and presented in the following theorem. 
+
+Theorem 3.2. Let T ε, Φ ε and U ε be the weak solutions of multi-scale nonlin-ear multi-physics equations (1.1), while T0, Φ 0 and U0 denote the weak solutions of corresponding homogenized equations (2.24). Let T [2 ε], Φ [2 ε] and U [2 ε] be the HOMS solutions given by formulas (2.17)-(2.19). Under the above hypotheses (A 1)-(A 3) and (B 1)-(B 5), the following global error estimates are derived. 
+
+(3.5) 
+
+Φε − Φ[2 ε]   
+
+> L∞(0 ,T;H10(Ω))
+
++ T ε − T [2 ε] 
+
+> L∞(0 ,T;L2(Ω))
+
++ T ε − T [2 ε]   
+
+> L2(0 ,T;H10(Ω))
+
++ ∂U ε
+
+∂t − ∂U [2 ε]
+
+∂t L∞(0 ,T ;( L2(Ω)) n)
+
++ U ε − U [2 ε]   
+
+> L∞(0 ,T;( H10(Ω)) n)
+
+≤ C(Ω , T )ε. 
+
+Here, C(Ω , T ) is a positive constant depending on Ω and T , but independent of ε.
+
+Proof : The error estimate (3.5) is established on the residual equations (3.3) and as-MULTI-SCALE METHOD FOR THERMO-ELECTRO-MECHANICAL COUPLING PROBLEMS 15 sociated initial-boundary conditions (3.4). Firstly, multiplying the electronic residual equation in (3.3) by Φ[2 ε](x, t ) and integrating on Ω, the following equality is derived upon further applying Green’s formula and substituting the corresponding boundary condition in (3.4). (3.6) 
+
+Z
+
+> Ω
+
+λεij (x, T ε) ∂˚Φ[2 ε]
+
+∂x j
+
+∂˚Φ[2 ε]
+
+∂x i
+
+dΩ=
+
+Z
+
+> Ω
+
+εE 2(x, y, t )˚Φ[2 ε]dΩ + X
+
+> z∈Iξ
+
+Z
+
+> ∂E z
+
+σΦY (˚Φ[2 ε])˚Φ[2 ε]dΓy .
+
+Invoking lemma 3.1, we shall derive the following result for the boundary integral terms on ∂E z in (3.6). (3.7) 
+
+X
+
+> z∈Iξ
+
+Z
+
+> ∂E z
+
+σΦY (˚Φ[2 ε])˚Φ[2 ε]dΓy = X
+
+> z∈Iξ
+
+Z
+
+> ∂E z
+
+σΦY (Φε − Φ[2 ε])˚Φ[2 ε]dΓy
+
+= − X
+
+> z∈Iξ
+
+Z
+
+> ∂E z
+
+σΦY (Φ[2 ε])˚Φ[2 ε]dΓy = 0 .
+
+Furthermore, employing assumption (A 1) and Poincar´ e-Friedrichs inequality to the left side of (3.6), it follows that (3.8) 
+
+Z
+
+> Ω
+
+λεij (x, T ε) ∂˚Φ[2 ε]
+
+∂x j
+
+∂˚Φ[2 ε]
+
+∂x i
+
+dΩ ≥ C ˚Φ[2 ε] 2 
+
+> H10(Ω)
+
+.
+
+After that, exploiting the Schwarz’s inequality and equality (3.7), we derive the fol-lowing inequality by transforming the right side of (3.6) (3.9) 
+
+Z
+
+> Ω
+
+εE 2(x, y, t )˚Φ[2 ε]dΩ + X
+
+> z∈Iξ
+
+Z
+
+> ∂E z
+
+σΦY (˚Φ[2 ε])˚Φ[2 ε]dΓy
+
+≤ ∥ εE 2(x, y, t )∥L2(Ω) ˚Φ[2 ε]
+
+> L2(Ω)
+
+≤ Cε ∥E2(x, y, t )∥L2(Ω) ˚Φ[2 ε] 
+
+> H10(Ω)
+
+.
+
+A combination of (3.8) and (3.9) leads to the following inequality (3.10) Φε − Φ[2 ε]  
+
+> H10(Ω)
+
+= ˚Φ[2 ε] 
+
+> H10(Ω)
+
+≤ Cε ∥E2(x, y, t )∥L2(Ω) .
+
+Then, leveraging the arbitrariness of temporal variable t in (3.10), we readily arrive at the explicit convergence estimate Φε − Φ[2 ε]   
+
+> L∞(0 ,T;H10(Ω))
+
+≤ Cε for the electric potential field. In what follows, we proceed to derive the error estimates for the temperature and displacement fields. Since ∂ ˚U [2 ε]
+
+> i
+
+∂t ∈ L∞(0 , T ; L2(Ω)), it cannot be directly utilized as a test function for hyperbolic dynamics part of the residual equations (3.3). To tackle this challenge, the density argument approach in [8] is employed. For the sake of brevity, the details of this argument are omitted. Next, multiplying the thermal residual equation in (3.3) by ˚T [2 ε] and the mechanical equations in (3.3) by ∂ ˚U [2 ε]
+
+> i
+
+∂t 16 H. DONG 
+
+respectively, and integrating over Ω, the following equalities are derived by further applying Green’s formula and substituting associated boundary conditions in (3.4). (3.11) 
+
+Z
+
+> Ω
+
+ρεcε ∂ ˚T [2 ε]
+
+∂t ˚T [2 ε]dΩ + 
+
+Z
+
+> Ω
+
+kεij 
+
+∂ ˚T [2 ε]
+
+∂x j
+
+∂ ˚T [2 ε]
+
+∂x i
+
+dΩ
+
+−
+
+Z
+
+> Ω
+
+λεij 
+
+∂˚Φ[2 ε]
+
+∂x i
+
+∂˚Φ[2 ε]
+
+∂x j
+
+˚T [2 ε]dΩ + 
+
+Z
+
+> Ω
+
+eT β εij 
+
+∂∂t 
+
+ ∂ ˚U [2 ε]
+
+> i
+
+∂x j
+
+˚T [2 ε]dΩ=
+
+Z
+
+> Ω
+
+εH 2(x, y, t )˚T [2 ε]dΩ + X
+
+> z∈Iξ
+
+Z
+
+> ∂E z
+
+σT Y (˚T [2 ε])˚T [2 ε]dΓy ,
+
+Z
+
+> Ω
+
+ρε ∂2 ˚U [2 ε]
+
+> i
+
+∂t 2
+
+∂ ˚U [2 ε]
+
+> i
+
+∂t dΩ + 
+
+Z
+
+> Ω
+
+
+
+cεijkl 
+
+∂ ˚U [2 ε]
+
+> k
+
+∂x l
+
+− βεij ˚T [2 ε] ∂∂x j
+
+ ∂ ˚U [2 ε]
+
+> i
+
+∂t 
+
+
+
+dΩ=
+
+Z
+
+> Ω
+
+εF i2(x, y, t ) ∂ ˚U [2 ε]
+
+> i
+
+∂t dΩ + X
+
+> z∈Iξ
+
+Z
+
+> ∂E z
+
+σiY ( ˚U [2 ε]) ∂ ˚U [2 ε]
+
+> i
+
+∂t dΓy .
+
+Invoking lemma 3.1, the following results are established for the boundary integral terms on ∂E z in (3.11). (3.12) 
+
+X
+
+> z∈Iξ
+
+Z
+
+> ∂E z
+
+σT Y (˚T [2 ε])˚T [2 ε]dΓy = X
+
+> z∈Iξ
+
+Z
+
+> ∂E z
+
+σT Y (T ε − T [2 ε])˚T [2 ε]dΓy
+
+= − X
+
+> z∈Iξ
+
+Z
+
+> ∂E z
+
+σT Y (T [2 ε])˚T [2 ε]dΓy = 0 ,
+
+X
+
+> z∈Iξ
+
+Z
+
+> ∂E z
+
+σiY ( ˚U [2 ε]) ∂ ˚U [2 ε]
+
+> i
+
+∂t dΓy = X
+
+> z∈Iξ
+
+Z
+
+> ∂E z
+
+σiY (U ε − U [2 ε]) ∂ ˚U [2 ε]
+
+> i
+
+∂t dΓy
+
+= − X
+
+> z∈Iξ
+
+Z
+
+> ∂E z
+
+σiY (U [2 ε]) ∂ ˚U [2 ε]
+
+> i
+
+∂t dΓy = 0 .
+
+After that, the following two equalities are derived separately for multi-scale thermal and mechanical equations with temperature-dependent material parameters in (3.11). (3.13) 12
+
+∂∂t 
+
+h Z
+
+> Ω
+
+ρε(x, T ε)cε(x, T ε) ˚T [2 ε]2dΩ
+
+i
+
++
+
+Z
+
+> Ω
+
+kεij (x, T ε) ∂ ˚T [2 ε]
+
+∂x j
+
+∂ ˚T [2 ε]
+
+∂x i
+
+dΩ
+
+− 12
+
+Z
+
+> Ω
+
+∂ρ ε(x,T ε)
+
+∂t cε(x,T ε) ˚T [2 ε]2dΩ − 12
+
+Z
+
+> Ω
+
+ρε(x,T ε) ∂c ε(x,T ε)
+
+∂t 
+
+ ˚T [2 ε]2dΩ
+
+−
+
+Z
+
+> Ω
+
+λεij (x, T ε) ∂˚Φ[2 ε]
+
+∂x i
+
+∂˚Φ[2 ε]
+
+∂x j
+
+˚T [2 ε]dΩ + 
+
+Z
+
+> Ω
+
+eT β εij (x, T ε) ∂∂t 
+
+ ∂ ˚U [2 ε]
+
+> i
+
+∂x j
+
+˚T [2 ε]dΩ=
+
+Z
+
+> Ω
+
+εH 2(x, y, t )˚T [2 ε]dΩ.
+
+(3.14) 12
+
+∂∂t 
+
+h Z
+
+> Ω
+
+ρε(x, T ε)  ∂ ˚U [2 ε]
+
+> i
+
+∂t 
+
+2dΩ + 
+
+Z
+
+> Ω
+
+cεijkl (x, T ε) ∂ ˚U [2 ε]
+
+> k
+
+∂x l
+
+∂ ˚U [2 ε]
+
+> i
+
+∂x j
+
+dΩ
+
+i
+
+− 12
+
+Z
+
+> Ω
+
+∂ρ ε(x, T ε)
+
+∂t 
+
+  ∂ ˚U [2 ε]
+
+> i
+
+∂t 
+
+2dΩ − 12
+
+Z
+
+> Ω
+
+∂c εijkl (x, T ε)
+
+∂t ∂ ˚U [2 ε]
+
+> k
+
+∂x l
+
+∂ ˚U [2 ε]
+
+> i
+
+∂x j
+
+dΩ
+
+−
+
+Z
+
+> Ω
+
+βεij (x, T ε)˚T [2 ε] ∂∂x j
+
+ ∂ ˚U [2 ε]
+
+> i
+
+∂t 
+
+
+
+dΩ = 
+
+Z
+
+> Ω
+
+εF i2(x, y, t ) ∂ ˚U [2 ε]
+
+> i
+
+∂t dΩ.MULTI-SCALE METHOD FOR THERMO-ELECTRO-MECHANICAL COUPLING PROBLEMS 17 Then, implementing the calculation (3.13)+ eT ×(3.14) yields the following equality. (3.15) 12
+
+∂∂t 
+
+h Z
+
+> Ω
+
+ρε(x, T ε)cε(x, T ε) ˚T [2 ε]2dΩ
+
+i
+
++
+
+Z
+
+> Ω
+
+kεij (x, T ε) ∂ ˚T [2 ε]
+
+∂x j
+
+∂ ˚T [2 ε]
+
+∂x i
+
+dΩ
+
+− 12
+
+Z
+
+> Ω
+
+∂ρ ε(x,T ε)
+
+∂t cε(x,T ε) ˚T [2 ε]2dΩ − 12
+
+Z
+
+> Ω
+
+ρε(x,T ε) ∂c ε(x,T ε)
+
+∂t 
+
+ ˚T [2 ε]2dΩ
+
+−
+
+Z
+
+> Ω
+
+λεij (x, T ε) ∂˚Φ[2 ε]
+
+∂x i
+
+∂˚Φ[2 ε]
+
+∂x j
+
+˚T [2 ε]dΩ + 12
+
+∂∂t 
+
+h Z
+
+> Ω
+
+ρε(x, T ε)  ∂ ˚U [2 ε]
+
+> i
+
+∂t 
+
+2 eT d Ω
+
+i
+
++ 12
+
+∂∂t 
+
+h Z
+
+> Ω
+
+cεijkl (x, T ε) ∂ ˚U [2 ε]
+
+> k
+
+∂x l
+
+∂ ˚U [2 ε]
+
+> i
+
+∂x j
+
+eT d Ω
+
+i
+
+− 12
+
+Z
+
+> Ω
+
+∂ρ ε(x, T ε)
+
+∂t 
+
+  ∂ ˚U [2 ε]
+
+> i
+
+∂t 
+
+2 eT d Ω
+
+− 12
+
+Z
+
+> Ω
+
+∂c εijkl (x, T ε)
+
+∂t ∂ ˚U [2 ε]
+
+> k
+
+∂x l
+
+∂ ˚U [2 ε]
+
+> i
+
+∂x j
+
+eT d Ω = 
+
+Z
+
+> Ω
+
+εH 2(x, y, t )˚T [2 ε]dΩ+
+
+Z
+
+> Ω
+
+εF i2(x, y, t ) ∂ ˚U [2 ε]
+
+> i
+
+∂t eT d Ω.
+
+Afterwards, integrating both sides of (3.15) over (0 , t ] with 0 < t ≤ T and imposing the initial conditions of thermal and mechanical residual equations given in (3.4), it follows that (3.16) 
+
+Z
+
+> Ω
+
+ρεcε ˚T [2 ε](x, t )2dΩ + 
+
+Z t
+
+> 0
+
+Z
+
+> Ω
+
+2kεij 
+
+∂ ˚T [2 ε](x, τ )
+
+∂x j
+
+∂ ˚T [2 ε](x, τ )
+
+∂x i
+
+dΩdτ 
+
++
+
+Z
+
+> Ω
+
+ρε  ∂ ˚U [2 ε] 
+
+> i
+
+(x, t )
+
+∂t 
+
+2 eT d Ω + 
+
+Z
+
+> Ω
+
+cεijkl 
+
+∂ ˚U [2 ε] 
+
+> k
+
+(x, t )
+
+∂x l
+
+∂ ˚U [2 ε] 
+
+> i
+
+(x, t )
+
+∂x j
+
+eT d Ω=
+
+Z
+
+> Ω
+
+ρεcε εeχ2(x)2dΩ + 
+
+Z t
+
+> 0
+
+Z
+
+> Ω
+
+2λεij 
+
+∂˚Φ[2 ε](x, τ )
+
+∂x i
+
+∂˚Φ[2 ε](x, τ )
+
+∂x j
+
+˚T [2 ε](x, τ )dΩdτ 
+
++
+
+Z t
+
+> 0
+
+Z
+
+> Ω
+
+∂ρ ε
+
+∂t cε ˚T [2 ε](x, τ )2dΩdτ +
+
+Z t
+
+> 0
+
+Z
+
+> Ω
+
+ρε ∂c ε
+
+∂t 
+
+ ˚T [2 ε](x, τ )2dΩdτ 
+
++
+
+Z
+
+> Ω
+
+ρε εeζ2i(x)2 eT d Ω + 
+
+Z t
+
+> 0
+
+Z
+
+> Ω
+
+∂c εijkl 
+
+∂t ∂ ˚U [2 ε] 
+
+> k
+
+(x, τ )
+
+∂x l
+
+∂ ˚U [2 ε] 
+
+> i
+
+(x, τ )
+
+∂x j
+
+eT d Ωdτ 
+
++
+
+Z t
+
+> 0
+
+Z
+
+> Ω
+
+∂ρ ε
+
+∂t 
+
+  ∂ ˚U [2 ε] 
+
+> i
+
+(x, τ )
+
+∂t 
+
+2 eT d Ωdτ +
+
+Z
+
+> Ω
+
+cεijkl 
+
+∂[εeη2k(x)] 
+
+∂x l
+
+∂[εeη2i(x)] 
+
+∂x j
+
+eT d Ω+
+
+Z t
+
+> 0
+
+Z
+
+> Ω
+
+2εH 2 ˚T [2 ε](x, τ )dΩdτ +
+
+Z t
+
+> 0
+
+Z
+
+> Ω
+
+2εF i2
+
+∂ ˚U [2 ε] 
+
+> i
+
+(x, τ )
+
+∂t eT d Ωdτ. 
+
+Owing to the assumptions (A 1) and (A 2), and employing the Poincar´ e-Friedrichs inequality and Korn’s inequality, the following inequality can be obtained from left 18 H. DONG 
+
+side of equality (3.16). (3.17) 
+
+Z
+
+> Ω
+
+ρεcε ˚T [2 ε](x, t )2dΩ + 
+
+Z t
+
+> 0
+
+Z
+
+> Ω
+
+2kεij 
+
+∂ ˚T [2 ε](x, τ )
+
+∂x j
+
+∂ ˚T [2 ε](x, τ )
+
+∂x i
+
+dΩdτ 
+
++
+
+Z
+
+> Ω
+
+ρε  ∂ ˚U [2 ε] 
+
+> i
+
+(x, t )
+
+∂t 
+
+2 eT d Ω + 
+
+Z
+
+> Ω
+
+cεijkl 
+
+∂ ˚U [2 ε] 
+
+> k
+
+(x, t )
+
+∂x l
+
+∂ ˚U [2 ε] 
+
+> i
+
+(x, t )
+
+∂x j
+
+eT d Ω
+
+≥ ρ∗c∗ ˚T [2 ε](x, t ) 2 
+
+> L2(Ω)
+
++ C1
+
+Z t
+
+> 0
+
+˚T [2 ε](x, τ ) 2 
+
+> H10(Ω)
+
+dτ 
+
++ ρ∗ eT ∂ ˚U [2 ε](x, t )
+
+∂t (L2(Ω)) n + C2 eT ˚U [2 ε](x, t ) (H10 (Ω)) n
+
+≥ C
+
+ ˚T [2 ε](x, t ) 2
+
+> L2(Ω)
+
++
+
+Z t
+
+> 0
+
+˚T [2 ε](x, τ ) 2 
+
+> H10(Ω)
+
+dτ 
+
++ ∂ ˚U [2 ε](x, t )
+
+∂t 
+
+> 2(L2(Ω)) n
+
++ ˚U [2 ε](x, t ) 2(H10 (Ω)) n
+
+
+
+.
+
+Here C1 and C2 arise from the Poincar´ e-Friedrichs inequality and Korn’s inequality separately. Moreover, we denote C = min (ρ∗c∗, C 1, ρ ∗ eT , C 2 eT ). Subsequently, utiliz-ing the assumptions (A 1), (A 2), (B 2), Schwarz’s inequality, Young’s inequality and error estimate for electric potential field, the following inequality is derived from the right side of equality (3.16). (3.18) 
+
+Z
+
+> Ω
+
+ρεcε εeχ2(x)2dΩ + 
+
+Z t
+
+> 0
+
+Z
+
+> Ω
+
+2λεij 
+
+∂˚Φ[2 ε](x, τ )
+
+∂x i
+
+∂˚Φ[2 ε](x, τ )
+
+∂x j
+
+˚T [2 ε](x, τ )dΩdτ 
+
++
+
+Z t
+
+> 0
+
+Z
+
+> Ω
+
+∂ρ ε
+
+∂t cε ˚T [2 ε](x, τ )2dΩdτ +
+
+Z t
+
+> 0
+
+Z
+
+> Ω
+
+ρε ∂c ε
+
+∂t 
+
+ ˚T [2 ε](x, τ )2dΩdτ 
+
++
+
+Z
+
+> Ω
+
+ρε εeζ2i(x)2 eT d Ω + 
+
+Z t
+
+> 0
+
+Z
+
+> Ω
+
+∂c εijkl 
+
+∂t ∂ ˚U [2 ε] 
+
+> k
+
+(x, τ )
+
+∂x l
+
+∂ ˚U [2 ε] 
+
+> i
+
+(x, τ )
+
+∂x j
+
+eT d Ωdτ 
+
++
+
+Z t
+
+> 0
+
+Z
+
+> Ω
+
+∂ρ ε
+
+∂t 
+
+  ∂ ˚U [2 ε] 
+
+> i
+
+(x, τ )
+
+∂t 
+
+2 eT d Ωdτ +
+
+Z
+
+> Ω
+
+cεijkl 
+
+∂[εeη2k(x)] 
+
+∂x l
+
+∂[εeη2i(x)] 
+
+∂x j
+
+eT d Ω+
+
+Z t
+
+> 0
+
+Z
+
+> Ω
+
+2εH 2 ˚T [2 ε](x, τ )dΩdτ +
+
+Z t
+
+> 0
+
+Z
+
+> Ω
+
+2εF i2
+
+∂ ˚U [2 ε] 
+
+> i
+
+(x, τ )
+
+∂t eT d Ωdτ 
+
+≤ C3ε2 + C4
+
+Z t
+
+> 0
+
+˚T [2 ε](x, τ ) 2
+
+> L2(Ω)
+
+dτ + C5
+
+Z t
+
+> 0
+
+˚U [2 ε](x, τ ) 2(H10 (Ω)) n dτ 
+
++ C6
+
+Z t
+
+> 0
+
+∂ ˚U [2 ε](x, τ )
+
+∂t 
+
+> 2(L2(Ω)) n
+
+dτ + C7
+
+Z t
+
+> 0
+
+˚Φ[2 ε](x, τ ) 2 
+
+> H10(Ω)
+
+dτ 
+
+≤ Cε 2 + C
+
+" Z t
+
+> 0
+
+˚T [2 ε](x, τ ) 2
+
+> L2(Ω)
+
+dτ +
+
+Z t
+
+> 0
+
+Z τ
+
+> 0
+
+˚T [2 ε](x, s ) 2 
+
+> H10(Ω)
+
+dsdτ 
+
++
+
+Z t
+
+> 0
+
+∂ ˚U [2 ε](x, τ )
+
+∂t 
+
+> 2(L2(Ω)) n
+
+dτ +
+
+Z t
+
+> 0
+
+˚U [2 ε](x, τ ) 2(H10 (Ω)) n
+
+dτ 
+
+#
+
+.
+
+Here, we denote C = max (C3, C 4, C 5, C 6, C 7). Furthermore, combining (3.17) and MULTI-SCALE METHOD FOR THERMO-ELECTRO-MECHANICAL COUPLING PROBLEMS 19 (3.18), it is apparent that (3.19) 
+
+C
+
+ ˚T [2 ε](x, t ) 2
+
+> L2(Ω)
+
++
+
+Z t
+
+> 0
+
+˚T [2 ε](x, τ ) 2 
+
+> H10(Ω)
+
+dτ 
+
++ ∂ ˚U [2 ε](x, t )
+
+∂t (L2(Ω)) n + ˚U [2 ε](x, t ) (H10 (Ω)) n
+
+
+
+≤ Cε 2 + C
+
+" Z t
+
+> 0
+
+˚T [2 ε](x, τ ) 2
+
+> L2(Ω)
+
+dτ +
+
+Z t
+
+> 0
+
+Z τ
+
+> 0
+
+˚T [2 ε](x, s ) 2 
+
+> H10(Ω)
+
+dsdτ 
+
++
+
+Z t
+
+> 0
+
+∂ ˚U [2 ε](x, τ )
+
+∂t 
+
+> 2(L2(Ω)) n
+
+dτ +
+
+Z t
+
+> 0
+
+˚U [2 ε](x, τ ) 2(H10 (Ω)) n
+
+dτ 
+
+#
+
+.
+
+Without loss of generality, let us introduce a constant C = C/C and define a function Υ( t) = ˚T [2 ε] 2
+
+> L2(Ω)
+
++
+
+Z t
+
+> 0
+
+˚T [2 ε] 2 
+
+> H10(Ω)
+
+dτ + ∂ ˚U [2 ε]
+
+∂t  
+
+> 2(L2(Ω)) n
+
++ ˚U [2 ε] 2(H10 (Ω)) n . Subse-quently, we have Υ( t) ≤ C(Ω) ε2 +C(Ω) 
+
+Z t
+
+> 0
+
+Υ( τ )dτ according to (3.19). Next, it follows from the Gronwall’s inequality in chapter 12 of reference [8] that Υ( t) ≤ C(Ω , T )ε2,which yields the following inequality (3.20) 
+
+˚T [2 ε] 2
+
+> L2(Ω)
+
++
+
+Z t
+
+> 0
+
+˚T [2 ε] 2 
+
+> H10(Ω)
+
+dτ 
+
++ ∂ ˚U [2 ε]
+
+∂t 
+
+> 2(L2(Ω)) n
+
++ ˚U [2 ε] 2(H10 (Ω)) n ≤ C(Ω , T )ε2.
+
+Then using the arithmetic and geometric means inequality to the left side of the inequality (3.20) and squaring root on both sides of the inequality (3.20), the following inequality can be readily derived. (3.21) 
+
+˚T [2 ε]
+
+> L2(Ω)
+
++ ˚T [2 ε] 
+
+> L2(0 ,t ;H10(Ω))
+
++ ∂ ˚U [2 ε]
+
+∂t (L2(Ω)) n
+
++ ˚U [2 ε]  
+
+> (H10(Ω)) n
+
+≤ C(Ω , T )ε. 
+
+To account for the arbitrariness of time variable t, we obtain the explicit convergence estimate (3.5) from (3.10) and (3.21). 
+
+4. Two-stage numerical algorithm. For the investigated multi-scale nonlin-ear multi-physics problem (1.1), we propose a high-accuracy multi-scale computational framework that yields a closed solving system, consisting of microscopic cell models, a macroscopic homogenized model, and high-order multi-scale solutions. Leveraging the inherent characteristics of this multi-scale computational model, a two-stage numerical algorithm, comprising off-line and on-line stages, is developed to enable efficient multi-scale simulation of the time-dependent nonlinear thermo-electro-mechanical coupling problem (1.1) of composite structures, details of which are presented as follows. 
+
+4.1. Off-line stage: computation for microscopic cell problems. 
+
+(1) Identify the geometric configuration of PUC Y = [0 , 1] n and generate a family of triangular or tetrahedral finite element meshes Th1 = {K} for PUC Y,where h1 =max K {hK } denotes the mesh size. Whereupon denoting the linear conforming finite element space Vh1 (Y) = {ν ∈ C0( ¯Y) : ν |∂Y = 0 , ν |K ∈
+
+P1(K)} ⊂ H1(Y) for auxiliary cell problems. 20 H. DONG 
+
+(2) Define the computational temperature range [ T min  
+
+> 0
+
+, T max  
+
+> 0
+
+] and select a set of representative macroscopic temperature ¯T s 
+
+> 0
+
+within the concerned temperature range. Next, employ FEM to solve the first-order cell functions defined by (2.20)-(2.23) on Vh1 (Y) corresponding to each distinct representative macro-scopic temperature ¯T s 
+
+> 0
+
+. Note that classical periodic boundary condition of auxiliary cell problems is replaced by homogeneous Dirichlet boundary con-dition for practical numerical implementation [33, 6, 5]. Below, the specific finite element scheme for first-order unit cell problem (2.20) is established. (4.1) 
+
+Z
+
+> Y
+
+k(0)  
+
+> ij
+
+(y, ¯T s 
+
+> 0
+
+) ∂Mα1 (y, ¯T s 
+
+> 0
+
+)
+
+∂y j
+
+∂υ h1
+
+∂y i
+
+dY
+
+= −
+
+Z
+
+> Y
+
+k(0)  
+
+> iα 1
+
+(y, ¯T s 
+
+> 0
+
+) ∂υ h1
+
+∂y i
+
+dY, ∀υh1 ∈ V h1 (Y).
+
+(3) The macroscopic material parameters bS(T0), bkij (T0), bλij (T0), bρ(T0), bcijkl (T0)and bβij (T0) are evaluated via formula (2.25) for each distinct macroscopic temperature ¯T s 
+
+> 0
+
+.(4) Utilizing the identical mesh as that employed for the first-order cell functions, the second-order auxiliary cell functions governed by (2.26)-(2.41), which cor-respond to distinct representative macroscopic temperature ¯T s 
+
+> 0
+
+, are evaluated on Vh1 (Y) via FEM respectively. 
+
+4.2. On-line stage: computation for macroscopic homogenized problem and high-order multi-scale solutions. 
+
+(1) Let Th0 = {e} be a family of triangular or tetrahedral finite element meshes for the macroscopic region Ω, where h0 =max e{he} denotes the mesh size. Then define the linear conforming finite element space Vh0 (Ω) = {ν ∈ C0( ¯Ω) : 
+
+ν |∂Ω= 0 , ν |e∈ P1(e)} ⊂ H1(Ω) for the macroscopic homogenized equations (2.24). Moreover, the homogenized material parameters can be determined through the interpolation approach at each node x of Vh0 (Ω). (2) Solve the macroscopic homogenized equations (2.24) with homogeneous co-efficients on the computational domain Ω × (0 , T ) using a mixed FDM-FEM inspired by references [28, 10, 11, 23], which is implemented on a coarser mesh with a larger time step. This approach employs FEM for spatial discretization and and FDM for temporal discretization. Using the equidistant time step ∆t = T /N to divide time-domain (0 , T ) into 0 = t0 < t 1 < · · · < t N = T and 
+
+tm = m∆t(m = 0 , · · · , N ), then we denote T m 
+
+> 0
+
+= T0(x, t m), Φm 
+
+> 0
+
+= Φ0(x, t m)and U mi0 = Ui0(x, t m). Additionally, define bT m+1 /20 = (3 T m 
+
+> 0
+
+− T m−10 )/2 and ¯T m+1 /20 = ( T m 
+
+> 0
+
++ T m+1 0 )/2 for m = 0 , · · · , N − 1. Then, the computational scheme inspired by reference [23] is employed to precompute Φ00 and bT 1/20 ,details of which are presented below. (4.2) 
+
+Z
+
+> Ω
+
+bλij (T 00 ) ∂Φ00
+
+∂x j
+
+∂φ ∂x i
+
+dΩ = 
+
+Z
+
+> Ω
+
+fΦ (x, t 0)φd Ω, ∀φ ∈ V h0 (Ω) ,
+
+Φ00 = bΦ(x, t 0), on ∂Ω.MULTI-SCALE METHOD FOR THERMO-ELECTRO-MECHANICAL COUPLING PROBLEMS 21 (4.3) 
+
+Z
+
+> Ω
+
+bS(T 00 ) bT 1/20 − T 00
+
+∆t/ 2 υd Ω + 
+
+Z
+
+> Ω
+
+bkij (T 00 ) ∂ bT 1/20
+
+∂x j
+
+∂υ ∂x i
+
+dΩ=
+
+Z
+
+> Ω
+
+bλ∗ 
+
+> ij
+
+(T 00 ) ∂Φ00
+
+∂x i
+
+∂Φ00
+
+∂x j
+
+υd Ω −
+
+Z
+
+> Ω
+
+T 00 bβ∗ 
+
+> ij
+
+(T 00 ) ∂ eU 1
+
+> i
+
+∂x j
+
+υd Ω+
+
+Z
+
+> Ω
+
+fT (x, t 1/2)υd Ω, ∀υ ∈ V h0 (Ω) ,
+
+bT 1/20 = bT (x, t 1/2), on ∂Ω.
+
+Next, the following computational scheme inspired by references [28, 10, 11, 23] is adopted to successively compute Φm+1 /20 , T m+1 0 and U m+1  
+
+> i0
+
+for m =0, · · · , N − 1. (4.4) 
+
+Z
+
+> Ω
+
+bλij ( bT m+1 /20 ) ∂Φm+1 /20
+
+∂x j
+
+∂φ ∂x i
+
+dΩ = 
+
+Z
+
+> Ω
+
+fΦ (x, t m+1 /2)φd Ω, ∀φ ∈ V h0(Ω) ,
+
+Φm+1 /20 = bΦ(x, t m+1 /2), on ∂Ω.
+
+(4.5) 
+
+Z
+
+> Ω
+
+bS( bT m+1 /20 ) T m+1 0 − T m
+
+> 0
+
+∆t υd Ω + 
+
+Z
+
+> Ω
+
+bkij ( bT m+1 /20 ) ∂ ¯T m+1 /20
+
+∂x j
+
+∂υ ∂x i
+
+dΩ=
+
+Z
+
+> Ω
+
+bλ∗ 
+
+> ij
+
+( bT m+1 /20 ) ∂Φm+1 /20
+
+∂x i
+
+∂Φm+1 /20
+
+∂x j
+
+υd Ω
+
+−
+
+Z
+
+> Ω
+
+bT m+1 /20 bβ∗ 
+
+> ij
+
+( bT m+1 /20 ) 1∆t
+
+ ∂U mi0
+
+∂x j
+
+− ∂U m−1
+
+> i0
+
+∂x j
+
+
+
+υd Ω+
+
+Z
+
+> Ω
+
+fT (x, t m+1 /2)υd Ω, ∀υ ∈ V h0 (Ω) ,T m+1 0 = bT (x, t m+1 ), on ∂Ω.
+
+(4.6) 
+
+Z
+
+> Ω
+
+bρ(T m+1 0 ) U m+1  
+
+> i0
+
+− 2U mi0 + U m−1
+
+> i0
+
+(∆ t)2 νidΩ+
+
+Z
+
+> Ω
+
+bcijkl (T m+1 0 ) ∂U m+1 
+
+> k0
+
+∂x l
+
+∂ν i
+
+∂x j
+
+dΩ
+
+−
+
+Z
+
+> Ω
+
+bβij (T m+1 0 )( T m+1 0 − eT ) ∂ν i
+
+∂x j
+
+dΩ+
+
+Z
+
+> Ω
+
+fi(x, t m+1 )υd Ω, ∀ν ∈  Vh0 (Ω) n,
+
+U m+1 0 = bU (x, t m+1 ), on ∂Ω.
+
+Consequently, we can solve for the macroscopic electric potential, temperature and displacement fields at each temporal step by means of three alternating sub-problems (4.5)-(4.6). (3) At any given point ( x, t ) ∈ Ω × (0 , T ), we utilize the interpolation method to determine the corresponding values of the first-order cell functions, second-order cell functions, and homogenized solutions. (4) The average approach on relative elements [5] is utilized to compute the spatial derivatives, and the difference scheme is applied to approximate the temporal derivatives at each time steps involving in formulas (2.17)-(2.19). 22 H. DONG 
+
+(5) Ultimately, the temperature field T [2 ε](x, t ), electric potential field Φ[2 ε](x, t )and displacement field U [2 ε](x, t ) are computed separately via the formulas (2.17)-(2.19). Furthermore, we can employ the high-order interpolation and post-processing techniques to gain high-accuracy HOMS solutions [25]. 
+
+5. The error analyses for two-stage numerical algorithm. 
+
+Lemma 5.1. Let M h1 
+
+> α1
+
+and N h1 
+
+> α1
+
+denote the corresponding finite element solutions for the microscopic cell functions, respectively. If all microscopic cell functions belong to H2(Y) for any fixed T0, then the following inequalities hold 
+
+(5.1) 
+
+Mh1 
+
+> α1
+
+(y, T 0) − M α1 (y, T 0) Hm(Y) ≤ Ch 2−m 
+
+> 1
+
+∥M α1 (y, T 0)∥H2(Y) ,
+
+Hh1 
+
+> α1
+
+(y, T 0) − H α1 (y, T 0) Hm(Y) ≤ Ch 2−m 
+
+> 1
+
+∥H α1 (y, T 0)∥H2(Y) ,
+
+N α1,h 1 
+
+> km
+
+(y, T 0) − N α1
+
+> km
+
+(y, T 0) Hm(Y)
+
+≤ Ch 2−m 
+
+> 1
+
+∥N α1
+
+> km
+
+(y, T 0)∥H2(Y) ,
+
+Ph1 
+
+> k
+
+(y, T 0) − P k(y, T 0) Hm(Y)
+
+≤ Ch 2−m 
+
+> 1
+
+∥P k(y, T 0)∥H2(Y) ,
+
+where m = 0 , 1 and C is the finite element estimate constant independent of h1 and dependent on Y.
+
+Proof : These inequalities can be easily derived by employing classical finite element theory. 
+
+Lemma 5.2. Denote bSh1 (T0), bkh1 
+
+> ij
+
+(T0), bλh1 
+
+> ij
+
+(T0), bch1
+
+> ijkl
+
+(T0) and bβh1 
+
+> ij
+
+(T0) be the finite element approximations of the corresponding homogenized parameters, the following results hold 
+
+(5.2) 
+
+bSh1 (T0) − bS(T0) ≤ Ch 21 ∥P(y, T 0)∥2(H2(Y)) n ,
+
+eS0 ≤ bSh1 (T0) ≤ eS1,
+
+(5.3) 
+
+bkh1 
+
+> ij
+
+(T0) − bkij (T0) ≤ Ch 21 ∥M i(y, T 0)∥H2(Y) ∥M j (y, T 0)∥H2(Y) ,
+
+eκ0|ξ|2 ≤ bkh1 
+
+> ij
+
+(T0)ξiξj ≤ eκ1|ξ|2,
+
+(5.4) 
+
+bλh1 
+
+> ij
+
+(T0) − bλij (T0) ≤ Ch 21 ∥H i(y, T 0)∥H2(Y) ∥H j (y, T 0)∥H2(Y) ,
+
+eκ0|ξ|2 ≤ bλh1 
+
+> ij
+
+(T0)ξiξj ≤ eκ1|ξ|2,
+
+(5.5) bch1
+
+> ijkl
+
+(T0) − bcijkl (T0) ≤ Ch 21 N ji (y, T 0) (H2(Y)) n N lk(y, T 0) (H2(Y)) n ,
+
+eκ0|ζ|2 ≤ bch1
+
+> ijkl
+
+(T0)ζij ζkl ≤ eκ1|ζ|2,
+
+(5.6) 
+
+bβh1 
+
+> ij
+
+(T0) − bβij (T0) ≤ Ch 21 N ji (y, T 0) (H2(Y)) n ∥P(y, T 0)∥2(H2(Y)) n ,
+
+eκ0|ξ|2 ≤ bβh1 
+
+> ij
+
+(T0)ξiξj ≤ eκ1|ξ|2,
+
+where C is a constant independent of h1.MULTI-SCALE METHOD FOR THERMO-ELECTRO-MECHANICAL COUPLING PROBLEMS 23 
+
+Proof : Inspired by reference [14], by employing the definitions of macroscopic ho-mogenized material parameters given in (2.25), along with assumption A1, remark 2 and lemma 5.1, it follows that (5.7) 
+
+bch1
+
+> ijkl
+
+(T0) − bcijkl (T0)
+
+= 1
+
+|Y|
+
+Z
+
+> Y
+
+ c(0)  
+
+> ijkl
+
++ c(0) 
+
+> ijα 1α2
+
+∂N l,h 1
+
+> α1k
+
+∂y α2
+
+dY − 1
+
+|Y|
+
+Z
+
+> Y
+
+ c(0)  
+
+> ijkl
+
++ c(0) 
+
+> ijα 1α2
+
+∂N lα1k
+
+∂y α2
+
+dY
+
+= 1
+
+|Y|
+
+Z
+
+> Y
+
+c(0) 
+
+> ijα 1α2
+
+∂ N l,h 1 
+
+> α1k
+
+− N lα1k
+
+
+
+∂y α2
+
+dY
+
+= 1
+
+|Y|
+
+Z
+
+> Y
+
+∂N jα3i
+
+∂y α4
+
+c(0) 
+
+> α3α4α1α2
+
+∂ N l,h 1 
+
+> α1k
+
+− N lα1k
+
+
+
+∂y α2
+
+dY
+
+= 1
+
+|Y|
+
+Z
+
+> Y
+
+∂ N j,h 1 
+
+> α3i
+
+− N jα3i
+
+
+
+∂y α4
+
+c(0) 
+
+> α3α4α1α2
+
+∂ N l,h 1 
+
+> α1k
+
+− N lα1k
+
+
+
+∂y α2
+
+dY
+
+≤ C N j,h 1 
+
+> i
+
+(y, T 0)−N ji (y, T 0) (H1(Y)) n N l,h 1 
+
+> k
+
+(y, T 0)−N lk(y, T 0) (H1(Y)) n
+
+≤ Ch 21 N ji (y, T 0) (H2(Y)) n
+
+N lk(y, T 0) (H2(Y)) n
+
+.
+
+Choosing a sufficiently small h1 > 0 ensures that Ch 21 N ji (H2(Y)) n N lk (H2(Y)) n ≤
+
+¯κ0/2, from which we can verify that the lower bound stated in (5.5) holds as below. (5.8) bch1
+
+> ijkl
+
+(T0)ζij ζkl = bcijkl (T0)ζij ζkl + bch1
+
+> ijkl
+
+(T0) − bcijkl (T0)ζij ζkl 
+
+≥ (¯ κ0 − ¯κ0/2) |ζ|2 = eκ0|ζ|2,
+
+where eκ0 = ¯ κ0/2 is a constant independent of h1. Moreover, the upper bound in (5.5) is easily derived when setting eκ1 = ¯ κ1 + ¯ κ0/2. Finally, following the similar way, we can obtain the results (5.2)-(5.4) and (5.6). According to lemmas 5.1 and 5.2, the values of macroscopic homogenized material parameters depend on the finite element computation of the first-order auxiliary cell functions Mα1 (y, T 0), Hα1 (y, T 0), N α1
+
+> km
+
+(y, T 0) and Pk(y, T 0). Thus, the following modified homogenized equations are numerically solved in practice. (5.9) 
+
+bSh1 (T h1 
+
+> 0
+
+) ∂T h1
+
+> 0
+
+∂t − ∂∂x i
+
+bkh1 
+
+> ij
+
+(T h1 
+
+> 0
+
+) ∂T h1
+
+> 0
+
+∂x j
+
+
+
+= bλh1 
+
+> ij
+
+(T h1 
+
+> 0
+
+) ∂Φh1
+
+> 0
+
+∂x i
+
+∂Φh1
+
+> 0
+
+∂x j
+
+− T h1 
+
+> 0
+
+bβh1 
+
+> ij
+
+(T h1 
+
+> 0
+
+) ∂∂t 
+
+ ∂U h1
+
+> i0
+
+∂x j
+
+
+
++ fT , in Ω × (0 , T ),
+
+− ∂∂x i
+
+bλh1 
+
+> ij
+
+(T h1 
+
+> 0
+
+) ∂Φh1
+
+> 0
+
+∂x j
+
+
+
+= fΦ , in Ω × (0 , T ),
+
+bρ(T h1 
+
+> 0
+
+) ∂2U h1
+
+> i0
+
+∂t 2 − ∂∂x j
+
+bch1
+
+> ijkl
+
+(T h1 
+
+> 0
+
+) ∂U h1
+
+> k0
+
+∂x l
+
+
+
+= − ∂∂x j
+
+ bβh1 
+
+> ij
+
+(T h1 
+
+> 0
+
+)( T h1 
+
+> 0
+
+− eT )
+
+
+
++ fi, in Ω × (0 , T ),T h1 
+
+> 0
+
+(x,t ) = bT (x,t ), Φh1 
+
+> 0
+
+(x,t ) = bΦ(x,t ), U h1 
+
+> 0
+
+(x,t ) = bU (x,t ), on ∂Ω×(0 ,T ),T h1 
+
+> 0
+
+(x, 0) = eT , U h1 
+
+> 0
+
+(x, 0) = eU 0(x), ∂U h1 
+
+> 0
+
+(x, 0) 
+
+∂t = eU 1(x), in Ω .24 H. DONG 
+
+Based on lemma 5.2, the solutions of the modified homogenized equations (5.9) possess the same regularity as those established in references [34, 22, 17, 28, 37]. 
+
+Lemma 5.3. Denote T h1 
+
+> 0
+
+, Φ h1 
+
+> 0
+
+and U h1 
+
+> 0
+
+be the exact solution of the modified ho-mogenized equations (5.9), and assume that the two-way coupled system is reduced to a one-way coupled system in which the displacement field does not affect the temperature field, then the following estimate holds 
+
+(5.10) 
+
+Φh1 
+
+> 0
+
+−Φ0 L∞(0 ,T ;H10 (Ω)) + T h1 
+
+> 0
+
+−T0 L∞(0 ,T ;L2(Ω)) + T h1 
+
+> 0
+
+−T0 L2(0 ,T ;H10 (Ω)) 
+
++ ∂U h1
+
+> 0
+
+∂t − ∂U0
+
+∂t L∞(0 ,T ;( L2(Ω)) n) + U h1 
+
+> 0
+
+− U0 L∞(0 ,T ;( H10 (Ω)) n) ≤ Ch 21,
+
+where C is a constant independent of h1.
+
+Proof : Through subtracting the electric equation in (2.24) from corresponding elec-tric equation in (5.9), one can directly verify that (5.11) 
+
+− ∂∂x i
+
+hbλh1 
+
+> ij
+
+(T h1 
+
+> 0
+
+) ∂ Φh1 
+
+> 0
+
+− Φ0
+
+
+
+∂x j
+
+i
+
+= − ∂∂x i
+
+h bλij (T0) − bλh1 
+
+> ij
+
+(T h1 
+
+> 0
+
+) ∂Φ0
+
+∂x j
+
+i
+
+= − ∂∂x i
+
+h bλij (T0) − bλh1 
+
+> ij
+
+(T0) ∂Φ0
+
+∂x j
+
+i
+
+− ∂∂x i
+
+h bλh1 
+
+> ij
+
+(T0) − bλh1 
+
+> ij
+
+(T h1 
+
+> 0
+
+) ∂Φ0
+
+∂x j
+
+i
+
+.
+
+Next, multiplying on both sides of equality (5.11) by Φh1 
+
+> 0
+
+− Φ0 and integrating over Ω, we obtain the following equality. (5.12) 
+
+Z
+
+> Ω
+
+bλh1 
+
+> ij
+
+(T h1 
+
+> 0
+
+) ∂ Φh1 
+
+> 0
+
+− Φ0
+
+
+
+∂x j
+
+∂ Φh1 
+
+> 0
+
+− Φ0
+
+
+
+∂x i
+
+dΩ=
+
+Z
+
+> Ω
+
+ bλij (T0) − bλh1 
+
+> ij
+
+(T0) ∂Φ0
+
+∂x j
+
+∂ Φh1 
+
+> 0
+
+− Φ0
+
+
+
+∂x i
+
+dΩ+
+
+Z
+
+> Ω
+
+ bλh1 
+
+> ij
+
+(T0) − bλh1 
+
+> ij
+
+(T h1 
+
+> 0
+
+) ∂Φ0
+
+∂x j
+
+∂ Φh1 
+
+> 0
+
+− Φ0
+
+
+
+∂x i
+
+dΩ.
+
+Recalling the inequality in (5.4) and employing the Cauchy-Schwarz inequality, we naturally derive the following inequality from equality (5.14) if |bλh1 
+
+> ij
+
+(T0)− bλh1 
+
+> ij
+
+(T h1 
+
+> 0
+
+)| ≤ 
+
+C|T0 − T h1 
+
+> 0
+
+|.(5.13) Φh1 
+
+> 0
+
+− Φ0 H10 (Ω) ≤ Ch 21 + C T h1 
+
+> 0
+
+− T0 L2(Ω) .
+
+Afterwards, by subtracting the thermal equation in (2.24) from the corresponding thermal equation in (5.9) respectively, we shall obtain (5.14) 
+
+bSh1 (T h1 
+
+> 0
+
+) ∂ T h1 
+
+> 0
+
+− T0
+
+
+
+∂t − ∂∂x i
+
+hbkh1 
+
+> ij
+
+(T h1 
+
+> 0
+
+) ∂ T h1 
+
+> 0
+
+− T0
+
+
+
+∂x j
+
+i
+
+=  bS(T0) − bSh1 (T0) ∂T 0
+
+∂t +  bSh1 (T0) − bSh1 (T h1 
+
+> 0
+
+) ∂T 0
+
+∂t 
+
+− ∂∂x i
+
+h bkij (T0) − bkh1 
+
+> ij
+
+(T0) ∂T 0
+
+∂x j
+
+i
+
+− ∂∂x i
+
+h bkh1 
+
+> ij
+
+(T0) − bkh1 
+
+> ij
+
+(T h1 
+
+> 0
+
+) ∂T 0
+
+∂x j
+
+i
+
++ bλh1 
+
+> ij
+
+(T h1 
+
+> 0
+
+) ∂ Φh1 
+
+> 0
+
+− Φ0
+
+
+
+∂x i
+
+∂Φh1
+
+> 0
+
+∂x j
+
++ bλh1 
+
+> ij
+
+(T h1 
+
+> 0
+
+) − bλh1 
+
+> ij
+
+(T0) ∂Φ0
+
+∂x i
+
+∂Φh1
+
+> 0
+
+∂x j
+
++ bλh1 
+
+> ij
+
+(T0) − bλij (T0) ∂Φ0
+
+∂x i
+
+∂Φh1
+
+> 0
+
+∂x j
+
++ bλij (T0) ∂Φ0
+
+∂x i
+
+∂ Φh1 
+
+> 0
+
+− Φ0
+
+
+
+∂x j
+
+.MULTI-SCALE METHOD FOR THERMO-ELECTRO-MECHANICAL COUPLING PROBLEMS 25 Furthermore, multiplying both sides of equality (5.14) by ( T h1 
+
+> 0
+
+− T0) and integrating over Ω, it can derive that (5.15) 12
+
+∂∂t 
+
+h Z
+
+> Ω
+
+bSh1 (T h1 
+
+> 0
+
+) T h1 
+
+> 0
+
+− T0
+
+2dΩ
+
+i
+
++
+
+Z
+
+> Ω
+
+bkh1 
+
+> ij
+
+(T h1 
+
+> 0
+
+) ∂ T h1 
+
+> 0
+
+− T0
+
+
+
+∂x j
+
+∂ T h1 
+
+> 0
+
+− T0
+
+
+
+∂x i
+
+dΩ= 12
+
+Z
+
+> Ω
+
+∂ bS(T h1 
+
+> 0
+
+)
+
+∂t 
+
+ T h1 
+
+> 0
+
+− T0
+
+2dΩ + 
+
+Z
+
+> Ω
+
+ bS(T0) − bSh1 (T0) ∂T 0
+
+∂t 
+
+ T h1 
+
+> 0
+
+− T0
+
+dΩ+
+
+Z
+
+> Ω
+
+ bSh1 (T0) − bSh1 (T h1 
+
+> 0
+
+) ∂T 0
+
+∂t 
+
+ T h1 
+
+> 0
+
+− T0
+
+dΩ+
+
+Z
+
+> Ω
+
+ bkh1 
+
+> ij
+
+(T h1 
+
+> 0
+
+) − bkh1 
+
+> ij
+
+(T0) ∂T 0
+
+∂x j
+
+∂ T h1 
+
+> 0
+
+− T0
+
+
+
+∂x i
+
+dΩ+
+
+Z
+
+> Ω
+
+ bkh1 
+
+> ij
+
+(T0) − bkij (T0) ∂T 0
+
+∂x j
+
+∂ T h1 
+
+> 0
+
+− T0
+
+
+
+∂x i
+
+dΩ+
+
+Z
+
+> Ω
+
+bλh1 
+
+> ij
+
+(T h1 
+
+> 0
+
+) ∂ Φh1 
+
+> 0
+
+− Φ0
+
+
+
+∂x i
+
+∂Φh1
+
+> 0
+
+∂x j
+
+ T h1 
+
+> 0
+
+− T0
+
+dΩ+
+
+Z
+
+> Ω
+
+bλh1 
+
+> ij
+
+(T h1 
+
+> 0
+
+) − bλh1 
+
+> ij
+
+(T0) ∂Φ0
+
+∂x i
+
+∂Φh1
+
+> 0
+
+∂x j
+
+ T h1 
+
+> 0
+
+− T0
+
+dΩ+
+
+Z
+
+> Ω
+
+bλh1 
+
+> ij
+
+(T0) − bλij (T0) ∂Φ0
+
+∂x i
+
+∂Φh1
+
+> 0
+
+∂x j
+
+ T h1 
+
+> 0
+
+− T0
+
+dΩ+
+
+Z
+
+> Ω
+
+bλij (T0) ∂Φ0
+
+∂x i
+
+∂ Φh1 
+
+> 0
+
+− Φ0
+
+
+
+∂x j
+
+ T h1 
+
+> 0
+
+− T0
+
+dΩ.
+
+Subsequently, integrating both sides of (5.15) from 0 to t (0 < t ≤ ), recalling inequalities (5.2)-(5.6) and (5.13), and employing the Cauchy-Schwarz inequality and Young inequality, we can obtain the following inequality from equality (5.15) 26 H. DONG 
+
+if | bSh1 (T0) − bSh1 (T h1 
+
+> 0
+
+)| ≤ C|T0 − T h1 
+
+> 0
+
+| and |bkh1 
+
+> ij
+
+(T0) − bkh1 
+
+> ij
+
+(T h1 
+
+> 0
+
+)| ≤ C|T0 − T h1 
+
+> 0
+
+|.(5.16) 
+
+C T h1 
+
+> 0
+
+− T0 
+
+> 2
+> L2(Ω)
+
++ C
+
+## Z t
+
+> 0
+
+T h1 
+
+> 0
+
+− T0 
+
+> 2
+> H10(Ω)
+
+dτ 
+
+≤
+
+## Z t
+
+> 0
+
+C T h1 
+
+> 0
+
+− T0
+
+> 2
+> L2(Ω)
+
+dτ +
+
+## Z t
+
+> 0
+
+C
+
+2 h41dτ +
+
+## Z t
+
+> 0
+
+C
+
+2 T h1 
+
+> 0
+
+− T0
+
+> 2
+> L2(Ω)
+
+dτ 
+
++
+
+## Z t
+
+> 0
+
+C T h1 
+
+> 0
+
+− T0
+
+> 2
+> L2(Ω)
+
+dτ +
+
+## Z t
+
+> 0
+
+C
+
+2λ T h1 
+
+> 0
+
+− T0
+
+> 2
+> L2(Ω)
+
+dτ 
+
++
+
+## Z t
+
+> 0
+
+λ
+
+2 T h1 
+
+> 0
+
+− T0 
+
+> 2
+> H10(Ω)
+
+dτ +
+
+## Z t
+
+> 0
+
+C
+
+2λ h41dτ +
+
+## Z t
+
+> 0
+
+λ
+
+2 T h1 
+
+> 0
+
+− T0 
+
+> 2
+> H10(Ω)
+
+dτ 
+
++
+
+## Z t
+
+> 0
+
+C Φh1 
+
+> 0
+
+− Φ0 
+
+> 2
+> H10(Ω)
+
+dτ +
+
+## Z t
+
+> 0
+
+C T h1 
+
+> 0
+
+− T0
+
+> 2
+> L2(Ω)
+
+dτ 
+
++
+
+## Z t
+
+> 0
+
+C T h1 
+
+> 0
+
+− T0
+
+> 2
+> L2(Ω)
+
+dτ +
+
+## Z t
+
+> 0
+
+C T h1 
+
+> 0
+
+− T0
+
+> 2
+> L2(Ω)
+
+dτ 
+
++
+
+## Z t
+
+> 0
+
+C
+
+2 h41dτ +
+
+## Z t
+
+> 0
+
+C
+
+2 T h1 
+
+> 0
+
+− T0
+
+> 2
+> L2(Ω)
+
+dτ +
+
+## Z t
+
+> 0
+
+C Φh1 
+
+> 0
+
+− Φ0 
+
+> 2
+> H10(Ω)
+
+dτ 
+
++
+
+## Z t
+
+> 0
+
+C T h1 
+
+> 0
+
+− T0
+
+> 2
+> L2(Ω)
+
+dτ 
+
+≤
+
+## Z t
+
+> 0
+
+Ch 41dτ +
+
+## Z t
+
+> 0
+
+C T h1 
+
+> 0
+
+− T0
+
+> 2
+> L2(Ω)
+
+dτ 
+
++
+
+## Z t
+
+> 0
+
+λ T h1 
+
+> 0
+
+− T0 
+
+> 2
+> H10(Ω)
+
+dτ +
+
+## Z t
+
+> 0
+
+C Φh1 
+
+> 0
+
+− Φ0 
+
+> 2
+> H10(Ω)
+
+dτ 
+
+≤
+
+## Z t
+
+> 0
+
+Ch 41dτ +
+
+## Z t
+
+> 0
+
+C T h1 
+
+> 0
+
+− T0
+
+> 2
+> L2(Ω)
+
+dτ +
+
+## Z t
+
+> 0
+
+λ T h1 
+
+> 0
+
+− T0 
+
+> 2
+> H10(Ω)
+
+dτ. 
+
+By choosing a sufficiently small λ and defining Υ 1(t) = T h1 
+
+> 0
+
+− T0 
+
+> 2
+> L2(Ω)
+
++
+
+Z t
+
+> 0
+
+T h1 
+
+> 0
+
+−
+
+T0 
+
+> 2
+> H10(Ω)
+
+dτ , then we can derive Υ 1(t) ≤ Ch 41 + C
+
+Z t
+
+> 0
+
+Υ1(τ )dτ from (5.16). Conse-quently, by applying Gronwall inequality and leveraging the arbitrariness of time vari-able t, there holds the inequality T h1 
+
+> 0
+
+− T0 L∞(0 ,T ;L2(Ω)) + T h1 
+
+> 0
+
+− T0 L2(0 ,T ;H10 (Ω)) ≤
+
+Ch 21. Additionally, the inequality, Φh1 
+
+> 0
+
+− Φ0 L∞(0 ,T ;H10 (Ω)) ≤ Ch 21, holds true. Afterwards, subtracting the mechanical equations in (2.24) from the correspond-MULTI-SCALE METHOD FOR THERMO-ELECTRO-MECHANICAL COUPLING PROBLEMS 27 ing mechanical equations in (5.10) respectively, we can derive (5.17) 
+
+bρ(T h1 
+
+> 0
+
+) ∂2 U h1 
+
+> i0
+
+− Ui0
+
+
+
+∂t 2 − ∂∂x j
+
+hbch1
+
+> ijkl
+
+(T h1 
+
+> 0
+
+) ∂ U h1 
+
+> k0
+
+− Uk0
+
+
+
+∂x l
+
+i
+
+= bρ(T0) − bρ(T h1 
+
+> 0
+
+) ∂2Ui0
+
+∂t 2 + ∂∂x j
+
+h bch1
+
+> ijkl
+
+(T h1 
+
+> 0
+
+) − bch1
+
+> ijkl
+
+(T0) ∂U k0
+
+∂x l
+
+i
+
++ ∂∂x j
+
+h bch1
+
+> ijkl
+
+(T0) − bcijkl (T0) ∂U k0
+
+∂x l
+
+i
+
++ ∂∂x j
+
+h  bβij (T0) − bβh1 
+
+> ij
+
+(T0)(T0 − eT )
+
+i
+
++ ∂∂x j
+
+h  bβh1 
+
+> ij
+
+(T0) − bβh1 
+
+> ij
+
+(T h1 
+
+> 0
+
+)(T0 − eT )
+
+i
+
++ ∂∂x j
+
+h bβh1 
+
+> ij
+
+(T h1 
+
+> 0
+
+)( T0 − T h1 
+
+> 0
+
+)
+
+i
+
+.
+
+Furthermore, implementing the calculation 
+
+Z
+
+> Ω
+
+(5 .17) × ∂ U h1 
+
+> i0
+
+− Ui0
+
+
+
+∂t dΩ, suffice it to have the following equality (5.18) 12
+
+∂∂t 
+
+h Z
+
+> Ω
+
+bρ(T h1 
+
+> 0
+
+) ∂ U h1 
+
+> i0
+
+− Ui0
+
+
+
+∂t 
+
+2dΩ+
+
+Z
+
+> Ω
+
+bch1
+
+> ijkl
+
+(T h1 
+
+> 0
+
+) ∂ U h1 
+
+> k0
+
+− Uk0
+
+
+
+∂x l
+
+∂ U h1 
+
+> i0
+
+− Ui0
+
+
+
+∂x j
+
+dΩ
+
+i
+
+= 12
+
+Z
+
+> Ω
+
+∂ bρ(T h1 
+
+> 0
+
+)
+
+∂t 
+
+ ∂ U h1 
+
+> i0
+
+− Ui0
+
+
+
+∂t 
+
+2dΩ+ 12
+
+Z
+
+> Ω
+
+∂bch1
+
+> ijkl
+
+(T h1 
+
+> 0
+
+)
+
+∂t ∂ U h1 
+
+> k0
+
+− Uk0
+
+
+
+∂x l
+
+∂ U h1 
+
+> i0
+
+− Ui0
+
+
+
+∂x j
+
+dΩ+
+
+Z
+
+> Ω
+
+bρ(T0) − bρ(T h1 
+
+> 0
+
+) ∂2Ui0
+
+∂t 2
+
+∂ U h1 
+
+> i0
+
+− Ui0
+
+
+
+∂t dΩ
+
+−
+
+Z
+
+> Ω
+
+ bch1
+
+> ijkl
+
+(T h1 
+
+> 0
+
+) − bch1
+
+> ijkl
+
+(T0) ∂U k0
+
+∂x l
+
+∂∂x j
+
+ ∂ U h1 
+
+> i0
+
+− Ui0
+
+
+
+∂t 
+
+
+
+dΩ
+
+−
+
+Z
+
+> Ω
+
+ bch1
+
+> ijkl
+
+(T0) − bcijkl (T0) ∂U k0
+
+∂x l
+
+∂∂x j
+
+ ∂ U h1 
+
+> i0
+
+− Ui0
+
+
+
+∂t 
+
+
+
+dΩ+
+
+Z
+
+> Ω
+
+  bβij (T0) − bβh1 
+
+> ij
+
+(T0)(T0 − eT ) ∂∂x j
+
+ ∂ U h1 
+
+> i0
+
+− Ui0
+
+
+
+∂t 
+
+
+
+dΩ+
+
+Z
+
+> Ω
+
+  bβh1 
+
+> ij
+
+(T0) − bβh1 
+
+> ij
+
+(T h1 
+
+> 0
+
+)(T0 − eT ) ∂∂x j
+
+ ∂ U h1 
+
+> i0
+
+− Ui0
+
+
+
+∂t 
+
+
+
+dΩ+
+
+Z
+
+> Ω
+
+bβh1 
+
+> ij
+
+(T h1 
+
+> 0
+
+)( T0 − T h1 
+
+> 0
+
+) ∂∂x j
+
+ ∂ U h1 
+
+> i0
+
+− Ui0
+
+
+
+∂t 
+
+
+
+dΩ.
+
+Subsequently, integrating both sides of (5.18) from 0 to t (0 < t ≤ T ), recalling inequalities (5.2)-(5.6), and employing the Cauchy-Schwarz inequality and Young inequality, we can obtain the following inequality from equality (5.18) if |bρ(T0) −
+
+bρ(T h1 
+
+> 0
+
+)| ≤ C|T0 − T h1 
+
+> 0
+
+| , | bβh1 
+
+> ij
+
+(T0) − bβh1 
+
+> ij
+
+(T h1 
+
+> 0
+
+)| ≤ C|T0 − T h1 
+
+> 0
+
+|, |bch1
+
+> ijkl
+
+(T0) − bch1
+
+> ijkl
+
+(T h1 
+
+> 0
+
+)| ≤ 
+
+C|T0 − T h1 
+
+> 0
+
+|, | ∂ bβh1 
+
+> ij
+
+(T0)
+
+∂t − ∂ bβh1 
+
+> ij
+
+(T h1 
+
+> 0
+
+)
+
+∂t | ≤ C|T0 − T h1 
+
+> 0
+
+|, | ∂bch1
+
+> ijkl
+
+(T0)
+
+∂t − ∂bch1
+
+> ijkl
+
+(T h1 
+
+> 0
+
+)
+
+∂t | ≤ 28 H. DONG 
+
+C|T0 − T h1
+
+0 | and | ∂T 0
+
+∂t − ∂T h1
+
+0
+
+∂t | ≤ C|T0 − T h1
+
+0 |.(5.19) 
+
+C ∂U h1
+
+0
+
+∂t − ∂U0
+
+∂t 
+
+2(L2(Ω)) n
+
++ C U h1
+
+0 − U0
+
+2(H10 (Ω)) n
+
+≤
+
+## Z t
+
+0
+
+C ∂U h1
+
+0
+
+∂τ − ∂U0
+
+∂τ 
+
+2(L2(Ω)) n dτ +
+
+## Z t
+
+0
+
+C U h1
+
+0 − U0
+
+2(H10 (Ω)) n dτ 
+
++
+
+## Z t
+
+0
+
+C T h1
+
+0 − T0
+
+2
+
+L2(Ω) dτ +
+
+## Z t
+
+0
+
+C ∂U h1
+
+0
+
+∂τ − ∂U0
+
+∂τ 
+
+2(L2(Ω)) n dτ 
+
++ C
+
+2λ T h1
+
+0 − T0
+
+2
+
+L2(Ω) + λ
+
+2 U h1
+
+0 − U0
+
+2(H10 (Ω)) n
+
++
+
+## Z t
+
+0
+
+C T h1
+
+0 − T0
+
+2
+
+L2(Ω) dτ +
+
+## Z t
+
+0
+
+C U h1
+
+0 − U0
+
+2(H10 (Ω)) n dτ 
+
++
+
+## Z t
+
+0
+
+C T h1
+
+0 − T0
+
+2
+
+L2(Ω) dτ +
+
+## Z t
+
+0
+
+C U h1
+
+0 − U0
+
+2(H10 (Ω)) n dτ 
+
++ C
+
+2λ h41 + λ
+
+2 U h1
+
+0 − U0
+
+2(H10 (Ω)) n
+
++
+
+## Z t
+
+0
+
+Ch 41dτ +
+
+## Z t
+
+0
+
+C U h1
+
+0 − U0
+
+2(H10 (Ω)) n dτ 
+
++
+
+## Z t
+
+0
+
+Ch 41dτ +
+
+## Z t
+
+0
+
+C U h1
+
+0 − U0
+
+2(H10 (Ω)) n dτ 
+
++ C
+
+2λ T h1
+
+0 − T0
+
+2
+
+L2(Ω) + λ
+
+2 U h1
+
+0 − U0
+
+2(H10 (Ω)) n
+
++
+
+## Z t
+
+0
+
+C T h1
+
+0 − T0
+
+2
+
+L2(Ω) dτ +
+
+## Z t
+
+0
+
+C U h1
+
+0 − U0
+
+2(H10 (Ω)) n dτ 
+
++
+
+## Z t
+
+0
+
+C T h1
+
+0 − T0
+
+2
+
+L2(Ω) dτ +
+
+## Z t
+
+0
+
+C U h1
+
+0 − U0
+
+2(H10 (Ω)) n dτ 
+
++ C
+
+2λ h41 + λ
+
+2 U h1
+
+0 − U0
+
+2(H10 (Ω)) n
+
++
+
+## Z t
+
+0
+
+Ch 41dτ +
+
+## Z t
+
+0
+
+C U h1
+
+0 − U0
+
+2(H10 (Ω)) n dτ 
+
++
+
+## Z t
+
+0
+
+Ch 41dτ +
+
+## Z t
+
+0
+
+C U h1
+
+0 − U0
+
+2(H10 (Ω)) n dτ 
+
++ C
+
+2λ T h1
+
+0 − T0
+
+2
+
+L2(Ω) + λ
+
+2 U h1
+
+0 − U0
+
+2(H10 (Ω)) n
+
++
+
+## Z t
+
+0
+
+C T h1
+
+0 − T0
+
+2
+
+L2(Ω) dτ +
+
+## Z t
+
+0
+
+C U h1
+
+0 − U0
+
+2(H10 (Ω)) n dτ 
+
++
+
+## Z t
+
+0
+
+C T h1
+
+0 − T0
+
+2
+
+L2(Ω) dτ +
+
+## Z t
+
+0
+
+C U h1
+
+0 − U0
+
+2(H10 (Ω)) n dτ 
+
+≤
+
+## Z t
+
+0
+
+Ch 41dτ +
+
+## Z t
+
+0
+
+C ∂U h1
+
+0
+
+∂τ − ∂U0
+
+∂τ 
+
+2(L2(Ω)) n dτ +
+
+## Z t
+
+0
+
+C U h1
+
+0 − U0
+
+2(H10 (Ω)) n dτ. MULTI-SCALE METHOD FOR THERMO-ELECTRO-MECHANICAL COUPLING PROBLEMS 29 When choosing a sufficiently small λ and setting Υ 2(t) = ∂U h1
+
+> 0
+
+∂t − ∂U0
+
+∂t  
+
+> 2(L2(Ω)) n
+
++
+
+U h1 
+
+> 0
+
+− U0  
+
+> 2(H10(Ω)) n
+
+, then we can derive Υ 2(t) ≤ Ch 41 + C
+
+Z t
+
+> 0
+
+Υ2(τ )dτ from (5.19). Consequently, by taking advantage of Gronwall inequality and the arbitrariness of time variable t, there holds the inequality ∂U h1
+
+> 0
+
+∂t − ∂U0
+
+∂t L∞(0 ,T ;( L2(Ω)) n)
+
++ U h1 
+
+> 0
+
+−
+
+U0 L∞(0 ,T ;( H10 (Ω)) n) ≤ Ch 21. In summary, combining the inequalities for electric po-tential, temperature and displacement fields, we can easily obtain inequality (5.10). 
+
+Lemma 5.4. Denote Φ h1,h 0 
+
+> 0
+
+, T h1,h 0 
+
+> 0
+
+and U h1,h 0 
+
+> 0
+
+be the finite element solutions of the modified homogenized equations (5.9) by mixed FDM-FEM scheme proposed in reference [28], the following estimate holds 
+
+(5.20) max  
+
+> 1≤n≤N
+
+Φh1,h 0 
+
+> 0
+
+(x, t n) − Φh1 
+
+> 0
+
+(x, t n) L2(Ω) 
+
++ max  
+
+> 1≤n≤N
+
+T h1,h 0 
+
+> 0
+
+(x, t n) − T h1 
+
+> 0
+
+(x, t n) L2(Ω) 
+
++ max 
+
+> 1≤n≤N
+
+∂U h1,h 0 
+
+> 0
+
+(x, t n)
+
+∂t − ∂U h1 
+
+> 0
+
+(x, t n)
+
+∂t (L2(Ω)) n ≤ C∆t + Ch 20,
+
+where C is a constant irrespective of h1 and ∆t.
+
+Proof : As shown in the modified homogenized equations (5.9), it satisfy the condi-tions of error estimates in reference [28]. Hence, employing the same proof technique as reference [28], the estimate (5.20) can be derived. 
+
+Theorem 5.5. Let Φ h1,h 0 
+
+> 0
+
+, T h1,h 0 
+
+> 0
+
+and U h1,h 0 
+
+> 0
+
+be the finite element solutions of the modified homogenized equations (5.9), and Φ 0, T0 and U0 be the exact solutions of the homogenized equations (2.24), then the following estimate holds 
+
+(5.21) max  
+
+> 1≤n≤N
+
+Φh1,h 0 
+
+> 0
+
+(x, t n) − Φ0(x, t n) L2(Ω) 
+
++ max  
+
+> 1≤n≤N
+
+T h1,h 0 
+
+> 0
+
+(x, t n) − T0(x, t n) L2(Ω) 
+
++ max 
+
+> 1≤n≤N
+
+∂U h1,h 0 
+
+> 0
+
+(x, t n)
+
+∂t − ∂U0(x, t n)
+
+∂t (L2(Ω)) n ≤ C∆t + Ch 20 + Ch 21,
+
+where C is a positive constant independent of h1, h0 and ∆t.30 H. DONG 
+
+Proof : Firstly, employing the triangle inequality, there exists a inequality such that (5.22) max  
+
+> 1≤n≤N
+
+Φh1,h 0 
+
+> 0
+
+(x, t n) − Φ0(x, t n) L2(Ω) 
+
++ max  
+
+> 1≤n≤N
+
+T h1,h 0 
+
+> 0
+
+(x, t n) − T0(x, t n) L2(Ω) 
+
++ max 
+
+> 1≤n≤N
+
+∂U h1,h 0 
+
+> 0
+
+(x, t n)
+
+∂t − ∂U0(x, t n)
+
+∂t (L2(Ω)) n
+
+≤ max  
+
+> 1≤n≤N
+
+Φh1,h 0 
+
+> 0
+
+(x, t n) − Φh1 
+
+> 0
+
+(x, t n) L2(Ω) 
+
++ max  
+
+> 1≤n≤N
+
+T h1,h 0 
+
+> 0
+
+(x, t n) − T h1 
+
+> 0
+
+(x, t n) L2(Ω) 
+
++ max 
+
+> 1≤n≤N
+
+∂U h1,h 0 
+
+> 0
+
+(x, t n)
+
+∂t − ∂U h1 
+
+> 0
+
+(x, t n)
+
+∂t (L2(Ω)) n
+
++ max  
+
+> 1≤n≤N
+
+Φh1 
+
+> 0
+
+(x, t n) − Φ0(x, t n) L2(Ω) 
+
++ max  
+
+> 1≤n≤N
+
+T h1 
+
+> 0
+
+(x, t n) − T0(x, t n) L2(Ω) 
+
++ max 
+
+> 1≤n≤N
+
+∂U h1 
+
+> 0
+
+(x, t n)
+
+∂t − ∂U0(x, t n)
+
+∂t (L2(Ω)) n .
+
+Moreover, with the help of the embedding theorem, suffice it to have the following inequality (5.23) max  
+
+> 1≤n≤N
+
+Φh1,h 0 
+
+> 0
+
+(x, t n) − Φh1 
+
+> 0
+
+(x, t n) L2(Ω) 
+
+≤ Φh1 
+
+> 0
+
+− Φ0 L∞(0 ,T ;H10 (Ω)) ≤ Ch 21.
+
+Finally, substituting (5.10), (5.20) and (5.23) into (5.22), one can directly obtain the error estimate (5.21). In summary, we remark that the above-mentioned theoretical analysis rigorously ensures the convergence of the proposed two-stage numerical algorithm in both mi-croscopic and macroscopic computations. 
+
+6. Numerical examples and results. In this section, numerical experiments are conducted on a HPS desktop workstation equipped with an Intel(R) Xeon(R) Gold 6146 CPU (3.20 GHz) and internal memory (96.0 GB), and implemented based on Freefem++ software. In addition, since exact solutions for nonlinear multi-scale prob-lems are unattainable, we use direct numerical simulation (DNS) solutions T ε
+
+> DNS
+
+(x, t ), 
+
+Φε
+
+> DNS
+
+(x, t ) and U ε
+
+> DNS
+
+(x, t ) to replace T ε(x, t ), Φε(x, t ) and U ε(x, t ) for evaluating the proposed HOMS method. Furthermore, we define the following notations: T 0 
+
+> L2
+
+(t), T1 
+
+> L2
+
+(t) and T 2 
+
+> L2
+
+(t) denote the relative errors for homogenized solutions, LOMS solu-tions and HOMS solutions of temperature field in the L2 norm, while T 0 
+
+> H1
+
+(t), T 1 
+
+> H1
+
+(t)and T 2 
+
+> H1
+
+(t) denote the relative errors for those solutions in the H1 semi-norm. Anal-ogously, P 0 
+
+> L2
+
+(t), P 1 
+
+> L2
+
+(t) and P 2 
+
+> L2
+
+(t) represent the relative errors for electric potential field in the L2 norm, and P 0 
+
+> H1
+
+(t), P 1 
+
+> H1
+
+(t) and P 2 
+
+> H1
+
+(t) represent those in the H1 semi-norm. D 0 
+
+> L2
+
+(t), D 1 
+
+> L2
+
+(t) and D 2 
+
+> L2
+
+(t) represent the relative errors for displacement field in the L2 norm, and D 0 
+
+> H1
+
+(t), D 1 
+
+> H1
+
+(t) and D 2 
+
+> H1
+
+(t) represent those in the H1 semi-norm. 
+
+6.1. Example 1: nonlinear thermo-electro-mechanical coupling simula-tion of 2D composite structure. This example investigates the nonlinear thermo-electro-mechanical coupling behaviors of a 2D composite structure, which is composed MULTI-SCALE METHOD FOR THERMO-ELECTRO-MECHANICAL COUPLING PROBLEMS 31 of repeating unit cells with the characteristic periodic length ε = 1 /10. The whole domain Ω = ( x1, x 2) = [0 , 1] × [0 , 1] and PUC Y are displayed in Fig. 1. 
+
+(a) (b) (c)     
+
+> Fig. 1 .(a) The 2D composite structure Ω; (b) PUC Y; (c) homogenized structure Ω.
+
+Additionally, the material parameters of matrix and inclusion phases of this com-posite structure are detailed in Table 1.  
+
+> Table 1
+> Material parameters of composite structure ( Tstands for the temperature value).
+
+Material parameters Matrix/Inclusion 
+
+ρε 0.008/0.002 
+
+cε 562.5/750.0 
+
+kεij 4.0+0.0004 T /0.04+0.000004 Tλεij 300.0-0.015 T /0.075-0.00000325 Tβεij 3.0-0.0003 T /7.5-0.00075 TEε 3.5 ×10 6-3.5 ×10 3T /2.2 ×10 6-2.2 ×10 3Tνε 0.25/0.20 Moreover, the source items, boundary conditions and initial conditions in the multi-scale nonlinear problem (1.1) of this example are presented as below. (6.1) 
+
+fT (x, t ) = 20000 , f Φ (x, t ) = 200 , f 1(x, t ) = 5000 , f 2(x, t ) = 5000 , in Ω ,
+
+bT (x, t ) = 300 .0, bΦ(x, t ) = 0 .0, bU (x, t ) = (0 .0, 0.0, 0.0) , in ∂Ω,
+
+eT = 300 .0, eU 0(x) = (0 .0, 0.0, 0.0) , eU 1(x) = (0 .0, 0.0, 0.0) , in Ω .
+
+In this example, the 2D heterogeneous structure contains a multitude of micro-scopic unit cells. Resolving these microscale features via a direct finite element method (FEM) demands excessively fine meshes, leading to severe computational overhead. Consequently, separate finite element meshes are generated for original multi-scale equations, auxiliary cell equations and corresponding homogenized equations. De-tailed mesh statistics and CPU times are summarized in Table 2. 
+
+> Table 2
+> Summary of computational cost in 2D composite structure.
+
+Multi-scale eqs. Cell eqs. Homogenized eqs. FEM elements 70800 856 5000 FEM nodes 35761 469 2601 DNS off-line stage on-line stage Computational time 13086.440s 41.129s 8294.787s 32 H. DONG 
+
+For this example, 10 equidistant macroscopic interpolation temperatures are pre-scribed within a single unit cell. It is noteworthy that auxiliary cell problems are off-line computation before on-line multi-scale computation, which remain valid for different heterogeneous structures. The dynamic nonlinear thermo-electro-mechanical coupling responses of the 2D heterogeneous structure are simulated over the time inter-val t ∈ [0 , 1]. Setting the temporal step as ∆ t = 0 .001, the macroscopic homogenized equations (2.24) and multi-scale nonlinear equations (1.1) are on-line simulated re-spectively. Following this, the ultimate simulation outcomes of temperature, electric potential and displacement fields at t = 1 .0 are depicted in Figs. 2-4, respectively. Besides, Fig. 5 is plotted to visualize the evolutionary relative errors of three physical fields tracked in the L2 norm and H1 semi-norm senses. 
+
+(a) (b) (c) (d)           
+
+> Fig. 2 .The temperature field at t= 1 .0: (a) T0; (b) T[1 ε]; (c) T[2 ε]; (d) Tε
+> DNS .
+
+(a) (b) (c) (d)    
+
+> Fig. 3 .The electric potential field at t= 1 .0: (a) Φ 0; (b) Φ [1 ε]; (c) Φ [2 ε]; (d) Φ ε
+> DNS .
+
+(a) (b) (c) (d)             
+
+> Fig. 4 .The displacement field at t= 1 .0: (a) U10 ; (b) U[1 ε]1; (c) U[2 ε]1; (d) Uε
+> 1DNS .
+
+As reported in Table 2, the proposed HOMS approach yields a substantial reduc-tion in computational resource utilization, particularly in terms of CPU memory and MULTI-SCALE METHOD FOR THERMO-ELECTRO-MECHANICAL COUPLING PROBLEMS 33 Time         
+
+> 00.2 0.4 0.6 0.8 1
+> L2 norm relative error / %
+> 0
+> 1
+> 2
+> 3
+> 4
+> 5
+> 6
+> TL2
+> 0(t)
+> TL2
+> 1(t)
+> TL2
+> 2(t)
+
+(a) Time          
+
+> 00.2 0.4 0.6 0.8 1
+> H1 semi-norm relative error / %
+> 0
+> 20
+> 40
+> 60
+> 80
+> 100
+> TH1
+> 0(t)
+> TH1
+> 1(t)
+> TH1
+> 2(t)
+
+(b) Time         
+
+> 00.2 0.4 0.6 0.8 1
+> L2 norm relative error / %
+> 0
+> 20
+> 40
+> 60
+> 80
+> 100
+> PL2
+> 0(t)
+> PL2
+> 1(t)
+> PL2
+> 2(t)
+
+(c) Time          
+
+> 00.2 0.4 0.6 0.8 1
+> H1 semi-norm relative error / %
+> 0
+> 20
+> 40
+> 60
+> 80
+> 100
+> PH1
+> 0(t)
+> PH1
+> 1(t)
+> PH1
+> 2(t)
+
+(d) Time         
+
+> 00.2 0.4 0.6 0.8 1
+> L2 norm relative error / %
+> 0.5
+> 1
+> 1.5
+> 2
+> 2.5
+> 3
+> DL2
+> 0(t)
+> DL2
+> 1(t)
+> DL2
+> 2(t)
+
+(e) Time          
+
+> 00.2 0.4 0.6 0.8 1
+> H1 semi-norm relative error / %
+> 0
+> 10
+> 20
+> 30
+> 40
+> 50
+> DH1
+> 0(t)
+> DH1
+> 1(t)
+> DH1
+> 2(t)
+
+(f) 
+
+Fig. 5 . The evolutive relative errors of physical fields: (a) T L2 (t); (b) T H1 (t); (c) P L2 (t); (d) PH1 (t); (e) D L2 (t); (f ) D H1 (t).
+
+time, when contrasted with high-resolution DNS. Specifically, the proposed HOMS approach achieves an approximate saving of 36.30% in computational time. Further-more, the computational savings afforded by HOMS become more pronounced as the duration of the simulation increases. From the computational results in Figs. 2-4, it can be clearly found that only HOMS solutions have the capacity to accurately simu-late the nonlinear thermo-electro-mechanical coupling behaviors of 2D heterogeneous structure, and the computational accuracy of homogenized and LOMS solutions is significantly inferior. Obviously, the homogenized method can only catch its macro-scopic behaviors and the LOMS method can only capture its inadequate microscopic responses. Notably, as evidenced in Fig. 5, the HOMS approach maintains long-term numerical stability, exhibiting no blow-up phenomena up to the terminal time t = 1 .0. 34 H. DONG 
+
+In real-world engineering applications, since direct FEM simulations are computa-tionally prohibitive for large-scale composite structures involving a multitude of unit cells, the HOMS method proposed herein provides a efficient and robust alternative for multi-physics multi-scale simulations with minimal resource consumption. 
+
+6.2. Example 2: nonlinear thermo-electro-mechanical coupling simula-tion of 3D composite structure. This example evaluates the nonlinear thermo-electro-mechanical coupling behaviors of a 3D composite structure characterized by a periodic array of unit cells with the characteristic length parameter ε = 1 /5. The entire domain Ω = ( x1, x 2, x 3) = [0 , 1] × [0 , 1] × [0 , 1] and PUC Y are detailedly illustrated in Fig. 6. 
+
+(a) (b) (c)     
+
+> Fig. 6 .(a) The 3D composite structure Ω; (b) PUC Y; (c) homogenized structure Ω.
+
+The material parameters of this example are defined as those of Example 1. Fur-thermore, the internal heat source, electric charge density and body forces are pre-scribed as fT (x, t ) = 80000 x1(1 − x1)x2(1 − x2), fΦ (x, t ) = 800 x1(1 − x1)x2(1 − x2)and ( f1(x, t ), f 2(x, t ), f 3(x, t )) = (0 , 0, 20000). The boundary conditions of tempera-ture and electric potential fields are defined as bT (x, t ) = 300 .0 and bΦ(x, t ) = 0 .0. The boundary condition of displacement field on the four lateral surfaces of the investigated 3D composite structure, that are perpendicular to x1-axis and x2-axis, is enforced as 
+
+bU (x, t ) = (0 .0, 0.0, 0.0). The initial conditions of temperature and displacement fields are given by eT = 300 .0, eU 0(x) = (0 .0, 0.0, 0.0), and eU 1(x) = (0 .0, 0.0, 0.0). Direct numerical simulation of the 3D heterogeneous structure considered herein, which contains a vast number of unit cells, necessitates extremely fine meshes and incurs unaffordable computational costs in turn. For the purpose of comparison, finite element discretizations are constructed for original multi-scale system, auxiliary cell problems, and corresponding homogenized system. A detailed breakdown of the mesh resolutions and execution times is provided in Table 3. 
+
+> Table 3
+> Summary of computational cost in 3D composite structure.
+
+Multi-scale eqs. Cell eqs. Homogenized eqs. FEM elements 1275910 139775 162000 FEM nodes 206563 23807 29791 DNS off-line stage on-line stage Computational time 405368.064s 53542.102s 231230.402s For this example, we allocate 10 equidistant macroscopic interpolation tempera-ture within a single unit cell. It should note that although solving the auxiliary cell problems constitutes a computationally expensive off-line stage, these obtained data MULTI-SCALE METHOD FOR THERMO-ELECTRO-MECHANICAL COUPLING PROBLEMS 35 can be reused for various heterogeneous structures during the on-line phase. The dynamic nonlinear thermo-electro-mechanical coupling responses of the 3D heteroge-neous structure are simulated over the time interval t ∈ [0 , 1]. Setting the temporal step as ∆ t = 0 .001, the macroscopic homogenized equations (2.24) and multi-scale nonlinear equations (1.1) are on-line simulated respectively. Following this, the final distributions of temperature, electric potential and displacement fields at t = 1 .0 are illustrated in Figs. 7-10, respectively. Besides, the temporal evolution of the relative errors of three physical fields in the L2 norm and H1 semi-norm senses is visualized in Fig. 11. 
+
+(a) (b) (c) (d)              
+
+> Fig. 7 .The temperature field in cross section x3= 0 .5at t= 1 .0: (a) T0; (b) T[1 ε]; (c) T[2 ε];(d) Tε
+> DNS .
+
+(a) (b) (c) (d)       
+
+> Fig. 8 .The electric potential field in cross section x3= 0 .5at t= 1 .0: (a) Φ 0; (b) Φ [1 ε]; (c) Φ[2 ε]; (d) Φ ε
+> DNS .
+
+(a) (b) (c) (d)                
+
+> Fig. 9 .The displacement field in cross section x3= 0 .5at t= 1 .0:(a) U10 ; (b) U[1 ε]1; (c)
+> U[2 ε]1; (d) Uε
+> 1DNS .
+
+Table 3 shows that the HOMS method significantly reduces computational mem-ory and time requirements relative to high-resolution DNS, yielding a 29.75% decrease 36 H. DONG 
+
+(a) (b) (c) (d)                
+
+> Fig. 10 .The displacement field in cross section x3= 0 .5at t= 1 .0:(a) U30 ; (b) U[1 ε]3; (c)
+> U[2 ε]3; (d) Uε
+> 3DNS .
+
+in runtime. This efficiency gain scales favorably with the simulation time. In principle, greater reductions in computational cost could be realized by the proposed method. Nevertheless, to ensure a fair comparison with the reference solution, the time step size was chosen to be as small as that utilized in the high-resolution DNS. Besides, the numerical results in Figs. 7-10 demonstrate that only the HOMS solution can ac-curately capture the nonlinear thermo-electro-mechanical coupling behaviors of the 3D heterogeneous structure, whereas the standard homogenized method resolves only the macroscopic response, and the LOMS method provides insufficient microscopic corrections. In terms of temporal robustness, Fig. 11 effectively validate that the proposed HOMS approach can remain entirely stable without blow-up in the numer-ical solutions until t = 1 .0. These attributes make the HOMS approach particularly well-suited for complex 3D composite structures with numerous unit cells, circum-venting the prohibitive computational cost of direct FEM simulations in large-scale multi-physics applications. 
+
+7. Conclusions. This work proposes a low-computational-cost high-order multi-scale method for high-accuracy simulation of time-dependent nonlinear thermo-electro-mechanical coupling problems in composite structures with highly microscopic het-erogeneities. The pivotal contributions of this work are threefold: First, the novel macro-micro correlative formulations with the high-order correction terms are estab-lished for composite structures with periodically microscopic configurations. Second, rigorous local and global error analyses for multi-scale solutions of composite struc-tures are derived in detail. Third, an efficient two-stage algorithm with off-line/on-line paradigm is designed to alleviate the intractable computational cost, and its conver-gence analysis is also derived. Numerical results confirmed that the proposed HOMS framework is high-accuracy and efficient for time-variant nonlinear three-field coupling simulation of large-scale composite structures, and simultaneously economize the com-putational cost for real-world applications. Furthermore, it is particularly noteworthy that simulating nonlinear multi-physics multi-scale problems of large-scale compos-ite structures requires highly refined computational meshes to accurately resolve the micro-scale features. Such stringent mesh requirements render most conventional engineering solvers computationally prohibitive, failing to yield viable numerical solu-tions. The proposed method circumvents this bottleneck by delivering highly accurate numerical approximations with significantly reduced computational overhead, thereby offering significant practical value for practical engineering applications. As a future objective, we will focus on the extension of intricate nonlinear multi-physics problems including thermal radiation and convection effects under high-temperature environ-ment, magnetic effect under strong electromagnetic environment. Furthermore, the MULTI-SCALE METHOD FOR THERMO-ELECTRO-MECHANICAL COUPLING PROBLEMS 37 Time         
+
+> 00.2 0.4 0.6 0.8 1
+> L2 norm relative error / %
+> 0
+> 0.5
+> 1
+> 1.5
+> 2
+> TL2
+> 0(t)
+> TL2
+> 1(t)
+> TL2
+> 2(t)
+
+(a) Time          
+
+> 00.2 0.4 0.6 0.8 1
+> H1 semi-norm relative error / %
+> 0
+> 20
+> 40
+> 60
+> 80
+> 100
+> TH1
+> 0(t)
+> TH1
+> 1(t)
+> TH1
+> 2(t)
+
+(b) Time         
+
+> 00.2 0.4 0.6 0.8 1
+> L2 norm relative error / %
+> 0
+> 20
+> 40
+> 60
+> 80
+> 100
+> PL2
+> 0(t)
+> PL2
+> 1(t)
+> PL2
+> 2(t)
+
+(c) Time          
+
+> 00.2 0.4 0.6 0.8 1
+> H1 semi-norm relative error / %
+> 0
+> 20
+> 40
+> 60
+> 80
+> 100
+> PH1
+> 0(t)
+> PH1
+> 1(t)
+> PH1
+> 2(t)
+
+(d) Time         
+
+> 00.2 0.4 0.6 0.8 1
+> L2 norm relative error / %
+> 1.1
+> 1.2
+> 1.3
+> 1.4
+> 1.5
+> DL2
+> 0(t)
+> DL2
+> 1(t)
+> DL2
+> 2(t)
+
+(e) Time          
+
+> 00.2 0.4 0.6 0.8 1
+> H1 semi-norm relative error / %
+> 8
+> 10
+> 12
+> DH1
+> 0(t)
+> DH1
+> 1(t)
+> DH1
+> 2(t)
+
+(f) 
+
+Fig. 11 . The evolutive relative errors of physical fields: (a) T L2 (t); (b) T H1 (t); (c) P L2 (t);(d) P H1 (t); (e) D L2 (t); (f ) D H1 (t).
+
+computational efficiency of the proposed HOMS method is further accelerated in the on-line stage by exploiting the integrated spatiotemporal computational capability of randomized neural network approach. 
+
+REFERENCES [1] A. Abdulle, E. Weinan, B. Engquist, and E. Vanden-Eijnden , The heterogeneous multi-scale method , Acta Numerica, 21 (2012), pp. 1–87. [2] I. V. Andrianov, H. Topol, and V. V. Danishevskyy , Asymptotic analysis of heat transfer in composite materials with nonlinear thermal properties , International Journal of Heat and Mass Transfer, 111 (2017), pp. 736–754. [3] A. Bensoussan, J.-L. Lions, and G. Papanicolaou , Asymptotic Analysis for Periodic Struc-tures , vol. 5 of Studies in Mathematics and its Applications, North-Holland, Amsterdam, 38 H. DONG 1978. [4] H. G. C and S.-V. T , Boundary integral formulations for transient linear thermoelasticity with combined-type boundary conditions , SIAM Journal on Mathematical Analysis, 53 (2021), pp. 3888–3911. [5] L.-Q. Cao , Multiscale asymptotic expansion and finite element methods for the mixed bound-ary value problems of second order elliptic equation in perforated domains , Numerische Mathematik, 103 (2006), pp. 11–45. [6] L.-Q. Cao, J.-Z. Cui, and D.-C. Zhu , Multiscale asymptotic analysis and numerical simulation for the second order helmholtz equations with rapidly oscillating coefficients over general convex domains , SIAM Journal on Numerical Analysis, 40 (2002), pp. 543–577. [7] P. W. Chung, K. K. Tamma, and R. R. Namburu , Homogenization of temperature-dependent thermal conductivity in composite materials , Journal of Thermophysics and Heat Transfer, 15 (2001), pp. 10–17. [8] D. Cioranescu and P. Donato , An introduction to homogenization , Oxford university press, 1999. [9] H. Dong, J. Cui, Y. Nie, R. Ma, K. Jin, and D. Huang , Multi-scale computational method for nonlinear dynamic thermo-mechanical problems of composite materials with temperature-dependent properties , Communications in Nonlinear Science and Numerical Simulation, 118 (2023), p. 107000. [10] H. Dong, X. Guan, and Y. Nie , Multiscale method and convergence analysis for coupled nonlinear thermomechanical problems in heterogeneous shells , SIAM Journal on Scientific Computing, 47 (2025), pp. B190–B219. [11] H. Dong, Z. Yang, and Y. Nie , Higher-order multiscale method and its convergence analysis for nonlinear thermo-electric coupling problems of composite structures , Multiscale Mod-eling & Simulation, 23 (2025), pp. 1744–1772. [12] H. Dong, X. Zheng, J. Cui, Y. Nie, Z. Yang, and Q. Ma , Multi-scale computational method for dynamic thermo-mechanical performance of heterogeneous shell structures with orthog-onal periodic configurations , Computer Methods in Applied Mechanics and Engineering, 354 (2019), pp. 143–180. [13] H. Dong, X. Zheng, J. Cui, Y. Nie, Z. Yang, and Z. Yang , High-order three-scale com-putational method for dynamic thermo-mechanical problems of composite structures with multiple spatial scales , International Journal of Solids and Structures, 169 (2019), pp. 95– 121. [14] Q.-L. Dong and L.-Q. Cao , Multiscale asymptotic expansions and numerical algorithms for the wave equations of second order with rapidly oscillating coefficients , Applied Numerical Mathematics, 59 (2009), pp. 3008–3032. [15] Y. Efendiev, J. Galvis, G. Li, and M. Presho , Generalized multiscale finite element meth-ods. nonlinear elliptic equations , Communications in Computational Physics, 15 (2014), pp. 733–755. [16] Y. Efendiev and T. Y. Hou , Multiscale finite element methods: theory and applications ,vol. 4, Springer Science & Business Media, 2009. [17] J. Fern´ andez and K. Kuttler , A dynamic thermoviscoelastic problem: numerical analysis and computational experiments , Quarterly journal of mechanics and applied mathematics, 63 (2010), pp. 295–314. [18] P. Henning and A. M˚ alqvist , Localized orthogonal decomposition techniques for boundary value problems , SIAM Journal on Scientific Computing, 36 (2014), pp. A1609–A1634. [19] T. Hou, X.-H. Wu, and Z. Cai , Convergence of a multiscale finite element method for elliptic problems with rapidly oscillating coefficients , Mathematics of Computation, 68 (1999), pp. 913–943. [20] G. C. Hsiao and T. S´ anchez-Vizuet , Time-domain boundary integral methods in linear ther-moelasticity , SIAM Journal on Mathematical Analysis, 52 (2020), pp. 2463–2490. [21] T. J. Hughes , Multiscale phenomena: Green’s functions, the dirichlet-to-neumann formula-tion, subgrid scale models, bubbles and the origins of stabilized methods , Computer Meth-ods in Applied Mechanics and Engineering, 127 (1995), pp. 387–401. [22] K. Kuttler, M. Shillor, and J. Fern´ andez , Existence for the thermoviscoelastic thermistor problem , Differential Equations and Dynamical Systems, 17 (2009), pp. 217–233. [23] B. Li, H. Gao, and W. Sun , Unconditionally optimal error estimates of a crank–nicolson galerkin method for the nonlinear thermistor equations , SIAM Journal on Numerical Analy-sis, 52 (2014), pp. 933–954. [24] P. Li, Y. Dong, M. Tang, J. Mao, L. J. Jiang, and H. Ba˘ gcı , Transient thermal analysis of 3-d integrated circuits packages by the dgtd method , IEEE Transactions on Components, Packaging and Manufacturing Technology, 7 (2017), pp. 862–871. MULTI-SCALE METHOD FOR THERMO-ELECTRO-MECHANICAL COUPLING PROBLEMS 39 
+
+[25] Q. Lin and Q. Zhu , The Preprocessing and Preprocessing for the Finite Element Method ,Shanghai Scientific & Technical Publishers, 1994. [26] I. Lunati and P. Jenny , Multiscale finite-volume method for compressible multiphase flow in porous media , Journal of Computational Physics, 216 (2006), pp. 616–636. [27] C. Ma, C. Alber, and R. Scheichl , Wavenumber explicit convergence of a multiscale gen-eralized finite element method for heterogeneous helmholtz problems , SIAM Journal on Numerical Analysis, 61 (2023), pp. 1546–1584. [28] A. M˚ alqvist and T. Stillfjord , Finite element convergence analysis for the thermoviscoelas-tic joule heating problem , BIT Numerical Mathematics, 57 (2017), pp. 787–810. [29] A. H. Muliana and J. S. Kim , A two-scale homogenization framework for nonlinear effective thermal conductivity of laminated composites , Acta Mechanica, 212 (2010), pp. 319–347. [30] O. A. Ole¨ ınik, A. Shamaev, and G. Yosifian , Mathematical problems in elasticity and ho-mogenization , vol. 26, Elsevier, 1992. [31] A. A. Pankov , G-convergence and homogenization of nonlinear partial differential operators ,vol. 422, Springer Science & Business Media, 2013. [32] Q.-H. Qin and Q.-S. Yang , Macro-micro theory on multifield coupling behavior of heteroge-neous materials , Springer Berlin, Germany:, 2008. [33] X. Wang, L. Cao, and Y. Wong , Multiscale computation and convergence for coupled ther-moelastic system in composite materials , Multiscale Modeling & Simulation, 13 (2015), pp. 661–690. [34] X. Wu and X. Xu , Existence for the thermoelastic thermistor problem , Journal of mathematical analysis and applications, 319 (2006), pp. 124–138. [35] J. Xie and M. Swaminathan , Electrical–thermal cosimulation with nonconformal domain de-composition method for multiscale 3-d integrated systems , IEEE Transactions on Compo-nents, Packaging and Manufacturing Technology, 4 (2013), pp. 588–601. [36] Y. Xing, Y. Yang, and X. Wang , A multiscale eigenelement method and its application to periodical composite structures , Composite Structures, 92 (2010), pp. 2265–2275. [37] Y.-B. Yang and Y.-L. Jiang , Optimal error estimates of a lowest-order galerkin-mixed fem for the thermoviscoelastic joule heating equations , Applied Numerical Mathematics, 183 (2023), pp. 86–107. [38] Z. Yang, J. Cui, Y. Sun, J. Liang, and Z. Yang , Multiscale analysis method for thermo-mechanical performance of periodic porous materials with interior surface radiation , In-ternational Journal for Numerical Methods in Engineering, 105 (2016), pp. 323–350. [39] W. Yu, S. Cheng, Z. Li, L. Liu, Z. Zhang, Y. Zhao, Y. Guo, and S. Liu , The application of multi-scale simulation in advanced electronic packaging , Fundamental Research, (2024). [40] H. Zhai, Q. Wu, N. Yoshikawa, K. Xiong, and C. Chen , Space-time asymptotic expan-sion method for transient thermal conduction in the periodic composite with temperature-dependent thermal properties , Computational Materials Science, 194 (2021), p. 110470.
