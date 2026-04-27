@@ -1,0 +1,1272 @@
+Title: Approximate Simulation-based Hierarchical Control of Nonlinear Systems
+
+URL Source: https://arxiv.org/pdf/2604.20509v1
+
+Published Time: Thu, 23 Apr 2026 00:54:58 GMT
+
+Number of Pages: 14
+
+Markdown Content:
+> IEEE TRANSACTIONS AND JOURNALS TEMPLATE 1
+
+# Approximate Simulation-based Hierarchical Control of Nonlinear Systems 
+
+Zirui Niu, Graduate Student Member, IEEE , Antoine Girard, Fellow, IEEE ,Giordano Scarciotti, Senior Member, IEEE ,
+
+Abstract — Controlling complex dynamical systems to satisfy sophisticated specifications remains a significant challenge in modern engineering. A promising approach to this problem is the approximate simulation-based hi-erarchical control (ASHC) technique. In this method, a simplified representation of the complex system, called the abstract system, is first designed and controlled. An interface function is then designed to translate the control law into the input of the complex system, thereby achieving approximate control synthesis. However, most existing results in ASHC are only for linear systems. This paper proposes a constructive method for solving the ASHC problem for nonlinear systems. To this end, we propose invariance equation-based methods to achieve the two classical requirements of the ASHC technique, namely the bounded output discrepancy and the m-relation. We then study the solvability conditions of the problem and summarise the overall design procedures. We illustrate the results with a practical example, providing step-by-step solutions to the ASHC problem of a DC-to-DC ´Cuk converter. 
+
+Index Terms — Approximate abstractions, nonlinear sys-tems, simulation functions, Lyapunov functions, model reduction 
+
+I. I NTRODUCTION 
+
+# MODERN engineering applications, such as robotics, autonomous vehicles, aeronautics, and manufacturing, increasingly rely on complex systems ( e.g. , nonlinear and/or higher-order) to enable higher levels of autonomy and precision. The inherent complexity of such models, however, imposes substantial computational demands on analysis and control design, thereby incurring significant processing time and energy expenditure in simulations and hardware implementations. Aiming to handle sophisticated specifications with such com-plexities can even result in intractable computations. Such a problem is intrinsically multidisciplinary, and it is dealt with in different ways by different research communities. A notable framework to solve this problem is model order reduction (MOR), see, e.g. , [1] for linear systems and [2] for nonlinear systems. Another family of approaches, which is particularly indicated when the key focus of the simplification is control design, is based on hierarchical control. This is a 
+
+Z. Niu and G. Scarciotti are with the Department of Electrical and Electronic Engineering, Imperial College London, SW7 2AZ, London, U.K. [zn120, gs3610]@ic.ac.uk 
+
+A. Girard is with Universit ´e Paris-Saclay, CNRS, CentraleSup ´elec, Laboratoire des Signaux et Syst `emes, 91190, Gif-sur-Yvette, France (e-mail: antoine.girard@centralesupelec.fr). Complex Concrete System 
+
+Interface: 
+
+Simpler Abstract System 
+
+Fig. 1. Hierarchical control system architecture. 
+
+framework introduced by Girard and Pappas [3] based on the notion of approximate simulation, and hereafter referred to as approximate simulation-based hierarchical control (ASHC). As illustrated in Fig. 1, given a complex system to be controlled, referred to as the concrete system , a simpler model is constructed, termed the abstract system or abstraction . An interface function is then designed to translate the control inputs synthesised for the abstraction into inputs applicable to the concrete system, thereby enabling approximate control of the concrete system while providing guarantees on the output error. While [3] only proposed solutions for linear systems, the approach was then extended to more complicated scenarios such as networked systems [4]–[6], piecewise affine systems [7], linear stochastic hybrid systems [8], and cyber-physical systems [9]. However, there is no constructive way to solve the ASHC problem for general nonlinear systems. Solutions available in the existing literature only apply to special cases. For example, Fu et al. [10] solved the ASHC problem of differentially flat nonlinear systems by transforming the nonlinear system into a linear model and proceeding with the linear method in [3]. Zamani and Arcak [4] solved the ASHC problem for Lur’e-type systems, building upon their compositional ASHC solutions for networked systems. These existing results cannot be extended to the general nonlinear cases. It is also worth mentioning that [11] proposed an approximate simulation approach that constructs a finite transition system from the concrete system for symbolic control synthesis. However, by relying on grid- 
+
+> arXiv:2604.20509v1 [eess.SY] 22 Apr 2026 2IEEE TRANSACTIONS AND JOURNALS TEMPLATE
+
+based discretisation, this method suffers from the curse of dimensionality, rendering it computationally expensive for higher-dimensional systems, while also obscuring the physical intuition of the underlying continuous dynamics. Therefore, the ASHC of nonlinear systems remains an open problem. In this paper, we solve the ASHC problem for general nonlinear systems, with a particular focus on input-affine systems. The classical ASHC problem typically requires two key design criteria, namely the bounded output discrepancy property and the so-called “Π -relation” . The bounded output discrepancy requires that the error between the outputs of the concrete and abstract systems is bounded by a known function called simulation function , originated from [12]. Furthermore, the Π-relation requires that the construction of an abstract system preserves the input-output controllability properties of the concrete system. In this paper, we address both requirements in the nonlinear setting. First, under certain stabilisability and Lipschitz continuity assumptions, we characterise the bounded output discrepancy requirement via a partial differential equa-tion (PDE). Then we generalise the linear Π-relation to an m-relation for nonlinear systems and characterise the requirement through another PDE. By combining the two PDE-based characterisations, we establish the overall solvability condition and present a detailed procedure for addressing the ASHC problem. Finally, we demonstrate the approach by applying the results step by step to a DC-to-DC ´ Cuk converter. The main contribution of this paper is to provide constructive methods for solving ASHC problems for nonlinear systems. It is worth mentioning that, unlike MOR techniques that focus on open-loop trajectory accuracy, see, e.g. , [1], [2], [13] and references therein, the ASHC technique focuses on control design. However, since [14] established a conceptual bridge between the ASHC technique and the moment-matching-based MOR technique, the ASHC technique can also be regarded as a model order reduction method for control design. From this perspective, although several studies exist, e.g. , [15]–[17], most of the available results are confined to linear systems with certain assumptions on system/controller structures. Therefore, the contribution of this work can be alternatively viewed as a novel approach to employing reduced-order models for controlling nonlinear systems. The remainder of this paper is organised as follows. Sec-tion II recalls some preliminary notions. Section III formulates the ASHC problem by extending its two key classical require-ments to the nonlinear setting. Then, the solution to the ASHC problem is provided in Section IV, which first addresses each key requirement individually and then outlines the overall design procedures to satisfy both requirements. An illustrative example based on the DC-to-DC ´Cuk converter, along with step-by-step solutions, is presented in Section V, which is followed by some concluding remarks in Section VI. 
+
+Notation. The symbols R, R≥0, and R>0 denote the set of real numbers, non-negative real numbers and positive real num-bers, respectively. The symbol In indicates an n-dimensional identity matrix and the symbol 0m×n represents a zero matrix in Rm×n. The superscript ⊤ denotes the transposition operator and the superscript † denotes the Moore-Penrose pseudoinverse operator. Given any vector x ∈ Rn with a positive definite matrix Q ∈ Rn×n, ∥x∥ indicates its Euclidean norm and 
+
+∥x∥Q represents its weighted norm px⊤Qx . Given a bounded function x : R → Rn, ∥x∥∞ := sup t≥0 ∥x(t)∥ denotes its L∞ norm. A function γ : R≥0 → R≥0 belongs to class K if it is continuous, strictly increasing, and satisfies 
+
+γ(0) = 0 . A function γ is said to belong to class K∞ if 
+
+γ ∈ K and γ(r) → +∞ as r → +∞. A continuous function 
+
+β : R≥0 × R≥0 → R≥0 belongs to class KL if, for each fixed 
+
+t, the function β(·, t ) belongs to class K and, for each fixed r,
+
+β(r, ·) is strictly decreasing and satisfies lim t→+∞ β(r, t ) = 0 .Given any function f : N → M for some set N ⊆ Rn and 
+
+M ⊆ Rm, the image (also called range) of f is defined as 
+
+Im( f ) := {f (x) | x ∈ N} ⊆ M, while the kernel of f is denoted by Ker( f ) := {x ∈ N | f (x) = 0 } ⊆ N.
+
+II. P RELIMINARIES 
+
+In this section, we formulate the nonlinear systems studied in this paper, and we recall the definition of stabilisability for nonlinear systems. 
+
+A. Nonlinear Control Systems 
+
+The class of continuous-time nonlinear control systems to be studied is defined as follows. 
+
+Definition 1: A control system Σ is a tuple Σ =(Rn, U, U, f, Rp, h ), where Rn, Rp are the state and output spaces, respectively, and  
+
+> •
+
+U ⊆ Rm is the input space containing the origin.  
+
+> •
+
+U is a set of all measurable functions of time, from some open interval ℓ ⊆ R to U. 
+
+> •
+
+f : Rn × Rm → Rn is a locally Lipschitz continuous mapping, i.e. , given any compact set Xl ⊂ Rn, there exists a constant Lf ∈ R>0 such that ∥f (x, u ) − f (z, u )∥ ≤ 
+
+Lf ∥x − z∥ for all x, z ∈ Xl. 
+
+> •
+
+h : Rn → Rp is the output mapping. ■
+
+Then for any open interval ℓ ⊆ R, we say that a locally absolutely continuous function x(t) ∈ Rn and a curve y(t) ∈
+
+Rp are the state trajectory and the output trajectory of system Σ
+
+if there exists an input function u ∈ U satisfying 
+
+Σ : 
+
+ ˙x = f (x, u),
+
+y = h(x), (1) for almost all t ∈ ℓ. Throughout this paper, we assume that all considered control systems of the form Σ are forward complete [18], i.e. , given any state trajectory with initial condition x(t0) = x0 ∈ Rn and controlled by any input u ∈ U ,there exists a function Φxf : R × R × Rn × Rm → Rn such that 
+
+x(t) = Φ xf
+
+ t, t 0, x 0, u[t0,t )
+
+
+
+for all t ∈ [t0, +∞). The uniqueness of Φxf (tf , t 0, x 0, u) is guaranteed by the Lipschitz property of f , see [19]. From now on, we indicate with Σ = ( Rn, U, U, f, Rp, h )
+
+the concrete system, i.e. , the complex nonlinear system that we want to control. We indicate with Σ′ =  Rˆn, R ˆm, V, ϕ, Rp, κ 
+
+the (simpler) abstract system, which has state and output trajectories satisfying 
+
+Σ′ :
+
+ ˙ξ = ϕ(ξ, v),
+
+ψ = κ(ξ), (2) AUTHOR et al. : TITLE 3
+
+for some input v ∈ V . Note that both systems Σ and Σ′ have the same observation space ( i.e. , Rp), but may possess different state and input spaces. 
+
+B. Notion of Stabilisability 
+
+We now recall some stabilisability conditions that will be used later in this paper. For brevity, denote ∆ := 
+
+{(x, z ) ∈ Rn × Rn | x = z} as a diagonal set on R2n. Then we have the following definition. 
+
+Definition 2 (Asymptotic Stabilisability [11]): A control system Σ = ( Rn, U, U, f, Rp, h ) is said to be asymptotically stabilisable 1 if there exists a function k : Rn × Rn × U → U
+
+satisfying: i) k is continuously differentiable on R2n\∆;ii) k(z, x, u ) = u for all (x, z ) ∈ ∆;and rendering the system ( ˙ x, ˙z) = ( f ×k f ) (( x, z), u) where 
+
+(f ×k f ) (( x, z ), u ) := ( f (x, u ), f (z, k (z, x, u ))) (3) uniformly globally asymptotically stable with respect to ∆,that is, enforcing that for all x0, z 0 ∈ Rn, ℓ = [ t0, +∞) with 
+
+t0 ∈ R, u ∈ U , and t ∈ ℓ, there exists a class KL function βk
+
+satisfying 
+
+∥Φxf (t, t 0, x 0, u[t0,t ))−Φzf (t, t 0, z 0, u∗
+
+> [t0,t )
+
+)∥ ≤ βk(∥x0 −z0∥, t ),
+
+(4) where the input function u∗(t) := k(z(t), x(t), u(t)) =
+
+k(Φ zf (t, t 0, z 0, u∗
+
+> [t0,t )
+
+), Φxf (t, t 0, x 0, u[t0,t )), u(t)) . ■
+
+By Definition 2, a control system Σ is asymptotic stabilisable if for any state trajectory x controlled by an input u, there exists a feedback control law u∗ = k(z, x, u) such that another state trajectory z starting with any initial condition z0 asymptotically converges to x. This property can be checked by a Lyapunov criterion as follows. 
+
+Theorem 1: [11, Proposition 2.7] A control system Σ = (Rn, U, U, f, Rp, h ) is asymptotically stabilisable if and only if there exist: i) a function k : Rn × Rn × U → U satisfying: a) k is continuously differentiable on R2n\∆;b) k(z, x, u ) = u for all (x, z ) ∈ ∆,c) f ×k f defined in (3) is forward complete. ii) a smooth function V : Rn × Rn → R≥0 and class K∞
+
+functions α, ¯α, α for which the following inequalities hold for all x, z ∈ Rn and u ∈ U:
+
+α(∥x − z∥) ≤ V (x, z ) ≤ ¯α(∥x − z∥), (5a) 
+
+∂V ∂x f (x, u ) + ∂V ∂z f (z, k (z, x, u )) ≤ − α(∥x − z∥). (5b) 
+
+■
+
+Instead of checking (4), the Lyapunov criterion in Theorem 1 provides a constructive way of characterising the asymptotic stabilisability property. Note also that, by comparing this prop-erty with the incremental stability in [20], any incrementally stable system is asymptotically stabilisable with k(z, x, u ) = u
+
+for all (x, z ) ∈ R2n. In other words, asymptotic stabilisability is a less restrictive condition than incremental stability. 
+
+> 1The property was originally called Stabilizability Assumption II in [11, Definition 2.5].
+
+III. ASHC P ROBLEM : F ORMULATION 
+
+In this section, we formulate the ASHC problem for the class of nonlinear systems Σ = ( Rn, U, U, f, Rp, h ). To this end, we first need to introduce some definitions and initial results that allow us to extend the two key design requirements of the classical ASHC problem, namely the bounded output discrepancy and the m-relation. 
+
+A. Requirement 1: Bounded Output Discrepancy 
+
+To provide guarantees on the trajectories of the concrete system when implementing the ASHC technique shown in Fig. 1, one key requirement is that the output discrepancy of the two systems Σ and Σ′ is bounded through a so-called “simulation function”, which was originally introduced by [12] as a generalisation of the concept of simulation relation, see [21]–[23]. Now we define the simulation function introduced in [3] with slight modifications. 
+
+Definition 3 (Simulation Function): Consider systems Σ
+
+and Σ′. Given a set V ⊆ Rˆn, a continuously differentiable function W : V × Rn → R≥0 is called a local simulation function of system Σ′ to system Σ and a function uw :
+
+V × Rn × R ˆm → U is an associated local interface if there exist functions αh, η ∈ K ∞ and γ ∈ K such that 
+
+W (ξ, x ) ≥ αh (∥κ(ξ) − h(x)∥) , (6) and 
+
+∇W (ξ, x )T
+
+ ϕ(ξ, v )
+
+f (x, u w(ξ, x, v )) 
+
+
+
+< −η (W (ξ, x )) + γ(∥v∥),
+
+(7) for all (ξ, x ) ∈ V × Rn and v ∈ R ˆm. ■
+
+There are two main differences between Definition 3 and [3, Definition 1]. On the one hand, Definition 3 is a local version of [3, Definition 1] where V = Rˆn. The reason for this change will be explained later. On the other hand, the functions 
+
+αh and η in [3, Definition 1] are assumed to be identity mappings. Despite these changes, similarly to [3, Theorem 1], the simulation function defined in Definition 3 still quantifies a bound on the error of the outputs of systems Σ and Σ′, as shown in the next result. 
+
+Theorem 2: Consider the hierarchical structure in Fig. 1. Suppose W is a local simulation function from Σ′ to Σ on some set V ⊆ Rˆn and uw is the associated local interface. Then, there exists a function β ∈ KL such that for any measurable input function v : [ t0, +∞) → R ˆm enforcing the state trajectory 
+
+ξ(t) ∈ V for all t ≥ t0, the output trajectories ψ of system Σ′
+
+and y of system Σ satisfy 
+
+∥ψ(t) − y(t)∥ ≤ α−1 
+
+> h
+
+(β(W (ξ0, x 0), t )) + α−1 
+
+> h
+
+(η−1(2 γ(∥v∥∞))) (8) for all t ≥ t0 with any initial conditions ξ(t0) = ξ0 ∈ V and 
+
+x(t0) = x0 ∈ Rn at any initial time t0 ∈ R.
+
+Proof: For any t ≥ t0, the satisfaction of the inequality (7) implies that 
+
+W (ξ(t), x(t)) = W (ξ0, x 0) + 
+
+Z tt0
+
+dW (ξ(τ ), x(τ )) 
+
+dτ dτ 
+
+≤
+
+Z tt0
+
+(−η (W (ξ(τ ), x(τ ))) + γ(∥v∥∞)) dτ. 4 IEEE TRANSACTIONS AND JOURNALS TEMPLATE 
+
+Then [8, Lemma 3.6] yields the existence of a KL function β
+
+such that 
+
+W (ξ(t), x(t)) ≤ max β(W (ξ0, x 0), t ), η −1(2 γ(∥v∥∞)) ,
+
+which, by the inequality (6), yields that 
+
+∥ψ(t) − y(t)∥ ≤ α−1 
+
+> h
+
+(W (ξ(t), x(t))) 
+
+≤ max α−1 
+
+> h
+
+(β(W (ξ0, x 0), t )) , α −1 
+
+> h
+
+(η−1(2 γ(∥v∥∞))) .
+
+This result implies the satisfaction of the inequality (8). Theorem 2 provides a guarantee on the discrepancy be-tween the outputs of systems Σ and Σ′. This guarantee is fundamental when implementing the ASHC technique. For example, consider the task of controlling a concrete system Σ
+
+such that the output y(t) tracks a given reference trajectory 
+
+r : [ t0, +∞) → Y ⊆ Rp under the constraint ∥r(t)−y(t)∥ ≤ ϵ
+
+for some ϵ ≥ 0 and t0 ∈ R. While we assume that it is possible to control y(t) = r(t) for all t ≥ t0, directly controlling system Σ can result in high complexity in controller design and implementation. Alternatively, one can first design a controller for an abstract system Σ′ with ψ(t) = r(t) with some input trajectory v(t). Then by implementing ASHC onto system Σ,the error constraint ∥r(t) − y(t)∥ ≤ ϵ is guaranteed to be satisfied if v(t) is such that 
+
+α−1 
+
+> h
+
+(β(W (ξ0, x 0), t )) + α−1 
+
+> h
+
+(η−1(2 γ(∥v∥∞))) ≤ ϵ. (9) Note that the first term in the left side of (9) can be minimised by some appropriate choice of the initial conditions ξ0 and x0.From the above reference-tracking example, we can see that, as a control problem generally specifies an output subspace 
+
+Y ⊆ Rp of interest, a simulation function and an interface in Definition 3 need not exist for all ξ ∈ Rˆn, as the abstract system, by the ASHC technique, is normally controlled to operate within a certain state subspace V to generate some expected output trajectories ψ(t) ∈ Y. In such a case, a basic requirement for the set V is that 
+
+V ⊆ Rˆn : ∀ψ ∈ Y, ∃ ξ ∈ V s.t. ψ = κ(ξ), (10) which ensures that when the abstract system Σ′ is operating with the expected output ψ(t) ∈ Y, the simulation function and the interface can guarantee the boundedness in the output discrepancy between the two systems Σ and Σ′.
+
+Remark 1: The simulation function in Definition 3 has a similar mathematical structure to the one used in [4, Definition 3.2]. However, key distinctions exist, as [4, Definition 3.2] imposes a global definition and does not explicitly specify an associated interface function. Moreover, despite this structural similarity, Theorem 2 and its proof establish a tighter bound than that presented in [4, Theorem 3.3]. 
+
+B. Requirement 2: m-Relation 
+
+While the simulation function provides guarantees on the output discrepancy when implementing the ASHC technique, another classical requirement on the abstraction design, as discussed in [3], is the preservation of all possible output behaviours of the concrete system. To characterise this property, we introduce the following definition. 
+
+Definition 4: Given a set Y ⊆ Rp, let Xy = {x ∈
+
+Rn | h(x) ∈ Y}. Suppose for any u ∈ U and x ∈ Xy , there exists a mapping m : Xy → Rˆn and a vector v ∈ R ˆm such that 
+
+∂m (x)
+
+∂x f (x, u ) = ϕ(m(x), v ), (11a) 
+
+h(x) = κ(m(x)) . (11b) Then we say that system Σ is m-related to system Σ′ on Y.
+
+■
+
+Definition 4 is a generalisation of the Π-relation defined in [3, Definition 3], which guarantees, in the linear time-invariant (LTI) case, that all possible output trajectories of the concrete system can be reproduced by the abstract system. Similarly, this m-relation in Definition 4 implies the following result. 
+
+Theorem 3: Given a set Y ⊆ Rp. If system Σ′ is m-related to system Σ on Y, then for any output trajectory y : ℓ → Y
+
+of system Σ on some open interval ℓ ⊆ R, ψ(t) = y(t) is also an output trajectory of system Σ′ for all t ∈ ℓ. ■
+
+Proof: Recall that Xy = {x ∈ Rn | h(x) ∈ Y}. The satisfaction of (11a) implies the existence of an input v such that an invariant manifold Ms = {(x, ξ ) ∈ (Xy × Rˆn) | ξ =
+
+m(x)} exists, i.e. , for all state trajectory x : ℓ → Xy of system Σ, ξ(t) = m(x(t)) is a state trajectory of system Σ′
+
+for all t ∈ ℓ. Consequently, the satisfaction of (11b) implies that for any output trajectory y : ℓ → Y of system Σ, y(t) = 
+
+h(x(t)) = κ(m(x(t))) = κ(ξ(t)) = ψ(t) is also an output trajectory of system Σ′ for all t ∈ ℓ.Theorem 3 indicates the importance of the m-relation in various control tasks. For example, we recall the previous reference-tracking task described after Theorem 2. An impor-tant premise for the constraint (9) to be satisfied is that the reference trajectory r(t) ∈ Y expected to be tracked by the concrete system Σ can be perfectly tracked by the output of the abstract system Σ′, i.e. , ψ(t) = r(t). This property, by Theorem 3, is ensured by the m-relation in Definition 4. Note also that, similarly to what is discussed in Section III-A, the output trajectory y of system Σ is typically expected to vary within a specific region of interest Y. Therefore, unlike the classical Π-relation that is defined globally for LTI systems [3, Definition 3], the proposed m-relation is defined with respect to some specified output subspace Y ⊆ Rp of interest, which is not necessarily equal to Rp.With all the required results introduced, we are ready to formulate the nonlinear ASHC problem. 
+
+Problem 1 (Nonlinear ASHC): Given a nonlinear concrete system Σ and an output subspace Y of interest, design an abstract system Σ′ and a (locally defined) interface function 
+
+uw such that the following two tasks are solved. (1) For some V satisfying (10), there exists a (locally-defined) simulation function W for all (ξ, x ) ∈ V × Rn;(2) The abstract system Σ′ is m-related to the concrete system Σ on Y.
+
+IV. ASHC P ROBLEM : C ONSTRUCTIVE SOLUTION 
+
+In this section, we present constructive methods for designing the abstract system Σ′ and the function uw that guarantee the satisfaction of each of the two key requirements: the bounded AUTHOR et al. : TITLE 5
+
+output discrepancy and the m-relation. To this end, in the rest of this paper we consider the design of an abstract system Σ′
+
+in the input affine form, i.e. ,
+
+ϕ(ξ, v ) = ¯ϕ(ξ) + δ(ξ)v, (12) where ¯ϕ : Rˆn → Rˆn and δ : Rˆn → Rˆn× ˆm satisfy the same regularity conditions as ϕ, and therefore as f of the concrete system Σ.In fact, most solutions in this paper consider the case that system Σ is also input affine, i.e. ,
+
+f (x, u ) = ¯f (x) + g(x)u, (13) with ¯f : Rn → Rn and g : Rn → Rn×m also satisfy the same regularity conditions as f . Nevertheless, we will show that the core results can be extended to general nonlinear systems. 
+
+A. Bounded Output Discrepancy 
+
+As discussed in Section III, an essential design requirement of the ASHC problem is to guarantee the existence of a simulation function that bounds the outputs of systems Σ
+
+and Σ′ in the hiararchical framework in Fig. 1. We now provide a method for characterising the simulation function and the associated interface, relying on the following assumption. 
+
+Assumption 1: The output mapping h of system Σ is Lipschitz continuous, i.e. , there exists a constant Lh ∈ R>0
+
+such that ∥h(x) − h(z)∥ ≤ Lh∥x − z∥ for all x, z ∈ Rn.
+
+Theorem 4: Consider system Σ satisfying (13) and sys-tem Σ′ satisfying (12). Suppose system Σ is asymptotically stabilisable and satisfies Assumption 1. Assume there exist a set V ⊆ Rˆn and mappings p : V → Rn and l : V → U that solve 
+
+∂p (ξ)
+
+∂ξ ¯ϕ(ξ) = ¯f (p(ξ)) + g(p(ξ)) l(ξ), (14a) 
+
+κ(ξ) = h(p(ξ)) , (14b) for all ξ ∈ V. Then the function W (ξ, x ) = V (p(ξ), x ) with 
+
+V satisfying (5) is a local simulation function of Σ′ to Σ with the associated local interface 
+
+uw(ξ, x, v ) = k(x, p (ξ), l (ξ)) + u∗(ξ, x, v ) (15) for some function u∗ : V × Rn × R ˆm → U if the function V
+
+in (5) satisfies the following boundedness condition. 
+
+(B) There exist functions α∗ ∈ K ∞ and γ ∈ K such that the function αd := α − α∗ ∈ K ∞ with α in (5b), and 
+
+∂V (p(ξ), x )
+
+∂p (ξ)
+
+∂p (ξ)
+
+∂ξ δ(ξ)v + ∂V (p(ξ), x )
+
+∂x g(x)u∗
+
+≤ α∗(∥p(ξ) − x∥) + γ(∥v∥)
+
+(16) holds for all (ξ, x ) ∈ V × Rn and v ∈ R ˆm.
+
+Proof: To prove the theorem, we need to show that the function W (ξ, x ) = V (p(ξ), x ) with the interface uw
+
+in (15) satisfies (6) and (7) . In fact, since system Σ is asymptotically stabilisable and therefore V satisfies (5a) ,
+
+W (ξ, x ) = V (p(ξ), x ) satisfies 
+
+W (ξ, x ) ≥ α(∥p(ξ) − x∥) ≥ α
+
+ 1
+
+Lh
+
+∥h(p(ξ)) − h(x)∥
+
+
+
+,
+
+where the last inequality is derived based on Assumption 1. Then, by (14b) , we obtain W (ξ, x ) ≥ α  1 
+
+> Lh
+
+∥κ(ξ) − h(x)∥,implying that W (ξ, x ) satisfies (6) with αh(·) = α( 1 
+
+> Lh
+
+(·)) .Then to show (7) , as functions f and ϕ satisfy (13) and (12) respectively, we have 
+
+∇W (ξ, x )T
+
+ ϕ(ξ, v )
+
+f (x, u w(ξ, x, v )) 
+
+
+
+= ∂W ∂p (ξ)
+
+∂p (ξ)
+
+∂ξ 
+
+  ¯ϕ(ξ) + δ(ξ)v + ∂W ∂x 
+
+  ¯f (x)+ g(x)uw
+
+
+
+= ∂W ∂p (ξ) f (p(ξ), l (ξ))+ ∂W ∂x 
+
+  ¯f (x)+ g(x)uw
+
++ ∂W ∂ξ δ(ξ)v, 
+
+where ∂W (ξ, x )/∂p (ξ) = V (p(ξ), x )/∂p (ξ), and the last equation is derived from (14a) . Remember that W (ξ, x ) = 
+
+V (p(ξ), x ) with V satisfying (5b) and the interface uw is designed as (15). If condition (B) holds, we obtain 
+
+∇W (ξ, x )T
+
+ ϕ(ξ, v )
+
+f (x, u w(ξ, x, v )) 
+
+
+
+= ∂W ∂p (ξ) f (p(ξ), l (ξ)) + ∂W ∂x 
+
+  ¯f (x) + g(x)k(x, p (ξ), l (ξ)) 
+
++ ∂W ∂p (ξ)
+
+∂p (ξ)
+
+∂ξ δ(ξ)v + ∂W ∂x g(x)u∗
+
+≤ − α (∥p(ξ) − x∥) + ∂W ∂p (ξ)
+
+∂p (ξ)
+
+∂ξ δ(ξ)v + ∂W ∂x g(x)u∗
+
+≤ − α (∥p(ξ) − x∥) + α∗ (∥p(ξ) − x∥) + γ(∥v∥)
+
+≤ − αd (∥p(ξ) − x∥) + γ(∥v∥).
+
+Now consider again that W (ξ, x ) = V (p(ξ), x ) with V
+
+satisfying (5a) , we have W (ξ, x ) ≤ α(∥p(ξ) − x∥), or equivalently, α−1(W (ξ, x )) ≤ ∥ p(ξ) − x∥. This finally implies 
+
+−αd(∥p(ξ) − x∥) + γ(∥v∥) ≤ − αd ◦ α−1(W (ξ, x )) + γ(∥v∥),
+
+showing that W satisfies (7) with η = αd ◦ α−1.Theorem 4 presents a constructive way of designing an abstract system Σ′ and an interface uw to guarantee the existence of a simulation function under the extra condition (B) .We now provide a sufficient condition that can ensure the satisfaction of this condition. 
+
+Proposition 1: Consider condition (B) . Suppose the set V ⊆
+
+Rˆn is compact, the mapping p that solves (14) is continuously differentiable, and the mapping δ is continuous for all ξ ∈ V.Then there exist functions α∗ ∈ K ∞ and γ ∈ K such that (16) holds with u∗ ≡ 0 if there exists a function ˆα∗ ∈ K ∞ such that V in (5) satisfies 
+
+∂V (x, z )
+
+∂x 
+
+> 2
+
+≤ ˆα∗(∥x − z∥) (17) for all x, z ∈ Rn.
+
+Proof: Consider (16) and let u∗ ≡ 0. By the Cauchy-Schwarz inequality and Young’s inequality, the left-hand side of (16) comes down to 
+
+∂V (p(ξ), x )
+
+∂p (ξ)
+
+∂p (ξ)
+
+∂ξ δ(ξ)v ≤ ∂V (p(ξ), x )
+
+∂p (ξ)
+
+∂p (ξ)
+
+∂ξ δ(ξ)v
+
+≤ ε
+
+2
+
+∂V (p(ξ), x )
+
+∂p (ξ)
+
+> 2
+
++ 12ε
+
+∂p (ξ)
+
+∂ξ δ(ξ)
+
+> 2
+
+∥v∥2
+
+(18) 6 IEEE TRANSACTIONS AND JOURNALS TEMPLATE 
+
+for any ε > 0. Note that since p is continuously differentiable with δ continuous, there exists a positive constant ¯d such that 
+
+∂p (ξ)
+
+∂ξ δ(ξ)
+
+> 2
+
+≤ ¯d
+
+for all ξ ∈ V with V a compact set. Then by (17) , there exist functions α∗ = ε 
+
+> 2
+
+ˆα∗ ∈ K ∞ and γ(r) = ¯d 
+
+> 2ε
+
+r2 such that 
+
+ε
+
+2
+
+∂V (p(ξ), x )
+
+∂p (ξ)
+
+> 2
+
++ 12ε
+
+∂p (ξ)
+
+∂ξ δ(ξ)
+
+> 2
+
+∥v∥2
+
+≤ α∗(∥p(ξ) − x∥) + γ(∥v∥),
+
+(19) 
+
+i.e. , (16) holds. By Theorem 4 and Proposition 1, condition (B) that guar-antees the existence of a simulation function can be satisfied if the Lyapunov function V in (5) satisfies (17) with αd =
+
+α − α∗ = α − ε 
+
+> 2
+
+ˆα∗ ∈ K ∞. In fact, condition (17) can be easily satisfied if V is quadratic, i.e. , V (x, z ) = ( x − z)⊤P (x − z)
+
+for some positive definite matrix P ∈ Rn×n. This is true for many incrementally stable systems, see [24]. In this case, the requirement αd = α − ε 
+
+> 2
+
+ˆα∗ ∈ K ∞ can also be naturally satisfied by an appropriate choice of the free parameter ε, as both α and ˆα∗ can be quadratic. 
+
+Remark 2: Although Proposition 1 ensures the satisfaction of condition (B) with u∗ ≡ 0, the input function u∗ could be used to minimise the bound in (16) , thereby minimising the bound (8) , as long as condition (B) is satisfied. In particular, we can adopt a linear structure with respect to v as 
+
+u∗(ξ, x, v ) = q(ξ, x )v (20) for some function q : V × Rn → Rm× ˆm. Substituting this into (16) yields 
+
+∂V (p(ξ), x )
+
+∂p (ξ)
+
+∂p (ξ)
+
+∂ξ δ(ξ)v + ∂V (p(ξ), x )
+
+∂x g(x)u∗
+
+≤ ∂V (p(ξ), x )
+
+∂p (ξ)
+
+∂p (ξ)
+
+∂ξ δ(ξ) + ∂V (p(ξ), x )
+
+∂x g(x)q(ξ, x ) ∥v∥.
+
+When q ≡ 0, this expression naturally reduces to the bound for (16) established by Proposition 1. Instead, one can de-sign q to minimise the norm factor ∂V (p(ξ),x ) 
+
+> ∂p (ξ)
+> ∂p (ξ)
+> ∂ξ
+
+δ(ξ) +   
+
+> ∂V (p(ξ),x )
+> ∂x
+
+g(x)q(ξ, x ) . For instance, in the linear case, q can simply be chosen as a constant matrix, see [3, Proposition 1]. We further illustrate this design for nonlinear systems through the example in Section V. 
+
+Remark 3: Several similarities to the linear method in [3, Theorem 2] can be identified. Theorem 4 could be seen as a nonlinear generalisation of [3, Theorem 2], where the asymptotic stabilisability assumption boils down to the stabilisability of the linear concrete system, and Assumption 1 trivially holds. We also note that condition (B) naturally holds as the Lyapunov function in (5) for linear systems is quadratic and therefore (17) holds. In fact, the same simplification as in (18) has been used in the linear case to prove the boundedness in (16) , see [3, Theorem 2] and [25, Equation (3.12)]. Finally, note that the PDE in (14a) is a nonlinear extension of the Sylvester equation in [3, Equation (8)], and it defines an invariant manifold Md = {(x, ξ ) ∈ (Rn × V) | x = p(ξ)}
+
+in the interconnection in Fig. 1 when v ≡ 0.
+
+Remark 4: When system Σ is not input-affine, Theorem 4 still works with the right side of (14a) replaced by f (p(ξ), l (ξ)) .In this case, condition (B) can still be satisfied using Proposi-tion 1. Therefore, the result proposed in this subsection can be extended to general nonlinear systems. 
+
+Remark 5: The method in Theorem 4 relies on the solution of the PDE in (14a) . Although an analytic solution p is not easy to obtain, especially for high-dimensional concrete systems, various studies have presented numerical methods for approximating such a solution for reduced-order modelling or control purposes, see, e.g. , [26]–[29]. One special case of (14a) is to design ¯ϕ(ξ) ≡ 0ˆn×ˆn. In this manner, the resulting equation (14a) becomes an algebraic equation f (p(ξ), l (ξ)) = 0, obviating the need for solving PDEs. 
+
+B. m-Relation 
+
+As mentioned in Section III, the second design requirement of the ASHC problem is the preservation of all possible output behaviours of the concrete system. This preservation is specified by the so-called m-relation in Definition 4, which depends on the solvability of equations (11) for any input u. Now we show that this condition can be simplified when the concrete system is input-affine. 
+
+Lemma 1: Given a set Y ⊆ Rp, let Xy = {x ∈ Rn | h(x) ∈
+
+Y}. Suppose systems Σ and Σ′ are input affine and therefore satisfies (13) and (12) , respectively. Then system Σ is m-related to system Σ′ on Y if there exist functions m : Xy → Rˆn,
+
+b : Xy → R ˆm, and c : Xy → R ˆm×m such that 
+
+∂m (x)
+
+∂x ¯f (x) = ¯ϕ(m(x)) + δ(m(x)) b(x), (21a) 
+
+∂m (x)
+
+∂x g(x) = δ(m(x)) c(x), (21b) 
+
+h(x) = κ(m(x)) . (21c) for all x ∈ Xy .
+
+Proof: Suppose (21) holds for all u ∈ U and x ∈ Xy .Consider the PDE (11a) . Since f and ϕ satisfy (13) and (12) ,respectively, by substituting v = b(x) + c(x)u, (21a) and (21b) yields that 
+
+ϕ(m(x), v ) = ¯ϕ(m(x)) + δ(m(x))( b(x) + c(x)u)= ¯ϕ(m(x)) + δ(m(x)) b(x) + δ(m(x)) c(x)u
+
+= ∂m (x)
+
+∂x ¯f (x) + ∂m (x)
+
+∂x g(x)u = ∂m (x)
+
+∂x f (x, u )
+
+for any u ∈ U and x ∈ Xy . As (21c) is identical to (11b) , this concludes the proof. Lemma 1 is a generalisation of [14, Theorem 5] to the nonlinear case. It proposes a sufficient condition for the m-relation under the restriction that the input v driving system Σ′
+
+takes the form 
+
+v = b(x) + c(x)u, (22) and the resulting condition (21) only depends on the parameters of systems Σ and Σ′. Moreover, together with Theorem 3 and its proof, the satisfaction of (21) also implies that the outputs of systems Σ and Σ′ in the interconnection in Fig. 2 match one another ( y ≡ ψ) when both systems are initialised on the manifold Ms = {(x, ξ ) ∈ (Xy × Rˆn) | ξ = m(x)} for any AUTHOR et al. : TITLE 7 
+
+> Fig. 2. Interconnection to illustrate the design of m-relation.
+
+input u. Now we show that the sufficient condition (21) is not difficult to satisfy. 
+
+Theorem 5: Consider any functions m : Xy → Rˆn and 
+
+κ such that (21c) holds for all x ∈ Xy . Suppose m is differentiable. Then there exist functions b : Xy → R ˆm and 
+
+c : Xy → R ˆm×m such that (21a) and (21b) are satisfied for all x ∈ Xy if δ(x) is of full row rank for all x ∈ Xy .
+
+Proof: Suppose rank( δ(x)) = ˆn for all x ∈ Xy .Then for any function m, there exist functions b and c
+
+solving (21a) and (21b) for all x ∈ Xy . In fact, it is possible to select b(x) = δ†(m(x))   ∂m (x) 
+
+> ∂x
+
+¯f (x) − ¯ϕ(m(x)) 
+
+and c(x) = δ†(m(x)) ∂m (x) 
+
+> ∂x
+
+g(x).Theorem 5, together with Lemma 1, yields that the m-relation can be sufficiently guaranteed if δ(x) is right invertible for all x ∈ Xy . As a consequence, one can simply design 
+
+δ ≡ Iˆn, implying the input space covers the whole state space. Note that Theorem 5 omitted the solvability of (21c) .If we only focus on the m-relation (without bounded output discrepancy requirement), this equation is easy to satisfy, as one can simply design κ(ξ) = ξ and m(x) = h(x), so long as 
+
+h is differentiable. However, (21c) is more difficult to satisfy if the bounded output discrepancy requirement in Section IV-A must also hold. This issue is discussed in the next subsection. 
+
+Remark 6: For readers who are familiar with MOR tech-niques, the equations in (14) and (21) are similar to those used for nonlinear moment-matching [30, Theorem 7]. In fact, there exists a conceptual relation between the classical ASHC technique in [3] and the moment-matching-based MOR technique [2], [30], [31]. This relation has been studied by [14] in the linear context, and the results therein extend, by means of the framework presented in this paper, to the nonlinear case. For example, when comparing (14) with the nonlinear moment matching condition [2, Section 3.2], the hierarchical structure in Fig. 1 with v ≡ 0 can be seen as a “direct interconnection” structure by moment matching, see [14, Section III-A]. In this MOR context, the abstract system Σ′ with δ(ξ) = 0 behaves as a signal generator, or it can be regarded as a “limiting” reduced order model in the sense of moment matching, as it matches the “moment” (defined by h ◦ p) of system Σ at ( ¯ϕ, l ) only when v ≡ 0. A similar result also exists when interpreting the m-relation in Fig. 2 through the lens of moment matching, see [14, Section III-B]. 
+
+C. Achieving Two Design Requirements 
+
+Now we consider how to design the abstract system Σ′ and the interface function uw in (15) to simultaneously satisfy the two aforementioned requirements in the ASHC problem, i.e. ,to solve Problem 1. According to Section IV-A, the bounded output discrepancy requires the determination of the mappings 
+
+p : V → Rn and l : V → U that solve (14) for some 
+
+V satisfying (10) to guarantee the existence of a simulation function W . Then, according to Section IV-B, the m-relation requires the satisfaction of (21) for some mapping m : Xy →
+
+Rˆn, so that no controllable behaviour of system Σ on the specified state space Xy is disgarded when manipulating Σ′.Therefore, (14) and (21) are crucial for solving the ASHC problem. The main obstacle that hinders the concurrent solvability of (14) and (21) lies in the satisfaction of (14b) and (21c) .In fact, for any functions p and l that solve (14a) , if there exist functions m and κ such that (14b) and (21c) hold (and therefore (14) holds), then Theorem 5 yields that (21a) and (21b) also hold with any δ such that rank( δ(x)) = ˆ n for all x ∈ Xy . The following lemma provides conditions for (14b) and (21c) to hold simultaneously. 
+
+Theorem 6: Consider any functions p, l, ¯ϕ, and κ that solve (14) . Then (21c) holds for all x ∈ Xy if there exists a function m satisfying the following conditions: (i) for any x ∈ Xy ∩ Im( p), we have p(m(x)) = x.(ii) for any x ∈ Xy \ Im( p), there exists a vector x′ ∈ Xy ∩
+
+Im( p) such that m(x) = m(x′) and h(x) = h(x′).
+
+Proof: Suppose m satisfies condition (i). As (14b) holds, we have κ(m(x)) = h(p(m(x))) = h(x), i.e. , (21c) is satisfied for all x ∈ Xy ∩ Im( p). Now, suppose m also satisfies condition (ii). By (14b) and condition (i), we obtain 
+
+κ(m(x)) = h(p(m(x))) = h(p(m(x′))) = h(x′) = h(x) for all x ∈ Xy \Im( p). As a result, (21c) holds for all x ∈ Xy .A sufficient condition for condition (i) in Theorem 6 to hold is that the function p is injective. In such a case, one can define the function m as a left-inverse of p and therefore 
+
+m(p(ξ)) = m(x) = ξ holds for any ξ ∈ V. Consequently, given any x ∈ Xy ∩ Im( p), we have p(m(x)) = p(ξ) = x,
+
+i.e. , condition (i) holds. Then x′ in condition (ii) satisfies x′ =
+
+p(m(x)) and such condition reduces to h(x) = h(p(m(x))) for all x ∈ Xy \ Im( p). This discussion suggests that condition (ii) necessitates 
+
+h (Xy \ Im( p)) ⊆ h (Im( p)) . (23) In fact, condition (ii) can be further simplified under a certain linearity condition. 
+
+Corollary 1: Consider system Σ. Suppose the function h is linear and assume there exists a function m satisfying condition (i) in Theorem 6. Then condition (ii) also holds if and only if 
+
+x − p(m(x)) ∈ Ker( h) (24) for all x ∈ Xy \ Im( p).
+
+Proof: Sufficiency: Suppose p and h satisfy (24) . Then for any x ∈ Xy \ Im( p), let x′ = p(m(x)) ∈ Xy ∩ Im( p) and 
+
+¯x = x − p(m(x)) ∈ Ker( h). Since m satisfies condition (i), we obtain m(x′) = m(p(m(x))) = m(x). The linearity of h
+
+yields that h(x) = h(x′) + h(¯ x) = h(x′), as ¯x ∈ Ker( h).
+
+Necessity: Suppose condition (ii) holds. Then for any x ∈
+
+Xy \ Im( p), m(x) = m(x′) with x′ ∈ Im( p). Since m also satisfies condition (i), we have p(m(x)) = p(m(x′)) = x′.8 IEEE TRANSACTIONS AND JOURNALS TEMPLATE Select , , and solving (14a)              
+
+> with injective and satisfying (23) Find that satisfies
+> condition (ii)?
+> Design solving (14b)
+> Identify all differentiable left-inverse mappings of the mapping
+> Find satisfying (5) and condition (B)
+> ASHC Problem:
+> given an
+> asymptotically
+> stabilisable
+> system satisfying
+> Assumption 1
+> Design a continuous function
+> such that (21a) and (21b) hold
+> ASHC Problem Solved
+> Requirement 1:
+> Bounded Output Discrepancy Requirement 2: -Relation
+> Yes
+> No
+> Characterise the error bound (8)
+> via the proof of Theorem 4
+> Fig. 3. Flow chart of the final design procedure for solving the nonlinear ASHC problem formulated in Problem 1.
+
+Now let ¯x = x − x′. As h(x) = h(x′) with h a linear function, we obtain h(¯ x) = h(x − x′) = h(x) − h(x′) = 0 , implying that (24) holds. 
+
+Remark 7: If systems Σ and Σ′ are linear, the functions 
+
+p and m become linear mappings and therefore Im( p) and 
+
+Ker( h) become vector spaces. Consequently, when Xy = Rn,(24) boils down to the condition Im( p) + Ker( h) = Rn, see [3, Lemma 3] for more details. Recall that regarding the solutions of (14) and (21) , Prob-lem 1 also requires the satisfaction of (10) . This condition is, in fact, ensured by satisfying the conditions (i) and (ii) in Theorem 6 (and therefore (21c) holds) with m being the left-inverse of p on its domain V. In this case, it is straightforward to see that Im( m) = V. Consequently, for any ψ = y = h(x) ∈ Y with any x ∈ Xy , the satisfaction of (21c) yields the existence of ξ = m(x) ∈ V such that 
+
+ψ = y = h(x) = κ(ξ), i.e. , (10) holds. By combining the results of Theorems 5 and 6, we summarise the steps for designing an input-affine abstract system Σ′ and an interface uw in (15) that guarantee (14) and (21) as follows. 1) Select functions p, l, ¯ϕ solving (14a) with p injective such that (23) holds. 2) Design the function κ solving (14b). 3) Identify all differentiable left-inverse mappings m of the mapping p.4) Find m that satisfies condition (ii). If not successful, return to step 1) to redesign the functions p, l, and ¯ϕ.5) Design δ such that (21a) and (21b) hold by following Theorem 5. 
+
+Remark 8: As required by Theorem 5 and in step 3) above, the differentiability of the function m is necessary for (21a) to hold. Since we have shown, below Theorem 6, that the function m is the left inverse of the injective function p, the differentiability of m can be guaranteed by selecting p to be a smooth immersion/embedding, see [32, Chapter 4] for more details. The above steps only guarantee the satisfaction of (10) , (14) ,and (21) . By Theorem 4 and Lemma 1, this means that the m-relation is satisfied, but the bounded output discrepancy is not guaranteed, as it requires extra conditions, i.e. , Assumption 1 and condition (B) as in (16) . By taking the simulation function into consideration, the final design procedure for solving Problem 1 is summarised in Fig. 3. In fact, for a general nonlinear function h of the concrete system Σ, deriving a constructive condition on the function p
+
+in (14) that guarantees the existence of a differentiable function 
+
+m satisfying Theorem 6 remains challenging. Nevertheless, it should be noted that in the context of ASHC, the m-relation requirement discussed in this subsection is not as critical as the bounded output discrepancy requirement in Section IV-A. In fact, the bounded output discrepancy is the core target of the ASHC technique, while the m-relation is added by some authors as a requirement to provide a sufficient guarantee of the input-output controllability of the constructed abstract system. On the one hand, this controllability guarantee is a sufficient but not necessary condition for preserving the ability of system Σ′ to recover some designated output behaviour of system Σ. Failing to satisfy the m-relation does not imply that system Σ is unable to satisfy the designated control goal. On the other hand, even if the control goal, in the worst case, cannot be satisfied exactly due to the lack of this controllability, the abstract system Σ′ can still be controlled to approximately 
+
+recover the expected output trajectory with a guaranteed output error bound. Finally, note that as indicated by Theorems 5 and 6, although the condition (21c) is not straightforward to satisfy, the other conditions (21a) and (21b) can be guaranteed by augmenting the rank of δ, i.e. , one can improve the input-output controllability by enlarging the input space of the abstract system Σ′ (to even cover the entire state space). For the above reasons, most existing literature in the ASHC field omits the study of m-relation. 
+
+V. I LLUSTRATIVE EXAMPLE 
+
+In this section, we illustrate the results presented in this paper with an example. To this end, we consider the ASHC problem of a DC-to-DC ´Cuk converter, and we solve the problem following the design procedures shown in Fig. 3. AUTHOR et al. : TITLE 9E
+
+Ri
+
+GL
+
+L1 C2 L3
+
+C4
+
+u 1 - u
+
+i1(t) v2(t)
+
++ - i3(t)
+
+v4(t)+
+
+-
+
+> Fig. 4. DC-to-DC ´ Cuk Converter.
+
+A. System Modelling 
+
+Consider a DC-to-DC ´Cuk converter depicted in Fig. 4, where E represents the value of constant input voltage, Ri the input resistance, and GL the load admittance. The converter consists of two inductors, L1 and L3, and two capacitors, C2
+
+and C4. The currents flowing through the two inductors are indicated with i1 and i3, respectively, while the voltages across the two capacitors are denoted by v2 and v4, respectively. The input u denotes the duty cycle of a PWM signal controlling the position of the switch in the converter, and therefore satisfies 
+
+0 ≤ u ≤ 1. The averaged model of this converter circuit is given by the following equations. 
+
+L1
+
+ddt i1 = −(1 − u)v2 + E − i1Ri,C2
+
+ddt v2 = (1 − u)i1 + ui 3,L3
+
+ddt i3 = −uv 2 − v4,C4
+
+ddt v4 = i3 − GLv4.
+
+(25) Now denote x = [ x1, x2, x3, x4]⊤ with x1 = i1, x2 = v2,
+
+x3 = i3, and x4 = v4 as the states, and let y = v4 as the output. Then the averaged model (25) can be modelled as a (concrete) nonlinear system (1) satisfying the input-affine property (13), where 
+
+¯f (x) = 
+
+ 
+
+> 1
+> L1
+
+(−Rix1 −x2 +E) 
+
+> 1
+> C2
+
+x1
+
+− 1 
+
+> L3
+
+x41 
+
+> C4
+
+(x3 −GLx4)
+
+, g(x) = 
+
+ 
+
+> 1
+> L1
+
+x21 
+
+> C2
+
+(−x1 +x3)
+
+− 1 
+
+> L3
+
+x4
+
+0
+
+,h(x) = x4 = Cx, C =  0 0 0 1  ,
+
+(26) with dimensions n = 4 , m = p = 1 , and input space U = [0 , 1] .Note that the output mapping h satisfies Assumption 1. Fur-thermore, this concrete system can alternatively be formulated as 
+
+f (x, u ) = ¯A(u)x + ¯b (27) with 
+
+¯A(u) = 
+
+
+
+− Ri 
+
+> L1
+
+− 1−uL1 0 0 
+
+> 1−uC2
+
+0 uC2 00 − uL3 0 − 1
+
+> L3
+
+0 0 1 
+
+> C4
+
+− Gl
+
+> C4
+
+, ¯b =
+
+
+
+> EL1
+
+000
+
+,
+
+where ¯A is a linear function of u. This formulation (27) will be used later. In this example, we arbitrarily set the values              
+
+> Ri= 0 .05 Ω L1= 10 mH C2= 11 mF E= 12 V
+> GL= 44 .7 mS L3= 10 mH C4= 11 mF
+> TABLE I PARAMETERS OF THE DC-TO -DC ´ CUK CONVERTER MODEL .
+
+of the electrical components as listed in Table I. With such a selection of parameters, the converter is expected to output voltages between 0 and -120, i.e. , Y = [ −120 , 0] . Consequently, as y = h(x) = x4, the state is expected to stay within the set 
+
+Xy = {x ∈ Rn | h(x) ∈ Y} = R3 × [−120 , 0] .We now show that this converter system is asymptotically stabilisable. Since the concrete system is dissipative and can be formulated as (27) , following [33, Theorem 3], there exists a matrix M ∈ Rn×n and a strictly positive scalar λ such that 
+
+¯A⊤(u)M + M ¯A(u) ⪯ − λM, M ≻ 0n×n. (28) for all u ∈ [0 , 1] . Since ¯A is a linear function of u, the matrix 
+
+M can be computed, with parameter values in Table I, by solving the linear matrix inequalities (28) for both u = 0 
+
+and u = 1 . Using the solver MOSEK [34] with the YALMIP toolbox [35], we obtain 
+
+M =
+
+
+
+0.4804 0.0102 0.0002 −0.0093 0.0102 0.5304 0.0081 0.0001 0.0002 0.0081 0.4824 −0.0135 
+
+−0.0093 0.0001 −0.0135 0.5304 
+
+ (29) with λ = 2 . As a consequence, now we can show that the stabilisability Lyapunov function 
+
+V (x, z ) = ∥x − z∥2 
+
+> M
+
+= ( x − z)⊤M (x − z) (30) satisfies (5) with k(z, x, u ) = u. Let σ and σ be the smallest and largest eigenvalue of M in (29) , respectively. Then V
+
+in (30) satisfies (5a) as σ∥x − z∥2 ≤ V ≤ σ∥x − z∥2. Then to show (5b), we compute 
+
+˙V (x, z ) = ( x−z)⊤M ( ˙ x− ˙z) = 2( x−z)⊤M   ¯A(u)x− ¯A(u)z
+
+= 2( x − z)⊤M ¯A(u)( x − z).
+
+Since M satisfies (28) , the last equation yields that ˙V (x, z ) ≤−λV ≤ −λσ ∥x − z∥2, i.e. , (5b) holds. In addition, this Lyapunov function V is quadratic and satisfies (17) , which, by Proposition 1, can guarantee the satisfaction of condition (B) 
+
+if δ in (12) is designed to be continuous. 
+
+B. Solving (14) and (21) 
+
+Following the procedures shown in Fig. 3, the next step is to select p, l, and ¯ϕ solving (14a). Here we select 
+
+¯ϕ = 0 , p(ξ) = 
+
+
+
+> EG Lξ2
+> (ξ−1) 2+GLRiξ2
+
+− E(ξ−1) (ξ−1) 2+GLRiξ2
+
+> EG Lξ(ξ−1) (ξ−1) 2+GLRiξ2
+> Eξ (ξ−1) (ξ−1) 2+GLRiξ2
+
+ , l(ξ) = ξ, (31) for all ξ ∈ Rˆn with ˆn = 1 . Note that with Xy = R3 ×[−120 , 0] 
+
+and h in (26) , the function p in (31) satisfies (23) , but is not injective. We show later that p is injective over a certain region 10 IEEE TRANSACTIONS AND JOURNALS TEMPLATE 0 0.2 0.4 0.6 0.8 1-120 -100 -80 -60 -40 -20        
+
+> Fig. 5. Plot of κ(ξ)versus ξ∈[0 ,1] with parameter values in Table I.
+
+of interest V ⊂ Rˆn, and is such that condition (ii) in Theorem 6 holds. With the selection in (31), we obtain 
+
+κ(ξ) = h(p(ξ)) = E ξ (ξ − 1) (ξ − 1) 2 + GLRiξ2 , (32) which solves (14b) . Note that in this case, the interface function in (15) satisfies uw = ξ + u∗(ξ, x, v ) as k(z, x, u ) = u. Since the input space U = [0 , 1] , we require uw = ξ + u∗(ξ, x, v ) ∈
+
+[0 , 1] .After solving (14) , we focus on the satisfaction of the m-relation formulated in (21) . According to Fig. 3, we first find m
+
+satisfying condition (i) in Theorem 6, which is an intermediate step for solving (21c) . To this end, consider that (21c) requires 
+
+h(x) = κ(m(x)) = x4 with κ in (32) . By simplifying this equation, we obtain 
+
+[( GLRi + 1) x4 − E]m2 + ( E − 2x4)m + x4 = 0 , (33) which is solvable whenever x4 ∈ [− E
+
+> 2√RiGL
+
+, E
+
+> 2√RiGL
+
+]. By sub-stituting the values in Table I, we get [− E
+
+> 2√RiGL
+
+, E
+
+> 2√RiGL
+
+] = [−126 .91 , 126 .91] ⊃ Y = [−120 , 0] . Recall that Xy =
+
+R3 ×[−120 , 0] . This means that when the converter is operating on the state set Xy and generating the expected output y(t) ∈
+
+Y, (33) is always solvable. Note that (33) has two analytical solutions as the function p (and consequently κ(ξ) = h(p(ξ)) )is not injective for all ξ ∈ [0 , 1] , as mentioned earlier and shown in Fig. 5. However, this figure indicates that to generate outputs y in Y = [ −120 , 0] , it suffices to only focus on 
+
+ξ ∈ [0 , 0.95] . Thus, we restrict the domain to V = [0 , 0.95] ,which satisfies (10) and is such that the function p, as well as 
+
+κ = h ◦ p, is injective. Then, we determine 
+
+m(x) = −E + 2 x4 + √E2 − 4GLRix42
+
+2( GLRi + 1) x4 − 2E , (34) which is the left inverse function of p on V = [0 , 0.95] as 
+
+m(p(ξ)) = ξ. In fact, this function m also satisfies condition (ii) as 
+
+x − p(m(x)) = [ ∗1, ∗2, ∗3, 0] ∈ Ker( h),
+
+for some values ∗1, ∗2, ∗3 ∈ R. Then the satisfaction of condition (ii) follows from Corollary 1. Finally, by Theorem 5, we can simply have δ = 1 , which guarantees the satisfaction of (21a) and (21b) . Note also that by Proposition 1, this design of δ ensures the satisfaction of condition (B) in Theorem 4, thereby guaranteeing the existence of a simulation function. This concludes the design. The obtained abstract system solves Problem 1. 0 0.2 0.4 0.6 0.8 0500 1000 1500 0 0.2 0.4 0.6 0.8 0510                  
+
+> Fig. 6. Plots of ∥ϑ(ξ, x )∥versus ξ∈[0 ,0.95] when q≡0, with
+> δ= 1 (left) and δin (39) (right).
+
+C. Simulation Function and Error Bound 
+
+By following Fig. 3, we have constructed an ASHC frame-work, and the final step is to characterise and reduce the error bound in (8) by studying the simulation function. With V
+
+in (30), the candidate simulation function takes the form 
+
+W (ξ, x ) = V (p(ξ), x ) = ( p(ξ) − x)⊤M (p(ξ) − x). (35) By Theorem 4, this simulation function satisfies (6) . To check (7) , we first note that by straightforward computations, we have 
+
+∂W ∂p (ξ)
+
+∂p (ξ)
+
+∂ξ δ(ξ)v + ∂W ∂x g(x)u∗
+
+= 2( p(ξ) − x)⊤M
+
+ ∂p (ξ)
+
+∂ξ δ(ξ)v − g(x)u∗
+
+
+
+≤ ε∥p(ξ) − x∥2 
+
+> M
+
++ 1
+
+ε
+
+√M
+
+ ∂p (ξ)
+
+∂ξ δ(ξ)v − g(x)u∗
+
+ 2
+
+≤ ε∥p(ξ)−x∥2 
+
+> M
+
++ 1
+
+ε
+
+√M
+
+ ∂p (ξ)
+
+∂ξ δ(ξ)−g(x)q(ξ, x )
+
+ 2
+
+∥v∥2,
+
+(36) where we have used the same simplification steps as in (18) with ε > 0, and we have designed u∗ as in (20) . Then we obtain 
+
+∇W (ξ, x )T
+
+ ϕ(ξ, v )
+
+f (x, u w(ξ, x, v )) 
+
+
+
+= 2 ∥p(ξ) − x∥2  
+
+> M¯A(l(ξ))
+
++ ∂W ∂p (ξ)
+
+∂p (ξ)
+
+∂ξ δ(ξ)v + ∂W ∂x g(x)u∗
+
+≤ − (λ−ε)W(ξ, x )+ 1
+
+ε
+
+√M
+
+
+
+∂p (ξ)
+
+∂ξ δ(ξ)−g(x)q(ξ, x )
+
+ 2
+
+∥v∥2.
+
+In this manner, with any ε < λ , (7) holds if the function q is designed such that there exists a positive constant ¯d satisfying 
+
+∥ϑ(ξ, x )∥ ≤ ¯d with 
+
+ϑ(ξ, x ) := √M
+
+∂p (ξ)
+
+∂ξ δ(ξ)−g(x)q(ξ, x )
+
+
+
+(37) for all (ξ, x ) ∈ V×Rn. In fact, as shown by Proposition 1, this constant ¯d exists even when q ≡ 0, as the term ∥ ∂p (ξ) 
+
+> ∂ξ
+
+δ(ξ)∥
+
+with p in (31) and δ ≡ 1 is bounded for ξ ∈ V = [0 , 0.95] .With parameter values in Table I, this boundedness is illustrated in Fig. 6 (left), which displays the norm of ϑ(ξ, x ) with q ≡ 0,showing that the constant ¯d = 1760 satisfies ∥ϑ(ξ, x )∥ ≤ ¯d for all (ξ, x ) ∈ V × Rn.While the above designs solve the ASHC problem, the bound of the output discrepancy in (8) can be reduced. To this end, note that, (36) implies that η(r) = ( λ − ε)r and γ(r) = AUTHOR et al. : TITLE 11  
+
+> 1
+> ε
+
+∥ϑ(ξ, x )∥2∥r∥2 in (8) with αh(r) = 0 .52 r2 satisfying (6) .This can be seen by the fact that since M in (29) satisfies M ⪰
+
+0.52 C⊤C with C in (26) , W (ξ, x ) = ( p(ξ) − x)⊤M (p(ξ) −
+
+x) ≥ 0.52( p(ξ) − x)⊤C⊤C(p(ξ) − x) = 0 .52 ∥κ(ξ) − h(x)∥2.Consequently, 
+
+α−1 
+
+> h
+
+(η−1(2 γ(∥v∥∞))) = 
+
+s
+
+20.52( λ − ε)ε ∥ϑ(ξ, x )∥∥ v∥∞.
+
+(38) Therefore, reducing the bound (8) boils down to minimising the term 
+
+q 10.26( λ−ε)ε ∥ϑ(ξ, x )∥, in which the first multiplier is minimised when ε = 1 as λ = 2 . Then the task comes down to minimising the term ∥ϑ(ξ, x )∥.One way of minimising ∥ϑ(ξ, x )∥ is by redesigning δ.Previously, with δ = 1 , Fig. 6 shows that ∥ϑ(ξ, x )∥ increases fast when ξ is close to 0.95. By observing the function  
+
+> ∂p (ξ)
+> ∂ξ
+
+(obtainable from (31) ), this growth can be reduced by redesigning δ as 
+
+δ(ξ) = (( ξ − 1) 2 + GLRi ξ2)2. (39) Consequently, as shown by Fig. 6 (right), ∥ϑ(ξ, x )∥ with 
+
+q ≡ 0 is greatly reduced, with the bound ¯d = 12 .35 . Such a modification in δ brings two advantages. On the one hand, the reduction in ∥ϑ(ξ, x )∥ allows more flexibility in designing the input v that controls the abstract system, as ∥v∥∞ can be larger while resulting in the same bound (38) as before. On the other hand, as shown in Fig. 6, δ in (39) leads to a flatter curve of ϑ(ξ, x ). Then the derived bound (38), computed by taking the maximum value ¯d of ϑ(ξ, x ), yields a less conservative estimate. Note that this new design of δ does not violate the satisfaction of the m-relation, as δ(ξ) in (39) is invertible for all ξ ∈ V. In fact, by the proof of Theorem 5, the functions b
+
+and c solving (21a)–(21b) are of the form 
+
+b(x) = − 2( x3 − GLx4)( x4 − E + GLRix4)2
+
+C4Eχ (E + χ − GLRiχ + EG LRi − 4GLRix4) ,c(x) = 0 ,
+
+(40) where χ = E2 − 4GLRix42.Another way of minimising ∥ϑ(ξ, x )∥, as mentioned in Section IV-A, is to manipulate u∗. In this example, with u∗
+
+in (20) and ϑ in (37) , the minimisation of ∥ϑ(ξ, x )∥ becomes a least square approximation problem. Whenever rank( g(x)) = 1, i.e. , g(x)̸ = 04×1, the minimum of ∥ϑ(ξ, x )∥ is reached by having q(ξ, x ) = ( g⊤(x)M g (x)) −1g⊤(x)M ∂p (ξ) 
+
+> ∂ξ
+
+δ(ξ). This result is a direct extension of [3, Proposition 1] to the nonlinear case. In summary, to solve the ASHC problem of the converter, we can design the abstract system Σ′ as 
+
+Σ′ :
+
+
+
+˙ξ = (( ξ − 1) 2 + GLRiξ2)2v,
+
+ψ = Eξ(ξ − 1) (ξ − 1) 2 + GLRiξ2 , (41) and the interface function uw takes the form 
+
+uw(ξ, x, v ) = ξ + q(ξ, x )v, (42) -50 050 0 5 10 15 20 25 30 0.2 0.4 0.6 0.8        
+
+> Fig. 7. Time histories of inputs v(top) and u(bottom) driving systems Σ′
+> and Σ, respectively, in the ASHC framework.
+
+with 
+
+q(ξ, x ) = 
+
+(
+
+(g⊤(x)M g (x)) −1g⊤(x)M ∂p (ξ) 
+
+> ∂ξ
+
+δ(ξ), g(x)̸ = 04×1;0, g(x) = 04×1.
+
+(43) 
+
+Remark 9: Recall that the input space is U = [0 , 1] . There may not be a guarantee on the fact that uω in (42) stays inside 
+
+U for all times. In such a case, one can instead design uω as 
+
+uω = sat( ξ + q(ξ, x )v) , (44) where the saturation function sat( r) := max(0 , min(1 , r )) .Since ξ always stays within V = [0 , 0.95] ⊂ U, the design in (44) can be regarded as adding a limitation on the norm of 
+
+q(ξ, x ) for minimising the output discrepancy, which does not violate the bounded discrepancy result established before. 
+
+D. Simulation Result 
+
+Now we are ready to show the simulation results of the ASHC technique based on the proposed abstract system (41) and interface (42) . We first illustrate the bounded output discrepancy property. Then we show the satisfaction of the 
+
+m-relation. All simulations are conducted using MATLAB. In this example, the objective is to control the concrete system Σ (in this case, the converter (25) ) to output the specific voltage levels as 
+
+[−19 .11 , −80 .90 , −44 .27 , −4.31 , −12 .48 , −32 .91] .
+
+To this end, we control the abstract system Σ′ and synthesise the controller of the concrete system Σ via the ASHC technique. The initial condition of the abstract system Σ′
+
+is randomly selected as ξ(t0) = ξ0 = 0 .6156 , while that of the concrete system Σ is set as x(t0) = x0 = p(ξ0) = [1 .3678 , 31 .0396 , −0.8541 , −19 .1080] ⊤, where t0 = 0 in this simulation. Note that this special selection of x(t0) is not necessary, and is performed here only for illustrative purposes to be explained later. The simulation results of the bounded output discrepancy are displayed by Figs. 7 and 8. Fig. 7 shows the time histories of the input v driving the abstract system Σ′ (top) and the input u that controls the concrete system Σ (bottom). Fig. 8 depicts the time histories of the 12 IEEE TRANSACTIONS AND JOURNALS TEMPLATE -80 -60 -40 -20 00 5 10 15 20 25 30 -2 02               
+
+> Fig. 8. Time histories of outputs y(blue solid) and ψ(red dashed) of systems Σand Σ′(top) and their error ey=ψ−y(bottom).
+
+0.2 0.4 0.6 0.8 0 5 10 15 20 -600 -400 -200 0200 400        
+
+> Fig. 9. Time histories of inputs u(top) and v(bottom) into systems Σ
+> and Σ′, respectively, in the interconnection in Fig. 2.
+
+outputs y and ψ of systems Σ and Σ′, respectively, (top), and the time history of their error ey = ψ − y (bottom). The results confirm that the control input u varies within 
+
+U = [0 , 1] , and the output error between the two systems is bounded, implying that the concrete system Σ approximately achieves its control objective. Note also that by having the initial condition x0 = p(ξ0), the ASHC problem starts with the simulation function W (ξ, x ) = 0 , meaning that the first term of the error bound in (8) is eliminated. Hence, the error bound only depends on ∥v∥∞.
+
+Remark 10: In this example, as ∥v∥∞ = 60 , the compu-tation of the error bound via (38) yields ∥ey∥ ≤ 
+
+q 10.26 ×
+
+12 .35 × 60 = 1453 .22 , which is not tight. A reason for this is that the bound (38) is computed at the maximum point of ∥ϑ(ξ, x )∥ corresponding to ξ = 0 .95 , see Fig. 6 (right). However, the state of system Σ′ generally does not stay around this extreme point, and the real error is much smaller. Another reason is the use of u∗ for minimising the bound. The bound is computed according to ∥ϑ(ξ, x )∥ in Fig. 6 (right) with q ≡ 0
+
+and therefore u∗ ≡ 0. However, we have designed q as in (43) ,so ∥ϑ(ξ, x )∥ is further reduced. This reduction is not taken into account when computing the error bound. We then illustrate the satisfaction of the m-relation by implementing the interconnection in Fig. 2, where the functions 0 5 10 15 20 -60 -40 -20 0         
+
+> Offset=0
+> Fig. 10. Time histories of outputs y(blue solid) and ψ(red dashed) of systems Σand Σ′in the interconnection in Fig. 2.
+
+b and c for constructing the link (22) are as (40) . In this case, following the proof of Theorem 3, systems Σ and Σ′ are initialised on the manifold Ms = {(x, ξ ) ∈ (Xy × Rˆn) | ξ =
+
+m(x)}, with a randomly selected 
+
+x(t0) = x0 = [10 .3256 , 2.0561 , −4.9785 , −6.9732] ⊤
+
+and with ξ(t0) = ξ0 = m(x0) = 0 .3677 . The input u is arbitrarily selected as u = 0 .3∇(t − 2) + 0 .1 sin(2 π(t − 2)) + 0.45 , where ∇(t) ≜ 2
+
+> π
+
+R t 
+
+> 0
+
+sign(sin( τ )) dτ − 1. Fig. 9 displays the time histories of the input u of system Σ (top) and the input v in (22) of system Σ′ (bottom). As a result, Fig. 10 displays the time histories of the outputs y (solid blue) and ψ
+
+(red dashed) of systems Σ and Σ′, respectively, showing that the outputs of two systems exactly match each other for all times. In other words, this result suggests that the m-relation successfully preserves the ability of the abstract system to recover the input-output controllability of the concrete system. 
+
+VI. C ONCLUSION 
+
+This paper has addressed the ASHC problem of nonlinear systems by providing methods for designing an abstract system and an interface that satisfy two key requirements: bounded output discrepancy and m-relation. Regarding the bounded output discrepancy requirement, we have proposed a PDE-based solution under the assumptions of asymptotic stabilisability of the concrete system and Lipschitz continuity of its output mapping (Theorem 4). We have then shown that the m-relation condition can be satisfied by another PDE-based solution (Lemma 1). By combining the two proposed solutions, the overall solvability has been studied (Theorems 5 and 6), with the complete design procedure of the ASHC problem summarised in a flow chart (Fig. 3). All the proposed results have been illustrated by a practical example. Note that while most results focus on input-affine concrete systems, the proposed solutions to the bounded output discrepancy requirement can be extended to general nonlinear systems, while the m-relation, in general, is not a core criterion in the ASHC field, as discussed at the end of Section IV-C. 
+
+REFERENCES           
+
+> [1] A. C. Antoulas, Approximation of large-scale dynamical systems .Philadelphia, USA: SIAM, 2005. AUTHOR et al. : TITLE 13
+
+[2] G. Scarciotti and A. Astolfi, “Interconnection-based model order reduction - a survey,” Eur. J. Control , vol. 75, p. 100929, 2024. [3] A. Girard and G. J. Pappas, “Hierarchical control system design using approximate simulation,” Automatica , vol. 45, no. 2, pp. 566–571, 2009. [4] M. Zamani and M. Arcak, “Compositional abstraction for networks of control systems: A dissipativity approach,” IEEE Trans. Control Netw. Syst. , vol. 5, no. 3, pp. 1003–1015, 2017. [5] M. Rungger and M. Zamani, “Compositional construction of approximate abstractions of interconnected control systems,” IEEE Trans. Control Netw. Syst. , vol. 5, no. 1, pp. 116–127, 2016. [6] S. W. Smith, M. Arcak, and M. Zamani, “Approximate abstractions of control systems with an application to aggregation,” Automatica , vol. 119, p. 109065, 2020. [7] Z. Song, V. Kurtz, S. Welikala, P. J. Antsaklis, and H. Lin, “Robust approximate simulation for hierarchical control of piecewise affine systems under bounded disturbances,” in Proc. 41st Amer. Control Conf. ,2022, pp. 1543–1548. [8] M. Zamani, M. Rungger, and P. M. Esfahani, “Approximations of stochastic hybrid systems: A compositional approach,” IEEE Transactions on Automatic Control , vol. 62, no. 6, pp. 2838–2853, 2016. [9] B. Zhong, M. Arcak, and M. Zamani, “Hierarchical control for cyber-physical systems via general approximate alternating simulation relations,” 
+
+IFAC-PapersOnLine , vol. 58, no. 11, pp. 13–18, 2024. [10] J. Fu, S. Shah, and H. G. Tanner, “Hierarchical control via approximate simulation and feedback linearization,” in Proc. 32nd Am. Control Conf. ,2013, pp. 1816–1821. [11] P. Tabuada, “An approximate simulation approach to symbolic control,” 
+
+IEEE Trans. Autom. Control , vol. 53, no. 6, pp. 1406–1418, 2008. [12] A. Girard and G. J. Pappas, “Approximation metrics for discrete and continuous systems,” IEEE Trans. Autom. Control , vol. 52, no. 5, pp. 782–798, 2007. [13] W. H. Schilders, H. A. Van der Vorst, and J. Rommes, Model order reduction: theory, research aspects and applications . Berlin, Heidelberg: Springer, 2008, vol. 13. [14] Z. Niu, M. F. Shakib, and G. Scarciotti, “Bridging abstraction-based hierarchical control and moment matching: A conceptual unification,” in 
+
+Proc. 64th IEEE Conf. Decis. Control , 2025. [15] G. Obinata and B. D. Anderson, Model reduction for control system design . Springer Science & Business Media, 2012. [16] T. J. Meijer, S. A. N. Nouwens, V. S. Dolk, B. de Jager, and W. P. M. H. Heemels, “Finite-horizon minimal realizations for model predictive control of large-scale systems,” in Proc. 61st IEEE Conf. Decis. Control ,2022, pp. 1136–1141. [17] J. D. Jansen and L. J. Durlofsky, “Use of reduced-order models in well control optimization,” Optim. Eng. , vol. 18, no. 1, pp. 105–132, 2017. [18] D. Angeli and E. D. Sontag, “Forward completeness, unboundedness observability, and their Lyapunov characterizations,” Syst. Control Lett. ,vol. 38, no. 4-5, pp. 209–217, 1999. [19] E. D. Sontag, Mathematical Control Theory: Deterministic Finite Dimensional Systems . Springer Science & Business Media, 2013, vol. 6. [20] D. Angeli, “A Lyapunov approach to incremental stability properties,” 
+
+IEEE Trans. Autom. Control , vol. 47, no. 3, pp. 410–421, 2002. [21] R. Milner, Communication and Concurrency . Prentice-Hall, Inc., 1989. [22] G. J. Pappas, G. Lafferriere, and S. Sastry, “Hierarchically consistent control systems,” IEEE Trans. Autom. Control , vol. 45, no. 6, pp. 1144– 1160, 2000. [23] P. Tabuada and G. J. Pappas, “Hierarchical trajectory refinement for a class of nonlinear systems,” Automatica , vol. 41, no. 4, pp. 701–708, 2005. [24] J. Jouffroy and T. I. Fossen, “A tutorial on incremental stability analysis using contraction theory,” Model. Identif. Control , vol. 31, no. 3, p. 93, 2010. [25] B. Samari, A. Nejati, and A. Lavaei, “Model order reduction from data with certification,” in Proc. 64th IEEE Conf. Decis. Control , 2025, pp. 5800–5805. [26] D. Kalise and K. Kunisch, “Polynomial approximation of high-dimensional Hamilton–Jacobi–Bellman equations and applications to feedback control of semilinear parabolic PDEs,” SIAM J. Sci. Comput. ,vol. 40, no. 2, pp. A629–A652, 2018. [27] D. Kalise, S. Kundu, and K. Kunisch, “Robust feedback control of nonlinear PDEs by numerical approximation of high-dimensional Hamilton–Jacobi–Isaacs equations,” SIAM J. Appl. Dyn. Syst. , vol. 19, no. 2, pp. 1496–1524, 2020. [28] N. Faedo, G. Scarciotti, A. Astolfi, and J. V. Ringwood, “On the approximation of moments for nonlinear systems,” IEEE Trans. Autom. Control , vol. 66, no. 11, pp. 5538–5545, 2021. [29] C. Doebeli, A. Astolfi, D. Kalise, A. Moreschini, G. Scarciotti, and J. Simard, “A polynomial approximation scheme for nonlinear model reduction by moment matching,” arXiv preprint arXiv:2412.13371 , 2024. [30] A. Astolfi, “Model reduction by moment matching for linear and nonlinear systems,” IEEE Trans. Autom. Control , vol. 55, no. 10, pp. 2321–2336, 2010. [31] G. Scarciotti and A. Astolfi, “Nonlinear model reduction by moment matching,” Found. Trends Syst. Control , vol. 4, no. 3-4, pp. 224–409, 2017. [32] J. M. Lee, Introduction to Smooth Manifolds , 2nd ed. New York, NY, USA: Springer, 2012. [33] A. Girard and G. J. Pappas, “Approximate bisimulation relations for constrained linear systems,” Automatica , vol. 43, no. 8, pp. 1307–1317, 2007. [34] MOSEK ApS, The MOSEK API for MATLAB 11.0.28 , 2019, Accessed: Mar. 10, 2026. [Online]. Available: https://docs.mosek.com/latest/ matlabapi/index.html [35] J. L ¨ofberg, “YALMIP: A toolbox for modeling and optimization in MATLAB,” in Proc. 13th IEEE Conf. Comput.-Aided Control Syst. Des. ,2004. 
+
+Zirui Niu (Graduate Student Member, IEEE) was born in Shandong, China. He received the B.Eng. (Hons) degree in electrical and electronic engineering from the University of Liverpool, UK, in 2020, and the M.Sc. degree in control systems from Imperial College London, UK, in 2021. Since 2022, he has been pursuing a Ph.D. in control theory at Imperial College London, UK, supported by the CSC-Imperial Scholarship. His research interests include output regulation, hybrid systems, model reduction, approximate simulation of complex systems, and data-driven control. He was the recipient of the MSc Control Systems Outstanding Achievement Prize (2021) and the Hertha Ayrton Centenary Prize (2021) for outstanding performance in MSc Control Systems and the outstanding master’s thesis in the Electrical and Electronic Engineering Department at Imperial College London, respectively. 
+
+Antoine Girard (Fellow, IEEE) is a Senior Re-searcher at CNRS and a member of the Lab-oratory of Signals and Systems. He is also an Adjunct Professor at CentraleSup ´elec, Universit ´eParis-Saclay. He received the Ph.D. degree from Grenoble Institute of Technology, in 2004. From 2004 to 2006, he held postdoctoral positions at University of Pennsylvania and Universit ´eGrenoble-Alpes. From 2006 to 2015, he was an Assistant/Associate Professor at the Universit ´eGrenoble-Alpes. His main research interests deal with analysis and control of hybrid systems with an emphasis on computational approaches, formal methods and applications to cyber-physical and autonomous systems. Antoine Girard is an IEEE Fellow. In 2015, he was appointed as a junior member of the Institut Universitaire de France (IUF). In 2016, he was awarded an ERC Consolidator Grant. He received the George S. Axelby Outstanding Paper Award from the IEEE Control Systems Society in 2009, the CNRS Bronze Medal in 2014, and the European Control Award in 2018. 14 IEEE TRANSACTIONS AND JOURNALS TEMPLATE 
+
+Giordano Scarciotti (Senior Member, IEEE) received his B.Sc. and M.Sc. degrees in Automa-tion Engineering from the University of Rome “Tor Vergata”, Italy, in 2010 and 2012, respectively. In 2012 he joined the Control and Power Group, Imperial College London, UK, where he obtained a Ph.D. degree in 2016. He also received an M.Sc. in Applied Mathematics from Imperial in 2020. He is currently an Associate Professor in Control Theory at Imperial. He was a visiting scholar at New York University in 2015, at Uni-versity of California Santa Barbara in 2016, and a Visiting Fellow of Shanghai University in 2021-2022. He is the recipient of an Imperial College Junior Research Fellowship (2016), of the IET Control & Automation PhD Award (2016), the Eryl Cadwaladr Davies Prize (2017), an ItalyMadeMe award (2017) and the IEEE Transactions on Control Systems Technology Outstanding Paper Award (2023). He is a member of the EUCA Conference Editorial Board, of the IFAC and IEEE CSS Technical Committees on Nonlinear Control Systems and has served in the International Programme Committees of multiple conferences. He is Associate Editor of Automatica and Guest Associate Editor of Nonlinear Analysis: Hybrid Systems. He was the National Organising Committee Chair for the EUCA European Control Conference (ECC) 2022, and of the 7th IFAC Conference on Analysis and Control of Nonlinear Dynamics and Chaos 2024, and the Invited Session Chair and Editor for the IFAC Symposium on Nonlinear Control Systems 2022 and 2025, respectively. He is the General Co-Chair of ECC 2029.

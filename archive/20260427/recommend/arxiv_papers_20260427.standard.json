@@ -1,0 +1,238 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-27T20:46:16.253932+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 6,
+    "quick_skim_target": 11,
+    "quick_selected": 6
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.17903v1",
+      "title": "Research on mode transition of micro-newton-level cusped field Hall thruster",
+      "abstract": "The micro-newton cusped field Hall thruster is an electric propulsion device that employs microwave-assisted ionization control. It serves as an actuator in drag-free control systems, ensuring control accuracy and stability by providing continuously adjustable thrust over a wide range. However, a mode transition occurring during the regulation process can lead to a sudden change in anode current, degrading control precision and stability. Therefore, it is necessary to investigate the underlying patterns of mode transition. This study examines the variations in internal plasma parameters and discharge characteristics of the thruster before and after microwave mode transition, primarily through probe diagnostics.Experimental results indicate that before the mode transition, the plasma luminous region is primarily concentrated within the electron cyclotron resonance (ECR) area, approximately 1-3 mm upstream of the anode. After the transition, the luminous region moves further upstream, and the plasma density near the anode exceeds the cutoff density, dropping sharply along the axial direction. The fundamental cause of the change in electron heating mechanism is the alteration in the propagation characteristics of fundamental waves due to this plasma density variation.When the plasma density rises to the cutoff density, the R wave and O wave, which drive ionization, are rapidly attenuated or reflected. At this point, the R-wave cannot reach the resonance layer, causing the dominant ECR ionization to become ineffective. The ionization mechanism shifts from being dominated by the R wave and O wave to being dominated primarily by the O wave. Consequently, the electron heating mechanism transitions from volume heating to surface wave heating.",
+      "authors": [
+        "Jiahao Wu",
+        "Ming Zeng",
+        "Hui Liu",
+        "Daren Yu"
+      ],
+      "primary_category": "physics.plasm-ph",
+      "categories": [
+        "physics.plasm-ph"
+      ],
+      "published": "2026-04-20T07:29:21+00:00",
+      "link": "https://arxiv.org/pdf/2604.17903v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Precision thrust control for micro-newton level actuators",
+      "llm_evidence_cn": "微牛级执行器的精密推力控制",
+      "llm_evidence": "微牛级执行器的精密推力控制",
+      "canonical_evidence": "微牛级执行器的精密推力控制",
+      "llm_tldr_en": "Investigates mode transitions in Hall thrusters to improve precision and stability in drag-free control systems.",
+      "llm_tldr_cn": "研究霍尔推进器的模式切换，以提高无拖曳控制系统的精密性与稳定性。",
+      "llm_tldr": "研究霍尔推进器的模式切换，以提高无拖曳控制系统的精密性与稳定性。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.18439v1",
+      "title": "Classical counterparts of shortcuts to adiabaticity in nonlinear dissipative Lagrangian systems",
+      "abstract": "Shortcuts to adiabaticity (STA) were first developed in quantum dynamics to realize rapid transformations with suppressed residual excitations. Here we show how the same idea can be implemented in classical nonlinear dissipative Lagrangian systems. Using a coupled $r$-$θ$ manipulator as an illustrative model, we perform inverse engineering on the Euler-Lagrange equations with Rayleigh dissipation by prescribing endpoint-stationary trajectories, obtaining the corresponding force and torque profiles and quantifying how geometric coupling amplifies errors and residual energy. We further compare smooth STA protocols with actuator-bounded time-optimal solutions and with proportional-integral-derivative tracking, which highlights a trade-off among smoothness, speed, and robustness. Finally, we introduce a single-shot correction based on one mid-course measurement to reduce the effect of early deviations while keeping the inputs nearly smooth. These results provide a practical bridge between quantum STA concepts and their classical counterparts.",
+      "authors": [
+        "Jincheng Shi",
+        "Yicheng Pan",
+        "Yue Ban",
+        "Xi Chen"
+      ],
+      "primary_category": "quant-ph",
+      "categories": [
+        "quant-ph",
+        "physics.class-ph"
+      ],
+      "published": "2026-04-20T15:56:51+00:00",
+      "link": "https://arxiv.org/pdf/2604.18439v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "inverse engineering for force profiles in dissipative systems",
+      "llm_evidence_cn": "耗散系统中力曲线的逆向工程设计",
+      "llm_evidence": "耗散系统中力曲线的逆向工程设计",
+      "canonical_evidence": "耗散系统中力曲线的逆向工程设计",
+      "llm_tldr_en": "Applies shortcuts to adiabaticity to classical dissipative systems for precise force and trajectory control.",
+      "llm_tldr_cn": "将绝热快捷方式应用于经典耗散系统，以实现精确的力和轨迹控制。",
+      "llm_tldr": "将绝热快捷方式应用于经典耗散系统，以实现精确的力和轨迹控制。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.18507v1",
+      "title": "Learning the Riccati solution operator for time-varying LQR via Deep Operator Networks",
+      "abstract": "We propose a computational framework for replacing the repeated numerical solution of differential Riccati equations in finite-horizon Linear Quadratic Regulator (LQR) problems by a learned operator surrogate. Instead of solving a nonlinear matrix-valued differential equation for each new system instance, we construct offline an approximation of the associated solution operator mapping time-dependent system parameters to the Riccati trajectory. The resulting model enables fast online evaluation of approximate optimal feedbacks across a wide class of systems, thereby shifting the computational burden from repeated numerical integration to a one-time learning stage. From a theoretical perspective, we establish control-theoretic guarantees for this operator-based approximation. In particular, we derive bounds quantifying how operator approximation errors propagate to feedback performance, trajectory accuracy, and cost suboptimality, and we prove that exponential stability of the closed-loop system is preserved under sufficiently accurate operator approximation. These results provide a framework to assess the reliability of data-driven approximations in optimal control. On the computational side, we design tailored DeepONet architectures for matrix-valued, time-dependent problems and introduce a progressive learning strategy to address scalability with respect to the system dimension. Numerical experiments on both time-invariant and time-varying LQR problems demonstrate that the proposed approach achieves high accuracy and strong generalization across a wide range of system configurations, while delivering substantial computational speedups compared to classical solvers. The method offers an effective and scalable alternative for parametric and real-time optimal control applications.",
+      "authors": [
+        "Jun Chen",
+        "Umberto Biccari",
+        "Junmin Wang"
+      ],
+      "primary_category": "math.OC",
+      "categories": [
+        "math.OC",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-04-20T16:56:34+00:00",
+      "link": "https://arxiv.org/pdf/2604.18507v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "learned operator surrogate for optimal feedback control",
+      "llm_evidence_cn": "用于最优反馈控制的学习算子代理",
+      "llm_evidence": "用于最优反馈控制的学习算子代理",
+      "canonical_evidence": "用于最优反馈控制的学习算子代理",
+      "llm_tldr_en": "Uses Deep Operator Networks to learn Riccati solutions for fast online optimal control evaluation.",
+      "llm_tldr_cn": "使用深度算子网络学习Riccati解，以实现快速在线最优控制评估。",
+      "llm_tldr": "使用深度算子网络学习Riccati解，以实现快速在线最优控制评估。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.18889v1",
+      "title": "AC-SINDy: Compositional Sparse Identification of Nonlinear Dynamics",
+      "abstract": "We present AC-SINDy, a compositional extension of the Sparse Identification of Nonlinear Dynamics (SINDy) framework that replaces explicit feature libraries with a structured representation based on arithmetic circuits. Rather than enumerating candidate basis functions, the proposed approach constructs nonlinear features through compositions of linear functions and multiplicative interactions, yielding a compact and scalable parameterization and enabling sparsity to be enforced directly over the computational graph. We also introduce a formulation that separates state estimation from dynamics identification by combining latent state inference with shared dynamics and multi-step supervision, improving robustness to noise while preserving interpretability. Experiments on nonlinear and chaotic systems demonstrate that the method recovers accurate and interpretable governing equations while scaling more favorably than standard SINDy.",
+      "authors": [
+        "Peter Racioppo"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-04-20T22:14:12+00:00",
+      "link": "https://arxiv.org/pdf/2604.18889v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "identification of nonlinear dynamics and state estimation",
+      "llm_evidence_cn": "非线性动力学辨识与状态估计",
+      "llm_evidence": "非线性动力学辨识与状态估计",
+      "canonical_evidence": "非线性动力学辨识与状态估计",
+      "llm_tldr_en": "Introduces AC-SINDy for compositional sparse identification of nonlinear dynamics using arithmetic circuits.",
+      "llm_tldr_cn": "引入AC-SINDy，利用算术电路对非线性动力学进行组合稀疏辨识。",
+      "llm_tldr": "引入AC-SINDy，利用算术电路对非线性动力学进行组合稀疏辨识。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "eddy current effects in electromagnetic actuators dynamic modeling",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.19465v1",
+      "title": "A neural operator framework for data-driven discovery of stability and receptivity in physical systems",
+      "abstract": "Understanding how complex systems respond to perturbations, such as whether they will remain stable or what their most sensitive patterns are, is a fundamental challenge across science and engineering. Traditional stability and receptivity (resolvent) analyses are powerful but rely on known equations and linearization, limiting their use in nonlinear or poorly modeled systems. Here, we introduce a data-driven framework that automatically identifies stability properties and optimal forcing responses from observation data alone, without requiring governing equations. By training a neural network as a dynamics emulator and using automatic differentiation to extract its Jacobian, we can compute eigenmodes and resolvent modes directly from data. We demonstrate the method on both canonical chaotic models and high-dimensional fluid flows, successfully identifying dominant instability modes and input-output structures even in strongly nonlinear regimes. By leveraging a neural network-based emulator, we readily obtain a nonlinear representation of system dynamics while additionally retrieving intricate dynamical patterns that were previously difficult to resolve. This equation-free methodology establishes a broadly applicable tool for analyzing complex, high-dimensional datasets, with immediate relevance to grand challenges in fields such as climate science, neuroscience, and fluid engineering.",
+      "authors": [
+        "Chengyun Wang",
+        "Liwei Chen",
+        "Nils Thuerey"
+      ],
+      "primary_category": "physics.flu-dyn",
+      "categories": [
+        "physics.flu-dyn",
+        "cs.AI"
+      ],
+      "published": "2026-04-21T13:43:32+00:00",
+      "link": "https://arxiv.org/pdf/2604.19465v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Data-driven discovery of optimal forcing responses in physical systems",
+      "llm_evidence_cn": "物理系统中最佳力响应的数据驱动发现",
+      "llm_evidence": "物理系统中最佳力响应的数据驱动发现",
+      "canonical_evidence": "物理系统中最佳力响应的数据驱动发现",
+      "llm_tldr_en": "A neural operator framework to identify stability and optimal forcing responses from observation data.",
+      "llm_tldr_cn": "一种通过观测数据识别物理系统稳定性及最佳受力响应的神经算子框架。",
+      "llm_tldr": "一种通过观测数据识别物理系统稳定性及最佳受力响应的神经算子框架。",
+      "llm_tags": [
+        "query:em-force:composite"
+      ],
+      "matched_query_tag": "query:em-force:composite",
+      "matched_query_text": "Papers central to 查找非接触式电磁激振器的力控制方法，特别是精密控制策略, especially work that connects or combines: electromagnetic exciter force control; ddy current magnetic bearing modeling; magnetic bearing flux feedback; non-contact electromagnetic shaker force control; precision force control strategies for electromagnetic actuators; closed-loop force control for electromagnetic shakers; flux feedback linearization zero bias magnetic bearing; non contact electromagnetic exciter precision force control; eddy current effects in electromagnetic actuators dynamic modeling; flux feedback control for magnetic bearing force precision.",
+      "matched_requirement_id": "req-composite-em-force",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.20509v1",
+      "title": "Approximate Simulation-based Hierarchical Control of Nonlinear Systems",
+      "abstract": "Controlling complex dynamical systems to satisfy sophisticated specifications remains a significant challenge in modern engineering. A promising approach to this problem is the approximate simulation-based hierarchical control (ASHC) technique. In this method, a simplified representation of the complex system, called the abstract system, is first designed and controlled. An interface function is then designed to translate the control law into the input of the complex system, thereby achieving approximate control synthesis. However, most existing results in ASHC are only for linear systems. This paper proposes a constructive method for solving the ASHC problem for nonlinear systems. To this end, we propose invariance equation-based methods to achieve the two classical requirements of the ASHC technique, namely the bounded output discrepancy and the $m$-relation. We then study the solvability conditions of the problem and summarise the overall design procedures. We illustrate the results with a practical example, providing step-by-step solutions to the ASHC problem of a DC-to-DC Ćuk converter.",
+      "authors": [
+        "Zirui Niu",
+        "Antoine Girard",
+        "Giordano Scarciotti"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY",
+        "math.OC"
+      ],
+      "published": "2026-04-22T12:52:35+00:00",
+      "link": "https://arxiv.org/pdf/2604.20509v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "hierarchical control of nonlinear systems",
+      "llm_evidence_cn": "非线性系统的分层控制",
+      "llm_evidence": "非线性系统的分层控制",
+      "canonical_evidence": "非线性系统的分层控制",
+      "llm_tldr_en": "Proposes a hierarchical control method for nonlinear systems using abstract representations.",
+      "llm_tldr_cn": "提出了一种利用抽象表示对非线性系统进行分层控制的方法。",
+      "llm_tldr": "提出了一种利用抽象表示对非线性系统进行分层控制的方法。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
