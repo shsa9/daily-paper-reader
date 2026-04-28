@@ -1,0 +1,79 @@
+{
+  "label": "2026-04-28",
+  "date": "2026-04-28",
+  "generated_at": "2026-04-28T20:59:46",
+  "count": 5,
+  "papers": [
+    {
+      "paper_id": "202604/28/2604.18961v1-ai-enabled-image-based-hybrid-visionforce-control-of-tendon-driven-aerial-continuum-manipulators",
+      "section": "quick",
+      "title_en": "AI-Enabled Image-Based Hybrid Vision/Force Control of Tendon-Driven Aerial Continuum Manipulators",
+      "authors": "Shayan Sepahvand, Farrokh Janabi-Sharifi, Farhad Aghili",
+      "date": "2026-04-21",
+      "pdf": "https://arxiv.org/pdf/2604.18961v1",
+      "score": "6.0",
+      "evidence": "物理交互与不确定性补偿的视觉/力混合控制",
+      "tldr": "提出了一种用于精确物理交互的级联视觉/力混合控制框架。",
+      "tags": "query:em-force",
+      "abstract_en": "This paper presents an AI-enabled cascaded hybrid vision/force control framework for tendon-driven aerial continuum manipulators based on constant-strain modeling in $SE(3)$ as a coupled system. The proposed controller is designed to enable autonomous, physical interaction with a static environment while stabilizing the image feature error. The developed strategy combines the cascaded fast fixed-time sliding mode control and a radial basis function neural network to cope with the uncertainties in the image acquired by the eye-in-hand monocular camera and the measurements from the force sensing apparatus. This ensures rapid, online learning of the vision- and force-related uncertainties without requiring offline training. Furthermore, the features are extracted via a state-of-the-art graph neural network architecture employed by a visual servoing framework using line features, rather than relying on heuristic geometric line extractors, to concurrently contribute to tracking the desired normal interaction force during contact and regulating the image feature error. A comparative study benchmarks the proposed controller against established rigid-arm aerial manipulation methods, evaluating robustness across diverse scenarios and feature extraction strategies. The simulation and experimental results showcase the effectiveness of the proposed methodology under various initial conditions and demonstrate robust performance in executing manipulation tasks.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/28/2604.20234v1-robust-fixed-time-model-reference-adaptive-control",
+      "section": "quick",
+      "title_en": "Robust Fixed-Time Model Reference Adaptive Control",
+      "authors": "Chayan Kumar Paul, Krishanu Nath, Indra Narayan Kar, Denis Efimov, Rosane Ushirobira",
+      "date": "2026-04-22",
+      "pdf": "https://arxiv.org/pdf/2604.20234v1",
+      "score": "6.0",
+      "evidence": "针对具有参数不确定性的线性系统精密跟踪的自适应控制",
+      "tldr": "提出一种鲁棒定时自适应控制策略，用于线性系统的精密跟踪与参数估计。",
+      "tags": "query:em-force",
+      "abstract_en": "This article proposes a Model Reference Adaptive Control (MRAC) strategy to achieve fixed-time convergence of parameter estimation and tracking errors for unknown linear time-invariant systems, without relying on the persistence of excitation condition. Instead, it employs a less restrictive initial/interval excitation condition on the regressor matrix, enhancing practicality and ease of implementation in real-world scenarios. Our primary contribution is a novel parameter update law within the indirect MRAC framework, ensuring that parameter estimates converge within a fixed time, once the initial/interval excitation condition is met. This approach simplifies the practical requirements for adaptive control while guaranteeing robust performance against parameter uncertainty and external disturbances. Simulation results provide a comparison with the current literature to validate the effectiveness of this approach.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/28/2604.23142v1-an-algebraic-state-observer-for-a-class-of-physical-systems",
+      "section": "quick",
+      "title_en": "An Algebraic State Observer for a Class of Physical Systems",
+      "authors": "Alexey Bobtsov, Jose Guadalupe Romero, Romeo Ortega, Anton Pyrkin",
+      "date": "2026-04-25",
+      "pdf": "https://arxiv.org/pdf/2604.23142v1",
+      "score": "6.0",
+      "evidence": "适用于执行器状态估计的非线性物理系统代数状态观测器",
+      "tldr": "本文提出了一种针对非线性物理系统的代数状态观测器设计新方法。该方法旨在建立不可测状态与输入输出滤波信号之间的代数关系，且在所有时间点均成立，而非传统的渐近收敛。通过利用物理系统中常见的具有可测导数的状态分量，并结合交换引理处理动力学方程，实现了无需可观测性或激励条件的观测器设计，为电机和机械系统等领域的状态估计提供了全新的视角和理论框架。",
+      "tags": "query:em-force",
+      "abstract_en": "In this paper we present a radically new approach to design state observers for nonlinear systems, with particular emphasis on physical ones. Our objective is to obtain an algebraic relation between the unmeasurable part of the state and filtered versions of the systems inputs and outputs, which holds true for all $t \\geq 0$. The latter qualifier should be contrasted with the usual asymptotic (or fixed/finite time) objective. The standing assumption for our design is the availability -- or possibility of constructing, via coordinate change -- state components with measurable derivatives. In the physical systems studied in the paper this condition is naturally satisfied. The next step in the design is the application of the Swapping Lemma to pull out from the dynamics the derivative of one of these signals. The design is completed replacing the latter by the measurable signals and arranging the remaining terms. The algebraic observer constitutes a refreshing major departure from classical asymptotic observer designs, even in the case of electrical motors and mechanical systems that have been exhaustively studied. Particularly notable is the fact that no observability or excitation condition is imposed for the construction of the algebraic observer.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/28/2604.23269v1-wsindy-for-model-predictive-control-with-applications-to-fusion-drones-and-chaos",
+      "section": "quick",
+      "title_en": "WSINDy for Model Predictive Control with Applications to Fusion, Drones, and Chaos",
+      "authors": "Cristian López, Mckenna Partridge, Sebastian De Pascuale, Jeremy Lore, Andrew Christlieb, Stephen Becker, David M. Bortz",
+      "date": "2026-04-25",
+      "pdf": "https://arxiv.org/pdf/2604.23269v1",
+      "score": "6.0",
+      "evidence": "针对带驱动输入的非线性动力系统的驱动数据模型预测控制",
+      "tldr": "针对复杂动力系统控制中存在的强非线性、高噪声和计算限制等挑战，本文提出了一种将带驱动输入的弱形式稀疏识别（WSINDYc）嵌入模型预测控制（MPC）的框架。该方法通过在噪声环境下稳健地识别简洁且可解释的动力学模型，显著提升了控制精度和效率。在核聚变等离子体、无人机避障及混沌系统等多个领域的实验表明，该框架在预测时域、跟踪误差和成本优化方面均优于基准方法。",
+      "tags": "query:em-force",
+      "abstract_en": "The control of complex dynamical systems remains a fundamental challenge in science and engineering, where strong nonlinearities, the presence of noise, and computational constraints often pose significant obstacles in traditional control approaches. Recent advances in data-driven methods, particularly system identification techniques, have shown a powerful alternative by providing fast, parsimonious, interpretable models that are well-suited for model predictive control (MPC). Building on these developments, the present article embeds WSINDy with actuation inputs (WSINDYc) within a MPC framework. Compared to benchmark data-driven methods, WSINDYc enables a more robust identification of the governing dynamics, particularly in the presence of high noise levels, resulting in more accurate and efficient control. The capabilities of the proposed WSINDY-MPC framework are demonstrated on a range of problems, including a tokamak plasma boundary model that includes main ion gas puff actuation, drone tracking and collision avoidance, the chaotic Lorenz system, and a simplified flight control model for an F-8 aircraft. The proposed framework achieves superior performance in the presence of noise, enabling longer prediction horizons, lower trajectory tracking error, and a more reliable obstacle clearance, while simultaneously achieving lower MPC cost values compared to the baseline methods.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/28/2604.24706v1-exploiting-differential-flatness-for-efficient-learning-based-model-predictive-control-of-constrained-multi-input-control-affine-systems",
+      "section": "quick",
+      "title_en": "Exploiting Differential Flatness for Efficient Learning-based Model Predictive Control of Constrained Multi-Input Control Affine Systems",
+      "authors": "Tobias A. Farger, Adam W. Hall, Angela P. Schoellig",
+      "date": "2026-04-27",
+      "pdf": "https://arxiv.org/pdf/2604.24706v1",
+      "score": "6.0",
+      "evidence": "针对受限多输入非线性系统的模型预测控制",
+      "tldr": "针对具有不确定动力学的受限多输入控制仿射系统，本文提出一种利用微分平坦性的学习型模型预测控制（MPC）方法。该方法通过系统扩展和块对角代价函数设计，将复杂的非线性控制问题转化为两个高效的顺序凸优化问题，在满足输入和状态约束的同时保证了概率稳定性。相比传统高斯过程MPC，该方法在保持跟踪性能的同时显著提升了计算效率，并在硬件实验中得到了验证。",
+      "tags": "query:em-force",
+      "abstract_en": "Learning-based control techniques use data from past trajectories to control systems with uncertain dynamics. However, learning-based controllers are often computationally inefficient, limiting their practicality. To address this limitation, we propose a learning-based controller that exploits differential flatness, a property of many robotic systems. Recent research on using flatness for learning-based control either is limited in that it (i) ignores input constraints, (ii) applies only to single-input systems, or (iii) is tailored to specific platforms. In contrast, our approach uses a system extension and block-diagonal cost formulation to control general multi-input, nonlinear, affine systems. Furthermore, it satisfies input and half-space flat state constraints and guarantees probabilistic Lyapunov decrease using only two sequential convex optimizations. We show that our approach performs similarly to, but is multiple times more efficient than, a Gaussian process model predictive controller in simulation, and achieves competitive tracking in real hardware experiments.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

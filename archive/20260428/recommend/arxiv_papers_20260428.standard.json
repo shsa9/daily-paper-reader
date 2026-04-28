@@ -1,0 +1,208 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-28T20:58:55.748607+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 5,
+    "quick_skim_target": 11,
+    "quick_selected": 5
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.18961v1",
+      "title": "AI-Enabled Image-Based Hybrid Vision/Force Control of Tendon-Driven Aerial Continuum Manipulators",
+      "abstract": "This paper presents an AI-enabled cascaded hybrid vision/force control framework for tendon-driven aerial continuum manipulators based on constant-strain modeling in $SE(3)$ as a coupled system. The proposed controller is designed to enable autonomous, physical interaction with a static environment while stabilizing the image feature error. The developed strategy combines the cascaded fast fixed-time sliding mode control and a radial basis function neural network to cope with the uncertainties in the image acquired by the eye-in-hand monocular camera and the measurements from the force sensing apparatus. This ensures rapid, online learning of the vision- and force-related uncertainties without requiring offline training. Furthermore, the features are extracted via a state-of-the-art graph neural network architecture employed by a visual servoing framework using line features, rather than relying on heuristic geometric line extractors, to concurrently contribute to tracking the desired normal interaction force during contact and regulating the image feature error. A comparative study benchmarks the proposed controller against established rigid-arm aerial manipulation methods, evaluating robustness across diverse scenarios and feature extraction strategies. The simulation and experimental results showcase the effectiveness of the proposed methodology under various initial conditions and demonstrate robust performance in executing manipulation tasks.",
+      "authors": [
+        "Shayan Sepahvand",
+        "Farrokh Janabi-Sharifi",
+        "Farhad Aghili"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.CV"
+      ],
+      "published": "2026-04-21T01:19:11+00:00",
+      "link": "https://arxiv.org/pdf/2604.18961v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Hybrid vision/force control for physical interaction and uncertainty compensation",
+      "llm_evidence_cn": "物理交互与不确定性补偿的视觉/力混合控制",
+      "llm_evidence": "物理交互与不确定性补偿的视觉/力混合控制",
+      "canonical_evidence": "物理交互与不确定性补偿的视觉/力混合控制",
+      "llm_tldr_en": "Proposes a cascaded hybrid vision/force control framework for precise physical interaction.",
+      "llm_tldr_cn": "提出了一种用于精确物理交互的级联视觉/力混合控制框架。",
+      "llm_tldr": "提出了一种用于精确物理交互的级联视觉/力混合控制框架。",
+      "llm_tags": [
+        "query:em-force:composite"
+      ],
+      "matched_query_tag": "query:em-force:composite",
+      "matched_query_text": "Papers central to 查找非接触式电磁激振器的力控制方法，特别是精密控制策略, especially work that connects or combines: electromagnetic exciter force control; ddy current magnetic bearing modeling; magnetic bearing flux feedback; non-contact electromagnetic shaker force control; precision force control strategies for electromagnetic actuators; closed-loop force control for electromagnetic shakers; flux feedback linearization zero bias magnetic bearing; non contact electromagnetic exciter precision force control; eddy current effects in electromagnetic actuators dynamic modeling; flux feedback control for magnetic bearing force precision.",
+      "matched_requirement_id": "req-composite-em-force",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.20234v1",
+      "title": "Robust Fixed-Time Model Reference Adaptive Control",
+      "abstract": "This article proposes a Model Reference Adaptive Control (MRAC) strategy to achieve fixed-time convergence of parameter estimation and tracking errors for unknown linear time-invariant systems, without relying on the persistence of excitation condition. Instead, it employs a less restrictive initial/interval excitation condition on the regressor matrix, enhancing practicality and ease of implementation in real-world scenarios. Our primary contribution is a novel parameter update law within the indirect MRAC framework, ensuring that parameter estimates converge within a fixed time, once the initial/interval excitation condition is met. This approach simplifies the practical requirements for adaptive control while guaranteeing robust performance against parameter uncertainty and external disturbances. Simulation results provide a comparison with the current literature to validate the effectiveness of this approach.",
+      "authors": [
+        "Chayan Kumar Paul",
+        "Krishanu Nath",
+        "Indra Narayan Kar",
+        "Denis Efimov",
+        "Rosane Ushirobira"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-04-22T06:34:49+00:00",
+      "link": "https://arxiv.org/pdf/2604.20234v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Adaptive control for precision tracking in linear systems with parameter uncertainty",
+      "llm_evidence_cn": "针对具有参数不确定性的线性系统精密跟踪的自适应控制",
+      "llm_evidence": "针对具有参数不确定性的线性系统精密跟踪的自适应控制",
+      "canonical_evidence": "针对具有参数不确定性的线性系统精密跟踪的自适应控制",
+      "llm_tldr_en": "Proposes a robust fixed-time adaptive control strategy for tracking and parameter estimation in linear systems.",
+      "llm_tldr_cn": "提出一种鲁棒定时自适应控制策略，用于线性系统的精密跟踪与参数估计。",
+      "llm_tldr": "提出一种鲁棒定时自适应控制策略，用于线性系统的精密跟踪与参数估计。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.23142v1",
+      "title": "An Algebraic State Observer for a Class of Physical Systems",
+      "abstract": "In this paper we present a radically new approach to design state observers for nonlinear systems, with particular emphasis on physical ones. Our objective is to obtain an algebraic relation between the unmeasurable part of the state and filtered versions of the systems inputs and outputs, which holds true for all $t \\geq 0$. The latter qualifier should be contrasted with the usual asymptotic (or fixed/finite time) objective. The standing assumption for our design is the availability -- or possibility of constructing, via coordinate change -- state components with measurable derivatives. In the physical systems studied in the paper this condition is naturally satisfied. The next step in the design is the application of the Swapping Lemma to pull out from the dynamics the derivative of one of these signals. The design is completed replacing the latter by the measurable signals and arranging the remaining terms. The algebraic observer constitutes a refreshing major departure from classical asymptotic observer designs, even in the case of electrical motors and mechanical systems that have been exhaustively studied. Particularly notable is the fact that no observability or excitation condition is imposed for the construction of the algebraic observer.",
+      "authors": [
+        "Alexey Bobtsov",
+        "Jose Guadalupe Romero",
+        "Romeo Ortega",
+        "Anton Pyrkin"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-04-25T04:49:40+00:00",
+      "link": "https://arxiv.org/pdf/2604.23142v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Algebraic state observer for nonlinear physical systems applicable to actuator state estimation",
+      "llm_evidence_cn": "适用于执行器状态估计的非线性物理系统代数状态观测器",
+      "llm_evidence": "适用于执行器状态估计的非线性物理系统代数状态观测器",
+      "canonical_evidence": "适用于执行器状态估计的非线性物理系统代数状态观测器",
+      "llm_tldr_en": "Proposes a new algebraic state observer for nonlinear physical systems to estimate unmeasurable states.",
+      "llm_tldr_cn": "提出一种用于非线性物理系统的代数状态观测器，可用于估计不可测量的系统状态。",
+      "llm_tldr": "提出一种用于非线性物理系统的代数状态观测器，可用于估计不可测量的系统状态。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.23269v1",
+      "title": "WSINDy for Model Predictive Control with Applications to Fusion, Drones, and Chaos",
+      "abstract": "The control of complex dynamical systems remains a fundamental challenge in science and engineering, where strong nonlinearities, the presence of noise, and computational constraints often pose significant obstacles in traditional control approaches. Recent advances in data-driven methods, particularly system identification techniques, have shown a powerful alternative by providing fast, parsimonious, interpretable models that are well-suited for model predictive control (MPC). Building on these developments, the present article embeds WSINDy with actuation inputs (WSINDYc) within a MPC framework. Compared to benchmark data-driven methods, WSINDYc enables a more robust identification of the governing dynamics, particularly in the presence of high noise levels, resulting in more accurate and efficient control. The capabilities of the proposed WSINDY-MPC framework are demonstrated on a range of problems, including a tokamak plasma boundary model that includes main ion gas puff actuation, drone tracking and collision avoidance, the chaotic Lorenz system, and a simplified flight control model for an F-8 aircraft. The proposed framework achieves superior performance in the presence of noise, enabling longer prediction horizons, lower trajectory tracking error, and a more reliable obstacle clearance, while simultaneously achieving lower MPC cost values compared to the baseline methods.",
+      "authors": [
+        "Cristian López",
+        "Mckenna Partridge",
+        "Sebastian De Pascuale",
+        "Jeremy Lore",
+        "Andrew Christlieb",
+        "Stephen Becker",
+        "David M. Bortz"
+      ],
+      "primary_category": "math.DS",
+      "categories": [
+        "math.DS",
+        "math.OC"
+      ],
+      "published": "2026-04-25T12:22:13+00:00",
+      "link": "https://arxiv.org/pdf/2604.23269v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Data-driven model predictive control for nonlinear dynamical systems with actuation inputs",
+      "llm_evidence_cn": "针对带驱动输入的非线性动力系统的驱动数据模型预测控制",
+      "llm_evidence": "针对带驱动输入的非线性动力系统的驱动数据模型预测控制",
+      "canonical_evidence": "针对带驱动输入的非线性动力系统的驱动数据模型预测控制",
+      "llm_tldr_en": "Integrates WSINDy with MPC for robust control of complex nonlinear systems under noise and constraints.",
+      "llm_tldr_cn": "将WSINDy与MPC结合，实现了噪声和约束下复杂非线性系统的鲁棒控制。",
+      "llm_tldr": "将WSINDy与MPC结合，实现了噪声和约束下复杂非线性系统的鲁棒控制。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.24706v1",
+      "title": "Exploiting Differential Flatness for Efficient Learning-based Model Predictive Control of Constrained Multi-Input Control Affine Systems",
+      "abstract": "Learning-based control techniques use data from past trajectories to control systems with uncertain dynamics. However, learning-based controllers are often computationally inefficient, limiting their practicality. To address this limitation, we propose a learning-based controller that exploits differential flatness, a property of many robotic systems. Recent research on using flatness for learning-based control either is limited in that it (i) ignores input constraints, (ii) applies only to single-input systems, or (iii) is tailored to specific platforms. In contrast, our approach uses a system extension and block-diagonal cost formulation to control general multi-input, nonlinear, affine systems. Furthermore, it satisfies input and half-space flat state constraints and guarantees probabilistic Lyapunov decrease using only two sequential convex optimizations. We show that our approach performs similarly to, but is multiple times more efficient than, a Gaussian process model predictive controller in simulation, and achieves competitive tracking in real hardware experiments.",
+      "authors": [
+        "Tobias A. Farger",
+        "Adam W. Hall",
+        "Angela P. Schoellig"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY",
+        "cs.LG",
+        "cs.RO"
+      ],
+      "published": "2026-04-27T17:14:17+00:00",
+      "link": "https://arxiv.org/pdf/2604.24706v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Model predictive control for constrained multi-input nonlinear systems",
+      "llm_evidence_cn": "针对受限多输入非线性系统的模型预测控制",
+      "llm_evidence": "针对受限多输入非线性系统的模型预测控制",
+      "canonical_evidence": "针对受限多输入非线性系统的模型预测控制",
+      "llm_tldr_en": "Proposes an efficient learning-based MPC for nonlinear systems, potentially applicable to actuator control.",
+      "llm_tldr_cn": "提出了一种高效的基于学习的非线性系统模型预测控制，可应用于执行器控制。",
+      "llm_tldr": "提出了一种高效的基于学习的非线性系统模型预测控制，可应用于执行器控制。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

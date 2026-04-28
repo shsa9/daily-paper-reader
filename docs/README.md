@@ -6,41 +6,38 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-27
-- 运行时间：2026-04-27 20:46:46 UTC
+- 最新运行日期：2026-04-28
+- 运行时间：2026-04-28 20:59:37 UTC
 - 运行状态：成功
-- 本次总论文数：6
+- 本次总论文数：5
 - 精读区：0
-- 速读区：6
+- 速读区：5
 
 ### 今日简报（AI）
-今日聚焦微牛级推进器与智能控制前沿，速览 6 篇涵盖等离子体动力学及深度算子网络的最新研究。
-核心看点在于微牛级霍尔推力器的模式转换机制，以及 DeepONets 在求解时变 LQR 控制问题上的高效表现。
-推荐对微纳卫星动力系统及 AI 赋能经典控制理论感兴趣的读者深入了解。
-- 详情：[/202604/27/README](/202604/27/README)
+- 今日共生成 5 篇推荐（精读 0 篇，速读 5 篇）
+- 速读：《AI-Enabled Image-Based Hybrid Vision/Force Control of Tendon-Driven Aerial Continuum Manipulators》（6.0/10）, 《Robust Fixed-Time Model Reference Adaptive Control》（6.0/10）, 《An Algebraic State Observer for a Class of Physical Systems》（6.0/10）
+- 这些结果覆盖了当下较热的方向，建议先看精读区论文的关键问题与方法。
+- 详情：[/202604/28/README](/202604/28/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Research on mode transition of micro-newton-level cusped field Hall thruster](/202604/27/2604.17903v1-research-on-mode-transition-of-micro-newton-level-cusped-field-hall-thruster)  
-   标签：评分：7.0/10、query:em-force
-   evidence：微牛级执行器的精密推力控制
-2. [Classical counterparts of shortcuts to adiabaticity in nonlinear dissipative Lagrangian systems](/202604/27/2604.18439v1-classical-counterparts-of-shortcuts-to-adiabaticity-in-nonlinear-dissipative-lagrangian-systems)  
+1. [AI-Enabled Image-Based Hybrid Vision/Force Control of Tendon-Driven Aerial Continuum Manipulators](/202604/28/2604.18961v1-ai-enabled-image-based-hybrid-visionforce-control-of-tendon-driven-aerial-continuum-manipulators)  
    标签：评分：6.0/10、query:em-force
-   evidence：耗散系统中力曲线的逆向工程设计
-3. [Learning the Riccati solution operator for time-varying LQR via Deep Operator Networks](/202604/27/2604.18507v1-learning-the-riccati-solution-operator-for-time-varying-lqr-via-deep-operator-networks)  
+   evidence：物理交互与不确定性补偿的视觉/力混合控制
+2. [Robust Fixed-Time Model Reference Adaptive Control](/202604/28/2604.20234v1-robust-fixed-time-model-reference-adaptive-control)  
    标签：评分：6.0/10、query:em-force
-   evidence：用于最优反馈控制的学习算子代理
-4. [AC-SINDy: Compositional Sparse Identification of Nonlinear Dynamics](/202604/27/2604.18889v1-ac-sindy-compositional-sparse-identification-of-nonlinear-dynamics)  
+   evidence：针对具有参数不确定性的线性系统精密跟踪的自适应控制
+3. [An Algebraic State Observer for a Class of Physical Systems](/202604/28/2604.23142v1-an-algebraic-state-observer-for-a-class-of-physical-systems)  
    标签：评分：6.0/10、query:em-force
-   evidence：非线性动力学辨识与状态估计
-5. [A neural operator framework for data-driven discovery of stability and receptivity in physical systems](/202604/27/2604.19465v1-a-neural-operator-framework-for-data-driven-discovery-of-stability-and-receptivity-in-physical-systems)  
+   evidence：适用于执行器状态估计的非线性物理系统代数状态观测器
+4. [WSINDy for Model Predictive Control with Applications to Fusion, Drones, and Chaos](/202604/28/2604.23269v1-wsindy-for-model-predictive-control-with-applications-to-fusion-drones-and-chaos)  
    标签：评分：6.0/10、query:em-force
-   evidence：物理系统中最佳力响应的数据驱动发现
-6. [Approximate Simulation-based Hierarchical Control of Nonlinear Systems](/202604/27/2604.20509v1-approximate-simulation-based-hierarchical-control-of-nonlinear-systems)  
+   evidence：针对带驱动输入的非线性动力系统的驱动数据模型预测控制
+5. [Exploiting Differential Flatness for Efficient Learning-based Model Predictive Control of Constrained Multi-Input Control Affine Systems](/202604/28/2604.24706v1-exploiting-differential-flatness-for-efficient-learning-based-model-predictive-control-of-constrained-multi-input-control-affine-systems)  
    标签：评分：6.0/10、query:em-force
-   evidence：非线性系统的分层控制
+   evidence：针对受限多输入非线性系统的模型预测控制
 
 
 <div class="dpr-home-promo-card">

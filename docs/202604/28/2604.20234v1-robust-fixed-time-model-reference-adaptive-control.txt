@@ -1,0 +1,561 @@
+Title: Robust Fixed-Time Model Reference Adaptive Control
+
+URL Source: https://arxiv.org/pdf/2604.20234v1
+
+Published Time: Thu, 23 Apr 2026 00:33:14 GMT
+
+Number of Pages: 10
+
+Markdown Content:
+# Robust Fixed-Time Model Reference Adaptive Control 
+
+Chayan Kumar Paul 1, Krishanu Nath 2, Indra Narayan Kar 1, Denis Efimov 3, and Rosane Ushirobira 3
+
+> 1
+
+Department of Electrical Engineering, Indian Institute of Technology Delhi, New Delhi 110016, India, 
+
+chayanpaul007@gmail.com, ink@ee.iitd.ac.in 
+
+> 2
+
+Department of Electronics and Instrumentation Engineering, NIT Agartala, Tripura 799046, India, 
+
+krishanu.eie@faculty.nita.ac.in 
+
+> 3
+
+Inria, Univ. Lille, CNRS, UMR 9189–CRIStAL, F-59000 Lille, France, Denis.Efimov@inria.fr, Rosane.Ushirobira@inria.fr 
+
+## April 23, 2026 
+
+Abstract 
+
+This article proposes a Model Reference Adaptive Control (MRAC) strategy to achieve fixed-time convergence of parameter estimation and tracking errors for unknown linear time-invariant systems, without relying on the persistence of excitation condition. Instead, it employs a less restrictive initial/interval excitation condition on the regressor matrix, enhancing practicality and ease of implementation in real-world scenarios. Our primary contribution is a novel parameter update law within the indirect MRAC framework, ensuring that parameter estimates converge within a fixed time, once the initial/interval excitation condition is met. This approach simplifies the practical requirements for adaptive control while guaranteeing robust performance against parameter uncertainty and external disturbances. Simulation results provide a comparison with the current literature to validate the effectiveness of this approach. Also, implementation on a single-link manipulator is given to illustrate the real-life applicability of this method. 
+
+# 1 Introduction 
+
+Model Reference Adaptive Control (MRAC) [1] is a strategy that enables a system to mimic the behavior of a predefined reference model. It can be implemented using two main approaches: direct and indirect. In the direct approach [2], the adaptive control law is derived directly from the error between the actual system trajectory and the reference model trajectory, leading to a time-varying feedback gain. In contrast, the indirect approach [3] first estimates the system parameters and then designs the feedback gain based on the estimates. While the direct MRAC approach ensures convergence of the tracking error, it does not provide estimates of the underlying model coefficients. The indirect approach overcomes this limitation by continuously estimating the parameters and updating the control law accordingly, offering a better understanding and adaptability for systems with unknown dynamics. A key challenge in implementing indirect MRAC is ensuring that the regressor signals satisfy the persistent excitation (PE) condition [4, 5]. However, enforcing the PE condition on the regressor signal is often impractical, as it requires the signal to consistently retain sufficient excitation over time – a requirement that depends on future values, which are challenging to predict or monitor continuously. To address this limitation, concurrent learning (CL) [6] utilizes stored regressor data that satisfy a rank condition, providing a less restrictive alternative to traditional PE enforcement. While this approach mitigates the strict PE requirement, it is computationally intensive and requires significant memory and processing resources. An alternative strategy, initial (or interval) excitation (IE) [7, 8], relaxes the PE condition by requiring excitation only within an initial finite time window, eliminating the need for continuous excitation. Asufficiently rich regressor signal fulfills this IE condition almost instantly, and after that, exponential convergence of the parameters is guaranteed. However, since under the IE condition the parameter estimates converge only exponentially, the control input cannot immediately exploit their adaptation, necessitating additional compensatory dynamics to account for the estimation error. Moreover, in the presence of disturbances, the parameter estimation error can only approach a bounded neighborhood around the origin rather than converging exactly to it. The influence of such disturbances on parameter convergence within the IE framework remains largely unexplored. So far, all strategies have used Lyapunov-based analysis to obtain either asymptotic or exponential convergence results. In 2000, the notion of finite-time convergence [9] gained immense popularity, as it gives stronger convergence-time results than exponential stability, with good robustness. However, in estimation or observer problems, the user usually does not know the actual parameter values or initial error vectors. So, a fixed-time (FxT) [10] convergence-based 1
+
+> arXiv:2604.20234v1 [eess.SY] 22 Apr 2026
+
+approach is usually preferred, in which the estimation error converges within a predefined time independent of the initial condition. The concept of fixed-time control has been widely applied to various practical scenarios, including finite-time stabi-lization of nonlinear systems [11], homogeneous systems [12, 13], and consensus tracking [14]. Adaptive backstepping-based FxT control was also proposed for uncertain nonlinear systems [15]. A general scheme for direct adaptive finite-and fixed-time control is presented in [16], but no study is conducted on the convergence of the adjusted parameters to their desired values. The application of FxT methods in parameter estimation remains limited. An FxT parameter estimation strategy using dynamic regressor extension and mixing was presented in [17, 18], proving parameter conver-gence without strict PE conditions. Yet, it still requires the regressor to be excited throughout the overall estimation period, and no associated control law was developed based on these estimates. In this article, we present an indirect FxT MRAC scheme for linear systems in the presence of external disturbances, where the regressor matrix satisfies only an IE condition. The stability and convergence properties of the closed-loop system are analyzed using tools from homogeneity theory. Homogeneity, a dilation-based symmetry, is widely exploited in control theory for analysis, control, and observer design [19–21]. In particular, it enables the inference of global stability from local properties and provides an explicit characterization of the convergence rate through the homogeneity degree, thereby offering a systematic and insightful framework for FxT stability analysis. The main contributions in this paper are as follows: 
+
+• A novel fixed-time parameter adaptation law is developed for a class of linear systems under bounded disturbances. The proposed method requires the regressor to satisfy the excitation condition only over an initial finite interval, after which the estimated parameters converge within a fixed time to a small neighborhood of their true values. 
+
+• A fixed-time MRAC framework is formulated by integrating the proposed adaptation law with a model reference controller, ensuring faster transient response and improved robustness against parameter uncertainty against standard MRAC. 
+
+• Homogeneity-based analysis is used to study the closed-loop error dynamics, guaranteeing FxT input-to-state stability (ISS). Additionally, we provide a comparative analysis between the proposed fixed-time parameter convergence law and the exponential convergence update law [7], demonstrating the efficacy of the proposed approach. The methodology is further validated on a single-link manipulator to assess its practical applicability in real-world settings. The structure of the paper is as follows. Section 2 presents an overview of model reference adaptive and FxT controls. Section 3 introduces the update law for ensuring FxT parameter convergence, while Section 4 details the control law for trajectory tracking. Section 5 gives comparative analysis on a second-order system through simulations implementation. A conclusion is provided in the last section. 
+
+Notation: Let R>0 := {x ∈ R | x > 0} denote the set of strictly positive real numbers and R≥0 := {x ∈ R |
+
+x ≥ 0}. For a given norm ∥ · ∥ on Rn, ∥A∥ denotes the induced matrix norm of a matrix A ∈ Rn×n. The class of continuously differentiable functions is denoted by C1. The identity matrix of dimension n is denoted by In. For a matrix G ∈ Rn×n, its eigenvalues are denoted by λi(G), i = 1 , . . . , n . If G is symmetric, then λmin (G) := min i λi(G) and 
+
+λmax (G) := max i λi(G). The notation P > 0 indicates that a symmetric matrix P = P ⊤ ∈ Rn×n is positive definite. The notation ℜ(λ) denotes the real part of a complex number λ. We denote ⌈v⌋α := |v1|αsgn( v1) . . . |vn|αsgn( vn)⊤,for v = v1 . . . vn
+
+⊤ ∈ Rn.
+
+# 2 Preliminaries and Problem Formulation 
+
+## 2.1 Preliminaries 
+
+Consider a system with the following dynamics ˙y(t) = F (t, y (t)) , y(t0) = y0, ∀t ≥ t0 ∈ R≥0 (1) with y(t) ∈ C y ⊆ Rn, Cy an open neighborhood of the origin, and F : R≥0 × C y → C y a nonlinear function. Assume that the origin is an equilibrium point of (1). Refer to [22] for the conventional definitions of stability properties. 
+
+Definition 1 [23] The bounded signal y is said to be persistently exciting (PE) if there exist positive scalars μ1, μ2,and T ∈ R>0, such that μ1In ≤
+
+Z t+Tt
+
+y(τ )y⊤(τ ) ≤ μ2In, ∀t ∈ R>0.
+
+Definition 2 [10] System (1) is said to be: 
+
+21. fixed-time (FxT) stable , if it is asymptotically stable, and for any initial condition y(t0) ∈ C y and t0 ∈ R≥0, the corresponding solution y(t) of (1) reaches the equilibrium point at some finite-time instant, i.e., y(t) = 0 , for all 
+
+t ≥ t0 + Tf , where Tf is called settling time .2. fixed-time (FxT) attractive by a bounded set Y ⊂ C y around the origin, if for any initial condition y(t0) ∈ C y
+
+and t0 ∈ R≥0, the solution y(t) of (1) reaches the set Y in some time t ≤ t0 + Tf , and it remains inside for all subsequent times, i.e., y(t) ∈ Y , for all t ≥ t0 + Tf .
+
+Lemma 1 [10] Let V : Cy → R≥0 be a continuous, positive definite function defined on an open neighborhood of the origin, and a, b, l 1, l 2 > 0 such that 0 < l 1 < 1 < l 2. Assume that any solution y(t) of (1) satisfies: 
+
+˙V (y(t)) ≤ − a V l1 (y(t)) − b V l2 (y(t)) .
+
+Then, the system (1) is FxT-stable, and the corresponding settling-time function satisfies 
+
+Tf ≤ 1
+
+a(1 − l1) + 1
+
+b(l2 − 1) .
+
+Lemma 2 For any vector y ∈ Rn and real numbers 0 < r < s , we have ∥y∥s ≤ ∥ y∥r ≤ n 1   
+
+> r−1
+> s
+
+∥y∥s.
+
+This is a direct consequence of the H¨ older inequality [24]. Homogeneity is a structural symmetry property of functions, operators, sets, and vector fields with respect to a family of transformations referred to as dilations (see, for example, [25, 26]). In this work, we consider a one-parameter group of linear dilations D : R → Rn defined as 
+
+D(τ ) := eHτ =
+
+> ∞
+
+X
+
+> k=0
+
+Hkτ k
+
+k! , ∀τ ∈ R, (2) where H ∈ Rn×n is a constant matrix so that −H is a Hurwitz matrix and it characterizes the dilation function. The following definitions formalize the notion of homogeneity for dynamical systems. 
+
+Definition 3 [27] 1. A function h : Rn → R is D-homogeneous of degree ν ∈ R if h(D(τ )x) = eντ h(x), for all x ∈ Rn, τ ∈ R.2. A vector field f : Rn → Rn is D-homogeneous of degree ν ∈ R if f (D(τ )x) = eντ D(τ )f (x), for all x ∈ Rn, τ ∈ R.3. The dynamical system ˙x = f (x) is said to be D-homogeneous if the vector field f is D-homogeneous. 
+
+Let FD (Rn) and HD (Rn) denote the sets of D-homogeneous vector fields and functions which are continuous on 
+
+Rn \ { 0}, respectively. The corresponding homogeneity degrees are denoted by deg FD (·) and deg HD (·). If a D-homogeneous function h is continuously differentiable, then its homogeneity property is inherited by its derivatives. In particular, using Lemma 1 in [28], the gradient ∇h is D-homogeneous of degree ν − 1 in the sense that 
+
+∇h(D(τ )x) = e(ν−1) τ D(−τ )⊤∇h(x), ∀x̸ = 0 . (3) 
+
+Definition 4 [29] The dilation D is said to be strictly monotone on Rn if there exists a constant κ ∈ R>0 such that 
+
+∥D (τ )∥ ≤ eκτ , for all τ ≤ 0.
+
+Lemma 3 ( [30]) Let D be a dilation in Rn with associated matrix H. Then: 
+
+• all eigenvalues λi of H lie in the open right half-plane, that is, ℜ(λi) > 0, for i = 1 , 2, . . . , n ;
+
+• there exists a symmetric positive definite matrix P = P ⊤ ∈ Rn×n such that 
+
+P H + H⊤P > 0; (4) 
+
+• the dilation D is strictly monotone with respect to the weighted Euclidean norm ∥x∥P := p⟨x, x ⟩P , where P
+
+satisfies (4) . In particular, 
+
+eκ1τ ≤ ∥D (τ )∥P ≤ eκ2τ , τ ≤ 0, (5) 
+
+eκ2τ ≤ ∥D (τ )∥P ≤ eκ1τ , τ ≥ 0, (6) 
+
+where 
+
+κ1 = 12 λmax 
+
+
+
+P 12 HP − 12 + P − 12 H⊤P 12
+
+
+
+, (7) 
+
+κ2 = 12 λmin 
+
+
+
+P 12 HP − 12 + P − 12 H⊤P 12
+
+
+
+. (8) 3Homogeneity plays a central role in control theory, as it provides a clear and intuitive way to understand the behavior of nonlinear dynamical systems. In particular, the convergence rate of homogeneous systems can be directly inferred from their homogeneity degree, making homogeneity a practical tool for analyzing finite- and fixed-time stability properties. 
+
+Lemma 4 [28] Consider the D-homogeneous dynamical system: 
+
+˙x = f (x), f : Rn → Rn,
+
+which is asymptotically stable at the origin. Then, the type of convergence is completely characterized by the homogeneity degree deg( f ) := deg FD (f ) as follows: 1. the system is finite-time stable if deg( f ) < 0;2. the system is nearly fixed-time stable if deg( f ) > 0;3. the system is exponentially stable if deg( f ) = 0 .
+
+In addition to convergence rate characterization, homogeneous control systems exhibit strong robustness properties with respect to external disturbances, measurement noise, and time delays (see [26, 31–33]). 
+
+## 2.2 Problem Formulation 
+
+Consider a continuous linear time-invariant (LTI) system: ˙x = Ax + Bu + d, (9) where x(t) ∈ C x ⊆ Rn denotes the state vector, and u(t) ∈ R represents the control input. The disturbance d(t) ∈ Rn is bounded by a known scalar, i.e., ess sup t≥0 (|d(t)|) < d . The pair A ∈ Rn×n and B ∈ Rn is controllable and the matrix 
+
+A is unknown. The desired closed-loop response is captured using a reference model, given by: ˙xm = Amxm + Br, (10) where Am ∈ Rn×n is a Hurwitz matrix and r(t) ∈ R is a bounded, continuous reference input. The reference state vector, xm(t) ∈ C x ⊂ Rn, represents the desired trajectory for the system states in (9). The control objective is to ensure that the system state x follows the reference xm.To ensure tracking in absence of the disturbance, i.e., d ≡ 0, an adaptive control law [34], incorporating both a linear feedback and feedforward term, can be defined as 
+
+u = K⊤ 
+
+> x
+
+x + r, (11) where Kx(t) ∈ Rn is a time-varying control gain vector. Substituting (11) in (9) yields ˙x = ( A + BK⊤ 
+
+> x
+
+)x + Br. (12) To ensure that the system (12) behaves as the chosen reference model (10), we need the following assumptions [23]. 
+
+Assumption 1 [34] There exist a constant vector Kx ∈ Rn such that A + BK⊤ 
+
+> x
+
+= Am.
+
+Using this assumption, the closed-loop system in (12) becomes ˙x = Amx + Br + B eK⊤ 
+
+> x
+
+x, (13) where eKx(t) ≜ Kx(t) − K x. Using (10) and (13), the dynamics of the tracking error e ≜ x − xm is obtained as ˙e = Ame + B eK⊤ 
+
+> x
+
+x. (14) The standard direct adaptive update laws [34] for Kx is: ˙Kx = −Γ1xe ⊤P1B, (15) where Γ 1 ∈ R>0, and P ∈ Rn×n is a symmetric positive definite matrix satisfying the Lyapunov equation 
+
+A⊤
+
+> m
+
+P1 + P1Am + Q1 = 0 , (16) 4for any given symmetric positive definite Q1 ∈ Rn×n.
+
+The control input (11) along with the parameter update law (15) ensures asymptotic tracking, i.e., e(t) → 0 as 
+
+t → ∞ . In contrast, our objective is to achieve fixed-time convergence for both the parameters estimation and the tracking error. The estimates of the system matrix, denoted as bA, can be utilized to indirectly estimate the controller gains. The control gain can be defined as: 
+
+K⊤ 
+
+> x
+
+= B†(Am − bA), (17) where B† = ( B⊤B)−1B⊤ is the pseudo-inverse of B.The convergence of Kx to the actual value Kx typically relies on the PE condition, which is difficult to guarantee in practice. Existing solutions based on IE (interval exciting) may relax the PE condition, but still yield exponential parameter convergence, without a trajectory-independent time bound. Therefore, we seek a parameter update law that ensures that the controller parameters converge to their actual values within a fixed time, independent of the initial conditions. In addition, we aim to develop a parameter update law that guarantees convergence of the tracking error within a prescribed time bound, in the absence of disturbances. In the presence of disturbances, the goal is to achieve fixed-time input-to-state stability (FxT-ISS), meaning that both the parameter estimation error and the tracking error converge to prescribed neighborhoods of the origin within a predetermined time, where the size of the neighborhoods is proportional to the disturbance amplitude. 
+
+# 3 Fixed-time Identification of Plant Parameters 
+
+The plant dynamics in (9) can be rewritten as: ˙x = ΦΘ + Bu + d, (18) where Φ( x) ∈ Rn×n2
+
+is the known regressor matrix with Φ( x) = In ⊗ x⊤, (19) and ⊗ represents the matrix Kronecker product. The unknown plant-parameter vector Θ ∈ Rn2
+
+, comprising all elements of A, is defined as: Θ ≜ vec( A⊤). (20) Inspired by [7], the following first-order filters are designed: ˙N = −kN + Φ , N (0) = 0 , (21) ˙G1 = −kG 1 + ˙ x, G1(0) = 0 , (22) ˙G2 = −kG 2 + Bu, G2(0) = 0 , (23) where k > 0 is a scalar gain ensuring filter stability, N (t) ∈ Rn×n2
+
+represents a filtered regressor satisfying ∥N (t)∥ ≤ N ,
+
+G1(t), G2(t) ∈ Rn denote the filtered state derivative and input, respectively. The filter variables can be expressed as: 
+
+N (t) = e−kt 
+
+Z t
+
+> 0
+
+ekτ Φ( τ )dτ, (24) 
+
+G1(t) = e−kt 
+
+Z t
+
+> 0
+
+ekτ ˙x(τ )dτ. (25) 
+
+G2(t) = e−kt 
+
+Z t
+
+> 0
+
+ekτ Bu (τ )dτ. (26) From (18), (24) and (25), the following can be deduced: 
+
+G = G1 − G2 = N Θ + W (27) where W (t) ∈ Rn arises due to the disturbances and can be analytically expressed as 
+
+W (t) ≜
+
+Z t
+
+> 0
+
+ek(τ −t)d(τ )dτ. 
+
+By using ∥d(t)∥ ≤ d, one can ensure W (t) ≤ W (t) ≜ dk
+
+ 1 − e−kt .5To obtain G1, one needs to know ˙ x, which is not available in real time. So, we use integration by parts on (25): 
+
+G1(t) = x(t) − e−kt x(0) − kh (t), (28) where h(t) ∈ Rn is the output of the filter equation: ˙h = −kh + x, h(0) = 0 . (29) Since x is measurable, equations (28), (29) and (23) can be employed to compute G online. Consequently, the filter equations (24) and (25) transform the differential equation (18) into the algebraic equation (27), thereby eliminating the requirement for the direct knowledge of ˙ x.A gradient-based FxT parameter estimation law, based on (27), can be formulated to estimate Θ, as proposed in [18]. However, such a law necessitates the restrictive excitation condition on Φ until the parameter converges, which is practically very difficult to achieve. To overcome this limitation, we use the IE condition, which is imposed through the assumption: 
+
+Assumption 2 [7] There exists T , γ > 0, such that Φ is interval exciting (IE) with degree of excitation γ on the interval [0 , T ], i.e., Z T
+
+> 0
+
+Φ⊤(t)Φ( t) ≥ γI n(n+1) .
+
+Using Assumption 2, a less conservative approach can be proposed with the following filters ˙M = −kM + N ⊤N, M (0) = 0 , (30) ˙H = −kH + N ⊤G, H(0) = 0 , (31) where M (t) ∈ Rn2×n2
+
+is the integrated-filtered regressor and H(t) ∈ Rn2
+
+is the integrated-filtered output. With the help of (27), one can deduce that 
+
+H = M Θ + W1, (32) with W1(t) ≜ R t 
+
+> 0
+
+ek(τ −t)N ⊤(τ )W (τ )dτ .Since the regressor N is bounded and W is also bounded, one can obtain that ∥W1(t)∥ ≤ W 1 for some W 1 > 0. The time-varying matrix M has the following properties: 
+
+Property 1 M (t) is a positive semidefinite function of time, i.e., M (t) ≥ 0, ∀t ≥ 0.
+
+Property 2 [35] If the initial excitation condition is satisfied, it can be shown 
+
+λmin (M (t)) ≥ μ = γ
+
+> q
+
+X
+
+> j=1
+
+e−jkT , ∀t ≥ qT, q ≥ 1. (33) 
+
+where λmin (M (t)) denotes the smallest eigenvalue of M (t).
+
+The parameter estimation law is proposed as follows: ˙bΘ = κN ⊤ 
+
+⌈G − N bΘ⌋1−α + ⌈G − N bΘ⌋1+ α
+
++ Γ M ⊤ 
+
+⌈H − M bΘ⌋1−α + ⌈H − M bΘ⌋1+ α
+
+,
+
+(34) where bΘ( t) ∈ Rn(n+1) is an online estimate of the unknown plant-parameter vector Θ. The user-defined variables κ,Γ > 0 and α ∈ (0 , 1) are scalar constants. The plant parameter estimation error is defined as 
+
+eΘ ≜ bΘ − Θ. (35) Using (27), (32), (34), and (35), the dynamics of eΘ becomes ˙eΘ = −κN ⊤ 
+
+⌈N eΘ + W ⌋1+ α + ⌈N eΘ + W ⌋1−α
+
+− ΓM ⊤ 
+
+⌈M eΘ + W1⌋1+ α + ⌈M eΘ + W1⌋1−α
+
+.
+
+(36) The proof of Theorem 1 is given in the Appendix. 6Theorem 1 Let Assumption 2 be satisfied. The parameter estimation error dynamics in (36) is uniformly FxT-ISS stable with respect to the disturbance signals. Moreover, in the absence of disturbances, the convergence time is uniformly bounded by 
+
+Tmax = 2
+
+α
+
+ 1
+
+κ1
+
++ 1
+
+κ2
+
+
+
++ qT, (37) 
+
+where α ∈ (0 , 1) , κ 1 = 2 2−α 
+
+> 2
+
+μ2−αΓ 1−α 
+
+> 2−α
+
+, κ2 = 2 2+ α 
+
+> 2
+
+μ2+ αpΓ( n + 1) −α 
+
+> 2(2+ α)
+
+, and 
+
+p = 1 − c2+ α 1 + α
+
+2 + α − z 2+ α 
+
+> 1+ α
+
+(1 + α)2
+
+2 + α > 0,
+
+for some positive c, z > 0.
+
+# 4 Tracking Error Convergence 
+
+The following theorem proves the fixed-time stabilization of the system (9) using homogeneity theory [28]. Its proof is given in the Appendix. 
+
+Theorem 2 Consider the system (9) under the parameter update law (34) . Assume that the following conditions hold: 
+
+(C1) There exist Y ∈ Rm×n and L ∈ Rn×n that satisfy 
+
+AmL − LA m + BY = Am, LB = 0 ,
+
+such that L − In is invertible and the matrix Gd ≜ εI n + νL is anti-Hurwitz, for some positive scalars ε and ν.
+
+(C2) Given a positive definite function 
+
+ϕ ∈ H D (Rn) ∩ C1(Rn \ { 0}, R>0),
+
+with deg HD (ϕ) = 1 , associated with the generator Gd, there exists a positive scalar β such that 
+
+∂ϕ (ξ)
+
+∂ξ 2
+
+∥ξ∥2 ≤ β, (38) 
+
+for all ξ ∈ Rn verifying ϕ(ξ) = 1 .
+
+(C3) For some scalars ι > ζ > 0, the system of LMIs 
+
+Q X(Am + BK 0)⊤ + Y ⊤B⊤
+
+∗ −χI n
+
+
+
+≤ 0,
+
+(ζ − ι)X + ηI n ≤ 0, X > 0, χ > 0,
+
+is feasible for some matrices X ∈ Rn×n and Y ∈ R1×n, and some scalars χ, η ∈ R>0, where K0 = Y (L − In)−1,Q = ( Am + BK 0)X + X(Am + BK 0)⊤ + BY 
+
++ Y ⊤B⊤ + χβ 
+
+ 12 In − Gd
+
+  12 In − Gd
+
+⊤
+
++ ιX. 
+
+(C4) The disturbance signal d satisfies                 
+
+> ∥D (−ln ( ϕ(e)))) d∥2≤
+> ψ ζ η ϕ (e)2νX−12D(−ln ( ϕ(e))) e22
+> 2 1 + ∥12In−Gd∥2
+> ,
+
+for ψ ∈ (0 , 1) and for all e ∈ Rn \ { 0}.Set the control input of the form 
+
+u =
+
+(
+
+K⊤ 
+
+> d
+
+x + r, t ≤ T max 
+
+K⊤ 
+
+> x
+
+x + r + K0e + ϕ(e)ν+ϵKD(− ln( ϕ(e)) e t > Tmax 
+
+(39) 7where Kx is given in (17) and the adaptive gain Kd is obtained from 
+
+˙Kd = Γ d(xe ⊤P1B − σKd), (40) 
+
+with P1 introduced in (15) . Then, for K = Y P, P = X−1, the tracking error e = x − xm stays bounded in the presence of disturbances. Moreover, for d ≡ 0, it reaches the set C = {e ∈ Rn | V (e) ≤ υ}, for any υ ∈ R≥0, within time Tfinal ,where 
+
+V (e) = e⊤D⊤(− ln ( ϕ(e))) P D(− ln ( ϕ(e))) eϕ (e),
+
+and the final reaching time can be obtained as 
+
+Tfinal = max δ2ν
+
+> min
+
+, δ 2ν
+
+> max
+
+(1 − ψ)ιν υ−ν + Tmax (41) 
+
+where δmin = min            
+
+> z∈Rn
+> h(z)=1
+> X−12z2,δmax =max
+> z∈Rn
+> h(z)=1
+> X−12z2.
+
+# 5 Simulation Results 
+
+## 5.1 Simulation Results 
+
+The proposed algorithm is validated in simulation using a second-order LTI system subject to a sinusoidal disturbance 
+
+d(t) =  12 sin(50 t) sin(50 t)⊤. Based on (10) and (9), the system and reference model matrices are selected as follows. 
+
+A =
+
+ 0 1
+
+−5 −6
+
+
+
+, B =
+
+01
+
+
+
+, A m =
+
+ 0 1
+
+−7 −10 
+
+
+
+,
+
+with the reference input r(t) = 5 + 3 sin( t) + 5 sin(2 t)U (t − 5), where U (t) is the unit-step function. The control input u
+
+is generated using (39), with parameter estimates obtained through (34). The initial state vector is chosen as 5 8⊤.At t = 0 .5 seconds, the rank of M is equal to four, and its minimum eigenvalue reaches γ = 0 .25. For the simulation, we set q = 1, which gives μ = 0 .022. The design gains for the parameter update law are selected as κ = 25, Γ = 50, 
+
+α = 23 , c = 0 .8, z = 0 .6, which results the maximum time of parameter convergence to be Tmax = 4 .35 sec. For the controller gains appearing in (39), the design parameters are selected as ϵ = 0 .5, β = 1 .5, ζ = 0 .1, ν = 0 .2, 
+
+v = 0 .1, K0 = 7 10 , and L =
+
+2 01 0
+
+
+
+. We choose the function ϕ(e) =  P ni=1 |ei|ρ/ (1+( i−n)ν)1/ρ , as proposed in [28], with ρ = 2. By solving the LMIs in (38), the following feasible solution is obtained: 
+
+χ = 12 .6, η = 0 .14 , ι = 0 .25 , X =
+
+14 .5 −6
+
+−6 5
+
+
+
+.
+
+Consequently, the resulting controller gain is computed as K = −1.26 −2.71 . For time t ≤ T max , the Lyapunov matrix for the direct adaptive case is given as 
+
+P1 =
+
+0.3025 −0.5
+
+−0.5 1.05 
+
+
+
+and Γ d = 10 I2.
+
+Using these values, the theoretical upper bounds on the convergence times are obtained as Tmax = 4 .35 sec and Tfinal =29 .6 sec. As illustrated in Fig. 1, the system states accurately track the reference trajectory under the proposed control scheme. For comparison, the control strategy presented in [7] is also implemented. The resulting plots clearly demonstrate the superior tracking performance of the proposed approach. Fig. 2 depicts the time evolution of both the parameter estimation error norm and the tracking error norm. Despite the presence of perturbations, the tracking and estimation errors stay bounded, demonstrating the shown input-to-state stability. Moreover, the tracking error is rigorously guaranteed to remain confined within the prescribed set C.To further demonstrate the fixed-time convergence capability, Fig. 3 presents the estimation error trajectories for several different initial conditions. In all cases, the error norm settles within a fixed time, confirming the robustness and consistency of the proposed adaptive framework. This highlights that the method achieves improved tracking performance together with guaranteed fixed-time parameter convergence. 8Figure 1: Evolution of the system state x1(t) and the reference state 
+
+xm1 (t). 
+
+Figure 2: Norm of parameter estima-tion error and tracking error in pres-ence of disturbance 
+
+Figure 3: Norm of parameter estima-tion error for different initial condi-tions. 
+
+# 6 Conclusion 
+
+This paper presents a model reference adaptive control (MRAC) algorithm for unknown linear time-invariant systems that eliminates the need for prior knowledge of system matrices or state derivative information. The proposed indirect MRAC framework guarantees fixed-time convergence of parameter estimation and tracking errors in the presence of bounded disturbances. By employing fixed-time convergence, the algorithm ensures faster and more predictable param-eter adaptation, resulting in improved tracking performance compared to conventional adaptive control methods. The effectiveness of the proposed method is validated through simulations implementation, demonstrating its advantages over traditional MRAC techniques. Future work includes extending the approach to output-feedback scenarios and linear time-varying systems for broader applicability. 
+
+# References 
+
+[1] Shankar Sastry and Marc Bodson. Adaptive control: stability, convergence and robustness . Courier Corporation, 2011. [2] K Narendra and A Annaswamy. Robust adaptive control in the presence of bounded disturbances. IEEE Trans-actions on Automatic Control , 31(4):306–315, 2003. [3] Anuradha M Annaswamy. Model reference adaptive control. Control Systems, Robotics and Automation–Volume X: Advanced Control Systems-IV , page 63, 2009. [4] R Bitmead. Persistence of excitation conditions and the convergence of adaptive schemes. IEEE Transactions on Information Theory , 30(2):183–191, 1984. [5] Kumpati S Narendra and Anuradha M Annaswamy. Persistent excitation in adaptive systems. International Journal of Control , 45(1):127–160, 1987. [6] Girish Chowdhary and Eric Johnson. Concurrent learning for convergence in adaptive control without persistency of excitation. In 49th IEEE Conference on Decision and Control (CDC) , pages 3674–3679, 2010. [7] Sayan Basu Roy, Shubhendu Bhasin, and Indra Narayan Kar. Combined MRAC for unknown MIMO LTI systems with parameter convergence. IEEE Transactions on Automatic Control , 63(1):283–290, 2017. [8] Yongping Pan and Haoyong Yu. Composite learning robot control with guaranteed parameter convergence. Auto-matica , 89:398–406, 2018. [9] Sanjay P Bhat and Dennis S Bernstein. Finite-time stability of continuous autonomous systems. SIAM Journal on Control and optimization , 38(3):751–766, 2000. [10] Andrey Polyakov. Nonlinear feedback design for fixed-time stabilization of linear control systems. IEEE transactions on Automatic Control , 57(8):2106–2110, 2011. [11] Changchun Hua, Yafeng Li, and Xinping Guan. Finite/fixed-time stabilization for nonlinear interconnected systems with dead-zone input. IEEE Transactions on Automatic Control , 62(5):2554–2560, 2016. [12] Andrey Polyakov, Denis Efimov, and Wilfrid Perruquetti. Robust stabilization of MIMO systems in finite/fixed time. International Journal of Robust and Nonlinear Control , 26(1):69–90, 2016. 9[13] Junfeng Zhang and Denis Efimov. Fixed-time and finite-time stability of switched time-delay systems. International Journal of Control , 95(10):2780–2792, 2022. [14] Zongyu Zuo. Nonsingular fixed-time consensus tracking for second-order multi-agent networks. Automatica , 54:305– 309, 2015. [15] Fang Wang and Guanyu Lai. Fixed-time control design for nonlinear uncertain systems via adaptive method. 
+
+Systems & Control Letters , 140:104704, 2020. [16] Konstantin Zimenko, Denis Efimov, and Andrey Polyakov. Adaptive finite-time and fixed-time control design using output stability conditions. International Journal of Robust and Nonlinear Control , 32(11):6361–6378, 2022. [17] Marina Korotina, Stanislav Aranovskiy, Rosane Ushirobira, Denis Efimov, and Jian Wang. Fixed-time parameter estimation via the discrete-time DREM method. IFAC-PapersOnLine , 56(2):4013–4018, 2023. [18] Jian Wang, Denis Efimov, Stanislav Aranovskiy, and Alexey A Bobtsov. Fixed-time estimation of parameters for non-persistent excitation. European Journal of Control , 55:24–32, 2020. [19] Sanjay P Bhat and Dennis S Bernstein. Geometric homogeneity with applications to finite-time stability. Mathe-matics of Control, Signals and Systems , 17(2):101–127, 2005. [20] Andrey Polyakov, Denis Efimov, Emilia Fridman, and Wilfrid Perruquetti. On homogeneous distributed parameter systems. IEEE Transactions on Automatic Control , 61(11):3657–3662, 2016. [21] Andrey Polyakov, Denis Efimov, and Bernard Brogliato. Consistent discretization of finite-time and fixed-time stable systems. SIAM Journal on Control and Optimization , 57(1):78–103, 2019. [22] Hassan K Khalil and Jessy W Grizzle. Nonlinear systems , volume 3. Prentice hall Upper Saddle River, NJ, 2002. [23] Gang Tao. Adaptive control design and analysis , volume 37. John Wiley & Sons, 2003. [24] Dragoslav S Mitrinovic and Petar M Vasic. Analytic inequalities , volume 1. Springer, 1970. [25] Emmanuel Bernuau, Denis Efimov, Wilfrid Perruquetti, and Andrey Polyakov. On homogeneity and its application in sliding mode control. Journal of the Franklin Institute , 351(4):1866–1901, 2014. [26] Vincent Andrieu, Laurent Praly, and Alessandro Astolfi. Homogeneous approximation, recursive observer design, and output feedback. SIAM Journal on control and optimization , 47(4):1814–1850, 2008. [27] Denis Efimov, Andrey Polyakov, et al. Finite-time stability tools for control and estimation. Foundations and Trends ® in Systems and Control , 9(2-3):171–364, 2021. [28] K Zimenko, A Polyakov, D Efimov, and X Ping. Homogeneous control design for linear MIMO systems. In 2025 European Control Conference (ECC) , pages 2770–2774. IEEE, 2025. [29] Andrey Polyakov, Jean-Michel Coron, and Lionel Rosier. On finite-time stabilization of evolution equations: A homogeneous approach. In 2016 IEEE 55th conference on decision and control (CDC) , pages 3143–3148, 2016. [30] Andrey Polyakov. Sliding mode control design using canonical homogeneous norm. International Journal of Robust and Nonlinear Control , 29(3):682–701, 2019. [31] Emmanuel Bernuau, Andrey Polyakov, Denis Efimov, and Wilfrid Perruquetti. Verification of ISS, iISS and IOSS properties applying weighted homogeneity. Systems & Control Letters , 62(12):1159–1167, 2013. [32] Denis Efimov, Andrei Polyakov, Wilfrid Perruquetti, and J-P Richard. Weighted homogeneity for time-delay systems: Finite-time and independent of delay stability. IEEE Transactions on Automatic Control , 61(1):210–215, 2015. [33] Konstantin Zimenko, Andrey Polyakov, Denis Efimov, and Artem Kremlev. Homogeneity based finite/fixed-time observers for linear MIMO systems. International Journal of Robust and Nonlinear Control , 33(15):8870–8889, 2023. [34] Kumpati S Narendra and Anuradha M Annaswamy. Stable adaptive systems . Courier Corporation, 2012. [35] Stanislav Aranovskiy, Rosane Ushirobira, Marina Korotina, and Alexey Vedyakov. On preserving-excitation prop-erties of Kreisselmeier’s regressor extension scheme. IEEE Transactions on Automatic Control , 68(2):1296–1302, 2022. 10

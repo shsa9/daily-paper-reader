@@ -1,0 +1,2033 @@
+Title: An Algebraic State Observer for a Class of Physical Systems
+
+URL Source: https://arxiv.org/pdf/2604.23142v1
+
+Published Time: Tue, 28 Apr 2026 00:23:29 GMT
+
+Number of Pages: 30
+
+Markdown Content:
+# An Algebraic State Observer for a Class of Physical Systems 
+
+## Alexey Bobtsov ∗, Jose Guadalupe Romero †, Romeo Ortega †and Anton Pyrkin ∗
+
+## April 28, 2026 
+
+Abstract 
+
+In this paper we present a radically new approach to design state ob-servers for nonlinear systems, with particular emphasis on physical ones. Our objective is to obtain an algebraic relation between the unmeasur-able part of the state and filtered versions of the systems inputs and outputs, which holds true for all t ≥ 0. The latter qualifier should be contrasted with the usual asymptotic (or fixed/finite time) objective. The standing assumption for our design is the availability—or possibility of constructing, via coordinate change—state components with measurable derivatives . In the physical systems studied in the paper this condition is naturally satisfied. The next step in the design is the application of the Swapping Lemma to pull out from the dynamics the derivative of one of these signals. The design is completed replacing the latter by the measurable signals and arranging the remaining terms. The algebraic ob-server constitutes a refreshing major departure from classical asymptotic observer designs, even in the case of electrical motors and mechanical sys-tems that have been exhaustively studied. Particularly notable is the fact that no observability or excitation condition is imposed for the construc-tion of the algebraic observer. 
+
+## Keywords: Observer theory, nonlinear control, physical systems, swapping lemma. 
+
+# 1 Introduction and Problem Formulation 
+
+The problem of reconstruction of the state of a dynamical system out of the measurement of its inputs and outputs is one of the central problems of control engineering practice intensively investigated by the control community. Many monographs and research papers have been devoted to this problem with the 
+
+> ∗
+
+A. Bobtsov and A. Pyrkin are with the Control Systems and Robotics Department, ITMO, St. Petesburg, Russia (e-mail: bobtsov {a.pyrkin }@itmo.ru). 
+
+> †
+
+J.G. Romero and R. Ortega are with the Department of Electrical and Elec-tronic Engineering, ITAM, R´ ıo Hondo 1, Mexico City, 01080, Mexico (e-mail: 
+
+{jose.romerovelaquez }{ romeo.ortega }@itam.mx). 
+
+1
+
+> arXiv:2604.23142v1 [eess.SY] 25 Apr 2026
+
+successful identification of particular classes of nonlinear systems for which con-structive solutions are available. This classes include systems in affine-in-the-state form and systems with triangular structure—the interested reader is re-ferred to the recent book [2] and the tutorial paper [3] for a review of the recent developments on this topic. One feature of all existing solutions to this prob-lem is that the reconstruction of the state vector is achieved asymptotically ,and in some recent designs—that rely on the practically undesirable injection of high-gain—in finite/fixed time , see e.g. [10] for a recent tutorial on this topic. Unfortunately, most of the physical systems of practical interest, including me-chanical and electromechanical systems, do not fit into the two aforementioned systems structures. Moreover, due to inevitable presence of noise, they are very sensitive to the injection of high gain. We consider in the paper nonlinear systems described in the standard ( f, g, h )form [12], that is: {
+
+˙x = f (x) + g(x)uy = h(x), (1) with x(t) ∈ Rn, u(t) ∈ Rm and y(t) ∈ Rp. In this paper we take a radically different approach to the state observation problem—our objective being to obtain an algebraic relation between a part of the state that is unmeasurable ,denoted xu(t) ∈ Rnu , n u ≤ n, and filtered versions of the systems inputs and outputs, with this identity holding true for all t ≥ 0. That is, we want to find a mapping O : R2m+2 p → Rnu such that the following identity holds true 1
+
+xu(t) = O[u(t), y (t), F[u]( t), F[y]( t)] , ∀t ≥ 0, (2) where F(p) ∈ R(p) is a linear time-invariant (LTI) filter. Notice that, in contrast to the standard definition of an observer, we want the identity (2) to remain valid for all t ≥ 0, and not asymptotically as t → ∞ . On the other hand, we also require that the identity (2) holds true for all initial conditions and input signals—attaching in this way the qualifier global to the result. The main standing assumption for the solution of this problem is the exis-tence of some of the state variables, whose time derivative is measurable . Taking into account, that if such states are not available, we can create them via coor-dinate change that, as expected, involves the solution of two partial differential equations. Indeed, it is possible to replace the assumption of existence of ele-ments of the vector x whose derivative is measurable, by the following. 
+
+Assumption 1 There exists mappings ̟
+
+: Rn → Rnm , w f : Rp → Rnm , w g : Rp → Rnm ,
+
+such that the following equations are satisfied 
+
+∇⊤̟ (x)f (x) = wf (h(x)) 
+
+∇⊤̟ (x)g(x) = wg (h(x)) .
+
+> 1Since the filters time constants cand be chosen arbitrarily small, we neglect its transient in the identity (2).
+
+2It is clear that if Assumption 1 holds we have that the signal zm := ̟ (x)satisfies ˙zm = wf (y) + wg (y)u, 
+
+whose right hand side is measurable .It should be noted that the scenario where some of the state variables have measurable derivatives is common in physical systems. For instance, systems with magnetic components satisfy Faraday’s law ˙φ = v, with φ the unmeasurable 
+
+flux and v the measurable voltage. The same is true for electrical systems where the derivative of the charge, which is an unmeasurable quantity, is the current that is measurable .2
+
+Once these signals with known time derivatives have been identified (or constructed) we appeal to the powerful tool of the Swapping Lemma [26, Lemma 3.6.5]. This lemma, which played a central law in the solution of the model reference adaptive control (MRAC) problem in the 1980s, was reported by Morse in the groundbreaking paper [19]. Using this lemma it is possible to—via LTI filtering—extract from the product of two signals a term depending on the 
+
+derivative of one of them. In the scenario of MRAC this signal is the parameter estimation error, whose derivative was known to be square integrable, a feature that turned out to be instrumental to provide the first complete global stability proof of the MRAC problem in [19]. In our algebraic observer design scenario, this signal is then replaced by the measurable ones and rearranged in such a way as to create the algebraic relation O required by the design. Given the importance of the Swapping Lemma in our observer design, we refer to it in the sequel as Algebraic Swapping Lemma Observer (ASLO). A particularly notable feature of ASLO is the fact that no observability or excitation condition is imposed for its construction—which constitutes a major departure from all existing observer designs. It is clear that, due to the use of filtered signals , a transient time is implicit in all the derivations—which, as indicated in Footnote 1 above, is neglected in (2). This transient can be modified selecting the filters time constants—however, given the complicated combinations of the filtered signals in the ASLO, this is done in a rather indirect way. To provide a clearer handle on the assignment of a convergence rate to the observers, besides the ASLO we present an asymp-totically convergent variation of it that incorporates a tuning gain that directly affects the convergence time. This new asymptotic observer—named in the se-quel asymptotic ASLO (A-ASLO) directly incorporates the information of the ASLO, hence it also constitutes a radically new observer design. The format of presentation we have adopted in the paper is the following: first, we start with a simple motivational example in Section 2, that—given the novelty of the design procedure—is worked out in full detail. The performance of the ASLO and the A-ASLO are compared in simulations with the standard asymptotically convergent Luenberger observer. Then, in Section 3 we illustrate the ASLO desing procedure with and in Section 4 with mechanical systems . It 
+
+> 2See the recent paper [23] where this property is exploited to design “classical” adaptive state observers for systems with quadratic nonlinearities.
+
+3is worth pointing out that for all these applications, that have been exhaustively studied in the literature, the reported ASLO gives radically new solutions—with no assumptions whatsoever on observability imposed for the design. Finally, in Section 5 we present some concluding remarks. The key Swapping Lemma is recalled in Appendix A and the proofs of the main propositions are given in Appendices B to E. 
+
+Notation For b ∈ Rn we denote the Euclidean norm as |b|. R+ and Z+ denote the positive real and integer numbers, respectively. For q ∈ Z+ we define the set ¯ q := {1, 2, . . . , q }. In is the n × n identity matrix and 0n×s is an n × s
+
+matrix of zeros, while ej is the j-th element of the Euclidean basis. The action of an LTI filter F(p) ∈ R(p) on a signal w(t) is denoted as F[w]( t), where 
+
+pn[w] := dn w(t) 
+
+> dt n
+
+. To avoid cluttering, when clear from the context, the time argument is omitted. Given a function H : Rn → R, we define the differential operator ∇H(x) := 
+
+( ∂H 
+
+∂x 
+
+)⊤
+
+.
+
+# 2 Motivational Example 
+
+In this section we illustrate the procedure that we will follow to design the ASLO with a simple academic example. 
+
+## 2.1 Problem formulation 
+
+Consider the second order LTI system ˙x1 = x2, ˙x2 = u, y = x1. (3) The objective is to design, using the measurements of u and y, an ASLO for the state x2. That is, we want to find a mapping O : R2 → R such that the following identity holds true 
+
+x2(t) = O(u(t), y (t), F[u]( t), F[y]( t)) , ∀t ≥ 0, (4) where F(p) ∈ R(p). Notice that, in contrast to the standard definition of an ob-server, we want the identity (4) to hold true for all t ≥ 0 and not asymptotically 
+
+as t → ∞ . The property required above is also different from convergence in finite (or fixed) time where we assume the existence (or fix) a time tc > 0 such that (4) holds for all t ≥ tc. As will become clear below, and in the examples given in the sequel, the construction of our ASLO is radically different from the standard construction of existing observers. 
+
+## 2.2 Design of the ASLO 
+
+Proposition 1 Consider the system (3) . The ASLO of the state x2 is given by 
+
+x2(t) = pF[y]( t) + 1
+
+λ F[u]( t), ∀t ≥ 0, (5) 4where we defined the LTI filter 
+
+F(p) = λ
+
+p + λ , (6) 
+
+with λ > 0.
+
+Proof 1 Using the obvious identity ˙ x2 = p[x2] + λx 2 − λx 2, which, manip-ulating the factor ( p + λ), we rearrange as 
+
+F[x2] = x2 − 1
+
+λ F[ ˙ x2] = x2 − 1
+
+λ F[u] (7) where we used (3) to get the second identity. Invoking again the system dy-namics (3) we can write the left hand side of (7) as 
+
+F[x2] = F[ ˙ x1] = pF[x1] = pF[y]. (8) Replacing this identity in (7) and rearranging terms we obtain our ASLO (5). 
+
+## 2.3 A new asymptotic observer 
+
+Setting large values for the constant λ we can reduce the time of convergence of the filter F(p). 3 However, its effect on the convergence rate of the ASLO is done in a rather indirect way. To provide a clearer handle on the assignment of the observers convergence rate, we present below an A-ASLO, that is, an asymptot-ically convergent variation of ASLO that explicitly incorporates a tuning gain that directly affects the convergence time. 
+
+Corollary 1 Consider the system (3) and the ASLO given in (5) . Define the asymptotic ASLO 
+
+˙ˆx2 = u − γ
+
+[
+
+ˆx2 −
+
+(
+
+pF[y] + 1
+
+λ F[u]
+
+)] 
+
+, (9) 
+
+where γ > 0 is a tuning gain. Then, the observation error ˜x2 := ˆ x2 − x2 satisfies 
+
+˙˜x2 = −γ ˜x2.
+
+## 2.4 Discussion 
+
+We make the following observations regarding the derivations above. 
+
+O1 The claim that the identity (5) holds true for all t ≥ 0 should be understood taking into account that the action of the filters is not instantaneous. This fact is clearly seen if you consider in the example (3) the case of u(t) ≡ 0, ∀t ≥ 0. In this case, which clearly corresponds to the case where x2(t) = x2(0) , ∀t ≥ 0, some simple calculations prove that the right hand side of (5) yields instead (1 + e−λt )x2(0).  
+
+> 3It should be underscored that we have chosen the basic first order filter (6) to simplify the derivations. However, as the SL is applicable to any LTI system , we can select any other LTI system—but there is no clear advantage for doing that.
+
+5O2 It is interesting to compare the ASLO observer (5) with the A-ASLO (9) and the classical reduced-order Luenberger observer [25]. Towards this end, we obtain the state-space realization of the three of them as: 
+
+ASLO (5) 
+
+[ ˙w1
+
+˙w2
+
+]
+
+=
+
+[−λ 00 −λ
+
+] [ w1
+
+w2
+
+]
+
++
+
+[λ 00 −λ2
+
+] [ uy
+
+]
+
+x2 = [ 1 
+
+> λ
+
+1] [w1
+
+w2
+
+]
+
++ λy. (10) 
+
+A-ASLO (9) 
+
+
+
+˙w1
+
+˙w2
+
+˙ˆx2
+
+ =
+
+−λ 0 00 −λ 0 
+
+> γ
+> λ
+
+γ −γ
+
+w1
+
+w2
+
+ˆx2
+
+ +
+
+λ 00 −λ2
+
+1 γλ 
+
+[uy
+
+]
+
+. (11) 
+
+Reduced Order Luenberger Observer [25, Theorem 15.7] ˙xc = −γLxc + u − γ2
+
+> L
+
+y
+
+ˆx2 = xc + γLy, (12) with γL > 0, whose error dynamics is also of the form ˙ ˜x2 = −γL ˜x2 as for the A-ASLO. Comparing (10) with (11) we see that—besides the presence of a new gain 
+
+γ—the only difference is the addition of the state ˆ x2 which brings along a u-dependent term. Hence, it is expected that the latter will be more sensible to input noise, a fact that is verified in the simulations presented below. On the other hand, there is absolutely no resemblance of neither one of these two ob-servers with the Luenberger one rendering very difficult the comparison between them. 
+
+O3 It is possible to extend the result of Proposition 1 for the case of n-th order 
+
+systems. To avoid cluttering the notation, we illustrate the procedure with the case of a fourth order integrator, 4 which can be easily extended for the n-th order case. That is, we consider: ˙x1 = x2, ˙x2 = x3, ˙x3 = x4, ˙x4 = u, y = x1,
+
+and our objective is to design an ASLO for ( x2, x 3, x 4). From the equations above, the following identity is easily verified (p + 1) 3x4 = p3y + u + ( p + 1) u + ( p + 1) 2u, 
+
+that, multiplying by 1 
+
+> (p+1) 3
+
+, can be rewritten as 
+
+x4 = wy 
+
+> 3
+
++ wu 
+
+> 3
+
++ wu 
+
+> 2
+
++ wu 
+
+> 2
+
+, (13)   
+
+> 4With respect to the example of Proposition 1, we take for simplicity λ= 1 in the filter
+> F(p) (6).
+
+6where we defined the filtered signals 
+
+wyi := pi
+
+(p + 1) i y, i = 1 , 2, 3, w ui := 1
+
+(p + 1) i u, i = 1 , 2, 3.
+
+Similarly, it is easy to verify that 
+
+x2 = p
+
+p + 1 y + x3 − 1
+
+p + 1 x4 = wy 
+
+> 1
+
++ x3 − x4 + wu 
+
+> 1
+
+. (14) Proceeding in the same manner with x3 we get 
+
+x3 = wy 
+
+> 2
+
++ 2 x4 − wu 
+
+> 2
+
+. (15) Replacing (13) in (15), and this in turn in (14), completes the design of the ASLO. 
+
+O4 It is interesting to note that the ASLO is robust vis-` a-vis constant distur-bances at the input and output. Let us illustrate this fact with the second order example (3). First, assume the output is perturbed by a constant disturbance 
+
+δ, that is, y = x1 + δ, the state estimates of the ASLO are insensitive to the presence of this unknown disturbance. This fact is clear if in (8) we evaluate 
+
+pF[x1 − δ] and see that—as p[δ] = 0—this is still equal to pF[y]. It is easy to prove that this robustness property holds true for the n-th order case system considered above. Second, suppose now that it is the input signal that is per-turbed by an additive constant, that is u ← u + δ. Replacing this in (7) results in 
+
+x2(t) = pF[y] + 1
+
+λ F[u + δ] = pF[y] + 1
+
+λ F[u] + εt,
+
+where εt → 0 exponentially fast—recovering asymptotically the true value of 
+
+x2. From (12) it is clear that such a disturbance induces an unstable behavior in the Luenberger observer. 
+
+## 2.5 Simulation results 
+
+In this subsection we evaluate the performance of the ASLO (5), the A-ASLO (9) and reduced order Luenberger observer (12) for different filter and tuning gains, and the presence of input measurement noise as well as dynamic uncertainty. The simulations were carried out using the input signal u = cos(0 .02 t). The initial conditions for the second-order system were set as x(0) = col(0 , 0.1). For the three observers all initial conditions were set to zero in all simulations. For the three observers, we present the observer error ˜ x2.To evaluate the effect of the tuning parameters on the transient performance, different values of λ were considered for the ASLO. As expected, as λ increases, the observer error ˜ x2 converges faster—without any overshoot—as shown in Fig. 1a. For the same values of λ the A-ASLO was simulated with γ = 2. The corresponding transient response is shown in Fig. 1b, where asymptotic convergence is observed, with improved convergence rate as λ increases. As expected, with increased values of γ the convergence time of A-ASLO decreases 7as shown in in Fig. 1c. For the Luenberger observer, simulations were conducted with γL = λ. The transient responses for different values of γL are presented in Fig. 1d. Surprisingly, and very hard to explain, the observer error dynamics of the ASLO and the Luenberger observer are almost identical , a behavior that was also observed in the robustness tests. Simulations were also conducted by adding white noise to the input signal, and fixing λ = 3, for ASLO, γ = 2 for A-ASLO, and γL = 3 for the Luenberger observer. Fig. 2 shows that both observer errors remain near zero, with a slightly better response seen from ASLO. The transient behavior of the Luenberger observer is not presented, but it exhibits performance very similar to that of the ASLO. Finally, the observers are tested in the presence of dynamic parasitic distur-bances in the input signal, which are described by 
+
+τ ˙u = −u + v, 
+
+where v is the input signal used by the observers. The simulations were con-ducted for different values of τ with u(0) = 0, and the same observer gains: 
+
+λ = 3 for ASLO, γ = 2 for the A-ASLO and γL = 3 for the Luenberger ob-server. Fig. 3 shows the transient behavior of the observer errors for the ASLO and A-ASLO designs under different values of τ . Both observers achieve satis-factory performance for small values of τ , with ASLO systematically ensuring a better behavior. Moreover, for slower parasitic dynamics, the error of A-ASLO exhibits a drift away from zero. Similarly to the case of input noise, the behavior of the Luenberger observer is very similar to the one of ASLO design, therefore it is omitted. 
+
+# 3 Electric Motor Examples 
+
+In this section we present the examples of two electric motors which admit the design of an ASLO as formulated in Section 1. Also, after reviewing the model of the generalized electrical motor, we discuss its potential extension to other classes of motors. We concentrate on the problem of observation of the 
+
+flux . It is worth pointing out that, since it is possible to reconstruct the rotor position from the flux [15, Eq. (9)], this is the crucial problem to be solved in the practically relevant scenario of sensorless control [13, 17, 20]—that has been intensively studied by the control community. As will become clear below the mechanical dynamics, which is given here for completeness, plays no role on the design of the ASLO—this situation is similar to the design of other classes of flux observers, e.g. , [2, 6, 9, 15, 17, 24, 28]. To streamline the presentation of the results, throughout the paper we in-troduce measurable signals —which are algebraic combinations of the inputs and outputs—that we identify with the letter zi and combinations of filtered mea-surable signals denoted wi.80 2 4 6 8 10 
+
+> -0.1 -0.08 -0.06 -0.04 -0.02 00.02
+
+(a) ASLO for different λ     
+
+> 0246810
+> -0.1 -0.08 -0.06 -0.04 -0.02 00.02
+
+(b) A-ASLO with γ = 2 and different λ     
+
+> 0246810
+> -0.1 -0.08 -0.06 -0.04 -0.02 00.02
+
+(c) A-ASLO with λ = 2 .5and different γ     
+
+> 0246810
+> -0.1 -0.08 -0.06 -0.04 -0.02 00.02
+
+(d) Luenberger observer with different γL
+
+Figure 1: Transient behavior of ˜ x2
+
+0 2 4 6 8 10 
+
+-0.1 -0.08 -0.06 -0.04 -0.02 00.02     
+
+> 78910
+> -5 0510 -4
+
+Figure 2: Transient behavior of ˜ x2 for ASLO and A-ASLO with white noise added to u
+
+9Figure 3: Transient behavior of ˜ x2 for ASLO and A-ASLO with input unmod-elled dynamics with different time constant τ
+
+## 3.1 Surface-mount permanent magnet synchronous motor (PMSM) 
+
+In this subsection we design an ASLO for the flux of the PMSM measuring only voltages and currents. The solution we will present here is radically different 
+
+from all existing solutions reported in the literature. Assessing its performance opens a new, wide research avenue in this fundamental topic. 
+
+3.1.1 Mathematical model 
+
+The classical, two-phase αβ model of the non-salient PMSM is given by [6, eqs. (1)-(3)] ˙φ = −Ry + u
+
+˙θ = ωJ ˙ω = −Rmω + np(y2φ1 − y1φ2) − τL, (16) 
+
+φ(t) ∈ R2 is the stator flux vector, θ(t) ∈ [0 , 2π) is the rotor angle, ω(t) ∈ R
+
+the rotor angular velocity, y(t) ∈ R2 is the stator current and u(t) ∈ R2 is the applied voltage. 5 The constant R is the stator resistance, J is the rotor moment of inertia, Rm the friction coefficient, np the number of pole pairs and 
+
+τL(t) ∈ R is the load torque. In the practically relevant scenario of sensorless control [9], the only measurable quantity is the stator current , which is related to the systems state via [6, eqs. (2) and (3)]: 
+
+> 5Notice that the first two equations of the systems model (16) are Faraday’s Law.
+
+10 Ly = φ − λm
+
+[cos( npθ)sin( npθ)
+
+]
+
+, (17) with L the stator inductance and λm the flux of the permanent magnet. 
+
+3.1.2 Main Result 
+
+In this section we present the ASLO for the stator flux of the PMSM and give an A-ASLO. The proof of the proposition is given in Appendix B. 
+
+Proposition 2 Consider the dynamics of the PMSM system given in (16) .Define the following measurable signals 
+
+z1 := −Ry 1 + u1, z 2 := −Ry 2 + u2
+
+z3 := − λ2
+
+> m
+
+2L + L
+
+2 (y21 + y22 ). (18) 
+
+and introduce the dynamic extension 
+
+w4 = − p
+
+λ F[y1] + 1
+
+λL F[z1], w 5 = − p
+
+λ F[y2] + 1
+
+λL F[z2]
+
+w6 = 1
+
+λ F[z1F[y1]] + 1
+
+λ F[z2F[y2]] + 1
+
+λL F[z1
+
+1
+
+λ F[z1]]+ 1
+
+λL F[z2
+
+1
+
+λ F[z2]] − p
+
+λ F[z3]
+
+w7 = F[w4], w 8 = F[w5],w9 = F[w6] + 1
+
+λ F[z1F[w4]] + 1
+
+λ F[z2F[w5]] ,
+
+with F(p) the LTI filter defined in (6) . Also, define the signal 
+
+∆ := w4w8 − w5w7, (19) 
+
+which we assume is different to zero for all t ≥ 0.6
+
+P1 The ASLO of φ is given by 
+
+φ(t) = 1
+
+∆( t)
+
+[w6(t)w8(t) − w5(t)w9(t)
+
+w4(t)w9(t) − w6(t)w7(t)
+
+]
+
+. (20) 
+
+P2 Define the A-ASLO flux observer 
+
+˙ˆφ1 = z1 − γ ˆφ1 + γ 1
+
+∆ (w6w8 − w5w9)˙ˆφ2 = z2 − γ ˆφ2 + γ 1
+
+∆ (w4w9 − w6w7), (21) 
+
+where γ > 0 is a tuning gain. Then, the observation error ˜φ := ˆφ − φ satisfies 
+
+˙˜φ = −γ ˜φ. (22)      
+
+> 6If there exists tc∈R+such that the generic condition is violated, standard modifications—
+> e.g. temporary freeze the estimation or add a jump [26]—can be incorporated to avoid the singularity.
+
+11 3.1.3 Simulation results 
+
+In this section we present simulation results of the flux ASLO and A-ASLO of Proposition 2. As indicated above this flux observation problem has attracted a lot of attention in the control community, therefore we compare the performance of three other observers, namely: 
+
+FO1: The observer reported in [4], which is given by the state equations 7
+
+˙ξ14 =
+
+[ vi
+
+]
+
+, ξ 14 (0) ∈ R4
+
+˙ξ5 = −λ (ξ5 + |q|2) , ξ 5(0) ∈ R
+
+˙ξ67 = −λ (ξ67 − 2q) , ξ 67 (0) ∈ R2
+
+˙ˆη = γΩ( y − Ω⊤ ˆη), ˆη(0) ∈ R2, (23) with the algebraic relations 
+
+q = ξ12 − Rξ 34 − Li, y = −λ (|q|2 + ξ5
+
+) ,
+
+Ω = λ (2 q − ξ67 ) , ˆφ = Li + q + ˆη, 
+
+where λ > 0 is a filter parameter, γ > 0 is the adaptation gain. 
+
+FO2: The observer reported in [22], given by ˙ˆφ = v − Ri − γ
+
+2
+
+∂h ( ˆφ, i )
+
+∂ ˆφ max {0, h ( ˆφ, i )}, (24) where h( ˆφ, i ) := | ˆφ − Li |2 − λ2
+
+> m
+
+, with γ > 0 the adaptation gain. It should be underscored that, in contrast with the observer proposed in this paper, the observer FO2 assumes that, besides the electrical parameters R and L, the magnet flux constant λm is also known. 
+
+FO3: A variation of the ASLO based on the estimation-based approach of [24] given by ˙ˆφ1 = z1 + γ∆( w6w8 − w5w9 − ∆ ˆφ1)˙ˆφ2 = z2 + γ∆( w4w9 − w6w7 − ∆ ˆφ2), (25) where γ > 0 is tuning gain. Clearly, the observer satisfies ˙˜φ = −γ∆2 ˜φ, which should be contrasted with the error dynamics of A-ASLO (22). Another inter-esting feature of this variation of A-ASLO is that the division by the determinant ∆, that may cross through singularity, is avoided .In Table 1 we list the parameters of the PMSM used in the simulations, which were taken from [5]. In all scenarios we study the behavior of the observers for the motor driven by a controller with the desired speed ωref (t) = 2 + 0 .5 sin( t)[rad/s] and load torque τL = 3 + 0 .5 sin(0 .1t) [Nm]. For all observers we selected the same tuning parameters λ = 5 and γ = 5. The regulation of the speed, as       
+
+> 7For i, j ∈Z+, j > i , we use the notation ξij := col( ξi, ξ i+1 , . . . , ξ j).
+
+12 well as its measurement, was the industry standard PI control with a PLL for the reconstruction of the speed as reported in [15, Section 2.B and 2.C]. Figs. 4a-4e show that all observer errors converge to zero as predicted by the theory. The convergence rate of all observers is significantly different, with the 
+
+fastest rate —and smaller overshoot—achieved by the ASLO, followed closely by the ASLO-based observer FO3 . To improve the behavior of the observer FO2 
+
+it was necessary to take very large values of γ—of the order of 1000. 
+
+Inductance L(mH ) 40.03 
+
+Resistance R(Ω) 8.875 
+
+Drive inertia J(kgm 2) 60 × 10 −6
+
+Pairs of poles np(−) 5
+
+Magnetic flux λm(W b ) 0.2086 
+
+Maximum current I(A) 2.3 
+
+Table 1: Parameters of the motor BMP0701F used in the simulations      
+
+> 012345
+> -1 -0.5 00.5 1
+
+(a) Flux estimation error ASLO (20)      
+
+> 012345
+> -1 -0.5 00.5 1
+
+(b) Flux estimation error A-ASLO (21)      
+
+> 012345
+> -1 -0.5 00.5 1
+
+(c) Flux estimation error for FO1 (23)      
+
+> 012345
+> -1 -0.5 00.5 1
+
+(d) Flux estimation error for FO2 (24)      
+
+> 012345
+> -1 -0.5 00.5 1
+
+(e) Flux estimation error for FO3 (25) 
+
+Figure 4: Flux observation errors for the case of time-varying desired rotor speed 
+
+## 3.2 Wound Rotor Induction Motor (WRIM) 
+
+In this section we design an ASLO for the flux of the WRIM. We make the important observation that in WRIM—in contrast to the more popular squirrel-13 cage IM—the rotor windings are connected to slip rings, hence the rotor current is measurable . Although WRIM are much less popular than squirrel-cage IM they are still used in high-power industrial systems like cranes and mine hoists, ball and grinding mills, conveyors and large pumps, hence the interest to design an ASLO for it. 
+
+3.2.1 Mathematical model 
+
+The αβ model describing the behavior of the IM is given by [21, eqs. (10.1)-(10.4)] ˙φ = −
+
+[RsI2 02
+
+02 RrI2
+
+]
+
+i +
+
+[I2
+
+02
+
+]
+
+u (26) ˙θ = ω
+
+˙ω = − Rm
+
+J ω + 1
+
+J i⊤ 
+
+> s
+
+J φs − 1
+
+J τL
+
+where φ(t) = [ φ⊤ 
+
+> s
+
+(t) φ⊤ 
+
+> r
+
+(t)] ⊤ ∈ R4 is the flux vector, i(t) = [ i⊤ 
+
+> s
+
+(t) i⊤ 
+
+> r
+
+(t)] ⊤ is the current vector, u(t) ∈ R2 is the stator voltage, θ(t) ∈ [0 , 2π) is the rotor angle and ω(t) ∈ R is the rotor angular velocity. The constants Rr and Rs are the rotor and stator resistances, respectively, J is the rotor moment of inertia, 
+
+Rm the friction coefficient, τL is the load torque, and τ (t) ∈ R is the electrical torque, where we defined the rotation matrix 
+
+J := 
+
+[ 0 −11 0
+
+]
+
+.
+
+Under a linear magnetic assumption, fluxes and currents are related through the 4 × 4 inductance matrix of the windings as [21, eq. (10.5)] 
+
+φ =
+
+[ LsI2 Lsr eJ θ
+
+Lsr e−J θ Lr I2
+
+]
+
+i, (27) where Lr, Ls are self-inductances, Lsr is the mutual inductance, with the rota-tion matrix 
+
+eJ θ =
+
+[ cos( θ) − sin( θ)sin( θ) cos( θ)
+
+]
+
+.
+
+Similarly to the case of the PMSM the task is to design an ASLO for the flux assuming measurable only the current and the voltage vectors. Hence, we define the output signals y(t) ∈ R4 as 8
+
+y =
+
+[ys
+
+yr
+
+]
+
+:= 
+
+[is
+
+ir
+
+]
+
+. (28) To simplify the notation we introduce the following convention: we use the subindex κ to denote either a stator or a rotor signal. That is, we denote (·)κ, κ ∈ { s, r }.
+
+> 8We recall the important observation made above that we assume the rotor currents are
+> measurable —as it is the case in WRIM.
+
+14 3.2.2 Main Result Proposition 3 Consider the dynamics of the IM system given in (26) and the filter (6) . Define the following measurable signals 
+
+zsi := −Rsisi + ui, z ri := −Rriri , i = 1 , 2,
+
+and introduce the dynamic extension 
+
+wκ4 = 1
+
+λL s
+
+F[zκ1 ] − p
+
+λ F[yκ1 ]
+
+wκ5 = 1
+
+λL s
+
+F[zκ2 ] − p
+
+λ F[yκ2 ]
+
+wκ6 = 1
+
+λ F[zκ1 F[yκ1 ]] + 1
+
+λ F[zκ2 F[yκ2 ]] + 1
+
+λL s
+
+F[zκ1
+
+1
+
+λ F[zκ1 ]] + 1
+
+λL s
+
+F[zκ2
+
+1
+
+λ F[zκ2 ]] − p
+
+λ F[zκ3 ]
+
+wκ7 = F[wκ4 ]
+
+wκ8 = F[wκ5 ]
+
+wκ9 = F[wκ6 ] + 1
+
+λ F[zκ1 F[wκ4 ]] + 1
+
+λ F[zκ2 F[wκ5 ]] ,
+
+Define the signals 
+
+∆κ := wκ4 wκ8 − wκ5 wκ7 ,
+
+which we assume are different to zero for all t ≥ 0.
+
+P1 The ASLO of φκ is given by 
+
+φκ(t) = 1
+
+∆κ(t)
+
+[wκ6 (t)wκ8 (t) − wκ5 (t)wκ9 (t)
+
+wκ4 (t)wκ9 (t) − wκ6 (t)wκ7 (t)
+
+]
+
+. (29) 
+
+P2 Define the A-ASLO 
+
+˙ˆφκ1 = zκ1 − γκ ˆφκ1 + γκ
+
+1
+
+∆κ
+
+(wκ6 wκ8 − wκ5 wκ9 )˙ˆφκ2 = zκ2 − γκ ˆφκ2 + γκ
+
+1
+
+∆κ
+
+(wκ4 wκ9 − wκ6 wκ7 ), (30) 
+
+where γκ > 0 is a tuning gain. Then, the observation errors ˜φκ := ˆφκ − φκ
+
+satisfy ˙˜φκ = −γκ ˜φκ.
+
+## 3.3 Discussion 
+
+We make the following observations regarding the application of ASLO to elec-trical machines. 
+
+O5 A model for the generalized electric motor (given in Euler-Lagrange (EL) form) may be found in [21, eqs. (9.6)-(9.8)], see also [16] where many practical examples are discussed in detail. The electrical part may be expressed in terms 15 of the flux φ(t) ∈ Rne and the current y(t) ∈ Rne , with ne ∈ Z+ the number of windings (in stator and rotor), as follows: ˙φ = −Ry + Gu φ = L(θ)y + μ(θ),
+
+with θ(t) ∈ [0 , 2π) the rotor angle and G ∈ Rne×m a constant input matrix. The first equation is, clearly, Faraday’s law. From the derivations given in the proofs of Propositions 2 and 3, we see that there are two key steps for the design of an ASLO: 
+
+S1 The establishment of linear algebraic relations of the form (42). 
+
+S2 The requirement that the matrices A(t) and B(t) should be measurable .Towards this end, we exploited the structure of the mappings L(θ) and μ(θ)to, in both examples, eliminate from the algebraic relations the dependence on 
+
+θ. Moreover, in the IM example we needed to restrict ourselves to the case of wounded rotor IM because—to fulfill the requirement of step S2 —it was necessary to assume measurement of the rotor current, which is unavailable in squirrel cage IM. 
+
+O6 There are many practical motor examples that fulfill the requirements above— e.g. , the PM stepper motor [21, Example 9.9]. 
+
+O7 Although it is clear from (17) that, with the knowledge of the flux φ, the rotor angle in the PMSM can be computed via 
+
+θ = 1
+
+np
+
+arctan 
+
+{ Ly 2 − φ2
+
+Ly 1 − φ1
+
+}
+
+,
+
+it is interesting to note that it is possible to design an ASLO directly for θ.The key steps are reported in [24] where an adaptive observer based on the Dynamic Regressor Equation and Mixing parameter estimation procedure [1] is proposed. The key step is the derivation of the algebraic relation [24, eq. (28)], which is linear in the vector col(cos( npθ), sin( npθ)) (denoted χ in [24]). Although this relation is scalar, it is possible to generate another scalar relation via application of the SL—as it is done here. However, in [24] the interesting variation of deriving the second relation using a different filter in the SL is explored. 
+
+O8 One particularly important motor, which has a very wide range of appli-cations, is the interior PMSM [20]. For this motor, due to the presence of higher-order harmonics, we have that the inductance matrix L(θ) takes the complicated form: 
+
+L(θ) = Ld + Lq
+
+2 I2 + Ld − Lq
+
+2
+
+[ cos(2 θ) sin(2 θ)sin(2 θ) − cos(2 θ)
+
+]
+
+,
+
+where Ld, L q are the dq stator inductances—hence the construction indicated in observation O5 does not seem feasible. In spite of that, it is possible to design as ASLO for the active flux which is defined as 
+
+x := φ − Lq y. 
+
+16 The basic step is carried out in [9, eq. (21)] where the authors present a (per-turbed) algebraic relation, which is linear in the vector x. Similarly to [24], this relation is scalar , but as explained above, it is possible to generate another scalar relation via application of the SL or using a different filter in the SL. The 
+
+perturbation is the sum of two terms, denoted ǫ(t) and d(t) in [9], the first is the exponentially convergent contribution of the filters’ initial conditions, while d(t)is proven to be small due to practical considerations. Henceforth, both terms can be neglected. One interesting feature of the developments of [9] is that a new version of the SL—necessary to carry out the analysis—is established in [9, Lemma 2]. In [9] an ASLO is not derived , instead a gradient descent es-timation algorithm is implemented to asymptotically reconstruct x. It is worth mentioning that the stability analysis carried out in [9] imposes a hard constraint on the estimation gain—styimieing the achievement of high performance. This obstacle has been removed in the recent paper [28], where a new analysis tech-nique based on the creation of a “virtual” invariant manifold was utilized. It is interesting to note that it also possible to design an ASLO for the scheme reported in [28]. 
+
+# 4 Mechanical Systems Examples 
+
+In this section we apply the ASLO procedure for mechanical systems. We consider the practical scenario where the positions are measurable and we want to find an ASLO for the coordinate velocities . First, we provide the solution for the two well-known examples of the Robotic Leg [8] and the Ball-and-Beam (B&B) [11] systems. Then, we give a general characterization of a class of mechanical systems amenable for the design of an ASLO. For the two examples we also give an A-ASLO. 
+
+## 4.1 Robotic Leg system 
+
+We consider in this section the Robotic Leg system, which was studied in [8]. It has three DoF q1(t) ∈ R and ( q2(t), q 3(t)) ∈ (0 , 2π] × (0 , 2π], and two control forces u(t) ∈ R2. The inertia and input matrices are of the form 
+
+M (q1) = 
+
+m1 0 00 m1q21 00 0 m2
+
+ , G =
+
+1 00 10 −1
+
+ ,
+
+with positive numbers m1 and m2. Besides, there is no potential energy term nor friction matrix. Consequently, the EL equations of motion take the form 
+
+m1 ¨q1 =m1q1 ˙q22 + u1, m 1q21 ¨q2 = −2m1q1 ˙q1 ˙q2 + u2,m2 ¨q3 = − u2. (31) As indicated above, it is assumed that the positions q are available for mea-surement and our objective is to design an ASLO for the corresponding velocities ˙q.17 Proposition 4 Consider the dynamics of the Robotic Leg system given in (31) .Define the signals 
+
+z1 := e2 ln( q1 ), z 2 := u2
+
+m1q21
+
+(32) 
+
+and introduce the dynamic extension 
+
+w1 = pF[q2] + 1
+
+λ F
+
+[
+
+z1z2F
+
+[ 1
+
+z1
+
+]] 
+
+, w 2 = 1
+
+m2λ F[u2], (33) 
+
+w3 = pF[q3], w 4 = 1
+
+λ F
+
+[
+
+q1
+
+( w1
+
+z1F[z1]
+
+)2
+
++ u1
+
+m1
+
+]
+
+, (34) 
+
+with F(p) the LTI filter defined in (6) .
+
+P1 The ASLO for ˙q is given by 
+
+˙q(t) = col 
+
+(
+
+pF[q1] + w4(t), w1(t)
+
+z1(t)F[z1(t)] , w 2(t) + w3(t))
+
+.
+
+P2 Denote the estimate of ˙q as ˆω and define an A-ASLO for ˙q as 
+
+˙ˆω =col 
+
+(
+
+q1 ˙q22 + 1
+
+m1
+
+u1, − 2
+
+q1
+
+˙q1 ˙q2 + 1
+
+m1q21
+
+u2, − 1
+
+m2
+
+u2
+
+)
+
+− γ ˆω + γ ˙q, 
+
+where ˙q in the right hand side of the equations above is replaced by its ASLO expressions given in P1 above and γ > 0 is a tuning gain. Then, the speed observation error ˜ω := ˆ ω − ˙q satisfies ˙˜ω = −γ ˜ω. 
+
+## 4.2 The ball and beam system 
+
+In this section we study the B&B system. It has two DoF, q1(t) ∈ (− ℓ 
+
+> 2
+
+, ℓ 
+
+> 2
+
+)and q2(t) ∈ (0 , 2π], with ℓ ∈ R+ the length of the beam—see [11] for further details. The inertia matrix is M (q1) = diag {1, ℓ 2 + q21 }. The potential energy is 
+
+V (q) = gq 1 sin( q2) and the input matrix is G = col(0 , 1), furthermore we assume there is no friction. The EL equations of motion take the form ¨q1 = q1 ˙q22 − g sin( q2),
+
+(ℓ2 + q21 )¨ q2 = −2q1 ˙q1 ˙q2 − gq 1 cos( q2) + u (35) with u(t) ∈ R the control torque. 
+
+Proposition 5 Consider the dynamics of the B&B system given in (35) . De-fine the following measurable signals 
+
+z1 := 1
+
+ℓ2 + q21
+
+[
+
+− gq 1 cos( q2) + u
+
+]
+
+, z 2 := eln( ℓ2+q21 )
+
+and introduce the dynamic extension 
+
+w1 := F[z−12 ], w 2 = F[w1z1z2]18 P1 The ASLO of ˙q is given by 
+
+˙q(t) = col 
+
+(
+
+pF[q1] + 1
+
+λ F[q1 ˙q22 − g sin( q2)] , 1
+
+w1z2
+
+( 1
+
+λ w2 + pF[q2 ]
+
+)) 
+
+.
+
+P2 Denote the estimate of ˙q as ˆω and define an A-ASLO for ˙q as 
+
+˙ˆω =col 
+
+(
+
+q1 ˙q22 − g sin( q2), −2q1 ˙q1 ˙q2 − gq 1 cos( q2) + u
+
+ℓ2 + q21
+
+)
+
+− γ ˆω + γ ˙q, 
+
+where ˙q in the right hand side of the equations above is replaced by its ASLO expressions given in P1 above and γ > 0 is a tuning gain. Then, the speed observation error 
+
+˜ω := ˆ ω − ˙q satisfies ˙˜ω = −γ ˜ω. 
+
+## 4.3 Identification of a class of mechanical systems amenable for ASLO design 
+
+We consider general mechanical systems whose dynamics is described by the well-known EL equations of motion [21] 
+
+M (q)¨ q + C(q, ˙q) ˙ q + R ˙q + ∇V (q) = G(q)u, (36) where q(t) ∈ Rn are the configuration variables, u(t) ∈ Rm are the control signals, M : Rn → Rn×n, is the positive definite generalized inertia matrix, 
+
+C(q, ˙q) ˙ q are the Coriolis and centrifugal forces, with C : Rn × Rn → Rn × Rn
+
+defined as 
+
+C(q, ˙q) = 
+
+[
+
+∇q (M (q) ˙ q) − 1
+
+2 [∇q (M (q) ˙ q)] ⊤
+
+]
+
+˙q, (37) 
+
+V : Rn → R is the systems potential energy, G : Rn → Rn×m is the full rank input matrix and R ∈ Rn×n, which satisfies R = R⊤ ≥ 0, is the friction matrix. To simplify the definition of the class, we partition the generalized coordi-nates as q = col( q1, q 2), with q1 ∈ Rs and q2 ∈ Rm and s := n − m. Similarly, the inertia matrix and input matrix are partitioned as 
+
+M (q) = 
+
+[ m1(q) m⊤ 
+
+> 2
+
+(q)
+
+m2(q) m3(q)
+
+]
+
+, G(q) = 
+
+[ g1(q)
+
+g2(q)
+
+]
+
+,
+
+where m1 : Rn → Rs×s, m2 : Rn → Rm×s, m3 : Rn → Rm×m, g1 : Rn → Rs×n
+
+and g2 : Rn → Rm×n. In addition, we assume that R = diag {R1, R 2} with 
+
+R1 ∈ Rs×s and R2 ∈ Rm×m diagonal , and u = col( u1, u 2), with u1(t) ∈ Rs and 
+
+u2(t) ∈ Rm
+
+Using this notation the class is identified imposing two assumptions. The first one, which is quite restrictive, is the following one. 
+
+Assumption 2 The inertia matrix is diagonal and depends only on the vari-ables q1. Moreover, the sub-block matrix m1 is constant. Consequently, M (q)
+
+becomes: 
+
+M (q1) = 
+
+[ m1 0s×m
+
+0m×s m3(q1)
+
+]
+
+.
+
+19 We have decided to make the diagonal components of the inertia matrix 
+
+constant for the upper part ones, and for those in the lower part, they are 
+
+dependent on q1 only . This choice was made to capture the two examples studied before. As will be shown below it would have been possible to swap the roles and make the upper terms dependent on q2 and the lower ones constant. In the first case, we will design our ASLO for ˙ q2 first—as in the previous two examples. On the other hand, with the second choice it will be an ASLO for ˙ q1 the one designed first. Under Assumption 2, we have that 
+
+∇q (M (q) ˙ q) = 
+
+[ 0m×m 0m×s
+
+∇q1 [m3(q1) ˙ q2] 0s×s
+
+]
+
+,
+
+and the Coriolis forces (37) take the form 
+
+C(q, ˙q) ˙ q =
+
+[ − 1 
+
+> 2
+
+∇q1 [m3(q1) ˙ q2]⊤ ˙q2
+
+∇q1 [m3(q1) ˙ q2] ˙ q1
+
+]
+
+. (38) Invoking Assumption 2 and (38) the EL model (36) is 
+
+m1 ¨q1 − 1
+
+2 ∇q1 [m3(q1) ˙ q2]⊤ ˙q2 + R1 ˙q1 + ∇q1 V (q) = g1(q)um3(q1)¨ q2 + ∇q1 [m3(q1) ˙ q2] ˙ q1 + R2 ˙q2 + ∇q2 V (q) = g2(q)u. (39) Exploiting the fact that m3 is a diagonal matrix, and after some straight-forward calculations, the j-th component of the second term in the right hand side of the second equation of (39) can be written as: 
+
+e⊤ 
+
+> j
+
+∇q1 [m3(q1) ˙ q2] ˙ q1 =
+
+[ s∑
+
+> i=1
+
+(
+
+∇q1i m3j (q1)
+
+)
+
+˙q1i
+
+]
+
+˙q2j , j ∈ ¯m. 
+
+Since R2 is diagonal, the j-term of the second equation in (39) takes the form ¨q2j + 1
+
+m3j (q1)
+
+[ s∑
+
+> i=1
+
+(
+
+∇q1i m3j (q1)
+
+)
+
+˙q1i
+
+]
+
+˙q2j + ¯ r2j (q1) ˙ q2j =: z0j (q),
+
+where we defined ¯r2j (q1) := 1
+
+m3j (q1) R2j
+
+z0j (q) := 1
+
+m3j (q1) e⊤
+
+> j
+
+[
+
+g2(q)u − ∇ q2 V (q)
+
+]
+
+.
+
+To define the class of systems addressed in this note, the following final assumption is required. 
+
+Assumption 3 There exist functions zj : Rs → R, such that 
+
+˙zj (q1) = 1
+
+m3j (q1)
+
+[ s∑
+
+> i=1
+
+(
+
+∇q1i m3j (q1)
+
+)
+
+˙q1i
+
+]
+
++ ¯ r2j (q1), j ∈ ¯m. (40) 
+
+Since zj (q1) depends solely on q1, it is measurable .
+
+20 Finally, Assumption 3 allows us to express the m terms of the vector ¨ q2 in the following form: ¨q2j + ˙ zj (q1) ˙ q2j = z0j (q1), j ∈ ¯m. (41) Notice that in both examples above Assumptions 2 and 3 are satisfied—with ¯r2j (q1) ˙ q2j = 0. The latter can be verified comparing (41) with (57) and (60). Once the acceleration vector ¨ q2 is expressed in the form (41) the design of the ASLO for ˙ q follows the construction done in the proofs of Proposition 4 and 5, and is omitted for brevity. 
+
+# 5 Conclusions and Future Work 
+
+We presented in this paper a radically new state observer design where the ob-jective is to obtain an algebraic relation between the observed state and nonlin-ear combinations of the systems inputs and outputs and their filtered versions. The main requirement is that this algebraic relation should hold true for all 
+
+t ≥ 0—which should be contrasted with standard asymptotic (or fixed/finite time) observers. The methodology is applicable to nonlinear systems where the 
+
+derivative of some of the states is available for measurement, as it is often the case in many physical systems. The key technical tool is the SL that “extracts” (via filtering) from the product of two signals, the derivative of one of them. The applicability of the method is illustrated with the physical examples of mo-tors and mechanical systems, yielding radically new, high performance, observer designs, even in the case of LTI systems. The introduction of this new ASLO opens up a wide research avenue for the state observation field with many interesting questions to be explored, among them: 
+
+• Assessment of the robustness properties of ASLO—comparing with classical asymptotically convergent versions. 
+
+• It is argued in the paper that, in contrast with standard observer designs, ASLO does not require an explicit assumption on observability . However, some operations on the construction of ASLO—for instance the division by the signal ∆ in the motor examples—may create numerical problems due to the appearance of singularities. A better understanding of this phenomenon is in dire need. 
+
+• Exploration of its applicabilty to other physical systems . It should be under-scored that we have recently succesfully applied it to active magnetic bearing 
+
+systems [18]—a result that will be reported shortly. 
+
+• Evaluate the effect in the observers performance of choosing different filter time-constants, ı.e., different λ.
+
+• Replace the SL by the use of different filters to generate the required algebraic equations—as done in [24] in the context of adaptive observer design. 
+
+• In the spirit of the robustness to constant output disturbances indicated in Observation O5 in Subsection2.5, use that fact that the SL is valid for any LTI 21 filter to investigate the possibilty of rejecting disturbances with known internal model [12]: for instance ( p2 + ω2)[sin( ωt )] = 0. 
+
+• Study the possibility of replacing the classical SL with the nonlinear version 
+
+reported in [14]. 
+
+# References 
+
+[1] S. Aranovskiy, A. Bobtsov, R. Ortega and A. Pyrkin, Performance enhance-ment of parameter estimators via dynamic regressor extension and mixing, 
+
+IEEE Trans. Automatic Control , vol. 62, pp. 3546-3550, 2017. [2] P. Bernard, Observer Design for Nonlinear Systems , Springer, Switzerland, 2019. [3] P. Bernard, V. Andrieu, and D. Astolfi, Observer design for continuous-time dynamical systems, Annual Reviews in Control , pp. 224-248, 2022. [4] Bobtsov, A.A., Pyrkin, A.A., Ortega, R., Vukosavic, S.N., Stankovic, A.M., Panteley, E.V.: ‘A robust globally convergent position observer for the permanent magnet synchronous motor’, Automatica , 2015, 61 , pp. 47-54. [5] BMP Synchronous motor, Motor manual, V1.00, 12.2012, Schneider Elec-tric , 2012. [6] A. Bobtsov, A. Pyrkin and R. Ortega. A new approach for estimation of electrical parameters and flux observation of permanent magnet syn-chronous motors, Int. J. on Adaptive Control and Signal Processing , Vol, 30, No. 8-10, pp. 1434-1448, August-October, 2016. [7] A. Bobtsov, R. Ortega, B. Yi and N. Nikolayev, Adaptive state estimation of state-affine systems with unknown time-varying parameters, Interna-tional Journal of Control , vol. 95, No. 9, pp.2460-2472, 2021. [8] F. Bullo and A. Lewis, Geometric Control of Mechanical Systems , Springer Science-Bussiness Media, New York, 2005. [9] J. Choi, K. Nam, A. Bobtsov and R. Ortega, Sensorless control of IPMSM based on regression model, IEEE Trans. Power Electronics , vol. 34, no. 9, pp. 9191-9201, 2019. [10] D. Efimov and A. Polyakov, Finite-time stability tools for control and es-timation, Annual Reviews in Control , vol. 50, pp. 254-271, 2020. [11] J. Hauser, S. Sastry, and P. V. Kokotovi´ c, Nonlinear control via approxi-mate input-output linearization: the ball and beam example, IEEE Trans. Automatic Control , IEEE vol. 37, no. 3, pp. 392-398, 1992. [12] A. Isidori, Lectures in Feedback Design for Multivariable Systems , Springer, 2017. 22 [13] P. C. Krause, Analysis of Electric Machinery , New York: McGraw Hill, 1986. [14] M. Krsti´ c and P. V. Kokotovi´ c, Adaptive Nonlinear Design with Controller-Identifier Separation and Swapping, IEEE Trans. Automatic Control , vol 40, no. 3, pp. 426-440, 1995. [15] J. Lee, J. Hong, K. Nam, R. Ortega, A. Astolfi and L. Praly, Sensorless control of surface-mount permanent magnet synchronous motors based on a nonlinear observer, IEEE Trans. Power Electron. , vol. 25, no. 2, pp. 290-297, 2010. [16] X. Liu, G. Verghese, J. Lang and M. ¨Onder, Generalizing the Blondel- Park Transformation of Electrical Machines: Necessary and Sufficient Condi-tions, IEEE Trans. on Circuits and Systems , vol. 36, no. 8. pp. 1058-1067, 1989. [17] R. Marino, P. Tomei and C. Verrelli, Induction Motor Control Design 
+
+Berlin, Germany: Springer Science & Business Media; 2010. [18] E. H. Maslen, Self-sensing magnetic bearings, in G. Schweitzer and E.H. Maslen (Eds.), Magnetic Bearings: Theory, Design, and Application to Rotating Machinery , Springer, Berlin/Heidelberg, Chapter 15, pp. 435-459. [19] A. S. Morse, Global stability of parameter-adaptive control systems, IEEE Trans. Automatic Control , vol. 25, no. 3, pp. 433-439 1980. [20] K.H. Nam, AC Motor Control and Electric Vehicle Application , CRC Press, 2010. [21] R. Ortega, A. Loria, P. J. Nicklasson and H. Sira–Ramirez, Passivity–Based Control of Euler–Lagrange Systems , Springer-Verlag, Berlin, Communica-tions and Control Engineering, 1998. [22] R. Ortega, L. Praly, A. Astolfi, J. Lee and K. Nam, Estimation of rotor position and speed of permanent magnet synchronous motors with guaran-teed stability, IEEE Transaction on Control Systems Technology , Vol. 19, No. 3, pp. 601-614, 2011 [23] R. Ortega, B. Yi, A. Bobtsov, A. Pyrkin and M. Sinetova, Adaptive state observers for a class of nonlinear systems: The non-triangular and non-state-affine case, Systems and Control Letters , Vol. 196, 106020, 2025. [24] A. Pyrkin, A. Bobtsov, R. Ortega, A. Vedyakov and S. Aranovskiy, Adap-tive state observer design using dynamic regressor extension and mixing, 
+
+Systems and Control Letters , Vol. 133, pp. 1-8, 2019. [25] W.J. Rugh, Linear Systems Theory , 2nd Edition, Prentice hall, NJ, 1996. [26] S. Sastry and M. Bodson, Adaptive Control: Stability, Convergence and Robustness , Prentice-Hall, New Jersey, 1989. 23 [27] A. van der Schaft, L2-Gain and Passivity Techniques in Nonlinear Control ,Springer, Berlin, 3rd Edition, 2016. [28] B. Yi, R. Ortega, J. Choi and K. Nam, A high performance globally expo-nentially stable sensorless observer for the IPMSM: Theoretical and exper-imental results, Automatica , 174, (AUT-112138) , 2025. 
+
+# A Swapping Lemma [26, Lemma 3.6.5] 
+
+Consider the stable LTI filter (6). Given the signals w : R+ → Rn×m and 
+
+v : R+ → Rm, with v(t) differentiable, the following identity holds true 9
+
+F[wv ] = F[w]v − F 
+
+[ 1
+
+λ F[w] ˙ v
+
+]
+
+.
+
+# B Proof of Proposition 2 
+
+The main objective of the proof is to establish a linear algebraic relation of the form 
+
+A(t)φ(t) = B(t), (42) where A(t) ∈ R2×2 and B(t) ∈ R2 are measurable matrices, with A(t) invertible, this will be possible via succesive applications of the well-known SL given in [26, Lemma 3.6.5], and recalled in Appendix A for ease of reference. First, notice that using the well-known fact that cos 2(npx3) + sin 2(npx3) = 1 ,
+
+we get from (17) an alternative algebraic equation, which is the main step to design an algebraic observer 
+
+|Ly − φ|2 = λ2
+
+> m
+
+.
+
+Expanding it, we get 
+
+L2y21 − 2Ly 1φ1 + φ21 + L2y22 − 2Ly 2φ2 + φ22 = λ2
+
+> m
+
+,
+
+which can be written as 
+
+y1φ1 + y2φ2 = 1
+
+2L |φ|2 + z3 (43) with the measurable signal z3 defined in (18). Applying the SL to each of the terms of (43) we obtain 
+
+F[y1φ1] = F[φ1y1] = φ1F[y1] − 1
+
+λ F[z1F[y1]] 
+
+F[y2φ2] = F[φ2y2] = φ2F[y2] − 1
+
+λ F[z2F[y2]] 
+
+F[1 × | φ|2] = F[1 × φ21] + F[1 × φ22]  
+
+> 9For ease of presentation we have selected the basic filter (6). However, as shown in [26, Lemma 3.6.5] the lemma holds true of an arbitrary LTI system. See also the footnote in the observation O3 of Subsection 2.3.
+
+24 = φ21F[1] − 1
+
+λ F[(2 φ1 ˙φ1)F[1]] + φ22F[1] − 1
+
+λ F[(2 φ2 ˙φ2)F[1]] = |φ|2 − 2
+
+λ
+
+(
+
+F[φ1z1] + F[φ2z2]
+
+)
+
+= |φ|2 − 2
+
+λ
+
+(
+
+φ1F[z1] − 1
+
+λ F[z1F[z1]] + φ2F[z2] − 1
+
+λ F[z2F[z2]] 
+
+)
+
+.
+
+Thus after applying filter F to (43), and using the equations above, we obtain 
+
+φ1F[y1] − 1
+
+λ F[z1F[y1]] + φ2F[y2] − 1
+
+λ F[z2F[y2]] = 1
+
+2L
+
+[
+
+|φ|2 − 2
+
+λ
+
+(
+
+φ1F[z1] − 1
+
+λ F[z1F[z1]] + φ2F[z2]
+
+− 1
+
+λ F[z2F[z2]] 
+
+)] 
+
++ F[z3]. (44) To simplify the notation let us define variables: 
+
+w1 := F[y1] + 1
+
+λL F[z1]
+
+w2 := F[y2] + 1
+
+λL F[z2]
+
+w3 := 1
+
+λ
+
+[
+
+F[z1F[y1]] + F[z2F[y2]] + 1
+
+λL 
+
+(
+
+F[z1F[z1]] + F[z2F[z2]] 
+
+)] 
+
++ F[z3].
+
+Notice that these three signals, w1, w 2 and w3, are measurable .Using the definitions above in (44) we obtain 
+
+φ1w1 + φ2w2 = 1
+
+2L |φ|2 + w3. (45) Now, we can write the system of two equations (43) and (45) as 
+
+y1φ1 + y2φ2 = 1
+
+2L |φ|2 + z3
+
+w1φ1 + w2φ2 = 1
+
+2L |φ|2 + w3 (46) After subtraction we obtain: 
+
+w4φ1 + w5φ2 = w6 (47) where we defined 
+
+w4 := w1 − y1, w 5 := w2 − y2, w 6 = w3 − z3
+
+which are, clearly, measurable .Now we can apply filter F to the equation above: 
+
+F[w6] = F[φ1w4] + F[φ2w5]25 Applying the SL we can rewrite this equation as 
+
+F[w6] = φ1F[w4] − 1
+
+λ F[z1F[w4]] + φ2F[w5] − 1
+
+λ F[z2F[w5]] ,
+
+which can be compactly rewritten as 
+
+w7φ1 + w8φ2 = w9 (48) where we defined 
+
+w7 := F[w4], w 8 := F[w5]
+
+w9 := F[w6] + 1
+
+λ F[z1F[w4]] + 1
+
+λ F[z2F[w5]] .
+
+With the definitions 
+
+A(t) := 
+
+[w4 w5
+
+w7 w8
+
+]
+
+, B(t) := 
+
+[w6
+
+w9
+
+]
+
+.
+
+the equations (47) and (48) constitute the algebraic system (42) we are looking for. Under the generic assumption that the matrix determinant ∆( t) = w4(t)w8(t) − w5(t)w7(t) 6 = 0 , ∀t ≥ 0,
+
+we can solve this system to finally get the desired ASLO: 
+
+[φ1
+
+φ2
+
+]
+
+= 1
+
+∆
+
+[w6w8 − w5w9
+
+w4w9 − w6w7
+
+]
+
+, (49) proving claim C1 .Finally, to prove the claim C2 notice that, according to the definition of z
+
+in (18), we have that ( z1, z 2) = ˙φ. Replacing this in (21) yields (22).  
+
+# C Proof of Proposition 3 
+
+Similarly to the proof of Proposition 2, the main objective of the proof is to establish, in this case two , linear algebraic relations of the form 
+
+Aκ(t)φκ(t) = Bκ(t), κ ∈ { s, r }, (50) where Aκ(t) ∈ R2×2 and Bκ(t) ∈ R2 are measurable matrices, with Aκ(t) in-vertible .We note that (27) can be decomposed as follows 
+
+φs − Lsis = Lsr eJ θ ir
+
+φr − Lr ir = Lsr e−J θ is.
+
+26 Hence, we have that 
+
+|φs − Lsis|2 = L2
+
+> sr
+
+|ir |2
+
+|φr − Lrir |2 = L2
+
+> sr
+
+|is|2, (51) where we used the fact that 
+
+(
+
+eJ θ)⊤
+
+eJ θ = I2.
+
+Expanding the left hand side of both equations in (51) and rearranging terms we get that 
+
+φ⊤ 
+
+> κ
+
+yκ = 1
+
+2Lκ
+
+|φκ|2 + zκ3 , (52) where we use the notation (28) and defined the measurable signals 
+
+zs3 := Ls
+
+2 (i2 
+
+> s1
+
++ i2 
+
+> s2
+
+) − L2
+
+> sr
+
+2Ls
+
+(i2 
+
+> r1
+
++ i2 
+
+> r2
+
+)
+
+zr3 = Lr
+
+2 (i2 
+
+> r1
+
++ i2 
+
+> r2
+
+) − L2
+
+> sr
+
+2Lr
+
+(i2 
+
+> s1
+
++ i2 
+
+> s2
+
+).
+
+Now, we apply the SL to each of the terms in (52). 
+
+F[yκ1 φκ1 ] = F[φκ1 yκ1 ] = φκ1 F[yκ1 ] − 1
+
+λ F[zκ1 F[yκ1 ]] 
+
+F[yκ2 φκ2 ] = F[φκ2 yκ2 ] = φ2F[yκ2 ] − 1
+
+λ F[zκ2 F[yκ2 ]] 
+
+F[1 × (φ2 
+
+> κ1
+
++ φ2 
+
+> κ2
+
+)] = F[1 × (φ2 
+
+> κ1
+
+)] + F[1 × (φ2 
+
+> κ2
+
+)] = φ2 
+
+> κ1
+
+F[1] − 1
+
+λ F[(2 φκ1
+
+˙φκ1 )F[1]] + φ2 
+
+> κ2
+
+F[1] − 1
+
+λ F[(2 φκ2
+
+˙φκ2 )F[1]] = |φκ|2 − 2
+
+λ
+
+(
+
+F[φκ1 zκ1 ] + F[φκ2 zκ2 ]
+
+)
+
+= |φκ|2 − 2
+
+λ
+
+(
+
+φκ1 F[zκ1 ] − 1
+
+λ F[zκ1 F[zκ1 ]] + φκ2 F[zκ2 ] − 1
+
+λ F[zκ2 F[zκ2 ]] 
+
+)
+
+.
+
+Thus after applying filter F to (52), and using the equations above, we obtain 
+
+φκ1 F[yκ1 ] − 1
+
+λ F[zκ1 F[yκ1 ]] + φκ2 F[yκ2 ] − 1
+
+λ F[zκ2 F[yκ2 ]] = 1
+
+2Ls
+
+|φκ|2 − 2
+
+λ
+
+(
+
+φκ1 F[zκ1 ] − 1
+
+λ F[zκ1 F[zκ1 ]] + φκ2 F[zκ2 ]
+
+)
+
+− 2
+
+λ
+
+(
+
+− 1
+
+λ F[zκ2 F[zκ2 ]] 
+
+)] 
+
++ F[zκ3 ]
+
+)
+
+. (53) 
+
+27 To simplify the notation let us define variables: 
+
+wκ1 := F[yκ1 ] + 1
+
+λL s
+
+F[zκ1 ]
+
+wκ2 := F[yκ2 ] + 1
+
+λL s
+
+F[zκ2 ]
+
+wκ3 := 1
+
+λ
+
+[
+
+F[zκ1 F[yκ1 ]] + F[zκ2 F[yκ2 ]]+ + 1
+
+λL s
+
+(
+
+F[zκ1 F[zκ1 ]] + F[zκ2 F[zκ2 ]] 
+
+)] 
+
++ F[zκ3 ].
+
+Notice that these three signals, wκ1 , w κ2 and wκ3 , are measurable .Using the definitions above in (53) we obtain 
+
+φκ1 wκ1 + φκ2 wκ2 = 1
+
+2Ls
+
+(φ2 
+
+> κ1
+
++ φ2 
+
+> κ2
+
+) + wκ3 . (54) Now, we can write the system of two equations (52) and (54) as 
+
+yκ1 φκ1 + yκ2 φκ2 = 1
+
+2Ls
+
+|φκ|2 + zκ3
+
+wκ1 φκ1 + wκ2 φκ2 = 1
+
+2Ls
+
+|φκ|2 + wκ3 .
+
+After subtraction we obtain: 
+
+wκ4 φκ1 + wκ5 φκ2 = wκ6 (55) where we defined 
+
+wκ4 := wκ1 − yκ1 , w κ5 := wκ2 − yκ2 , w κ6 := wκ3 − zκ3
+
+which are, clearly, measurable .Now we can apply filter F to the equation above: 
+
+F[wκ6 ] = F[φκ1 wκ4 ] + F[φκ2 wκ5 ]Applying the SL we can rewrite this equation as 
+
+F[wκ6 ] = φ1F[wκ4 ] − 1
+
+λ F[zκ1 F[wκ4 ]] + φκ2 F[wκ5 ] − 1
+
+λ F[zκ2 F[wκ5 ]] ,
+
+which can be compactly rewritten as 
+
+wκ7 φ1 + wκ8 φ2 = wκ9 (56) where we defined 
+
+wκ7 := F[wκ4 ], w κ8 := F[wκ5 ]
+
+wκ9 := F[wκ6 ] + 1
+
+λ F[zκ1 F[wκ4 ]] + 1
+
+λ F[zκ2 F[wκ5 ]] .
+
+With the definitions 
+
+Aκ(t) := 
+
+[wκ4 wκ5
+
+wκ7 wκ8
+
+]
+
+, Bκ(t) := 
+
+[wκ6
+
+wκ9
+
+]
+
+.
+
+the equations (55) and (56) constitute the algebraic system of (50) we are looking for. Under the generic assumption that the matrix determinant satisfies ∆κ(t) = wκ4 (t)wκ8 (t) − wκ5 (t)wκ7 (t) 6 = 0 , ∀t ≥ 0,
+
+we can solve this system to finally get the ASLO (29).  
+
+28 D Proof of Proposition 4 
+
+ASLO for ˙q1: Given the identity 
+
+F[ ˙ q1 ] = ˙ q1 − 1
+
+λ F[¨ q1 ],
+
+we obtain that ˙q1 = F[ ˙ q1 ] + 1
+
+λ F[¨ q1 ]= pF[q1 ] + 1
+
+λ F[q1 ˙q22 + u1
+
+m1
+
+]= pF[q1 ] + 1
+
+λ F
+
+[
+
+q1
+
+( w1
+
+z1F[z1]
+
+)2
+
++ u1
+
+m1
+
+]
+
+.
+
+The second equation is obtained replacing ˙ q2 by its ALSO and the proof is completed replacing the second right hand term by w4.
+
+ASLO for ˙q2: First, we write from (31) ¨ q2 as ¨q2 = − 2
+
+q1
+
+˙q1 ˙q2 + 1
+
+m1q21
+
+u2, = −2 ˙ z3 ˙q2 + z2, (57) where we used the definition of z2 in (32) and defined the measurable signal z3 := ln( q1).
+
+Define now the signal 
+
+χ := z1 ˙q2, (58) whose derivative takes the form ˙χ = ˙ z1 ˙q2 + z1 ¨q2 = ˙ z1 ˙q2 + z1(−2 ˙ z3 ˙q2 + z2)= 2 z1 ˙z3 ˙q2 − 2z1 ˙z3 ˙q2 + z1z2 = z1z2 (59) which is clearly measurable. Now, applying the filter F to ˙q2 = 1 
+
+> z1
+
+χ—defined in (58)—yields 
+
+pF[q2 ] = F
+
+[
+
+χ 1
+
+z1
+
+]
+
+= χF
+
+[ 1
+
+z1
+
+]
+
+− 1
+
+λ F
+
+[
+
+˙χF
+
+[ 1
+
+z1
+
+]] 
+
+= z1 ˙q2F
+
+[ 1
+
+z1
+
+]
+
+− 1
+
+λ F
+
+[
+
+z1z2F
+
+[ 1
+
+z1
+
+]] 
+
+where we applied the SL to get the second identity and, for the third one, used the expressions for χ and ˙χ in (58) and (59), respectively. The proof is completed rear-ranging terms to pull out the term ˙ q2.
+
+ASLO for ˙q3: Define the identity ¨q3 = p[ ˙ q3] + λ ˙q3 − λ ˙q3,
+
+from which we get (p + λ)[ ˙ q3] = p[ ˙ q3] + λ ˙q3.
+
+Dividing by ( p + λ) we get ˙q3 = 1
+
+p + λ [¨ q3] + F[ ˙ q3] = 1
+
+m2
+
+1
+
+p + λ [u] + pF[q3],
+
+completing the proof. 
+
+29 E Proof of Proposition 5 
+
+ASLO for ˙q2: To simplify the derivation of the proof we first present the ASLO for ˙q2. To streamline the proof we rewrite the equation for ¨ q2 as follows ¨q2 = − ˙z3 ˙q2 + z1, (60) where we defined the measurable function z3 := ln( ℓ2 + q21 ). Define now the function Ψ := z2 ˙q2, (61) whose derivative satisfies ˙Ψ = ˙ z2 ˙q2 + z2 ¨q2 = ˙ z2 ˙q2 + z2(− ˙z3 ˙q2 + z1)= z2 ˙z3 ˙q2 + z2(− ˙z3 ˙q2 + z1) = z1z2 (62) where, to obtain the second identity, we used the fact that ˙ z2 = z2 ˙z3.Now, from (61) we have that ˙ q2 = 1 
+
+> z2
+
+Ψ, to which we apply the SL to get 
+
+F[ ˙ q2 ] = F[Ψ 1
+
+z2
+
+] = Ψ F
+
+[ 1
+
+z2
+
+]
+
+− 1
+
+λ F
+
+[ ˙ΨF
+
+[ 1
+
+z2
+
+]] 
+
+= pF[q2].
+
+From the last identity we obtain Ψ = 1
+
+F
+
+[ 1
+
+> z2
+
+](
+
+pF[q2] + 1
+
+λ F
+
+[ ˙ΨF
+
+[ 1
+
+z2
+
+]]) 
+
+= 1
+
+F
+
+[ 1
+
+> z2
+
+](
+
+pF[q2] + 1
+
+λ F
+
+[
+
+z1z2F
+
+[ 1
+
+z2
+
+]]) 
+
+= z2 ˙q2.
+
+where we used (62) to get the second equation. The proof is completed dividing the right hand side of the second equation above by z2 and using the definitions given in Proposition 5. 
+
+ASLO for ˙q1: In the following derivations we assume that ˙ q2 is known , as it is given by the ASLO of Proposition 5. We find convenient to write the dynamics of ¨ q1 in a state-space form. For, we define ˙q11 = q12 , ˙q12 = q11 ˙q22 − g sin( q2), q 1 = q11 .
+
+Proceeding from the identity 
+
+F[q12 ] = q12 − 1
+
+λ pF[q12 ] = q12 − 1
+
+λ F[q11 ˙q22 − g sin( q2)] ,
+
+we get that 
+
+q12 = F[q12 ] + 1
+
+λ F[q11 ˙q22 − g sin( q2)] = pF[q1] + 1
+
+λ F[q1 ˙q22 − g sin( q2)] .
+
+The proof is completed noting that q12 = ˙ q1.
+
+30
