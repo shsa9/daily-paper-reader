@@ -1,0 +1,2166 @@
+Title: Numerical approximation of a transient thermo-electromagnetic problem in axisymmetric geometries
+
+URL Source: https://arxiv.org/pdf/2604.25261v1
+
+Published Time: Wed, 29 Apr 2026 00:33:34 GMT
+
+Number of Pages: 22
+
+Markdown Content:
+# Numerical approximation of a transient thermo-electromagnetic problem in axisymmetric geometries 
+
+Dolores G´ omez ∗ Bibiana L´ opez-Rodr´ ıguez † Pilar Salgado ‡ Pablo Venegas §
+
+Abstract 
+
+This paper analyzes a transient thermo-electromagnetic problem arising in the modeling of induction heating processes. Unlike previous studies that focused on steady-state scenar-ios, we consider a time-dependent thermal problem coupled with a nonlinear time-harmonic electromagnetic problem through temperature-dependent electrical conductivity and Joule effect. Exploiting cylindrical symmetry and assuming a purely azimuthal current density, we formulate the problem on a two-dimensional meridional section. We introduce a variational formulation in appropriately weighted Sobolev spaces and prove existence of a solution by a fixed-point argument. Under reasonable assumptions on the physical parameters, we also prove uniqueness. A finite element discretization combined with implicit time stepping is used to compute the numerical solution. To evaluate the accuracy of the approximation, a priori error estimates are derived and validated by numerical experiments. Finally, numerical simulations illustrate the effectiveness of the proposed approach in an industrially relevant configuration. 
+
+Keywords: Transient thermo-electromagnetic problem; axisymmetric formulation; finite element approximation; a priori error estimates; induction heating. 
+
+AMS Subject Classification: 65N30, 65M60, 35K61 
+
+# 1 Introduction 
+
+Thermo-electromagnetic models describe the coupled evolution of temperature and electromag-netic fields and, in most applications, take the form of nonlinear systems of partial differential equations. This work addresses the numerical analysis of coupled thermo-electromagnetic sys-tems arising in induction heating, a technique in which an alternating current in an induction coil generates a time-varying magnetic field that induces eddy currents in an electrically conductive workpiece. The resulting resistive losses (Joule heating) raise the workpiece temperature, which can be controlled through the excitation frequency and current as well as the coil geometry. Due to their flexibility and reliability, induction heating systems have become an indispensable part of a wide range of industrial applications, including material forming and induction hard-ening. From a modeling viewpoint, the process requires solving an eddy-current problem to compute the dissipated power together with a heat-transfer problem for the temperature field. 
+
+> ∗
+
+CITMAga, Departamento de Matem´ atica Aplicada, Universidade de Santiago de Compostela, Santiago de Compostela, Spain. Email: mdolores.gomez@usc.es .
+
+> †
+
+Departamento de Matem´ aticas, Universidad Nacional de Colombia, sede Medell´ ın, Colombia. Email: 
+
+blopezr@unal.edu.co .
+
+> ‡
+
+CITMAga, Departamento de Matem´ atica Aplicada, Universidade de Santiago de Compostela, Santiago de Compostela, Spain. Email: mpilar.salgado@usc.es .
+
+> §
+
+GIMNAP, Departamento de Matem´ atica, Universidad del B´ ıo-B´ ıo, Concepci´ on, Chile. Email: 
+
+pvenegas@ubiobio.cl .
+
+1
+
+> arXiv:2604.25261v1 [math.NA] 28 Apr 2026
+
+The coupling is twofold: the electrical conductivity depends on the temperature and Joule heat-ing provides the source term in the thermal equation. The overall problem is nonlinear and becomes particularly challenging for ferromagnetic materials, where the magnetic constitutive relation between the magnetic field and the magnetic induction is nonlinear. In a previous study [17] we analyzed the steady-state thermo-electromagnetic model as a first step toward more realistic simulations of induction heating. Here, we extend that work by coupling a transient thermal problem with a nonlinear time-harmonic electromagnetic formula-tion to capture the temperature evolution. While the harmonic formulation is exact for linear materials under harmonic excitation, in the present nonlinear setting, it must be considered an approximation of the electromagnetic response. This is a justified choice, as the large separation between the electromagnetic and thermal time scales renders a fully transient nonlinear coupled simulation computationally prohibitive. For this reason, nonlinear time-harmonic formulations are widely used in commercial software for industrial induction heating simulations. Compared with the steady-state case, the proposed transient analysis is more delicate. The main difficulties arise from the additional nonlinear magnetic term associated with the B–H curve and from the Joule heating source, which is computed from the electromagnetic solution and may have low regularity (often only in L 1 in space). This complicates the analysis of both the heat equation and the coupled problem. In particular, time regularity is needed to apply compactness arguments and establish the existence of a weak solution. Moreover, the time dependence of the heat equation introduces further challenges, including the need to propose, implement, and analyze the convergence of an efficient and reliable time discretization scheme. Existence results for fully transient thermo-electromagnetic models have been analyzed using time discretization and compactness techniques; see, for example, [12, 13, 27], where Rothe’s method is used. We focus on a two-dimensional axisymmetric setting. Both the underlying mathematical model and the numerical strategy are standard in the induction heating literature and have been extensively validated (see, e.g., [11, 4, 5]). However, to the best of our knowledge, neither the well-posedness of the coupled weak formulation, including the nonlinear magnetic effects associated with the B-H curve, nor a rigorous numerical analysis of a fully discrete approximation has been established so far. This is the main goal of the present work. The resulting thermo-electromagnetic model is structurally similar to the classical thermistor problem, for which substantial theoretical and numerical literature is available ([2, 1, 20, 15, 22, 26, 16, 19]). However, the axisymmetric geometry and the specific features of the electromagnetic subsystem considered here lead to a coupled partial differential equation system that differs substantially from the standard thermistor setting, and therefore requires a dedicated variational framework and numerical analysis. For the electromagnetic problem, we adopt a nonlinear time-harmonic eddy-current formula-tion written in terms of the magnetic vector potential. This formulation is coupled to a transient nonlinear heat equation on the workpiece, with Joule heating as the source term. Under ap-propriate assumptions, the three-dimensional problem reduces to a two-dimensional model on a meridional section. In this setting, we introduce weighted Sobolev spaces and derive a coupled weak formulation in which the magnetic vector potential is posed on a computational domain containing the workpiece, the coils and the surrounding air, whereas the temperature is defined only on the workpiece. To establish the well-posedness of the coupled thermo-electromagnetic problem, we use a fixed-point argument similar to that in [8, 9], where existence is proved for three-dimensional transient thermo-electromagnetic models arising in the simulation of electrodes in electric fur-naces. Related existence results for fully transient eddy-current formulations written in terms of the magnetic vector potential can also be found in [12]. Our setting, however, requires a different functional framework: the axisymmetric reduction leads naturally to cylindrical coor-dinates and weighted Sobolev spaces, and the associated degeneracies near the symmetry axis 2introduce additional analytical difficulties, even when dealing with a transient linear thermal model. Under further assumptions on the material coefficients (particularly, on the electrical and the thermal conductivities), we also prove uniqueness of the coupled solution. In this work, our contribution goes beyond the continuous analysis. We provide a rigorous foundation for a fully discrete scheme based on backward Euler time stepping and a finite element discretization in space. Assuming additional regularity of the exact solution, we derive optimal-order a priori error estimates for the resulting approximation. The paper is organized as follows: In section 2, we formulate the transient thermo-electromagnetic problem in an axisymmetric setting, using a magnetic vector potential for the electromagnetic component and prescribing voltages as input data. In section 3 we introduce the weak formula-tion, prove well-posedness via Schauder’s fixed-point theorem, and establish uniqueness under additional assumptions on the material coefficients. In section 4 we present and analyze a fully discrete scheme based on backward Euler time stepping and Lagrange finite elements in space; we prove convergence and derive optimal-order a priori error estimates under additional regu-larity assumptions. Finally, in section 5 we report numerical tests that confirm the theoretical convergence rates and illustrate the method on an industrially relevant induction-hardening configuration from the automotive industry. 
+
+# 2 Statement of the problem 
+
+Figure 1: Induction heating system including the workpiece and the coil (left). Meridional domains for the electromagnetic (center) and thermal (right) problems. We consider a basic induction-heating system consisting of a coil surrounding an axially symmetric conductive workpiece, as shown in Figure 1. For the axisymmetric formulation, the coil is replaced by m parallel toroidal rings. The detailed derivation of the model and the notation follow [17], except that the thermal equation is now transient and the electromagnetic model may involve a nonlinear B-H curve. In particular, the three-dimensional computational domain is a cylinder ˘Ω enclosing the heating system and chosen ‘sufficiently large’, whose meridian section Ω is decomposed as Ω = Ω C ∪ Ωa. The conductor region is Ω C = Ω 0 ∪ Ωcoil , where Ω 0 is the workpiece section, assumed to be polygonal but not necessarily convex, and Ω coil = Smk=1 Ωk
+
+is the union of the m coil ring sections. The surrounding air is denoted by Ω a. Finally, we split Γ := ∂Ω = Γ 0 ∪ Γ1 and bΓ := ∂Ω0 = bΓ0 ∪ bΓ1, where Γ 0 and bΓ0 are the parts lying on the symmetry axis r = 0. The electromagnetic excitation is time-harmonic with angular frequency ω = 2 πf and we 3adopt the eddy current approximation, as in [6, 17]. It reads 
+
+iω B + curl E = 0, curl H = J, div B = 0 , in ˘Ω,
+
+where E, B, H and J are the complex amplitudes of the electric field, magnetic induction, magnetic field and current density, respectively. For the axisymmetric formulation, we use cylindrical coordinates ( r, θ, z ) with associated local orthonormal basis ( er, eθ, ez ), the symmetry axis being r = 0. We assume that all fields and coefficients are independent of θ, and that the current density in conductors has the form 
+
+J(r, θ, z ) = Jθ(r, z )eθ. Then, the magnetic vector potential has only an azimuthal component, 
+
+A(r, θ, z ) = Aθ(r, z ) eθ, B = curl A.
+
+To account for magnetic nonlinearity, we consider the constitutive law 
+
+H = ν(|B|)B := 
+
+(
+
+νC(|B|)B, in Ω C,ν0B, in Ω a, (1) where νC denotes the magnetic reluctivity in the conducting region and ν0 > 0 the vacuum reluc-tivity. In Ω C, Ohm’s law reads J = σ(T )E, with temperature-dependent electrical conductivity 
+
+σ, which couples the electromagnetic and thermal models. Following [17], there exist complex constants Vk, k = 0 , . . . , m such that 
+
+iωA θ + σ(T )−1Jθ = Vk
+
+r in Ω k. (2) Moreover, in the workpiece, V0 = 0. Hence, the electromagnetic model reads: 
+
+−
+
+ ∂∂r 
+
+ νr∂(rA θ)
+
+∂r 
+
+
+
++ ∂∂z 
+
+
+
+ν ∂(Aθ)
+
+∂z 
+
+ 
+
+=
+
+
+
+−iωσA θ + σ Vk
+
+r in Ω k, k = 1 , . . . , m, 
+
+−iωσA θ in Ω 0,
+
+0 in Ω a,
+
+(3) where ν = ν(| curl (Aθeθ)|). We impose the boundary condition Aθ = 0 on Γ. The transient thermal is posed only in the workpiece. Under the axisymmetry assumption, the temperature is written as T = T (t, r, z ), and for all t ∈ [0 , T ] satisfies 
+
+ρc P
+
+∂T ∂t − 1
+
+r∂∂r 
+
+
+
+rκ (T ) ∂T ∂r 
+
+
+
+− ∂∂z 
+
+
+
+κ(T ) ∂T ∂z 
+
+
+
+= ω2
+
+2 σ(T ) |Aθ|2 in Ω 0. (4) Here, ρ, cP and κ denote the density, specific heat, and temperature-dependent thermal conduc-tivity, respectively. The right-hand side represents the cycle-averaged Joule heating |J|2/(2 σ), obtained from (2) with V0 = 0, and provides the coupling with the electromagnetic model. Equation (4) is complemented with boundary conditions 
+
+κ(T ) grad T · n + η (T − Tc) = 0 on bΓ1,κ(T ) grad T · n = 0 on bΓ0, (5) and with the initial condition T (0 , ·) = T0(·) in Ω 0.
+
+# 3 Mathematical analysis 
+
+In this section, we state the problem in weak form, in a way suitable for the mathematical analysis. We then prove existence and, under additional assumptions, uniqueness of the solution. To this end, we first introduce some preliminary results and notation. Derivatives are denoted in the standard way with respect to the variable under consideration. In particular, the notations 
+
+∂ug and ∂g ∂u are used interchangeably for partial derivatives with respect to u.43.1 Functional spaces and preliminary results 
+
+We define weighted Sobolev spaces appropriate for the mathematical analysis of the problem and recall some of their properties. For ϑ ⊆ Ω and α ∈ R, let L 2
+
+> α
+
+(ϑ) be the weighted Lebesgue space of measurable functions G defined in ϑ with bounded norm 
+
+∥G∥2L2 
+
+> α(ϑ)
+
+:= 
+
+Z
+
+> ϑ
+
+|G|2rα dr dz. 
+
+Given k ∈ N, the weighted Sobolev space H k 
+
+> 1
+
+(ϑ) consists of all functions in L 21(ϑ) whose deriva-tives in the sense of distributions up to order k are also in L 21(ϑ). We define the norms and semi-norms of these spaces in the standard way. We will also use the following Hilbert space: 
+
+eH11(ϑ) := H 11(ϑ) ∩ L2
+
+> −1
+
+(ϑ),
+
+with its respective norm defined by 
+
+∥Z∥2 
+
+> eH11(ϑ)
+
+:= ∥Z∥2H11(ϑ) + ∥Z∥2L2
+
+> −1(ϑ)
+
+.
+
+In addition, for our analysis, we will rely on the results presented below whose proofs can be found in references [7], [10] and [18], respectively. 
+
+Lemma 1. Let ϑ ∈ { Ω, Ω0}, there holds H11(ϑ) ⊂ L61(ϑ) continuously, and there exists Ce > 0
+
+such that ∥G∥L61(ϑ) ≤ Ce∥G∥H11(ϑ) for all G ∈ H11(ϑ).
+
+Lemma 2. For all W ∈ H11(Ω 0), there exists Cp > 0 such that 
+
+Cp ∥W ∥2H11(Ω 0) ≤ | W |2H11(Ω 0) + ∥W ∥2L21(bΓ1).
+
+Lemma 3. For all W ∈ H11(Ω 0), there exists Ctr > 0 such that 
+
+∥W ∥L21(bΓ1) ≤ Ctr ∥W ∥H11(Ω 0).
+
+Lemma 4. For all Z ∈ eH11(Ω) , ∂r(rZ ) belongs to L2
+
+> −1
+
+(Ω) and satisfies 
+
+∥∂rZ∥2L21(Ω) + ∥Z∥2L2 
+
+> −1(Ω)
+
+≤ ∥ ∂r(rZ )∥2L2 
+
+> −1(Ω)
+
+≤ 2∥∂rZ∥2L21(Ω) + 2 ∥Z∥2L2
+
+> −1(Ω)
+
+.
+
+Moreover, we recall the classical functional framework for functions defined on a bounded interval [0 , T ] with values in a separable Hilbert space X. We denote by C([0 , T ]; X) the Banach space of all continuous functions g : [0 , T ] → X. We also consider the space L 2(0 , T ; X) of equivalence classes of B¨ ochner-measurable functions g : [0 , T ] → X such that ∥g∥L2(0 ,T ;X) := 
+
+R T 
+
+> 0
+
+∥g(t)∥2 
+
+> X
+
+dt 
+
+1/2
+
+< ∞. Furthermore, we define H1(0 , T ; X) := g ∈ L2(0 , T ; X) : ∂tg ∈ L2(0 , T ; X) .
+
+Analogously, H k(0 , T ; X) is defined for every k ∈ N.In what follows, let us suppose that σ(x, u ), κ(x, u ) are Carath´ eodory functions from Ω × R
+
+into R, i.e., measurable with respect to x := ( r, θ ) and continuous with respect to u. Moreover, we make the following assumptions on the data 
+
+η∗ ≤ η(x) ≤ η∗ a.e. x ∈ bΓ1, (6) 
+
+κ∗ ≤ κ(x, u ) ≤ κ∗ a.e. x ∈ Ω0, ∀u ∈ R, (7) 
+
+σ∗ ≤ σ(x, u ) ≤ σ∗ a.e. x ∈ Ω0, ∀u ∈ R, (8) 5where η(∗) 
+
+> ∗
+
+, κ (∗) 
+
+> ∗
+
+and σ(∗) 
+
+> ∗
+
+are strictly positive constants. In addition, σ is assumed to be constant in each coil ring and equal to zero in the air region, namely, 
+
+σ(x, u ) = 
+
+(σk > 0, a.e. in Ω k, k = 1 , . . . , m, 
+
+0, a.e. in Ω a, ∀u ∈ R. (9) We denote by σcoil ..= max  
+
+> 1≤k≤m
+
+σk, the largest electrical conductivities among the coil rings and for any ϑ ⊆ Ω, we define I ϑ
+
+> ..
+
+= R 
+
+> ϑ
+
+r dr dz . Let us also consider the following assumptions on the nonlinear magnetic reluctivity νC : R+0 → R (see, e.g., [24]) 
+
+∃ νmin : 0 < ν min ≤ νC(p) ≤ ν0 ∀p ∈ R+0 , (10) 
+
+∃ ξ > 0 : |νC(p)p − νC(q)q| ≤ ξ|p − q| ∀p, q ∈ R+0 , (11) 
+
+∃ ϱ > 0 : ( νC(p)p − νC(q)q)( p − q) ≥ ϱ|p − q|2 ∀p, q ∈ R+0 . (12) The previous properties are natural assumptions on the reluctivity consistent with physical BH -curves. Finally, for simplicity, we assume that ρ = cP = 1. In order to establish a weak formulation of problem (3)–(5), we introduce 
+
+eH11,Γ(Ω) := 
+
+n
+
+Z ∈ eH11(Ω) : Z = 0 on Γ 
+
+o
+
+.
+
+We integrate (3) multiplied by a test function rZ with Z ∈ eH11,Γ(Ω) and (4) by rW with 
+
+W ∈ H11(Ω 0), integrate by parts and use (5). Thus, we are led to the following nonlinear coupled variational problem: 
+
+Problem 1. Given V ..= ( V1, . . . , V m) ∈ Cm, Tc ∈ L2(0 , T ; L 21(bΓ1)) and T0 ∈ L21(Ω 0), find 
+
+(Aθ, T ) ∈ L2(0 , T ; eH11,Γ(Ω)) × L2(0 , T ; H 11(Ω 0)) ∩ H1(0 , T ; L 21(Ω 0)) such that for all (Z, W ) ∈
+
+eH11,Γ(Ω) × H11(Ω 0) and a.e. t ∈ (0 , T )
+
+iω 
+
+Z
+
+> ΩC
+
+σ(·, T )Aθ ¯Zr dr dz +
+
+Z
+
+> Ω
+
+ν(| curl (Aθeθ)|)
+
+ 1
+
+r∂(rA θ)
+
+∂r 
+
+1
+
+r∂(r ¯Z)
+
+∂r + ∂A θ
+
+∂z ∂ ¯Z∂z 
+
+
+
+r dr dz 
+
+=
+
+> m
+
+X
+
+> k=1
+
+Z
+
+> Ωk
+
+σkVk ¯Z dr dz, 
+
+Z
+
+> Ω0
+
+∂tT W r dr dz +
+
+Z
+
+> Ω0
+
+κ(·, T ) grad T · grad W r dr dz +
+
+Z
+
+> bΓ1
+
+η T W r dl 
+
+= 12
+
+Z
+
+> Ω0
+
+ω2σ(·, T )|Aθ|2W r dr dz +
+
+Z
+
+> bΓ1
+
+η T c W r dl, T (0) = T0 in Ω0.
+
+In the upcoming section, we will establish the existence of solution to the preceding problem through the application of a fixed-point argument. Additionally, under additional assumptions on the coefficients, we will provide a proof for the uniqueness of the solution. 
+
+3.2 Existence 
+
+To establish the existence of a solution to problem 1, we employ Schauder’s fixed-point theorem. To this end, we define two operators: one corresponding to the nonlinear electric problem and another for the nonlinear thermal problem. Both operators are shown to be bounded and continuous. 6Let us first introduce the nonlinear operator A : eH11(Ω) → eH11(Ω) ′, that will be used to study the electrical problem: 
+
+⟨A (G), Z ⟩ ..=
+
+Z
+
+> Ω
+
+ν(| curl (Geθ)|)
+
+ 1
+
+r∂(rG )
+
+∂r 
+
+1
+
+r∂(r ¯Z)
+
+∂r + ∂G ∂z ∂ ¯Z∂z 
+
+
+
+r dr dz ∀G, Z ∈ eH11(Ω) . (13) Notice that, using the expression of the curl operator in cylindrical coordinates, A can be rewritten as 
+
+⟨A (G), Z ⟩ =
+
+Z
+
+> Ω
+
+ν(| curl (Geθ)|) curl (Geθ) · curl ( ¯Zeθ) r dr dz. 
+
+Next we show several key properties of this operator which will be instrumental in various contexts throughout this article. 
+
+Lemma 5. The nonlinear operator A is strongly monotone and Lipschitz continuous, i.e., there exist ˜ξ and ˜ϱ strictly positive constants such that 
+
+⟨A (G) − A (Z), G − Z⟩ ≥ ˜ϱ∥G − Z∥2 
+
+> eH11(Ω)
+
+∀G, Z ∈ eH11(Ω) , (14) 
+
+|⟨A (G) − A (F ), Z ⟩| ≤ ˜ξ∥G − F ∥eH11(Ω) ∥Z∥eH11(Ω) ∀G, F, Z ∈ eH11(Ω) , (15) 
+
+where ˜ϱ ..= min {ϱ,ν 0} 
+
+> 2 max {1,R 2}
+
+, ˜ξ ..= 4 max {3ξ, ν 0} and R denoting the width of the rectangle Ω.Proof. We first notice that, from (10)–(12) and by proceeding as in the proof of [24, Lemma 2.8 and Lemma 2.9] it follows that νC : C3 → C3 is strongly monotone and Lipschitz continuous; in fact (νC(|p|)p−νC(|q|)q)·(¯ p− ¯q) ≥ ϱ|p−q|2, |νC(|p|)p−νC(|q|)q| ≤ 3ξ|p−q| ∀p, q ∈ C3. (16) Thus, from the definition of νC (cf. (1)), A and by taking p = curl (Geθ) and q = curl (Zeθ) in the previous equation we obtain 
+
+⟨A (G) − A (Z), G − Z⟩
+
+=
+
+Z
+
+> Ω
+
+(ν(| curl (Geθ)|) curl (Geθ) − ν(| curl (Zeθ)|) curl (Zeθ)) · curl ( ¯Geθ − ¯Zeθ)r dr dz 
+
+≥ ϱ
+
+Z
+
+> ΩC
+
+| curl (Geθ − Zeθ)|2r dr dz + ν0
+
+Z
+
+> Ωa
+
+| curl (Geθ − Zeθ)|2r dr dz 
+
+≥ min {ϱ, ν 0}∥ curl (G − Z)eθ∥2L21(Ω) = min {ϱ, ν 0}
+
+
+
+∥∂r(r(G − Z)) ∥2L2 
+
+> −1(Ω)
+
++ ∥∂z (G − Z)∥2L21(Ω) 
+
+
+
+≥ min {ϱ, ν 0}
+
+2 max {1, R 2} ∥G − Z∥2
+
+> eH11(Ω)
+
+where, for the last inequality, we have applied lemma 4. Next, we apply (16) and lemma 4 again to prove that A is Lipschitz continuous 
+
+|⟨A (G)−A (F ), Z ⟩| ≤ 
+
+Z
+
+> Ω
+
+|ν(| curl (Geθ)|) curl (Geθ)−ν(| curl (F eθ)|) curl (F eθ)| | curl ( ¯Zeθ)|r dr dz 
+
+≤ 3ξ
+
+Z
+
+> ΩC
+
+| curl (Geθ − F eθ)| | curl ( ¯Zeθ)|r dr dz + ν0
+
+Z
+
+> Ωa
+
+| curl (Geθ − F eθ)| | curl ( ¯Zeθ)|r dr dz 
+
+≤ max {3ξ, ν 0}∥ curl (G − F )eθ∥L21(Ω) ∥ curl (Z)eθ∥L21(Ω) 
+
+≤ 4 max {3ξ, ν 0}∥ G − F ∥eH11(Ω) ∥Z∥eH11(Ω) .
+
+Thus, the proof is complete. 7Next, in order to study the existence of solution of the coupled problem, we begin by introduc-ing the nonlinear operator related to the electromagnetic problem: given S ∈ L2(0 , T ; L 21(Ω 0)), we defined H as follows 
+
+H : L2(0 , T ; L 21(Ω 0)) −→ L2(0 , T ; eH11,Γ(Ω)) 
+
+S 7 −→ H(S) ..= ASθ
+
+where, a.e. t ∈ (0 , T ), ASθ (t) solves, ∀Z ∈ eH11,Γ(Ω), 
+
+iω 
+
+Z
+
+> ΩC
+
+σ(·, S )ASθ (t) ¯Zr dr dz + ⟨A (ASθ (t)) , Z ⟩ =
+
+> m
+
+X
+
+> k=1
+
+Z
+
+> Ωk
+
+σkVk ¯Z dr dz (17) The following lemma guarantees the well-posedness of the preceding problem. 
+
+Lemma 6. Let V ∈ Cm. For S ∈ L2(0 , T ; L 21(Ω 0)) there exists a unique ASθ ∈ L2(0 , T ; eH11,Γ(Ω)) 
+
+solution of problem (17) . Moreover 
+
+∥ASθ ∥L2(0 ,T ; eH11(Ω)) ≤ Cc∥V∥∞
+
+where Cc ..= σcoil ˜ϱ−1
+
+Pmk=1 IΩk
+
+ 12 √T and ∥V∥∞ ..= max 
+
+> 1≤k≤m
+
+{| Vk|} .Proof. The existence result follows from [28, Theorem 25.B] since the operator A is strongly monotone and Lipschitz continuous. In fact both, the strongly monotone and Lipschitz continu-ous follows from lemma 5. To prove the estimate for ASθ , let us first notice that, as a consequence of lemma 5 we get 
+
+⟨A (Z), Z ⟩ ≥ ˜ϱ∥Z∥2 
+
+> eH11(Ω)
+
+∀Z ∈ eH11(Ω) .
+
+Thus, by taking Z = ASθ in (17), using the previous inequality and proceeding as in the proof of [17, Lemma 3.5] it follows ˜ϱ∥ASθ ∥2 
+
+> eH11(Ω)
+
+≤ Re iω 
+
+Z
+
+> ΩC
+
+σ(·, S )|ASθ |2r dr dz + ⟨A (ASθ ), A Sθ ⟩
+
+!
+
+≤ iω 
+
+Z
+
+> ΩC
+
+σ(·, S )|ASθ |2r dr dz + ⟨A (ASθ ), A Sθ ⟩ =
+
+> m
+
+X
+
+> k=1
+
+Z
+
+> Ωk
+
+σkVk ¯ASθ dr dz 
+
+≤ σcoil ∥V∥∞∥ASθ ∥L2
+
+> −1(Ω coil )
+> m
+
+X
+
+> k=1
+
+IΩk
+
+! 12
+
+,
+
+and thus 
+
+∥ASθ (t)∥eH11(Ω) ≤ σcoil 
+
+˜ϱ
+
+ mX
+
+> k=1
+
+IΩk
+
+ 12
+
+∥V∥∞ a.e. t ∈ [0 , T ]. (18) Now, integrating over [0 , T ] we obtain the estimate ∥ASθ ∥L2(0 ,T ; eH11(Ω)) .As a consequence of the previous result it follows that the nonlinear operator H is well-defined and bounded. In particular, for all S ∈ L2(0 , T ; L 21(Ω 0)), H(S) satisfies 
+
+∥H (S)∥L2(0 ,T ; eH11(Ω)) ≤ Cc∥V∥∞.
+
+Moreover, operator H is continuous as stated in the following result. 
+
+Lemma 7. The mapping H : L 2(0 , T ; L 21(Ω 0)) → L2(0 , T ; eH11,Γ(Ω)) is continuous. 
+
+8Proof. Let S ∈ L2(0 , T ; L 21(Ω 0)) and {Sℓ}ℓ∈N ⊂ L2(0 , T ; L 21(Ω 0)) be a sequence such that Sℓ →
+
+S strongly in L 2(0 , T ; L 21(Ω 0)). To prove that H is continuous, we show that the sequence 
+
+{Aℓθ}ℓ∈N ..= {H (Sℓ)}ℓ∈N converges strongly to ASθ ..= H(S) in L 2(0 , T ; eH11,Γ(Ω)). First we notice that ASθ and Aℓθ satisfy 
+
+iω 
+
+Z
+
+> ΩC
+
+σ(·, S )ASθ ¯Zr dr dz + ⟨A (ASθ ), Z ⟩ =
+
+> m
+
+X
+
+> k=1
+
+Z
+
+> Ωk
+
+σkVk ¯Z dr dz ∀Z ∈ eH11,Γ(Ω) ,iω 
+
+Z
+
+> ΩC
+
+σ(·, S ℓ)Aℓθ ¯Zr dr dz + ⟨A (Aℓθ), Z ⟩ =
+
+> m
+
+X
+
+> k=1
+
+Z
+
+> Ωk
+
+σkVk ¯Z dr dz ∀Z ∈ eH11,Γ(Ω) .
+
+Thus, by subtracting the previous equations and from the assumptions on σ (cf. (9)) we get 
+
+iω 
+
+Z
+
+> ΩC
+
+σ(·, S ℓ)( Aℓθ − ASθ ) ¯Zr dr dz + ⟨A (Aℓθ) − A (ASθ ), Z ⟩ = −iω 
+
+Z
+
+> Ω0
+
+(σ(·, S ℓ) − σ(·, S )) ASθ ¯Zr dr dz 
+
+for all Z ∈ eH11,Γ(Ω). By taking Z = Aℓθ − ASθ in the previous equation, using lemma 5 (cf. (14)) and by applying H¨ older’s inequality we arrive at ˜ξ∥Aℓθ − ASθ ∥2 
+
+> eH11(Ω)
+
+≤ Re 
+
+
+
+iω 
+
+Z
+
+> ΩC
+
+σ(·, S ℓ)|Aℓθ − ASθ |2r dr dz + ⟨A (Aℓθ) − A (ASθ ), A ℓθ − ASθ ⟩
+
+
+
+≤ iω 
+
+Z
+
+> Ω0
+
+(σ(·, S ℓ) − σ(·, S )) ASθ Aℓθ − ASθ r dr dz 
+
+≤ ω
+
+ Z
+
+> Ω0
+
+|σ(·, S ℓ) − σ(·, S )|2r dr dz 
+
+ 12  Z
+
+> Ω0
+
+|ASθ (Aℓθ − ASθ )|2r dr dz 
+
+ 12
+
+≤ ω∥σ(·, S ℓ) − σ(·, S )∥L21(Ω 0)∥ASθ ∥L61(Ω 0)∥Aℓθ − ASθ ∥L31(Ω 0)
+
+≤ ω C 2 
+
+> e
+
+I 16Ω0Cc∥V∥∞∥σ(·, S ℓ) − σ(·, S )∥L21(Ω 0)∥Aℓθ − ASθ ∥H11(Ω 0)
+
+(19) where, to obtain the last inequality, we have applied the continuous embedding H 11(Ω 0) ⊂ L61(Ω 0)(cf. lemma 1), the fact that ∥W ∥L31(Ω 0) ≤
+
+R
+
+> Ω0
+
+r dr dz 
+
+ 16
+
+∥W ∥L61(Ω 0) = I 16Ω0∥W ∥L61(Ω 0) for all W ∈
+
+L61(Ω 0) and (18). Thus, by integrating (19) over [0 , T ] it follows that 
+
+Z T
+
+> 0
+
+∥Aℓθ(t) − ASθ (t)∥2 
+
+> eH11(Ω)
+
+dt ≤
+
+ ˜ξ−1ω C 2 
+
+> e
+
+I 16Ω0Cc∥V∥∞
+
+2 Z T
+
+> 0
+
+∥σ(·, S ℓ(t)) − σ(·, S (t)) ∥2L21(Ω 0) dt. 
+
+Finally, considering that σ is a Carath´ eodory function, by virtue of Lebesgue’s dominated con-vergence theorem we get ∥σ(·, S ℓ) − σ(·, S )∥L2(0 ,T ;L 21(Ω 0)) → 0 and from the previous estimate we conclude that Aℓθ → ASθ strongly in L 2(0 , T ; eH11,Γ(Ω)). Thus we conclude the proof. We next consider the thermal problem. The following result will be used below. 
+
+Lemma 8. Let V ∈ Cm, Tc ∈ L2(0 , T ; L 21(bΓ1)) and T0 ∈ L21(Ω 0). For S ∈ L2(0 , T ; L 21(Ω 0)) there exists a unique ˆSθ ∈ L2(0 , T ; H 11(Ω 0)) ∩ H1(0 , T ; L 21(Ω 0)) such that 
+
+Z
+
+> Ω0
+
+∂t ˆSθ W r dr dz +
+
+Z
+
+> Ω0
+
+κ(·, S ) grad ˆSθ · grad W r dr dz +
+
+Z
+
+> bΓ1
+
+η ˆSθ W r dl 
+
+= 12
+
+Z
+
+> Ω0
+
+ω2σ(·, S )|H (S)|2 W r dr dz +
+
+Z
+
+> bΓ1
+
+η T c W r dl, (20) 
+
+∀W ∈ H11(Ω 0) in D′(0 , T ),
+
+ˆSθ(0) = T0 in Ω0. (21) 9Moreover, there exists ˆC > 0 such that 
+
+∥ ˆSθ∥L∞(0 ,T ;L 21(Ω 0)) + ∥ ˆSθ∥L2(0 ,T ;H 11(Ω 0)) ≤ ˆC
+
+
+
+∥T0∥L21(Ω 0) + ∥V∥2 
+
+> ∞
+
++ ∥Tc∥L2(0 ,T ;L 21(bΓ1)) 
+
+
+
+Proof. The well-posedness of problem (20)–(21) follows from the Poincar´ e-type inequality and trace inequality in weighted Sobolev given in lemmas 2 and 3, respectively, and the classical theory for parabolic problems (see, for instance, [14, Chapter XVIII]). Now, by taking W = ˆSθ(t)in (20), using lemmas 2 and 3, H¨ older’s inequality and the fact that H 11(Ω 0) ,→ L61(Ω 0) (cf. lemma 1) and ∥W ∥L 12 51 (Ω 0)
+
+≤
+
+R
+
+> Ω0
+
+r dr dz 
+
+ 14
+
+∥W ∥L61(Ω 0) for all W ∈ L61(Ω 0), we obtain 12
+
+ddt ∥ ˆSθ(t)∥2L21(Ω 0) + Cp min {κ∗, η ∗}∥ ˆSθ(t)∥2H11(Ω 0)
+
+≤ 12T ω2σ∗C3 
+
+> e
+
+C2 
+
+> c
+
+I 12Ω0∥V∥2
+
+> ∞
+
+∥ ˆSθ(t)∥H11(Ω 0) + η∗Ctr ∥Tc∥L21(bΓ1)∥ ˆSθ(t)∥H11(Ω 0)
+
+≤ (Cp min {κ∗, η ∗})−1
+
+4T 2 ω4(σ∗)2C6 
+
+> e
+
+C4 
+
+> c
+
+IΩ0∥V∥4 
+
+> ∞
+
++ ( Cp min {κ∗, η ∗})−1(η∗)2C2tr ∥Tc(t)∥2L21(bΓ1)
+
++ 12 Cp min {κ∗, η ∗}∥ ˆSθ(t)∥2H11(Ω 0)
+
+integrating over [0 , t ], we get 
+
+∥ ˆSθ(t)∥2L21(Ω 0) − ∥ ˆSθ(0) ∥2L21(Ω 0) +
+
+Z t
+
+> 0
+
+∥ ˆSθ(t)∥2H11(Ω 0) dt 
+
+≤ 2( Cp min {κ∗, η ∗})−1
+
+min {1, C p min {κ∗, η ∗}} 
+
+ 14T ω4(σ∗)2C6 
+
+> e
+
+C4 
+
+> c
+
+IΩ0∥V∥4 
+
+> ∞
+
++ ( η∗)2C2tr 
+
+Z t
+
+> 0
+
+∥Tc(t)∥2L21(bΓ1) dt 
+
+
+
+.
+
+Thus, we conclude the proof. As a consequence of the previous result, we introduce a nonlinear operator associated with the thermal problem. As in the electromagnetic case, this operator depends on the temperature. More precisely, for S ∈ L2(0 , T ; L 21(Ω 0)), we define a nonlinear mapping Q by 
+
+Q : L2(0 , T ; L 21(Ω 0)) −→ L2(0 , T ; H 11(Ω 0)) ∩ H1(0 , T ; L 21(Ω 0)) 
+
+S 7 −→ Q(S) ..= ˆSθ
+
+where ˆSθ ∈ L2(0 , T ; H 11(Ω 0)) is solution of problem (20)–(21). The well-posedness of Q follows from lemma 8; its continuity is proved in the next lemma. 
+
+Lemma 9. The mapping Q : L 2(0 , T ; L 21(Ω 0)) → L2(0 , T ; H 11(Ω 0)) ∩ H1(0 , T ; L 21(Ω 0)) is continu-ous. Proof. First, let us introduce a formulation equivalent of problem (20)–(21). For S ∈ L2(0 , T ; L 21(Ω 0)) find ˆSθ ∈ L2(0 , T ; H 11(Ω 0)) ∩H1(0 , T ; L 21(Ω 0)) such that for all W ∈ L2(0 , T ; H 11(Ω 0)) ∩H1(0 , T ; L 21(Ω 0)) with W (T ) = 0 the following holds 
+
+−
+
+Z T
+
+> 0
+
+Z
+
+> Ω0
+
+ˆSθ(t)∂tW (t)r dr dz dt +
+
+Z T
+
+> 0
+
+Z
+
+> Ω0
+
+κ(·, S ) grad ˆSθ(t) · grad W (t)r dr dz dt 
+
++
+
+Z T
+
+> 0
+
+Z
+
+> bΓ1
+
+η ˆSθ(t)W (t)r dl dt =
+
+Z T
+
+> 0
+
+Z
+
+> Ω0
+
+12 ω2σ(·, S )|H (S)( t)|2W (t)r dr dz dt 
+
++
+
+Z T
+
+> 0
+
+Z
+
+> bΓ1
+
+η T c(t)W (t)r dl dt +
+
+Z
+
+> Ω0
+
+T0W (0) r dr dz. (22) 10 Let S ∈ L2(0 , T ; L 21(Ω 0)) be a sequence such that Sℓ → S strongly in L 2(0 , T ; L 21(Ω 0)). Let ˆSℓθ ..= Q(Sℓ). We prove that Q(Sℓ) → Q (S) strongly in L 2(0 , T ; H 11(Ω 0)) ∩ H1(0 , T ; L 21(Ω 0)). With this aim, we first need to prove that ˆSℓθ → Q (S) weakly in L 2(0 , T ; H 11(Ω 0)). Since { ˆSℓθ}ℓ∈N
+
+is uniformly bounded in L 2(0 , T ; H 11(Ω 0)) ∩ L∞(0 , T ; L 21(Ω 0)) (see lemma 8), it has a weakly convergent (not relabeled) subsequence in L 2(0 , T ; H 11(Ω 0)). Let ˆSθ be the weak limit of { ˆSℓθ}ℓ∈N.Next, we recall that for any ℓ ∈ N, ˆSℓθ satisfy 
+
+−
+
+Z T
+
+> 0
+
+Z
+
+> Ω0
+
+ˆSℓθ(t)∂tW (t)r dr dz dt +
+
+Z T
+
+> 0
+
+Z
+
+> Ω0
+
+κ(·, S ℓ) grad ˆSℓθ(t) · grad W (t)r dr dz dt 
+
++
+
+Z T
+
+> 0
+
+Z
+
+> bΓ1
+
+η ˆSℓθ(t)W (t)r dl dt =
+
+Z T
+
+> 0
+
+Z
+
+> Ω0
+
+12 ω2σ(·, S ℓ)|H (Sℓ)( t)|2W (t)r dr dz dt 
+
++
+
+Z T
+
+> 0
+
+Z
+
+> bΓ1
+
+η T c(t)W (t)r dl dt +
+
+Z
+
+> Ω0
+
+T0W (0) r dr dz 
+
+for all W ∈ L2(0 , T ; H 11(Ω 0)) ∩ H1(0 , T ; L 21(Ω 0)) with W (T ) = 0. Following the lines of that of Lemma 3.8 from [17], now in time-dependent spaces, we have 
+
+−
+
+Z T
+
+> 0
+
+Z
+
+> Ω0
+
+ˆSℓθ(t)∂tW (t)r dr dz dt → −
+
+Z T
+
+> 0
+
+Z
+
+> Ω0
+
+ˆSθ(t)∂tW (t)r dr dz dt 
+
+Z T
+
+> 0
+
+Z
+
+> Ω0
+
+κ(·, S ℓ) grad ˆSℓθ(t) · grad W (t)r dr dz dt →
+
+Z T
+
+> 0
+
+Z
+
+> Ω0
+
+κ(·, S ) grad ˆSθ(t) · grad W (t)r dr dz dt 
+
+Z T
+
+> 0
+
+Z
+
+> bΓ1
+
+η ˆSℓθ(t)W (t)r dl dt →
+
+Z T
+
+> 0
+
+Z
+
+> bΓ1
+
+η ˆSθ(t)W (t)r dl dt 
+
+Z T
+
+> 0
+
+Z
+
+> Ω0
+
+12 ω2σ(·, S ℓ)|H (Sℓ)( t)|2W (t)r dr dz dt →
+
+Z T
+
+> 0
+
+Z
+
+> Ω0
+
+12 ω2σ(·, S )|H (S)( t)|2W (t)r dr dz dt 
+
+(23) for all W ∈ L2(0 , T ; H 11(Ω 0)) ∩H1(0 , T ; L 21(Ω 0)) with W (T ) = 0. Because the equivalence between problem (20)–(21) and problem (22), we have proved that ˆSθ = Q(S). Moreover, since the limit is unique, we conclude that ˆSℓθ → ˆSθ weakly in L 2(0 , T ; H 11(Ω 0)). Now, to prove that { ˆSℓθ}ℓ∈N converges strongly to ˆSθ in L 2(0 , T ; H 11(Ω 0)) ∩ H1(0 , T ; L 21(Ω 0)), we subtract the variational equations verified by ˆSℓθ and ˆSθ, take the test function W = ˆSℓθ − ˆSθ
+
+and integrating over [0 , t ], it follows that 12 ∥( ˆSℓθ − ˆSθ)( t)∥2L21(Ω 0) +
+
+Z t
+
+> 0
+
+Z
+
+> Ω0
+
+κ(·, S ℓ)| grad ( ˆSℓθ − ˆSθ)( t)|2r dr dz dt +
+
+Z t
+
+> 0
+
+Z
+
+> bΓ1
+
+η |( ˆSℓθ − ˆSθ)( t)|2r dl dt 
+
+=
+
+Z t
+
+> 0
+
+Z
+
+> Ω0
+
+(κ(·, S ℓ) − κ(·, S )) grad ˆSθ(t) · grad ( ˆSℓθ − ˆSθ)( t)r dr dz dt 
+
++
+
+Z t
+
+> 0
+
+Z
+
+> Ω0
+
+12 ω2(σ(·, S ℓ)|H (Sℓ)( t)|2 − σ(·, S )|H (S)( t)|2)( ˆSℓθ − ˆSθ)( t)r dr dz dt. 
+
+From (23) and the fact that { ˆSℓθ} → ˆSθ weakly in L 2(0 , T ; H 11(Ω 0)), it follows that the right-hand side of the previous equation converges to zero. Then, the result follows from (6), (8) and lemma 2. Using the definitions of the operators H and Q together with the previous lemmas, we can prove the existence of the solution of the nonlinear coupled problem 1 using point-fixed arguments as shown in the following result. 
+
+Theorem 1. Given V ∈ Cm, Tc ∈ L2(0 , T ; L 21(bΓ1)) and T0 ∈ L21(Ω 0), problem 1 has a solution 
+
+(Aθ, T ) ∈ L2(0 , T ; eH11,Γ(Ω)) × L2(0 , T ; H 11(Ω 0)) ∩ H1(0 , T ; L 21(Ω 0)) .
+
+11 Proof. Let j : L 2(0 , T ; H 11(Ω 0)) ∩ H1(0 , T ; L 21(Ω 0)) → L2(0 , T ; L 21(Ω 0)) be the compact injection (see [23, Lemma 4.2] and [21, Chapter 1, Theorem 5.1]). Note that ( Aθ, T ) ∈ L2(0 , T ; eH11,Γ(Ω)) ×
+
+L2(0 , T ; H 11(Ω 0)) ∩ H1(0 , T ; L 21(Ω 0)) is solution to problem 1 if and only if T is a fixed point of the mapping Q ◦ j and Aθ = ( H ◦ j)( T ). Since Q is continuous mapping and j is compact, Q ◦ j is compact. Moreover, since ∥Q (T )∥L2(0 ,T ;H 11(Ω 0)) ≤ C(T0, T c, V), then Schauder’s theorem yields the existence of a fixed point T of Q and the proof is complete. 
+
+3.3 Uniqueness 
+
+Since problem 1 is nonlinear, we do not known whether the solution is unique. In fact, the study of uniqueness of solution, without making additional assumptions on the data, is a difficult task. Therefore, for the following analysis we will further assume that the coefficients κ and σ satisfy: 
+
+Hκ. There exists ˚ κ > 0 such that κ(r, z, u ) = ˚ κ(r, z ) in Ω 0 × R and κ∗ ≤ ˚κ(r, z ) ≤ κ∗ in Ω 0.
+
+Hσ. σ is uniformly Lipschitz continuous in the following sense: there exists σp > 0 such that 
+
+|σ(r, z, u ) − σ(r, z, v )| ≤ σp|u − v| ∀u, v ∈ R, a.e. ( r, z ) ∈ Ω0. (24) From hypothesis Hκ and problem 1 we get the following variational formulation. Notice that we have removed the subscript θ to simplify the notation. 
+
+Problem 2. Given V ∈ Cm, Tc ∈ L2(0 , T ; L 21(bΓ1)) and T0 ∈ L21(Ω 0), find (A, T ) ∈ L2(0 , T ; eH11,Γ(Ω)) ×
+
+L2(0 , T ; H 11(Ω 0)) ∩ H1(0 , T ; L 21(Ω 0)) such that for a.e. t ∈ (0 , T )
+
+iω 
+
+Z
+
+> ΩC
+
+σ(·, T )A ¯Z r dr dz + ⟨A (A), Z ⟩ =
+
+> m
+
+X
+
+> k=1
+
+Z
+
+> Ωk
+
+σkVk ¯Z dr dz, ∀Z ∈ eH11,Γ(Ω) ,
+
+Z
+
+> Ω0
+
+∂tT W r dr dz + b(T, W ) = 12
+
+Z
+
+> Ω0
+
+ω2σ(·, T )|A|2W r dr dz +
+
+Z
+
+> bΓ1
+
+η T c W r dl, ∀W ∈ H11(Ω 0),T (0) = T0 in Ω0,
+
+where A is defined in (13) and b : H 11(Ω 0) × H11(Ω 0) → R is such that 
+
+b(T, W ) ..=
+
+Z
+
+> Ω0
+
+˚κ grad T · grad W r dr dz +
+
+Z
+
+> bΓ1
+
+η T W r dl. 
+
+In the following theorem, given the previous assumptions, we establish uniqueness of the solution to problem 2. 
+
+Theorem 2. Given V ∈ Cm, Tc ∈ L2(0 , T ; L 21(bΓ1)) and T0 ∈ L21(Ω 0), if Hκ and Hσ are satisfied, then problem 2 has a unique solution. Proof. Let ( A1, T 1) and ( A2, T 2) be two solutions of problem 2. By proceeding as in the proof of lemma 7 (cf. (19)) and from Hσ it follows that there exists C > 0 such that 
+
+∥A1 − A2∥eH11(Ω) ≤ C∥T1 − T2∥L21(Ω 0). (25) Next we estimate ∥T1 − T2∥L21(Ω 0). From the thermal equation in problem 2 we get 
+
+Z
+
+> Ω0
+
+∂t(T1 − T2)W r dr dz + b(T1 − T2, W ) = 12
+
+Z
+
+> Ω0
+
+ω2(σ(T1)|A1|2 − σ(T2)|A2|2) W r dr dz. 
+
+12 By taking W = T1 − T2 in the previous equation, from Hκ and lemma 2 we obtain 12
+
+ddt ∥T1 − T2∥2L21(Ω 0) + Cp min {κ∗, η ∗}∥ T1 − T2∥2H11(Ω 0)
+
+≤ ω2
+
+2
+
+Z
+
+> Ω0
+
+(σ(T1)|A1|2 − σ(T2)|A2|2)( T1 − T2) r dr dz 
+
+≤ ω2
+
+2
+
+h
+
+∥(σ(T1) − σ(T2)) |A2|2∥L21(Ω 0) + ∥σ(T1)( |A1|2 − | A2|2)∥L21(Ω 0)
+
+i
+
+∥T1 − T2∥L21(Ω 0). (26) It remains to estimate the right-hand side of the previous equation. For these terms we apply (8), (24) and H¨ older’s inequality, then there exists C > 0 such that 
+
+∥(σ(T1) − σ(T2)) |A2|2∥L21(Ω 0) ≤ C∥T1 − T2∥L61(Ω 0)∥A2∥2L61(Ω 0) ≤ C∥T1 − T2∥H11(Ω 0), (27) 
+
+∥σ(T1)( |A1|2 − | A2|2)∥L21(Ω 0) ≤ C∥A1 + A2∥L31(Ω 0)∥A1 − A2∥L61(Ω 0) ≤ C∥A1 − A2∥eH11(Ω) (28) where we have used lemma 1 and the fact that ∥Ai∥eH11(Ω) ≤ Cc√T ∥V∥∞, i ∈ { 1, 2} (cf. (18)). By substituting (27)–(28) in (26) and using the bound for ∥A1 −A2∥eH11(Ω) (cf. (25)), it follows that there exists C > 0 such that 
+
+ddt ∥T1 − T2∥2L21(Ω 0) + ∥T1 − T2∥2H11(Ω 0) ≤ C∥T1 − T2∥2L21(Ω 0) .
+
+Therefore, from Gr¨ onwall’s inequality it follows that T1 = T2 which implies that A1 = A2
+
+(cf. (25)) and the proof is complete. 
+
+Remark 1. We assume Hκ for the sake of clarity in presenting the uniqueness result, although it is important to note that the analysis extends to a more general case, e.g. (see [17]) 
+
+H∗
+
+> κ
+
+. κ (r, z, u ) = α(r, z )β(u) where α and β are measurable and continuous functions, respec-tively, that satisfy 0 < α ∗ ≤ α ≤ α∗ and 0 < β ∗ ≤ β ≤ β∗, α∗, α ∗, β ∗, β ∗ ∈ R.
+
+# 4 Fully discrete approximation 
+
+In this section, we introduce a space discretization based on finite elements and a backward Euler scheme for time discretization of problem 2 and obtain error estimates for the proposed approximation. Let {T h}h> 0 be a regular family of partitions of ¯Ω = [0 , R ]×[0 , L ] in triangles, where h denotes the mesh-size (i.e., the maximal length of the sides of the triangulation). We also assume that each element K ∈ T h is contained either in Ω a or in Ω k, k = 0 , . . . , m . We denote 
+
+T 0 
+
+> h..
+
+= K ∈ T h : K ⊂ ¯Ω0 .
+
+Let Yh be the space of piecewise linear continuous finite elements with vanishing values in Γ, 
+
+Yh ..= {Z ∈ C ( ¯Ω) : Z|K ∈ P1(K) ∀K ∈ T h, Z |Γ = 0 } ⊂ eH11,Γ(Ω) and 
+
+Xh ..= {W ∈ C ( ¯Ω0) : W |K ∈ P1(K) ∀K ∈ T 0 
+
+> h
+
+} ⊂ H11(Ω 0).
+
+For the time discretization, we consider a uniform partition of [0 , T ], tn := n∆t, n = 0 , . . . , N ,with time step ∆ t := T /N . Let us now introduce the following notation: if v is regular enough with respect to t, we denote vn := v(tn), n = 0 , . . . N . On the other hand, for any sequence 
+
+{un}Nn=0 , we define ¯∂u n+1 . .= un+1 − un
+
+∆t , n = 0 , . . . , N − 1.
+
+13 We write a ≲ b to mean that a ≤ C b, where C > 0 is a generic constant independent of a, b,the mesh size h and the time step ∆ t. The value of C may change at each occurrence and will be specified only when is needed. For the numerical scheme, we consider that V and Tc are continuous in time and that we dispose of an approximation T 0 
+
+> h
+
+∈ X h of the initial data T0. We propose the following fully discrete approximation of problem 2: 
+
+Problem 3. Let V ∈ Cm, Tc ∈ C ([0 , T ]; L 21(bΓ1)) and T 0 
+
+> h
+
+∈ X h be given data.  
+
+> •
+
+Find A0 
+
+> h
+
+∈ Y h such that 
+
+iω 
+
+Z
+
+> ΩC
+
+σ(T 0 
+
+> h
+
+)A0 
+
+> h
+
+¯Zh r dr dz + ⟨A (A0
+
+> h
+
+), Z h⟩ =
+
+> m
+
+X
+
+> k=1
+
+Z
+
+> Ωk
+
+σk Vk ¯Zh dr dz ∀Zh ∈ Y h (29)  
+
+> •
+
+For n = 0 , . . . , N − 1, let (An+1  
+
+> h
+
+, T n+1  
+
+> h
+
+) ∈ Y h × X h such that, for all (Wh, Z h) ∈ Y h × X h
+
+Z
+
+> Ω0
+
+¯∂T n+1  
+
+> h
+
+Wh r dr dz + b(T n+1  
+
+> h
+
+, W h) = 12
+
+Z
+
+> Ω0
+
+ω2σ(T nh )|Anh|2Wh r dr dz +
+
+Z
+
+> bΓ1
+
+η T nc Wh r dl, 
+
+(30) 
+
+iω 
+
+Z
+
+> ΩC
+
+σ(T n+1  
+
+> h
+
+)An+1  
+
+> h
+
+¯Zh r dr dz + ⟨A (An+1  
+
+> h
+
+), Z h⟩ =
+
+> m
+
+X
+
+> k=1
+
+Z
+
+> Ωk
+
+σk Vk ¯Zh dr dz. 
+
+(31) We can prove the existence and uniqueness of Anh, for each n = 0 , . . . , N , using lemmas 4 and 5, along with a known existence result for nonlinear problems (see [28, Theorem 25.B]). On the other hand, the existence and uniqueness of T nh , n = 1 , . . . , N , follow directly from lemma 2 due to the Lax-Milgram theorem. Thus, problem 3 is well posed. Moreover, the solution is uniformly bounded in n, in particular 
+
+∥Anh∥eH11(Ω) ≲ ∥V∥∞
+
+∥T n+1  
+
+> h
+
+∥L21(Ω 0) +
+
+
+
+∆t
+
+> n
+
+X
+
+> k=1
+
+∥T kh ∥2H11(Ω 0)
+
+1/2
+
+≲ ∥T 0 
+
+> h
+
+∥L21(Ω 0) + ∥V∥2 
+
+> ∞
+
++ ∥Tc∥C([0 ,T ];L 21(bΓ1)) . (32) Let Ih : eH11,Γ(Ω) → Y h and Qh : H 11(Ω 0) → X h be Cl´ ement-type operators such that, for all 
+
+s ∈ [1 , 2] (see [3, Theorem 1 and Theorem 2]), 
+
+∥Z − IhZ∥eH11(Ω) ≲ hs−1∥Z∥Hs 
+
+> 1(Ω) ∩eH11(Ω)
+
+, Z ∈ Hs
+
+> 1
+
+(Ω) ∩ eH11,Γ(Ω) ,
+
+(33) 
+
+h−1∥W − QhW ∥L21(Ω 0) + ∥W − QhW ∥H11(Ω 0) ≲ hs−1∥W ∥Hs
+
+> 1(Ω 0)
+
+, W ∈ Hs
+
+> 1
+
+(Ω 0). (34) Our next goal is to derive error estimates for problem 3, the numerical approximation of prob-lem 2. To this end, we henceforth assume that the solution to problem 2 satisfies ( A, T ) ∈C([0 , T ]; eH11,Γ(Ω)) × C ([0 , T ]; H 11(Ω 0)). For n = 0 , . . . , N , we define the errors and split them as follows 
+
+Anh − An ..= enh,A + IhAn − An, T nh − T n ..= enh,T + QhT n − T n,
+
+where 
+
+enh,A ..= Anh − IhAn, enh,T ..= T nh − QhT n.
+
+Now, we are in a position to write the main result of this paper related to the convergence of the proposed scheme. 14 Theorem 3. Given V ∈ Cm, Tc ∈ H1(0 , T ; L 21(bΓ1)) and T0 ∈ H11(Ω 0). Let (A, T ) ∈ L2(0 , T ; eH11,Γ(Ω)) ×
+
+L2(0 , T ; H 11(Ω 0)) ∩ H1(0 , T ; L 21(Ω 0)) , A0 
+
+> h
+
+∈ Y h and (Anh, T nh ) ∈ Y h × X h, n = 1 , . . . , N solutions to problem 2 and problem 3, respectively. If (A, T ) ∈ H1(0 , T ; H 11(Ω 0)) × H2(0 , T ; L 21(Ω 0)) and 
+
+T 0 
+
+> h
+
+:= QhT 0, then 
+
+max  
+
+> 1≤n≤N
+
+∥T nh − T n∥2L21(Ω 0) + ∆ t
+
+> N
+
+X
+
+> n=1
+
+∥T nh − T n∥2H11(Ω 0) + max  
+
+> 0≤n≤N
+
+∥Anh − An∥2
+
+> eH11(Ω)
+
+≲ max  
+
+> 0≤n≤N
+
+∥An − IhAn∥2 
+
+> eH11(Ω)
+
++ max  
+
+> 0≤n≤N
+
+∥T n − QhT n∥2H11(Ω 0) + ∥(I − Qh)∂tT ∥2L2(0 ,T ;L 21(Ω 0)) 
+
++ ∆ t2 
+
+∥∂tTc∥2L2(0 ,T ;L 21(bΓ1)) + ∥T ∥2H2(0 ,T ;L 21(Ω 0)) + ∥∂tA∥2L2(0 ,T ;H 11(Ω 0)) 
+
+
+
+.
+
+Proof. Let us begin by estimating the error in the electromagnetic problem. To this end, we note that, for each time tn, n = 0 , . . . , N , the pair ( An, T n) satisfies 
+
+iω 
+
+Z
+
+> ΩC
+
+σ(T n)An ¯Z r dr dz + ⟨A (An), Z ⟩ =
+
+> m
+
+X
+
+> k=1
+
+Z
+
+> Ωk
+
+σkVk ¯Z dr dz (35) for all Z ∈ eH11,Γ(Ω). By subtracting (35) from (29) and (31), using the definitions of Ih and enh,A 
+
+it follows that, for all Zh ∈ Y h
+
+iω 
+
+Z
+
+> ΩC
+
+σ(T nh )enh,A ¯Zhr dr dz + ⟨A (Anh) − A (IhAn), Z h⟩ = iω 
+
+Z
+
+> Ω0
+
+(σ(T n) − σ(T nh )) An ¯Zhr dr dz 
+
++ iω 
+
+Z
+
+> ΩC
+
+σ(T nh ) ( An − IhAn) ¯Zhr dr dz + ⟨A (An) − A (IhAn), Z h⟩.
+
+By taking Zh = enh,A in the previous equation, using (8), (24), lemma 5 and applying Cauchy-Schwarz inequality we arrive at ˜ϱ∥enh,A ∥2 
+
+> eH11(Ω)
+
+≤ Re 
+
+
+
+iω 
+
+Z
+
+> ΩC
+
+σ(T nh ) enh,A  
+
+> 2
+
+r dr dz + ⟨A (Anh) − A (IhAn), enh,A ⟩
+
+
+
+≤ ωσ p∥T n − T nh ∥L21(Ω 0)∥Anenh,A ∥L21(Ω 0)
+
++ ω max {σ∗, σ coil }∥ An − IhAn∥L21(Ω C)∥enh,A ∥L21(Ω C)
+
++ ˜ξ∥An − IhAn∥eH11(Ω) ∥enh,A ∥eH11(Ω) 
+
+≲
+
+
+
+∥T n − T nh ∥L21(Ω 0) + ∥An − IhAn∥eH11(Ω) 
+
+
+
+∥enh,A ∥eH11(Ω) 
+
+where, in the last inequality, we have estimated the first term on the right-hand side by pro-ceeding as in (19). From the definition of enh,T and the previous equation we get 
+
+∥enh,A ∥eH11(Ω) ≲ ∥enh,T ∥L21(Ω 0) + ∥QhT n − T n∥L21(Ω 0) + ∥An − IhAn∥eH11(Ω) . (36) Let us now estimate the error for the temperature. Notice that ( An+1 , T n+1 ) satisfies the following equations 
+
+Z
+
+> Ω0
+
+∂tT n+1 W r dr dz + b(T n+1 , W ) = 12
+
+Z
+
+> Ω0
+
+ω2σ(T n+1 )|An+1 |2W r dr dz +
+
+Z
+
+> bΓ1
+
+η T n+1  
+
+> c
+
+W r dl 
+
+for all W ∈ H11(Ω 0). Moreover, the previous equality can be rewritten as follows: 
+
+Z
+
+> Ω0
+
+¯∂T n+1 W r dr dz + b(T n+1 , W ) = 12
+
+Z
+
+> Ω0
+
+ω2σ(T n)|An|2 W r dr dz 
+
++
+
+Z
+
+> bΓ1
+
+η T n+1  
+
+> c
+
+W r dl + Rn(W ),
+
+(37) 15 where 
+
+Rn(W ) ..=
+
+Z
+
+> Ω0
+
+  ¯∂T n+1 − ∂tT n+1  W r dr dz 
+
++ 12 ω2
+
+Z
+
+> Ω0
+
+σ(T n)  |An+1 |2 − | An|2 W r dr dz 
+
++ 12 ω2
+
+Z
+
+> Ω0
+
+ σ(T n+1 ) − σ(T n) |An+1 |2W r dr dz. 
+
+We estimate Rn(W ) by using (8), Cauchy-Schwarz inequality and by proceeding as in (27) and lemma 1 to estimate the last term 
+
+|R n(W )| ≲
+
+
+
+∥ ¯∂T n+1 − ∂tT n+1 ∥L21(Ω 0) + ∥| An+1 |2 − | An|2∥L21(Ω 0)
+
+
+
+∥W ∥L21(Ω 0)
+
++ ∥σ(T n+1 ) − σ(T n)∥L21(Ω 0) ∥An+1 ∥2H11(Ω 0) ∥W ∥H11(Ω 0).
+
+Next, we bound each term on the right-hand side of the previous equation by using (24), (18), lemma 1 and applying H¨ older’s inequality and Taylor’s formula 
+
+∥ ¯∂T n+1 − ∂tT n+1 ∥2L21(Ω 0) ≤ ∆t
+
+Z tn+1 
+
+> tn
+
+∥∂tt T (s)∥2L21(Ω 0) ds 
+
+∥| An+1 |2 − | An|2∥2L21(Ω 0) ≲ ∥An+1 + An∥2L31(Ω 0)∥An+1 − An∥2L61(Ω 0) ≲ ∆t
+
+Z tn+1 
+
+> tn
+
+∥∂tA(s)∥2H11(Ω 0) ds 
+
+∥σ(T n+1 ) − σ(T n)∥2L21(Ω 0) ≲ ∆t
+
+Z tn+1 
+
+> tn
+
+∥∂tT (s)∥2L21(Ω 0) ds. 
+
+From the previous equations and Young’s inequality, there exists ϵ1 > 0 such that 
+
+|R n(W )| ≲ ∆tϵ1
+
+Z tn+1 
+
+> tn
+
+n
+
+∥∂tt T (s)∥2L21(Ω 0) + ∥∂tA(s)∥2H11(Ω 0) + ∥∂tT (s)∥2L21(Ω 0)
+
+o
+
+ds + ϵ1∥W ∥2H11(Ω 0).
+
+(38) On the other hand, subtracting (37) from (30), using the definitions of Ih, Qh, enh,A and en+1 
+
+> h,T
+
+it follows that 
+
+Z
+
+> Ω0
+
+¯∂en+1  
+
+> h,T
+
+Wh r dr dz + b(en+1  
+
+> h,T
+
+, W h) = 
+
+Z
+
+> Ω0
+
+¯∂(T n+1 − QhT n+1 ) Wh r dr dz + b(T n+1 −QhT n+1 , W h)+ 12
+
+Z
+
+> Ω0
+
+ω2 (σ(T nh ) − σ(T n)) |Anh|2Wh r dr dz 
+
++ 12
+
+Z
+
+> Ω0
+
+ω2σ(T n)  |Anh|2 − | An|2 Wh r dr dz 
+
++
+
+Z
+
+> bΓ1
+
+η  T nc − T n+1 
+
+> c
+
+ Wh r dl − R n(Wh).
+
+By taking Wh = en+1  
+
+> h,T
+
+in the previous equation, using (8), (24), (32) and by applying Cauchy-Schwarz and Young’s inequalities we obtain 12∆ t
+
+
+
+∥en+1  
+
+> h,T
+
+∥2L21(Ω 0) − ∥ enh,T ∥2L21(Ω 0)
+
+
+
++ Cp min {˚κ, η ∗}∥ en+1  
+
+> h,T
+
+∥2H11(Ω 0)
+
+≲|R n(en+1  
+
+> h,T
+
+)| + 1
+
+ϵ2
+
+n
+
+∥ ¯∂(T n+1 − QhT n+1 )∥L21(Ω 0) + ∥T nc − T n+1  
+
+> c
+
+∥L21(bΓ1)
+
++∥T n+1 − QhT n+1 ∥H11(Ω 0) + ∥T nh − T n∥L21(Ω 0) + ∥Anh − An∥H11(Ω 0)
+
+o2
+
++ ϵ2∥en+1  
+
+> h,T
+
+∥2H11(Ω 0)
+
+16 for some ϵ2 > 0. By estimating the second and third term on the right-hand side of the previous equation in a similar way as was done to obtain (38), from (38), (36) and taking 
+
+ϵ1 = ϵ2 = Cp min {˚κ, η ∗}/4 it follows that 12∆ t
+
+
+
+∥en+1  
+
+> h,T
+
+∥2L21(Ω 0) − ∥ enh,T ∥2L21(Ω 0)
+
+
+
++ Cp min {˚κ, η ∗}
+
+2 ∥en+1  
+
+> h,T
+
+∥2H11(Ω 0)
+
+≲ ∥enh,T ∥2L21(Ω 0) + ∥An − IhAn∥2
+
+> eH11(Ω)
+
++ ∥QhT n − T n∥2L21(Ω 0) + 1∆t
+
+Z tn+1 
+
+> tn
+
+∥(I − Qh)∂tT (s)∥2L21(Ω 0) ds + ∥T n+1 − QhT n+1 ∥2H11(Ω 0)
+
++ ∆ t
+
+Z tn+1 
+
+> tn
+
+n
+
+∥∂tTc(s)∥2L21(bΓ1) + ∥∂tt T (s)∥2L21(Ω 0) + ∥∂tA(s)∥2H11(Ω 0) + ∥∂tT (s)∥2L21(Ω 0)
+
+o
+
+ds. 
+
+In particular, the term ∥enh,T ∥L21(Ω 0) is derived from ∥T nh − T n∥L21(Ω 0), ∥Anh − An∥H11(Ω 0) adding and subtracting QhT n, IhAn and using (36). Then, multiplying by 2∆ t, summing over n and using the discrete Gronwall’s inequality, we obtain for all ℓ = 1 , . . . , N 
+
+∥eℓh,T ∥2L21(Ω 0) + ∆ t
+
+> ℓ
+
+X
+
+> n=1
+
+∥enh,T ∥2H11(Ω 0) ≲ ∥e0 
+
+> h,T
+
+∥2L21(Ω 0) + max  
+
+> 0≤n≤N−1
+
+∥An − IhAn∥2
+
+> eH11(Ω)
+
++ max  
+
+> 0≤n≤N
+
+∥QhT n − T n∥2H11(Ω 0) +
+
+Z T
+
+> 0
+
+∥(Qh − I)∂tT (s)∥2L21(Ω 0) ds 
+
++ ∆ t2
+
+Z T
+
+> 0
+
+n
+
+∥∂tTc(s)∥2L21(bΓ1) + ∥∂tt T (s)∥2L21(Ω 0) + ∥∂tA(s)∥2H11(Ω 0) + ∥∂tT (s)∥2L21(Ω 0)
+
+o
+
+ds. 
+
+Notice that ∥e0 
+
+> h,T
+
+∥L21(Ω 0) = 0 since we have assumed T 0 
+
+> h
+
+:= QhT 0. Thus, the result follows by writing Anh − An = enh,A + IhAn − An, T nh − T n = enh,T + QhT n − T n, from the previous inequality and (36). Next, as a consequence of the previous theorem and interpolation properties for Ih and Qh
+
+(cf. (33)–(34)), we obtain the following result, which yields the optimal convergence order of the proposed scheme under additional spatial regularity assumptions for both the temperature and the magnetic vector potential. 
+
+Theorem 4. Under the hypothesis of the previous theorem, if we further assume A in C([0 , T ]; H 21(Ω) ∩
+
+eH11,Γ(Ω)) and T in C([0 , T ]; H 21(Ω 0)) ∩ H1(0 , T ; H 11(Ω 0)) , then 
+
+max  
+
+> 1≤n≤N
+
+∥T nh − T n∥2L21(Ω 0) + ∆ t
+
+> N
+
+X
+
+> n=1
+
+∥T nh − T n∥2H11(Ω 0) + max  
+
+> 0≤n≤N
+
+∥Anh − An∥2
+
+> eH11(Ω)
+
+≲ h2
+
+∥A∥2   
+
+> C([0 ,T];H 21(Ω) ∩eH11(Ω))
+
++ ∥T ∥2  
+
+> C([0 ,T];H 21(Ω 0))
+
++ ∥∂tT ∥2L2(0 ,T ;H 11(Ω 0)) 
+
+
+
++ ∆ t2
+
+∥∂tTc∥2L2(0 ,T ;L 21(bΓ1)) + ∥T ∥2H2(0 ,T ;L 21(Ω 0)) + ∥∂tA∥2L2(0 ,T ;H 11(Ω 0)) 
+
+
+
+.
+
+The solution ( Anh, T nh ) of problem 3 allows us to compute an approximation to the magnetic induction B defined by 
+
+Bnh ..= − ∂A nh
+
+∂z er + 1
+
+r∂(rA nh)
+
+∂r ez , n = 0 , . . . , N. 
+
+Corollary 1. Under the same assumptions as in Theorem 4 it follows that 
+
+max  
+
+> 1≤n≤N
+
+∥Bnh − Bn∥2L2( ˘Ω) 3 ≲ h2
+
+∥A∥2   
+
+> C([0 ,T];H 21(Ω) ∩eH11(Ω))
+
++ ∥T ∥2  
+
+> C([0 ,T];H 21(Ω 0))
+
++ ∥∂tT ∥2L2(0 ,T ;H 11(Ω 0)) 
+
+
+
++ ∆ t2 
+
+∥∂tTc∥2L2(0 ,T ;L 21(bΓ1)) + ∥T ∥2H2(0 ,T ;L 21(Ω 0)) + ∥∂tA∥2L2(0 ,T ;H 11(Ω 0)) 
+
+
+
+.
+
+where Bn ..= − ∂A n 
+
+> ∂z
+
+er + 1 
+
+> r∂(rA n)
+> ∂r
+
+ez , n = 0 , . . . , N .
+
+17 5 Numerical tests 
+
+In this section, we present some numerical results obtained by solving problem 3 described in the previous section. First, we conduct a test to assess the error estimates. We then apply the proposed scheme to the numerical simulation of an industrial induction-hardening process. 
+
+5.1 Convergence analysis 
+
+For this test, we consider a conducting cylinder surrounded by a copper induction coil modeled by four individual rings. The geometric configuration is the same as that used in Test 6.1 of [17], but all coordinates are multiplied by 100 in order to obtain a setting where both spatial and temporal errors can be observed. The electrical frequency is 50 Hz, as in Test 6.1 of [17], while the voltage sources are multiplied by a factor of 10 4 to simulate a short time interval. The final time is 0 .5 seconds, and the initial temperature is 20 ◦C. Regarding the thermal properties, the density, specific heat and thermal conductivity are taken as ρ = 7500 kg m −3, cP = 510 J K −1 kg −1, and κ = 15 W m −1 K−1, respectively. On the thermal boundary, we use a heat transfer coefficient a heat transfer coefficient η = 5 W m −2 K−1
+
+and a convection temperature Tc = 20 ◦C. For the electrical properties, the magnetic perme-ability is taken equal to the vacuum permeability for all materials, μ0 = 4 π × 10 −7 H m −1. The electrical conductivity in the coil is constant and equal to 2 × 10 7 S m −1, while in the work-piece it depends on temperature as in [17], but multiplied by 10 4 so that the skin effect is less pronounced: 
+
+σ(T ) = 1000 ×  −4.51 × 10 −13 T 2 + 8 .18 × 10 −10 T + 7 .26 × 10 −7 S/m .
+
+We focus on the errors for the temperature field. In the absence of an analytical solution, the reference solution T ref was obtained using the same finite-element method on a highly refined mesh and with a very small time-step. The numerical solution of problem 3 is then computed on a sequence of progressively refined meshes derived from a coarse one, while the time step is successively reduced from ∆ t = 0 .25 s. Figure 2 shows log–log plots of the error in T measured in the discrete norm L 2(0 , T ; H 11(Ω 0)) versus the number of degrees of freedom (d.o.f.) and versus ∆ t (left and right, respectively). To study the error with respect to the number of degrees of freedom, we set the time step to a sufficiently small value so that the error depends almost exclusively on the mesh size h. In this case, a linear dependence on h is observed. Similarly, to study the error with respect to the time step, the mesh is chosen sufficiently fine so that the time discretization error dominates. A linear dependence on ∆ t is again observed. 
+
+Figure 2: Errors in log-log scale for T versus the number of degrees of freedom (left) and versus ∆ t (right). 18 5.2 An industrial application of the induction heating model 
+
+In the automotive industry, induction hardening is widely used as a surface treatment for carbon-steel components. The process consists of rapidly and locally heating a thin surface layer by electromagnetic induction in order to modify the microstructure and, after cooling, improve hardness and wear resistance. Here, we focus on the induction heating stage and present numer-ical simulations for a typical axle stub. The analysis concerns the temperature field generated by eddy currents in the near-surface region, which depends mainly on the inductor geometry, the excitation frequency, the coil current, and the heating time. In particular, the AC frequency de-termines the penetration depth of the induced currents through the skin effect. In this example, the operating frequency is f = 6000 Hz and the coil current is I = 4000 A rms; a representative coil voltage is 33.1 V rms with phase 0.46 rad. The inductor is made of copper and the work-piece of ferromagnetic steel. Its magnetic behavior is described by a temperature-dependent Fr¨ ohlich-Kennelly law (see [25]) 
+
+B = μ0 H + f ( ˆT ) H
+
+a + b|H| , f ( ˆT ) = T 2 
+
+> c
+
+− ˆT 2
+
+T 2 
+
+> c
+
+− T 20
+
+!1/4
+
+, (39) with parameters a, b > 0. From (1) and (39) we obtain 
+
+ν( ˆT , |B|) = −aμ 0 − f ( ˆT ) + b|B| + √D
+
+2bμ 0|B| , D = ( aμ 0 + f ( ˆT ) − b|B|)2 + 4 abμ 0|B|.
+
+The parameters are chosen as a = 1128 .27, b = 0.64, Tc = 750 ◦C (Curie temperature), 
+
+T0 = 20 ◦C, and ˆT = 400 ◦C, with μ0 = 4 π × 10 −7 H m −1. Figure 3 shows the resulting B-H curve together with the conductivity of the steel as a function of temperature. The thermal conduc-tivity and volumetric heat capacity are taken as κ = 45 W m −1 K−1, ρ c P = 3925000 J m −3 K−1.Although the workpiece exhibits a nonlinear B-H relation, the electromagnetic problem is treated under the time-harmonic assumption. This is justified by the different time scales of the electromagnetic and thermal phenomena, which makes such an approximation appropriate in the present setting. 
+
+Figure 3: Steel properties: B-H curve (left) and σ(T ) (right). Figure 4 displays the temperature evolution in the workpiece at several time instants in [0,2] s. The results show a progressive increase of the temperature, essentially localized near the surface region closest to the coil, while the interior remains comparatively cold, in agreement with the expected behavior. 
+
+# Acknowledgments 
+
+This work was supported by FEDER, Ministerio de Econom´ ıa, Industria y Competitividad-AEI research project PID2021-122625OB-I00, by Xunta de Galicia (Spain) research project 19 Figure 4: Evolution of the temperature ( ◦C) in the workpiece. ED431C 2025/09. P. Venegas was partially supported by ANID-Chile through FONDECYT grant 1211030 and Centro de Modelamiento Matem´ atico (CMM), grant FB210005, BASAL funds for centers of excellence. B. L´ opez-Rodr´ ıguez was partially supported by Universidad Nacional de Colombia through Hermes project 63726. 
+
+# References 
+
+[1] G. Akrivis and S. Larsson. Linearly implicit finite element methods for the time-dependent Joule heating problem. BIT , 45(3):429–442, 2005. [2] W. Allegretto and H. Xie. Existence of solutions for the time-dependent thermistor equa-tions. IMA J. Appl. Math. , 48(3):271–281, 1992. [3] Z. Belhachmi, C. Bernardi, and S. Deparis. Weighted Cl´ ement operator and application to the finite element discretization of the axisymmetric Stokes problem. Numer. Math. ,105(2):217–247, 2006. [4] A. Berm´ udez, D. G´ omez, M. C. Mu˜ niz, and P. Salgado. Transient numerical simulation of a thermoelectrical problem in cylindrical induction heating furnaces. Adv. Comput. Math. ,26(1-3):39–62, 2007. [5] A. Berm´ udez, D. G´ omez, M.C. Mu˜ niz, P. Salgado, and R. V´ azquez. Numerical simulation of a thermo-electromagneto-hydrodynamic problem in an induction heating furnace. Appl. Numer. Math. , 59(9):2082–2104, 2009. [6] A. Berm´ udez, D. G´ omez, and P. Salgado. Mathematical Models and Numerical Simulation in Electromagnetism . New York: Springer, 2014. [7] A. Berm´ udez and R. Mu˜ noz Sola. Existence of solution of a coupled problem arising in the thermoelectrical simulation of electrodes. Quart. Appl. Math. , 57(4):621–636, 1999. [8] A. Berm´ udez, R. Mu˜ noz Sola, and F. Pena. A nonlinear partial differential system arising in thermoelectricity. European J. Appl. Math. , 16(6):683–712, 2005. [9] A. Berm´ udez, R. Mu˜ noz Sola, and F. Pena. Existence of a solution for a thermoelectric model with several phase changes and a Carath´ eodory thermal conductivity. Nonlinear Anal. Real World Appl. , 14(6):2212–2230, 2013. [10] A. Berm´ udez, C. Reales, R. Rodr´ ıguez, and P. Salgado. Numerical analysis of a finite-element method for the axisymmetric eddy current model of an induction furnace. IMA J. Numer. Anal. , 30(3):654–676, 2010. 20 [11] C. Chaboudez, S. Clain, R. Glardon, D. Mari, J. Rappaz, and M. Swierkosz. Numerical modeling in induction heating for axisymmetric geometries. IEEE T. Magn. , 33(1):739–745, 1997. [12] J. Chovan, C. Geuzaine, and M. Slodiˇ cka. A-φ formulation of a mathematical model for the induction hardening process with a nonlinear law for the magnetic field. Comput. Methods Appl. Mech. Engrg. , 321:294–315, 2017. [13] J. Chovan and M. Slodiˇ cka. Induction hardening of steel with restrained Joule heating and nonlinear law for magnetic induction field: solvability. J. Comput. Appl. Math. , 311:630– 644, 2017. [14] R. Dautray and J-L. Lions. Mathematical Analysis and Numerical Methods for Science and Technology, Volume 5, Evolution Problems I. Springer-Verlag, Berlin. Springer-Verlag, Berlin, 1992. [15] H. Gao, B. Li, and W. Sun. Stability and convergence of fully discrete Galerkin FEMs for the nonlinear thermistor equations in a nonconvex polygon. Numer. Math. , 136(2):383–409, 2017. [16] H. Gao, W. Sun, and C. Wu. Optimal error estimates and recovery technique of a mixed fi-nite element method for nonlinear thermistor equations. IMA J. Numer. Anal. , 41(4):3175– 3200, 2021. [17] B. G´ omez, D. L´ opez-Rodr´ ıguez, P. Salgado, and P. Venegas. A coupled steady thermo-electromagnetic problem in axisymmetric geometries. Mathematical and numerical analysis. 
+
+IMA J. Numer. Anal. , 45(4):2132–2170, 2024. [18] J. Gopalakrishnan and J. Pasciak. The convergence of V-cycle multigrid algorithms for axisymmetric Laplace and Maxwell equations. Math. Comp. , 75(256):1697–1719, 2006. [19] M. Jensen, A. M˜ alqvist, and A. Persson. Finite element convergence for the time-dependent Joule heating problem with mixed boundary conditions. IMA J. Numer. Anal. , 42(1):199– 228, 2022. [20] B. Li, H. Gao, and W. Sun. Unconditionally Optimal Error Estimates of a Crank–Nicolson Galerkin Method for the Nonlinear Thermistor Equations. SIAM Journal on Numerical Analysis , 52(2):933–954, 2014. [21] J.-L. Lions. Quelques m´ ethodes de r´ esolution des probl` emes aux limites non lin´ eaires .Dunod, Paris; Gauthier-Villars, Paris, 1969. [22] M. Mbehou. The theta-Galerkin finite element method for coupled systems resulting from microsensor thermistor problems. Math. Methods Appl. Sci. , 41(4):1480–1491, 2018. [23] B. Mercier and G. Raugel. R´ esolution d’un probl` eme aux limites dans un ouvert ax-isym´ etrique par ´ el´ ements finis en r, z et s´ eries de fourier en θ. RAIRO, Anal. Num´ er. ,16(4):405–461, 1982. [24] C. Pechstein. Multigrid-Newton-methods for nonlinear magnetostatic problems . Master’s Thesis, Institute for Computational Mathematics, Johannes Kepler Universit¨ at Linz, 2004. [25] T. Petzold. Modelling, Analysis and Simulation of Multifrequency Induction Hardening .PhD thesis, Technische Universit¨ at Berlin, Germany, 2014. [26] D. Shi and H. Yang. Superconvergent estimates of conforming finite element method for nonlinear time-dependent Joule heating equations. Numer. Methods Partial Differential Equations , 34(1):336–356, 2018. 21 [27] L. Wang, C. Yao, and Z. Zhang. Convergence analysis of finite element approximation for 3-D magneto-heating coupling model. Int. J. Numer. Anal. Model. , 17(1):1–23, 2020. [28] E. Zeidler. Nonlinear Functional Analysis and its Applications. II/B: Nonlinear Monotone Operators . Springer-Verlag, New York, 1990. 22

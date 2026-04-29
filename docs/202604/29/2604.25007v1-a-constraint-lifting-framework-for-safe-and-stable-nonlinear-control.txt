@@ -1,0 +1,776 @@
+Title: A Constraint-Lifting Framework for Safe and Stable Nonlinear Control
+
+URL Source: https://arxiv.org/pdf/2604.25007v1
+
+Published Time: Wed, 29 Apr 2026 00:19:53 GMT
+
+Number of Pages: 12
+
+Markdown Content:
+> 1
+
+# A Constraint-Lifting Framework for Safe and Stable Nonlinear Control 
+
+Jhon Manuel Portella Delgado and Ankit Goel 
+
+Abstract— This paper presents a constraint-lifting control framework for designing stabilizing controllers that guarantee the forward invariance of a prescribed safe set. State-of-the-art safety-enforcing methods, such as control barrier functions (CBFs) and model predictive control (MPC), typically rely on solving constrained optimization problems in real time and therefore may not yield an explicit control law that guarantees constraint satisfaction under all conditions. In contrast, the proposed approach develops an explicit control law for a class of nonlinear systems that ensures both asymptotic stabilization of a desired equilibrium and safety preservation of a user-defined set. The central idea is to lift the constrained state space into an unbounded domain using a sigmoid-based diffeo-morphic mapping, synthesize the controller in the transformed coordinates, and then map it back to the original coordinates. To address numerical conditioning near constraint boundaries, a special class of Lyapunov candidate functions, called sigmoid integral functions, is introduced. A rigorous stability analysis, based on the Barbashi-Krasovskii-LaSalle invariance principle, establishes asymptotic convergence and safety guarantees. The efficacy of the proposed controller is demonstrated through a safe attitude-control problem. Index Terms— safe control, constraint-lifting control, non-linear systems, forward invariance, safe attitude control 
+
+I. I NTRODUCTION 
+
+The problem of enforcing state and output constraints in nonlinear systems has received significant attention in control theory due to its importance in safety-critical applications in aerospace and robotics. Classical control theory primarily addresses the stabilization and command-following problems. State-of-the-art approaches for han-dling state constraints often use techniques such as sat-uration functions [1] and reference governors [2], [3], [4], [5]. However, designing a controller that enforces state constraints while guaranteeing stability remains a chal-lenging problem. While effective methods exist, they often involve practical trade-offs, such as the use of auxiliary constraint-enforcement layers (e.g., CBF-based filters), reliance on online optimization (e.g., MPC), or sensitivity near constraint boundaries (e.g., in BLF-based designs). A fundamental challenge arises when the constrained state 
+
+Jhon Manuel Portella is a Postdoctoral Research Fellow with the Department of Aerospace Engineering, University of Michigan, Ann Arbor, MI 48109, USA. This work was completed while he was a Ph.D. candidate in the Department of Mechanical Engineer-ing, University of Maryland, Baltimore County, MD 21250, USA. jportella@umbc.edu Ankit Goel is an Assistant Professor in the Department of Me-chanical Engineering, University of Maryland, Baltimore County, MD 21250. ankgoel@umbc.edu 
+
+z1
+
+z2
+
+Unconstrained dynamics 
+
+Safe Set 
+
+Constrained dynamics 
+
+x1 x2
+
+ϕ
+
+ψ
+
+Fig. 1. Enforcing forward invariance via the constraint lifting framework. 
+
+has a relative degree greater than one with respect to the control input. In this case, existing approaches typically enforce safety through auxiliary constructions that impose additional constraints on higher-order states, yielding a forward invariant set that is a subset of the original safe set. This observation motivates the following question: can one guarantee forward invariance of the original safe set for systems subject to higher relative-degree constraints, without introducing auxiliary constraints? This paper thus addresses the state-constrained control problem by developing a control framework that ensures satisfac-tion of user-specified state constraints while maintain-ing closed-loop stability. In particular, this paper shows that such non-conservative invariance can be achieved through a constraint-lifting transformation combined with a Lyapunov-based design. While optimal control frameworks can be formulated to handle constraints, constraint satisfaction in such approaches is enforced through the feasibility of an as-sociated optimization problem, which also optimizes a performance criterion. Model predictive control (MPC), a subclass of optimal control techniques, provides a system-atic framework that integrates constraint handling with performance optimization through an online optimization problem [6], [7]. However, MPC presents several practi-cal challenges in implementation. First, solving the full 
+
+> arXiv:2604.25007v1 [math.OC] 27 Apr 2026 2
+
+nonlinear optimization problem can be computationally demanding, potentially limiting its applicability in real-time embedded implementations [8]. To address this, linearization techniques are often employed to reduce the optimization problem to a quadratic program [9]; however, this approach introduces modeling approxima-tions. Furthermore, because constraints are enforced over a prediction horizon, modeling errors arising from these approximations can affect constraint satisfaction. Finally, because solving the optimization problem at each sampling instant is computationally expensive, maintaining perfor-mance guarantees in fast or highly dynamic applications can be challenging. Incorporating constraints into Lyapunov-based formula-tions represents an alternative approach to handling con-straints. Nevertheless, the presence of constraints usually introduces singularities in the resulting control synthesis. Barrier Lyapunov functions (BLFs), a class of these meth-ods, provide a framework to handle constraints by using Lyapunov candidate functions that grow unbounded near constraint boundaries [10], [11], [12]. Although BLFs can theoretically prevent constraint violations, they typically introduce singular terms into the resulting controller that grow unbounded as the state approaches the constraint boundary, which can lead to numerical sensitivity and large control inputs[13], [14]. Mitigating these singularities requires careful gain tuning, and stability guarantees often rely on conservative assumptions [15]. Furthermore, as shown in [16], [17], [18], the BLF framework enforces constraints on the error states rather than directly on the system states, thereby limiting its application. Recently, control barrier functions (CBFs) have emerged as an alternative tool for enforcing safety constraints [19], [20], [21], [22], [23]. CBFs [24], [25], [26] are based on Nagumo’s invariance principle [27], [28], which introduced the notion of lower integrals to guarantee positive forward invariance of a prescribed set. In particular, Nagumo’s invariance principle yields a safety inequality that ensures the system’s state remains within the prescribed safe set if the inequality is satisfied. Note that the CBFs themselves do not generate a control signal; instead, they modify a control signal to enforce safety. In practice, the CBFs are implemented as discrete-time safety filters that, at each step, solve a constrained optimization problem to find a signal as close as possible to the nominal control signal while satisfying the safety inequality [29]. Since the CBFs are necessarily implemented using sample data, this complicates the closed-loop stability analysis. Ad-hoc techniques such as fixed margins can be used to miti-gate inter-sample violations, but they generally degrade performance. Control Lyapunov functions (CLFs), similar to CBFs, have been proposed to guarantee simultaneous safety and stability, but these approaches ultimately rely on solving a constrained optimization problem to compute the control signal. Furthermore, when the constrained variable has relative degree greater than one with respect to the control input, the construction of control barrier functions becomes nontrivial and typically requires higher-order barrier formulations [30]. Such formulations enforce safety through multiple barrier conditions, resulting in an invariant set defined by the intersection of several con-straints, which may introduce conservatism. This struc-tural limitation motivates the development of alternative approaches that can enforce invariance of the original constraint set directly. An alternative approach, which also motivates the constraint-lifting framework developed in this paper, uses state transformations to embed constraints into the sys-tem dynamics [31], [32], [20]. In particular, continu-ous functions that diverge to infinity at the constraint boundaries are used to transform the system dynamics. However, these nonlinear mappings may induce numerical instability near the constraint boundaries. Furthermore, constraints that are applied to the entire state result in the composition of several such nonlinear functions, leading to even more pronounced numerical instabilities. Ad hoc techniques, such as switching controllers, have been investigated to address numerical instability [33]. This paper introduces the constraint-lifting framework for designing a control law that simultaneously enforces constraints and guarantees closed-loop stability for aclass of nonlinear systems. Similar to state-transformation techniques, the proposed framework converts a state-constrained control problem into an equivalent uncon-strained one, as shown in Figure 1, by lifting the con-strained state space into an unconstrained state space, thereby converting a control problem defined over aconstrained domain into an equivalent problem in which the transformed state evolves without explicit constraints. In contrast to existing approaches, however, this work introduces a novel Lyapunov function that mitigates the numerical instabilities commonly observed in prior methods. Specifically, a controller is synthesized for the unconstrained system using the classical backstepping approach with the proposed Lyapunov function, called the sigmoid integral function. This function exhibits quadratic behavior near the origin and linear growth away from it, a key property that eliminates the exponentially grow-ing terms responsible for numerical ill-conditioning near constraint boundaries in conventional Lyapunov-based control designs. Unlike MPC and CBF-based approaches, the proposed method yields an explicit control law rather than requiring the solution of an optimization problem at each sampling instant, thereby eliminating inter-sample constraint violations. Furthermore, unlike BLF- and state-transformation-based techniques, the proposed method avoids the use of singular terms, thereby preventing numerical ill-conditioning. The comparison of existing constraint-enforcing control techniques with the proposed approach is summarized in Table I. Note that the results are established under nominal model assumptions; robust-ness to uncertainty is not addressed in this work. The main contributions of this paper are as follows. First, a constraint-lifting, sigmoid-based diffeomorphic map is introduced to reformulate the constrained control problem as an equivalent unconstrained one. Second, a 3
+
+Method Central Idea Limitations Contrast with Proposed Method MPC Embeds constraints in an online optimization framework. High computational cost; requires solv-ing a nonlinear or quadratic program at each step; prone to inter-sample viola-tions. Provides an explicit control law without online optimization; invariance guaran-tees are established in continuous time. BLF Uses Lyapunov functions that di-verge near constraint boundaries. Contains singular terms causing numeri-cal ill-conditioning; constraints are often applied to error states. Employs sigmoid-integral Lyapunov functions to mitigate numerical growth near constraint boundaries. CBF Uses Nagumo’s principle to ensure forward invariance. Requires solving QPs at every instant. Furthermore, for constraints with rel-ative degree greater than one, higher-order barrier constructions are required, leading to multiple barrier conditions and invariant sets defined through their intersection, which may introduce con-servatism. Yields an analytic control law with continuous-time invariance and stability guarantees under stated assumptions. Handles constraints on states with rel-ative degree greater than one directly within the control design, without aux-iliary higher-order barrier constructions. State Transfor-mation Maps constrained space to uncon-strained via a nonlinear diffeomor-phism. Mappings diverge near boundaries, causing numerical instability and com-pounded ill-conditioning. Uses sigmoid-based maps with Lyapunov-based compensation to mitigate numerical growth near constraint boundaries. Comparison Across Methods Invariant Set Property Set whose forward invariance is guaranteed by the method. For higher relative degree constraints, the invariant set is defined through aux-iliary conditions and is generally a sub-set of the original constraint set. Guarantees forward invariance of the original safe set without introducing auxiliary constraints or set reduction. TABLE I 
+
+COMPARISON OF CONSTRAINT -ENFORCING CONTROL TECHNIQUES WITH THE PROPOSED METHOD . T HE TABLE HIGHLIGHTS KEY DIFFERENCES IN CONSTRAINT ENFORCEMENT AND INVARIANT SET GUARANTEES , PARTICULARLY FOR STATES WITH RELATIVE DEGREE GREATER THAN ONE .
+
+Lyapunov function, called the sigmoid integral function, is proposed, which exhibits quadratic behavior near the origin and linear behavior away from it, thereby elim-inating exponentially growing terms introduced by the state transformation. Third, a rigorous stability analysis of the resulting closed-loop system is provided. Finally, the effectiveness of the proposed method is demonstrated through the constrained attitude control problem. The development in this paper focuses on a two-level system structure for clarity of presentation. Nevertheless, the pro-posed framework extends to systems with higher relative degree, in which the control synthesis follows a recursive structure analogous to backstepping, thereby increasing design complexity. The paper is organized as follows. Section II describes the notation, formulates the control problem, states the necessary assumptions, and introduces the constraint-lifting function and the sigmoid integral functions used to construct the safety-enforcing controller. Section III presents the main result and the stability analysis of the closed-loop system. Section IV presents the motivation for introducing the sigmoid integral functions. Section V demonstrates the application of the proposed method in the constrained attitude control problem. Finally, the paper concludes with a discussion in Section VI. 
+
+II. P ROBLEM FORMULATION AND PRELIMINARIES 
+
+This section establishes the notation, formulates the control problem, and introduces the sigmoid-function-based mappings used in the controller synthesis. A. Notation Let q ∈ Rn, define 
+
+D(q) △
+
+= diag (q1, q 2, . . . , q n) ∈ Rn×n. (1) If, for i = 1 , . . . , n, q i̸ = 0 , then define 
+
+DI(q) △
+
+= diag( q−11 , . . . , q −1 
+
+> n
+
+) ∈ Rn×n. (2) Note that DI(q)−1 = D(q). The set of all q ∈ Rn such that |qi| < 1 for all i is denoted by C, equivalently, 
+
+C △
+
+= {x ∈ Rn : ∥x∥∞ < 1}. (3) Note that C is a unit norm ball induced by the infinity norm. The set of n-dimensional real vectors with strictly positive components is denoted by Rn
+
+> +
+
+, that is, 
+
+Rn
+
+> +
+> △
+
+= {x ∈ Rn : xi > 0, ∀i = 1 , . . . , n }. (4) B. System Description Consider the system 
+
+˙x1 = g1(x1)x2, (5) 
+
+˙x2 = f2(x1, x 2) + g2(x1, x 2)u, (6) where x1, x 2 ∈ Rn denote the states, and u ∈ Rn is the control input. Let g1 : Rn → Rn×n, f 2 : Rn × Rn → Rn,
+
+and g2 : Rn × Rn → Rn×n be continuously differentiable functions of sufficient order. The objective is to design a control law that asymptot-ically stabilizes a desired state x1d and ensures that the system states remain bounded within user-specified limits. Specifically, the states (x1, x 2) are required to remain inside a safe set S defined as 
+
+S △
+
+= {(x1, x 2) ∈ Rn × Rn : |x1| < x 1, |x2| < x 2}, (7) 4
+
+where x1, x 2 ∈ Rn 
+
+> +
+
+denote the user-specified upper bounds on x1 and x2, respectively. In other words, the objective is to design a control law that renders (x1d, 0) is asymptoti-cally stable and guarantees the forward invariance of S. In addition, the objective is to preserve forward invariance of the original safe set S directly, without introducing auxiliary constraints on higher-order states. The following assumptions are required for controller synthesis. Assumption 1: The function f2(x1, x 2) = 0 if and only if x2 = 0 .
+
+Assumption 2: The matrices g1(x1) and g2(x1, x 2) are nonsingular for (x1, x 2) ∈ S .
+
+Remark 1: Assumption 1 is used to ensure that the set 
+
+{ ˙V = 0 } corresponds only to the desired equilibrium in the Lyapunov analysis. In particular, it guarantees that the condition f2(x1, x 2) = 0 implies x2 = 0 , which is required to conclude asymptotic convergence via the invariance principle. If this condition is relaxed, the set { ˙V = 0 }
+
+may contain additional trajectories, and the invariance analysis requires a more detailed characterization of the resulting invariant set. This does not fundamentally alter the control design but introduces additional technical steps to establish convergence properties. Remark 2: Assumption 2 ensures that the input map-pings remain nonsingular within the safe set S, which is required for the well-posedness of the control law and the invertibility of the associated transformations in the control design. This condition guarantees that the control input has authority over all state directions within S, and is closely related to the notion of local controllability or full actuation in nonlinear control systems. Such assump-tions are standard in inversion-based methods, including backstepping and feedback linearization. In practice, this implies that the safe set is selected to exclude configura-tions where control effectiveness is lost. C. Conservatism in Higher-Order Barrier Methods Control barrier functions (CBFs) provide a systematic framework for enforcing forward invariance of a prescribed safe set based on Nagumo’s condition. For constraints with relative degree one, the resulting safety condition depends directly on the control input, allowing the invariance condition to be enforced through a single inequality constraint. However, when the constrained state has a relative degree greater than one with respect to the control input, the standard CBF construction is no longer directly applicable, since the control input does not appear in the first derivative of the constraint function. To address this limitation, higher-order control barrier function (HOCBF) formulations introduce additional con-straints by recursively differentiating the barrier function until the control input explicitly appears. As a result, a sequence of barrier conditions must be satisfied simulta-neously to ensure forward invariance. Consequently, the     
+
+> Fig. 2. Forward invariant set for the double integrator under a higher-order barrier construction. The admissible set is C0∩ C 1,which may be a strict subset of C0.
+
+forward invariant set is defined by the intersection of mul-tiple constraint sets, each corresponding to a higher-order derivative condition. This intersection imposes additional restrictions on higher-order states, such as velocities, even when the original constraint is defined only in terms of position. Therefore, the resulting invariant set may be a strict subset of the original constraint set. This effect introduces a form of conservatism, since admissible trajectories that satisfy the original constraint may be excluded by the additional derivative-based conditions. In contrast, the objective of this work is to enforce forward invariance of the original constraint set directly, without introducing auxiliary constraints on higher-order states.    
+
+> 1) Illustrative Double-Integrator Example:
+
+To illustrate the conservatism introduced by higher-order barrier con-structions, consider the double integrator 
+
+˙x1 = x2, ˙x2 = u, (8) with the state constraint h(x) △
+
+= 1 − x21 ≥ 0. The corresponding safe set is 
+
+C0
+
+> △
+
+= {x ∈ R2 : h(x) ≥ 0} = {x ∈ R2 : |x1| ≤ 1}. (9) Since h has relative degree two with respect to the input 
+
+u, the control input does not appear in ˙h, and a standard first-order CBF condition cannot be imposed directly. A higher-order barrier construction therefore introduces an additional constraint involving x2, which defines another set C1. The resulting forward invariant set is then given by C0 ∩ C 1, rather than by C0 alone. In particular, C1
+
+imposes state-dependent restrictions on the velocity x2,even though the original safety constraint is posed only on 
+
+x1. Therefore, the forward invariant set under the higher-order barrier construction is not simply h(x) ≥ 0, and may be a strict subset of the original safe set. Figure 2 shows the forward invariant set under a higher-order barrier construction, which shows that the admissible set is smaller than the original safe set C0.5
+
+D. Sigmoid and Associated Functions This section provides a brief review of the sigmoid func-tions used to transform the state x for the construction of a control law that ensures asymptotic stability of the desired state x1d and guarantees forward invariance of S.In addition, these sigmoid functions are used to construct the constraint-lifting function and to define a class of Lyapunov functions, called sigmoid integral functions, that will later facilitate the controller synthesis. 
+
+1) Sigmoid Functions: We revisit the definition and key properties of sigmoid functions, presented in [34]. In particular, we will require the sigmoid function to be strictly increasing in order to ensure the existence of its inverse. Definition 2.1 (Simple sigmoids): A function σ : R →
+
+(−1, 1) is a simple sigmoid if it satisfies the following conditions. 1) σ is a smooth function, that is, σ(x) ∈ C∞.
+
+2) σ is an odd function, that is, σ(−x) = −σ(x).
+
+3) σ has y = ±1 as horizontal asymptotes, that is, 
+
+lim x→∞ σ(x) = 1 .
+
+4) σ(x)/x is a completely convex function in (0 , 1) .
+
+The following result, reproduced from [34], establishes that if the simple sigmoid is strictly increasing, then its inverse exists. Proposition 2.1: Let y = σ(x) be a strictly increasing simple sigmoid, that is, σ′(x) > 0 for all x ∈ R, where σ′
+
+denotes the derivative of σ. Then, 1) η △
+
+= σ−1 : ( −1, 1) → R exists. 2) η(y) is a strictly increasing function, analytic in the interval (−1, 1) .
+
+3) η′(y) = 1 /σ ′(η(y)) , where η′ and σ′ denote the first derivatives of η and σ, respectively. 4) η(y)/y is absolutely monotone in (0 , 1) .
+
+2) Constraint-Lifting Function: Using the strictly increas-ing sigmoid functions presented above, we define the constraint-lifting function, which is used to convert aconstrained control problem into an equivalent uncon-strained problem. In particular, the constraint-lifting func-tion ϕ : C → Rn is constructed using the inverse of a strictly increasing sigmoid function, thereby providing a diffeomorphic transformation from the constrained state 
+
+x to the unconstrained state z, which will be defined in Section III. Similarly, the mapping ψ : Rn → C, used to recover x from z, is constructed using the strictly increasing sigmoid function. In particular, the constraint-lifting function is 
+
+ϕ(χ) △
+
+= [η1(χ1) η2(χ2) . . . ηn(χn)]T ∈ Rn, (10) where each ηi is the inverse of a strictly increasing sigmoid function. The functions ηi may, in general, be chosen independently for each component. Note that the constraint-lifting function maps an element from C to Rn.
+
+Similarly, the inverse of the constraint-lifting function is 
+
+ψ(z) △
+
+= [σ1(z1) σ2(z2) . . . σn(zn)]T ∈ Rn, (11) where each σi is the inverse of ηi. Table II lists several strictly increasing sigmoid functions and their inverses in the second and the first column, respectively, and Figure 3 shows these functions and their inverses.                                                                         
+
+> ϕ(x) = η(x)ψ(z) = σ(z)V(ζ)tan
+> (π
+> 2x
+> )2
+> πatan (z)ζatan (ζ)−
+> 12 log (1 + ζ2)
+> atanh (x)tanh ( z)log (cosh( ζ))
+> x
+> 1− | x|
+> z
+> 1 + |z||ζ| − log (1 + |ζ|)
+> x
+> √1−x2
+> z
+> √1 + z2
+> √1 + ζ2−12
+> √πerf −1(x)erf
+> (√π
+> 2z
+> )
+> ζerf
+> (√π
+> 2ζ
+> )
+> +2
+> π
+> e−π
+> 4ζ2
+> −1
+> 
+> 2
+> πasinh
+> (
+> tan
+> (π
+> 2x
+> )) 2
+> πatan
+> (
+> sinh
+> (π
+> 2z
+> )) 2
+> π ζatan
+> (
+> sinh π
+> 2ζ−
+> ∫π
+> 2ζ
+> 0
+> rsech (r)d r
+> )
+> TABLE II
+> VARIOUS SIGMOID FUNCTIONS ,THEIR INVERESES ,AND THE CORRESPONDING SIGMOID INTEGRAL FUNCTION .-1 01
+> -10 -5 0510
+> -10 010
+> -1 -0.5 00.5 1
+> -10 010
+> 02468
+> Fig. 3. Various sigmoid functions, their invereses, and the corre-sponding sigmoid integral function. Note that the legend includes only the ϕ(x)functions, while the associated ψ(z)and V(ζ)
+> functions are shown using the same color scheme to maintain visual consistency.
+
+Remark 3: For the controller synthesis in Section III and the example in Section V, the same constraint-lifting function is used for both state variables to simplify the presentation. However, the components of the constraint-lifting function, that is, the sigmoid functions σi in (10) and their corresponding inverses ηi in (11) may be selected differently depending on the application. Remark 4: Note that the constraint-lifting function is defined using the inverse of the sigmoid function, whereas its own inverse is constructed using the sigmoid function 6
+
+itself. This clarification is emphasized to avoid confusion arising from the use of the term “inverse” in both contexts. The following property of the constraint-lifting function is used in the stability analysis of the closed-loop system, presented in Section III-C. Proposition 2.2: Consider the constraint-lifting func-tion (10). Then, for all x ∈ C , the Jacobian ∂xϕ(x) is nonsingular. Proof: The Jacobian ∂xϕ(x) is a diagonal matrix whose diagonal entries are strictly positive. Since all diagonal elements are positive, ∂xϕ(x) is nonsingular. 
+
+3) Sigmoid Integral Function: Using the sigmoid functions presented above, we define the sigmoid integral function. The sigmoid integral function will be used to construct candidate Lyapunov functions in Section III. Definition 2.2: Let σ : R → R be a simple sigmoid function. The sigmoid integral function V : R → [0 , ∞)
+
+is defined as 
+
+V(ζ) △
+
+=
+
+∫ ζ
+
+> 0
+
+σ(s)d s. (12) The sigmoid integral function defined above has following easily verifiable properties. 1) V(0) = 0 , and for all ζ ∈ R \ { 0}, V(ζ) > 0.
+
+2) lim ζ→±∞ V(ζ) = ±∞ .
+
+3) ∂ζ V (ζ) = σ(ζ), and thus the sigmoid integral function is continuous. Note that the sigmoid integral functions V(ζ) exhibit quadratic behavior near ζ = 0 and approach linear behavior for |ζ| ≫ 0. Table II lists the sigmoid integral functions V(ζ) corresponding to each sigmoid function in the third column and Figure 3 shows these sigmoid integral functions. 
+
+III. C ONTROLLER SYNTHESIS 
+
+This section develops a control law that guarantees the forward invariance of the safe set S for the system described by (5)–(6) while simultaneously guaranteeing asymptotic stability of the desired state x1d .A. State Transformation The states subject to constraints are lifted using the constraint-lifting function to obtain an unconstrained representation in the lifted state space. The key idea of transforming the constrained dynamics into an equivalent unconstrained form is illustrated in Figure 4. In particular, to facilitate controller synthesis, the states 
+
+(x1, x 2) are first transformed to intermediate state vari-ables (χ1, χ 2) such that the bounds on components of x1
+
+and x2 are normalized to ±1. This transformation ensures that each component of χ1 and χ2 lies within (−1, +1) 
+
+whenever (x1, x 2) ∈ S , that is, χ1, χ 2 ∈ C . Next, (χ1, χ 2)
+
+are transformed to (z1, z 2) ∈ Rn through a constraint-lifting function, which are detailed in Section II-D.2. Due to the properties of the constraint-lifting function, while χ1, χ 2 ∈ C, the transformed variables z1, z 2 are unconstrained, that is, z1, z 2 ∈ Rn. A stabilizing controller is then designed in the z-coordinates for the transformed     
+
+> x1
+> x2
+> safe set Constrained Dynamics
+> z1
+> z2
+> Unconstrained Dynamics Constraint Lifting
+> x1
+> z2
+> z1
+> x2
+> Fig. 4. Illustration of the constraint-lifting concept, where the constrained dynamics in the original state space (x1, x 2)are trans-formed into equivalent unconstrained dynamics in the lifted state space (z1, z 2).
+
+x1d . Finally, an additional transformation from (z1, z 2)
+
+to (ζ1, ζ 2) is introduced to simplify the notation used in mapping z back to x as well as the stability analysis. The state transformations from x to z and the intermediate state variables χ and ζ are shown in Figure 5. 
+
+DI(x)x D(x)ϕ(χ)
+
+DI(x)zD(x)ψ(ζ)
+
+χ ∈ C z ∈ Rn
+
+ζ ∈ Rn
+
+x ∈ S  
+
+> Fig. 5. State transformations with the constraint-lifting function and its inverse used in the control synthesis.
+
+Define 
+
+χ1
+
+> △
+
+= DI(x1)x1, (13) 
+
+χ2
+
+> △
+
+= DI(x2)x2. (14) Note that the state variables χ1 and χ2 are defined to map the constraint boundaries to ±1, that is, when the constraints are satisfied, then, χ1, χ 2 ∈ C .
+
+Next, define 
+
+z1
+
+> △
+
+= D(x1)ϕ(χ1), (15) 
+
+z2
+
+> △
+
+= D(x2)ϕ(χ2), (16) where ϕ : C → Rn is a constraint-lifting function as defined in Section II-D.2. Remark 5: For simplicity, the same constraint-lifting function ϕ is used for both z1 and z2. This assumption is made without loss of generality, as the subsequent formulation can be easily extended to the case where distinct constraint-lifting functions are used for each state. Next, define 
+
+ζ1
+
+> △
+
+= DI(x1)z1, (17) 
+
+ζ2
+
+> △
+
+= DI(x2)z2. (18) 7
+
+The state variables ζ1 and ζ2 are defined to simplify the controller synthesis, as described below. Finally, define 
+
+x1 = D(x1)ψ(ζ1), (19) 
+
+x2 = D(x2)ψ(ζ2), (20) where ψ : Rn → S is an inverse of the constraint-lifting function as defined in Section II-D.2. With the state transformations defined above, the dynamics (5), (6) in terms of the transformed state z is 
+
+˙z1 = G1(z1, z 2), (21) 
+
+˙z2 = F2(z1, z 2) + G2(z1, z 2)u, (22) where 
+
+G1(z1, z 2) △
+
+= Φ( ζ1)ψ(ζ2), (23) 
+
+F2(z1, z 2) △
+
+= [ ∂χ2 ϕ(ψ(ζ2))] f2(D(x1)ψ(ζ1), D (x2)ψ(ζ2)) ,
+
+(24) 
+
+G2(z1, z 2) △
+
+= [ ∂χ2 ϕ(ψ(ζ2))] g2(D(x1)ψ(ζ1), D (x2)ψ(ζ2)) ,
+
+(25) and 
+
+Φ( ζ1) △
+
+= [ ∂χ1 ϕ(ψ(ζ1))] g1(D(x1)ψ(ζ1)) D(x2).. (26) Note that ζ1 and ζ2 are given by (17), (18). Algebraic details of the derivation of dynamics in z coordinates are shown in Appendix I. The following propositions establish key properties of the functions G1, F2, and G2, which are subsequently used in the controller design and stability analysis. Proposition 3.1: Consider G1(z1, z 2) ∈ Rn given by (23). Then, G1(z1, 0) = 0 .
+
+Proof: Since ψ(0) = 0 by definition, it follows from (23) that G1(z1, 0) = Φ( DI(x1)z1)ψ(0) = 0 .
+
+Proposition 3.2: Consider F2(z1, z 2) ∈ Rn given by (24). Then, F2(z1, 0) = 0 .
+
+Proof: Since ψ(0) = 0 by definition, it follows from Assumption 1 that f2(D(x1)ψ(ζ1), 0) = 0 , which in turn implies F2(z1, 0) = 0 .
+
+Proposition 3.3: Consider G2(z1, z 2) ∈ Rn×n given by (25). Then, G2(z1, z 2) is nonsingular. Proof: It follows from Proposition 2.2 that 
+
+∂χ2 ϕ(ψ(ζ2)) = ∂χ2 ϕ(χ2) is a diagonal matrix with strictly positive elements on the diagonal. Next, it follows from Assumption 2 that g2(D(x1)ψ(ζ1), D (x2)ψ(ζ2)) is non-singular. Since the product of two nonsingular matrices is a nonsingular matrix, it follows that G2(z1, z 2) is nonsingular. Proposition 3.4: Consider Φ( ζ1) ∈ Rn×n given by (26). Then, Φ( ζ1) is nonsingular. Proof: It follows from Proposition 2.2 that 
+
+∂χ1 ϕ(ψ(ζ1)) = ∂χ1 ϕ(χ1) is a diagonal matrix with strictly positive elements on the diagonal. Next, it follows from Assumption 2 that g1(D(x1)ψ(ζ1), ) is nonsingular. Fur-thermore D(x2) is positive definite. Since the product of nonsingular matrices is a nonsingular matrix, it follows that Φ( ζ1) is nonsingular. B. Controller Synthesis Let x1d ∈ S be the desired value of x1. Let χ1d ∈ C and 
+
+z1d be the corresponding desired state values, that is, 
+
+χ1d 
+
+> △
+
+= DI(x1)x1d , (27) 
+
+z1d 
+
+> △
+
+= D(x1)ϕ(χ1d ). (28) Define the tracking error 
+
+e1
+
+> △
+
+= z1 − z1d . (29) 
+
+1) e1 stabilization: Consider the function 
+
+V1
+
+> △
+
+= 12 eT1 e1. (30) Differentiating (30) and using (21) yields 
+
+˙V1 = eT1 G1(z1, z 2). (31) If z2 is chosen such that G1(z1, z 2) = −ke 1, where k1 >
+
+0, then ˙V1 < 0. However, since z2 is not the control input, 
+
+G1(z1, z 2) cannot be arbitrarily chosen. Instead, we define 
+
+e2
+
+> △
+
+= G1(z1, z 2) − (−k1e1) = Φ( ζ1)ψ(ζ2) + k1e1. (32) and design the control law to ensure that e2 converges to 0, thus implying that G1(z1, z 2) converges to −k1e1.
+
+Substituting G1(z1, z 2) from (32) into (31) yields 
+
+˙V1 = −k1eT1 e1 + eT2 e1. (33) 
+
+2) e2 stabilization: Next, consider the function 
+
+V △
+
+= V1 +
+
+> n
+
+∑
+
+> i=1
+
+V(ζ2i), (34) where V is a sigmoid integral function given by (12). As shown in Appendix II, note that 
+
+dtn∑
+
+> i=1
+
+V(ζ2i) = ψ(ζ2)TDI(x2) ˙ z2. (35) Thus, 
+
+˙V = −k1eT1 e1 + eT2 e1 + ψ(ζ2)TDI(x2)
+
+(
+
+F2(z1, z 2) + G2(z1, z 2)u
+
+)
+
+. (36) Substituting ψ(ζ2) from (32) in the equation above yields 
+
+˙V = −k1e21 + eT2 e1 + ( eT2 − k1eT1 )Φ −T(ζ1)
+
+DI(x2)
+
+(
+
+F2(z1, z 2) + G2(z1, z 2)u
+
+)
+
+. (37) Finally, choosing 
+
+u = −G 2(z1, z 2)−1 (F2(z1, z 2) + k2D(x2)Φ T(ζ1)e2
+
+) (38) yields 
+
+˙V = −k1eT1 e1 + (1 + k1k2)eT2 e1 − k2eT2 e2
+
+= −k1eT1 e1 + (1 + k1k2)eT2 e1 − k2eT2 e2
+
++ 2 √k1k2eT1 e2 − 2√k1k2eT1 e2
+
+= −
+
+(√ k1e1 − √k2e2
+
+)T (√ k1e1 − √k2e2
+
+)
+
++ (1 + k1k2 − 2√k1k2)eT2 e1. (39) 8
+
+Note that If k2 = k−11 , then, 
+
+˙V = −
+
+(√ k1e1 − √k2e2
+
+)T (√ k1e1 − √k2e2
+
+)
+
+. (40) Furthermore, if k1e1 = e2, then ˙V = 0 .
+
+C. Stability Analysis The stability analysis of the closed-loop dynamics with the proposed control law uses the Barbashin-Krasovskii-LaSalle invariance principle, which originally appeared as Theorems 1 and 2 in [35]. In particular, the Barbashin-Krasovskii-LaSalles’s invariance principle is used to prove the asymptotic stability of the equilibrium point. Propositions 3.5, 3.6, 3.7, and 3.8 introduced below define the sets used in the stability analysis and establish their properties. Proposition 3.5: [Equilibrium solution.] Consider the system (21), (22). Let z1d ∈ Rn. Then, the solution 
+
+(z1, z 2, u ) = ( z1d , 0, 0) (41) is an equilibrium point. Proof: If z2 = 0 , then it follows from Proposition 3.1 that G1(z1, z 2) = 0 , which implies that ˙z1 = 0 . Further-more, it follows from Proposition 3.2 that F2(z1, z 2) = 0 .
+
+Moreover, if u = 0 , then ˙z2 = 0 , implying that (z1, z 2, u ) ≡
+
+(z1d , 0, 0) is an equilibrium point. Proposition 3.6: Consider the system (21), (22). Con-sider the Lyapunov candidate function (34). Let k2 = k−11 .
+
+Let ℓ > 0. Define the sublevel set 
+
+Ω △
+
+= {(z1, z 2, u ) ∈ Rn × Rn × Rn : V ≤ ℓ}. (42) Then, Ω is bounded and a positively invariant set. Proof: Since V is radially unbounded and Ω is defined by V ≤ ℓ, it follows from Theorem 2 in [35] that Ω is bounded. Since ˙V ≤ 0 and V > 0, V is non-increasing along the trajectory of the system. Therefore, any trajectory starting in Ω cannot leave Ω, thus implying that Ω is a positively invariant set. Proposition 3.7: Consider the system (21), (22). Con-sider the function (34) and the positively invariant set 
+
+Ω, given in (42). Let k2 = k−11 . Define E ⊂ Ω such that 
+
+z2 = 0 . Then, E is the set of all the points in Ω such that 
+
+˙V = 0 .
+
+Proof: Note that it follows from (18) that ζ2 = 0 if and only if z2 = 0 . Next, ζ2 = 0 implies that ψ(ζ2) = 0 ,
+
+which further implies that Φ( ζ1)ψ(ζ2) = 0 . Next, it follows from (32) that k1e1 = e2. Finally, since k2 = k−11 , it follows from (39) that ˙V = 0 if and only if k1e1 = e2.
+
+Proposition 3.8: Consider the system (21), (22). Con-sider the function (34). Let k2 = k−11 . Let M ⊂ E such that u = 0 . Then, M is the largest positively invariant set in E. 
+
+Proof: It follows from Proposition 3.5 that the point 
+
+z1 = z1d , z 2 = u = 0 is an equilibrium of the system. Hence, the set of all equilibrium points constitutes apositively invariant subset of E. Next, consider the case where u̸ = 0 and z2 = 0 . From (22) and the fact that 
+
+G2(z1, z 2) is nonsingular for all z1, z 2 ∈ Rn, it follows that 
+
+˙z2̸ = 0 . Consequently, the trajectory leaves the set E.Therefore, M ⊂ E is the largest positively invariant subset of E.Theorem 1: Consider the system (5), (6) and the system (21), (22). Assume that the initial conditions of (5), (6) are inside the safe set, that is, (x1(0) , x 2(0)) ∈ S , and let 
+
+|x1d | < x 1. Consider the control law (38), with k2 = k−11 .
+
+Then, 
+
+lim  
+
+> t→∞
+
+z1(t) = z1d , (43) 
+
+lim  
+
+> t→∞
+
+z2(t) = 0 , (44) 
+
+lim  
+
+> t→∞
+
+u(t) = 0 , (45) 
+
+lim  
+
+> t→∞
+
+x1(t) = x1d , (46) 
+
+∀t ≥ 0, (x1(t), x 2(t)) ∈ S . (47) Proof: Consider the set Ω defined in Proposition 3.6 and the set E defined in Proposition 3.7. It follows from Proposition 3.8 that M is the largest positively invariant set in E. It follows from Theorem 2 in [35] that any solution starting in Ω converge to M as t → ∞ , which implies (43)–(45). Next, it trivially follows from (28) and (43) that lim t→∞ x1(t) = x1d . Finally, since the map ψ is a bijection, it follows that ∀t ≥ 0, (x1(t), x 2(t)) ∈ S .
+
+Corollary 1 (Non-conservative invariance): Under the conditions of Theorem 1, the proposed control law guaran-tees forward invariance of the original safe set S directly. In particular, invariance is achieved without introducing auxiliary constraints on higher-order states, and the ad-missible invariant set coincides with the prescribed safe set S.Remark 6: The stability and forward invariance guar-antees established above are nominal and assume exact knowledge of the system dynamics. The effects of model uncertainty and external disturbances are not considered in this work and remain important directions for future research. 
+
+IV. M OTIVATION FOR THE SIGMOID INTEGRAL FUNCTION AS A LYAPUNOV CANDIDATE 
+
+The sigmoid integral functions, introduced in Section II-D.3, are selected as the Lyapunov candidate func-tions for control synthesis because the classical quadratic Lyapunov function leads to a control law that exhibits numerical instability arising from specific ill-conditioned terms. In contrast, employing the sigmoid integral function eliminates these problematic terms, yielding a numeri-cally robust closed-loop system. The following example demonstrates the numerical difficulties associated with the classical quadratic Lyapunov function. Consider the double integrator (8), where x1, x 2, u ∈ R. To simplify presentation, we consider the problem of only constraining 
+
+x2 with x2 = 1 . Note that x1 is unconstrained. Following the procedure outlined in Section III-A, the transformed 9
+
+system in z coordinates is 
+
+˙z1 = tanh ( z2) , ˙z2 = cosh 2 (z2) u. (48) Next, following the procedure outlined in Section III-B with ϕ(x) = atanh( x) as the constraint lifting function, the controller is 
+
+u = −k2sech 2 (z2) (tanh ( z2) + k1e1) , (49) which implies that 
+
+˙z2 = −k2 (tanh ( z2) + k1e1) . (50) If, instead of the sigmoid integral function, the classical quadratic function were used, that is, 
+
+V = V1 + 12 eT2 e2, (51) then ˙V = −k1e21 +e2 (e1 + k1 tanh ( z2) + u) . Furthermore, the control law 
+
+u = − (e1 + k1 tanh ( z2) + k2e2) , (52) where k1, k 2 > 0 ensure that ˙V = −k1e21 − k2e22 ≤ 0.
+
+Moreover, z2 satisfies 
+
+˙z2 = − cosh 2 (z2) ( e1 + k1 tanh ( z2) + k2e2) . (53) Note that the variables e1 and e2 for both formulations are exactly the same and are given by e1 = z1 − z1d , and 
+
+e2 = tanh ( z2)+ k1e1. A straightforward Lyapunov analysis shows that the closed-loop dynamics are asymptotically stable in both cases. However, ˙z2 in (53) includes the term 
+
+cosh( z2)2, while ˙z2 in (50) does not. As shown in Figure 6, the function cosh( z2)2 grows exponentially, implying that ˙z2 in (53) also increases exponentially, which leads to numerical instability. -10 -5 0 5 10            
+
+> 246810 12 10 7
+> Fig. 6. The function cosh 2(z2).Note the exponential growth in
+> cosh 2(z2).For a value of z2≈10 ,cosh 2(z2)≈10 7.
+
+We emphasize that both controllers theoretically guar-antee asymptotic stability, as established by the Lyapunov analysis. However, the corresponding closed-loop dynam-ics exhibit numerical instability, which imposes practical limitations on implementation. This behavior has been consistently observed in multiple numerical investigations with various choices of constraint lifting functions. The numerical instability arising from the classical quadratic Lyapunov function thus motivates the use of sigmoid integral functions for constructing a numerically robust Lyapunov candidate. 
+
+V. A PPLICATION TO SAFE ATTITUDE CONTROL 
+
+This section considers the constrained attitude control problem. Although Euler angles offer an intuitive and compact representation of attitude dynamics and are often preferred over quaternions and direction cosine matrices for visualization purposes, they suffer from the well-known gimbal lock phenomenon [36]. Accordingly, the objective of this example is to design a control law that enables tracking of an arbitrary attitude command within the prescribed safe set, while ensuring the body’s attitude remains strictly away from gimbal lock configuration. Consider a rigid body B with a body fixed-frame FD.
+
+Let FA be an inertial frame. Assume that FD is related to FA by a 3-2-1 Euler angle sequence, that is, 
+
+FA 
+
+> ψ
+> −→
+> 3
+
+FB 
+
+> θ
+> −→
+> 2
+
+FC 
+
+> ϕ
+> −→
+> 1
+
+FD, (54) where FB is obtained by rotating FA about its third axis, FC is obtained by rotating FB about its second axis, and FD is obtained by rotating FC about its first axis. Note that each rotation is an Euler rotation and the corresponding angle is the Euler angle. Let q △
+
+= [ϕ θ ψ]T ∈ R3 denote the vector of Euler angles ϕ, θ, and ψ. Then, the orientation of B
+
+parameterized by q satisfies the Poisson’s equation 
+
+˙q = S(q)−1ω, (55) where ω ∈ R3 is the angular velocity vector of FD relative to FA measured in the body-fixed frame FD and 
+
+S(q) △
+
+=
+
+1 0 − sin θ
+
+0 cos ϕ (sin ϕ) cos θ
+
+0 − sin ϕ (cos ϕ) cos θ
+
+ . (56) Note that, if θ̸ = ±π/ 2, then S(q) is nonsingular. Otherwise, the inverse of S(q), is given by 
+
+S(q)−1 =
+
+
+
+1 sin( ϕ) tan( θ) cos( ϕ) tan( θ)0 cos( ϕ) − sin( ϕ)0 sin( ϕ) sec( θ) cos( ϕ) sec( θ)
+
+ . (57) Note that the gimbal lock arises from the singularity of the matrix S(q) at θ = ±π/ 2. As θ approaches ±π/ 2, certain trigonometric terms in S(q) become unbounded, which can result in ill-conditioned computations and undesirable controller behavior. The control objective is thus to enforce the constraint θ ∈ [−θ, θ ], where θ < π/ 2.
+
+Next, the angular velocity ω satisfies the Euler’s equa-tion 
+
+J ˙ω + ω × Jω = τ, (58) where J ∈ R3×3 is the moment of inertia matrix of B in 
+
+FD and τ ∈ R3 is the external torque applied to B as measured in FD.
+
+The attitude dynamics (55), (58) is in the form similar to (5), (6), where x1 = q, x 2 = ω, g1(x1) = S(x1)−1, (59) 
+
+f2(x1, x 2) = J−1x2 × Jx 2, (60) 
+
+g2(x1, x 2) = J−1. (61) 10 
+
+Note that Assumptions 1 and 2 are satisfied. In this numerical example, the safe set is defined by 
+
+q △
+
+= [π/ 3 π/ 3 π/ 3]T , and ω △
+
+= [0.03 0.02 0.01 ]T .
+
+These constraints imply that each of the Euler angles should remain smaller than π/ 3 radians in magnitude and the components of the angular velocity vector should not exceed 0.03 rad /s, 0.02 rad /s, and 0.01 rad /s, respectively in magnitude. To simulate the attitude dynamics, the body-fixed frame 
+
+FD is assumed to coincide with the principal-axis frame. Consequently, the inertia matrix is diagonal, that is, 
+
+J = diag( J1, J 2, J 3), where we set J1 = 1, J2 = 2,
+
+and J3 = 3 in this example. The initial conditions to simulate (55) and (58) and the attitude commands in S are randomly generated from a uniform distribution over S.In particular, we randomly generate ten initial conditions and attitude commands. The attitude controller is designed following the proce-dure outlined in Section III, with the control law given by (38). In particular, we use the ϕ(x) = atanh( x) as the constraint-lifting function. Consequently, ψ(z) and V(ζ)
+
+are given by the second line in Table II. In this numerical example, the control gain is set to k1 = 0 .1.Figure 7 presents a geometric illustration of the closed-loop Euler angle trajectories under multiple initial condi-tions and reference commands. The pink-shaded region represents the prescribed safe set, and all trajectories remain confined within this set, demonstrating forward invariance. For each trajectory, the initial attitude is marked by a triangle, and the corresponding desired value is indicated by a square of the same color.           
+
+> Fig. 7. Geometric illustration of forward invariance for the closed-loop system under multiple initial conditions and reference commands. The trajectories remain confined within the prescribed safe set S(shown in pink). Desired angle values are marked with squares, and initial conditions are marked with triangles.
+
+Figure 8 presents a geometric illustration of the closed-loop angular velocity trajectories under multiple initial conditions. The yellow-shaded region represents the pre-scribed safe set, and all trajectories remain confined within this set, demonstrating forward invariance. The initial angular velocities are marked by triangles, and the desired equilibrium (zero angular velocity) is marked at the origin. As expected, all trajectories converge to zero.   
+
+> Fig. 8. Geometric illustration of forward invariance for the closed-loop angular velocity trajectories under multiple initial conditions. The trajectories remain confined within the prescribed safe set S
+> (shown in yellow). Initial conditions are marked with triangles.
+
+Finally, Figure 9 shows the time responses of the closed-loop Euler angles, angular velocities, and control torques for the ten trajectories. The first column shows the Euler angle responses, the second column shows the angular velocity responses, and the third column shows the control torque signals. The pink- and yellow-shaded regions in the first and second columns, respectively, denote the corresponding safe sets. 
+
+VI. C ONCLUSIONS 
+
+This paper presented a constraint-enforcing control framework that guarantees closed-loop stability for a class of nonlinear systems while ensuring the positive invariance of a prescribed safe set. A key outcome of this work is that forward invariance of the original safe set can be enforced for constraints with relative degree greater than one, without introducing auxiliary conditions on higher-order states. In contrast to higher-order barrier constructions, which typically enforce invariance on a modified set defined by the intersection of multiple constraints, the proposed approach directly preserves the original con-straint set, thereby avoiding the conservatism associated with derivative-based conditions. The proposed approach transforms the constrained control problem into an equiva-lent unconstrained one through constraint-lifting functions 11 
+
+Fig. 9. Closed-loop responses of the attitude dynamics: angles 
+
+(ϕ, θ, ψ ) and angular velocities (ω1, ω 2, ω 3) over time for ran-domly initialized and commanded trajectories, and control inputs 
+
+(τ1, τ 2, τ 3) generated by the control law (38). Note that the angle and angular responses are always contained within the desired safe set S.
+
+constructed using strictly increasing sigmoid functions. A class of Lyapunov candidate functions, called sigmoid integral functions, was introduced. These functions behave quadratically near the origin and linearly far away from it, a key property that eliminates exponentially growing terms that lead to numerical instability in the classical Lyapunov-based controller design. The sigmoid integral functions are then employed in the controller synthesis to design a stabilizing feedback law for the transformed system. A rigorous theoretical analysis establishes the asymptotic stability of the resulting closed-loop system. The development in this paper focuses on a two-level system structure for clarity of presentation. Nevertheless, the proposed framework extends to systems with higher relative degree, in which the control synthesis follows a recursive structure analogous to backstepping, thereby increasing design complexity. A numerical simulation demonstrates the effectiveness of the proposed technique for a constrained attitude control problem. 
+
+APPENDIX IDYNAMICS IN z COORDINATE 
+
+It follows from (15) that 
+
+˙z1 = D(x1)∂χ1 ϕ(χ1) ˙ χ1
+
+= D(x1)∂χ1 ϕ(χ1)DI(x1) ˙ x1
+
+= ∂χ1 ϕ(χ1)g1(x1)x2
+
+= ∂χ1 ϕ(ψ1(ζ1)) g1(D(x1)ψ1(ζ1)) D(x2)ψ2(ζ2)= Φ( ζ1)ψ2(ζ2)= G1(z1, z 2). (62) Similarly, it follows from (16) that 
+
+˙z2 = D(x2)∂χ2 ϕ(χ2) ˙ χ2
+
+= ∂χ2 ϕ(χ2)D(x2)DI(x2) ˙ x2
+
+= ∂χ2 ϕ(χ2) ( f2(x1, x 2) + g2(x1, x 2)u)= ∂χ2 ϕ(ψ2(ζ2)) 
+
+(
+
+f2(D(x1)ψ1(ζ1), D (x2)ψ2(ζ2)) + g2(D(x1)ψ1(ζ1), D (x2)ψ2(ζ2)) u
+
+)
+
+= F2(z1, z 2) + G2(z1, z 2)u. (63) 
+
+APPENDIX II TIME -DERIVATIVE OF SIGMOID INTEGRAL -BASED 
+
+LYAPUNOV FUNCTION 
+
+Note that 
+
+dtn∑
+
+> i=1
+
+V(ζ2i) = 
+
+> n
+
+∑
+
+> i=1
+
+dt
+
+∫ ζ2i
+
+> 0
+
+σ(s)d s (64) For each i = 1 , . . . , n, it follows from the Leibniz’s formula that 
+
+dt
+
+∫ ζ2i
+
+> 0
+
+σ(s)d s = σ(ζ2i) ˙ζ2i, (65) which, using (18), implies that 
+
+dtn∑
+
+> i=1
+
+V(ζ2i) = 
+
+> n
+
+∑
+
+> i=1
+
+σ(ζ2i) ˙ζ2i = ψ(ζ)T ˙ζ2
+
+= ψ(ζ2)TDI(x2) ˙ z2. (66) 
+
+[1] K. Graichen, A. Kugi, N. Petit, and F. Chaplais, “Handling constraints in optimal control with saturation functions and system extension,” Systems & Control Letters, vol. 59, no. 11, pp. 671–679, 2010. [2] E. Garone, S. Di Cairano, and I. Kolmanovsky, “Reference and command governors for systems with constraints: A survey on theory and applications,” Automatica, vol. 75, pp. 306–328, 2017. [3] P. Wang, H. Wang, X. Zhang, and S. S. Ge, “Balanced control between performance and saturation for constrained nonlinear systems,” International Journal of Robust and Nonlinear Con-trol, vol. 33, no. 10, pp. 5675–5690, 2023. [4] E. G. Gilbert, I. Kolmanovsky, and K. T. Tan, “Discrete-time reference governors and the nonlinear control of systems with state and control constraints,” International Journal of robust and nonlinear control, vol. 5, no. 5, pp. 487–504, 1995. [5] E. G. Gilbert and I. Kolmanovsky, “Fast reference governors for systems with state and control constraints and disturbance inputs,” International Journal of Robust and Nonlinear Control: IFAC-Affiliated Journal, vol. 9, no. 15, pp. 1117–1141, 1999. [6] Y. Kim, T. H. Oh, T. Park, and J. M. Lee, “Backstepping con-trol integrated with lyapunov-based model predictive control,” Journal of Process Control, vol. 73, pp. 137–146, 2019. [7] Y. Kim, T. Park, and J. M. Lee, “Integration of model predictive control and backstepping approach and its stability analysis,” IFAC-PapersOnLine, vol. 51, no. 18, pp. 405–410, 2018. [8] J. Schlagenhauf, P. Hofmeier, T. Bronnenmeyer, R. Paelinck, and M. Diehl, “Cascaded nonlinear mpc for realtime quadrotor position tracking￿￿this research has been funded by the company kiteswarms in the kite project (zvk2017022302) with the university of freiburg.” IFAC-PapersOnLine, vol. 53, no. 2, pp. 7026–7032, 2020, 21st IFAC World Congress. [Online]. Available: https://www.sciencedirect.com/science/article/pii/ S2405896320307357 12 
+
+[9] D. Wang, C. Zhao, J. Hu, and Q. Pan, “Model predictive path following control of a quadrotor in constrained environments,” in 2020 IEEE 16th International Conference on Control and Automation (ICCA), 2020, pp. 719–724. [10] J. Li, L. Wan, J. Li, and K. Hou, “Adaptive backstepping control of quadrotor uavs with output constraints and input saturation,” Applied Sciences, vol. 13, no. 15, p. 8710, 2023. [11] K. P. Tee, S. S. Ge, and E. H. Tay, “Barrier lyapunov func-tions for the control of output-constrained nonlinear systems,” Automatica, vol. 45, no. 4, pp. 918–927, 2009. [12] Y. Soukkou, M. Tadjine, A. Soukkou, M. Nibouche, and H. Nouri, “Tuning functions based adaptive backstepping con-trol for uncertain strict-feedback nonlinear systems using bar-rier lyapunov functions with full state constraints,” European Journal of Control, vol. 70, p. 100783, 2023. [13] K. B. Ngo, R. Mahony, and Z.-P. Jiang, “Integrator backstep-ping using barrier functions for systems with multiple state constraints,” in Proceedings of the 44th IEEE Conference on Decision and Control. IEEE, 2005, pp. 8306–8312. [14] B. Niu, X. Wang, X. Wang, X. Wang, and T. Li, “Adaptive barrier-lyapunov-functions based control scheme of nonlinear pure-feedback systems with full state constraints and asymp-totic tracking performance,” Journal of Systems Science and Complexity, vol. 37, no. 3, pp. 965–984, 2024. [15] N. Sadeghzadeh-Nokhodberiz and N. Meskin, “Consensus-based distributed formation control of multi-quadcopter systems: Bar-rier lyapunov function approach,” IEEE Access, vol. 11, pp. 142 916–142 930, 2023. [16] Z. Yin, B. Wang, C. Du, and Y. Zhang, “Barrier-lyapunov-function-based backstepping control for pmsm servo system with full state constraints,” in 2019 22nd International Con-ference on Electrical Machines and Systems (ICEMS). IEEE, 2019, pp. 1–5. [17] Y.-X. Li, “Barrier lyapunov function-based adaptive asymptotic tracking of nonlinear systems with unknown virtual control coefficients,” Automatica, vol. 121, p. 109181, 2020. [18] K. P. Tee and S. S. Ge, “Control of nonlinear systems with partial state constraints using a barrier lyapunov function,” International Journal of Control, vol. 84, no. 12, pp. 2008–2023, 2011. [19] S. Di Cairano, W. M. H. Heemels, M. Lazar, and A. Bemporad, “Stabilizing dynamic controllers for hybrid systems: A hybrid control lyapunov function approach,” IEEE Transactions on Automatic Control, vol. 59, no. 10, pp. 2629–2643, 2014. [20] B. Zhu, N. Xu, G. Zong, and X. Zhao, “Adaptive optimized backstepping tracking control for full-state constrained non-linear strict-feedback systems without using barrier lyapunov function method,” Optimal Control Applications and Methods, vol. 45, no. 5, pp. 2051–2075, 2024. [21] A. J. Taylor, P. Ong, T. G. Molnar, and A. D. Ames, “Safe backstepping with control barrier functions,” in 2022 IEEE 61st Conference on Decision and Control (CDC). IEEE, 2022, pp. 5775–5782. [22] J. Kim and Y. Kim, “Safe control synthesis for multicopter via control barrier function backstepping,” in 2023 62nd IEEE Conference on Decision and Control (CDC), 2023, pp. 8720– 8725. [23] K. H. Kim, M. Diagne, and M. Krstić, “Constant-sum high-order barrier functions for safety between parallel boundaries,” IEEE Control Systems Letters, vol. 9, pp. 1447–1452, 2025. [24] M. Z. Romdlony and B. Jayawardhana, “Stabilization with guaranteed safety using control lyapunov–barrier function,” Automatica, vol. 66, pp. 39–47, 2016. [25] A. D. Ames, S. Coogan, M. Egerstedt, G. Notomista, K. Sreenath, and P. Tabuada, “Control barrier functions: The-ory and applications,” in 2019 18th European control conference (ECC). Ieee, 2019, pp. 3420–3431. [26] Z. Wu, F. Albalawi, Z. Zhang, J. Zhang, H. Durand, and P. D. Christofides, “Control lyapunov-barrier function-based model predictive control of nonlinear systems,” Automatica, vol. 109, p. 108508, 2019. [27] M. Nagumo, “Über die lage der integralkurven gewöhnlicher differentialgleichungen,” Nippon Sugaku-Butsurigakkwai Kizi Dai 3 Ki, 1942. [28] F. Blanchini, “Set invariance in control,” Automatica, vol. 35, no. 11, pp. 1747–1767, 1999. [29] A. D. Ames, X. Xu, J. W. Grizzle, and P. Tabuada, “Control barrier function based quadratic programs for safety critical systems,” IEEE Transactions on Automatic Control, vol. 62, no. 8, pp. 3861–3876, 2016. [30] P. Ong, M. H. Cohen, T. G. Molnar, and A. D. Ames, “Rectified control barrier functions for high-order safety constraints,” IEEE Control Systems Letters, 2024. [31] T. Guo and X. Wu, “Backstepping control for output-constrained nonlinear systems based on nonlinear mapping,” Neural Computing and Applications, vol. 25, pp. 1665–1674, 2014. [32] X. Huang, Y. Song, and C. Wen, “Output feedback control for constrained pure-feedback systems: A non-recursive and transformational observer based approach,” Automatica, vol. 113, p. 108789, 2020. [33] M. Sampei, J. Shen, and N. H. McClamroch, “Nonlinear control of the air spindle testbed with constraints,” in Proceedings of the 2003 American Control Conference, 2003., vol. 1. IEEE, 2003, pp. 483–488. [34] A. Menon, K. Mehrotra, C. K. Mohan, and S. Ranka, “Char-acterization of a class of sigmoid functions with applications to neural networks,” Neural networks, vol. 9, no. 5, pp. 819–835, 1996. [35] J. LaSalle, “Some extensions of liapunov’s second method,” IRE Transactions on circuit theory, vol. 7, no. 4, pp. 520–527, 1960. [36] E. G. Hemingway and O. M. O’Reilly, “Perspectives on euler angle singularities, gimbal lock, and the orthogonality of applied forces and applied moments,” Multibody system dynamics, vol. 44, no. 1, pp. 31–56, 2018. 
+
+Jhon Portella received the B.Sc. degree in Mechanical Engineering from the Pontificia Universidad Católica del Perú (PUCP), Lima, Peru, in 2013, and the M.Eng. degree in Mechatronics Engineering from the University of Melbourne, Melbourne, Australia, in 2016. He is currently pursuing a Ph.D. degree in Mechanical Engineering at the University of Maryland, Baltimore County, Baltimore, MD, USA. His research interests include nonlinear and adaptive control, as well as the use of optimization and machine learning techniques for control design. 
+
+Ankit Goel (Member, IEEE) received the B.E. degree in Mechanical Engineering from Delhi College of Engineering, Delhi, in 2009, and the M.S. and Ph.D. degrees in Aerospace Engi-neering from The University of Michigan, Ann Arbor, MI, USA, in 2014 and 2019, respec-tively. He is currently an Assistant Professor in the Department of Mechanical Engineer-ing at the University of Maryland, Baltimore County, where he directs the Estimation, Con-trol, and Learning Laboratory (ECLL). His research interests include model-free, data-driven, and learning-based adaptive control, as well as model-based methods for complex dynamical systems.

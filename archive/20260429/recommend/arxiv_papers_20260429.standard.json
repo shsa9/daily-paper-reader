@@ -1,0 +1,163 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-29T20:55:05.067676+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.23696v1",
+      "title": "Real-Time Non-Contact Force Compensation for Wrist-Mounted Force/Torque Sensors in Haptic-Enabled Robotic Surgery Training",
+      "abstract": "Haptic feedback has been a long-missed feature in robotic-assisted surgery, one that would allow surgeons to perceive tissue properties and apply controlled forces during delicate procedures. Although commercial robotic systems have begun to integrate haptic technologies, their high costs limit accessibility for training and research purposes. To address this gap, we extend our previously developed low-cost robotic surgery training setup, RoboScope, by incorporating a wrist-mounted force/torque (F/T) sensor for haptic feedback training. Wrist-mounted sensing avoids many challenges associated with tip-mounted sensors but introduces additional non-contact forces, such as gravity, sensor bias, installation offsets, and associated torques, which compromise measurement accuracy. In this paper, we propose a robust real-time compensation method based on recursive least squares (RLS). This method eliminates the need for dataset collection and frequent recalibration while adapting to changing operating conditions. Experimental validation demonstrates that the proposed approach achieves over 95% error reduction in non-contact force compensation and more than 91% in non-contact torque compensation, significantly outperforming existing methods. These results highlight the potential of our approach for providing reliable haptic feedback in robotic surgery training and research.",
+      "authors": [
+        "Walid Shaker",
+        "Mustafa Suphi Erden"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "eess.SY"
+      ],
+      "published": "2026-04-26T13:21:45+00:00",
+      "link": "https://arxiv.org/pdf/2604.23696v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "real-time non-contact force compensation for controlled force application",
+      "llm_evidence_cn": "用于受控力施加的实时非接触力补偿",
+      "llm_evidence": "用于受控力施加的实时非接触力补偿",
+      "canonical_evidence": "用于受控力施加的实时非接触力补偿",
+      "llm_tldr_en": "Develops real-time non-contact force compensation for wrist-mounted sensors to enable haptic feedback.",
+      "llm_tldr_cn": "开发了腕部传感器的实时非接触力补偿，以实现触觉反馈。",
+      "llm_tldr": "开发了腕部传感器的实时非接触力补偿，以实现触觉反馈。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "non contact electromagnetic exciter precision force control",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.25007v1",
+      "title": "A Constraint-Lifting Framework for Safe and Stable Nonlinear Control",
+      "abstract": "This paper presents a constraint-lifting control framework for designing stabilizing controllers that guarantee the forward invariance of a prescribed safe set. State-of-the-art safety-enforcing methods, such as control barrier functions (CBFs) and model predictive control (MPC), typically rely on solving constrained optimization problems in real time and therefore may not yield an explicit control law that guarantees constraint satisfaction under all conditions. In contrast, the proposed approach develops an explicit control law for a class of nonlinear systems that ensures both asymptotic stabilization of a desired equilibrium and safety preservation of a user-defined set. The central idea is to lift the constrained state space into an unbounded domain using a sigmoid-based diffeomorphic mapping, synthesize the controller in the transformed coordinates, and then map it back to the original coordinates. To address numerical conditioning near constraint boundaries, a special class of Lyapunov candidate functions, called sigmoid integral functions, is introduced. A rigorous stability analysis, based on the Barbashi-Krasovskii-LaSalle invariance principle, establishes asymptotic convergence and safety guarantees. The efficacy of the proposed controller is demonstrated through a safe attitude-control problem.",
+      "authors": [
+        "Jhon Manuel Portella Delgado",
+        "Ankit Goel"
+      ],
+      "primary_category": "math.OC",
+      "categories": [
+        "math.OC"
+      ],
+      "published": "2026-04-27T21:10:57+00:00",
+      "link": "https://arxiv.org/pdf/2604.25007v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "safe and stable nonlinear control framework",
+      "llm_evidence_cn": "安全稳定的非线性控制框架",
+      "llm_evidence": "安全稳定的非线性控制框架",
+      "canonical_evidence": "安全稳定的非线性控制框架",
+      "llm_tldr_en": "Introduces a constraint-lifting framework for explicit nonlinear control with safety guarantees.",
+      "llm_tldr_cn": "引入了一种约束提升框架，用于具有安全保证的显式非线性控制。",
+      "llm_tldr": "引入了一种约束提升框架，用于具有安全保证的显式非线性控制。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.25261v1",
+      "title": "Numerical approximation of a transient thermo-electromagnetic problem in axisymmetric geometries",
+      "abstract": "This paper analyzes a transient thermo-electromagnetic problem arising in the modeling of induction heating processes. Unlike previous studies that focused on steady-state scenarios, we consider a time-dependent thermal problem coupled with a nonlinear time-harmonic electromagnetic problem through temperature-dependent electrical conductivity and Joule effect. Exploiting cylindrical symmetry and assuming a purely azimuthal current density, we formulate the problem on a two-dimensional meridional section. We introduce a variational formulation in appropriately weighted Sobolev spaces and prove existence of a solution by a fixed-point argument. Under reasonable assumptions on the physical parameters, we also prove uniqueness. A finite element discretization combined with implicit time stepping is used to compute the numerical solution. To evaluate the accuracy of the approximation, a priori error estimates are derived and validated by numerical experiments. Finally, numerical simulations illustrate the effectiveness of the proposed approach in an industrially relevant configuration.",
+      "authors": [
+        "D. Gómez",
+        "B. López-Rodríguez",
+        "P. Salgado",
+        "P. Venegas"
+      ],
+      "primary_category": "math.NA",
+      "categories": [
+        "math.NA"
+      ],
+      "published": "2026-04-28T06:11:16+00:00",
+      "link": "https://arxiv.org/pdf/2604.25261v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "modeling of transient thermo-electromagnetic problems and eddy current effects",
+      "llm_evidence_cn": "瞬态热-电磁问题建模及涡流效应分析",
+      "llm_evidence": "瞬态热-电磁问题建模及涡流效应分析",
+      "canonical_evidence": "瞬态热-电磁问题建模及涡流效应分析",
+      "llm_tldr_en": "Analyzes transient thermo-electromagnetic problems in axisymmetric geometries using numerical approximation.",
+      "llm_tldr_cn": "利用数值逼近方法分析了轴对称几何结构中的瞬态热-电磁问题。",
+      "llm_tldr": "利用数值逼近方法分析了轴对称几何结构中的瞬态热-电磁问题。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "eddy current effects in electromagnetic actuators dynamic modeling",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.25337v1",
+      "title": "Design and Modeling of a HASEL Actuator-Based Micro Parallel Robot",
+      "abstract": "This paper presents the mechatronic design, dynamic modeling, and experimental validation of a three-degree-of-freedom (3-DOF) micro parallel robot featuring a prismatic-spherical (3PS) topology actuated by three Hydraulically Amplified Self-Healing Electrostatic (HASEL) actuators. Each soft actuator provides the prismatic motion of an individual limb, while a compliant interface to the moving platform functions as a spherical joint. A prototype incorporating three base-integrated HASEL actuators was fabricated, and the platform motion was measured using an XY laser-tracking system. For control purposes, a port-Hamiltonian (PH) model, combined with the mechanism's forward kinematics (FKM), is developed to capture the robot's nonlinear dynamic behavior, whereas the inverse kinematics (IKM) is employed to estimate the required actuator displacements. Model parameters were identified using nonlinear grey-box (NLGB) estimation, yielding a compact and control-oriented representation suitable for subsequent controller design.",
+      "authors": [
+        "Agustin Feregrino",
+        "Nelson Cisneros",
+        "Alexis Lefèvre",
+        "Yongxin Wu",
+        "Yann Le Gorrec"
+      ],
+      "primary_category": "math.OC",
+      "categories": [
+        "math.OC"
+      ],
+      "published": "2026-04-28T07:53:28+00:00",
+      "link": "https://arxiv.org/pdf/2604.25337v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "dynamic modeling and control of electrostatic actuators",
+      "llm_evidence_cn": "静电执行器的动态建模与控制",
+      "llm_evidence": "静电执行器的动态建模与控制",
+      "canonical_evidence": "静电执行器的动态建模与控制",
+      "llm_tldr_en": "Develops a port-Hamiltonian model for a micro robot driven by electrostatic HASEL actuators.",
+      "llm_tldr_cn": "为由静电HASEL驱动器驱动的微型机器人开发了端口哈密顿模型。",
+      "llm_tldr": "为由静电HASEL驱动器驱动的微型机器人开发了端口哈密顿模型。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

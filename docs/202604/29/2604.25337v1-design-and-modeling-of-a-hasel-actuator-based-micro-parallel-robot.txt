@@ -1,0 +1,465 @@
+Title: 2604.25337v1.pdf
+
+URL Source: https://arxiv.org/pdf/2604.25337v1
+
+Published Time: Wed, 29 Apr 2026 00:39:41 GMT
+
+Number of Pages: 7
+
+Markdown Content:
+# Design and Modeling of a HASEL Actuator-Based Micro Parallel Robot ⋆
+
+Agustin Feregrino ∗ Nelson Cisneros ∗ Alexis Lef` evre ∗
+
+Yongxin Wu ∗ Yann Le Gorrec ∗∗ Universit´ e Marie et Louis Pasteur, SUPMICROTECH, CNRS, institut FEMTO-ST, F- 25000 Besan¸ con, France (e-mails: yongxin.wu@femto-st.fr). 
+
+Abstract: This paper presents the mechatronic design, dynamic modeling, and experimen-tal validation of a three-degree-of-freedom (3-DOF) micro parallel robot featuring a pris-matic–spherical (3PS) topology actuated by three Hydraulically Amplified Self-Healing Elec-trostatic (HASEL) actuators. Each soft actuator provides the prismatic motion of an individual limb, while a compliant interface to the moving platform functions as a spherical joint. A prototype incorporating three base-integrated HASEL actuators was fabricated, and the platform motion was measured using an XY laser-tracking system. For control purposes, a port-Hamiltonian (PH) model, combined with the mechanism’s forward kinematics (FKM), is developed to capture the robot’s nonlinear dynamic behavior, whereas the inverse kinematics (IKM) is employed to estimate the required actuator displacements. Model parameters were identified using nonlinear grey-box (NLGB) estimation, yielding a compact and control-oriented representation suitable for subsequent controller design. 
+
+Keywords: Mechatronic system design, Port-Hamiltonian Systems, Parallel Robots, HASEL Actuators 1. INTRODUCTION Soft robotics offers inherently safe, adaptable, and light weight systems, outperforming rigid robots in human interaction and unstructured environments (Kim et al., 2013). These capabilities are primarily enabled by the use of soft actuators, which provide compliant motion through flexible materials (El-Atab et al., 2020). Among soft actu-ators, Hydraulically Amplified Self-Healing Electrostatic (HASEL) actuators stand out for their large, controllable deformations, low energy consumption, and ease of fab-rication, making them suitable for compact and portable robots (Mitchell et al., 2019; Acome et al., 2018). Their integration into different soft robotic devices is rapidly advancing due to their softness, precision, and efficiency. Recent studies highlight their use in biomedical diagnostics (Ehrlich et al., 2025), artificial sphincters (Lyko et al., 2024), and bio-inspired soft robots (Perera et al., 2024; Xiong et al., 2024). These developments highlight the need for accurate models capturing the complex dynamics of HASEL actuators. Several modeling approaches for HASEL actuators have been reported in the literature, ranging from reduced-order lumped models (Hainsworth et al., 2022) to data-driven approximations such as Dynamic Mode Decomposition (Volchko et al., 2024). While these methods are useful to approximate certain aspects of actuator behavior, they of-ten neglect key nonlinear phenomena (such as drift effects and electromechanical coupling) or simplify the underlying  
+
+> ⋆This work is supported by the EIPHI Graduate School (contract: ANR-17-EURE-0002) and R´ egion Franche-Comt´ e.
+
+electrical dynamics. As a result, their predictive capability is limited, particularly for control-oriented applications where an accurate representation of multiphysics interac-tions is essential (Cisneros et al., 2024). The port-Hamiltonian (PH) framework offers a structured and physically interpretable approach to modeling sys-tems composed of coupled physical domains by explic-itly characterizing how energy is stored, dissipated, and exchanged among subsystems. This energy-based formu-lation makes PH modeling particularly well suited for describing HASEL actuators, as recently demonstrated in (Cisneros et al., 2025). While existing studies have primar-ily examined the dynamics of single HASEL actuators, the extension of PH modeling to mechanisms driven by mul-tiple soft actuators remains largely unexplored. Such an extension is crucial for enabling coordinated motion gen-eration, distributed actuation strategies, and systematic control synthesis in soft robotic architectures. Moreover, the intrinsic passivity properties of PH systems provide a strong foundation for control design, facilitating stable interconnections, and energy-aware control schemes. Beyond its formal modeling advantages, the motivation for this work is also driven by the growing interest in compliant systems whose mechanical properties contribute directly to functional performance. This is particularly relevant at micro scales, where applications such as min-imally invasive medical procedures, micro-manipulation, and the handling of delicate materials impose stringent re-quirements on precision, adaptability, and safe interaction. Fully exploiting these advantages requires control-oriented models capable of capturing the nonlinear interactions 
+
+> arXiv:2604.25337v1 [math.OC] 28 Apr 2026
+
+that arise in assemblies driven by multiple soft actuators. In this context, port-Hamiltonian (PH) formulations offer a natural framework, as they provide energy-consistent representations and preserve passivity, which is essential for achieving stable and predictable closed-loop behavior. To investigate these considerations, this work examines the design and PH-based modeling of a three-degree-of-freedom (3-DOF) system actuated by three indepen-dent Hydraulically Amplified Self-Healing Electrostatic (HASEL) devices. Each actuation unit produces prismatic motion and is coupled to the moving structure through a passive spherical interface. This arrangement creates a fully HASEL-driven prismatic–spherical (3PS) config-uration in which the nonlinear actuation characteristics interact with the geometric constraints of the mechanism. The main contributions of this paper are: 
+
+• We designed and fabricated a 3-DOF parallel plat-form actuated by HASEL devices, using additive manufacturing to obtain a lightweight and compliant prototype. 
+
+• We integrated the PH model of individual HASEL actuators, as reported in Cisneros et al. (2025), into the kinematic framework of the parallel platform, enabling a unified description of the system. 
+
+• We validated the combined model experimentally by actuating the platform and tracking the end-effector motion. 
+
+• We provide a foundational framework for the design and analysis of soft parallel robots, validated through the first fully HASEL-actuated prototype. Our unified PHS model is a crucial step toward developing robust control strategies for this new class of compliant systems. This paper is organized as follows. Section 2 presents the design and fabrication of the HASEL actuators and the 3PS parallel platform. Section 3 introduces the kinematic modeling of the mechanism and its connection with the PH actuator model. Section 4 reports the parameter identification and experimental validation. Finally, Section 5 concludes the work and outlines future directions. 2. DESIGN AND MANUFACTURING In this section, we describe the design and fabrication of the HASEL actuators and their integration into a3-DOF parallel platform. We first detail the actuator manufacturing process, including the choice of materials and sealing methods. We then present the design of the parallel platform. 
+
+2.1 Micro Parallel Robot Design and Assembly 
+
+The parallel platform is formed by a triangular structure supported by three connecting links, each attached at its base to a HASEL actuator. The kinematic behavior corresponds to a 3PS configuration. In this topology, the prismatic joints (P) are provided by the vertical deformation of each HASEL actuator, while the spherical joints (S) arise at the lower connection between each link and its respective actuator. This spherical behavior does not result from a mechanical ball joint but rather from the intrinsic flexibility of the links combined with the compliant attachment of the actuator to the rigid component. Figure 1 a) illustrates the design concept of the HASEL-actuated parallel platform. Figure 1 (b) shows the kine-matic diagram of the 3PS topology, where each HASEL actuator provides the P and the flexible link connections emulate S. Figure 1 (c) depicts the schematic represen-tation of the 3D-printed prototype in its neutral position, highlighting the antenna for motion tracking, the dielectric shell, and the compliant electrodes and the actuated con-figuration: when a high voltage Uin is applied, the resulting prismatic deformation of the actuators (red arrows) in-duces platform motion through passive spherical behavior. Spherical Joint (S) Platform Prismatic Joint (P)          
+
+> hi
+> Tip Antenna
+> L
+> Cp
+> XY
+> Z
+> XY
+> Z
+> Dielectric liquid Prismatic Joint Electrodes Passive spherical behavior a) b) c) Electrodes 3PS parallel platform +-+--+
+> U1in
+> U2in U3in
+> δi
+> 1θi
+> (1 /2) LvAis
+> (1 /2) lip
+> (1 /2) lip
+> lie
+> Led)
+
+Fig. 1. a) Top view HASEL actuator schematic design and 3PS parallel platform. b) Kinematic diagram of the 3PS topology. c) Side views showing the actuator displacements hi, centroid Cp, and antenna T ip with length L. d) HASEL schematic. 
+
+2.2 Fabrication of the Actuators 
+
+The actuators were fabricated using thermoplastic BOPP film as the dielectric shell, filled with Envirotemp FR3 biodegradable transformer oil as the dielectric fluid. Carbon-based conductive paint was applied as flexible electrodes on the actuator surfaces (Acome et al., 2018; Rothemund et al., 2020). The manufacturing protocol was adapted from the procedure reported in (Cisneros, 2025), including cutting, heat sealing, filling, and assembly. The detailed manufacturing procedure consists of the following steps: (1) Sealing of the outline. The actuator outlines were sealed using a 3D printer operated without filament. The heat from the printer nozzle was applied directly to the BOPP film to create a hermetic perimeter. (2) Filling with dielectric fluid. Each actuator was filled with 0.4 mL of dielectric fluid using a precision syringe. The fluid was manually redistributed to min-imize air bubbles. (3) Application of compliant electrodes. Compliant electrodes were applied using a template and allowed to dry before final sealing. (4) Final sealing. The perimeter was sealed with a sol-dering iron at 217 ◦C, which provided reliable sealing without puncturing or dielectric breakdown. 
+
+2.3 Fabrication of the platform 
+
+The structural components were fabricated using Fused Deposition Modeling (FDM) with PLA filament. Each print required approximately 23 minutes, enabling rapid prototyping and straightforward replacement during ex-perimental trials. Figure 2 shows the physical prototype of the platform after integration of the HASEL actuators. The actuators provide the prismatic inputs to the 3PS mechanism. 
+
+Fig. 2. 3PS prototype showing the integrated antenna for motion tracking and the three HASEL actuators providing the prismatic inputs. 3. MODELING OF MICRO PARALLEL ROBOT In this section we present the soft parallel robot model driven by HASEL actuators based on the HASEL ac-tuator PH model from (Cisneros et al., 2025) and the kinematic analysis of the 3PS parallel platform. The model establishes the relation between actuator elongations and the motion of the antenna. Forward Kinematics Model (FKM) computes the antenna tip position from the actua-tor displacements, while Inverse Kinematics Model (IKM) determines the actuator heights for a desired tip position. 
+
+3.1 Control oriented port-Hamiltonian formulation 
+
+The PH formalism provides a general framework to model multi-domain dynamical systems in terms of energy stor-age, dissipation, and interconnection through power ports (Ortega et al., 2001; van der Schaft and Maschke, 2002). It can be expressed as: ˙x = [ J(x) − R(x)] ∇H(x) + G(x)u, y = G⊤(x)∇H(x),
+
+(1) where x ∈ Rn is the state vector, H(x) the Hamiltonian function representing stored energy, J(x) = −J⊤(x) the interconnection matrix, R(x) = R⊤(x) ≥ 0 the dissipa-tion, and G(x) the input mapping. The output y corre-sponds to the conjugate power variables, ensuring ener-getic consistency. HASEL actuators combine electrostatic forces, soft dielec-tric shells, and internal fluids to produce large deforma-tions with high efficiency (Rothemund et al., 2020). The total energy of the system is expressed as: 
+
+H = 12 θ⊤Kbθ + H¯g + 14 (lp − Lp)⊤K(lp − Lp)+ 12 p⊤M −1p + 12 Q⊤ 
+
+> 1
+
+C−11 Q1 + 12 Q⊤ 
+
+> 2
+
+C−12 (θ, l p)Q2
+
+(2) The angular deformation is θ = [ θ1 θ2 θ3]⊤, the top film deformation is lp = [ l1 
+
+> p
+
+l2 
+
+> p
+
+l3
+
+> p
+
+]⊤, the angular momentum is p = [p1 p2 p3]⊤. The electrical charges are defined as Q1 = [Q11 Q21 Q31]⊤ and Q2 = [Q12 Q22 Q32]⊤. M
+
+is the inertia matrix defined as M = diag([ ˜I1 ˜I2 ˜I3]) where the inertia is ˜Ii = (1 /24) Lv m. The mass of each HASEL actuator is m. The potential energy related with the gravity is defined as H¯g = 1 /2¯ gL v m(sin θ1 + sinθ 2 +
+
+sinθ 3). Lv is the bottom film length. 
+
+C1 = diag([ C11 C21 C31 ]) is the constant capacitance that represents the actuator’s charge retention effect. C2 =diag[ C12 C22 C32 ] is the dynamic capacitance that represents the electrodes, films, and dielectric liquid, computed as the sum of the capacitance of the zipped electrodes and the capacitance of the unzipped part of the electrodes. 
+
+Ci
+
+> 2
+
+(θi, l ip) = ϵ0ϵr w lie(θi, l ip)2t + Le − lie(θi, l ip)2t + Xh
+
+!
+
+(3) where ϵ0 is the vacuum permittivity, ϵr is the relative per-mittivity, w is the actuator width, t is the film thickness, 
+
+Le is the electrode’s length and lie is the length of the zipped electrodes part, where i = 1 , 2, 3. The zipped electrodes length is: 
+
+lie(θi, l ip) = Le − 1
+
+Xh
+
+AT − Lv lip
+
+4 sin (δi
+
+> 1
+
+(θi, l ip)) 
+
+!
+
+. (4) Where Xh is the distance between the unzipped electrodes. The constant area of the liquid inside the shell is AT .The dynamics of the system are: 
+
+
+
+˙θ
+
+˙lp
+
+˙p
+
+˙Q1
+
+˙Q2
+
+| {z } 
+
+> ˙x
+
+=
+
+
+
+0 0 I 0 00 0 d 0 0
+
+−I −d −b 0 00 0 0 −( ¯R0 + ¯R1) − ¯R0
+
+0 0 0 − ¯R0 −( ¯R0 + ¯R2)
+
+| {z }
+
+> J−R
+
+
+
+∇θ H
+
+∇lp H
+
+∇pH
+
+∇Q1 H
+
+∇Q2 H
+
+| {z }
+
+> ∇xH
+
++ 0 0 0 ¯R0ga (θ)⊤ ¯R0ga (θ)⊤⊤
+
+| {z }
+
+> g
+
+Uin 
+
+(5) y =   ¯R0ga (θ)⊤C−11 Q1 +   ¯R0ga (θ)⊤C−12 Q2
+
+| {z }
+
+> g⊤∇xH
+
+, (6) where x = [ θ⊤, l ⊤ 
+
+> p
+
+, p ⊤, Q ⊤ 
+
+> 1
+
+, Q ⊤ 
+
+> 2
+
+]⊤ includes all electrical and mechanical state variables. The coupling term d is defined as d = diag([ 2A1
+
+> s
+> l1
+> p
+> 2A2
+> s
+> l2
+> p
+> 2A3
+> s
+> l3
+> p
+
+]). The area inside the shell is computed by: 
+
+Ais = 14 lipLv sin (δi
+
+> 1
+
+(θi, l ip)) . (7) where 
+
+δi
+
+> 1
+
+(θi, l ip) = π + θi
+
+2 − sin −1
+
+ Lv
+
+lip
+
+sin 
+
+ π − θi
+
+2
+
+ 
+
+(8) The damping of the system is b = diag([ b1 b2 b3]). The admittances of the system are ¯R0, ¯R1 and ¯R2. They are defined as ¯R0 = diag([ 1
+
+> R10
+> 1
+> R20
+> 1
+> R30
+
+]), ¯R1 = diag([ 1
+
+> R11
+> 1
+> R21
+> 1
+> R31
+
+]) and ¯R2 = diag([ 1
+
+> R12
+> 1
+> R22
+> 1
+> R32
+
+]). The term ga is defined as 
+
+ga = diag([ ga 1 ga 2 ga 3]), where ga i = γ1 cos ( γ2θi). γ1
+
+and γ2 are parameters to be identified. The input voltage of the system is Uin = [ U 1in U 2in U 3in ]. The vertical elongation of the HASEL actuator is: 
+
+hp = [ 12 Lv sin θ1, 12 Lv sin θ2, 12 Lv sin θ3]⊤ (9) This detailed formulation serves as the foundation for embedding the actuator into the kinematic framework of our 3-DOF platform. 
+
+3.2 Forward Kinematics 
+
+To determine the spatial position of the end-effector ( i.e., 
+
+the tip of the antenna) based on the vertical elongation of three HASEL actuators, the Forward Kinematics Method (FKM) is employed. Assume that each actuator is located at fixed planar coordinates ( Xi, Y i), equally spaced at the vertices of an equilateral triangle. The vertical elongation of i-th actuator is denoted as hi(t). Accordingly, the position vector of the i-th platform corner point can be expressed as: 
+
+Pi(t) = 
+
+" Xi
+
+Yi
+
+hi(t)
+
+#
+
+. (10) The centroid of the platform is given by: 
+
+Cp(t) = 13
+
+ P1(t) + P2(t) + P3(t) (11) The orientation is obtained by defining the unit normal vector as: v1 = P2(t) − P1(t),
+
+v2 = P3(t) − P1(t),
+
+n(t) = v1 × v2
+
+∥v1 × v2∥
+
+(12) Assuming the antenna is rigid and perpendicular to the platform, the tip position is: 
+
+Tip (t) = Cp(t) + L n(t) (13) where L is the antenna length. The actuators are located at fixed base positions Pi, with vertical displacements 
+
+hi(t) defining the orientation of the platform. The centroid 
+
+Cp(t) and the unit normal vector n determine the position of the antenna tip Tip (t) according to (13) (left figure of Fig. 3). The same representation will be used in the derivation of IKM (see right figure of Fig. 3). 
+
+Fig. 3. Left: Forward kinematics; Right: Inverse kinematics 
+
+3.3 Inverse Kinematics (normal-aligned stick) 
+
+For the identification and control design purposes, it is nec-essary to compute the actuator heights hi at the three base locations ( Xi, Y i) from the tip position Tip = X, Y, Z ⊤,which is rigidly attached and remains orthogonal to the platform. Let Cb =   13
+
+P 
+
+> i
+
+Xi, 13
+
+P 
+
+> i
+
+Yi, 0 denote the centroid of the base in the horizontal plane. A direction vector from 
+
+Cb(t) to the tip position Tip (t) is defined as: 
+
+v =
+
+
+
+X − 13
+
+X
+
+> i
+
+Xi
+
+Y − 13
+
+X
+
+> i
+
+Yi
+
+Z
+
+ , n = v
+
+∥v∥ =
+
+" nX
+
+nY
+
+nZ
+
+#
+
+(14) which serves as an estimate of the platform normal, assumed to be aligned with the antenna (or stick) axis. Because the stick is orthogonal to the platform and has length L, the platform centroid is located along −n from the tip: 
+
+Cp = Tip −Ln = [ CpX CpY CpZ ]⊤ (15) The platform is modeled as a plane with normal n passing through Cp, i.e., 
+
+nX (X − CpX ) + nY (Y − CpY ) + nZ (Z − CpZ ) = 0 . (16) Evaluating this relation at the base anchor ( Xi, Y i) yields the platform height hi at each anchor: 
+
+hi = CpZ − nX (Xi − CpX ) + nY (Yi − CpY )
+
+nZ
+
+(17) To accurately capture the motion of the 3-DOF parallel platform, the kinematic model is enhanced by incorpo-rating the physical dynamics of the HASEL actuators, as described by (5). In particular, we use the output corresponding to the vertical displacement (9), which char-acterizes the effective prismatic motion at joint i.By mapping the actuator displacement hi(t) to the as-sociated platform corner, a direct relation is established between the control input (applied high voltage) and the geometric variables used in both the forward and inverse kinematics formulations. This approach allows the consis-tent description of the platform motion from the electrical input to the resulting tip position of the antenna. Furthermore, this integration highlights the modularity of the framework: the same PH actuator model can be embedded in multi-actuator systems without modification, thereby enabling predictive simulation and control of the complete 3-DOF platform. In addition, any nonlinear or energy-dependent effects captured by the PH formulation are naturally reflected in the platform kinematics, yielding a more physically consistent and realistic representation than that provided by purely geometric models. 4. IDENTIFICATION AND VALIDATION 
+
+4.1 Experimental Excitation and Data Acquisition 
+
+To identify the parameters of each actuator, the three HASEL units were driven by sinusoidal high-voltage inputs of the form ui(t) = U0 sin( ωt + φi), where the excitation frequency was set to ω = 3 π rad/s. The input signals were phase-shifted by 120 ◦ relative to each other, generating an approximately circular trajectory of the platform tip. The tip displacement was recorded using a high-speed 2D laser displacement sensor (Keyence LS-9000) with the sampling time of 0 .1 ms. The acquired measurements were subsequently processed using the inverse kinematic model (Section 3.3) to extract the effective vertical displacements 
+
+hi(t) corresponding to each actuator. The input signal generation and the data acquisition are connected to the computer via a dSPACE card. The overall experimental setup is shown in Fig. 4. 
+
+Fig. 4. Overall experimental setup 
+
+4.2 Nonlinear Grey-Box Identification 
+
+The dynamics of each HASEL actuator were repre-sented using a nonlinear ordinary differential equation (ODE) model, as described by (5). The adopted grey-box model included nine parameters: (i) electrical parameters (R0, R 1, R 2) representing equivalent resistances and C1
+
+denoting the effective capacitance; (ii) mechanical param-eters K, Kb and b denoting the linear stiffness, the tor-sional stiffness and the damping coefficient, respectively; (iii) input gain coefficients γ1, γ 2. This grouping preserves the physical interpretability of the model while allowing parameter estimation from experimental data. Parameter identification was performed in MATLAB using the System Identification Toolbox . A nonlinear grey-box (NLGB) strategy was implemented via the nlgreyest 
+
+routine, employing the Levenberg–Marquardt (LM) opti-mization algorithm. The solver ode15s was used to handle the stiffness of the actuator dynamics, with absolute and relative tolerances set to 10 −3.Figures 5 (a)–(c) compare the experimental vertical dis-placements hi(t) of each actuator ( i = 1 , 2, 3) with the sim-ulated response of the identified PH-based grey-box model. The experimental displacement is found by measuring the position of the tip and using the IKM. The corresponding fit percentages, expressed as the normalized root-mean-square error (NRMSE), are reported in each subplot. Figure 5 (d) shows the reconstructed tip trajectory in the XY plane, obtained by applying the forward kinematic model (Section 3.2) to the simulated actuator outputs; the associated 2D fit percentage is also indicated. These results confirm that the identified models accurately capture both the actuator-level dynamics and the coordinated motion of the complete platform. During identification at ω = 3π rad/s, the models achieved fit percentages (NRMSE) of 81.15%, 70.06%, and 84.54% for Actuators 1– 3, respectively, demonstrating the high accuracy of the grey-box parameter identification. The final identified values of the electrical, mechanical, and coupling parameters are summarized in Table 1, which reports the effective capacitances, stiffness and damping coefficients, and input gains associated with each actuator. 0 1 2 3 4 5 6 7 8 9                          
+
+> 2.5 33.5 44.5
+> 10 -4 a) Actuator 1 (FIT = 81.15%)
+> 0123456789
+> 02410 -4 b) Actuator 2 (FIT = 70.06%)
+> 0123456789
+> 1234
+> 10 -4 c) Actuator 3 (FIT = 84.54%) -1 -0.5 00.5 1
+> 10 -3
+> -1 -0.5 00.5 1
+> 10 -3
+> d) 2D Trajectory Fit = 76.71 %
+
+Fig. 5. Parameter identification results. (a–c) Experimen-tal vs. simulated vertical displacements hi(t) for each actuator. (d) Reconstructed tip trajectory obtained from the identified models via FKM. Table 1. Model parameters of the three HASEL actuators. 
+
+Parameter Act. 1 Act. 2 Act. 3 
+
+K [N/m] 0.250 0.200 0.250 
+
+Kb [Nm/rad] 0.305 0.300 0.300 
+
+b [kg ·s] 0.129 0.010 0.015 
+
+R0 [Ω] 600 600 600 
+
+R1 [Ω] 99.98 112.7 100 
+
+R2 [Ω] 5.385 ×10 4 5.60 ×10 4 5.5 ×10 4
+
+C1 [F] 2.15 ×10 −10 2.00 ×10 −10 2.20 ×10 −10 
+
+γ1 [–] 118.4 131.9 118.4 
+
+γ2 [–] 58.0 30.5 25.0 
+
+Common parameters for all actuators 
+
+Lp [m] 0.014 Lv [m] 0.012 
+
+Le [m] 0.020 Xh [m] 0.002 
+
+m [kg] 0.001133 ϵr [F/m] 2.2 
+
+ϵ0 [F/m] 8.854 × 10 −12 w [m] 0.025 
+
+t [m] 18 × 10 −6 g [m/s 2] 9.8 
+
+4.3 Model Validation 
+
+To further evaluate the predictive capability of the identi-fied models, a validation experiment was performed using an independent excitation frequency of ω = 11 rad/s, dis-tinct from the 3 π rad/s dataset used for estimation. Each actuator was driven by sinusoidal voltages phase-shifted by 120 ◦, and the resulting displacements were recorded with the 2D laser sensor. The simulated responses of the PH-based grey-box models showed good agreement in both amplitude and phase. The NRMSE fits achieved during validation were 71.80%, 61.04%, and 79.33% for Actuators 1–3, respectively. The reconstructed tip trajectory in the XY plane, obtained via the forward kinematic model (Section 3.2), also followed the experimental motion with a 2D fit of 74.96%, as shown in Fig. 6. These results demonstrate that the identified parameters generalize effectively the training conditions, confirming that the nonlinear PH framework combined with grey-box identification captures the essential dynam-ics of the HASEL actuators and supports system-level modeling of the 3PS platform. 5. CONCLUSION In this paper we presented the design, modeling, and experimental validation of a three-degree-of-freedom soft parallel robot actuated by HASEL devices. The robot is based on a 3PS topology, where each limb combines one prismatic joint actuated by a HASEL actuator and one passive spherical joint provided by the flexible links. The PH framework was employed to describe the mul-tiphysics dynamics of the actuators, and integrated into the kinematic formulation of the parallel mechanism. A nonlinear grey-box identification approach was used to estimate the physical parameters of the model. The iden-tified PH models reproduced the actuator dynamics with high accuracy, achieving NRMSE fits above 70% during both identification and validation. The reconstructed plat-form trajectory also matched experimental measurements, confirming the predictive capability of the proposed model. The perspectives of this work are to implement closed-loop control strategies based on the PH formulation, extend the modeling to capture multi-actuator coupling effects, and 0 1 2 3 4 5 6 7 8 9                         
+
+> 2.5 33.5 44.5
+> 10 -4 a) Actuator 1 (FIT = 71.80%)
+> 0123456789
+> 0123
+> 10 -4 b) Actuator 2 (FIT = 61.04%)
+> 0123456789
+> Time [s]
+> 234
+> 10 -4 c) Actuator 3 (FIT = 79.33%) -1 -0.5 00.5 1
+> 10 -3
+> -1 -0.5 00.5 1
+> 10 -3
+> d) 2D Trajectory Fit = 74.96 %
+
+Fig. 6. Validation results under ω = 11 rad/s. (a–c) Ex-perimental vs. simulated vertical displacements hi(t); (d) Reconstructed tip trajectory obtained via FKM. apply the framework to biomedical and microscale robotic systems. 
+
+REFERENCES Acome, E., Mitchell, S., Morrissey, T., Emmett, M., Benjamin, C., King, M., Radakovitz, M., and Keplinger, C. (2018). Hydrauli-cally amplified self-healing electrostatic actuators with muscle-like performance. Science , 359, 61–65. Cisneros, N., Wu, Y., Rabenorosoa, K., and Le Gorrec, Y. (2025). Dynamic modeling of a curling HASEL actuator using the port Hamiltonian framework with experimental validation. Mechatron-ics , 109, 103342. doi:10.1016/j.mechatronics.2025.103342. Cisneros, N. (2025). PhD Thesis: Modeling and control of HASEL actuators for micro-robotics applications . Ph.D. thesis, ´Ecole Nationale Sup´ erieure de M´ ecanique et des Microtechniques, Be-san¸ con, France. Defended on January 29, 2025. Cisneros, N., Wu, Y., Rabenorosoa, K., and Le Gorrec, Y. (2024). Port-Hamiltonian modeling and control of a curling HASEL actu-ator. In IFAC/IEEE CSS Workshop on Control of Systems Gov-erned by Partial Differential Equations CPDE and XI Workshop Control of Distributed Parameter Systems , volume 58, 143–148. Elsevier / IFAC PapersOnLine. doi:10.1016/j.ifacol.2024.08.271. Ehrlich, J., L¨ oscke, P., Ziegler, J., Lacroix, M., and B¨ ose, H. (2025). High performance HASEL actuators as self-healing trigger devices for biomedical diagnostics. Proceedings of SPIE , 13431, 1343109. doi:10.1117/12.3050100. El-Atab, N., Mishra, R.B., Al-Modaf, F., Joharji, L., Alsharif, A.A., Alamoudi, H., Diaz, M., Qaiser, N., and Hussain, M.M. (2020). Soft actuators for soft robotic applications: A review. Advanced Intelligent Systems , 2(10), 2000128. Hainsworth, T., Schmidt, I., Sundaram, V., Whiting, G.L., Keplinger, C., and MacCurdy, R. (2022). Simulating electro-hydraulic soft actuator assemblies via reduced order modeling. In Proceedings of the IEEE International Conference on Soft Robotics (RoboSoft) , 21–28. IEEE, Edinburgh, UK. Kim, S., Laschi, C., and Trimmer, B. (2013). Soft robotics: A bioinspired evolution in robotics. Trends in Biotechnology , 31, 287–294. Lyko, B., Katzschmann, R.K., M¨ uller, B., et al. (2024). In vitro testing of an artificial muscle for the treatment of incontinence. In Electroactive Polymer Actuators and Devices (EAPAD) XXVI ,volume 12945, 34–43. SPIE. Mitchell, S.K., Wang, X., Acome, E., Martin, T., Ly, K., Kellaris, N., Venkata, V.G., and Keplinger, C. (2019). An easy-to-implement toolkit to create versatile and high-performance HASEL actuators for untethered soft robots. Advanced Science , 6, 1900178. Ortega, R., van der Schaft, A., Maschke, B., and Escobar, G. (2001). Interconnection and damping assignment passivity-based control of port-controlled Hamiltonian systems. Automatica , 38(4), 585– 596. doi:10.1016/S0005-1098(01)00278-3. Perera, O., Liyanapathirana, R., Gargiulo, G., and Gunawardana, U. (2024). A review of soft robotic actuators and their applications in biomedical engineering. Frontiers in Robotics and AI , 11, 524. doi:10.3389/frobt.2024.000524. Rothemund, P., Kellaris, N., Mitchell, S., Acome, E., and Keplinger, C. (2020). HASEL artificial muscles for a new generation of life-like robots—recent progress and future opportunities. Advanced Materials , 33(19), 2003375. doi:10.1002/adma.202003375. van der Schaft, A. and Maschke, B. (2002). Hamiltonian formu-lation of distributed-parameter systems with boundary energy flow. Journal of Geometry and Physics , 42(1-2), 166–194. doi: 10.1016/S0393-0440(01)00077-3. Volchko, A., Mitchell, S., Morrissey, T., and Humbert, J. (2024). Model-based data-driven system identification and controller syn-thesis framework for precise control of siso and miso HASEL-powered robotic systems. Frontiers in Robotics and AI , 11. doi: 10.3389/frobt.2024.1333837. Xiong, Q., Zhou, X., Li, D., and Yeow, R. (2024). Ac-driven series elastic electrohydraulic actuator for stable and smooth displacement output. arXiv preprint .

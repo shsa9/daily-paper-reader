@@ -1,0 +1,65 @@
+{
+  "label": "2026-04-29",
+  "date": "2026-04-29",
+  "generated_at": "2026-04-29T20:55:53",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202604/29/2604.23696v1-real-time-non-contact-force-compensation-for-wrist-mounted-forcetorque-sensors-in-haptic-enabled-robotic-surgery-training",
+      "section": "quick",
+      "title_en": "Real-Time Non-Contact Force Compensation for Wrist-Mounted Force/Torque Sensors in Haptic-Enabled Robotic Surgery Training",
+      "authors": "Walid Shaker, Mustafa Suphi Erden",
+      "date": "2026-04-26",
+      "pdf": "https://arxiv.org/pdf/2604.23696v1",
+      "score": "7.0",
+      "evidence": "用于受控力施加的实时非接触力补偿",
+      "tldr": "针对机器人辅助手术培训中触觉反馈缺失及商用系统昂贵的问题，本研究在低成本平台RoboScope上集成了腕部力/力矩传感器。为解决腕部传感器受重力、偏置等非接触力干扰的问题，提出了一种基于递推最小二乘法（RLS）的实时补偿方法。该方法无需预先采集数据集或频繁校准，显著提升了力感知精度，为手术培训提供了可靠的触觉反馈。",
+      "tags": "query:em-force",
+      "abstract_en": "Haptic feedback has been a long-missed feature in robotic-assisted surgery, one that would allow surgeons to perceive tissue properties and apply controlled forces during delicate procedures. Although commercial robotic systems have begun to integrate haptic technologies, their high costs limit accessibility for training and research purposes. To address this gap, we extend our previously developed low-cost robotic surgery training setup, RoboScope, by incorporating a wrist-mounted force/torque (F/T) sensor for haptic feedback training. Wrist-mounted sensing avoids many challenges associated with tip-mounted sensors but introduces additional non-contact forces, such as gravity, sensor bias, installation offsets, and associated torques, which compromise measurement accuracy. In this paper, we propose a robust real-time compensation method based on recursive least squares (RLS). This method eliminates the need for dataset collection and frequent recalibration while adapting to changing operating conditions. Experimental validation demonstrates that the proposed approach achieves over 95% error reduction in non-contact force compensation and more than 91% in non-contact torque compensation, significantly outperforming existing methods. These results highlight the potential of our approach for providing reliable haptic feedback in robotic surgery training and research.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/29/2604.25261v1-numerical-approximation-of-a-transient-thermo-electromagnetic-problem-in-axisymmetric-geometries",
+      "section": "quick",
+      "title_en": "Numerical approximation of a transient thermo-electromagnetic problem in axisymmetric geometries",
+      "authors": "D. Gómez, B. López-Rodríguez, P. Salgado, P. Venegas",
+      "date": "2026-04-28",
+      "pdf": "https://arxiv.org/pdf/2604.25261v1",
+      "score": "7.0",
+      "evidence": "瞬态热-电磁问题建模及涡流效应分析",
+      "tldr": "利用数值逼近方法分析了轴对称几何结构中的瞬态热-电磁问题。",
+      "tags": "query:em-force",
+      "abstract_en": "This paper analyzes a transient thermo-electromagnetic problem arising in the modeling of induction heating processes. Unlike previous studies that focused on steady-state scenarios, we consider a time-dependent thermal problem coupled with a nonlinear time-harmonic electromagnetic problem through temperature-dependent electrical conductivity and Joule effect. Exploiting cylindrical symmetry and assuming a purely azimuthal current density, we formulate the problem on a two-dimensional meridional section. We introduce a variational formulation in appropriately weighted Sobolev spaces and prove existence of a solution by a fixed-point argument. Under reasonable assumptions on the physical parameters, we also prove uniqueness. A finite element discretization combined with implicit time stepping is used to compute the numerical solution. To evaluate the accuracy of the approximation, a priori error estimates are derived and validated by numerical experiments. Finally, numerical simulations illustrate the effectiveness of the proposed approach in an industrially relevant configuration.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/29/2604.25007v1-a-constraint-lifting-framework-for-safe-and-stable-nonlinear-control",
+      "section": "quick",
+      "title_en": "A Constraint-Lifting Framework for Safe and Stable Nonlinear Control",
+      "authors": "Jhon Manuel Portella Delgado, Ankit Goel",
+      "date": "2026-04-27",
+      "pdf": "https://arxiv.org/pdf/2604.25007v1",
+      "score": "6.0",
+      "evidence": "安全稳定的非线性控制框架",
+      "tldr": "针对现有安全控制方法（如CBF和MPC）依赖实时优化且难以保证显式控制律的问题，本文提出了一种约束提升（Constraint-Lifting）框架。该方法利用基于S型函数的微分同胚映射将受限状态空间转换为无界空间，并在新坐标下合成控制器，从而为非线性系统提供显式的安全稳定控制律。研究引入了S型积分函数以优化边界数值表现，并通过理论证明和姿态控制实验验证了其在保证系统渐近稳定与集合前向不变性方面的优越性。",
+      "tags": "query:em-force",
+      "abstract_en": "This paper presents a constraint-lifting control framework for designing stabilizing controllers that guarantee the forward invariance of a prescribed safe set. State-of-the-art safety-enforcing methods, such as control barrier functions (CBFs) and model predictive control (MPC), typically rely on solving constrained optimization problems in real time and therefore may not yield an explicit control law that guarantees constraint satisfaction under all conditions. In contrast, the proposed approach develops an explicit control law for a class of nonlinear systems that ensures both asymptotic stabilization of a desired equilibrium and safety preservation of a user-defined set. The central idea is to lift the constrained state space into an unbounded domain using a sigmoid-based diffeomorphic mapping, synthesize the controller in the transformed coordinates, and then map it back to the original coordinates. To address numerical conditioning near constraint boundaries, a special class of Lyapunov candidate functions, called sigmoid integral functions, is introduced. A rigorous stability analysis, based on the Barbashi-Krasovskii-LaSalle invariance principle, establishes asymptotic convergence and safety guarantees. The efficacy of the proposed controller is demonstrated through a safe attitude-control problem.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/29/2604.25337v1-design-and-modeling-of-a-hasel-actuator-based-micro-parallel-robot",
+      "section": "quick",
+      "title_en": "Design and Modeling of a HASEL Actuator-Based Micro Parallel Robot",
+      "authors": "Agustin Feregrino, Nelson Cisneros, Alexis Lefèvre, Yongxin Wu, Yann Le Gorrec",
+      "date": "2026-04-28",
+      "pdf": "https://arxiv.org/pdf/2604.25337v1",
+      "score": "6.0",
+      "evidence": "静电执行器的动态建模与控制",
+      "tldr": "为由静电HASEL驱动器驱动的微型机器人开发了端口哈密顿模型。",
+      "tags": "query:em-force",
+      "abstract_en": "This paper presents the mechatronic design, dynamic modeling, and experimental validation of a three-degree-of-freedom (3-DOF) micro parallel robot featuring a prismatic-spherical (3PS) topology actuated by three Hydraulically Amplified Self-Healing Electrostatic (HASEL) actuators. Each soft actuator provides the prismatic motion of an individual limb, while a compliant interface to the moving platform functions as a spherical joint. A prototype incorporating three base-integrated HASEL actuators was fabricated, and the platform motion was measured using an XY laser-tracking system. For control purposes, a port-Hamiltonian (PH) model, combined with the mechanism's forward kinematics (FKM), is developed to capture the robot's nonlinear dynamic behavior, whereas the inverse kinematics (IKM) is employed to estimate the required actuator displacements. Model parameters were identified using nonlinear grey-box (NLGB) estimation, yielding a compact and control-oriented representation suitable for subsequent controller design.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
