@@ -6,35 +6,32 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-29
-- 运行时间：2026-04-29 20:55:44 UTC
+- 最新运行日期：2026-04-30
+- 运行时间：2026-04-30 20:12:37 UTC
 - 运行状态：成功
-- 本次总论文数：4
+- 本次总论文数：3
 - 精读区：0
-- 速读区：4
+- 速读区：3
 
 ### 今日简报（AI）
-- 今日共生成 4 篇推荐（精读 0 篇，速读 4 篇）
-- 速读：《Real-Time Non-Contact Force Compensation for Wrist-Mounted Force/Torque Sensors in Haptic-Enabled Robotic Surgery Training》（7.0/10）, 《Numerical approximation of a transient thermo-electromagnetic problem in axisymmetric geometries》（7.0/10）, 《A Constraint-Lifting Framework for Safe and Stable Nonlinear Control》（6.0/10）
-- 这些结果覆盖了当下较热的方向，建议先看精读区论文的关键问题与方法。
-- 详情：[/202604/29/README](/202604/29/README)
+今日聚焦非线性系统控制，探索数据驱动与自适应算法在机器人领域的深度融合。
+重点推荐利用线性 Koopman 动力学加速强化学习，以及无模型动态模式自适应控制的合成新方法。
+建议关注如何通过多层屏障自适应与离散时间超螺旋控制提升复杂环境下的系统鲁棒性。
+- 详情：[/202604/30/README](/202604/30/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Real-Time Non-Contact Force Compensation for Wrist-Mounted Force/Torque Sensors in Haptic-Enabled Robotic Surgery Training](/202604/29/2604.23696v1-real-time-non-contact-force-compensation-for-wrist-mounted-forcetorque-sensors-in-haptic-enabled-robotic-surgery-training)  
-   标签：评分：7.0/10、query:em-force
-   evidence：用于受控力施加的实时非接触力补偿
-2. [Numerical approximation of a transient thermo-electromagnetic problem in axisymmetric geometries](/202604/29/2604.25261v1-numerical-approximation-of-a-transient-thermo-electromagnetic-problem-in-axisymmetric-geometries)  
-   标签：评分：7.0/10、query:em-force
-   evidence：瞬态热-电磁问题建模及涡流效应分析
-3. [A Constraint-Lifting Framework for Safe and Stable Nonlinear Control](/202604/29/2604.25007v1-a-constraint-lifting-framework-for-safe-and-stable-nonlinear-control)  
+1. [Efficient Reinforcement Learning using Linear Koopman Dynamics for Nonlinear Robotic Systems](/202604/30/2604.19980v1-efficient-reinforcement-learning-using-linear-koopman-dynamics-for-nonlinear-robotic-systems)  
    标签：评分：6.0/10、query:em-force
-   evidence：安全稳定的非线性控制框架
-4. [Design and Modeling of a HASEL Actuator-Based Micro Parallel Robot](/202604/29/2604.25337v1-design-and-modeling-of-a-hasel-actuator-based-micro-parallel-robot)  
+   evidence：利用Koopman动力学对非线性系统进行闭环控制
+2. [Multi-layer barrier adaptation of the discrete-time super-twisting controller](/202604/30/2604.25527v1-multi-layer-barrier-adaptation-of-the-discrete-time-super-twisting-controller)  
    标签：评分：6.0/10、query:em-force
-   evidence：静电执行器的动态建模与控制
+   evidence：离散时间超螺旋滑模控制增强鲁棒性
+3. [Model-Free Dynamic Mode Adaptive Control for Data-Driven Control Synthesis](/202604/30/2604.26682v1-model-free-dynamic-mode-adaptive-control-for-data-driven-control-synthesis)  
+   标签：评分：6.0/10、query:em-force
+   evidence：未知系统的无模型数据驱动控制综合
 
 
 <div class="dpr-home-promo-card">

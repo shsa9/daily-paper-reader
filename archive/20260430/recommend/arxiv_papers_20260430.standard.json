@@ -1,0 +1,128 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-04-30T20:12:22.747350+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2604.19980v1",
+      "title": "Efficient Reinforcement Learning using Linear Koopman Dynamics for Nonlinear Robotic Systems",
+      "abstract": "This paper presents a model-based reinforcement learning (RL) framework for optimal closed-loop control of nonlinear robotic systems. The proposed approach learns linear lifted dynamics through Koopman operator theory and integrates the resulting model into an actor-critic architecture for policy optimization, where the policy represents a parameterized closed-loop controller. To reduce computational cost and mitigate model rollout errors, policy gradients are estimated using one-step predictions of the learned dynamics rather than multi-step propagation. This leads to an online mini-batch policy gradient framework that enables policy improvement from streamed interaction data. The proposed framework is evaluated on several simulated nonlinear control benchmarks and two real-world hardware platforms, including a Kinova Gen3 robotic arm and a Unitree Go1 quadruped. Experimental results demonstrate improved sample efficiency over model-free RL baselines, superior control performance relative to model-based RL baselines, and control performance comparable to classical model-based methods that rely on exact system dynamics.",
+      "authors": [
+        "Wenjian Hao",
+        "Yuxuan Fang",
+        "Zehui Lu",
+        "Shaoshuai Mou"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "eess.SY"
+      ],
+      "published": "2026-04-21T20:40:22+00:00",
+      "link": "https://arxiv.org/pdf/2604.19980v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "closed-loop control of nonlinear systems using Koopman dynamics",
+      "llm_evidence_cn": "利用Koopman动力学对非线性系统进行闭环控制",
+      "llm_evidence": "利用Koopman动力学对非线性系统进行闭环控制",
+      "canonical_evidence": "利用Koopman动力学对非线性系统进行闭环控制",
+      "llm_tldr_en": "Proposes a reinforcement learning framework for closed-loop control of nonlinear robotic systems.",
+      "llm_tldr_cn": "提出了一种用于非线性机器人系统闭环控制的强化学习框架。",
+      "llm_tldr": "提出了一种用于非线性机器人系统闭环控制的强化学习框架。",
+      "llm_tags": [
+        "query:em-force:composite"
+      ],
+      "matched_query_tag": "query:em-force:composite",
+      "matched_query_text": "Papers central to 查找非接触式电磁激振器的力控制方法，特别是精密控制策略, especially work that connects or combines: electromagnetic exciter force control; ddy current magnetic bearing modeling; magnetic bearing flux feedback; non-contact electromagnetic shaker force control; precision force control strategies for electromagnetic actuators; closed-loop force control for electromagnetic shakers; flux feedback linearization zero bias magnetic bearing; non contact electromagnetic exciter precision force control; eddy current effects in electromagnetic actuators dynamic modeling; flux feedback control for magnetic bearing force precision.",
+      "matched_requirement_id": "req-composite-em-force",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.25527v1",
+      "title": "Multi-layer barrier adaptation of the discrete-time super-twisting controller",
+      "abstract": "In digital sliding mode control implementations, discretization-induced chattering and inter-sample blindness can severely degrade the closed-loop performance, especially in case of fast perturbations. This paper addresses these challenges for a discrete-time implementation of the super-twisting sliding mode controller. Building upon recent results on barrier-function-modulated super-twisting algorithms, a nested architecture employing multiple barriers is discretized using an eigenvalue-based exact matching approach. The resulting discrete-time controller preserves the adaptive and robustness properties established in continuous time, while ensuring consistent stability behavior at the sampling level. The proposed framework is validated through numerical simulations. The results highlight the effectiveness of multi-layer barrier adaptation for discrete-time sliding mode control applications.",
+      "authors": [
+        "Antoine Thibault Vié",
+        "Leonid Fridman",
+        "Roberto Galeazzi",
+        "Dimitrios Papageorgiou"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-04-28T11:52:29+00:00",
+      "link": "https://arxiv.org/pdf/2604.25527v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "discrete-time super-twisting sliding mode control for robustness",
+      "llm_evidence_cn": "离散时间超螺旋滑模控制增强鲁棒性",
+      "llm_evidence": "离散时间超螺旋滑模控制增强鲁棒性",
+      "canonical_evidence": "离散时间超螺旋滑模控制增强鲁棒性",
+      "llm_tldr_en": "Proposes a discrete-time super-twisting controller to reduce chattering and improve performance in digital systems.",
+      "llm_tldr_cn": "提出一种离散时间超螺旋控制器，旨在减少数字化系统中的抖振并提高性能。",
+      "llm_tldr": "提出一种离散时间超螺旋控制器，旨在减少数字化系统中的抖振并提高性能。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "closed-loop force control for electromagnetic shakers",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2604.26682v1",
+      "title": "Model-Free Dynamic Mode Adaptive Control for Data-Driven Control Synthesis",
+      "abstract": "This paper presents a model-free, data-driven control synthesis method called dynamic mode adaptive control (DMAC) for systems whose mathematical models are unavailable or unsuitable for classical control design. The proposed approach combines data-driven dynamics approximation with adaptive control synthesis to enable online controller design using measured system data. DMAC comprises two main components: a dynamics-approximation module and a controller-synthesis module. The dynamics approximation module estimates a local linear representation of the system dynamics directly from measurements using a matrix recursive least-squares algorithm with a forgetting factor. The estimated dynamics are then used to compute an online stabilizing controller with full-state feedback and integral action. Theoretical analysis establishes convergence properties of the recursive dynamics approximation and boundedness of the closed-loop system under the DMAC controller. The performance of the proposed method is demonstrated through numerical examples involving representative dynamical systems, including an unstable linear system, the Van der Pol oscillator, and the Burgers' equation. Sensitivity studies further demonstrate the robustness of DMAC with respect to both algorithm hyperparameters and variations in system parameters.",
+      "authors": [
+        "Parham Oveissi",
+        "Ankit Goel"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY",
+        "math.OC"
+      ],
+      "published": "2026-04-29T13:50:22+00:00",
+      "link": "https://arxiv.org/pdf/2604.26682v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "model-free data-driven control synthesis for unknown systems",
+      "llm_evidence_cn": "未知系统的无模型数据驱动控制综合",
+      "llm_evidence": "未知系统的无模型数据驱动控制综合",
+      "canonical_evidence": "未知系统的无模型数据驱动控制综合",
+      "llm_tldr_en": "Proposes a data-driven adaptive control method for systems with unavailable mathematical models.",
+      "llm_tldr_cn": "为数学模型不可用的系统提出了一种数据驱动的自适应控制方法。",
+      "llm_tldr": "为数学模型不可用的系统提出了一种数据驱动的自适应控制方法。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

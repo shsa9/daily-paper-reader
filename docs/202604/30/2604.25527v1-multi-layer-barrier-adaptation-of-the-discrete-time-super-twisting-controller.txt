@@ -1,0 +1,538 @@
+Title: Multi-layer barrier adaptation of the discrete-time super-twisting controller
+
+URL Source: https://arxiv.org/pdf/2604.25527v1
+
+Published Time: Wed, 29 Apr 2026 00:53:23 GMT
+
+Number of Pages: 6
+
+Markdown Content:
+# Multi-layer barrier adaptation of the discrete-time super-twisting controller 
+
+Antoine Thibault Vi´ e, Leonid Fridman, Roberto Galeazzi and Dimitrios Papageorgiou 
+
+Abstract — In digital sliding mode control implementations, discretization-induced chattering and inter-sample “blindness” can severely degrade the closed-loop performance, especially in case of fast perturbations. This paper addresses these challenges for a discrete-time implementation of the super-twisting sliding mode controller. Building upon recent results on barrier-function-modulated super-twisting algorithms, a nested architecture employing multiple barriers is discretized using an eigenvalue-based exact matching approach. The resulting discrete-time controller preserves the adaptive and robustness properties established in continuous time, while ensuring con-sistent stability behavior at the sampling level. The proposed framework is validated through numerical simulations. The results highlight the effectiveness of multi-layer barrier adap-tation for discrete-time sliding mode control applications. 
+
+I. I NTRODUCTION 
+
+Sliding mode control (SMC) has long been recognized as a powerful methodology for the robust control of systems subject to matched uncertainties and external disturbances [1], [2]. Among several higher-order sliding mode strategies, the super-twisting algorithm (STA) has attracted particular attention due to its ability to enforce finite-time convergence of the sliding variable without requiring direct measurement of its derivative [3], as well as for featuring reduced chatter-ing compared to first-order sliding modes. These properties have rendered the STA especially attractive for practical applications involving noisy measurements and uncertain dynamics. Recent developments have focused on enhancing the adaptability of the super-twisting controller by introducing state-dependent gain modulation mechanisms [4], [5], [6], [7]. In particular, the incorporation of barrier functions into SMC architectures has been shown to guarantee Uniform Ultimate Boundedness (UUB) of the closed-loop trajectories [8] while enabling performance recovery in the presence of unknown but bounded perturbations [9]. Such barrier-based formulations exploit the sliding variable to dynamically ad-just control gains, thereby avoiding excessive conservatism. However, in digital implementations, the switching fre-quency is inherently constrained by the nonzero sampling period. As a consequence, the so-called discretization-induced chattering phenomenon arises, characterized by self-sustained oscillations in the system output and state variables, which ultimately degrade closed-loop control performance.                           
+
+> A. T. Vi´ e, R. Galeazzi and D. Papageorgiou are with the De-partment of Electrical and Photonics Engineering, Technical Uni-versity of Denmark, Elektrovej 326, Kgs Lyngby, 2800, Denmark
+
+anthv,roga,dimpa@dtu.dk  
+
+> L. Fridman is with Facultad de Ingenieria, Universidad Nacional Au-tonoma de Mexico, Mexico City, 04510, Mexico
+
+lfridman@unam.mx 
+
+[10], [11], [12], [13]. Moreover, when implemented in dis-crete time, super-twisting controllers suffer from an inher-ent inter-sample blindness. This may significantly degrade closed-loop performance and compromise robustness if not properly addressed. It has recently been shown that nested architectures based on multiple barrier functions can alleviate this issue by introducing layered gain adaptation mechanisms that respond differently across regions of the state space [14]. Motivated by these observations, the present work focuses on the discrete-time realization of a multi-layer barrier func-tion–based adaptive super-twisting controller. An eigenvalue-based discretization technique [11] is employed to construct a discrete-time equivalent of the continuous-time closed-loop dynamics while preserving stability properties. Unlike conventional discretization approaches, the method explicitly matches the continuous-time eigenstructure, thereby ensuring consistency between continuous and discrete implementa-tions. The effectiveness of the proposed control strategy is demonstrated through simulations. The results confirm that the multi-layer barrier adaptation significantly improves tracking accuracy and robustness under uncertainty and inter-sample blindedness. The contributions of the present work can be summarized as follows:  
+
+> •
+
+Discrete-time formulation of multi-layer barrier STA  
+
+> •
+
+Eigenvalue-based discretization preserving adaptive be-havior.  
+
+> •
+
+Sensitivity analysis of the proposed scheme according to its key tuning parameters and the sampling time The remainder of the paper is structured as follows: Section II presents the problem at hand along with nota-tion conventions. Section III details the discrete-time multi-layered algorithm. A simulation-based sensitivity analysis with respect to the parameters of the algorithm is provided in Section IV. Finally, conclusions are drawn in Section V, where future works is also discussed. II. P RELIMINARIES 
+
+The system under consideration is described by a per-turbed integrator of the form ˙s = u + d(t), (1) where s, u ∈ R and d : R+ → R.. Any system of relative degree ρ can be described by (1) based on an appropriate selection of a sliding-variable (corresponding to an (ρ − 1)-dimensional sliding manifold) and equivalent control [1]. 
+
+> arXiv:2604.25527v1 [eess.SY] 28 Apr 2026
+
+Within the non-homogeneous super-twisting sliding mode control (STSMC) framework, and using the compact notation 
+
+⌊s⌉a ≜ |s|asgn (s), the control law is defined as 
+
+u = −k1⌊s⌉α + v, (2a) ˙v = −k2⌊s⌉0, (2b) where k1, k2 ∈ R+and α ∈ R∗+.The resulting closed-loop dynamics, interpreted in the Filippov sense, are expressed as ˙s = −k1⌊s⌉α + φ , (3a) ˙φ = −k2⌊s⌉0 + δ (t), (3b) where δ (t) ≜ ˙d(t). The perturbation δ (t) is assumed to be bounded, such that there exists a constant ∆ > 0 satisfying 
+
+|δ (t)| ≤ ∆ for all t ∈ R+, while ∆ is not known a priori. It has been shown in [15] that the incorporation of barrier functions into sliding mode control architectures ensures UUB of the closed-loop trajectories. Moreover, it has been shown [14] that a semi-definite barrier function of the form: 
+
+k1,α (s) = |s|
+
+(ε − | s|)α+1 , (4a) 
+
+k2,α (s) = k1,α (s)2, (4b) guarantees UUB of the closed-loop solutions, where 
+
+k1,α (s), k2,α (s) are the gains of the system (3). For digital implementation, the continuous-time dynam-ics (3) are discretized using a constant sampling period 
+
+Ts ∈ R+, applying a zero-order hold (ZOH) both on the control input and the sliding variable, and finally, by con-sidering a piecewise-constant approximation of δ (t) over each sampling interval. Hence, a first-order forward Euler discretization of (3) yields the discrete-time system 
+
+sk+1 = sk + Ts(−k1,α (sk)⌊sk⌉α + φk), (5a) 
+
+φk+1 = φk − Tsk2,α (sk)⌊sk⌉0 + Tsδ (kT s), (5b) which coincides with the discrete-time super-twisting ap-proximation proposed in [11]. III. M ULTI -LAYERED BARRIER FUNCTION ADAPTATION IN DISCRETE TIME 
+
+It has been demonstrated in [14] that, due to the fact that the controller operates without access to intra-sample information, a nested architecture incorporating multiple barrier functions yields improved closed-loop performance. In this context, the objective of the present section is to reuse the adaptive gain modulation strategy proposed in [14], which is recalled below for completeness: 
+
+A0 :
+
+
+
+˙k1,α,d = k1,α,d /| ˙s|
+
+˙k2,α,d = k2,α,d
+
+2|s|1−α
+
+k1,α = k1,α,d
+
+k2,α = k2,α,d
+
+, Ai :
+
+
+
+˙k1,α,d = −k1,α,d
+
+˙k2,α,d = −k2,α,d
+
+k1,α = |s|
+
+(εi − | s|)α+1
+
+k2,α = k21,α
+
+,
+
+(6) ϵ1
+
+ϵ2
+
+ϵ3
+
+Adaptation 
+
+ϵ1
+
+Adaptation     
+
+> Fig. 1. Conceptual illustration of three-layer barrier architecture (left) with step disturbances compared to single-layer barrier function (right). In the latter case the system solely relies on dynamic adaptation when |s|>ε1.
+
+A one-step memory variable a is introduced to retain the previously selected scheme. The resulting nested switching algorithm can be expressed as follows: 
+
+
+
+A0 if |s| > εN ∨ (εN > |s| > ε1 ∧ a = A0)
+
+Ai if εi−1 < |s| < εi ∧ a̸ = A0
+
+A1 if |s| < ε1
+
+where N is the number of barriers and the barriers are ordered as 0 < ε1 < · · · < εN . The innermost barrier ε1 is associated with the desired target precision, whereas the outermost barrier εN defines the limit of acceptable performance. In the general case, the intermediate widths εi are uniformly spaced between the innermost and outermost layers. A nested switching logic is employed to interconnect the barrier lay-ers. Specifically, the region Ai corresponding to the current value of s, defined by |s| ∈ [εi−1, εi), is identified, and the associated barrier gain is subsequently applied. 
+
+Remark 1: The stability of the closed-loop system under the nested switching logic described in (6) is addressed as follows. It has been established in [14] that, for each active barrier layer Ai, the barrier-modulated gains k1,α (s)
+
+and k2,α (s) defined in (4) guarantee UUB of the closed-loop trajectories with respect to the region |s| ≤ εi. The switching between layers is therefore interpreted as a transition between a family of UUB systems, each associated with a distinct ultimate bound. When, due to inter-sample blindness, the sliding variable s is displaced beyond the innermost boundary 
+
+ε1 and a higher barrier layer Ai (i > 1) is activated, UUB is preserved with respect to the corresponding outer bound εi.Conversely, when effective disturbance rejection causes the sliding variable to re-enter an inner region, the switching logic transitions to a layer associated with a tighter ultimate bound, thereby recovering finer regulation. Since each sub-system is individually UUB and the switching logic is mono-tone in the sense that it assigns the tightest admissible barrier consistent with the current state, no destabilizing interaction between layers is introduced by the switching itself. The overall closed-loop system is therefore UUB under arbitrary switching within the nested barrier architecture, with the effective ultimate bound determined by the outermost barrier layer activated during operation. The above algorithm is implemented in discrete time us-ing an eigenvalue-based discretization strategy. The primary motivation for using this scheme is to reduce chattering compared to classical Euler or Tustin discretization methods [11]. Since stability in continuous time has already been established in [14], the analysis is restricted to the discretiza-tion procedure described in [11]. To this end, an alternative representation of the continuous-time dynamics in Eq. (3) is adopted, following [16]. By exploiting the identity sgn (s) = s
+
+|s| , ∀s̸ = 0 (7) the system (3) can be reformulated in Rosenbrock form as ˙x = Mα (s)x +
+
+ 0
+
+δ (t)
+
+
+
+, if s̸ = 0 (8) with x = [ s, φ ]T and Mα : R∗ → R2×2 is defined as: 
+
+Mα (s) = 
+
+−k1,α |s|α−1 1
+
+−k2,α |s|−1 0
+
+
+
+. (9) The eigenvalues of the matrix Mα (s) are given by 
+
+λ1,2 =
+
+
+
+− k1,α |s|α−1 
+
+> 2
+
+± 
+
+> √D
+> 2
+
+, if D ≥ 0,
+
+− k1,α |s|α−1 
+
+> 2
+
+± i
+
+√|D| 
+
+> 2
+
+, if D < 0,
+
+(10) where 
+
+D = k1,α |s|2α−2 − 4k2,α |s|−1. (11) When the barrier function defined in (4) is employed, the eigenvalues can be expressed as 
+
+λ1,2 =
+
+
+
+− |s|α 
+
+> 2(εi−| s|)α+1
+
+± |s| 12
+
+√|s|2α−1−42(εi−| s|)α+1 , |s|2α−1 ≥ 4
+
+− |s|α 
+
+> 2(εi−| s|)α+1
+
+± i |s| 12
+
+√|| s|2α−1−4| 
+
+> 2(εi−| s|)α+1
+
+, otherwise .
+
+(12) To avoid the occurrence of real eigenvalues with positive real parts, the design parameter ε is selected such that ε <
+
+4 12α−1 for α̸ = 12 , while any ε ∈ R+ is admissible when α = 
+
+> 12
+
+. Under this condition, the following asymptotic properties hold for each barrier: lim 
+
+> |s|→ 0+
+
+|λ1,2| = 0 and lim 
+
+> |s|→ ε−
+
+|λ1,2| = ∞, (13a) The matching discretization scheme is adopted to preserve the structural properties of the continuous-time system. The discrete-time eigenvalues obtained via exact matching are then given by 
+
+λ q 
+
+> 1,2
+
+= eλ1,2Ts . (14) The resulting discrete-time system is expressed based on the results in [11]: 
+
+xk+1 = Mq 
+
+> α
+
+(sk)xk + Ts
+
+ 0
+
+δ (kT s)
+
+
+
+, (15) with 
+
+Mq 
+
+> α
+
+(sk) = 
+
+ ˜u1,k Ts
+
+˜u2,k 1
+
+
+
+. (16) The coefficients ˜u1,k and ˜u2,k are selected such that 
+
+λ (Mq 
+
+> α
+
+(sk)) = λ q
+
+> 1,2
+
+, yielding ˜u1,k = λ q 
+
+> 1
+
++ λ q 
+
+> 2
+
+− 1, (17a) ˜u2,k = 1
+
+Ts
+
+  ˜u1,k − λ q 
+
+> 1
+
+λ q
+
+> 2
+
+ . (17b) Finally, the discrete-time implementation of the control law (2) is obtained as [11] 
+
+uk = 1
+
+Ts
+
+ −sk + ˜u1,ksk
+
+ + vk, (18a) 
+
+vk+1 = vk + ˜u2,ksk. (18b) IV. S IMULATIONS AND SENSITIVITY ANALYSIS 
+
+Numerical simulations were conducted to evaluate the behavior of the proposed discrete-time multi-layer barrier adaptive super-twisting controller and to assess its sensi-tivity with respect to the parameters α and the innermost barrier ε−. The simulations were designed to highlight the controller’s robustness and its ability to regulate tracking performance under fast and high amplitude perturbations. The simulated system is a perturbed integrator ˙x = u0 + d (19) where x must track a reference signal xre f = 0.1 sin (5t). Cal-culating the dynamics of s ≜ x−xre f with u0 = u+ ˙xre f brings the system in the form of Eq. (1), where u was generated by the proposed discrete-time super-twisting controller with 
+
+δ = ˙d. The disturbance d(t) = 10 3 sin (15 t) was selected to be of both high-amplitude and high-frequency in order to stress the robustness and adaptation mechanisms of the controller. The controller parameters were selected according to Table I where ε− and ε+ are defined as the inner and outer barriers, respectively. Fig. 2 shows the closed-loop system response. Despite the presence of a large-amplitude disturbance, accurate tracking of the reference signal is achieved. The sliding variable remains confined within the prescribed innermost barrier region showcasing the effectiveness of the discretization scheme. 
+
+A. Sensitivity with respect to α
+
+The influence of the parameter α is illustrated in Fig. 3, where values ranging from α = 0.25 to α = 1 were con-sidered. For low values of α, the closed-loop system be-comes under-constrained, resulting in frequent activation of the outermost barrier layer. This behavior leads to reduced steady-state accuracy and increased gain adaptation activity. Conversely, excessively large values of α impose overly restrictive dynamics, causing the sliding variable to exit the innermost barrier region and rely on higher barrier layers. Prior to this over-constrained regime, however, moderate increases in α relative to the nominal value are observed to improve tracking performance by accelerating convergence        
+
+> Parameter Value
+> α12
+> ε−1e−4
+> ε+min 1e−1,1e3ε−
+> Ts1e−5
+> TABLE I DEFAULT TUNABLE PARAMETERS VALUE
+
+0 5 10 
+
+Time (s) 
+
+-0.15 -0.1 -0.05 00.05 0.1 0.15 
+
+> x1(t)
+
+x1;ref (t)
+
+x1
+
+0 5 10 
+
+Time (s) 
+
+-1 01
+
+> s(t)
+
+#10 !4Fig. 2. Nominal performance under perturbation δ .0 0.2 0.4 0.6 0.8 1-0.1 00.1 
+
+> s(t)
+
+, = 1 =4
+
+, = 1 =2
+
+, = 3 =4
+
+, = 1 
+
+0 0.2 0.4 0.6 0.8 1
+
+Time (s) 
+
+-1 01
+
+> s(t)
+
+#10 !4            
+
+> Fig. 3. System performance under perturbation δfor α=14,12,34,1.
+
+toward the sliding manifold without inducing excessive switching. These results demonstrate that α plays a critical role in balancing convergence speed and barrier utilization. 
+
+B. Sensitivity with Respect to the innermost barrier ε−
+
+The sensitivity of the closed-loop response with respect to the inner barrier parameter ε− is shown in Fig. 4 for four distsinct values: 1 e−2, 1e−3, 1e−5 and 1 e−6. Decreasing 
+
+ε− leads to a tighter ultimate bound on the sliding variable, thereby enhancing steady-state tracking accuracy. However, excessively small values of ε− result in increased gain magnitudes and more aggressive control action, which may amplify discretization-induced chattering effects or prevent sustained confinement within the innermost barrier region, thus triggering reliance on outer barrier layers. In contrast, larger values of ε− yield smoother control signals and reduced gain activity, at the expense of relaxed tracking precision. These observations confirm that ε− acts as a key 0 0.5 1-0.1 00.1 
+
+> s(t)
+
+0! = 1 e!2
+
+0 0.5 1-1 01
+
+#10 !3
+
+0! = 1 e!3
+
+0 0.5 1
+
+Time (s) 
+
+-1 01
+
+> s(t)
+
+#10 !5
+
+0! = 1 e!5
+
+0 0.5 1
+
+Time (s) 
+
+-1 01
+
+#10 !3
+
+0! = 1 e!6        
+
+> Fig. 4. Performance under perturbation δfor ε−=1e−2,1e−3,1e−5, 1 e−6.
+
+tuning parameter governing the trade-off between steady-state accuracy and control smoothness. 
+
+C. Sensitivity with Respect to the Sampling Time T s
+
+In order to assess the effectiveness of the proposed algo-rithm with respect to the sampling period, the disturbance amplitude is reduced from 1 e3 to 1 e1, so that the influence of larger sampling times can be more clearly observed. The results are presented in Fig. 5. For Ts = 1e−2, it is observed that the adaptive algorithm A0 is activated at the onset of the simulation, after which the sliding variable is brought back within the innermost barrier region before being captured by the outermost layer. For Ts = 1e−3, the system is found to evolve exclusively within the outermost barrier, as the sliding variable is displaced beyond the innermost boundary during blind inter-sample intervals by the applied perturbation. In contrast, for Ts = 1e−4 and Ts = 1e−5, the sampling period is sufficiently small relative to the perturbation dynamics such that no inter-sample blind intervals of significance (with respect to the desired accuracy) are encountered, and confine-ment within the innermost barrier is consistently maintained. 
+
+D. Sensitivity with Respect to the Number of Barriers 
+
+As illustrated in Fig. 6, closed-loop performance is ob-served to improve monotonically with the number of barrier layers. For a fixed sampling period, deviations of the sliding variable are intercepted at earlier barrier layers as N is increased, thereby preventing the trajectory from reaching the outermost boundary. Consequently, perturbation-induced inter-sample deviations are attenuated more rapidly as the number of barriers is increased, resulting in tighter con-finement of the sliding variable and improved steady-state accuracy. 
+
+E. Cross-Sensitivity: Sampling Time and Number of Barriers 
+
+The inter-sample blindness inherent to the discretized implementation of the algorithm, as previously discussed and illustrated in Fig. 5, leads to performance degradation when 0 5 10 -2 -1 0
+
+> s(t)
+
+Ts = 1 e!2
+
+0 5 10 -0.1 00.1 
+
+Ts = 1 e!3
+
+0 5 10 
+
+Time (s) 
+
+-1 01
+
+> s(t)
+
+#10 !4
+
+Ts = 1 e!4
+
+0 5 10 
+
+Time (s) 
+
+-1 01
+
+#10 !4
+
+Ts = 1 e!5Fig. 5. Performance under reduced amplitude perturbation for Ts =   
+
+> 1e−2,1e−3,1e−4and 1 e−5.
+
+0 0.5 1-1 01
+
+> s(t)
+
+#10 !3
+
+N = 2 
+
+0 0.5 1-1 01 #10 !3
+
+N = 5 
+
+0 0.5 1
+
+Time (s) 
+
+-5 05
+
+> s(t)
+
+#10 !5
+
+N = 20 
+
+0 0.5 1
+
+Time (s) 
+
+-1 01
+
+#10 !5
+
+N = 50           
+
+> Fig. 6. Performance under perturbation for N=2,5,20 ,50 with ε−=1e−6.
+
+larger sampling times are employed. This limitation can be mitigated by appropriately adjusting the number of barriers, as demonstrated in Fig. 7. Specifically, it is observed that increasing the number of barriers enhances the likelihood that the sampled state lies within an inner barrier region, thereby improving the overall system performance. However, it is also observed that a higher number of barri-ers induces increased chattering, manifested as more frequent switching between barrier layers. This trade-off between performance improvement and chattering must therefore be carefully considered in the design of the control scheme. Furthermore, it is demonstrated that even for a relatively large sampling time ( Ts = 1e−2), satisfactory performance can be recovered by selecting an appropriate number of barriers. As shown in Fig. 8, the choice of N = 50 ensures that the system response remains within the maximum ac-ceptable error bounds. This result highlights the robustness 0 5 10 -0.01 00.01  
+
+> s(t) N= 5
+
+0 5 10 -2 02
+
+#10 !3 
+
+> N= 20
+
+0 5 10 
+
+Time (s) 
+
+-1 01
+
+> s(t)
+
+#10 !3 
+
+> N= 50
+
+0 5 10 
+
+Time (s) 
+
+-1 01
+
+#10 !3          
+
+> N= 200
+> Fig. 7. Performance under reduced amplitude perturbation for Ts=1e−3,
+> N=5,20 ,50 ,200.
+
+0 2 4 6 8 10 
+
+Time (s) 
+
+-0.05 00.05        
+
+> s(t)
+> Fig. 8. Performance under reduced amplitude perturbation for Ts=1e−2
+> and N=50.
+
+of the proposed approach and its capability to maintain safe operation despite adverse sampling conditions. 
+
+F. Discussion 
+
+Overall, the simulation results demonstrate that the proposed discrete-time multi-layer barrier adaptive super-twisting controller achieves robust tracking performance in the presence of severe disturbances and sampling constraints. The conducted sensitivity analysis highlights the importance of appropriate parameter selection and confirms the effec-tiveness of combining barrier-based gain adaptation with eigenvalue-preserving discretization to recover continuous-time performance characteristics in digital control implemen-tations. V. C ONCLUSIONS 
+
+In this paper, a discrete-time implementation of a multi-layer barrier function–based adaptive super-twisting con-troller has been presented. The proposed approach addresses the limitations arising from inter-sample blindness in digital sliding mode control by employing a nested barrier architec-ture that modulates the control gains across multiple regions of the sliding variable. A discretization strategy based on eigenvalue exact matching has been adopted to preserve the stability and robustness properties established in continuous time. It was shown that the resulting discrete-time controller retains the adaptive characteristics of the continuous-time design while ensuring boundedness of the closed-loop tra-jectories under unknown but bounded perturbations. ACKNOWLEDGMENTS This research was conducted at DTU Electro as part of the HyRel project, funded by the Danish Energy Technology Development and Demonstration Programm (EUDP), grant number 64022-1058. The authors appreciate their support. Leonid Fridman acknowledges the financial support of the Programa de Apoyo a Proyectos de Investigacion e In-novacion Tecnologica, Direccion General de Asuntos del Personal Academico, Universidad Nacional Autonoma de Mexico under Project IT100625. REFERENCES [1] J.-J. E. Slotine, W. Li, et al. , Applied nonlinear control . Prentice hall Englewood Cliffs, NJ, 1991, vol. 199, no. 1. [2] V. I. Utkin and V. I. Utkin, “Scope of the theory of sliding modes,” 
+
+Sliding modes in control and optimization , pp. 1–11, 1992. [3] J. A. Moreno, “Lyapunov Approach for Analysis and Design of Second Order Sliding Mode Algorithms,” in Sliding Modes after the First Decade of the 21st Century: State of the Art , ser. Lecture Notes in Control and Information Sciences, L. Fridman, J. Moreno, and R. Iriarte, Eds. Berlin, Heidelberg: Springer, 2012, pp. 113–149. [4] Y. Shtessel, J. Moreno, F. Plestan, L. Fridman, and A. Poznyak, “Super-twisting Adaptive Sliding Mode Control: a Lyapunov Design,” Dec. 2010, pp. 5109–5113. [5] Y. Shtessel, M. Taleb, and F. Plestan, “A novel adaptive-gain su-pertwisting sliding mode controller: Methodology and application,” 
+
+Automatica , vol. 48, pp. 759–769, May 2012. [6] J. Moreno, D. Negrete, V. Torres-Gonz´ alez, and L. Fridman, “Adaptive Continuous Twisting Algorithm,” International Journal of Control , pp. 1–15, Nov. 2015. [7] V. I. Utkin and A. S. Poznyak, “Adaptive sliding mode control with application to super-twist algorithm: Equivalent control method,” 
+
+Automatica , vol. 49, no. 1, pp. 39–47, Jan. 2013. [8] A. Gonz´ alez, L. Ovalle, and L. Fridman, “Final Set Adjustment in Barrier Function Adaptation Exploiting Properties of Signed Power-based Controllers,” IEEE Transactions on Automatic Control , vol. PP, pp. 1–6, Jan. 2024. [9] H. Obeid, S. Laghrouche, L. Fridman, Y. Chitour, and M. Harmouche, “Barrier Function-Based Adaptive Super-Twisting Controller,” IEEE Transactions on Automatic Control , vol. 65, no. 11, pp. 4928–4933, Nov. 2020. [10] S. Koch, M. Reichhartinger, M. Horn, and L. M. Fridman, “Discrete implementation of sliding mode controllers satisfying accuracy level specifications,” in 2016 14th International Workshop on Variable Structure Systems (VSS) , June 2016, pp. 154–159, iSSN: 2158-3986. [11] S. Koch and M. Reichhartinger, “Discrete-time equivalents of the super-twisting algorithm,” Automatica , vol. 107, pp. 190–199, Sept. 2019. [12] B. Brogliato, A. Polyakov, and D. Efimov, “The implicit discretization of the super-twisting sliding-mode control algorithm,” in 2018 15th International Workshop on Variable Structure Systems (VSS) , July 2018, pp. 349–353, iSSN: 2158-3986. [13] I. Salgado, S. Kamal, B. Bandyopadhyay, I. Chairez, and L. Fridman, “Control of discrete time systems based on recurrent Super-Twisting-like algorithm,” ISA Transactions , vol. 64, pp. 47–55, Sept. 2016. [14] A. T. Vi´ e, L. Fridman, R. Galeazzi, and D. Papageorgiou, “Multi-layer barrier function-based adaptive super-twisting controller,” in 
+
+2025 IEEE 64th Conference on Decision and Control (CDC) . IEEE, 2025, pp. 7932–7938. [15] J. A. Moreno, “On strict Lyapunov functions for some non-homogeneous super-twisting algorithms,” Journal of the Franklin Institute , vol. 351, no. 4, pp. 1902–1919, Apr. 2014. [16] M. Reichhartinger and S. Spurgeon, “An arbitrary-order differentiator design paradigm with adaptive gains,” International Journal of Con-trol , vol. 91, no. 9, pp. 2028–2042, Sept. 2018.

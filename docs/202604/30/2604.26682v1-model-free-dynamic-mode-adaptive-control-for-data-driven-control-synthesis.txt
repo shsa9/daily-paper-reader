@@ -1,0 +1,2565 @@
+Title: Model-Free Dynamic Mode Adaptive Control for Data-Driven Control Synthesis
+
+URL Source: https://arxiv.org/pdf/2604.26682v1
+
+Published Time: Thu, 30 Apr 2026 00:55:17 GMT
+
+Number of Pages: 16
+
+Markdown Content:
+# Parham Oveissi 
+
+Ph.D. Candidate, Department of Mechanical Engineering, University of Maryland, Baltimore County, 1000 Hilltop Circle, Baltimore, MD, 21250 email: parhamo1@umbc.edu 
+
+# Ankit Goel 1
+
+Assistant Professor, Department of Mechanical Engineering, University of Maryland, Baltimore County, 1000 Hilltop Circle, Baltimore, MD, 21250 email: ankgoel@umbc.edu 
+
+# Model-Free Dynamic Mode Adaptive Control for Data-Driven Control Synthesis 
+
+This paper presents a model-free, data-driven control synthesis method called dynamic mode adaptive control (DMAC) for systems whose mathematical models are unavailable or unsuitable for classical control design. The proposed approach combines data-driven dynamics approximation with adaptive control synthesis to enable online controller de-sign using measured system data. DMAC comprises two main components: a dynamics-approximation module and a controller-synthesis module. The dynamics approximation module estimates a local linear representation of the system dynamics directly from mea-surements using a matrix recursive least-squares algorithm with a forgetting factor. The estimated dynamics are then used to compute an online stabilizing controller with full-state feedback and integral action. Theoretical analysis establishes convergence properties of the recursive dynamics approximation and boundedness of the closed-loop system under the DMAC controller. The performance of the proposed method is demonstrated through numerical examples involving representative dynamical systems, including an unstable linear system, the Van der Pol oscillator, and the Burgers’ equation. Sensitivity studies further demonstrate the robustness of DMAC with respect to both algorithm hyperparam-eters and variations in system parameters. Keywords: Data-driven control, adaptive control, dynamic mode decomposition, recur-sive least squares, model-free control, online system identification. 
+
+1 Introduction 
+
+Many complex engineering systems, such as combustion pro-cesses, fluid flows, and high-dimensional structural systems, lack control-oriented mathematical models. Although high-fidelity computational models can accurately capture the underlying physics of these systems, they are often too large and computa-tionally intensive for online and real-time control synthesis. Con-sequently, designing controllers that rely on explicit first-principles models can be difficult or impractical in many real-world applica-tions. These challenges have motivated the development of data-driven and model-free control methods that synthesize controllers directly from measured data. Moreover, these challenges are par-ticularly pronounced in mechanical systems with distributed sens-ing, such as flexible structures and fluid–structure interaction prob-lems, where high-dimensional measurements must be mapped to low-dimensional control objectives. 
+
+Literature Review. Adaptive control methods provide a clas-sical framework for combining online system identification with controller synthesis. Approaches such as Model Reference Adap-tive Control (MRAC) [ 1–3] and self-tuning regulators [ 4,5] esti-mate model parameters online and update control laws accordingly, forming the basis of certainty-equivalent adaptive control [ 6]. More recently, learning-based adaptive control methods have been developed that integrate system identification with optimal control synthesis. In particular, adaptive linear-quadratic regula-tor (LQR) formulations have received significant attention in both learning and control [ 7–10 ]. These approaches provide rigorous guarantees, including regret bounds and sample-efficiency results, for linear systems with unknown dynamics. However, these meth-ods are largely restricted to linear-quadratic settings and emphasize performance metrics such as cumulative cost, rather than stabiliza-tion and tracking of nonlinear and high-dimensional systems. In 
+
+> 1Corresponding Author. Version 1.18, April 30, 2026
+
+addition, many of these methods rely on batch or episodic data to design controllers, resulting in policies that are computed offline rather than continuously adapted in real time. Optimization-based model-free control methods directly update control parameters using measured data. Examples of such meth-ods include Retrospective Cost Adaptive Control (RCAC) [ 11 ,12 ], Predictive Cost Adaptive Control (PCAC) [ 13 ], and reinforcement learning (RL) methods [ 14 –16 ]. RCAC admits efficient real-time implementations but can be sensitive to filter design, while PCAC requires solving constrained optimization problems online, which can limit applicability in fast systems. Reinforcement learning methods often require large datasets and substantial computational resources, and may lack guarantees on stability and transient per-formance in continuous-time settings. In parallel, data-driven modeling techniques have received con-siderable attention due to their ability to identify system dynam-ics directly from data. Dynamic Mode Decomposition (DMD) [17 ,18 ] provides a framework for extracting low-order linear rep-resentations of complex systems from measurement data. Exten-sions such as Dynamic Mode Decomposition with control (DMDc) [19 ,20 ] incorporate actuation into the identified models, while on-line variants of DMD [ 21 ] enable adaptation to time-varying dy-namics. Although these methods are effective for system identifi-cation and reduced-order modeling, they are primarily used in an offline setting, and their integration with real-time control synthesis remains limited. However, a unified framework that enables online identification of state-space dynamics directly in the measurement space, preserves physical interpretability, and simultaneously per-forms closed-loop control synthesis remains largely unexplored. 
+
+Open Challenges. Despite significant progress, several chal-lenges remain in the development of data-driven control methods. First, many existing approaches are limited to linear-quadratic for-mulations and do not directly address stabilization and tracking objectives for nonlinear, high-dimensional systems. Second, sev-eral methods rely on batch or episodic data and are not naturally 
+
+Journal of Dynamic Systems, Measurement, and Control Copyright © 2026 by ASME PREPRINT FOR REVIEW / 1 
+
+> arXiv:2604.26682v1 [eess.SY] 29 Apr 2026
+
+suited for continuous online adaptation. Third, optimization-based model-free methods can introduce computational burdens or re-quire careful tuning of design parameters. Finally, commonly used input-output identification frameworks may yield internal repre-sentations that lack physical interpretability, thereby complicating controller synthesis and limiting insight into the learned dynamics. These limitations motivate the development of a control frame-work that directly integrates data-driven state-space identification with real-time control synthesis, while preserving physical inter-pretability and avoiding reliance on batch data or optimization-based updates. 
+
+Contributions. This paper introduces a data-driven control framework, termed Dynamic Mode Adaptive Control (DMAC), that integrates dynamic mode approximation with adaptive con-trol synthesis to enable real-time controller design directly from measured data. The proposed approach constructs a local linear approximation of the system dynamics using a matrix recursive least-squares (RLS) algorithm with a forgetting factor, allowing the model to adapt to time-varying or uncertain dynamics. The identified dynamics are used directly for controller synthesis, re-sulting in a computationally efficient architecture suitable for on-line implementation. Unlike classical certainty-equivalent adaptive control, which assumes a known model structure with unknown pa-rameters, the proposed approach constructs the system dynamics directly from data without assuming a parametric model form. A key feature of the proposed method is its ability to operate in settings where measurements are obtained from a high-dimensional sensing space, while control objectives are defined over a lower-dimensional set of physically meaningful variables. Such scenarios arise in applications such as vibration suppression of flexible struc-tures and propulsion systems with distributed sensing. The pro-posed framework preserves a direct relationship between measured variables and the system dynamics, enabling low-order represen-tations suitable for control. Unlike many data-driven approaches that rely on input-output models, the proposed method identifies a state-space representation directly in terms of measured system variables. This structure-preserving formulation retains physical interpretability and enables controller synthesis directly on the identified dynamics. The main contributions of this paper are summarized as follows. (1) A data-driven control architecture (DMAC) that integrates dynamic mode approximation with adaptive control syn-thesis, enabling real-time controller design directly from streaming measurement data. (2) A recursive identification algorithm that estimates a low-order state-space model directly in the measurement space using a matrix-valued RLS formulation, avoiding vectoriza-tion, lifting, and input-output model reconstruction. (3) A theoretical analysis establishing convergence properties of the identification algorithm and uniform ultimate bounded-ness of the closed-loop system under the proposed controller. (4) Simulation studies on representative dynamical systems, in-cluding linear, nonlinear, and distributed-parameter exam-ples, demonstrating stabilization, regulation, and tracking using measurement data alone. The remainder of the paper is organized as follows. Section 
+
+2 presents the DMAC algorithm, including the dynamic mode approximation and control synthesis procedure. Section 3 pro-vides the convergence and closed-loop stability analysis. Section 
+
+4 presents numerical examples illustrating the performance of the proposed method. Section 5 concludes the paper and outlines di-rections for future research. Supporting derivations and technical results are provided in the appendices, including the recursive least-squares formulation underlying the dynamic mode approximation, the integral control design used in the DMAC architecture, and detailed proofs of the theoretical results. 
+
+2 Dynamic Mode Adaptive Control 
+
+This section presents the dynamic mode adaptive control (DMAC) algorithm. 
+
+2.1 Problem Formulation. Consider a dynamic system M
+
+whose input is 𝑢 (𝑡 ) ∈ R𝑙 𝑢 and the output is 𝑦 (𝑡 ) ∈ R𝑙 𝑦 , as shown in Figure 1. Let 𝑥 (𝑡 ) ∈ R𝑙 𝑥 denote the internal state of M. The state 
+
+𝑥 (𝑡 ) is not assumed to be fully measurable. Instead, a measured portion of the state is available and denoted by 𝜉 (𝑡 ) ∈ R𝑙 𝜉 .        
+
+> DMAC
+> Sampled-data System
+> Control ZOH M
+> 𝑇 s
+> DMA
+> 𝑟 𝑘 𝑦 𝑘
+> 𝑢 𝑘 𝑢 (𝑡 )𝑦 (𝑡 )
+> 𝜉 (𝑡 )𝑦 𝑘 𝜉 𝑘
+> 𝑢 𝑘
+> 𝐴 𝑘 , 𝐵 𝑘
+
+Fig. 1 Dynamic Mode Adaptive Control (DMAC) architec-ture for model-free, data-driven, and learning-based control of sampled-data systems. 
+
+Letting 𝑇 s > 0 denote the sample time, the system’s output is sampled to generate the sampled measurements 𝑦 𝑘 
+
+> △
+
+= 𝑦 (𝑘𝑇 s).
+
+The control input is implemented using a zero-order hold so that, for 𝑡 ∈ [ 𝑘𝑇 s , (𝑘 + 1)𝑇 s ), 𝑢 (𝑡 ) = 𝑢 𝑘 . The measured state signal is similarly sampled to obtain 𝜉 𝑘 
+
+> △
+
+= 𝜉 (𝑘𝑇 s). The objective of the DMAC controller is to generate the discrete-time control input 𝑢 𝑘 
+
+using the measured signals 𝜉 𝑘 and 𝑦 𝑘 such that the sampled output 
+
+𝑦 𝑘 tracks the reference signal 𝑟 𝑘 .
+
+2.2 Dynamic Mode Adaptive Control Architecture. The DMAC architecture is shown in Figure 1. The approach combines online system identification with control synthesis. At each time step, the DMAC algorithm performs the following two operations. (1) recursively estimate a local linear model of the system dy-namics using the measured signals 𝜉 𝑘 and 𝑢 𝑘 , as described in Section 2.3 , and (2) synthesize a control input that achieves the desired control objective, such as stabilization, reference tracking, or distur-bance rejection, as described in Section 2.5 .This architecture allows the controller to continuously update its internal model of the system dynamics as new data becomes avail-able. Furthermore, the recursive design enables the controller to adapt to changes in system dynamics without requiring a prior model of the system. 
+
+2.3 Dynamic Mode Approximation. To synthesize the con-trol input 𝑢 𝑘 , DMAC first estimates a local linear approximation of the system dynamics based on the measured signals 𝜉 𝑘 and 𝑢 𝑘 . In particular, DMAC estimates matrices 𝐴 ∈ R𝑙 𝜉 ×𝑙 𝜉 and 𝐵 ∈ R𝑙 𝜉 ×𝑙 𝑢 
+
+such that 
+
+𝜉 𝑘 +1 = 𝐴𝜉 𝑘 + 𝐵𝑢 𝑘 , (1) 
+
+which represents a local linear approximation of the dynamics of the measured state. Note that (1) can be written as 
+
+𝜉 𝑘 +1 = Θ 𝜙 𝑘 . (2) 
+
+where 
+
+Θ △
+
+= [𝐴 𝐵 ] ∈ R𝑙 𝜉 × ( 𝑙 𝜉 +𝑙 𝑢 ) , (3) 
+
+𝜙 𝑘 
+
+> △
+
+=
+
+[𝜉 𝑘 
+
+𝑢 𝑘 
+
+]
+
+∈ R𝑙 𝜉 +𝑙 𝑢 . (4) 
+
+2 / PREPRINT FOR REVIEW Transactions of the ASME Note that Θ is the matrix of unknown parameters and 𝜙 𝑘 is the regressor vector. The representation (2) differs from the classical regressor form 𝑦 = 𝜙𝜃 , where the unknown parameter 𝜃 is a column vector and the regressor 𝜙 is a matrix. In contrast, the unknown parameter in (2) is the matrix Θ.Indeed, (2) can be rewritten in vectorized form as 
+
+𝜉 𝑘 +1 = (𝜙 T 
+
+> 𝑘
+
+⊗ 𝐼 ) vec (Θ), (5) 
+
+where vec (Θ) denotes the stacked parameter vector and ⊗ de-notes the Kronecker product. However, DMAC avoids this re-formulation and instead estimates Θ directly in matrix form. This structure-preserving formulation yields the state-space matrices di-rectly, avoids vectorization of the unknown parameters, and leads to a covariance matrix of dimension (𝑙 𝜉 + 𝑙 𝑢 ) × ( 𝑙 𝜉 + 𝑙 𝑢 ) rather than 
+
+𝑙 𝜉 (𝑙 𝜉 + 𝑙 𝑢 ) × 𝑙 𝜉 (𝑙 𝜉 + 𝑙 𝑢 ).In general, a matrix Θ that exactly satisfies (2) may not exist. Instead, DMAC computes an approximate model by minimizing the exponentially weighted cost function 
+
+𝐽 𝑘 (Θ) △
+
+=
+
+> 𝑘
+
+Õ
+
+> 𝑖 =0
+
+𝜆 𝑘 −𝑖 ‖𝜉 𝑖 − Θ𝜙 𝑖 −1 ‖22 + 𝜆 𝑘 tr (ΘT 𝑅 ΘΘ), (6) 
+
+where 𝑅 Θ ∈ R(𝑙 𝜉 +𝑙 𝑢 ) × ( 𝑙 𝜉 +𝑙 𝑢 ) is a positive definite regularization matrix that ensures the existence of the minimizer of (6) and 
+
+𝜆 ∈ ( 0, 1] is a forgetting factor. The forgetting factor allows the identification algorithm to emphasize recent data while gradually discounting older measurements. This property is particularly im-portant for nonlinear or time-varying systems, where a single linear model may only accurately describe the system dynamics locally. This matrix-valued formulation preserves the state-space structure of the identified model and avoids the dimensional growth associ-ated with vectorized RLS implementations. 
+
+Proposition 2.1. Consider the cost function (6) . For all 𝑘 ≥ 0,
+
+define the minimizer of (6) as 
+
+Θ𝑘 
+
+> △
+
+= arg min    
+
+> Θ∈R𝑙 𝜉 × ( 𝑙 𝜉 +𝑙𝑢 )
+
+𝐽 𝑘 (Θ). (7) 
+
+Then, the minimizer Θ𝑘 satisfies 
+
+Θ𝑘 = Θ 𝑘 −1 + ( 𝜉 𝑘 − Θ𝑘 −1 𝜙 𝑘 −1 ) 𝜙 T
+
+> 𝑘 −1
+
+P𝑘 , (8) 
+
+P𝑘 = 𝜆 −1P𝑘 −1 − 𝜆 −1P𝑘 −1 𝜙 𝑘 −1 Γ−1 
+
+> 𝑘
+
+𝜙 T 
+
+> 𝑘 −1
+
+P𝑘 −1 , (9) 
+
+where, for all 𝑘 ≥ 0, Γ𝑘 
+
+> △
+
+= 𝜆 + 𝜙 T 
+
+> 𝑘 −1
+
+P𝑘 −1 𝜙 𝑘 −1 , and Θ0 = 0,
+
+P0
+
+> △
+
+= 𝑅 −1 
+
+> Θ
+
+.
+
+Proof. See Proposition A.2 in Appendix A.
+
+The matrices 𝐴 𝑘 and 𝐵 𝑘 used in the control design step are obtained from the estimate Θ𝑘 as 
+
+Θ𝑘 = [𝐴 𝑘 𝐵 𝑘 
+
+] . (10) 
+
+The cost function (6) can be viewed as a matrix-valued exten-sion of the recursive least-squares cost commonly used in engi-neering applications [ 22 ]. Although (2) can be rewritten in vector-ized form and analyzed using standard RLS arguments, the matrix formulation used here is advantageous because it directly yields the state-space matrices 𝐴 𝑘 and 𝐵 𝑘 without parameter stacking or realization reconstruction. In addition, the associated covari-ance matrix P𝑘 depends only on the regressor dimension 𝑙 𝜉 + 𝑙 𝑢 ,which is typically much smaller than the dimension required by a vectorized parameterization. As shown in [ 22 –24 ], persistency of excitation is required to ensure that (i) the parameter estimate converges and (ii) the covariance matrix P𝑘 remains bounded. To promote persistency of excitation, the control signal includes an 
+
+excitation component, which is designed to ensure persistence of excitation in the regressor 𝜙 𝑘 . This modification is discussed in Section 2.5 .
+
+2.4 Connection with Dynamic Mode Decomposition. The identification component of DMAC is closely related to the dy-namic mode decomposition (DMD) method, which is widely used for data-driven modeling and reduced-order analysis of complex dynamical systems. This subsection shows the connection between classical DMD and the identification procedure used in DMAC. Consider a discrete-time system 
+
+𝑥 𝑘 +1 = 𝑓 (𝑥 𝑘 , 𝑢 𝑘 ), (11) 
+
+where 𝑥 𝑘 ∈ R𝑙 𝑥 is the state vector, 𝑢 𝑘 ∈ R𝑙 𝑢 is the input vector, and 
+
+𝑓 : R𝑙 𝑥 × R𝑙 𝑢 → R𝑙 𝑥 represents the system dynamics. For 𝑘 ≥ 1, define the state snapshot matrix and the input snapshot matrix 
+
+𝑋 𝑘 
+
+> △
+
+= [𝑥 1 𝑥 2 · · · 𝑥 𝑘 
+
+] ∈ R𝑙 𝑥 ×𝑘 , (12) 
+
+𝑈 𝑘 
+
+> △
+
+= [𝑢 1 𝑢 2 · · · 𝑢 𝑘 
+
+] ∈ R𝑙 𝑢 ×𝑘 . (13) 
+
+The objective of DMD with inputs is to determine matrices 𝐴 ∈
+
+R𝑙 𝑥 ×𝑙 𝑥 and 𝐵 ∈ R𝑙 𝑥 ×𝑙 𝑢 such that 
+
+𝑋 𝑘 +1 = 𝐴𝑋 𝑘 + 𝐵𝑈 𝑘 . (14) 
+
+Equation (14) can be written in the compact form 
+
+𝑋 𝑘 +1 = Θ X𝑘 , (15) 
+
+where 
+
+Θ △
+
+= [𝐴 𝐵 ] ∈ R𝑙 𝑥 × ( 𝑙 𝑥 +𝑙 𝑢 ) , (16) 
+
+X𝑘 
+
+> △
+
+=
+
+[𝑋 𝑘 
+
+𝑈 𝑘 
+
+]
+
+∈ R(𝑙 𝑥 +𝑙 𝑢 ) × 𝑘 . (17) 
+
+In classical DMD, the matrix Θ is then obtained by minimizing the regularized least-squares cost 
+
+𝐽 dmd ,𝑘 (Θ) △
+
+= ‖ 𝑋 𝑘 +1 − ΘX𝑘 ‖2F + tr (ΘT 𝑅 ΘΘ), (18) 
+
+where ‖ 𝑀 ‖F
+
+> △
+
+= tr (𝑀 𝑀 T) denotes the Frobenius norm and 𝑅 Θ ∈
+
+R(𝑙 𝑥 +𝑙 𝑢 ) × ( 𝑙 𝑥 +𝑙 𝑢 ) is a positive definite regularization matrix [ 25 ]. Note that the Frobenius norm term can be expanded as 
+
+‖ 𝑋 𝑘 +1 − ΘX𝑘 ‖2F =
+
+> 𝑘
+
+Õ
+
+> 𝑖 =0
+
+‖𝑥 𝑖 +1 − Θ𝜒 𝑖 ‖22, (19) 
+
+where 
+
+𝜒 𝑖 
+
+> △
+
+=
+
+[𝑥 𝑖 
+
+𝑢 𝑖 
+
+]
+
+∈ R𝑙 𝑥 +𝑙 𝑢 . (20) 
+
+Therefore, the cost function minimized in classical DMD is equiv-alent to the least-squares cost used in the DMAC identification procedure. Consequently, the identification step of DMAC can be interpreted as a recursive implementation of dynamic mode de-composition. 
+
+Journal of Dynamic Systems, Measurement, and Control PREPRINT FOR REVIEW / 3 2.5 Control Law Update. This subsection describes the method used to compute the control input 𝑢 𝑘 using the dynam-ics approximation obtained in Section 2.3 . To track the reference signal 𝑟 𝑘 , the DMAC algorithm employs a full-state feedback con-troller with integral action, described in Appendix B. Note that the term full-state refers to the measured state 𝜉 𝑘 rather than the internal system state 𝑥 𝑘 .In particular, the control law is given by 
+
+𝑢 𝑘 = 𝐾 𝜉 ,𝑘 𝜉 𝑘 + 𝐾 𝑞,𝑘 𝑞 𝑘 + {𝑘 , (21) 
+
+where 𝐾 𝜉 ,𝑘 ∈ R𝑙 𝑢 ×𝑙 𝜉 and 𝐾 𝑞,𝑘 ∈ R𝑙 𝑢 ×𝑙 𝑦 are the time-varying state-feedback and integral gains, respectively. These gains are computed using the procedure described in Appendix B. The con-trol architecture is shown in Figure 2. The excitation signal {𝑘 is added to the control input to promote persistency of excitation in the regressor 𝜙 𝑘 used in the dynamic mode approximation step. In particular, Proposition D.1 shows that, in the context of a lin-ear system, an i.i.d., zero-mean input signal ensures persistency of excitation. 
+
+𝑟 q
+
+q − 1 𝐾 𝑞,𝑘 System 
+
+𝐾 𝜉 ,𝑘 
+
+𝑦 
+
+−
+
+𝑞 𝑘 𝑢 𝑘 
+
+𝜉 𝑘 
+
++
+
+Fig. 2 Time-varying full-state feedback controller with inte-gral action for reference tracking, where the gains Kξ,k and 
+
+Kq,k are updated using the dynamic approximation obtained by DMAC. 
+
+2.6 DMAC Algorithm. The dynamic mode adaptive control (DMAC) algorithm operates recursively by combining online sys-tem identification with control synthesis. At each time step 𝑘 , the algorithm updates the local linear approximation of the system dy-namics using the measured signals and then computes a control input using the estimated model. The steps of the DMAC algorithm are summarized as follows. (1) Measure the signals 𝜉 𝑘 and 𝑦 𝑘 and compute the reference error 𝑒 𝑘 = 𝑟 𝑘 − 𝑦 𝑘 and the integrator state given by (B4) .(2) Form the regressor vector (4) .(3) Update the parameter estimate Θ𝑘 using the recursive least-squares update (8) .(4) Extract the matrices Θ𝑘 = [𝐴 𝑘 𝐵 𝑘 
+
+] .
+
+(5) Compute the control gains 𝐾 𝜉 ,𝑘 and 𝐾 𝑞,𝑘 using the control design procedure described in Appendix B.(6) Compute the control input using (21) .In summary, the DMAC algorithm recursively estimates a local linear approximation of the system dynamics and uses this approx-imation to synthesize a stabilizing control input at each time step. 
+
+3 Convergence and Closed-Loop Stability Analysis 
+
+This section analyzes the theoretical properties of the DMAC algorithm described in Section 2.6 . First, we analyze the con-vergence properties of the recursive least-squares (RLS) algorithm used in the dynamic mode approximation step to estimate the local linear model of the system dynamics. Next, we analyze the be-havior of the closed-loop system when the estimated dynamics are used for control synthesis. In particular, we establish conditions under which the parameter estimates remain well-behaved, and the closed-loop state remains bounded under the DMAC control law. To facilitate the analysis, we consider the case in which the underlying system dynamics are linear, and the control objective is to stabilize the plant. In particular, we consider the discrete-time linear system 
+
+𝜉 𝑘 +1 = 𝐴 ★𝜉 𝑘 + 𝐵 ★𝑢 𝑘 , (22) 
+
+where 𝐴 ★ ∈ R𝑙 𝜉 ×𝑙 𝜉 and 𝐵 ★ ∈ R𝑙 𝜉 ×𝑙 𝑢 are constant matrices such that the pair ( 𝐴 ★, 𝐵 ★) is stabilizable. Under this assumption, the dynamic mode approximation described in Section 2.3 can recover the true system dynamics under suitable excitation conditions. The analysis below establishes convergence properties of the recursive identification step and boundedness of the closed-loop system un-der the DMAC control law. 
+
+3.1 Convergence of the Recursive Dynamic Mode Approxi-mation. To analyze the convergence of the dynamic mode approx-imation, we first express the system dynamics in the regressor form used by the recursive identification algorithm. In particular, note that (22) can be written as 
+
+𝜉 𝑘 +1 = Θ ★𝜙 𝑘 . (23) 
+
+where 
+
+Θ★ △
+
+= [ 𝐴 ★ 𝐵 ★] ∈ R𝑛 × 𝑝 , 𝜙 𝑘 
+
+> △
+
+=
+
+[𝜉 𝑘 
+
+𝑢 𝑘 
+
+]
+
+∈ R𝑝 . (24) 
+
+The matrix Θ contains the system matrices 𝐴 ★ and 𝐵 ★, and the 
+
+regressor 𝜙 𝑘 contains the measured state and the measured input. With the measured regressor, the matrix parameter Θ, at each 𝑘, is obtained by minimizing 𝐽 𝑘 (Θ) given by (6) . The minimizer of (6) 
+
+is recursively computed by (8) and (9) .The following definition reviews the concept of persistence of excitation [ 22 ], which is required to establish the stability of the recursive dynamic mode approximation algorithm. 
+
+Definition 3.1 (Persistence of excitation) . Let {𝜙 𝑘 }𝑘 ≥0 be a se-quence of regressors with 𝜙 𝑘 ∈ R𝑝 . The sequence {𝜙 𝑘 } is called persistently exciting, if there exist constants 𝛼, 𝛽 > 0 and an integer 
+
+𝑁 > 𝑝 such that, for all 𝑘 ≥ 0
+
+𝛼𝐼 𝑝 ≤
+
+> 𝑘 +𝑁
+
+Õ
+
+> 𝑖 =𝑘
+
+𝜙 𝑖 𝜙 T 
+
+> 𝑖
+
+≤ 𝛽𝐼 𝑝 . (25) 
+
+Under the persistence-of-excitation condition, the covariance matrix generated by the RLS update has the following properties. 
+
+Proposition 3.1. Consider the covariance update (9) . Let 𝜙 𝑘 be a persistently exciting regressor. Then, for all 𝑘 ≥ 0, P𝑘 satisfies 
+
+P−1 
+
+> 𝑘 +1
+
+= 𝜆 P−1 
+
+> 𝑘
+
++ 𝜙 𝑘 𝜙 T 
+
+> 𝑘
+
+. (26) 
+
+Furthermore, for all 𝑘 ≥ 0, P𝑘 is positive definite and bounded. Proof. See Section C.1 in Appendix C.
+
+Proposition 3.2. Define the matrix parameter error 
+
+˜Θ𝑘 
+
+> △
+
+= Θ 𝑘 − Θ★. (27) 
+
+Then, for all 𝑘 ≥ 0, ˜Θ𝑘 +1 satisfies 
+
+˜Θ𝑘 +1 = ˜Θ𝑘 
+
+(𝐼 − 𝜙 𝑘 𝜙 T 
+
+> 𝑘
+
+P𝑘 +1
+
+) = 𝜆 ˜Θ𝑘 P−1 
+
+> 𝑘
+
+P𝑘 +1 . (28) 
+
+Proof. See Section C.2 in Appendix C.
+
+The next result uses Theorems 3, 4, and 5 from [ 22 ] to prove stability of the equilibrium ˜Θ𝑘 = 0.
+
+Theorem 1. Consider the system (28) -(9) . Let P0 be positive definite. If 𝜆 = 1, then the equilibrium of (28) , that is, ˜Θ𝑘 = 0,is Lyapunov stable. If 𝜆 ∈ ( 0, 1), then the equilibrium of (28) is globally geometrically stable. Proof. See Section C.3 in Appendix C.
+
+Theorem 1 shows that the estimation error dynamics associated with the recursive least-squares update are stable. 
+
+4 / PREPRINT FOR REVIEW Transactions of the ASME 3.2 Closed-Loop Boundedness under DMAC. The conver-gence properties of the dynamic mode approximation established above are used in the following subsection to analyze the behavior of the closed-loop system under the DMAC controller. In particu-lar, the next theorem proves the boundedness of the state 𝜉 𝑘 with the proposed DMAC controller in the loop. 
+
+Theorem 2. Consider the system (22) , where the pair ( 𝐴 ★, 𝐵 ★) is stabilizable. Consider the control law 
+
+𝑢 𝑘 = 𝐾 𝑘 𝜉 𝑘 + {𝑘 , (29) 
+
+where (1) ( 𝐴 𝑘 , 𝐵 𝑘 ) are estimates of ( 𝐴 ★, 𝐵 ★) computed by the matrix RLS estimator with forgetting factor 𝜆 ∈ ( 0, 1),(2) 𝐾 𝑘 is the infinite-horizon discrete-time LQR gain associated with the stabilizing solution of the algebraic Riccati equation for the ( 𝐴 𝑘 , 𝐵 𝑘 ) and weighting matrices 𝑄 ≥ 0, 𝑅 > 0,(3) the excitation signal {𝑘 is i.i.d., zero-mean, with covariance 
+
+𝑅 { > 0, and satisfies the uniform bound 
+
+‖{𝑘 ‖ ≤ ¯{, ∀𝑘 ≥ 0. (30) 
+
+Assume that the RLS estimate ( 𝐴 𝑘 , 𝐵 𝑘 ) is stabilizable and 
+
+( 𝐴 𝑘 , 𝑄 1/2) is detectable for all sufficiently large 𝑘, so that the corresponding ARE solution exists and 𝐾 𝑘 is well-defined. Then there exists a constant 𝑐 > 0, depending on the system and Lya-punov constants, such that the closed-loop state 𝜉 𝑘 is uniformly ultimately bounded , and satisfies 
+
+lim sup 
+
+> 𝑘 →∞
+
+‖𝜉 𝑘 ‖ ≤ 𝑐 ¯{. (31) 
+
+Proof. See Section C.4 in Appendix C.
+
+Theorem 2 shows that, under the proposed DMAC architecture, the closed-loop state remains bounded despite the presence of the excitation signal required for system identification. 
+
+4 Numerical Examples 
+
+This section illustrates the performance of the proposed DMAC algorithm on three representative dynamical systems of increasing complexity. The examples are selected to demonstrate DMAC’s ability to stabilize unstable linear systems, regulate nonlinear oscil-latory dynamics, and control distributed-parameter systems. The first example considers an unstable linear system. This example serves two purposes: it provides numerical verification of the the-oretical results developed in Section 2, and it illustrates the basic operation of the DMAC algorithm. The second and third exam-ples consider increasingly complex systems, namely the nonlinear Van der Pol oscillator and the Burgers equation. These examples demonstrate DMAC’s ability to regulate nonlinear and distributed-parameter systems via online dynamic mode approximation. 
+
+4.1 Stabilization of an Unstable Linear System. This ex-ample verifies the theoretical properties established in Section 2.In particular, the example illustrates the convergence behavior of the recursive dynamic mode approximation and the boundedness of the closed-loop state under the DMAC controller. Consider the LTI system (22) , where 
+
+𝐴 ★ =
+
+[1.05 0.25 
+
+−0.1 0.98 
+
+]
+
+, 𝐵 ★ =
+
+[0.12 0.25 
+
+]
+
+. (32) 
+
+Note that the eigenvalues of 𝐴 ★ are {1.015 ± 0.1542 𝚥 }, and thus the open-loop system is unstable. The objective is to stabilize the unstable system. 
+
+DMAC Setup. In this example, we assume that the full state is available for controller synthesis. Since 𝜉 𝑘 ∈ R2 and 𝑢 𝑘 ∈ R,
+
+it follows that Θ𝑘 is a 2 × 3 matrix. In DMAC, we set Θ0 =
+
+02×3 , P0 = 10 3 𝐼 3, and 𝜆 = 0.995 , to estimate Θ𝑘 = [ 𝐴 𝑘 𝐵 𝑘 ] using the recursive DMA. The control gain 𝐾 𝑘 is computed using LQR with weights 𝑄 lqr = 𝐼 2, 𝑅 lqr = 0.2. The excitation signal is gener-ated from a uniform distribution. In particular, {𝑘 ∼ Unif ([− ¯{, ¯{]) .
+
+Finally, the control signal is given by (29) .
+
+Stabilization. Figure 3 shows the closed-loop response of the system with the control signal generated by DMAC with the initial condition 𝜉 0 = [1 − 0.5]T and excitation signal ¯{ = 0.01. In particular, 3a) shows the state 𝜉 𝑘 , 3b) shows the input 𝑢 𝑘 generated by DMAC, 3c) shows the state norm of the state 𝜉 𝑘 , and 3d) shows the parameter estimate Θ𝑘 computed by DMAC. Note that the states do not converge to zero due to the presence of the exogenous excitation signal {𝑘 . Specifically, once the sys-tem is stabilized, the excitation signal acts as an external input to an asymptotically stable system. Since the closed-loop system is asymptotically stable, the mapping from {𝑘 to 𝜉 𝑘 is mean-square stable [ 26 ,27 ]. Consequently, if {𝑘 is a zero-mean stochastic pro-cess with finite variance, then 𝜉 𝑘 is also a zero-mean stochastic process with bounded variance satisfying sup 
+
+> 𝑘
+
+E [‖𝜉 𝑘 ‖2] ≤ ‖ 𝐺 𝜉 { ‖2 
+
+> H∞
+
+sup 
+
+> 𝑘
+
+E [‖{𝑘 ‖2] . (33)        
+
+> -1 01
+> -0.5 00.5 1
+> 050 100
+> 10 -4
+> 10 -3
+> 10 -2
+> 10 -1
+> 10 0
+> 050 100
+> 00.5 1
+> Fig. 3 Closed-loop response of the unstable linear system
+> (22) with the dynamics and input matrices given by (32) .
+
+Next, Figure 4 shows closed-loop trajectories from multiple ini-tial conditions. In all cases, the DMAC controller stabilizes the open-loop unstable system, and the state converges to a bounded neighborhood of the origin. Figure 5 compares the terms 𝑇 1,𝑘 -𝑇 4,𝑘 in the Lyapunov difference expansion (C4) with their corresponding analytical upper bounds derived in the proof of Theorem 2. The results verify the validity of the derived inequalities and the collected bound in (C9) .
+
+State, Estimation Error, and Gain Error Convergence. Fig-ure 6 shows the state norm ‖𝜉 𝑘 ‖, the parameter estimation er-ror ‖˜Θ𝑘 ‖𝐹 , and the gain error ‖ ˜𝐾 𝑘 ‖2 on a logarithmic scale for 
+
+¯{ = 0.01 and ¯{ = 0.05. A smaller excitation magnitude leads to slower convergence of the parameter and gain estimates, which is consistent with the well-known property that the convergence rate of RLS depends on the magnitude of the regressor. At the same time, a smaller excitation signal results in convergence of the state to a smaller neighborhood of the origin. This behavior follows from the asymptotic stability of the closed-loop system, that is, in steady state, the state magnitude scales with the input magnitude according to (33) . Consequently, a larger excitation signal induces a larger steady-state response. These results verify the theoretical properties established in Sec-tion 2 and demonstrate DMAC’s ability to stabilize unstable sys-tems while simultaneously identifying the system dynamics online. 
+
+Journal of Dynamic Systems, Measurement, and Control PREPRINT FOR REVIEW / 5 -0.1 0 0.1 
+
+-0.1 -0.05 00.05 0.1  
+
+> Fig. 4 Closed-loop phase portrait with DMAC for various ini-tial conditions. The DMAC controller stabilizes the unstable system, and the state converges to a neighborhood of the origin.
+
+4.2 Output Tracking in Van Der Pol Oscillator. This exam-ple illustrates the performance of the DMAC controller on a non-linear system. In particular, the example demonstrates DMAC’s ability to track reference commands for nonlinear dynamics with-out requiring a system model. Consider the Van Der Pol oscillator 
+
+¥𝑞 − 𝜇 (1 − 𝑞 2) ˙𝑞 + 𝑞 = 𝑢. (34) 
+
+MATLAB’s ode45 routine is used to simulate (34) . In this ex-ample, we set 𝜇 = 1 and the initial condition 𝑥 (0) is randomly generated using MATLAB’s randn routine. The control objective is to ensure that the output 
+
+𝑦 𝑘 = 𝑞 (𝑘𝑇 s) (35) 
+
+tracks a reference signal 𝑟 . In this example, the DMAC algorithm updates the control signal 𝑢 𝑘 every 𝑇 s = 0.1 s .
+
+DMAC Setup. To apply the DMAC algorithm, we assume that the measured state is 
+
+𝜉 𝑘 =
+
+[𝑞 (𝑘𝑇 s)
+
+˙𝑞 (𝑘𝑇 s)
+
+]
+
+. (36) 
+
+Since 𝜉 𝑘 ∈ R2 and 𝑢 𝑘 ∈ R, the parameter matrix Θ𝑘 has di-mension 2 × 3. In DMAC, we set Θ0 = 02×3, P0 = 10 −2 𝐼 3, and 
+
+𝜆 = 0.995 , to estimate Θ𝑘 = [ 𝐴 𝑘 𝐵 𝑘 ] using the recursive DMA. The control gain 𝐾 𝑘 is computed using the full-state feedback with integral action described in Section B, with LQR weights 𝑄 lqr = 𝐼 3,
+
+and 𝑅 lqr = 1.
+
+Closed-Loop Response. Figure 7 shows the closed-loop re-sponse of the Van der Pol system with the DMAC controller. In particular, (a) shows the output 𝑦 𝑘 and the reference signal 𝑟 , (b) shows the control signal 𝑢 𝑘 computed by DMAC, (c) shows the ab-solute value of the tracking error 𝑧 𝑘 
+
+> △
+
+= 𝑦 𝑘 −𝑟 on a logarithmic scale, and (d) shows the parameter matrix Θ𝑘 estimated by DMAC. Note that the output error converges to a neighborhood of zero whose size is proportional to the magnitude of the excitation signal ¯{ and remains bounded. 
+
+Sensitivity to Algorithm Hyperparameters. To investigate the robustness of the DMAC algorithm with respect to its tuning parameters, we vary the hyperparameters 𝜆 , 𝑅 Θ, 𝑄 lqr , and 𝑅 lqr ,while keeping the remaining parameters at their nominal values. Figure 8 shows the effect of these hyperparameters on the closed-loop response 𝑦 𝑘 . Specifically, (a), (b), (c), and (d) show the effect 
+
+10 -11 
+
+10 -8 
+
+10 -5 
+
+10 -2 
+
+10 1
+
+10 -14 
+
+10 -11 
+
+10 -8 
+
+10 -5 
+
+10 -2 
+
+10 -8 
+
+10 -6 
+
+10 -4 
+
+10 -2 
+
+20 40 60 80 100 
+
+10 -8 
+
+10 -5 
+
+10 -2 
+
+10 1  
+
+> Fig. 5 Comparison of the terms
+
+T1,k –T4,k in the Lyapunov difference expansion (C4) with their corresponding analyti-cal upper bounds derived in the proof of Theorem 2. The re-sults confirm the validity of the derived inequalities and the collected bound in (C9) .
+
+of varying 𝜆 , 𝑅 Θ, 𝑄 lqr , and 𝑅 lqr , respectively. In each case, the hyperparameters are varied over several orders of magnitude. The results indicate that the DMAC algorithm maintains stable tracking performance across a wide range of parameter values, suggesting robustness to tuning. 
+
+Robustness to System Parameters. Finally, we assess the ro-bustness of the DMAC controller to variations in the physical sys-tem parameters. In particular, we vary the nonlinear damping parameter 𝜇 while keeping all other parameters fixed. Figure 9 shows the resulting closed-loop response 𝑦 𝑘 for dif-ferent values of 𝜇 . The result indicates that the DMAC controller maintains stable tracking performance, demonstrating robustness with respect to variations in the system dynamics. 
+
+4.3 Output Tracking in Burgers’ Equation. This example demonstrates DMAC’s ability to track reference commands for sys-tems governed by nonlinear partial differential equations without requiring a system model. Consider the one-dimensional Burgers’ equation given by 
+
+𝜕| 
+
+𝜕𝑡 + | 𝜕| 
+
+𝜕𝑥 = 𝜈 𝜕 2 |
+
+𝜕𝑥 2 + 𝑢 c (𝑥, 𝑡 ), (37) 
+
+where |(𝑥, 𝑡 ) may represent a pressure or a velocity field, 𝜈 is the viscosity coefficient, and 𝑢 c (𝑥, 𝑡 ) is the control input applied at the location 𝑥 at time 𝑡 .To simulate the Burgers equation (37) , we discretize (37) in space using a uniform grid with 𝑁 nodes over the domain 𝑥 ∈[0, 2𝜋 ]. Thus, the spatial step size Δ𝑥 = 2𝜋 /( 𝑁 − 1) and the 𝑖 th spatial node is 𝑥 𝑖 = (𝑖 − 1)Δ𝑥. The approximation of the field variable |(𝑥, 𝑡 ) at the spatial node 𝑥 𝑖 is denoted by |𝑖 (𝑡 ). At each node, the convective and diffusive terms are then approximated 
+
+6 / PREPRINT FOR REVIEW Transactions of the ASME 10 -4 
+
+10 -3 
+
+10 -2 
+
+10 -1 
+
+10 0
+
+20 40 60 80 100 
+
+10 -2 
+
+10 -1 
+
+10 0
+
+Fig. 6 State norm ‖ξk ‖ and parameter estimation and gain errors ‖ ˜Θk ‖F and ‖ ˜Kk ‖2 on a logarithmic scale for ¯v = 0.01 and ¯v = 0.5.          
+
+> -1 012
+> Reference -5 05
+> 200 400 600 800 1000
+> 10 -4
+> 10 -3
+> 10 -2
+> 10 -1
+> 10 0
+> 200 400 600 800 1000
+> 00.2 0.4 0.6 0.8
+
+Fig. 7 Closed-loop response of (34) with DMAC. a) shows the output yk and the reference signal r , b) shows the control signal uk , c) shows the absolute value of the tracking error 
+
+zk on a logarithmic scale, and d) shows the estimate matrix 
+
+Θk computed by DMAC. 
+
+using central differences, that is, 
+
+𝜕| 
+
+𝜕𝑥 𝑥 𝑖 
+
+≈ |𝑖 +1 − |𝑖 −1
+
+2Δ𝑥 (38) 
+
+𝜕 2|
+
+𝜕𝑥 2
+
+> 𝑥 𝑖
+
+≈ |𝑖 +1 − 2|𝑖 + |𝑖 −1
+
+Δ𝑥 2 . (39) 
+
+Thus, for 𝑖 = 1, 2, 3, . . . , 𝑁, 
+
+˙|𝑖 = −|𝑖 
+
+|𝑖 +1 − |𝑖 −1
+
+2Δ𝑥 
+
++ 𝜈 |𝑖 +1 − 2|𝑖 + |𝑖 −1
+
+Δ𝑥 2 + 𝑢 c,𝑖 (𝑡 ). (40) 
+
+To ensure a continuous flow, we impose periodic boundary con-ditions, where the function values wrap around the domain. In particular, the periodic boundary conditions are imposed by set-ting |0 = |𝑁 and |𝑁 +1 = |1.
+
+In this work, we set 𝑁 = 100 , 𝜈 = 0.1, and initialize |(𝑥, 0)
+
+randomly using MATLAB’s randn routine. MATLAB’s ode45 
+
+routine is used to simulate (40) . The output of the system is assumed to be the field variable at the 61st node, that is, 𝑦 = |61 .        
+
+> -1 012
+> -1 012
+> 200 400 600 800 1000
+> -2 02
+> 200 400 600 800 1000
+> -2 02
+
+Fig. 8 Effect of DMAC hyperparameters on the closed-loop response of the Van der Pol oscillator. a) Effect of the for-getting factor λ, b) effect of the regularization matrix RΘ, c) effect of the control weighting matrix Qlqr , and d) effect of the control weighting scalar Rlqr . The results indicate that the DMAC controller maintains stable tracking performance over a wide range of hyperparameter values.          
+
+> 100 200 300 400 500 600 700 800 900 1000
+> 024
+
+Fig. 9 Effect of varying the Van der Pol parameter μ on the closed-loop response under DMAC control. Despite varia-tions in the system dynamics, the DMAC controller maintains stable tracking performance, indicating robustness to plant parameter uncertainty. 
+
+The objective of the DMAC controller is to ensure that the output tracks a unit step reference signal 𝑟. In this example, the DMAC algorithm updates the control signal 𝑢 𝑘 every 𝑇 s = 0.01 s .
+
+To reflect the physical scenario with limited sensors, we assume that the field variable |𝑖 is measured at only a few sparse locations. In particular, we assume that |𝑖 is measured at the nodes 𝑖 ∈{1, 16 , 31 , 46 , 61 , 76 , 91 }.
+
+DMAC Setup. To apply the DMAC algo-rithm, we assume that the measured state is 𝜉 𝑘 =
+
+[|1 |16 |31 |46 |61 |76 |91 
+
+]T
+
+> 𝑡 =𝑘𝑇 s
+
+. Finally, in this example, the control is applied at 55th node, therefore, 
+
+𝑢 = 𝑢 c,55 .
+
+Since 𝜉 𝑘 ∈ R7 and 𝑢 𝑘 ∈ R, the parameter matrix Θ𝑘 has di-mension 7 × 8. In DMAC, we set Θ0 = 07×8 , P0 = 10 −2 𝐼 8,
+
+and 𝜆 = 0.9995 , to estimate Θ𝑘 = [ 𝐴 𝑘 𝐵 𝑘 ] using the recur-sive DMA. The control gain 𝐾 𝑘 is computed using the full-state feedback with integral action described in Section B, with LQR weights 𝑄 lqr = 10 × 𝐼 8, and 𝑅 lqr = 0.1.
+
+Closed-Loop Response. Figure 10 shows the closed-loop re-sponse of the Burgers’ system (37) with the DMAC controller. In particular, (a) shows the output 𝑦 𝑘 and the reference signal 𝑟 , (b) shows the control signal 𝑢 𝑘 computed by DMAC, (c) shows the ab-solute value of the tracking error 𝑧 𝑘 
+
+> △
+
+= 𝑦 𝑘 −𝑟 on a logarithmic scale, and (d) shows the parameter matrix Θ𝑘 estimated by DMAC. Note that the output error converges to a neighborhood of zero whose size is proportional to the magnitude of the excitation signal ¯{ and remains bounded. Figure 11 shows the closed-loop response of the discretized state of the Burgers equation. 
+
+Journal of Dynamic Systems, Measurement, and Control PREPRINT FOR REVIEW / 7 Fig. 10 Closed-loop response of (37) with DMAC. a) shows the output yk and the reference signal r , b) shows the control signal uk , c) shows the absolute value of the tracking error 
+
+zk on a logarithmic scale, and d) shows the estimate matrix 
+
+Θk computed by DMAC.  
+
+> Fig. 11 Closed-loop response of the discretized Burgers equation.
+
+Sensitivity to Algorithm Hyperparameters. To investigate the robustness of the DMAC algorithm with respect to its tuning parameters, we vary the hyperparameters 𝜆 , 𝑅 Θ, 𝑄 lqr , and 𝑅 lqr ,while keeping the remaining parameters at their nominal values. Figure 12 shows the effect of these hyperparameters on the closed-loop response 𝑦 𝑘 . Specifically, (a), (b), (c), and (d) show the effect of varying 𝜆 , 𝑅 Θ, 𝑄 lqr , and 𝑅 lqr , respectively. In each case, the hyperparameters are varied over several orders of mag-nitude. The results indicate that the DMAC algorithm maintains stable tracking performance across a wide range of parameter val-ues, suggesting robustness to tuning. 
+
+Robustness to System Parameters. Finally, we assess the ro-bustness of the DMAC controller to variations in the physical sys-tem parameters. In particular, we vary the viscosity coefficient 𝜈 
+
+while keeping all other parameters fixed. Figure 13 shows the resulting closed-loop response 𝑦 𝑘 for dif-ferent values of 𝜈 . The result indicates that the DMAC controller maintains stable tracking performance, demonstrating robustness with respect to variations in the system dynamics. 
+
+5 Conclusions 
+
+This paper presented a data-driven adaptive control framework called dynamic mode adaptive control (DMAC) for synthesizing controllers for dynamical systems whose mathematical models are          
+
+> Fig. 12 Effect of DMAC hyperparameters on the closed-loop performance.
+> 1000 2000 3000 4000 5000 6000 7000 8000
+> 0.5 11.5
+> Fig. 13 Effect of varying the system’s physical parameters on the closed-loop performance.
+
+unavailable or unsuitable for classical control design. The proposed approach integrates dynamic mode approximation with adaptive control synthesis within a unified recursive architecture, enabling controllers to be constructed directly from streaming measurement data. The identification component of DMAC uses a matrix recur-sive least-squares algorithm with a forgetting factor to estimate a local linear state-space representation of the system dynamics online. Because the identified model evolves with respect to mea-sured system variables, the resulting state representation retains a clear physical interpretation and can be used directly for controller synthesis. Theoretical analysis established convergence properties of the recursive identification algorithm and boundedness of the closed-loop system under the DMAC controller. The effectiveness of the proposed framework was demonstrated through numerical studies on dynamical systems of increasing complexity. An unstable linear system was used to verify the theoretical properties of the algorithm and illustrate the conver-gence behavior of the recursive identification step. Additional examples involving the Van der Pol oscillator and the Burgers equation demonstrated DMAC’s ability to regulate nonlinear and distributed-parameter systems using limited measurement data. Sensitivity studies further indicated that the proposed approach is robust to variations in algorithm hyperparameters and system parameters. Future work will focus on several directions. First, methods will be investigated to reduce or eliminate the need for persistent excitation while maintaining reliable parameter convergence in the recursive dynamics approximation. In particular, adaptive exci-tation mechanisms and identification strategies will be explored to ensure sufficient information for identification while minimiz-ing the impact of excitation signals on closed-loop performance. Second, constrained identification techniques will be developed to enforce structural properties in the learned dynamics, such as sta-bilizability or controllability, thereby improving the robustness and reliability of the resulting controller. Finally, future work will in-vestigate real-time implementation of the DMAC framework and evaluate its computational performance and control effectiveness 
+
+8 / PREPRINT FOR REVIEW Transactions of the ASME on physical dynamical systems. 
+
+Appendix 
+
+This appendix presents the technical derivations and supporting results omitted from the main text for clarity. A summary of all appendix results is provided in Table 1 to facilitate readability and highlight their role in the analysis. 
+
+Appendix A: Recursive Solution of the Exponentially Weighted Regularized Least-Squares Problem 
+
+This appendix derives the recursive solution of the exponentially weighted regularized least-squares problem. The derivation shows that the parameter matrix Θ𝑘 that minimizes the cost function (A1) 
+
+admits both a closed-form expression and a recursive update that can be implemented online. 
+
+A.1 Problem Formulation. Consider the cost function 
+
+𝐽 (𝑘, Θ) =
+
+> 𝑘
+
+Õ
+
+> 𝑖 =1
+
+𝜆 𝑘 −𝑖 (𝑦 𝑖 − Θ𝑥 𝑖 )T (𝑦 𝑖 − Θ𝑥 𝑖 ) + tr 𝜆 𝑘 𝑅 ΘΘΘ T, (A1) 
+
+where for all 𝑖 ≥ 1, 𝑦 𝑖 ∈ R𝑙 𝑦 and 𝑥 𝑖 ∈ R𝑙 𝑥 , Θ ∈ R𝑙 𝑦 ×𝑙 𝑥 , 𝑅 Θ ∈ R𝑙 𝑦 ×𝑙 𝑦 
+
+is positive definite, and 𝜆 ∈ ( 0, 1] is the forgetting factor. The first term in (A1) penalizes the exponentially weighted pre-diction error, where the forgetting factor 𝜆 determines how quickly past data are forgotten. The second term provides Tikhonov regu-larization and ensures that a unique minimizer exists. Note that the cost function can be written as 
+
+𝐽 (𝑘, Θ) =
+
+> 𝑘
+
+Õ
+
+> 𝑖 =1
+
+𝜆 𝑘 −𝑖 𝑦 T 
+
+> 𝑖
+
+𝑦 𝑖 + tr X𝑘 ΘTΘ − 2tr Y𝑘 Θ, (A2) 
+
+where 
+
+X𝑘 
+
+> △
+
+=
+
+> 𝑘
+
+Õ
+
+> 𝑖 =1
+
+𝜆 𝑘 −𝑖 𝑥 𝑖 𝑥 T 
+
+> 𝑖
+
++ 𝜆 𝑘 𝑅 Θ, (A3) 
+
+Y𝑘 
+
+> △
+
+=
+
+> 𝑘
+
+Õ
+
+> 𝑖 =1
+
+𝜆 𝑘 −𝑖 𝑥 𝑖 𝑦 T 
+
+> 𝑖
+
+. (A4) 
+
+The following identity from matrix differential calculus is used to compute the gradient of the cost function with respect to Θ.
+
+Fact A.1. Let Θ ∈ R𝑙 𝑦 ×𝑙 𝑥 , 𝐴 ∈ R𝑙 𝑦 ×𝑙 𝑦 , and 𝐵 ∈ R𝑙 𝑥 ×𝑙 𝑥 be matrices. Then, 
+
+𝜕 
+
+𝜕 Θ tr 𝐵 ΘTΘ = Θ (𝐵 + 𝐵 T), (A5) 
+
+𝜕 
+
+𝜕 Θ tr 𝐴 Θ𝐵 = 𝐴 T 𝐵. (A6) 
+
+Proof. See [ 28 ]. 
+
+A.2 Closed-Form Solution. The following proposition pro-vides a closed-form solution of the minimizer. 
+
+Proposition A.1 (Closed-form minimizer of the weighted least--squares problem. ). Consider the cost function (A1) . Let Θ𝑘 
+
+denote the minimizer of the cost function (A1) . Then, 
+
+Θ𝑘 = YT 
+
+> 𝑘
+
+X−1 
+
+> 𝑘
+
+. (A7) 
+
+Proof. Using Fact A.1 , it follows that 
+
+𝜕 
+
+𝜕 Θ tr X𝑘 ΘTΘ = 2ΘX𝑘 , 𝜕 
+
+𝜕 Θ tr Y𝑘 Θ = YT 
+
+> 𝑘
+
+, (A8) 
+
+and thus 
+
+𝜕 
+
+𝜕 Θ 𝐽 (𝑘, Θ) = 2ΘX𝑘 − 2YT 
+
+> 𝑘
+
+. (A9) 
+
+Setting the gradient equal to zero yields the minimizer. 
+
+A.3 Recursive Update. The following proposition provides a recursive formula for computing the closed-form solution of the minimizer. This result provides the recursive update used in Step 3 of the DMAC algorithm described in Section 2.6 .
+
+Proposition A.2 (Recursive update for exponentially weighted least squares. ). Consider the cost function (A1) . Let Θ𝑘 denote the minimizer of the cost function (A1) . Then, the minimizer Θ𝑘 
+
+satisfies 
+
+Θ𝑘 = Θ 𝑘 −1 + ( 𝑦 𝑘 − Θ𝑘 −1𝑥 𝑘 ) 𝑥 T 
+
+> 𝑘
+
+P𝑘 , (A10) 
+
+P𝑘 = 𝜆 −1P𝑘 −1 − 𝜆 −1P𝑘 −1 𝑥 𝑘 𝛾 −1 
+
+> 𝑘
+
+𝑥 T 
+
+> 𝑘
+
+P𝑘 −1, (A11) 
+
+where 𝛾 𝑘 
+
+> △
+
+= 𝜆 + 𝑥 T 
+
+> 𝑘
+
+P𝑘 −1𝑥 𝑘 , and P0
+
+> △
+
+= 𝑅 −1 
+
+> Θ
+
+.
+
+Proof. Proof of Proposition A.2 . Note that 
+
+X𝑘 =
+
+> 𝑘
+
+Õ
+
+> 𝑖 =1
+
+𝜆 𝑘 −𝑖 𝑥 𝑖 𝑥 T 
+
+> 𝑖
+
++ 𝜆 𝑘 𝑅 a = 𝜆 X𝑘 −1 + 𝑥 𝑘 𝑥 T 
+
+> 𝑘
+
+, (A12) 
+
+Y𝑘 =
+
+> 𝑘
+
+Õ
+
+> 𝑖 =1
+
+𝜆 𝑘 −𝑖 𝑥 𝑖 𝑦 T 
+
+> 𝑖
+
+= 𝜆 Y𝑘 −1 + 𝑥 𝑘 𝑦 T 
+
+> 𝑘
+
+. (A13) 
+
+Define P𝑘 
+
+> △
+
+= X−1 
+
+> 𝑘
+
+. Then, 
+
+P𝑘 =
+
+(
+
+𝜆 X𝑘 −1 + 𝑥 𝑘 𝑥 T
+
+> 𝑘
+
+) −1
+
+= 𝜆 −1X−1 
+
+> 𝑘 −1
+
+− 𝜆 −1X−1
+
+> 𝑘 −1
+
+𝑥 𝑘 𝛾 −1 
+
+> 𝑘
+
+𝑥 T 
+
+> 𝑘
+
+𝜆 −1X−1
+
+> 𝑘 −1
+
+= 𝜆 −1P𝑘 −1 − 𝜆 −1P𝑘 −1 𝑥 𝑘 𝛾 −1 
+
+> 𝑘
+
+𝑥 T 
+
+> 𝑘
+
+P𝑘 −1 , (A14) 
+
+Θ𝑘 = YT 
+
+> 𝑘
+
+X−1
+
+> 𝑘
+
+= (𝜆 YT 
+
+> 𝑘 −1
+
++ 𝑦 𝑘 𝑥 T 
+
+> 𝑘
+
+)X−1
+
+> 𝑘
+
+= (𝜆 Θ𝑘 −1X𝑘 −1 + 𝑦 𝑘 𝑥 T 
+
+> 𝑘
+
+)X−1
+
+> 𝑘
+
+= (Θ𝑘 −1 (X𝑘 − 𝑥 𝑘 𝑥 T 
+
+> 𝑘
+
+) + 𝑦 𝑘 𝑥 T 
+
+> 𝑘
+
+)X−1
+
+> 𝑘
+
+= Θ 𝑘 −1X𝑘 X−1 
+
+> 𝑘
+
+− Θ𝑘 −1𝑥 𝑘 𝑥 T 
+
+> 𝑘
+
+X−1 
+
+> 𝑘
+
++ 𝑦 𝑘 𝑥 T 
+
+> 𝑘
+
+X−1
+
+> 𝑘
+
+= Θ 𝑘 −1 − Θ𝑘 −1𝑥 𝑘 𝑥 T 
+
+> 𝑘
+
+P𝑘 + 𝑦 𝑘 𝑥 T 
+
+> 𝑘
+
+P𝑘 
+
+= Θ 𝑘 −1 + ( 𝑦 𝑘 − Θ𝑘 −1 𝑥 𝑘 ) 𝑥 T 
+
+> 𝑘
+
+P𝑘 , (A15) 
+
+which completes the proof. 
+
+Appendix B: Full-State Feedback Control with Integral Action 
+
+This section summarizes the full-state feedback controller with integral action used in the DMAC framework. 
+
+Journal of Dynamic Systems, Measurement, and Control PREPRINT FOR REVIEW / 9 Table 1 Summary of formal results in the appendices. 
+
+Appendix Section Label Type Description 
+
+Matrix RLS A Algorithm Recursive exponentially weighted least-squares update used to estimate the local linear model Θ𝑘 = [𝐴 𝑘 𝐵 𝑘 
+
+], including covariance update P𝑘 .
+
+Full-State Feedback Con-trol with Integral Action B Section Augmented-state formulation and state-feedback with integral action used in DMAC. 
+
+Proof of Proposition 3.1 C.1 Proof Proof that the covariance matrix update admits the inverse recursion and that P𝑘 remains positive definite. 
+
+Proof of Proposition 3.2 C.2 Proof Proof of the matrix estimation error recursion for ˜Θ𝑘 .
+
+Proof of Theorem 1 C.3 Proof Lyapunov proof for stability of the matrix RLS estimation error dynamics. 
+
+Proof of Theorem 2 C.4 Proof Composite Lyapunov proof establishing boundedness of the closed-loop state under DMAC. 
+
+Young’s Inequality with Pa-rameter C.1 Lemma Auxiliary inequality used to bound cross terms in the closed-loop Lyapunov analysis. 
+
+Persistence of excitation under random inputs D.1 Proposition Shows that, for a Schur system with controllable ( 𝐴, 𝐵 ) and i.i.d. zero-mean inputs, the regressor is persistently exciting in expectation. 
+
+Continuity and local Lips-chitz property of the LQR gain 
+
+D.2 Proposition Establishes continuity of the infinite-horizon LQR gain and a local Lipschitz bound with respect to perturbations in the pair ( 𝐴, 𝐵 ).
+
+B.1 Augmented System Formulation. Consider the discrete-time linear system 
+
+𝑥 𝑘 +1 = 𝐴𝑥 𝑘 + 𝐵𝑢 𝑘 , (B1) 
+
+𝑦 𝑘 = 𝐶𝑥 𝑘 , (B2) 
+
+where 𝑥 𝑘 ∈ R𝑙 𝑥 is the state, 𝑢 𝑘 ∈ R𝑙 𝑢 is the control input, and 
+
+𝑦 𝑘 ∈ R𝑙 𝑦 is the measured output. To achieve reference tracking for a command signal 𝑟 𝑘 , define the integrator state 
+
+𝑞 𝑘 
+
+> △
+
+=
+
+> 𝑘
+
+Õ
+
+> 𝑖 =0
+
+(𝑟 𝑖 − 𝑦 𝑖 ) ∈ R𝑙 𝑦 . (B3) 
+
+Note that the integrator state satisfies 
+
+𝑞 𝑘 +1 = 𝑞 𝑘 + 𝑒 𝑘 , (B4) 
+
+where the output error is 
+
+𝑒 𝑘 
+
+> △
+
+= 𝑟 𝑘 − 𝑦 𝑘 = 𝑟 𝑘 − 𝐶𝑥 𝑘 . (B5) 
+
+Next, define the augmented state 
+
+𝑥 a,𝑘 =
+
+[𝑥 𝑘 
+
+𝑞 𝑘 
+
+]
+
+∈ R𝑙 𝑥 +𝑙 𝑦 . (B6) 
+
+The augmented system dynamics then are 
+
+𝑥 a,𝑘 +1 = 𝐴 a𝑥 a,𝑘 + 𝐵 a𝑢 𝑘 + 𝐵 r𝑟 𝑘 , (B7) 
+
+𝑦 𝑘 = 𝐶 a𝑥 a,𝑘 , (B8) 
+
+where 
+
+𝐴 a
+
+> △
+
+=
+
+[ 𝐴 0
+
+−𝐶 𝐼 
+
+]
+
+, 𝐵 a
+
+> △
+
+=
+
+[𝐵 
+
+0
+
+]
+
+, 𝐵 r
+
+> △
+
+=
+
+[0
+
+𝐼 
+
+]
+
+, (B9) 
+
+𝐶 a
+
+> △
+
+= [𝐶 0] . (B10) 
+
+B.2 Controller Gain Computation. To stabilize the system and track the reference command 𝑟 𝑘 , consider the control law 
+
+𝑢 𝑘 = 𝐾 𝑥 𝑥 𝑘 + 𝐾 𝑞 𝑞 𝑘 , (B11) 
+
+where 𝐾 𝑥 ∈ R𝑙 𝑢 ×𝑙 𝑥 is the state-feedback gain matrix and 𝐾 𝑞 ∈
+
+R𝑙 𝑢 ×𝑙 𝑦 is the integral gain. Defining 
+
+𝐾 a
+
+> △
+
+= [𝐾 𝑥 𝐾 𝑞 
+
+] , (B12) 
+
+the control law can be written as 
+
+𝑢 𝑘 = 𝐾 a𝑥 a,𝑘 . (B13) 
+
+Substituting the control law into the augmented dynamics yields 
+
+𝑥 a,𝑘 +1 = ( 𝐴 a + 𝐵 a 𝐾 a)𝑥 a,𝑘 + 𝐵 r𝑟 𝑘 . (B14) 
+
+Note that if the pair ( 𝐴 a, 𝐵 a) is stabilizable, then there exists a gain matrix 𝐾 a such that ( 𝐴 a + 𝐵 a 𝐾 a) is Schur stable. The gain matrix 𝐾 a can be computed using standard state-feedback design techniques, such as pole placement or linear quadratic regulation. The following proposition provides conditions under which the pair 
+
+( 𝐴 a, 𝐵 a) is stabilizable. 
+
+Proposition B.1 (Integral action and zeros at 𝑧 = 1) . Assume 
+
+( 𝐴, 𝐵 ) is stabilizable. Then ( 𝐴 a, 𝐵 a) is stabilizable if and only if the triple ( 𝐴, 𝐵, 𝐶 ) has no invariant zeros at 𝑧 = 1, or equivalently, 
+
+rank 
+
+[𝐴 − 𝐼 𝐵 𝐶 0
+
+]
+
+= 𝑙 𝑥 + 𝑙 𝑦 . (B15) 
+
+Proof. See [ 29 ]. 
+
+Finally, if 𝑟 𝑘 = 𝑟 is constant, then 𝑥 a,𝑘 converges to a constant equilibrium point. Consequently, the integrator state 𝑞 𝑘 converges, which implies that the tracking error 𝑒 𝑘 converges to zero and therefore the output 𝑦 𝑘 converges to 𝑟 .
+
+10 / PREPRINT FOR REVIEW Transactions of the ASME Appendix C: Proofs 
+
+C.1 Proof of Proposition 3.1 .
+
+Proof. It follows from the Sherman–Morrison–Woodbury formula, [30 ], that 
+
+(𝜆 P−1 
+
+> 𝑘
+
++𝜙 𝑘 𝜙 T 
+
+> 𝑘
+
+)−1 = 𝜆 −1P𝑘 
+
+− 𝜆 −1P𝑘 𝜙 𝑘 
+
+(𝜆 + 𝜙 T 
+
+> 𝑘
+
+P𝑘 𝜙 𝑘 
+
+) −1 𝜙 T 
+
+> 𝑘
+
+P𝑘 .
+
+Next, note that it follows from (9) that the RSH of the equation above is equal to P𝑘 +1 , which proves (26) .Next, note that, for 𝑘 = 0, P−11 is a sum of two positive definite matrices and thus is positive definite. It follows by induction that, for all 𝑘 ≥ 0, P−1 
+
+> 𝑘
+
+is positive definite, which implies that P𝑘 is positive definite. Since 𝜙 𝑘 is persistently exciting, 𝛼, 𝛽, and 𝑁 exist such that (25) 
+
+holds. Since 𝛽 is finite, it follows that there exists ¯𝜙 ∈ R such that, for all 𝑘 ≥ 0, ‖𝜙 𝑘 ‖ ≤ ¯𝜙. 
+
+Next, it follows from (26) that 
+
+P−1 
+
+> 𝑘 +1
+
+= 𝜆 𝑘 +1P−10 +
+
+> 𝑘
+
+Õ
+
+> 𝑖 =0
+
+𝜆 𝑘 −𝑖 𝜙 𝑖 𝜙 T
+
+> 𝑖
+
+≤ 𝜆 𝑘 +1P−10 +
+
+> 𝑘
+
+Õ
+
+> 𝑖 =0
+
+𝜆 𝑘 −𝑖 ¯𝜙 2 𝐼 𝑝 
+
+≤ P−10 + ¯𝜙 2
+
+1 − 𝜆 𝐼 𝑝 .
+
+First, consider the case where 𝜆 ∈ (0, 1). In this case, P−1
+
+> 𝑘 +1
+
+is bounded from below and consequently P𝑘 +1 is bounded from above. On the other hand, in the case where 𝜆 = 1, P𝑘 satisfies 
+
+P−1 
+
+> 𝑘 +1
+
+= P−10 +
+
+> 𝑘
+
+Õ
+
+> 𝑖 =0
+
+𝜙 𝑖 𝜙 T 
+
+> 𝑖
+
+≥ P−10 + 𝛼 ⌊𝑘 /𝑁 ⌋𝐼 𝑝 ,
+
+where ⌊𝑘 /𝑁 ⌋ is the smallest integer larger than 𝑘 /𝑁. Conseqeuntly, 
+
+P−1 
+
+> 𝑘 +1
+
+grows without bounds and thus P𝑘 +1 → 0 as 𝑘 → ∞ .
+
+C.2 Proof of Proposition 3.2 .
+
+Proof. Using (23) and (8) , it follows that 
+
+˜Θ𝑘 +1 = Θ 𝑘 +1 − Θ★
+
+= Θ 𝑘 − Θ★ + (𝜉 𝑘 +1 − Θ𝑘 𝜙 𝑘 
+
+) 𝜙 T 
+
+> 𝑘
+
+P𝑘 +1
+
+= ˜Θ𝑘 + (Θ★𝜙 𝑘 − ( ˜Θ𝑘 + Θ★)𝜙 𝑘 
+
+) 𝜙 T 
+
+> 𝑘
+
+P𝑘 +1
+
+= ˜Θ𝑘 − ˜Θ𝑘 𝜙 𝑘 𝜙 T 
+
+> 𝑘
+
+P𝑘 +1
+
+= ˜Θ𝑘 
+
+(𝐼 − 𝜙 𝑘 𝜙 T 
+
+> 𝑘
+
+P𝑘 +1
+
+).
+
+Finally, substituting 𝜙 𝑘 𝜙 T 
+
+> 𝑘
+
+from (26) in the equation above yields the second equality. 
+
+C.3 Proof of Theorem 1. .
+
+Proof. Consider the function 
+
+𝑉 𝑘 
+
+> △
+
+= tr (˜Θ𝑘 P−1 
+
+> 𝑘
+
+˜ΘT
+
+> 𝑘
+
+) .
+
+Note that, for all 𝑘 ≥ 0 and ˜Θ𝑘 ≠ 0, 𝑉 𝑘 > 0 since P𝑘 is positive definite. Furthermore, 𝑉 𝑘 = 0 if and only if ˜Θ𝑘 = 0.
+
+Using (28) , it follows that 
+
+𝑉 𝑘 +1 = tr (˜Θ𝑘 +1P−1 
+
+> 𝑘 +1
+
+˜ΘT
+
+> 𝑘 +1
+
+)
+
+= 𝜆 2tr (˜Θ𝑘 P−1 
+
+> 𝑘
+
+P𝑘 +1P−1
+
+> 𝑘 +1
+
+P𝑘 +1 P−1 
+
+> 𝑘
+
+˜ΘT
+
+> 𝑘
+
+)
+
+= 𝜆 2tr (˜Θ𝑘 P−1 
+
+> 𝑘
+
+P𝑘 +1P−1 
+
+> 𝑘
+
+˜ΘT
+
+> 𝑘
+
+). (C1) 
+
+Post-multiplying (26) by P𝑘 +1 yields gives 
+
+P−1 
+
+> 𝑘
+
+P𝑘 +1 = 𝜆 −1 (
+
+𝐼 − 𝜙 𝑘 𝜙 T 
+
+> 𝑘
+
+P𝑘 +1
+
+)
+
+. (C2) 
+
+Next, substituting (C2) into (C1) yields 
+
+𝑉 𝑘 +1 = 𝜆 tr (˜Θ𝑘 
+
+(
+
+𝐼 − 𝜙 𝑘 𝜙 T 
+
+> 𝑘
+
+P𝑘 +1
+
+)
+
+P−1 
+
+> 𝑘
+
+˜ΘT
+
+> 𝑘
+
+)
+
+= 𝜆 tr (˜Θ𝑘 P−1 
+
+> 𝑘
+
+˜ΘT
+
+> 𝑘
+
+) − 𝜆 tr (˜Θ𝑘 𝜙 𝑘 𝜙 T 
+
+> 𝑘
+
+P𝑘 +1 P−1 
+
+> 𝑘
+
+˜ΘT
+
+> 𝑘
+
+),
+
+which implies that 
+
+𝑉 𝑘 +1 − 𝑉 𝑘 = −( 1 − 𝜆 )𝑉 𝑘 − 𝜆 tr (˜Θ𝑘 𝜙 𝑘 𝜙 T 
+
+> 𝑘
+
+P𝑘 +1P−1 
+
+> 𝑘
+
+˜ΘT
+
+> 𝑘
+
+)
+
+≤ −( 1 − 𝜆 )𝑉 𝑘 
+
+≤ 0, (C3) 
+
+since tr (˜Θ𝑘 𝜙 𝑘 𝜙 T 
+
+> 𝑘
+
+P𝑘 +1P−1 
+
+> 𝑘
+
+˜ΘT
+
+> 𝑘
+
+) = tr (˜ΘT 
+
+> 𝑘
+
+˜Θ𝑘 𝜙 𝑘 𝜙 T 
+
+> 𝑘
+
+P𝑘 +1 P−1
+
+> 𝑘
+
+) ≥ 0.
+
+Note that if 𝜆 = 1, then, for all 𝑘 ≥ 0,𝑉 𝑘 +1 − 𝑉 𝑘 ≤ 0,
+
+which implies Lyapunov stability of the equilibrium ˜Θ𝑘 = 0. Fur-thermore, if 𝜆 ∈ ( 0, 1), then, for all 𝑘 ≥ 0,𝑉 𝑘 +1 − 𝑉 𝑘 < 0,
+
+which implies globally geometric stability of the equilibrium ˜Θ𝑘 =
+
+0.
+
+C.4 Proof of Theorem 2.
+
+Proof. Define the composite Lyapunov function 
+
+V𝑘 (𝜉 𝑘 , ˜Θ𝑘 ) △
+
+= S𝑘 + 𝑉 𝑘 ,
+
+where 
+
+S𝑘 
+
+> △
+
+= 𝜉 T 
+
+> 𝑘
+
+𝑃𝜉 𝑘 , 𝑉 𝑘 
+
+> △
+
+= tr (˜Θ𝑘 P−1 
+
+> 𝑘
+
+˜ΘT
+
+> 𝑘
+
+),
+
+and ˜Θ𝑘 is given by (27) . Furthermore, P𝑘 given by (9) is positive definite, and 𝑃 is the positive definite solution of the discrete-time Lyapunov equation 
+
+( 𝐴 ★𝑐 )T 𝑃 𝐴 ★𝑐 − 𝑃 = −𝑄, 
+
+Journal of Dynamic Systems, Measurement, and Control PREPRINT FOR REVIEW / 11 where 
+
+𝐴 ★𝑐 
+
+> △
+
+= 𝐴 ★ + 𝐵 ★𝐾 ★.
+
+Thus, V𝑘 (𝜉 𝑘 , ˜Θ𝑘 ) ≥ 0 since 𝑃 and P𝑘 are positive definite. Since {𝑘 is i.i.d. and zero-mean, it follows from Proposition 
+
+D.1 that the regressor 𝜙 𝑘 given by (24) is persistently exciting. Consequently, by Theorem 1,
+
+𝑉 𝑘 +1 − 𝑉 𝑘 ≤ 0.
+
+Next, define ΔS𝑘 
+
+> △
+
+= S𝑘 +1 − S𝑘 . Then, 
+
+ΔS𝑘 = −𝜉 T 
+
+> 𝑘
+
+𝑄𝜉 𝑘 + 𝑇 1,𝑘 + 𝑇 2,𝑘 + 𝑇 3,𝑘 + 𝑇 4,𝑘 , (C4) 
+
+where 
+
+𝑇 1,𝑘 
+
+> △
+
+= 2𝜉 T 
+
+> 𝑘
+
+( 𝐴 ★𝑐 )T 𝑃𝐵 ★ ˜𝐾 𝑘 𝜉 𝑘 ,𝑇 2,𝑘 
+
+> △
+
+= 𝜉 T 
+
+> 𝑘
+
+˜𝐾 T 
+
+> 𝑘
+
+𝐵 ★T 𝑃𝐵 ★ ˜𝐾 𝑘 𝜉 𝑘 ,𝑇 3,𝑘 
+
+> △
+
+= 2𝜉 T 
+
+> 𝑘
+
+( 𝐴 ★𝑐 )T 𝑃𝐵 ★{𝑘 + {T 
+
+> 𝑘
+
+𝐵 ★T 𝑃𝐵 ★{𝑘 ,𝑇 4,𝑘 
+
+> △
+
+= 2𝜉 T 
+
+> 𝑘
+
+˜𝐾 T 
+
+> 𝑘
+
+𝐵 ★T𝑃𝐵 ★{𝑘 ,
+
+with ˜𝐾 𝑘 
+
+> △
+
+= 𝐾 𝑘 − 𝐾 ★. By Proposition D.2 , there exist constants 
+
+𝑐 𝐾 > 0 and 𝑘 0 ∈ N such that, for all 𝑘 ≥ 𝑘 0,
+
+‖ ˜𝐾 𝑘 ‖ = ‖𝐾 𝑘 − 𝐾 ★ ‖ ≤ 𝑐 𝐾 ‖˜Θ𝑘 ‖.
+
+Bounding the perturbation terms. Next, we bound each term. First, 
+
+|𝑇 1,𝑘 = 2 𝜉 T 
+
+> 𝑘
+
+( 𝐴 ★𝑐 )T 𝑃𝐵 ★ ˜𝐾 𝑘 𝜉 𝑘 
+
+≤ 2‖𝜉 𝑘 ‖ ‖ ( 𝐴 ★𝑐 )T 𝑃𝐵 ★ ‖ ‖ ˜𝐾 𝑘 ‖ ‖ 𝜉 𝑘 ‖≤ 2‖ 𝐴 ★𝑐 ‖ ‖ 𝑃 ‖ ‖ 𝐵 ★‖ ‖ ˜𝐾 𝑘 ‖ ‖ 𝜉 𝑘 ‖2
+
+≤ 𝑐 1 ‖𝜉 𝑘 ‖2 ‖˜Θ𝑘 ‖, (C5) 
+
+where 
+
+𝑐 1
+
+> △
+
+= 2‖ 𝐴 ★𝑐 ‖ ‖ 𝑃 ‖ ‖ 𝐵 ★ ‖ 𝑐 𝐾 .
+
+Next, 
+
+|𝑇 2,𝑘 = 𝜉 T 
+
+> 𝑘
+
+˜𝐾 T 
+
+> 𝑘
+
+𝐵 ★T 𝑃𝐵 ★ ˜𝐾 𝑘 𝜉 𝑘 
+
+≤ ‖ 𝐵 ★‖2 ‖𝑃 ‖ ‖ ˜𝐾 𝑘 ‖2 ‖𝜉 𝑘 ‖2
+
+≤ 𝑐 2 ‖˜Θ𝑘 ‖2 ‖𝜉 𝑘 ‖2, (C6) 
+
+where 𝑐 2
+
+> △
+
+= ‖𝐵 ★‖2 ‖𝑃 ‖ 𝑐 2 
+
+> 𝐾
+
+.
+
+Next, for 𝜖 > 0, note that 
+
+𝑇 3,𝑘 ≤ 2‖𝜉 𝑘 ‖ ‖ ( 𝐴 ★𝑐 )T 𝑃𝐵 ★ ‖ ‖ {𝑘 ‖ + ‖ 𝐵 ★T𝑃𝐵 ★ ‖ ‖ {𝑘 ‖2
+
+≤ 𝜖 ‖𝜉 𝑘 ‖2 +
+
+( 1
+
+𝜖 ‖ ( 𝐴 ★𝑐 )T 𝑃𝐵 ★ ‖2 + ‖ 𝐵 ★ ‖2 ‖𝑃 ‖
+
+)
+
+‖{𝑘 ‖2
+
+≤ 𝑐 3𝑥 ‖𝜉 𝑘 ‖2 + 𝑐 3{ ‖{𝑘 ‖2, (C7) 
+
+where 
+
+𝑐 3𝑥 
+
+> △
+
+= 𝜖, 𝑐 3{
+
+> △
+
+= 1
+
+𝜖 ‖ ( 𝐴 ★𝑐 )T 𝑃𝐵 ★ ‖2 + ‖ 𝐵 ★ ‖2 ‖𝑃 ‖.
+
+Next, note that 
+
+|𝑇 4,𝑘 ≤ 2‖𝜉 𝑘 ‖ ‖ ˜𝐾 𝑘 ‖ ‖ 𝐵 ★ ‖2 ‖𝑃 ‖ ‖ {𝑘 ‖≤ 2𝑐 𝐾 ‖𝐵 ★ ‖2 ‖𝑃 ‖ ‖ 𝜉 𝑘 ‖ ‖ ˜Θ𝑘 ‖ ‖ {𝑘 ‖.
+
+Applying Young’s inequality (Lemma C.1 ), for 𝜂 > 0, yields 
+
+|𝑇 4,𝑘 ≤ 𝜂 ‖𝜉 𝑘 ‖2 ‖˜Θ𝑘 ‖2 + 1
+
+𝜂 
+
+(𝑐 𝐾 ‖𝐵 ★‖2 ‖𝑃 ‖)2 ‖{𝑘 ‖2
+
+≤ 𝑐 4𝜃 ‖𝜉 𝑘 ‖2 ‖˜Θ𝑘 ‖2 + 𝑐 4{ ‖{𝑘 ‖2, (C8) 
+
+where 𝑐 4𝜃 
+
+> △
+
+= 𝜂, and 𝑐 4{
+
+> △
+
+= 1
+
+> 𝜂
+
+(𝑐 𝐾 ‖𝐵 ★ ‖2 ‖𝑃 ‖)2.
+
+Bounding the Lyapunov function. Substituting (C5) , (C6) ,
+
+(C7) , and (C8) into (C4) yields 
+
+ΔS𝑘 ≤ − 𝜉 T 
+
+> 𝑘
+
+𝑄𝜉 𝑘 + 𝑐 1 ‖𝜉 𝑘 ‖2 ‖˜Θ𝑘 ‖ + 𝑐 2 ‖𝜉 𝑘 ‖2 ‖˜Θ𝑘 ‖2
+
++ 𝑐 3𝑥 ‖𝜉 𝑘 ‖2 + 𝑐 3{ ‖{𝑘 ‖2 + 𝑐 4𝜃 ‖𝜉 𝑘 ‖2 ‖˜Θ𝑘 ‖2
+
++ 𝑐 4{ ‖{𝑘 ‖2. (C9) 
+
+Combining like terms and using 𝜉 T 
+
+> 𝑘
+
+𝑄𝜉 𝑘 ≥ 𝜆 min (𝑄 )‖ 𝜉 𝑘 ‖2, it follows that 
+
+ΔS𝑘 ≤ − 𝜆 min (𝑄 )‖ 𝜉 𝑘 ‖2 + 𝑐 1 ‖𝜉 𝑘 ‖2 ‖˜Θ𝑘 ‖ + 𝑐 𝜃 ‖𝜉 𝑘 ‖2 ‖˜Θ𝑘 ‖2
+
++ 𝑐 𝑥 ‖𝜉 𝑘 ‖2 + 𝑐 { ‖{𝑘 ‖2, (C10) 
+
+where 𝑐 𝜃 
+
+> △
+
+= 𝑐 2 + 𝑐 4𝜃 , 𝑐 𝑥 
+
+> △
+
+= 𝑐 3𝑥 , and 𝑐 {
+
+> △
+
+= 𝑐 3{ + 𝑐 4{. Next, note that {𝑘 is bounded by ¯{ and assuming 𝜆 min (𝑄 ) > 𝑐 𝑥 , define 𝑐 𝑞 
+
+> △
+
+=
+
+𝜆 min (𝑄 ) − 𝑐 𝑥 > 0, it follows that 
+
+ΔS𝑘 ≤ − 𝑐 𝑞 ‖𝜉 𝑘 ‖2 + 𝑐 1 ‖𝜉 𝑘 ‖2 ‖˜Θ𝑘 ‖ + 𝑐 𝜃 ‖𝜉 𝑘 ‖2 ‖˜Θ𝑘 ‖2 + 𝑐 { ¯{2.
+
+(C11) 
+
+Small-Gain Condition from Parameter Convergence. Since the matrix RLS estimator converges globally and geometrically under persistent excitation for 0 < 𝜆 < 1 (Theorem 1), ‖˜Θ𝑘 ‖ → 0as 𝑘 → ∞ . Fix any 𝛿 ∈ ( 0, 1) and choose 𝑘 sufficiently large such that 
+
+𝑐 1 ‖˜Θ𝑘 ‖ + 𝑐 𝜃 ‖˜Θ𝑘 ‖2 ≤ 𝛿 𝑐 𝑞 . (C12) 
+
+Then (C11) implies, for all such 𝑘 ,
+
+ΔS𝑘 ≤ −( 1 − 𝛿 )𝑐 𝑞 ‖𝜉 𝑘 ‖2 + 𝑐 { ¯{2. (C13) 
+
+Ultimate Boundedness Radius. Define 
+
+𝑟 2
+
+> {
+> △
+
+= 𝑐 {
+
+(1 − 𝛿 )𝑐 𝑞 
+
+¯{2. (C14) 
+
+Then (C13) implies that whenever ‖𝜉 𝑘 ‖2 > 𝑟 2 
+
+> {
+
+, ΔS𝑘 < 0. Suppose that for some 𝑘 ≥ 𝑘 0, ‖𝜉 𝑘 ‖ > 𝑟 { . Then, it follows that S𝑘 +1 <
+
+S𝑘 . Hence, whenever ‖𝜉 𝑘 ‖ > 𝑟 {, the sequence {S𝑘 } is strictly decreasing. Since S𝑘 ≥ 0, it follows that ‖𝜉 𝑘 ‖ > 𝑟 { cannot hold for all 𝑘 ≥ 𝑘 0. Therefore, there exists a finite index 𝑘 1 ≥ 𝑘 0 such that 
+
+‖𝜉 𝑘 1 ‖ ≤ 𝑟 {.
+
+Norm Equivalence and Explicit State Bound. Since 𝑃 =
+
+𝑃 T > 0, S𝑘 is norm-equivalent to ‖𝜉 𝑘 ‖2, that is, for all 𝑘 ≥ 0,𝜆 min (𝑃 )‖ 𝜉 𝑘 ‖2 ≤ S𝑘 ≤ 𝜆 max (𝑃 )‖ 𝜉 𝑘 ‖2. (C15) 
+
+Thus, ‖𝜉 𝑘 ‖ ≤ 𝑟 { implies S𝑘 ≤ 𝜆 max (𝑃 ) 𝑟 2 
+
+> {
+
+. Hence, for all 𝑘 ≥ 𝑘 1,
+
+‖𝜉 𝑘 ‖2 ≤ 𝜆 max (𝑃 )
+
+𝜆 min (𝑃 ) 𝑟 2 
+
+> {
+
+, (C16) 
+
+12 / PREPRINT FOR REVIEW Transactions of the ASME From (C14) ,
+
+𝑟 { =
+
+√ 𝑐 {
+
+(1 − 𝛿 )𝑐 𝑞 
+
+¯{. (C17) 
+
+Equivalently, 𝜉 𝑘 is uniformly ultimately bounded and enters and remains in the set 
+
+
+
+𝜉 : ‖𝜉 ‖ ≤ 
+
+√
+
+𝜆 max (𝑃 )
+
+𝜆 min (𝑃 )
+
+√ 𝑐 {
+
+(1 − 𝛿 )𝑐 𝑞 
+
+︸ ︷︷ ︸
+
+𝑐 
+
+¯{. 
+
+
+
+, (C18) 
+
+whose radius scales linearly with ¯{. Therefore, lim sup 
+
+> 𝑘 →∞
+
+‖𝜉 𝑘 ‖ ≤ 𝑐 ¯{. (C19) 
+
+Closed-Loop Stability. Since 𝑉 𝑘 +1 − 𝑉 𝑘 ≤ 0 and S𝑘 is uni-formly ultimately bounded, it follows that V𝑘 (𝜉 𝑘 , ˜Θ𝑘 ) = S𝑘 + 𝑉 𝑘 is bounded and nonnegative. Moreover, ˜Θ𝑘 is Lyapunov stable (and globally geometrically convergent for 0 < 𝜆 < 1) by Theorem 1.Therefore, the closed-loop system is Lyapunov stable and the state 
+
+𝜉 𝑘 is uniformly ultimately bounded. 
+
+Lemma C.1 (Young’s Inequality with Parameter) . For any 𝑎, 𝑏 ∈
+
+R and any 𝜖 > 0, the following inequality holds. 
+
+2𝑎𝑏 ≤ 𝜖 𝑎 2 + 1
+
+𝜖 𝑏 2 . (C20) 
+
+Proof. Since (√𝜖 𝑎 − 1√𝜖 𝑏 )2 ≥ 0 for all 𝑎, 𝑏 ∈ R and 𝜖 > 0, it follows that 0 ≤ 𝜖 𝑎 2 − 2𝑎𝑏 + 1
+
+𝜖 𝑏 2, (C21) 
+
+which, upon rearranging, yields (C20) .
+
+Appendix D: Supporting Convergence Results 
+
+This Appendix provides additional technical derivations that support the analysis presented in the main text. These deriva-tions expand on intermediate steps that were omitted in the paper to improve readability and are included here for completeness. 
+
+Definition D.1 (Expected persistence of excitation. ). Consider, for all 𝑘 ≥ 0, a regressor 𝜙 𝑘 ∈ R𝑝 . The regressor {𝜙 𝑘 } is called 
+
+persistently exciting in expectation if there exist positive constants 
+
+𝛼 , 𝛽 and an integer 𝑁 > 𝑝 such that, for all 𝑘 ≥ 0,
+
+𝛼𝐼 𝑝 ≤ E
+
+[𝑘 +𝑁 Õ
+
+> 𝑖 =𝑘
+
+𝜙 𝑖 𝜙 T
+
+> 𝑖
+
+]
+
+≤ 𝛽𝐼 𝑝 . (D1) 
+
+Remark 1. Definition D.1 is a mean-square (expected) variant of the classical definition of persistence of excitation. This notion is convenient in stochastic settings, that is, in the case where 𝜙 𝑘 
+
+depends on random inputs, and is sufficient for the covariance boundedness arguments used in the subsequent result. 
+
+Proposition D.1 (Persistence of excitation under random in-puts. ). Consider the system 
+
+𝑥 𝑘 +1 = 𝐴𝑥 𝑘 + 𝐵𝑢 𝑘 , (D2) 
+
+where 𝑥 𝑘 ∈ R𝑛 and 𝑢 𝑘 ∈ R𝑚 . Assume that 𝐴 ∈ R𝑛 ×𝑛 is Schur stable and the pair ( 𝐴, 𝐵 ) is controllable. Assume that 𝑥 0 is bounded and 
+
+𝑢 𝑘 is i.i.d., zero-mean with covariance 𝑅. Then, the regressor 
+
+𝜙 𝑘 
+
+> △
+
+=
+
+[𝑥 𝑘 
+
+𝑢 𝑘 
+
+]
+
+∈ R𝑛 +𝑚 (D3) 
+
+is persistently exciting. Proof. For all 𝑘 ≥ 0, define 
+
+𝑆 𝑘 
+
+> △
+
+=
+
+> 𝑘 +𝑁
+
+Õ
+
+> 𝑖 =𝑘
+
+𝜙 𝑖 𝜙 T 
+
+> 𝑖
+
+=
+
+> 𝑘 +𝑁
+
+Õ
+
+> 𝑖 =𝑘
+
+[𝑥 𝑖 𝑥 T 
+
+> 𝑖
+
+𝑥 𝑖 𝑢 T
+
+> 𝑖
+
+𝑢 𝑖 𝑥 T 
+
+> 𝑖
+
+𝑢 𝑖 𝑢 T
+
+> 𝑖
+
+]
+
+. (D4) 
+
+Lower bound. Since E[𝑢 𝑖 𝑢 T 
+
+> 𝑖
+
+] = 𝑅 > 0, it follows that 
+
+E
+
+[𝑘 +𝑁 Õ
+
+> 𝑖 =𝑘
+
+𝑢 𝑖 𝑢 T
+
+> 𝑖
+
+]
+
+= (𝑁 + 1)𝑅 ≥ ( 𝑁 + 1)𝜆 min (𝑅 )𝐼 𝑚 . (D5) 
+
+Next, note that, for ℓ ≥ 1, 𝑥 𝑘 +ℓ can be written as 
+
+𝑥 𝑘 +ℓ = 𝐴 ℓ 𝑥 𝑘 +
+
+> ℓ−1
+
+Õ
+
+> 𝑗 =0
+
+𝐴 ℓ−1− 𝑗 𝐵𝑢 𝑘 + 𝑗 .
+
+Since ( 𝐴, 𝐵 ) is controllable, there exists an integer 𝐿 ≥ 1 such that 
+
+C𝐿 
+
+> △
+
+= [𝐵 𝐴𝐵 · · · 𝐴 𝐿 −1 𝐵 ] ∈ R𝑛 × ( 𝐿𝑚 )
+
+has full row rank. Define 
+
+˜𝑥 𝑘 +𝐿 
+
+> △
+
+=
+
+> 𝐿 −1
+
+Õ
+
+> 𝑗 =0
+
+𝐴 𝐿 −1− 𝑗 𝐵𝑢 𝑘 + 𝑗 = C𝐿 
+
+
+
+𝑢 𝑘 +𝐿 −1
+
+...𝑢 𝑘 
+
+
+
+.
+
+Since {𝑢 𝑘 } is i.i.d. with covariance 𝑅 and C𝐿 has full row rank, it follows that 
+
+E[ ˜𝑥 𝑘 +𝐿 ˜𝑥 T 
+
+> 𝑘 +𝐿
+
+] = C𝐿 (𝐼 𝐿 ⊗ 𝑅 )CT 
+
+> 𝐿
+
+.
+
+is positive definite. Hence, there exists 𝜂 > 0 such that, for all 
+
+𝑘 ≥ 0,
+
+E[ ˜𝑥 𝑘 +𝐿 ˜𝑥 T 
+
+> 𝑘 +𝐿
+
+] ≥ 𝜂𝐼 𝑛 . (D6) 
+
+Next, note that, for any 𝑁 ≥ 𝐿, 
+
+> 𝑘 +𝑁
+
+Õ
+
+> 𝑖 =𝑘
+
+𝑥 𝑖 𝑥 T 
+
+> 𝑖
+
+≥ 𝑥 𝑘 +𝐿 𝑥 T 
+
+> 𝑘 +𝐿
+
+.
+
+Since 𝑢 𝑘 +𝐿 is independent of {𝑢 𝑘 , . . . , 𝑢 𝑘 +𝐿 −1 } and satisfies 
+
+E[𝑢 𝑘 +𝐿 ] = 0, it follows that 
+
+E[𝑥 𝑘 +𝐿 𝑢 T 
+
+> 𝑘 +𝐿
+
+] = E
+
+©«
+
+𝐴 𝐿 𝑥 𝑘 +
+
+> 𝐿 −1
+
+Õ
+
+> 𝑗 =0
+
+𝐴 𝐿 −1− 𝑗 𝐵𝑢 𝑘 + 𝑗 ª®¬
+
+𝑢 T
+
+> 𝑘 +𝐿
+
+
+
+= 𝐴 𝐿 E[𝑥 𝑘 𝑢 T 
+
+> 𝑘 +𝐿
+
+] + 
+
+> 𝐿 −1
+
+Õ
+
+> 𝑗 =0
+
+𝐴 𝐿 −1− 𝑗 𝐵 E[𝑢 𝑘 + 𝑗 𝑢 T 
+
+> 𝑘 +𝐿
+
+]
+
+= 0.
+
+Therefore, taking expectations in (D4) and using (D5) and (D6) ,yields, for any 𝑁 ≥ 𝐿 ,
+
+E[𝑆 𝑘 ] =
+
+[E [Í 𝑘 +𝑁 𝑖 =𝑘 𝑥 𝑖 𝑥 T
+
+> 𝑖
+
+] 00 E [Í 𝑘 +𝑁 𝑖 =𝑘 𝑢 𝑖 𝑢 T
+
+> 𝑖
+
+]]
+
+≥ 𝛼𝐼 𝑛 +𝑚 , (D7) 
+
+where 
+
+𝛼 △
+
+= min {𝜂, (𝑁 + 1)𝜆 min (𝑅 )} > 0.
+
+Journal of Dynamic Systems, Measurement, and Control PREPRINT FOR REVIEW / 13 Upper bound. Since 𝐴 is Schur and 𝑥 0 is bounded, there exists 
+
+𝑐 𝑥 > 0 such that sup 𝑘 ≥0 E[‖ 𝑥 𝑘 ‖2] ≤ 𝑐 𝑥 . It follows that, for all 
+
+𝑘 ≥ 0, 
+
+E
+
+[𝑘 +𝑁 Õ
+
+> 𝑖 =𝑘
+
+𝑥 𝑖 𝑥 T
+
+> 𝑖
+
+]
+
+≤
+
+> 𝑘 +𝑁
+
+Õ
+
+> 𝑖 =𝑘
+
+E[‖ 𝑥 𝑖 ‖2] 𝐼 𝑛 ≤ ( 𝑁 + 1)𝑐 𝑥 𝐼 𝑛 .
+
+Furthermore, since E[𝑢 𝑖 𝑢 T 
+
+> 𝑖
+
+] = 𝑅 , it follows that 
+
+E
+
+[𝑘 +𝑁 Õ
+
+> 𝑖 =𝑘
+
+𝑢 𝑖 𝑢 T
+
+> 𝑖
+
+]
+
+= (𝑁 + 1)𝑅 ≤ ( 𝑁 + 1)𝜆 max (𝑅 )𝐼 𝑚 .
+
+Hence, for all 𝑘 ≥ 0, 
+
+E[𝑆 𝑘 ] ≤ 𝛽𝐼 𝑛 +𝑚 , (D8) 
+
+where 
+
+𝛽 △
+
+= max {( 𝑁 + 1)𝑐 𝑥 , (𝑁 + 1)𝜆 max (𝑅 )} < ∞.
+
+Finally, (D7) and (D8) imply that there exist 𝛼 > 0, 𝛽 > 0, and an integer 𝑁 > 𝑛 + 𝑚 such that, for all 𝑘 ≥ 0, 
+
+𝛼𝐼 𝑛 +𝑚 ≤ E
+
+[𝑘 +𝑁 Õ
+
+> 𝑖 =𝑘
+
+𝜙 𝑖 𝜙 T
+
+> 𝑖
+
+]
+
+≤ 𝛽𝐼 𝑛 +𝑚 .
+
+It thus follows from Definition D.1 that 𝜙 𝑘 is persistently exciting in expectation. 
+
+The next result follows from continuity of the stabilizing solu-tion of the discrete-time algebraic Riccati equation with respect to 
+
+( 𝐴, 𝐵 ) and continuity of the LQR gain map. 
+
+Proposition D.2 (Continuity and local Lipschitz property of the LQR gain. ). Let 𝑄 ∈ R𝑛 ×𝑛 and 𝑅 ∈ R𝑚 ×𝑚 be positive definite. Consider matrices 𝐴 ∈ R𝑛 ×𝑛 and 𝐵 ∈ R𝑛 ×𝑚 such that ( 𝐴, 𝐵 ) is stabilizable and ( 𝐴, 𝑄 1/2) is detectable. Let 𝐾 denote the infinite-horizon LQR gain associated with the stabilizing solution of the discrete-time algebraic Riccati equation for ( 𝐴, 𝐵, 𝑄, 𝑅 ). Assume that the sequence ( 𝐴 𝑘 , 𝐵 𝑘 ) converges to ( 𝐴, 𝐵 ), where ( 𝐴 𝑘 , 𝐵 𝑘 )
+
+is stabilizable for all 𝑘. Then, the infinite-horizon LQR gain 𝐾 𝑘 
+
+computed using ( 𝐴 𝑘 , 𝐵 𝑘 , 𝑄, 𝑅 ) converges to 𝐾. 
+
+Furthermore, define Θ △
+
+= [𝐴 𝐵 ] and Θ𝑘 
+
+> △
+
+= [𝐴 𝑘 𝐵 𝑘 
+
+]. There exist constants 𝜌 > 0 and 𝑐 𝐾 > 0 such that if ‖Θ𝑘 − Θ‖ ≤ 𝜌 , then 
+
+‖𝐾 𝑘 − 𝐾 ‖ ≤ 𝑐 𝐾 ‖Θ𝑘 − Θ‖. (D9) 
+
+Proof. For each 𝑘 , let 𝑃 𝑘 denote the stabilizing symmetric posi-tive definite solution of the discrete-time algebraic Riccati equation (DARE) associated with ( 𝐴 𝑘 , 𝐵 𝑘 , 𝑄, 𝑅 ), and let 𝑃 denote the stabi-lizing solution of the DARE associated with ( 𝐴, 𝐵, 𝑄, 𝑅 ). Define 
+
+𝑆 𝑘 
+
+> △
+
+= 𝑅 + 𝐵 T 
+
+> 𝑘
+
+𝑃 𝑘 𝐵 𝑘 ,𝑆 △
+
+= 𝑅 + 𝐵 T 𝑃𝐵. 
+
+The corresponding infinite-horizon LQR gains are 
+
+𝐾 𝑘 = 𝑆 −1 
+
+> 𝑘
+
+𝐵 T 
+
+> 𝑘
+
+𝑃 𝑘 𝐴 𝑘 ,𝐾 = 𝑆 −1 𝐵 T 𝑃 𝐴. 
+
+Since ( 𝐴 𝑘 , 𝐵 𝑘 ) → ( 𝐴, 𝐵 ), and the pairs ( 𝐴 𝑘 , 𝐵 𝑘 ) remain stabi-lizable and ( 𝐴 𝑘 , 𝑄 1/2) remain detectable, and hence the DARE for 
+
+( 𝐴 𝑘 , 𝐵 𝑘 , 𝑄, 𝑅 ) admits a unique positive definite solution 𝑃 𝑘 > 0.
+
+Next, note that for the stabilizing DARE solution that, on the set of stabilizable/detectable quadruples ( 𝐴, 𝐵, 𝑄, 𝑅 ) with 𝑄 > 0, 
+
+𝑅 > 0 and stabilizing solution, the mapping 
+
+( 𝐴, 𝐵 ) 7 → 𝑃 ( 𝐴, 𝐵 )
+
+is continuous [ 31 ,32 ]. Therefore, as 𝑘 → ∞ , 𝑃 𝑘 → 𝑃. 
+
+We now show that this implies 𝐾 𝑘 → 𝐾 .Next, since 𝑃 𝑘 → 𝑃 and ( 𝐴 𝑘 , 𝐵 𝑘 ) → ( 𝐴, 𝐵 ), it follows that 
+
+𝐵 T 
+
+> 𝑘
+
+𝑃 𝑘 𝐵 𝑘 → 𝐵 T𝑃𝐵, 𝐵 T 
+
+> 𝑘
+
+𝑃 𝑘 𝐴 𝑘 → 𝐵 T 𝑃 𝐴, 
+
+which implies that 𝑆 𝑘 → 𝑆 . Since 𝑅 > 0 and 𝑃 𝑘 > 0, it follows that, for all 𝑘 ≥ 0, 𝑆 𝑘 ≥ 𝑅 > 0, and thus 𝑆 𝑘 is invertible, and inversion is continuous on the cone of symmetric positive definite matrices, which implies that 𝑆 −1 
+
+> 𝑘
+
+→ 𝑆 −1.Next, note that 
+
+𝐾 𝑘 − 𝐾 = 𝑆 −1 
+
+> 𝑘
+
+𝐵 T 
+
+> 𝑘
+
+𝑃 𝑘 𝐴 𝑘 − 𝑆 −1 𝐵 T 𝑃 𝐴 
+
+= (𝑆 −1 
+
+> 𝑘
+
+− 𝑆 −1 )𝐵 T 
+
+> 𝑘
+
+𝑃 𝑘 𝐴 𝑘 + 𝑆 −1 (𝐵 T 
+
+> 𝑘
+
+𝑃 𝑘 𝐴 𝑘 − 𝐵 T 𝑃 𝐴 ), (D10) 
+
+which implies that 
+
+‖𝐾 𝑘 − 𝐾 ‖ ≤ ‖ 𝑆 −1 
+
+> 𝑘
+
+− 𝑆 −1 ‖ ‖ 𝐵 T 
+
+> 𝑘
+
+𝑃 𝑘 𝐴 𝑘 ‖+ ‖ 𝑆 −1 ‖ ‖ 𝐵 T 
+
+> 𝑘
+
+𝑃 𝑘 𝐴 𝑘 − 𝐵 T 𝑃 𝐴 ‖.
+
+Since 𝑆 −1 
+
+> 𝑘
+
+→ 𝑆 −1 and 𝐵 T 
+
+> 𝑘
+
+𝑃 𝑘 𝐴 𝑘 → 𝐵 T 𝑃 𝐴, it follows that the right-hand side converges to 0 , and thus ‖𝐾 𝑘 − 𝐾 ‖ → 0. Finally, note that since the mapping ( 𝐴, 𝐵 ) 7 → 𝑃 ( 𝐴, 𝐵 ) is lo-cally Lipschitz in a neighborhood of ( 𝐴, 𝐵 ) on the set of stabi-lizable/detectable pairs with 𝑄 > 0 and 𝑅 > 0 [ 31 ,32 ], there ex-ist constants 𝜌 > 0 and 𝑐 𝑃 > 0 such that, for all Θ𝑘 satisfying 
+
+‖Θ𝑘 − Θ‖ ≤ 𝜌 and remaining stabilizable/detectable, 
+
+‖𝑃 𝑘 − 𝑃 ‖ ≤ 𝑐 𝑃 ‖Θ𝑘 − Θ‖. (D11) 
+
+Moreover, for ‖Θ𝑘 − Θ‖ ≤ 𝜌 with 𝜌 sufficiently small, the matrices 
+
+𝐴 𝑘 , 𝐵 𝑘 , 𝑃 𝑘 remain uniformly bounded and 𝑆 𝑘 remains uniformly positive definite, which implies that the matrix inversion is locally Lipschitz on {𝑆 𝑘 }. Consequently, there exists a constant 𝑐 inv > 0such that 
+
+‖𝑆 −1 
+
+> 𝑘
+
+− 𝑆 −1 ‖ ≤ 𝑐 inv ‖𝑆 𝑘 − 𝑆 ‖.
+
+Similarly, there exist constants 𝑐 1, 𝑐 2 > 0 such that 
+
+‖𝑆 𝑘 − 𝑆 ‖ ≤ 𝑐 1 ‖Θ𝑘 − Θ‖,
+
+‖𝐵 T 
+
+> 𝑘
+
+𝑃 𝑘 𝐴 𝑘 − 𝐵 T 𝑃 𝐴 ‖ ≤ 𝑐 2 ‖Θ𝑘 − Θ‖.
+
+Combining these bounds yields 
+
+‖𝐾 𝑘 − 𝐾 ‖ ≤ ‖ 𝑆 −1 
+
+> 𝑘
+
+− 𝑆 −1 ‖ ‖ 𝐵 T 
+
+> 𝑘
+
+𝑃 𝑘 𝐴 𝑘 ‖+ ‖ 𝑆 −1 ‖ ‖ 𝐵 T 
+
+> 𝑘
+
+𝑃 𝑘 𝐴 𝑘 − 𝐵 T 𝑃 𝐴 ‖≤ 𝑐 𝐾 ‖Θ𝑘 − Θ‖,
+
+for some constant 𝑐 𝐾 > 0.
+
+Funding Data 
+
+This research was supported by the Office of Naval Research grant N00014-23-1-2468. 
+
+14 / PREPRINT FOR REVIEW Transactions of the ASME References 
+
+[1] Åström, K. J. and Wittenmark, B., 1995, Adaptive Control , Addison-Wesley. [2] Annaswamy, A. M. and Narendra, K. S., 1989, Stable adaptive systems , Prentice Hall Hoboken, NJ, USA. [3] Ioannou, P. A. and Sun, J., 2012, “Robust and adaptive motion control,” . [4] Åström, K. J., Borisson, U., Ljung, L., and Wittenmark, B., 1977, “Theory and applications of self-tuning regulators,” Automatica, 13 (5), pp. 457–476. [5] Åström, K. J. and Wittenmark, B., 1973, “On self tuning regulators,” Automat-ica, 9(2), pp. 185–199. [6] Campi, M. C. and Kumar, P., 1998, “Adaptive linear quadratic gaussian control: the cost-biased approach revisited,” SIAM Journal on Control and Optimization, 
+
+36 (6), pp. 1890–1907. [7] Abbasi-Yadkori, Y. and Szepesvári, C., 2011, “Regret bounds for the adaptive control of linear quadratic systems,” Proceedings of the 24th annual conference on learning theory , JMLR Workshop and Conference Proceedings, pp. 1–26. [8] Dean, S., Mania, H., Matni, N., Recht, B., and Tu, S., 2018, “Regret bounds for robust adaptive control of the linear quadratic regulator,” Advances in Neural Information Processing Systems, 31 , pp. 4188–4197. [9] Mania, H., Tu, S., and Recht, B., 2019, “Certainty equivalence is efficient for linear quadratic control,” Advances in neural information processing systems, 
+
+32 , pp. 10154–10164. [10] Cohen, A., Koren, T., and Mansour, Y., 2019, “Learning Linear-Quadratic Reg-ulators Efficiently with only √𝑇 Regret,” International Conference on Machine Learning , PMLR, pp. 1300–1309. [11] Rahman, Y., Xie, A., Hoagg, J. B., and Bernstein, D. S., 2016, “A tutorial and overview of retrospective cost adaptive control,” 2016 American Control Conference (ACC) , IEEE, pp. 3386–3409. [12] Rahman, Y., Xie, A., and Bernstein, D. S., 2017, “Retrospective cost adap-tive control: Pole placement, frequency response, and connections with LQG control,” IEEE Control Systems Magazine, 37 (5), pp. 28–69. [13] Vander Schaaf, J. C., Acharya, R., and Bernstein, D., 2025, “Predictive Cost Adaptive Control of Shock-Boundary-Layer Interaction in a Scramjet Isolator,” 
+
+AIAA SCITECH 2025 Forum , p. 0673. [14] Osinenko, P., Dobriborsci, D., and Aumer, W., 2022, “Reinforcement learning with guarantees: a review,” IFAC-PapersOnLine, 55 (15), pp. 123–128. [15] Wallace, B. A. and Si, J., 2024, “Continuous-time reinforcement learning: New design algorithms with theoretical insights and performance guarantees,” IEEE Transactions on Neural Networks and Learning Systems, 36 (4), pp. 6940–6954. [16] Chen, C., Xie, L., Jiang, Y., Xie, K., and Xie, S., 2022, “Robust output regulation and reinforcement learning-based output tracking design for unknown linear discrete-time systems,” IEEE Transactions on Automatic Control, 68 (4), pp. 2391–2398. [17] Schmid, P. J., 2010, “Dynamic mode decomposition of numerical and experi-mental data,” Journal of fluid mechanics, 656 , pp. 5–28. [18] Tu, J. H., 2013, “Dynamic mode decomposition: Theory and applications,” Ph.D. thesis, Princeton University. [19] Proctor, J. L., Brunton, S. L., and Kutz, J. N., 2016, “Dynamic mode decompo-sition with control,” SIAM Journal on Applied Dynamical Systems, 15 (1), pp. 142–161. [20] Korda, M. and Mezić, I., 2018, “Linear predictors for nonlinear dynamical systems: Koopman operator meets model predictive control,” Automatica, 93 ,pp. 149–160. [21] Zhang, H., Rowley, C. W., Deem, E. A., and Cattafesta, L. N., 2019, “On-line dynamic mode decomposition for time-varying systems,” SIAM Journal on Applied Dynamical Systems, 18 (3), pp. 1586–1609. [22] Goel, A., Bruce, A. L., and Bernstein, D. S., 2020, “Recursive least squares with variable-direction forgetting: Compensating for the loss of persistency [lecture notes],” IEEE Control Systems Magazine, 40 (4), pp. 80–102. [23] Y. Mareels, I. and Gevers, M., 1986, “Persistence of excitation criteria,” Proc. Conf. Dec. Contr , pp. 1933–1935, doi: 10.1109/CDC.1986.267349 .[24] Mareels, I. M. and Gevers, M., 1988, “Persistency of exci-tation criteria for linear, multivariable, time-varying systems,” 
+
+Mathematics of Control, Signals, and Systems , 1(3), pp. 203–226. [25] Strang, G., 2022, Introduction to linear algebra , SIAM. [26] Zhou, K., Doyle, J. C., and Glover, K., 1996, Robust and Optimal Control ,Prentice Hall. [27] Khalil, H. K. and Grizzle, J. W., 2002, Nonlinear systems , Vol. 3, Prentice hall Upper Saddle River, NJ. [28] Petersen, K. B., Pedersen, M. S., et al., 2008, “The matrix cookbook,” Technical University of Denmark, 7(15), p. 510. [29] Rugh, W. J., 1996, Linear System Theory , Prentice Hall. [30] Deng, C. Y., 2011, “A generalization of the Sherman–Morrison–Woodbury for-mula,” Applied Mathematics Letters, 24 (9), pp. 1561–1564. [31] Lancaster, P. and Rodman, L., 1995, Algebraic riccati equations , Clarendon press. [32] Aboukandil, H., Freiling, G., Ionescu, V., Jank, G., et al., 2003, “Matrix Ric-cati equations in control and systems theory,” IEEE Transactions in Automatic Control, 49 (10), pp. 2094–2095. 
+
+Journal of Dynamic Systems, Measurement, and Control PREPRINT FOR REVIEW / 15 List of Figures 
+
+1 Dynamic Mode Adaptive Control (DMAC) architecture for model-free, data-driven, and learning-based control of sampled-data systems. 2
+
+2 Time-varying full-state feedback controller with integral action for reference tracking, where the gains 𝐾 𝜉 ,𝑘 and 𝐾 𝑞,𝑘 are updated using the dy 
+
+3 Closed-loop response of the unstable linear system (22) with the dynamics and input matrices given by (32). . . . . . . 5
+
+4 Closed-loop phase portrait with DMAC for various initial conditions. The DMAC controller stabilizes the unstable system, and the state conve 
+
+5 Comparison of the terms 𝑇 1,𝑘 –𝑇 4,𝑘 in the Lyapunov difference expansion (C4) with their corresponding analytical upper bounds derived in the 
+
+6 State norm ‖𝜉 𝑘 ‖ and parameter estimation and gain errors ‖˜Θ𝑘 ‖𝐹 and ‖ ˜𝐾 𝑘 ‖2 on a logarithmic scale for ¯{ = 0.01 and ¯{ = 0.5. 7
+
+7 Closed-loop response of (34) with DMAC. a) shows the output 𝑦 𝑘 and the reference signal 𝑟, b) shows the control signal 𝑢 𝑘 , c) shows the abso 
+
+8 Effect of DMAC hyperparameters on the closed-loop response of the Van der Pol oscillator. a) Effect of the forgetting factor 𝜆 , b) effect of the 
+
+9 Effect of varying the Van der Pol parameter 𝜇 on the closed-loop response under DMAC control. Despite variations in the system dynamics, th 
+
+10 Closed-loop response of (37) with DMAC. a) shows the output 𝑦 𝑘 and the reference signal 𝑟, b) shows the control signal 𝑢 𝑘 , c) shows the abso 
+
+11 Closed-loop response of the discretized Burgers equation. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 8
+
+12 Effect of DMAC hyperparameters on the closed-loop performance. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 8
+
+13 Effect of varying the system’s physical parameters on the closed-loop performance. . . . . . . . . . . . . . . . . . . . . 8
+
+List of Tables 
+
+1 Summary of formal results in the appendices. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10 
+
+16 / PREPRINT FOR REVIEW Transactions of the ASME

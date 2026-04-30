@@ -1,0 +1,51 @@
+{
+  "label": "2026-04-30",
+  "date": "2026-04-30",
+  "generated_at": "2026-04-30T20:12:46",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202604/30/2604.19980v1-efficient-reinforcement-learning-using-linear-koopman-dynamics-for-nonlinear-robotic-systems",
+      "section": "quick",
+      "title_en": "Efficient Reinforcement Learning using Linear Koopman Dynamics for Nonlinear Robotic Systems",
+      "authors": "Wenjian Hao, Yuxuan Fang, Zehui Lu, Shaoshuai Mou",
+      "date": "2026-04-21",
+      "pdf": "https://arxiv.org/pdf/2604.19980v1",
+      "score": "6.0",
+      "evidence": "利用Koopman动力学对非线性系统进行闭环控制",
+      "tldr": "本研究提出了一种针对非线性机器人系统的模型强化学习框架。该框架通过Koopman算子理论学习线性提升动力学模型，并将其集成到Actor-Critic架构中进行策略优化。为了降低计算成本并减少模型滚动误差，研究采用单步预测估计策略梯度，实现了基于流式数据的在线策略改进。实验结果表明，该方法在采样效率和控制性能上显著优于现有的模型无关和模型强化学习基准，且在真实机器人平台上达到了与经典模型控制方法相当的效果。",
+      "tags": "query:em-force",
+      "abstract_en": "This paper presents a model-based reinforcement learning (RL) framework for optimal closed-loop control of nonlinear robotic systems. The proposed approach learns linear lifted dynamics through Koopman operator theory and integrates the resulting model into an actor-critic architecture for policy optimization, where the policy represents a parameterized closed-loop controller. To reduce computational cost and mitigate model rollout errors, policy gradients are estimated using one-step predictions of the learned dynamics rather than multi-step propagation. This leads to an online mini-batch policy gradient framework that enables policy improvement from streamed interaction data. The proposed framework is evaluated on several simulated nonlinear control benchmarks and two real-world hardware platforms, including a Kinova Gen3 robotic arm and a Unitree Go1 quadruped. Experimental results demonstrate improved sample efficiency over model-free RL baselines, superior control performance relative to model-based RL baselines, and control performance comparable to classical model-based methods that rely on exact system dynamics.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/30/2604.25527v1-multi-layer-barrier-adaptation-of-the-discrete-time-super-twisting-controller",
+      "section": "quick",
+      "title_en": "Multi-layer barrier adaptation of the discrete-time super-twisting controller",
+      "authors": "Antoine Thibault Vié, Leonid Fridman, Roberto Galeazzi, Dimitrios Papageorgiou",
+      "date": "2026-04-28",
+      "pdf": "https://arxiv.org/pdf/2604.25527v1",
+      "score": "6.0",
+      "evidence": "离散时间超螺旋滑模控制增强鲁棒性",
+      "tldr": "针对数字滑模控制中离散化引起的抖振和采样间盲区问题，本文提出了一种多层障碍自适应离散时间超螺旋控制器。该方法基于嵌套障碍函数架构，并采用基于特征值的精确匹配方法进行离散化，在保证系统稳定性的同时，保留了连续时间下的自适应与鲁棒特性，并通过仿真验证了其有效性。",
+      "tags": "query:em-force",
+      "abstract_en": "In digital sliding mode control implementations, discretization-induced chattering and inter-sample blindness can severely degrade the closed-loop performance, especially in case of fast perturbations. This paper addresses these challenges for a discrete-time implementation of the super-twisting sliding mode controller. Building upon recent results on barrier-function-modulated super-twisting algorithms, a nested architecture employing multiple barriers is discretized using an eigenvalue-based exact matching approach. The resulting discrete-time controller preserves the adaptive and robustness properties established in continuous time, while ensuring consistent stability behavior at the sampling level. The proposed framework is validated through numerical simulations. The results highlight the effectiveness of multi-layer barrier adaptation for discrete-time sliding mode control applications.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202604/30/2604.26682v1-model-free-dynamic-mode-adaptive-control-for-data-driven-control-synthesis",
+      "section": "quick",
+      "title_en": "Model-Free Dynamic Mode Adaptive Control for Data-Driven Control Synthesis",
+      "authors": "Parham Oveissi, Ankit Goel",
+      "date": "2026-04-29",
+      "pdf": "https://arxiv.org/pdf/2604.26682v1",
+      "score": "6.0",
+      "evidence": "未知系统的无模型数据驱动控制综合",
+      "tldr": "针对数学模型缺失或难以建模的系统，本文提出了一种名为动态模态自适应控制（DMAC）的无模型数据驱动控制方法。该方法通过矩阵递推最小二乘法在线估计系统的局部线性动力学，并据此合成具有积分作用的全状态反馈控制器。理论分析证明了算法的收敛性与闭环系统的稳定性，数值实验验证了其在处理非线性及偏微分方程系统时的有效性与鲁棒性。",
+      "tags": "query:em-force",
+      "abstract_en": "This paper presents a model-free, data-driven control synthesis method called dynamic mode adaptive control (DMAC) for systems whose mathematical models are unavailable or unsuitable for classical control design. The proposed approach combines data-driven dynamics approximation with adaptive control synthesis to enable online controller design using measured system data. DMAC comprises two main components: a dynamics-approximation module and a controller-synthesis module. The dynamics approximation module estimates a local linear representation of the system dynamics directly from measurements using a matrix recursive least-squares algorithm with a forgetting factor. The estimated dynamics are then used to compute an online stabilizing controller with full-state feedback and integral action. Theoretical analysis establishes convergence properties of the recursive dynamics approximation and boundedness of the closed-loop system under the DMAC controller. The performance of the proposed method is demonstrated through numerical examples involving representative dynamical systems, including an unstable linear system, the Van der Pol oscillator, and the Burgers' equation. Sensitivity studies further demonstrate the robustness of DMAC with respect to both algorithm hyperparameters and variations in system parameters.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
