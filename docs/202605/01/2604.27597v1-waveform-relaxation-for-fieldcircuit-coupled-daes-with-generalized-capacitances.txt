@@ -1,0 +1,316 @@
+Title: Waveform Relaxation for Field/Circuit Coupled DAEs with Generalized Capacitances
+
+URL Source: https://arxiv.org/pdf/2604.27597v1
+
+Published Time: Fri, 01 May 2026 00:40:18 GMT
+
+Number of Pages: 9
+
+Markdown Content:
+# Waveform Relaxation for Field/Circuit Coupled DAEs with Generalized Capacitances 
+
+Idoia Cortes Garcia 1 and Jonas Pade 2 
+
+> 1
+
+Department of Mechanical Engineering-Dynamics and Control, Eindhoven University of Technology, Eindhoven, The Netherlands, i.cortes.garcia@tue.nl  
+
+> 2
+
+Humboldt-Universit¨ at zu Berlin, Department of Mathematics, 10099 Berlin, Germany, jonas.pade@hu-berlin.de 
+
+Abstract. Field/circuit coupling is a common approach when a lumped representation of a certain electrotechnical device is not accurate enough. To exploit existing code and underlying properties of the coupled sys-tems, cosimulation techniques such as waveform relaxation can be used. The coupled system is of differential-algebraic type, which can poten-tially lead to divergence. This paper presents a novel, sufficient topo-logical convergence criterion for field/circuit coupled systems of higher index containing a generalized capacitance. Hereby, the criterion holds for a full range of field systems whose structure can be classified as a generalized capacitance. Finally, the theoretical results are supported by numerical simulations. 
+
+## 1 Introduction 
+
+Lumped circuit are ubiquitous in electrical engineering and often used to describe the electromagnetic behaviour of engineering systems. However, they neglect spatially distributed electromagnetic phenomena, which, for some applications, is too inaccurate. In these cases, field/circuit coupling can be performed [1, 3], where fully spatially distributed electromagnetic field elements are coupled to a surrounding lumped circuit. Recent work has shown that these field models can be understood as a generalization of classical circuit elements [2]. Cosimulation methods are well suited to solve field/circuit coupled systems since they allow solving the field and circuit parts separately and thus the usage of dedicated solvers and time scales for the different subsystems [3]. Originally introduced in [4], a well-established family of iterative cosimulation methods is waveform relaxation (WR), also known as dynamic iteration. Its application and convergence behaviour for differential-algebraic equations (DAEs) is still a topic of research [5]. While WR is convergent for coupled ODEs on finite time intervals [6], it can diverge for coupled DAEs unless an additional contractivity condition is satisfied [7]. Computing the contractivity condition, however, is usually costly. In this work, we extend the easy-to-check topological WR convergence results for higher-index DAEs obtained in [11] to coupled field/circuit systems whose field is a generalized capacitance [2]. With this, the theoretical results hold for all distributed models with a similar structure, that can be classified as a generalized  
+
+> arXiv:2604.27597v1 [math.NA] 30 Apr 2026 2I. Cortes Garcia and J. Pade
+
+capacitance. If the convergence criterion is not satisfied, we have to expect WR to diverge or to converge comparatively slowly. The paper is structured as follows. Section 2 introduces the definiton of gen-eralized capacitances and the field/circuit coupled system. The WR scheme and main convergence results are presented in Section 3. Finally, Section 4 and 5 finalize the paper with numerical simulation examples and conclusions. 
+
+## 2 Field/Circuit Coupled Model 
+
+Here, we introduce the coupled field/circuit system whose field element can be classified as a so-called generalized capacitance as in [2]. 
+
+2.1 Generalized Capacitance 
+
+A classic, lumped capacitance is described by the current-to-voltage relation 
+
+i = C(v)v′. (1) The state-dependent capacitance C(·) is required to be nonsingular for all states 
+
+v. This ensures that (1) can be solved for v′. That way, for a given current excitation i, the voltage v is described as an ODE v′ = C−1(v)i which depends on the input i. This well-posed ODE nature of the capacitance model w.r.t. unknown 
+
+v and input i should be reflected in a generalized definition of a capacitance. 
+
+Definition 1. A generalized capacitance is described by 
+
+f
+
+ ddt m(x, i, v, t ), x, i, v, t 
+
+
+
+= 0 , (2) 
+
+where f is continuously differentiable and after at most one differentiation, we can reformulate (2) with locally Lipschitz continuous functions χ and g and a continuously differentiable function Rχ as 
+
+x′ = χ(x, i, v, t ) + Rχ(i)i′ (3) 
+
+v′ = g(x, i, v, t ). (4) In the case of electromagnetic field models, the unknown x usually stems from spatial discretization of the field. 
+
+Remark 1. The above generalized definition can be understood as an index-1 condition for the unknowns ( x, v ) with input i. Additional robustness is required for v, which manifests itself in the absence of a derivative i′ in (4). We emphasize that we obtain an index 1 DAE in unknowns ( x, v ) for input i, and higher index in (x, i ) for input v. In a coupled model, the network topology determines whether or not this leads to a higher index network DAE. Waveform Relaxation for Circuits with Generalized Capacitances 3
+
+Remark 2. In [2], ”strongly capacitance-like” elements are defined, satisfying certain strong monotonicity conditions. Physically, these are related with pas-sivity properties of the elements. From a mathematical point of view, they make sure that the index results from [10] hold for generalized elements, too (c.f. [2]). Since these conditions and the implied index results from [10] are not necessary for our convergence analysis, and quite technical, we do not include them here. 
+
+2.2 Circuit and Coupled Model 
+
+Generalized capacitances are designed to be embedded in a surrounding circuit. In the following, its coupling is presented. The circuit subsystem is modeled by means of the modified nodal analysis 
+
+(MNA) [8] and it consists of quasilinear inductances and capacitances, fully nonlinear diodes and resistances, and independent voltage and current sources. In compact notation and assuming the circuit is coupled to a field element via the voltage v and the current i, it reads 
+
+E(z)z′ + f (t, z ) = P i, P ⊤z = v. (5) Here, the unknown z consists of node potentials and currents through inductors and voltage sources, E and f contain the system equations arising from MNA and 
+
+P ⊤ = ( A⊤ 
+
+> f
+
+0), where Af is the incidence matrix of the field element. We assume certain common local Lipschitz and passivity properties, cf. [10] for details. The MNA circuit system coupled to a generalized capacitance field element with coupling variables i and v reads 
+
+f
+
+ ddt m(x, i, v, t ), x, i, v, t 
+
+
+
+= 0 , (6) 
+
+E(z)z′ + f (t, z ) = P i, P ⊤z = v. (7) 
+
+## 3 Waveform Relaxation Scheme for Coupled Model 
+
+For cosimulation we consider the Jacobi WR scheme. In our coupled model, it reads 
+
+f
+
+ ddt m(xk, i k−1, v k, t ), x k, i k−1, v k, t 
+
+
+
+= 0 , (8) 
+
+E(zk)z′ 
+
+> k
+
++ f (t, z k) = P i k, P ⊤zk = vk−1, (9) where k is the iteration parameter. Note that we chose a voltage driven circuit and a current driven field here, which is reflected by the voltage v and the current 
+
+i entering the circuit (9) and the field (8) as previous ( k − 1)-th iterates, hence inputs, respectively. Note that it is possible to choose the generalized capacitance as voltage driven, but not advisable from the WR point of view. Notably, this would render an index-1 type estimate as in (11) impossible, which is crucial for convergence Theorem 1. 4 I. Cortes Garcia and J. Pade 
+
+Consistent initial values Initial values for DAEs are only partly (mathemati-cally) free, since some are fixed by algebraic constraints. We bypass the practi-cal difficulty of finding consistent initial values (those which satisfy the algebraic constraints of DAEs) as follows: For a general DAE f (x′, x, t ) = 0, we define 
+
+xdyn  
+
+> 0
+
+= Bx (t0) as the set of dynamic, hence freely selectable initial values, where 
+
+B is an appropriate matrix (which is generally non-trivial to find and can be nonlinear). We refer to [13] for details on consistent initalization for DAEs. 
+
+3.1 A Convergence Theorem 
+
+We call two nodes CV-connected, if there exists a path of (no elements other than) capacitances and voltage sources between them. In other words, there exists no LIR-cutset between such nodes. 
+
+Theorem 1. Let the coupling nodes of the field/circuit system (6) -(7) be not CV-connected. Then, the WR scheme (8) -(9) is convergent. More precisely: For any given consistent initial values on a sufficiently small time interval I = [ t0, T ], the sequence of solutions of the Jacobi WR scheme 
+
+(8) -(9) converges for k → ∞ in (C(I), ∥ · ∥ ∞) to the solution of the correspond-ing field/circuit coupled model (6) -(7) . The rate of convergence is √Hc for an appropriate constant c and H := T − t0.Remark 3. Due to the beneficial effect of a small time interval H on WR con-vergence, so-called windowing is common for WR methods. This involves the partition of the time interval into smaller subintervals and the successive execu-tion of WR on each subinterval separately. 
+
+Remark 4. An analogous result holds for Gauss-Seidel WR, where the rate of convergence is Hc . The faster convergence is a tradeoff against parallelization, which is in turn only possible for Jacobi WR. 
+
+3.2 Proof of the Convergence Theorem 
+
+For this subsection, we introduce the notation 
+
+∆kα := αk − α, ∆kα0 := αk(t0) − α(t0), α0 := α(t0)for any variable α. Furthermore, we denote by | · | the maximum norm in Rn and by ∥ · ∥ := ∥ · ∥ ∞ the uniform norm for continuous functions on I.
+
+Lemma 1. Consider the circuit (5) with a continuous perturbation δ of v:
+
+E(zδ )z′ 
+
+> δ
+
++ f (t, z δ ) = P i δ , P ⊤zδ = v + δ. (10) 
+
+If the coupling nodes are not CV-connected, then there exists a constant ν such that for the difference of solutions ∆(z, i ) := ( zδ − z, i δ − i) of the perturbed and the unperturbed circuit, it holds for all t ∈ I |∆(z, i )( t)| ≤ ν|δ(t)| (11) Waveform Relaxation for Circuits with Generalized Capacitances 5
+
+For a proof of the Lemma, we refer to [11], pp.55, Theorem 3.5.1. 
+
+Remark 5. The well-known topological index analysis introduced in [10] identi-fies CV-loops (and LI-cuts) in circuits as the cause for resulting index-2 DAEs. In this context, the lemma’s statement can be reformulated as follows: a local perturbation of a voltage source has an index-1 type impact (as described by (11)) on the state of the circuit. Note that this is independent of the (global) DAE index of (10). This is the crucial idea for the proof, which employs the well-known topological index concept only locally on the coupling variables . They are decisive for the convergence of WR. In practice, this means that also systems with index 2 or higher can lead to a convergent co-simulation, as long as the coupling variables have a lower-index relation. 
+
+Proof of Theorem For the proof we require the estimates: 1. ∥∆ki∥ ≤ η∥∆k−1v∥
+
+2. ∥∆kx∥ ≤ Hλ 1∥∆kv∥ + λ2∥∆k−1i∥
+
+3. ∥∆kv∥ ≤ Hμ ∥∆k−1i∥
+
+Plugging in 1. into 3., we then obtain the recursion 
+
+∥∆kv∥ ≤ Hc ∥∆k−2v∥, c = μη (12) which converges to 0 with rate √Hc for k → ∞ if Hc < 1. Due to 1. and 2., this implies that ∆ki and ∆kx converge with the same rate. Considering Lemma 1, Estimate (12) furthermore implies convergence of ∆kz, again with rate √Hc . In the following we derive estimates 1-3. 1.We notice that solving the circuit subsystem (9) of the WR scheme is equivalent to solving the circuit with a voltage perturbation as in (10) with 
+
+δ = vk−1 − v. The desired estimate is then immediately implied by Lemma 1. 2. For the field subsystem, integration of (3)-(4) yields 
+
+x(t) = x0 +
+
+Z tt0
+
+χ(x, i, v, τ ) + Rχ(i)i′dτ, v(t) = v0 +
+
+Z tt0
+
+g(x, i, v, τ )dτ, (13) where we drop the argument τ of the functions x, i, v within the integral for better readability. Writing the analogous integral formulation for the corresponding equations of the WR scheme and with the difference xk − x = ∆kx, basic calculus yields 
+
+Z tt0
+
+χ(xk, i k−1, v k, τ ) − χ(x, i, v, τ )dτ ≤ Lχ
+
+Z tt0
+
+|∆kx|dτ + |∆k−1i| + |∆kv|dτ 
+
+
+
+and, denoting the integral of Rχ(·) by rχ(·), 
+
+Z tt0
+
+Rχ(ik)( i′
+
+> k
+
+) − Rχ(i)i′dτ ≤ | rχ(ik(t)) − rχ(i(t)) | + |rχ(ik0 ) − rχ(i0)|≤ Lrχ (|∆ki(t)| + |∆ki0|) ,6 I. Cortes Garcia and J. Pade 
+
+where L∗ are the respective Lipschitz constants whose existence on bounded sets is guaranteed by definition of a generalized capacitance. Starting from the first equation in (13) and considering the estimates there-after, the lemma of Gronwall yields the existence of a constant ˜ c such that for all t ∈ I |∆kx(t)| ≤ ˜c
+
+Z tt0
+
+|∆k−1i| + |∆kv|dτ 
+
+
+
++ Lrχ (|∆k−1i(t)| + |∆k−1i0|)
+
+≤ Hλ 1∥∆kv∥ + λ2∥∆k−1i∥. (14) Note that the constant from the Gronwall lemma has the form c(H) = eβH for a constant β. However, since we assume H sufficiently small hence bounded, there exists ˜ c ≥ c(H) independent of H which satisfies (14). 3. The second equation in (13) gives for all t ∈ I |∆kv(t)| ≤ 
+
+Z tt0
+
+|∆kx| + |∆k−1i|dτ 
+
+hence, after plugging in (14) to eliminate ∆kx, the lemma of Gronwall yields the existence of a ˆ c such that 
+
+∥∆kv∥ ≤ H2 ˆc∥∆k−1i∥ + H ˆc(1 + λ2)∥∆k−1i∥ ≤ Hμ ∥∆k−1i∥.
+
+⊓⊔
+
+## 4 Numerical Examples 
+
+In the following we illustrate the convergence results in Section 3 with a toy example. For the field subsystem we choose the electroquasistatic description of the cable termination model in [12], which is a capacitance-like element as proven in [2]. We choose the surrounding circuits of [9], with an additional inductance to increase the system’s index to 2. The circuits and its coupling with the field model are sketched in Figure 1. The waveform relaxation cosimulation is done with a Gauss-Seidel WR scheme. Figure 2 shows the voltage vk 
+
+> f
+
+across the field element on the k-th WR iter-ation for both circuit coupling cases of Figure 1. As proven by theory, the WR scheme is convergent for the first coupled circuit, and divergent for the second one. As expected, this is the opposite convergence behaviour as the results in [9], where an inductance-like element is coupled to analogous circuits. Furthemore, Figure 3 shows the convergence order for the convergent case for fixed k = 1 and different window sizes H. As expected, our Gauss-Seidel scheme converges with order H for small enough window sizes (after some preasymptotic behaviour). 
+
+## 5 Conclusions 
+
+We have presented a topological convergence criterion for WR schemes of cir-cuits coupled to electromagnetic fields, where the field can be classified as a Waveform Relaxation for Circuits with Generalized Capacitances 7
+
+vs
+
+C
+
+R
+
+is
+
+L2
+
+L1
+
+vs
+
+C
+
+R
+
+is
+
+L2
+
+L1
+
+Fig. 1: Convergent (first) and divergent (second) circuit couplings. The circuits and toy values for the parameters ( R = 1Ω, L1 = 5H, L2 = 2H, C = 1F) are based on examples of [9]. 
+
+0 0.2 0.4
+
+−20 
+
+0
+
+20 
+
+40 
+
+t
+
+> Voltage  vf
+
+vmono 
+
+v1f
+
+v2f
+
+v3f
+
+0 0.2 0.4
+
+−2
+
+0
+
+2 ·10 8
+
+t
+
+> Voltage  vf
+
+Fig. 2: Evolution of voltage across generalized capacitance of monolithic vmono 
+
+and co-simulated vk 
+
+> f
+
+, k = 1 , . . . , 8 solutions for convergent (left) and divergent (right) circuits in Figure 1. 
+
+10 −2 10 −1
+
+10 1
+
+10 2
+
+H
+
+> Error
+
+err 4,v
+
+O(H)
+
+Fig. 3: Error err v = max t ∆1v(t) for different windows of size H.8 I. Cortes Garcia and J. Pade 
+
+generalized capacitance. The criterion that the coupling nodes must not be CV-connected holds for all such coupled field/circuit systems. Simulations of two circuit examples coupled to an electroquasistatic cable termination model con-firm the theoretical results. We believe that similar convergence conditions can be derived for generalized inductances and resistances to cover a wide range of distributed systems. This, however, is left for future research. 
+
+Acknowledgement This work was funded by the DFG, Germany, TRR 154, Mathematical Modelling, Simulation and Optimization Using the Example of Gas Networks, project number 239904186, project C02. 
+
+## References 
+
+1. I.A. Tsukerman, A. Konrad, G. Meunier, J.C. Sabonnadiere. Coupled field-circuit problems: trends and accomplishments. IEEE Trans. Magn 29(2), pp. 1701-1704 (1993). 2. I. Cortes Garcia, S. Sch¨ ops, C. Strohm, C. and C. Tischendorf. Generalized Ele-ments for a Structural Analysis of Circuits. In: Progress in DAE II. DAE Forum. Springer, Cham (2020) 3. A. Bartel, M. Brunk, M. G¨ unther, S. Sch¨ ops: Dynamic iteration for coupled prob-lems of electric circuits and distributed devices. SIAM Journal on Scientific Com-puting 35.2: B315-B335 (2013) 4. E. Lelarasmee, A.E. Ruehli, A.L. Sangiovanni-Vincentelli. The WR method for time-domain analysis of large scale integrated circuits. IEEE Trans. Comp. Aided Des. Integr. Circ. Syst. 1(3), 131–145 (1982) 5. A. Bartel, M. G¨ unther, B. Jacob and T. Reis. Operator splitting based dynamic iteration for linear differential-algebraic port-Hamiltonian systems. Numerische Mathematik, vol 155. pp. 1-34. Springer (2023). 6. K. Burrage. Parallel and sequential methods for ordinary differential equations. Clarendon Press (1995). 7. M. Arnold and M. G¨ unther. Preconditioned dynamic iteration for coupled differential-algebraic systems. BIT 41(1), 1-25 (2001). 8. C.-W. Ho, A.E. Ruehli, P.A. Brennan. The modified nodal approach to network analysis. IEEE Trans. Circ. Syst. 22(6), 504–509 (1975) 9. I. Cortes Garcia, J. Pade, S. Sch¨ ops and C. Tischendorf. Waveform relaxation for low frequency coupled field/circuit differential-algebraic models of index 2. In: Scientific Computing in Electrical Engineering. Mathematics in Industry, vol 36. Springer (2021) 10. D. Est´ evez Schwarz, C. Tischendorf. Structural analysis of electric circuits and consequences for MNA. International Journal of Circuit Theory and Applications, 28(2), 131-162 (2000) 11. J. Pade: Analysis and waveform relaxation for a differential-algebraic electrical circuit model. Doctoral dissertation, HU Berlin (2020) 12. I. Cortes Garcia, S. Sch¨ ops, H. De Gersem and S. Baumanns. Systems of differential algebraic equations in computational electromagnetics. In: Applica-tions of Differential-Algebraic Equations: Examples and Benchmarks, Differential-Algebraic Equations Forum. Springer (2019). Waveform Relaxation for Circuits with Generalized Capacitances 913. D. Est´ evez Schwarz. Consistent initialization for index-2 differential algebraic equa-tions and its application to circuit simulation. Dissertation. Humboldt-Universit¨ at zu Berlin (2000)
