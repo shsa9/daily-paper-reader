@@ -1,0 +1,51 @@
+{
+  "label": "2026-05-02",
+  "date": "2026-05-02",
+  "generated_at": "2026-05-02T20:28:08",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202605/02/2604.22251v1-false-feasibility-in-variable-impedance-mpc-for-legged-locomotion",
+      "section": "quick",
+      "title_en": "False Feasibility in Variable Impedance MPC for Legged Locomotion",
+      "authors": "Vishal Ramesh",
+      "date": "2026-04-24",
+      "pdf": "https://arxiv.org/pdf/2604.22251v1",
+      "score": "6.0",
+      "evidence": "执行器动力学与可实现控制集",
+      "tldr": "本研究揭示了足式机器人变阻抗MPC中将关节刚度视为瞬时决策变量的公式错误，这导致预测的可行域大于物理可实现范围。通过引入无量纲参数α（执行器带宽与任务时间尺度之积），研究量化了这种“虚假可行性”偏差，并证明在临界阈值以下，任何指令都无法实现预测效果。最后提出通过将刚度纳入预测状态来修正该问题。",
+      "tags": "query:em-force",
+      "abstract_en": "Variable impedance model predictive control (MPC) formulations that treat joint stiffness as an instantaneous decision variable operate on a feasible set strictly larger than the physically realizable set under first-order actuator dynamics. We identify this as a formulation error rather than a modeling approximation, formalize the distinction between the parameter-based feasible set Fparam and the realizable set Freal, and characterize the regime of mismatch via the dimensionless parameter alpha = omega_sT (actuator bandwidth times task timescale). For the 1D hopping monoped, we prove that below an analytical threshold alpha_crit derived in closed form from task physics, no admissible stiffness command realizes the parameter-based prediction. Numerical validation in 1D shows monotonic deviation growth as alpha decreases, with the predicted scaling holding across ten parameter combinations (log-log R2 = 0.99). Mechanism transfer to planar spring-loaded inverted pendulum dynamics confirms center-of-mass and stance-timing deviation as the primary consequence, with regime-dependent friction effects as a tertiary observable. A second threshold alpha_infeas < alpha_crit establishes a floor below which restricting the admissible stiffness range cannot repair realizability, closing the conservative-tuning objection on structural grounds. Augmenting the prediction state with stiffness closes the mismatch by construction.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/02/2604.24140v1-pressure-sensing-by-electro-mechanical-coupling-in-compliant-dielectric-membranes-polarized-by-a-bias-voltage",
+      "section": "quick",
+      "title_en": "Pressure sensing by electro-mechanical coupling in compliant dielectric membranes polarized by a bias voltage",
+      "authors": "Bart Van Damme, Alexandre Brun d'Arre, Patrick Danner, Dorina Opris, Andrea Bergamini",
+      "date": "2026-04-27",
+      "pdf": "https://arxiv.org/pdf/2604.24140v1",
+      "score": "6.0",
+      "evidence": "偏置电压极化介电薄膜中的机电耦合",
+      "tldr": "针对传统压电材料（如PZT、PVDF）弹性模量高、难以应用于柔性结构的问题，本文提出利用偏置电压极化介电材料（如PDMS）的方法，赋予其类似压电的传感特性。通过在硅橡胶薄膜上施加偏置电压，利用其在动态压力下的电容变化产生可测电压，成功实现了一种高顺应性的动态压力传感器，扩展了智能材料在软体结构中的应用范围。",
+      "tags": "query:em-force",
+      "abstract_en": "Among smart materials, piezoelectric materials occupy a very prominent position for sensing and actuation functions. Combined with simple or more advanced shunts, they are also proposed in various vibration mitigation schemes. However, the selection of available piezoelectric materials is mainly limited to ceramics (with an elastic modulus in the order of 10 Gpa (e.g. PZT ceramics) and a few polymer materials, with elastic modulus in the range of 1 Gpa (e.g. PVDF). In both cases, the high mechanical impedance and, consequently, the small dynamic strains limit the application of these materials to stiff structures. In this contribution, we discuss using a bias voltage to polarize dielectric materials and thereby compensate for the lack of spontaneous polarization observed in piezoelectrics. This enables access to materials with a wider range of elastic properties, such as soft elastomers, e.g. poly(dimethylsiloxane). As an example, we present a practical implementation of a silicone rubber membrane used as a highly compliant dynamic pressure sensor. For such nearly-incompressible materials, the capacitance change during dynamic deformation of the membranes is sufficiently large to generate a measurable dynamic voltage change over the membrane.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/02/2604.25698v1-reference-augmented-learning-for-precise-tracking-policy-of-tendon-driven-continuum-robots",
+      "section": "quick",
+      "title_en": "Reference-Augmented Learning for Precise Tracking Policy of Tendon-Driven Continuum Robots",
+      "authors": "Ziqing Zou, Ke Qiu, Haojian Lu, Rong Xiong, Yue Wang",
+      "date": "2026-04-28",
+      "pdf": "https://arxiv.org/pdf/2604.25698v1",
+      "score": "6.0",
+      "evidence": "参考增强学习用于非线性执行器的精确跟踪控制",
+      "tldr": "针对腱驱动连续体机器人（TDCR）的高非线性、路径依赖及非马尔可夫特性导致的控制难题，本文提出一种参考增强的离线学习框架。通过引入可微分RNN动力学代理模型作为梯度桥梁，并利用多尺度参考分布增强技术（包括随机偏差、谐波扰动和随机游走），使控制策略在无需额外硬件交互的情况下掌握多种误差恢复机制。实验表明，该方法在6自由度跟踪任务中显著提升了精度与稳定性。",
+      "tags": "query:em-force",
+      "abstract_en": "Tendon-Driven Continuum Robots (TDCRs) pose significant control challenges due to their highly nonlinear, path-dependent dynamics and non-Markovian characteristics. Traditional Jacobian-based controllers often struggle with hysteresis-induced oscillations, while conventional learning-based approaches suffer from poor generalization to out-of-distribution trajectories. This paper proposes a reference-augmented offline learning framework for precise 6-DOF tracking control of TDCRs. By leveraging a differentiable RNN-based dynamics surrogate as a gradient bridge, we optimize a control policy through an augmented reference distribution. This multi-scale augmentation scheme incorporates stochastic bias, harmonic perturbations, and random walks, forcing the policy to internalize diverse tracking error recovery mechanisms without additional hardware interaction. Experimental results on a three-section TDCR platform demonstrate that the proposed policy achieves a 50.9\\% reduction in average position error compared to non-augmented baselines and significantly outperforms Jacobian-based methods in both precision and stability across various speeds.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
