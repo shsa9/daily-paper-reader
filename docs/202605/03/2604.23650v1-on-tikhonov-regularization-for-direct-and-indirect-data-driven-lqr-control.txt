@@ -1,0 +1,680 @@
+Title: On Tikhonov Regularization for Direct and Indirect Data-Driven LQR Control
+
+URL Source: https://arxiv.org/pdf/2604.23650v1
+
+Published Time: Tue, 28 Apr 2026 00:59:49 GMT
+
+Number of Pages: 6
+
+Markdown Content:
+# On Tikhonov Regularization for Direct and Indirect Data-Driven LQR Control 
+
+Shuyuan Zhang 1, Zheming Wang 2, and Rapha¨ el M. Jungers 1
+
+Abstract — In recent years, the so-called ‘direct data-driven control’ has been a topic of intense research, and it is expected that it will become prominent in future complex dynamical systems control. Within this framework, regularization not only implicitly enforces system identification, but also plays a crucial role in ensuring reliable closed-loop behavior. To further enhance the performance of data-driven controllers, we propose a new regularization method for direct data-driven LQR control of unknown LTI systems, based on a regularized covariance parameterization. Unlike existing data-driven techniques, the proposed method remains effective in handling ill-conditioned cases, such as when the data matrix has a large condition number. Then, we demonstrate that our method is equivalent to the indirect certainty-equivalence LQR combined with Tikhonov regularization. Furthermore, we extend our method to the design of controllers for unknown nonlinear systems using Koopman linear embedding. Finally, the simulation results validate the effectiveness and advantages of the proposed regularization method. 
+
+I. INTRODUCTION Over the past two decades, data-driven methods have gained increasing popularity, particularly in cases where no available model or expert knowledge exists [1], [2]. By learning from data, these methods open new avenues for developing intelligent solutions in modern control systems. Broadly, data-driven methods can be classified into two main types: indirect and direct. 
+
+Indirect methods rely on system identification [3]. A model is first identified from data, and then analyzed in a second phase. In this phase, a controller is designed using traditional techniques, such as Linear Quadratic Regulator (LQR), treat-ing the identified system from the first phase as the ground-truth [4]. This approach relies on the so called ‘certainty-equivalence principle’ [5], whereby the estimates are treated as if they were the true parameters, without accounting for their uncertainty. In the first phase, regularized identification methods [6] can be applied to regression problems to handle uncertainties and facilitate numerical computation.          
+
+> RJ is a FNRS honorary Research Associate. This project has received funding from the European Research Council (ERC) under the European Union’s Horizon 2020 research and innovation programme under grant agreement No 864017 - L2C, from the Horizon Europe programme under grant agreement No101177842 - Unimaas, and from the ARC (French Community of Belgium) - project name: SIDDARTA. The work of Zheming Wang was supported in part by the National Natural Science Foundation of China under Grant 62303416 and W2421028.
+> 1S. Zhang and R. M. Jungers are with the ICTEAM Institute, UCLou-vain, 4Avenue Georges Lemaˆ ıtre, 1348 Louvain-la-Neuve, Belgium.
+
+shuyuan.zhang,raphael.jungers@uclouvain.be               
+
+> 2Z. Wang is with the Department of Automation, Zhe-jiang University of Technology, Hangzhou 310023, China
+
+wangzheming@zjut.edu.cn 
+
+Direct methods bypass the system identification step [7], relying solely on measured input-output data from the con-trolled plant for controller design. In [8], Willems et al. 
+
+presented a foundational result, known as Willems’ fun-damental lemma, which implies that the behavior of an LTI system can be characterized by the column span of a data Hankel matrix. Inspired by this lemma, De Persis and Tesi [9] proposed a data-dependent representation of the closed-loop behavior of an LTI system for LQR design by solving a positive semi-definite program. Furthermore, they developed a regularizer that promotes robust stability when the data used for controller design are affected by noise [10]. Subsequent works [11], [12], [13], [14] investigated different regularizers aimed at enhancing system performance. In [13], D¨ orfler et al. presented a regularized direct data-driven LQR formulation, which has been proven to be equivalent to the indirect certainty-equivalence LQR formulation with ordinary least-squares identification (see Corollary III.2 and Theorem III.3 in [13]). This method allows a trade-off between performance and robustness by blending differ-ent regularizers that promote either certainty equivalence or robust stability. Recently, Zhao et al. [14] proposed a regularization method for direct data-driven LQR design using a covariance parameterization. A notable advantage of this parameterization is that the dimension of the resulting formulation is independent of the data length. This approach has been applied to autonomous bicycle control [15] and power converters [16]. While the parameterization and regularization approaches shed light on direct data-driven LQR design, they rely on the assumption that the available data is sufficiently rich. This assumption guarantees that the data matrix D0D⊤ 
+
+> 0
+
+is positive definite, as shown in (10). However, its condition number may still be large, and inverting it may lead to large numerical errors. To address this issue, inspired by Tikhonov regularization [17], this paper proposes a reg-ularized covariance parameterization for direct data-driven LQR design of unknown LTI systems corrupted by process noise. Unlike the approaches in the above literature, the proposed parameterization remains valid even when D0D⊤
+
+> 0
+
+has a large condition number or when D0 is rank-deficient. Moreover, we show that the proposed method is equivalent to the indirect certainty-equivalence LQR approach combined with Tikhonov regularization (i.e., regularized least-squares identification). Notably, the dimension of the resulting LQR formulation remains independent of the data length. Com-pared with the regularized direct data-driven control method in [14], our approach achieves superior control performance 
+
+> arXiv:2604.23650v1 [math.OC] 26 Apr 2026
+
+through tuning of the regularization coefficients (see Exam-ples 1 and 2 for details). Finally, we extend the proposed method to controller design for unknown nonlinear systems using Koopman linear embedding. The rest of this paper is organized as follows. Section II reviews the model-based and data-driven LQR formulations. Section III presents a regularization method for direct data-driven LQR design of LTI systems, based on the proposed regularized covariance parameterization. In Section IV, the proposed method is extended to handle nonlinear systems. Section V validates the theoretical results through simula-tions. Conclusions are drawn in Section VI. II. PRELIMINARIES In this section, we review the model-based LQR, the indirect certainty-equivalence LQR [12], [13], and the di-rect data-driven LQR design via covariance parameterization along with its regularized variant [14], [18]. 
+
+A. Model-Based LQR 
+
+Consider a discrete-time LTI system: 
+
+x(k + 1) = Ax (k) + Bu (k) + w(k) (1) with k ∈ N, where x(k) ∈ Rn, u(k) ∈ Rm and w(k) ∈ Rn
+
+are the state, input and noise at time k, respectively. The pair 
+
+(A, B ) is unknown but assumed to be stabilizable. 
+
+Assumption 1. The initial state and the process noise are independent random variables with distributions satisfying 
+
+x(0) i.i.d. 
+
+∼ N (0 , σ 2
+
+> x
+
+In), and w(k) i.i.d. 
+
+∼ N (0 , σ 2
+
+> w
+
+In) for k ∈ N,where σx > 0 and σw > 0.The infinite-horizon LQR problem aims to find a state feedback gain K that minimizes the time-average cost, i.e., 
+
+min  
+
+> K
+
+J(K) := lim   
+
+> T→∞
+
+E
+
+"
+
+1
+
+T 
+
+> T−1
+
+X
+
+> k=0
+
+C(k)
+
+#
+
+s.t. (1) and u(k) = Kx (k), (2) where C(k) = x(k)⊤Qx (k) + u(k)⊤Ru (k) with Q > 0 and 
+
+R > 0, and E denotes the expectation over the randomness from the initial state and the process noise. When A + BK is stable, it holds that [19] 
+
+J(K) = Tr (QP + K⊤RKP ), (3) where P is the unique positive definite solution to the discrete-time Lyapunov equation: 
+
+P = In + ( A + BK )P (A + BK )⊤. (4) The optimal LQR gain K∗ := arg min K J(K) of (3) and (4) can be found by the celebrated Riccati equation solution [19]. Alternatively, as shown in Section 2 of [20], K∗ can be determined by solving the following optimization problem: 
+
+min   
+
+> P≥In,K
+
+Tr (QP + K⊤RKP )
+
+s.t. (A + BK )P (A + BK )⊤ − P + In ≤ 0. (5) We refer to (5) as the model-based LQR problem. However, when (A, B ) is unknown, a direct solution to (5) is not feasible. In the following, we recapitulate several data-driven control methods for computing K without explicit knowledge of (A, B ).
+
+B. Indirect Certainty-Equivalence LQR 
+
+A classical approach to data-driven LQR design is based on the certainty-equivalence principle [4]: it first estimates a model from data, and then solves the LQR problem regarding the identified model as the ground-truth. We assume that the data are collected offline by exciting system (1) with a random input u(k) for k ∈ N, where the input is independent of both the process noise and the initial condition specified in Assumption 1. Without loss of generality, we consider a T -step time series of states, inputs, noises, and successor states: 
+
+X0 := x(0) x(1) · · · x(T − 1)  ∈ Rn×T ,U0 := u(0) u(1) · · · u(T − 1)  ∈ Rm×T ,W0 := w(0) w(1) · · · w(T − 1)  ∈ Rn×T ,X1 := x(1) x(2) · · · x(T ) ∈ Rn×T .
+
+Thus, we have a data-based representation of system (1) as follows: 
+
+X1 = B A U0
+
+X0
+
+
+
++ W0. (6) Let us define 
+
+D0 := 
+
+U0
+
+X0
+
+
+
+.
+
+Assumption 2. The collected data is sufficiently rich, that is, rank (D0) = n + m. (7) This assumption is a necessary condition for the existing data-driven LQR design approach [21]. Based on (6) and (7), the least-squares estimator ( ˆA, ˆB)
+
+is given by 
+
+[ ˆB, ˆA] = arg min  
+
+> B,A
+
+∥X1 − [B, A ]D0∥F = X1D†
+
+> 0
+
+, (8) where D† 
+
+> 0
+
+= D⊤ 
+
+> 0
+
+(D0D⊤ 
+
+> 0
+
+)−1.As presented in [13], the system (A, B ) is replaced with its estimate ( ˆA, ˆB) in (5), and the LQR problem can be reformulated as 
+
+min   
+
+> P≥In,K
+
+Tr (QP + K⊤RKP )
+
+s.t. ( ˆA + ˆBK )P ( ˆA + ˆBK )⊤ − P + In ≤ 0. (9) We refer to (9) as the indirect certainty-equivalence LQR problem. 
+
+C. Direct Data-Driven LQR with Covariance Parameteriza-tion 
+
+The goal of direct data-driven LQR design is to compute the feedback gain K without performing explicit system identification (8). This subsection reviews recent advances in direct data-driven control methods based on parameterization and regularization [14], [18]. Define Φ := D0D⊤ 
+
+> 0
+
+/T . Under Assumption 2, Φ is positive definite, and for every K there exists a unique 
+
+V ∈ R(n+m)×n such that 
+
+KIn
+
+
+
+= Φ V. (10) We refer to (10) as the covariance parameterization [18, (15)]. Compared to the data-based parameterization 
+
+KIn
+
+
+
+= D0G, G ∈ RT ×n, (11) proposed in [13, (9)], the dimension of V is independent of the data length. Define the sample covariance matrices ¯X0 = X0D⊤ 
+
+> 0
+
+/T ,
+
+¯U0 = U0D⊤ 
+
+> 0
+
+/T , ¯W0 = W0D⊤ 
+
+> 0
+
+/T , and ¯X1 = X1D⊤ 
+
+> 0
+
+/T . We can formulate the direct data-driven LQR problem as 
+
+min   
+
+> P≥In,V
+
+Tr (QP + ( ¯U0V )⊤R( ¯U0V )P )
+
+s.t. ( ¯X1V )P ( ¯X1V )⊤ − P + In ≤ 0,
+
+¯X0V = In (12) with the gain matrix K = ¯U0V . We refer to (12) as the direct data-driven LQR problem with covariance parameterization (see (18) in [18]). As shown in [18, Lemma 1], (12) is equivalent to the indirect certainty-equivalence LQR (9) in the sense that their solutions coincide. Furthermore, Zhao et al. [14, (22)] presented a regular-ization formulation for the direct data-driven LQR problem (12) to enhance robust closed-loop stability as follows: 
+
+min   
+
+> P≥In,V
+
+Tr (QP + ( ¯U0V )⊤R( ¯U0V )P ) + λΩ( V )
+
+s.t. ( ¯X1V )P ( ¯X1V )⊤ − P + In ≤ 0,
+
+¯X0V = In (13) with the regularization coefficient λ ≥ 0, where Ω( V ) := 
+
+Tr (V P V ⊤Φ) . We refer to (13) as the regularized direct data-driven LQR problem. As illustrated in [14, Theorem 1], the role of the regularizer Ω( V ) is equivalent to mixing the certainty-equivalence promoting regularizer ∥ΠG∥ (with 
+
+Π := IT − D†
+
+> 0
+
+D0) from [13] and the robustness-promoting regularizer Tr (GP G ⊤) from [10], where G satisfies (11). Various regularizers have been employed in direct data-driven LQR design to promote desired performance [10], [13], [14]. In the next section, we introduce a new regularizer for direct data-driven LQR design, building upon the recent results in [14]. III. MAIN RESULTS In this section, we propose a new regularization method for direct data-driven LQR design and demonstrate its equiv-alence to the indirect certainty-equivalence LQR combined with Tikhonov regularization. 
+
+A. Regularized Covariance Parameterization 
+
+In this subsection, we present a direct data-driven LQR design method using the regularized covariance parameteri-zation to compute the controller. The covariance parameterization (10) relies on Assump-tion 2, which prevents D0D⊤ 
+
+> 0
+
+from having exactly zero eigenvalues. However, the condition number of D0D⊤ 
+
+> 0
+
+,denoted by cond (D0D⊤ 
+
+> 0
+
+), can still be large, and inverting 
+
+D0D⊤ 
+
+> 0
+
+may lead to large numerical errors. Inspired by the Tikhonov regularization technique [17] used in system identification, we add a ridge term to the diag-onal, i.e., D0D⊤ 
+
+> 0
+
++γI n+m with γ > 0, which shifts all eigen-values of D0D⊤ 
+
+> 0
+
+by γ and thereby mitigates ill-conditioning. To this end, we define Ψ := ( D0D⊤ 
+
+> 0
+
++ γI n+m)/T . Since 
+
+Ψ is positive definite even when rank (D0) < n + m (i.e., Assumption 2 is not satisfied), it follows that for every K
+
+there is a unique Ξ ∈ R(n+m)×n such that 
+
+KIn
+
+
+
+= ΨΞ . (14) We refer to (14) as the regularized covariance parameteriza-tion. Define Ψ := 
+
+Ψ1
+
+Ψ2
+
+
+
+, where Ψ1 ∈ Rm×(n+m) and Ψ2 ∈
+
+Rn×(n+m). Similar to (12), we formulate the following direct data-driven LQR problem: 
+
+min   
+
+> P≥In,Ξ
+
+Tr (QP + (Ψ 1Ξ) ⊤R(Ψ 1Ξ) P )
+
+s.t. ( ¯X1Ξ) P ( ¯X1Ξ) ⊤ − P + In ≤ 0,
+
+Ψ2Ξ = In (15) with the gain matrix K = Ψ 1Ξ. We refer to (15) as the direct data-driven LQR problem with regularized covariance parameterization. 
+
+Remark 1. The dimensions of all decision variables in (15) depend only on the system parameters n and m, and not on the data length T . This method is well-suited for larger datasets. By appropriately tuning γ, our method can reliably produce a stabilizing controller (see Example 1 in Section V). In particular, when γ = 0 , we have Ψ1 = ¯U0
+
+and Ψ2 = ¯X0, and (15) reduces to (12). 
+
+Remark 2. Although both regularized direct data-driven formulations (13) and (15) simultaneously address identifi-cation and control objectives, our method remains effective in handling ill-conditioned cases, e.g., when cond (D0D⊤ 
+
+> 0
+
+) is large. In addition, we find that the control performance can be enhanced by mixing the two regularizers in (13) and (15), which is demonstrated in Example 1 of Section V. 
+
+B. Equivalence to Indirect Certainty-Equivalence LQR 
+
+This subsection establishes the equivalence between the proposed (15) and the indirect certainty-equivalence LQR combined with Tikhonov regularization. In system identification, a classical approach is Tikhonov regularization method [22], which penalizes large values of [B, A ] in the following optimization problem: 
+
+[ ˆB, ˆA] = arg min  
+
+> B,A
+
+∥X1 − [B, A ]D0∥22 + γ|| [B, A ]|| 22
+
+= X1D⊤ 
+
+> 0
+
+(D0D⊤ 
+
+> 0
+
++ γI n+m)−1. (16) This is the ridge regression solution proposed by Hoerl and Kennard [17] in the 1970s. The regularized least-squares estimator (16) allows to handle rank-deficient data matrices, i.e., when rank (D0) < n + m. The positive definiteness of 
+
+D0D⊤ 
+
+> 0
+
++ γI n+m can be ensured by tuning γ. Consequently, the estimator (16) remains applicable even when Assumption 2 is not satisfied. Similar to (9), one can replace (A, B ) with its estimate 
+
+( ˆA, ˆB) in (16), which yields the following LQR problem: 
+
+min   
+
+> P≥In,K
+
+Tr (QP + K⊤RKP )
+
+s.t. ( ˆA + ˆBK )P ( ˆA + ˆBK )⊤ − P + In ≤ 0. (17) We refer to (17) as the regularized indirect certainty-equivalence LQR problem. Next, we establish the equivalence between the formula-tions (15) and (17). 
+
+Theorem 1. Consider the regularized direct and indirect data-driven LQR formulations (15) and (17), respectively. These two formulations are equivalent in the sense that their solutions coincide. 
+
+Proof. Due to the positive definiteness of Ψ, it follows from (14) that Ξ is uniquely determined as Ξ = Ψ −1
+
+KIn
+
+
+
+.Then, the LQR problem (15) can be reformulated as 
+
+min   
+
+> P≥In,K
+
+Tr (QP + K⊤RKP )
+
+s.t. X1D⊤ 
+
+> 0
+
+(D0D⊤ 
+
+> 0
+
++ γI n+m)−1
+
+KIn
+
+
+
+P
+
+KIn
+
+⊤
+
+(X1D⊤ 
+
+> 0
+
+(D0D⊤ 
+
+> 0
+
++ γI n+m)−1)⊤ − P + In ≤ 0.
+
+By the definition [ ˆB, ˆA] = X1D⊤ 
+
+> 0
+
+(D0D⊤ 
+
+> 0
+
++ γI n+m)−1
+
+in (16), this problem is exactly the regularized indirect certainty-equivalence LQR problem (17). ■
+
+Furthermore, we show that problem (15) can be cast as a convex program. 
+
+Proposition 1. Suppose that (15) is feasible. Then, the optimal gain for (15) can be computed as K = Ψ 1Y P −1,where Y ∈ R(n+m)×n and P ∈ Rn×n are solutions to 
+
+min  
+
+> P,Y,L
+
+Tr( QP ) + Tr( RL )
+
+s.t. 
+
+
+
+Ψ2Y = P, 
+
+P − In ¯X1YY ⊤ ¯X⊤ 
+
+> 1
+
+P
+
+
+
+≥ 0,
+
+ L Ψ1YY ⊤Ψ⊤ 
+
+> 1
+
+P
+
+
+
+≥ 0,
+
+(18) where L ∈ Rm×m.
+
+Proof. We first show that the solution to (15) can be computed as K = Ψ 1Y P −1, where Y and P are solutions to 
+
+min  
+
+> P,Y,L
+
+Tr( QP ) + Tr( RL )
+
+s.t. 
+
+
+
+Ψ2Y = P, P ≥ In,
+
+¯X1Y P −1Y ⊤ ¯X⊤ 
+
+> 1
+
+− P + In ≤ 0,L − Ψ1Y P −1Y ⊤Ψ⊤ 
+
+> 1
+
+≥ 0.
+
+(19) By the variable substitution Ξ = Y P −1, the first three constraints of (19) are equivalent to those of (15). Hence, the feasibility of (19) implies that of (15). The converse also holds by constructing an L that satisfies the fourth constraint of (19). Let (P, Y, L ) be an optimal solution to (19) and 
+
+(P, Ξ) an optimal solution to (15). Since R is positive definite, the optimal solution satisfies L = Ψ 1Y P −1Y ⊤Ψ⊤ 
+
+> 1
+
+.Therefore, the optima of (19) and (15) coincide. Based on the Schur complement [23], (19) can be refor-mulated as (18). Substituting Ξ = Y P −1 and K = Ψ 1Ξ
+
+then completes the proof. ■
+
+IV. EXTENSIONS TO NONLINEAR SYSTEMS In this section, we extend our method to the design of controllers for unknown nonlinear systems. Consider a discrete-time nonlinear system 
+
+x(k + 1) = f (x(k), u (k)) , (20) with k ∈ N, where x(k) ∈ Rn and u(k) ∈ Rm are the state and input at time k, respectively, and f (·) is the unknown nonlinear dynamics. One key idea of the Koopman operator is to lift the state 
+
+x(k) of the nonlinear system (20) to a higher-dimensional space via a set of lifting functions (often referred to as 
+
+observables ) [24], where the evolution of these observables becomes linear. 
+
+Assumption 3. The nonlinear system (20) is assumed to admit a Koopman linear embedding. That is, there exists a set of linearly independent lifting functions ϕ1(·), . . . , ϕ nz (·) : 
+
+Rn → R such that the lifted state 
+
+Θ( x(k)) := [ ϕ1(x(k)) , . . . , ϕ nz (x(k))] ∈ Rnz (21) evolves linearly along all trajectories of (20). Under Assumption 3, the lifted state z(k) = Θ( x(k)) ∈
+
+Rnz with nz > n satisfies 
+
+z(k + 1) = Az (k) + Bu (k), (22) with matrices A and B of appropriate dimensions. For system (20), we collect a time series of length T of states, inputs, and successor states, denoted by X0, U0, and 
+
+X1, as in Section II-B. With the lifting functions (21), we compute the lifted states as 
+
+Z0 := Θ( x(0)) · · · Θ( x(T − 1))  ∈ Rnz ×T ,Z1 := Θ( x(1)) · · · Θ( x(T ))  ∈ Rnz ×T .
+
+Let 
+
+D0 := 
+
+U0
+
+Z0
+
+
+
+, Ψ := 1
+
+T
+
+ D0D⊤ 
+
+> 0
+
++ γI n+m
+
+.Define ¯Z1 = Z1D⊤ 
+
+> 0
+
+/T . By solving (15) with ¯Z1 in place of ¯X1, the feedback gain K is obtained. This yields the controller u(k) = Kz (k) for the linear system (22), and consequently applies to the original nonlinear system (20). V. SIMULATIONS This section presents numerical simulations to validate the effectiveness and demonstrate the advantages of the proposed theoretical results. 
+
+Example 1. Consider the following linear system, where the unknown matrices A and B are chosen as: 
+
+A =
+
+
+
+0.99 0.01 0.02 00.02 0.98 0.01 00.01 0.03 0.97 0.01 0 0.01 0.02 0.95 
+
+ , B =
+
+
+
+1000
+
+ . (23) This system has n = 4 , and m = 1 , with an unstable open-loop behavior. Let Q = In and R = 10 −3Im. We perform 100 independent trials. In each trial, we run an experiment on the system with initial state x(0) ∼ N (0 , I n),input u(k) ∼ N (0 , 1) , and noise w(k) ∼ N (0 , σ 2
+
+> w
+
+In) over a time horizon T . Let K(i) denote the controller obtained in the i-th trial by solving either (13) (referred to as Method I) or (15) (referred to as Method II), using MOSEK [25]. We define the optimality gap as 
+
+E(i) = J(K(i)) − J(K∗)
+
+J(K∗) , (24) where J(·) is computed from (3), and K∗ is obtained by solving (5). We denote by S the percentage of trials yielding a stabilizing controller (with SI and SII corresponding to the two methods, respectively), and by M the median value of E(i) over 100 independent trials (with MI and MII ). Let T = 10 and σw = 0.1, and choose the regular-ization coefficients λ and γ from the set [0 , 1, 2, 3, 4, 5,
+
+6, 7, 8, 9, 10 , 20 , 30 , 40 , 50 , 100] × 10 −2. Fig. 1 shows the evolution of the stabilizing percentage S and the median value M with respect to the regularization coefficients, respectively. Here, NaN indicates that no median value is reported because SI < 50 for certain values of λ. We can ob-serve that our Method II achieves better control performance than Method I, as indicated by a higher stabilizing percentage 
+
+S and a smaller median value M through tuning of γ (with 
+
+max ( SII ) = 89 and min ( MII ) = 0 .7224 across all γ). The reason is that cond (D0D⊤ 
+
+> 0
+
+) ≫ cond (D0D⊤ 
+
+> 0
+
++ γI n+m),with γ improving the condition number of D0D⊤ 
+
+> 0
+
+, whereas 
+
+λ does not. In addition, by combining the two regularizers, i.e., using Tr (QP + (Ψ 1Ξ) ⊤R(Ψ 1Ξ) P ) + λΩ(Ξ) as the objective function in (15), we find that the best performance is achieved S = 93 at λ = 0 .2 and γ = 0 .3, and M = 0 .6902 
+
+at λ = 0 .03 and γ = 0 .04 . However, these regularizers cannot guarantee achieving the best performance in both M
+
+and S simultaneously. We now increase the data length and noise level, and choose T and σw from the following sets: T = [10 , 20 ,
+
+40 , 80 , 100 , 200] and σw = [0 .1, 0.2, 0.3, 0.4, 0.5] , respec-tively. For each pair (T, σ w), the colors in Fig. 2 represent 0 1 2 3 4 5 6 7 8 9 10 20 30 40 50 100 
+
+> Regularization coefficient (1e-2)
+> 45 50 55 60 65 70 75 80 85 90
+> Stabilizing percentage (%)
+> SI
+> SII
+
+(a) 0 1 2 3 4 5 6 7 8 9 10 20 30 40 50 100  
+
+> Regularization coefficient (1e-2)
+> 0510 15 20 25 30 35
+> Median value
+> MI
+> MII
+> NaN (M I)
+
+(b) 
+
+Fig. 1: Comparison of Method I and Method II in terms of (a) stabilizing percentage S and (b) median value M as functions of regularization coefficients. Blue and orange lines correspond to λ and γ, respectively. log(S II / S I)    
+
+> 0.1 0.2 0.3 0.4 0.5
+> Noise level
+> 10 20 40 80 100 200
+> Data length
+> 00.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1
+
+(a) log(M I / M II )     
+
+> 0.1 0.2 0.3 0.4 0.5
+> Noise level
+> 10 20 40 80 100 200
+> Data length
+> 00.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1
+
+(b) 
+
+Fig. 2: (a) log( SII /S I ) as a function of T and σw; (b) 
+
+log( MI /M II ) as a function of T and σw.the logarithmic values of SII /S I and MI /M II . For each 
+
+γ, let SγII and M γII denote the stabilizing percentage and the median value of J(K(i)) over 100 independent trials, respectively. Then, SII and MII represent the maximum and minimum of all SγII and M γII , respectively. The quantities 
+
+SI and MI are defined in the same way as above, but with respect to λ.As shown in Fig. 2, we have log( SII /S I ) ≥ 0 and 
+
+log( MI /M II ) > 0 for all (T, σ w), indicating that Method II consistently outperforms Method I (For visualization, all values of log( SII /S I ) and log( MI /M II ) are normalized to the interval [0 , 1] ). As the data length T increases, the colors become darker (blue), indicating that the ratios SII /S I
+
+and MI /M II decrease as the condition number of D0D⊤
+
+> 0
+
+improves, and both methods tend to exhibit comparable performance. When T = 200 , both methods yield nearly identical results; that is, SII and SI are 100%, and MI and 
+
+MII are close to the ground-truth cost J(K∗).Note that T should not be chosen too large, since for unstable or stable systems the sampled trajectories will di-verge to infinity or decay to zero, respectively, as T increases significantly. In either case, the quality of the collected data deteriorates, and the resulting data matrix D0D⊤ 
+
+> 0
+
+may become ill-conditioned or numerically singular, making it infeasible to compute a stabilizing controller. Moreover, when T is very small, Method I is not recommended, as its stabilizing percentage S is too low, whereas Method II remains effective. For instance, when T = 5 and σw = 0 .1,
+
+SI is around 20% , while SII exceeds 70% .
+
+Example 2 . Consider 1000 random systems with n = 3 and m = 1 , where the entries of A and B are drawn from 
+
+N (0 , 1) . The data length is set to T = 10 .For each system, the regularization coefficient is randomly selected from the interval (0 , 1) . We then perform 50 in-dependent trials, where S denotes the percentage of trials that yield a stabilizing controller. In each trial, we run an experiment on the system with initial state x(0) ∼ N (0 , I n),input u(k) ∼ N (0 , 1) , and noise w(k) ∼ N (0 , σ 2
+
+> w
+
+In).As shown in Table I, the number of cases with SI = 0 
+
+among 1000 random systems occurs more frequently than those with SII = 0 . Moreover, as the noise level increases, the number of cases with S = 0 also rises. When SI > 0 and SII > 0, we plot the histograms of 
+
+log 10 (SII /S I ) for σw = 0 .1 and σw = 1 . As shown in Fig. 3, the number of cases where SII > S I exceeds those where SII < S I , demonstrating that our method is more robust in finding a stabilizing controller for random systems. TABLE I: Number of systems (out of 1000) for each case of SI and SII under different noise levels. 
+
+σw = 0 .1 σw = 1 .0
+
+SI = 0 , S II = 0 16 76 
+
+SI = 0 , S II > 0 62 95 
+
+SI > 0, S II = 0 4 5
+
+SI > 0, S II > 0 918 824 1.5 1-0.5 -1 -1.5 050 100 150 200 250 300 350 400 
+
+> 0.5 0
+> Number of systems log 10 (S II /S I)
+
+(a) 1.5 0-0.5 050 100 150 200 250 300      
+
+> Number of systems
+> log 1
+> 0
+> 0
+> .5
+> (S II /S I)1
+
+(b) 
+
+Fig. 3: Histograms of log 10 (SII /S I ) for (a) σw = 0 .1 and (b) σw = 1 .VI. CONCLUSIONS In this paper, we proposed a new regularization method for direct data-driven LQR control of unknown LTI systems using the regularized covariance parameterization, which remains effective in handling ill-conditioned cases. We fur-ther demonstrated its equivalence to the indirect certainty-equivalence LQR combined with Tikhonov regularization. Moreover, we extended our method to the design of con-trollers for unknown nonlinear systems using Koopman linear embedding. Simulation results confirmed the effective-ness and benefits of the proposed method. In future work, we will develop formal conditions under which our method can effectively address unknown linear and nonlinear systems, informed by the experimental obser-vations in this paper. REFERENCES [1] Z.-S. Hou and Z. Wang, “From model-based control to data-driven control: Survey, classification and perspective,” Information Sciences ,vol. 235, pp. 3–35, 2013. [2] T. Martin, T. B. Sch¨ on, and F. Allg¨ ower, “Guarantees for data-driven control of nonlinear systems using semidefinite programming: A survey,” Annual Reviews in Control , vol. 56, p. 100911, 2023. [3] L. Ljung, System Identification: Theory for the User . Prentice Hall PTR, 1999. [4] H. Mania, S. Tu, and B. Recht, “Certainty equivalence is efficient for linear quadratic control,” Advances in Neural Information Processing Systems , vol. 32, 2019. [5] K. J. Astrom and B. Wittenmark, Adaptive control . Addison-Wesley Longman Publishing Co., Inc., 1994. [6] G. Pillonetto, T. Chen, A. Chiuso, G. De Nicolao, and L. Ljung, 
+
+Regularized system identification: Learning dynamic models from data . Springer Nature, 2022. [7] T. M. Maupong and P. Rapisarda, “Data-driven control: A behavioral approach,” Systems & Control Letters , vol. 101, pp. 37–43, 2017. [8] J. C. Willems, P. Rapisarda, I. Markovsky, and B. L. De Moor, “A note on persistency of excitation,” Systems & Control Letters , vol. 54, no. 4, pp. 325–329, 2005. [9] C. De Persis and P. Tesi, “Formulas for data-driven control: Stabi-lization, optimality, and robustness,” IEEE Transactions on Automatic Control , vol. 65, no. 3, pp. 909–924, 2020. [10] C. De Persis and P. Tesi, “Low-complexity learning of linear quadratic regulators from noisy data,” Automatica , vol. 128, p. 109548, 2021. [11] F. D¨ orfler, J. Coulson, and I. Markovsky, “Bridging direct and indirect data-driven control formulations via regularizations and relaxations,” 
+
+IEEE Transactions on Automatic Control , vol. 68, no. 2, pp. 883–897, 2023. [12] F. D¨ orfler, P. Tesi, and C. De Persis, “On the role of regularization in direct data-driven lqr control,” in Proceedings of the Conference on Decision and Control , pp. 1091–1098, 2022. [13] F. D¨ orfler, P. Tesi, and C. De Persis, “On the certainty-equivalence approach to direct data-driven lqr design,” IEEE Transactions on Automatic Control , vol. 68, no. 12, pp. 7989–7996, 2023. [14] F. Zhao, A. Chiuso, and F. D¨ orfler, “Regularization for covariance parameterization of direct data-driven lqr control,” IEEE Control Systems Letters , vol. 9, pp. 961–966, 2025. [15] N. Persson, F. Zhao, M. Kaheni, F. D¨ orfler, and A. V. Papadopou-los, “An adaptive data-enabled policy optimization approach for au-tonomous bicycle control,” 2025. arXiv:2502.13676. [16] F. Zhao, R. Leng, L. Huang, H. Xin, K. You, and F. D¨ orfler, “Di-rect adaptive control of grid-connected power converters via output-feedback data-enabled policy optimization,” in Proceedings of the European Control Conference , pp. 2563–2568, 2025. [17] A. E. Hoerl and R. W. Kennard, “Ridge regression: Biased estimation for nonorthogonal problems,” Technometrics , vol. 12, no. 1, pp. 55–67, 1970. [18] F. Zhao, F. D¨ orfler, A. Chiuso, and K. You, “Data-enabled policy optimization for direct adaptive learning of the lqr,” IEEE Transactions on Automatic Control , vol. 70, no. 11, pp. 7217–7232, 2025. [19] B. D. Anderson and J. B. Moore, Optimal control: linear quadratic methods . Courier Corporation, 2007. [20] E. Feron, V. Balakrishnan, S. Boyd, and L. El Ghaoui, “Numerical methods for H2 related problems,” in Proceedings of the American Control Conference , pp. 2921–2922, 1992. [21] H. J. Van Waarde, J. Eising, H. L. Trentelman, and M. K. Camlibel, “Data informativity: A new perspective on data-driven analysis and control,” IEEE Transactions on Automatic Control , vol. 65, no. 11, pp. 4753–4768, 2020. [22] T. Hastie, “Ridge regularization: An essential concept in data science,” 
+
+Technometrics , vol. 62, no. 4, pp. 426–433, 2020. [23] J. H. Gallier, “Notes on the schur complement,” 2010. upenn.edu. [24] M. Korda and I. Mezi´ c, “Linear predictors for nonlinear dynamical systems: Koopman operator meets model predictive control,” Auto-matica , vol. 93, pp. 149–160, 2018. [25] M. ApS, “Mosek optimization toolbox for matlab,” User’s Guide and Reference Manual , 2019. https://docs.mosek.com/10.1/toolbox.pdf.

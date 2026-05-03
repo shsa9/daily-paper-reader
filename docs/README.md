@@ -6,32 +6,35 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-05-02
-- 运行时间：2026-05-02 20:28:00 UTC
+- 最新运行日期：2026-05-03
+- 运行时间：2026-05-03 20:12:54 UTC
 - 运行状态：成功
-- 本次总论文数：3
+- 本次总论文数：4
 - 精读区：0
-- 速读区：3
+- 速读区：4
 
 ### 今日简报（AI）
-今日深入探讨足式机器人控制优化、柔性压力传感新机制及连续体机器人的高精度追踪策略。
-揭示了变阻抗 MPC 中的虚假可行性风险，并展示了通过偏置电压提升介电薄膜感知灵敏度的机电耦合方案。
-推荐关注控制算法的鲁棒性边界与新型感知材料的应用，以应对复杂环境下的精准作业挑战。
-- 详情：[/202605/02/README](/202605/02/README)
+今日聚焦太极计划引力波探测的地面高精度标定，并同步探讨数据驱动控制与观测器设计的理论优化。
+重点推荐利用物理信息神经网络（PINN）表征检验质量磁特性的新框架，以及针对 LQR 控制的正则化改进方案。
+建议关注空间科学任务中物理模型与深度学习的深度融合，尤其是高精度测量技术的落地应用。
+- 详情：[/202605/03/README](/202605/03/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [False Feasibility in Variable Impedance MPC for Legged Locomotion](/202605/02/2604.22251v1-false-feasibility-in-variable-impedance-mpc-for-legged-locomotion)  
+1. [High-Precision Ground Characterization of Test-Mass Magnetic Properties for the Taiji Gravitational Wave Mission via a Physics-Informed Neural Framework](/202605/03/2604.23510v1-high-precision-ground-characterization-of-test-mass-magnetic-properties-for-the-taiji-gravitational-wave-mission-via-a-physics-informed-neural-framework)  
+   标签：评分：7.0/10、query:em-force
+   evidence：磁特性和杂散力贡献的高精度表征
+2. [On Tikhonov Regularization for Direct and Indirect Data-Driven LQR Control](/202605/03/2604.23650v1-on-tikhonov-regularization-for-direct-and-indirect-data-driven-lqr-control)  
    标签：评分：6.0/10、query:em-force
-   evidence：执行器动力学与可实现控制集
-2. [Pressure sensing by electro-mechanical coupling in compliant dielectric membranes polarized by a bias voltage](/202605/02/2604.24140v1-pressure-sensing-by-electro-mechanical-coupling-in-compliant-dielectric-membranes-polarized-by-a-bias-voltage)  
+   evidence：用于闭环行为的数据驱动LQR控制
+3. [Interval Observer Design Using Observability Decomposition for Detectable Linear Systems](/202605/03/2604.24939v1-interval-observer-design-using-observability-decomposition-for-detectable-linear-systems)  
    标签：评分：6.0/10、query:em-force
-   evidence：偏置电压极化介电薄膜中的机电耦合
-3. [Reference-Augmented Learning for Precise Tracking Policy of Tendon-Driven Continuum Robots](/202605/02/2604.25698v1-reference-augmented-learning-for-precise-tracking-policy-of-tendon-driven-continuum-robots)  
+   evidence：用于状态估计的区间观测器设计
+4. [Robust Constrained Optimization via Sliding Mode Control](/202605/03/2604.27587v1-robust-constrained-optimization-via-sliding-mode-control)  
    标签：评分：6.0/10、query:em-force
-   evidence：参考增强学习用于非线性执行器的精确跟踪控制
+   evidence：用于鲁棒约束优化和精确执行的滑模控制
 
 
 <div class="dpr-home-promo-card">

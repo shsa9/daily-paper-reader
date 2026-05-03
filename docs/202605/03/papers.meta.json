@@ -1,0 +1,65 @@
+{
+  "label": "2026-05-03",
+  "date": "2026-05-03",
+  "generated_at": "2026-05-03T20:13:02",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202605/03/2604.23510v1-high-precision-ground-characterization-of-test-mass-magnetic-properties-for-the-taiji-gravitational-wave-mission-via-a-physics-informed-neural-framework",
+      "section": "quick",
+      "title_en": "High-Precision Ground Characterization of Test-Mass Magnetic Properties for the Taiji Gravitational Wave Mission via a Physics-Informed Neural Framework",
+      "authors": "Chang Liu, Qiong Deng, Huadong Li, Liwei Yang, Xiaodong Peng, Ziren Luo, Yuzhu Zhang, Chen Gao, Xiaotong Wei, Minghui Du, Zihao Xiao, Peng Xu, Bo Liang, Zhi Wang, Li-e Qiang",
+      "date": "2026-04-26",
+      "pdf": "https://arxiv.org/pdf/2604.23510v1",
+      "score": "7.0",
+      "evidence": "磁特性和杂散力贡献的高精度表征",
+      "tldr": "太极计划是中国科学院发起的空间引力波探测任务，其灵敏度受限于检验质量与磁场的耦合噪声。本研究针对地面扭秤实验中非平稳、有色背景噪声导致的参数估计偏差问题，提出了一种AI增强的可微分加权最小二乘（AI-WLS）框架。该框架结合残差网络与物理求解器，实现了对检验质量磁矩和磁化率的高精度表征，满足了太极计划的地面测试需求。",
+      "tags": "query:em-force",
+      "abstract_en": "Taiji is a gravitational wave detection mission in space initiated by the Chinese Academy of Sciences, which will open the millihertz window through a heliocentric triangular constellation of three drag-free spacecraft. Its ultimate sensitivity is determined partly by the residual acceleration noise of the gravitational reference sensors (GRS), within which the coupling between the test-mass and the fluctuating environmental magnetic field constitutes one of the key stray-force contributions. Following the path established by the LISA and TianQin teams, high-precision ground characterization of remanent magnetic moment $\\vec{m}_r$ and volume susceptibility $χ$ of the test masses is a central step in the Taiji pre-launch test program. A persistent challenge for this characterization is the non-stationary, colored background noise inherent to torsion-pendulum facilities, which systematically biases classical Ordinary Least Squares (OLS) and Kalman filter (KF) estimators. We propose an AI-enhanced Differentiable Weighted Least Squares (AI-WLS) framework that fuses a dilated one-dimensional residual network, acting as a dynamic noise evaluator, with a fully differentiable analytical physical solver. This architecture preserves the exact linear mapping from the magnetic parameters to the torque response while autonomously identifying and suppressing contaminated data segments. Validated on real measured noise from the Changchun Institute of Optics, Fine Mechanics and Physics torsion-pendulum facility developed for Taiji, which achieves a torque sensitivity of order $10^{-13}\\,\\mathrm{N\\cdot m\\,Hz^{-1/2}}$, the AI-WLS framework bounds the maximum absolute estimation errors at $4.46\\times 10^{-10}\\,\\mathrm{A\\cdot m^2}$ for $\\vec{m}_r$ and $7.8\\times 10^{-8}$ for $χ$, satisfying Taiji's ground-test requirements on all these parameters simultaneously.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/03/2604.23650v1-on-tikhonov-regularization-for-direct-and-indirect-data-driven-lqr-control",
+      "section": "quick",
+      "title_en": "On Tikhonov Regularization for Direct and Indirect Data-Driven LQR Control",
+      "authors": "Shuyuan Zhang, Zheming Wang, Raphael M. Jungers",
+      "date": "2026-04-26",
+      "pdf": "https://arxiv.org/pdf/2604.23650v1",
+      "score": "6.0",
+      "evidence": "用于闭环行为的数据驱动LQR控制",
+      "tldr": "本研究针对未知线性时不变系统的LQR控制，提出了一种基于正则化协方差参数化的新型Tikhonov正则化方法。该方法有效解决了数据矩阵病态导致的控制性能下降问题，并证明了直接法与带正则化的间接确定性等值法之间的等价性。此外，研究还将该方法扩展至基于Koopman算子的非线性系统控制，通过仿真验证了其在提升闭环系统可靠性方面的优势。",
+      "tags": "query:em-force",
+      "abstract_en": "In recent years, the so-called `direct data-driven control' has been a topic of intense research, and it is expected that it will become prominent in future complex dynamical systems control. Within this framework, regularization not only implicitly enforces system identification, but also plays a crucial role in ensuring reliable closed-loop behavior. To further enhance the performance of data-driven controllers, we propose a new regularization method for direct data-driven LQR control of unknown LTI systems, based on a regularized covariance parameterization. Unlike existing data-driven techniques, the proposed method remains effective in handling ill-conditioned cases, such as when the data matrix has a large condition number. Then, we demonstrate that our method is equivalent to the indirect certainty-equivalence LQR combined with Tikhonov regularization. Furthermore, we extend our method to the design of controllers for unknown nonlinear systems using Koopman linear embedding. Finally, the simulation results validate the effectiveness and advantages of the proposed regularization method.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/03/2604.24939v1-interval-observer-design-using-observability-decomposition-for-detectable-linear-systems",
+      "section": "quick",
+      "title_en": "Interval Observer Design Using Observability Decomposition for Detectable Linear Systems",
+      "authors": "Gia Quoc Bao Tran, Thach Ngoc Dinh, Zhenhua Wang",
+      "date": "2026-04-27",
+      "pdf": "https://arxiv.org/pdf/2604.24939v1",
+      "score": "6.0",
+      "evidence": "用于状态估计的区间观测器设计",
+      "tldr": "本研究针对可检测线性时不变（LTI）系统提出了一种系统的区间观测器设计方法。通过可观测性分解将系统状态分为可观测部分和不可观测但可检测部分，分别采用基于Sylvester方程和Jordan型的观测器进行设计，最终实现了对原始坐标系下状态区间的有效估计，有效扩展了区间观测器在非完全可观测系统中的应用。",
+      "tags": "query:em-force",
+      "abstract_en": "We provide a systematic interval observer design method for detectable linear time-invariant (LTI) systems, where a part of the state is observable from the measured output. An observability-based invertible LTI transformation decomposes the state into two parts. The first part is decoupled from the other and observable from the output, while the second is affected by the first, does not appear in the output, but is detectable. A Sylvester-based LTI interval observer is designed for the first part. For the second part, a Jordan-based linear time-varying interval observer is built, treating the interaction from the first part as inputs with known bounds. The intervals in the original coordinates are constructed either by inverting the decomposition online for the intervals in the transformed coordinates or by directly implementing the observer written in the original coordinates. Academic examples illustrate the interest of our approach.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/03/2604.27587v1-robust-constrained-optimization-via-sliding-mode-control",
+      "section": "quick",
+      "title_en": "Robust Constrained Optimization via Sliding Mode Control",
+      "authors": "Shyam Kamal, Baby Diana, Sunidhi Pandey, Sandip Ghosh, Thach Ngoc Dinh",
+      "date": "2026-04-30",
+      "pdf": "https://arxiv.org/pdf/2604.27587v1",
+      "score": "6.0",
+      "evidence": "用于鲁棒约束优化和精确执行的滑模控制",
+      "tldr": "本研究提出一种基于滑模控制（SMC）的等式约束优化框架，通过将KKT条件重构为控制仿射动力系统，将优化变量视为状态，拉格朗日乘子视为控制输入。该方法实现了约束的精确执行和有限时间收敛，且对匹配扰动和测量噪声具有鲁棒性。通过引入非奇异终端滑模，进一步加速了向最优解的收敛，在多种基准测试中表现出优于传统连续时间优化方法的准确性。",
+      "tags": "query:em-force",
+      "abstract_en": "This paper develops a sliding mode control based frame work for equality constrained optimization by reformulation the first order Karush Kuhn Tucker conditions as control affine dynamical system. The optimization variables are treated as states and the Lagrange multipliers as control input, with equality constraints defined as sliding manifold. The resulting design guarantees exact constraint enforcement with finite time convergence, independent of objective convexity, and exhibits robustness to matched disturbance, structural uncertainty and bounded measurement noise. To accelerate the convergence, a nonsingular terminal sliding mode based normed gradient flow is introduced, ensuring both finite time convergence to optimal solution and constraint satisfaction. Rigorous Lyapunov analysis establishes closed loop stability and convergence. Numerical studies across diverse benchmark problems demonstrate superior accuracy and robustness over classical continuous time optimization method, highlighting effectiveness under disturbance.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
