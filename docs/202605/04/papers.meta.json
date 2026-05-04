@@ -1,0 +1,37 @@
+{
+  "label": "2026-05-04",
+  "date": "2026-05-04",
+  "generated_at": "2026-05-04T20:15:33",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202605/04/2604.27509v2-stability-analysis-and-data-driven-state-estimation-for-generalized-persidskii-systems-with-time-delays-theory-and-experimental-validation-on-pmsm-drives",
+      "section": "quick",
+      "title_en": "Stability Analysis and Data-Driven State Estimation for Generalized Persidskii Systems with Time Delays: Theory and Experimental Validation on PMSM Drives",
+      "authors": "Syed Pouladi",
+      "date": "2026-04-30",
+      "pdf": "https://arxiv.org/pdf/2604.27509v2",
+      "score": "6.0",
+      "evidence": "永磁同步电机驱动等机电系统的状态估计与稳定性分析",
+      "tldr": "本文针对具有时变延迟和外部扰动的广义Persidskii系统，提出了一种结合稳定性分析与数据驱动状态估计的综合框架。研究通过Lyapunov-Krasovskii泛函推导出输入状态稳定性（ISS）的线性矩阵不等式（LMI）条件，并设计了鲁棒观测器。利用保稳定性的Koopman提升技术从轨迹数据中识别系统参数，并将其应用于ICODE-MPPI控制器。在1.5 kW永磁同步电机上的实验验证了该方法在提升估计精度和跟踪性能方面的显著优势。",
+      "tags": "query:em-force",
+      "abstract_en": "This paper addresses the stability analysis and state estimation of generalized Persidskii systems subject to time-varying delays and external disturbances. The generalized Persidskii class, which couples linear dynamics with sector-bounded nonlinear feedback loops, offers a tractable yet expressive framework for modeling electromechanical and neural network systems. We develop delay-dependent conditions for input-to-state stability (ISS) via Lyapunov--Krasovskii functionals incorporating Persidskii-type integral terms, and cast these conditions as linear matrix inequalities (LMIs). A structured robust observer is proposed for systems with partial state measurement, and its convergence is guaranteed through an $H_\\infty$ synchronization criterion. To handle plant uncertainty, the system matrices are identified from trajectory data using a stability-preserving Koopman lifting procedure, in which the ISS-LMI constraint is embedded as a convex side condition during parameter regression. The identified model populates the prediction horizon of an ICODE-MPPI (Input-dependent Control-oriented Dynamical Estimation -- Model Predictive Path Integral) controller. The complete framework is validated on a 1.5 kW Permanent Magnet Synchronous Motor (PMSM) drive equipped with a programmable load brake. Experimental results confirm a 35\\% reduction in velocity estimation RMSE relative to an Extended Kalman Filter and a 67\\% improvement in speed-tracking accuracy relative to standard Field-Oriented Control, corroborating the theoretical ISS bounds established herein.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/04/2605.00212v1-structure-preserving-optimal-control-of-maxwells-equations-with-applications-to-source-cloaking",
+      "section": "quick",
+      "title_en": "Structure-Preserving Optimal Control of Maxwell's Equations with Applications to Source Cloaking",
+      "authors": "Harbir Antil, Yaw Owusu-Agyemang, Rohit Khandelwal, Jimmie Adriazola, Denis Ridzal",
+      "date": "2026-04-30",
+      "pdf": "https://arxiv.org/pdf/2605.00212v1",
+      "score": "6.0",
+      "evidence": "电磁系统麦克斯韦方程组的最优控制",
+      "tldr": "本研究为随时间变化的麦克斯韦方程组开发了一个结构保持的最优控制框架。通过结合Nédélec和Raviart-Thomas有限元与Crank-Nicolson时间步进，该方法在低正则性条件下保持了de Rham结构、离散高斯定律及能量平衡。研究采用电流密度的旋度作为控制源以确保电荷守恒，证明了控制映射的良定性及离散最优解的收敛性，并成功应用于源隐身模拟。",
+      "tags": "query:em-force",
+      "abstract_en": "We develop a structure-preserving solution framework for the optimal control of the time-dependent Maxwell's equations. Building on a well-posedness theory for a weak form of the forward problem, we first analyze a forward solver that couples Nédélec and Raviart--Thomas finite elements with Crank--Nicolson time stepping. The solver preserves the de~Rham structure, enforces a discrete Gauss law, exactly satisfies a per-time-step energy balance, and converges to the weak solution under low regularity assumptions on the problem data, which are dictated by the optimal control setting. To control the Maxwell system, we add the curl of a space-time current density as a source to Ampére's law. The curl form yields charge conservation without auxiliary constraints. We prove the well-posedness and continuity of the control-to-state map, derive the adjoint system and a gradient representation for a tracking-type objective functional, and formulate a discrete optimization scheme that inherits structure preservation from the forward solver. Our discrete stationarity conditions are consistent with their continuous counterparts, and the discrete optimal controls converge, with mesh and time refinements, to the continuous optima. We demonstrate the merits of our optimal control formulation and the theoretical developments by numerically solving a series of source-cloaking model problems.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
