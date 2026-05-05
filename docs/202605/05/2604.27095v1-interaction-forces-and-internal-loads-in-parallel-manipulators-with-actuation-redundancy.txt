@@ -1,0 +1,1101 @@
+Title: Interaction Forces and Internal Loads in Parallel Manipulators with Actuation Redundancy
+
+URL Source: https://arxiv.org/pdf/2604.27095v1
+
+Published Time: Fri, 01 May 2026 00:07:04 GMT
+
+Number of Pages: 13
+
+Markdown Content:
+> 1
+
+# Interaction Forces and Internal Loads in Parallel Manipulators with Actuation Redundancy 
+
+Joshua Flight and Cl´ ement Gosselin 
+
+Abstract —This paper discusses null-space wrench components in parallel manipulators. We examine the adaptation of the two most common characterizations of these components in grasp-like systems, namely, interaction forces and internal loads, to parallel manipulators with actuation redundancy. We identify critical oversights in the existing literature on the subject, resolve ambiguities related to the definitions of interaction forces and internal loads, and provide explicit methods for synthesizing equilibrating and manipulating joint torque vectors. A case study is also provided to justify the validity of our novel methods and correct erroneous results reported in the literature. 
+
+Index Terms —Parallel robots, redundancy, internal loads, load distribution 
+
+I. I NTRODUCTION 
+
+Mechanical systems in which a single object is manipulated or supported by multiple actuated kinematic chains are becom-ing increasingly widespread in robotics. Prominent examples include multifingered grippers, legged robots, cooperating ma-nipulators, and parallel manipulators. For multifingered grippers, legged robots and cooperating manipulators, the wrench equilibrium equation is typically formulated using the grasp matrix [1]: 
+
+ho = Gh . (1) Here, ho = f To tTo
+
+T is the resultant wrench applied to the rigid object, comprising a force fo and a torque to. The vector 
+
+h = hT 
+
+> 1
+
+. . . hTk
+
+T stacks the k local wrenches applied to the object by the kinematic chains, and the grasp matrix 
+
+G maps these local wrenches to the resultant wrench. The nature of vector h varies by application. Typically, it defines contact forces in grasping, ground reaction wrenches in legged locomotion, or wrenches applied to an object by the end-effectors of cooperating manipulators. We use the term grasp-like systems to refer to these types of robots. In contrast, parallel manipulators require a distinct formu-lation. Their wrench equilibrium is not defined by aggregating Cartesian applied wrenches using the grasp matrix, but rather by mapping actuated joint torques to the end-effector wrench. This wrench mapping is governed by the kinematic Jacobians which relate the actuated joint velocities to the end-effector Cartesian velocities. By invoking the principle of virtual work (or static-kinematic duality), we obtain an equivalent mapping between the joint efforts and the end-effector wrench that is fundamentally different from (1). While both classes of systems adhere to the same underlying physical principles, this structural difference is non-trivial. Methods developed for grasp-like systems cannot be blindly applied to parallel manipulators; they must be adapted to account for the implicit nature of the Jacobian-based wrench mapping. This discrepancy becomes particularly important when analyzing redundancy. Modern robotics relies increasingly on redundant actuation—where the number of actuators exceeds the dimension of the task space—to circumvent the degeneration of the kinematic and static equations and improve performance. Redundancy can be leveraged to improve grip tightness in grasping, optimize energy consumption in walking robots, or ensure the proper cooperation of cooperating manipulators. Similarly, in parallel manipulators, it allows for singularity avoidance, homogenized load distributions, and increased feasible wrench capability [2]. In systems governed by the grasp matrix, redundant actua-tion causes the linear system in (1) to become indeterminate. For a given input vector h, the resultant wrench ho is uniquely determined, but there exist infinitely many solutions for h that can generate it. The components of h that lie in the null-space of G have no effect on the resultant wrench but contribute to the “squeezing” of the object [3]. In parallel manipulators, redundancy is more nuanced. It may appear as kinematic redundancy (extra degrees of freedom allowing internal self-motion), sensing redundancy (additional sensors for control), or actuation redundancy [2]. For the purpose of the analyses in this paper, we are strictly concerned with actuation redundancy since this is the only type that overconstrains the end-effector. Much like the grasp case, this renders the parallel manipulator statically indeterminate: com-ponents in the null-space of the Jacobian matrices contribute to the squeezing of the end-effector without inducing motion. Historically, the analysis of these null-space wrench com-ponents was established for grasp-like systems and only later adapted to parallel manipulators. However, we demonstrate that these adaptations overlook fundamental differences in the wrench mappings of these types of robots. Existing approaches often naively study the Jacobian-based wrench mappings of parallel manipulators through grasp matrix frameworks, lead-ing to physically erroneous conclusions regarding internal loading. In this paper, we aim to highlight and correct these over-sights. We identify the shortcomings of existing approaches and propose a generalized framework that properly extends methods developed for grasp matrix applications to paral-lel manipulators with actuation redundancy. Our generalized framework ensures that the distinct nature of the wrench mapping defined by the Jacobian matrices is preserved and returns results which are consistent with existing definitions 
+
+> arXiv:2604.27095v1 [cs.RO] 29 Apr 2026 2
+
+of null-space wrench components. II. R ELATED WORK 
+
+Null-space wrench components have been extensively stud-ied in the context of redundantly-actuated robotic systems. Early work by Kumar and Waldron [4] established a geometric foundation for the analysis of multifingered grippers and walking robots. They defined the interaction force between two forces as the difference in their components along the line joining their application points. Mathematically, a system is free of interaction forces if, for every pair of applied forces 
+
+fi and fj at locations ri and rj :
+
+(fj − fi) · (rj − ri) = 0 . (2) They termed the set of forces satisfying this condition the 
+
+equilibrating force distribution . To eliminate the components in the null-space of the grasp matrix, which are known to cause internal stress, and determine the equilibrating force distribution fe, they proposed the unweighted Moore-Penrose pseudo-inverse solution 
+
+fe = G†ho (3) where fe = f Te, 1 . . . f Te,k 
+
+T is the stacked vector of equili-brating forces and G† = GT (GG T )−1.Subsequent research sought to replace geometric defini-tions with physically meaningful interpretations of null-space wrench components. This often involved constructing virtual physical models to represent stress within the handled object. Notable examples include the virtual sticks formulation pro-posed by Uchiyama and Dauchez [5] and the virtual linkage model proposed by Williams and Khatib [6]. During this time, null-space wrench components were more often referred to as 
+
+internal loads . Some authors correctly distinguished internal loads from interaction forces, though the terms were often conflated. Walker et al. were among the first to highlight the distinction between interaction forces and internal loads in [3]. In their analysis of cooperating serial manipulators, they introduced a “nonsqueezing” generalized inverse of the grasp matrix, claiming it yielded wrench distributions free of internal loads. However, the validity of their approach was later contested. Chung et al. [7] demonstrated that the method proposed in [3] did, in fact, generate internal loads, and instead opted to use the Moore-Penrose pseudo-inverse. Zuo and Qian [8] also investigated interaction forces and internal loads by studying the conditions under which these two sets become identical in grasping applications. More recently, Erhart and Hirche [9] resolved many of these ambiguities by grounding the definition of internal loads in the principles of analytical dynamics, specifically using the Udwadia-Kalaba equation [10]. They demonstrated that the manipulating wrench distribution —the set of wrenches generating a resultant wrench ho without generating internal loads—is not necessarily unique. To address this, they derive a parametrized Moore-Penrose pseudo-inverse of the grasp matrix, G+ 
+
+> M
+
+, to determine the full solution space. While Erhart and Hirche provided a robust theoretical basis, gaps remained regarding the precise characterization of internal loads in general redundant systems. In recent work [11], we addressed these limitations by refining the theorem proposed in [9] to account for factors that had been over-looked. We also further clarified the distinction between the geometric interaction forces as defined by Kumar and Waldron and constraint wrenches as defined by Udwadia and Kalaba. This revised framework allowed us to fully characterize the uniqueness of the manipulating wrench distribution, refute the primary assumption in the leading wrench decomposition algorithms, and derive explicit, general solutions to the wrench synthesis and wrench analysis problems. Although the theoretical foundations of internal loading are well established for grasp-type systems, a critical gap remains for the applications of these principles to parallel manipulators where the wrench mapping is fundamentally different. The wrench capabilities of parallel manipulators have been studied extensively [12]–[20]. Some authors proposed optimization-based strategies to determine the feasible wrench sets of a given manipulator [13], [15], [18], [20]. However, as the computational cost of these approaches became apparent, other authors gravitated towards explicit analytical methods [14], [16], [17], [19]. For parallel manipulators with actuation redundancy, the central challenge lies in exploiting the additional actuation to increase the wrench capabilities of a manipulator, or to optimize secondary performance objectives with informed use of the null-space wrench components. It is well documented that the maximum output wrench is generally achieved when all actuators operate at their torque limits, even though this inevitably induces substantial null-space wrenches [13], [14], [17]. The physical significance of these components in par-allel manipulators, however, is still not well understood. The 
+
+scaling factor method proposed in [13] and used again in [14], [21] invokes Kumar and Waldron’s method directly, asserting that the Moore-Penrose pseudo-inverse solution for the joint torque vector τ (i.e., the minimum-norm solution for τ ) does not generate internal loads at the end-effector. We argue that this approach suffers from two critical oversights. First, it fails to differentiate between interaction forces and internal loads. As originally discussed in grasp matrix research [3], [8] and recently clarified in our own work [11], these variants of null-space wrench components refer to different physical phenomena. Kumar and Waldron clearly state in their work that their method relates to interaction forces, not internal loads. Second, and more importantly, this adaptation ignores the fundamental differences between the wrench mappings of grasp-like systems and parallel robots. The original method for eliminating interaction forces was established for systems in which wrench equilibrium is defined by the grasp matrix (1), whereas the wrench equilibrium equa-tion of parallel manipulators invokes the Jacobian matrices of the manipulator. Other authors have investigated the disparity between these two kinematic mappings in previous work. A parallel robot was analyzed in [22] where the authors correctly distinguished between the minimum-norm solution of the joint torque vector 3
+
+τ and that of the applied force vector f . However, they do not describe the difference between these two solutions, nor why the minimum-norm solution for τ generates interaction forces. In [23], the authors identify the conditions under which the minimum-norm solution for τ does not generate internal forces by considering the elastic deformation of the manipulator caused by each constraint and actuation wrench. Although their analysis is sound, we believe their conclusions offer an incomplete description of interaction forces in parallel manipulators and that their results are specific to the manipu-lator architecture which they consider. To the best of our knowledge, the question of how to adapt methods for synthesizing wrench distributions free of interaction forces or internal loads in grasp-like systems to parallel manipulators with actuation redundancy has yet to be answered. The current state of the art for eliminating interaction forces fails to account for the differences in the wrench mappings of the two classes of systems, and a method for calculating valid solutions at the joint torque level has yet to be derived. In addition, we have not found any examples of methods such as the ones proposed in [9], [11] for eliminating internal loads being adapted to parallel manipulators. In this paper, we aim to address these gaps by extending recent theoretical developments regarding null-space wrench components to redundant parallel manipulators. Building on the results presented in [11], we generalize these methods to accommodate the Jacobian-based wrench mapping of parallel robots. We highlight specific instances in the literature where the direct application of grasp matrix methods has led to incorrect conclusions, and we provide corrected results using our generalized methodology. III. T HEORETICAL BACKGROUND 
+
+A. Kinematics of Parallel Manipulators 
+
+Parallel manipulators, whether non-redundant or redundant, comprise multiple closed-loop kinematic chains. The kine-matic model for this type of manipulator is often more com-plex than that of serial manipulators and is therefore expressed as a set of implicit nonlinear equations of the form 
+
+g(θ, x) = 0 (4) where θ is the m-dimensional vector of joint coordinates and 
+
+x is the n-dimensional vector of Cartesian coordinates. Taking the first time-derivative, we obtain the velocity equations of the manipulator written as 
+
+J ˙x = K ˙θ (5) where J and K are the Jacobian matrices, ˙x is the Cartesian velocity vector and ˙θ is the joint velocity vector. 
+
+B. Wrench Transmission in Parallel Manipulators 
+
+The wrench equilibrium equation for parallel manipulators can be obtained with the static-kinematic duality. Assuming quasi-static conditions, the power balance of the manipulator can be written as 
+
+hTo ˙x = τ T ˙θ (6) where ho = f To tTo
+
+T is the resultant wrench applied to the end-effector defined as in (1), and τ is the joint torque vector. Substituting (5) into (6), we obtain 
+
+hTo ˙x = τ T K−1J ˙x. (7) For this equation to hold for all ˙x, we must have 
+
+ho = JT K−T τ , (8) which maps the joint torques τ to the resultant wrench ho and is the wrench equilibrium equation for parallel manipulators. It is important for what will follow to understand the phys-ical significance of this equation. In fact, (8) reveals the two-stage wrench transmission scheme of parallel manipulators. Each actuated joint adds one constraint to the end-effector, and matrix JT defines the external geometry of these constraints, where the i-th column represents the screw axis of the wrench applied by the i-th actuated joint to the end-effector. Meanwhile, K−T defines the internal mechanical advan-tage of the actuators. It transforms the input joint efforts in 
+
+τ into scalar coefficients that scale the columns of JT . These scalar coefficients act as transmission weights which determine to what extent a force or torque applied by an actuator is felt at the end-effector. Physically, matrix K−T determines how effectively a given actuator can generate a force along its corresponding constraint line. 
+
+C. Standard Redundancy Resolution 
+
+For an n-dof parallel manipulator with m actuators, ac-tuation redundancy is attained when m > n [2]. For these types of manipulators, the linear system defined by (8) be-comes indeterminate, and infinitely many joint effort vectors 
+
+τ can produce the same resultant wrench ho. The standard redundancy resolution method is to use an equation of the form 
+
+τ = ( JT K−T )+ho + [ Im − (JT K−T )+(JT K−T )] z (9) where (JT K−T )+ is any generalized inverse of the linear mapping JT K−T , Im is the m × m identity matrix, and z
+
+is an m-dimensional vector which defines the location of a given solution in the null space of JT K−T . The components in the null space have no effect on the resultant wrench, but can be used to optimize secondary criteria such as singularity avoidance or load balancing among the actuators. IV. D EFINITION OF INTERACTION FORCES AND INTERNAL 
+
+LOADS 
+
+Evidently, redundant actuation and the possibility of gener-ating null-space wrench components adds an additional layer of complexity to the control of redundant robots. This has motivated many researchers to study the physical implications of these null-space components and to propose methods for force synthesis that aim to limit or exploit them. However, 4
+
+such methods are typically proposed for grasp-like systems with wrench equilibrium equations of the form shown in (1). Though their fundamental equations may differ, parallel robots are analogous to grasp-like systems, since we may consider the end-effector as being “grasped” by the legs of the manipulator. Here, we give the form of the grasp matrix and define the two leading characterizations of null-space wrench components before discussing their application to parallel manipulators. 
+
+A. The Grasp Matrix 
+
+Arbitrary wrenches applied to a rigid body and their internal and external components can be studied using the grasp matrix 
+
+G which maps the applied wrenches to the resultant wrench that they generate as shown in (1). The form of G depends on the contact model. 
+
+Case 1 - Pure Forces (Point Contact): The kinematic chains only apply pure forces. Here, h = f T 
+
+> 1
+
+. . . f Tn
+
+T ∈
+
+R3n and G takes the form 
+
+G =
+
+ I3 · · · I3
+
+S(r1) · · · S(rn)
+
+
+
+(10) 
+
+Case 2 - General Wrenches (Rigid Contact): The kine-matic chains apply both forces and torques. Here, h =f T 
+
+> 1
+
+tT 
+
+> 1
+
+. . . f Tn tTn
+
+T ∈ R6n and G becomes 
+
+G =
+
+ I3 03 · · · I3 03
+
+S(r1) I3 · · · S(rn) I3
+
+
+
+. (11) Note that S(ri) denotes the skew-symmetric matrix that represents the cross product with vector ri such that S(ri)a =
+
+ri × a where a can be any 3-vector and that S(ri)T = −S(ri)
+
+is a property of skew-symmetric matrices. 
+
+B. Definition of Interaction Forces 
+
+Interaction forces were first formally defined by Kumar and Waldron in [4]. The authors consider only pure forces (no torques applied at the contact point) and provide the geometric condition shown in (2). It has since been noted by some authors that there is no clear way to extend the analogy of interaction forces to pure torques [9]. Therefore, to remain within the intended domain of applicability of Kumar and Waldron’s method, we restrict our consideration of interaction forces to situations in which only pure forces are applied to the rigid body. In [4], it was shown that the equilibrating force distribution is the solution which minimizes the Euclidean norm of the stacked vector of applied forces || f || . This is a typical quadratic optimization problem with equality constraints. We can write this as 
+
+min Z = 12 f T f
+
+subject to ho = Gf .
+
+(12) The equilibrating force distribution is the vector f which solves (12) and can be obtained explicitly with (3). 
+
+C. Definition of Internal Loads 
+
+We recently clarified the distinction between interaction forces and internal loads and proposed explicit solutions to the wrench synthesis and wrench analysis problems in [11]. The definition of internal loads is derived from the Udwadia-Kalaba equation [10] which can be written as 
+
+hm = h + hc (13) where hm = hm, 1 . . . hm,k 
+
+ is the stacked vector of manipulating wrenches and hc = hc, 1 . . . hc,k 
+
+ is the stacked vector of constraint wrenches. This equation is essentially a reformulation of Gauss’s principle of least constraint. If a resultant wrench ho is applied to the rigid body of mass mo and inertia tensor Jo, it will undergo an instantaneous acceleration given by 
+
+¨xo =
+
+ ¨po
+
+˙ωo
+
+
+
+= M−1 
+
+> o
+
+ho, Mo =
+
+moI3 00 Jo
+
+
+
+(14) where ¨xo = ¨pTo ˙ωTo
+
+T is the instantaneous acceleration induced by ho with ¨po and ˙ωo being the acceleration and angular acceleration, respectively. Mo is the generalized iner-tia matrix about the CoM of the rigid body. To calculate a set of wrenches that generates a resultant wrench while eliminating or prescribing internal loads, or to analyze a known set of applied wrenches, we must first determine a valid dynamically equivalent system for the rigid body. A dynamically equivalent system is a collection of k
+
+rigidly connected discrete elements with mass mi and inertia tensor Ji that, together, have the same mass, centre of mass, and inertia tensor as the physical object (see Fig. 1). As in [11], we call these discrete elements Lumped Mass-Inertia Elements (LMIEs) and define them as rigid bodies of arbitrary shape with known mass mi and inertia tensor Ji. A dynamically equivalent system of k LMIEs each with properties (mi, Ji)
+
+for a rigid object with properties (mo, Jo) must satisfy 
+
+mo =
+
+> k
+
+X
+
+> i=1
+
+mi (mass equivalence) , (15) 
+
+Jo =
+
+> k
+
+X
+
+> i=1
+
+Ji +
+
+> k
+
+X
+
+> i=1
+
+S(ri)miS(ri)T (inertia equiv.) , (16) 
+
+> k
+
+X
+
+> i=1
+
+rimi = 03×1 (CoM equivalence) . (17) The wrench hi applied at ri will induce an unconstrained acceleration of the corresponding LMIE given by 
+
+¨xdi = M−1 
+
+> i
+
+hi, Mi =
+
+miI3 00 Ji
+
+
+
+(18) where ¨xdi and Mi are the unconstrained acceleration and inertia matrix of the i-th LMIE, respectively. These are the accelerations that the LMIEs would have had , had they not been fixed to the rigid body. 5
+
+Fig. 1: Example of a dynamically equivalent system of k
+
+LMIEs. Since all points lie on the same rigid body, their relative position and orientation must remain constant. We can write these kinematic constraints in matrix form as 
+
+A¨x = b, (19) where ¨x = ¨xT 
+
+> 1
+
+. . . ¨xTk
+
+T is the stacked vector of con-strained LMIE accelerations where each ¨xi is defined similarly to ¨xo, and 
+
+A =
+
+
+
+−I3 S(r21 ) I3 00 −I3 0 I3
+
+... ... . . .
+
+−I3 S(rk1) I3 00 −I3 0 I3
+
+
+
+(20) where S(·) is a skew-symmetric matrix representing a cross product with the argument. rji is a relative position vector from ri to rj . The centripetal terms are grouped in vector b
+
+which is written as 
+
+b =
+
+
+
+S(ω2)2r21 
+
+0
+
+...
+
+S(ωn)2rk1
+
+0
+
+
+
+. (21) When the unconstrained acceleration ¨xdi of an LMIE in-duced by hi violates the kinematic constraints (i.e., is not consistent with the constrained motion of the rigid body), a constraint wrench hc,i is added such that the resultant is the manipulating wrench hm,i needed to generate the appropriate constrained acceleration that satisfies (19). This is illustrated in Fig. 2. Like the equilibrating force distribution, the manipulating wrench distribution can also be written as an optimization problem. In this case, it is defined as 
+
+min Z = 12 hT M−1h
+
+subject to ho = Gh .
+
+(22) where M is the inertia matrix of the system. M is a diagonal block matrix written as 
+
+(a) Three wrenches hi applied to a rigid body generate a re-sultant wrench ho.
+
+(b) The resultant wrench ho in-duces rigid body acceleration ¨xo.
+
+(c) Constraint wrenches hc,i ensure compliance with rigid body motion. 
+
+Fig. 2: Illustration of physical the significance of constraint wrenches. 
+
+M =
+
+
+
+m1I3 0 · · · 0 00 J1 · · · 0 0
+
+... ... . . . ... ...
+
+0 0 · · · mkI3 00 0 · · · 0 Jk
+
+
+
+. (23) The vector h which solves (22) is obtained with 
+
+hm = G+ 
+
+> M
+
+ho (24) where G+ 
+
+> M
+
+is the parametrized Moore-Penrose pseudo-inverse of the grasp matrix written as 
+
+G+ 
+
+> M
+
+=
+
+
+
+> m∗
+> 1
+> m∗
+> o
+
+I3 m∗
+
+> 1
+
+S(r1)T [J∗
+
+> o
+
+]−1
+
+03 J∗
+
+> 1
+
+[J∗
+
+> o
+
+]−1
+
+... ...
+
+> m∗
+> k
+> m∗
+> o
+
+I3 m∗
+
+> k
+
+S(rk)T [J∗
+
+> o
+
+]−1
+
+03 J∗
+
+> k
+
+[J∗
+
+> o
+
+]−1
+
+
+
+. (25) As shown in [11], the virtual inertia parameters (m∗ 
+
+> i
+
+, J∗ 
+
+> i
+
+)
+
+used to span the solution space for the manipulating wrench distribution must satisfy 
+
+m∗ 
+
+> o
+
+=
+
+> k
+
+X
+
+> i=1
+
+m∗ 
+
+> i
+
+, (26) 
+
+J∗ 
+
+> o
+
+=
+
+> k
+
+X
+
+> i=1
+
+J∗ 
+
+> i
+
++
+
+> k
+
+X
+
+> i=1
+
+S(ri)m∗ 
+
+> i
+
+S(ri)T , (27) 
+
+> k
+
+X
+
+> i=1
+
+rim∗ 
+
+> i
+
+= 0, (28) 
+
+J∗ 
+
+> i
+
+∝
+
+> k
+
+X
+
+> i=1
+
+S(ri)m∗ 
+
+> i
+
+S(ri)T ∝ J∗
+
+> o
+
+, ∀i. (29) 6
+
+Fig. 3: Force transmitted to the end-effector by a planar RRR leg. V. T HE PROBLEM WITH EXISTING METHODS : A LGEBRAIC VS . P HYSICAL NORMS 
+
+A. Mapping Joint Torques to End-Effector Wrenches 
+
+It was shown in Section IV that the definitions of interaction forces and internal loads have physical meaning as they cor-respond to the minimization of the unweighted and weighted norms of the wrenches applied to the rigid body, respectively. However, the wrench equations of parallel manipulators di-rectly map the joint torques to the resultant wrench, without consideration for the forces and torques applied by each leg to the end-effector. This is the crux of the problem we aim to solve. In order to properly adapt existing methods to the analysis of parallel manipulators, we must reformulate their wrench mapping such that this intermediary step is revealed, thus allowing us to study the forces and torques applied to the end-effector as required. Only then will the use of existing methods be permitted in this new context. We can obtain the desired mapping by modifying (8) such that the left-hand side becomes the stacked vector of applied wrenches h. To do so, we can simply replace matrix JT with a matrix of basis vectors B. We obtain an equation of the form 
+
+h = BK −T τ (30) where K−T is again a matrix of transmission weights that accounts for the mechanical advantage of each actuator and 
+
+B ∈ Rm×m contains the basis vectors that map these effective joint efforts to the wrenches that they apply to the end-effector. To better illustrate the physical significance of this mapping, let us determine the relevant quantities for one actuator in a simplified example. Consider a planar RRR leg with one actuator fixed to the base B of a parallel manipulator as shown in Fig. 3. Vectors u and v run along the proximal and distal links of the leg, respectively, and the effect of joint torque τ is felt at the end-effector E as a pure force f which is collinear with the distal link (i.e., in the direction of v). The free-body diagrams of the proximal and distal links under these loading conditions are shown in Fig. 4. Vectors 
+
+e∥ and e⊥ are unit vectors that are parallel and perpendicular to the proximal link, respectively. If the leg applies a force 
+
+> (a) Proximal link.
+> (b) Distal link.
+
+Fig. 4: Free-body diagrams of the links of the RRR parallel robot leg. 
+
+f to the end-effector, the end-effector applies an equal and opposite force −f to the leg. However, the joint torque τ need only resist force components applied at the end of the proximal link which are perpendicular to u (i.e., in the direction of e⊥). Any component parallel to u is compensated by a reaction force at the base and requires no effort from τ to counteract. Force f can be expressed as 
+
+f = wv (31) where w is the transmission weight which modulates the intensity of the force along vector v in accordance with the magnitude of the joint torque τ . Hence, by expressing the transmission weight w as a function of τ , we can express the applied force f as a function of τ as well. The magnitude of force −f in the direction of e⊥ is obtained as 
+
+|| f⊥|| = −f T e⊥ = −f T E u
+
+|| u|| (32) with 
+
+E =
+
+0 −11 0
+
+
+
+. (33) To counteract the applied force, τ must generate an equal and opposite force along e⊥. A torque τ generates a force of magnitude F at the end of a lever of length l given by 
+
+F = τl . (34) Hence, for the forces to cancel, we must have 
+
+τ
+
+|| u|| = −
+
+
+
+−f T E u
+
+|| u|| 
+
+
+
+(35) since the length of the lever for τ in this case is || u|| . Finally, we substitute (31) into (35) to obtain 7
+
+τ = wvT Eu , (36) which leads to our desired result 
+
+w = τ
+
+vT Eu . (37) Eq. (37) can be used to convert τ to the magnitude of the force that it generates. The force generated by a given joint torque τ is therefore written as 
+
+f = τ
+
+vT Eu v (38) If we had a manipulator with multiple legs like the one in this example and we wished to define the mapping (30), the element in K−T which corresponds to the i-th actuated joint would be given by (vTi Eu i)−1 and the force direction to be used in basis matrix B would be vi.
+
+B. Vector Norm Analysis 
+
+In the literature, some authors have claimed that the minimum-norm solution for τ for a given resultant wrench ho
+
+does not generate internal loads [13], [14], [21]. The reasons why this is an erroneous claim were given in Section II, and this is further supported by considering the mapping of the joint efforts to applied wrenches defined in (30). Crucially, the method proposed in [13] for eliminating interaction forces overlooks the fact that the Euclidean norm of a vector of parameters which define distances along basis vectors is not the same as the Euclidean norm of the actual spatial vector which they define; i.e., the Euclidean norm of the vector τ which defines the applied wrenches differs from the Euclidean norm of the applied wrench vector itself. Consider the following, the Euclidean norm of an arbitrary 
+
+m-dimensional vector x = x1 . . . xm
+
+T is defined as 
+
+|| x|| =
+
+q
+
+x21 + x22 + · · · + x2
+
+> m
+
+. (39) The unweighted Moore-Penrose pseudo-inverse returns the unique solution to an underdetermined linear system of equa-tions with the smallest Euclidean norm, which is why (3) returns the minimum-norm solution for f for a given wrench vector ho (i.e., min (f T f )). However, (39) only holds when the components xi define distances along orthonormal axes. Much like how a 3-dimensional vector in Cartesian space is defined by its x, y, and z components along the x-, y-, and z-axes, which are mutually orthogonal. To illustrate the effect of non-orthogonal basis vectors on the resulting vector’s norm, consider the following example. Let a general force vector f = fx fy
+
+T be constructed from two non-orthogonal basis vectors b1 and b2 as shown in Fig. 5. Vector f may be written as 
+
+f = q1b1 + q2b2 = b1 b2
+
+ q1
+
+q2
+
+
+
+= Bq . (40) If we choose arbitrarily q = 3 2T , we obtain the vector f
+
+shown in Fig. 5. 
+
+Fig. 5: The linear combination of the basis vectors b1 and b2
+
+defines the resultant force f .It is then evident that the Euclidean norm of f is not obtained from the sum of the squares of the components of q as shown in (39). Rather, it is obtained with 
+
+|| f || 2 = f 2 
+
+> x
+
++ f 2 
+
+> y
+
+= q21 + q22 + 2 q1q2b1 · b2. (41) Hence, when finding the Euclidean norm of a vector de-termined by parameters which define distances along basis vectors, it is imperative to consider the relative angles between the basis vectors (i.e., the term 2q1q2b1 · b2). This issue can be resolved by weighting the norm of the parameter vector using a metric tensor. VI. T HE GENERALIZED METHOD : A M ETRIC TENSOR 
+
+APPROACH 
+
+We may use (30) to derive a generalized method which accounts for the indirect transmission of joint torques to the end-effector. By substituting (30) into (12), we can write the optimization problem which defines the equilibrating force distribution as a function of τ . We obtain 
+
+min Z = 12 f T f = 12 τ T (K−1BT BK −T )τ
+
+subject to ho = Gf = GBK −T τ = JT K−T τ .
+
+(42) Hence, we have transformed an unweighted quadratic mini-mization problem into a weighted one. The weighting matrix 
+
+W = K−1BT BK −T is the Riemannian Metric Tensor which accounts for the non-orthogonality of the wrench directions of the actuators. An explicit solution for τ which balances a desired wrench without generating interaction forces can be easily derived using the Lagrange multiplier formulation. We write the La-grangian as 
+
+L(τ , λ) = 12 τ T (K−1BT BK −T )τ + ( ho − JT K−T τ )T λ.
+
+(43) where λ is the vector of Lagrange multipliers. Taking the partial derivatives, we obtain 8
+
+δL
+
+δτ = ( K−1BT BK −T )τ − (JT K−T )T λ = 0, (44) 
+
+δL
+
+δλ = ho − JT K−T τ = 0 (45) From (44), we can write 
+
+τ = ( K−1BT BK −T )−1(JT K−T )T λ. (46) This can be substituted into (45) to solve for λ as 
+
+λ = JT K−T (K−1BT BK −T )−1(JT K−T )T −1 ho. (47) Finally, we substitute (47) into (46) to obtain the solution 
+
+τ e = ( JT K−T )† 
+
+> We
+
+ho, (48) where τ e is the equilibrating joint torque vector and 
+
+(JT K−T )† 
+
+> We
+
+= W−1 
+
+> e
+
+(JT K−T )T JT K−T W−1 
+
+> e
+
+(JT K−T )T −1
+
+(49) is the weighted Moore-Penrose pseudo-inverse of JT K−T
+
+with weighting matrix We = K−1BT BK −T . The forces generated by τ e generate the desired resultant wrench without generating interaction forces. Since the optimization problem (22) which characterizes the manipulating wrench distribution is analogous to that of the equilibrating force distribution, we can obtain a joint torque vector which does not generate internal loads in much the same way. If we write (22) as a function of τ , we obtain 
+
+min Z = hT M−1h = τ T (K−1BT M−1BK −T )τ
+
+subject to ho = Gh = GBK −T τ = JT K−T τ .
+
+(50) Then, using the Lagrangian, we obtain the solution 
+
+τ m = ( JT K−T )+ 
+
+> Wm
+
+ho (51) where τ m is the manipulating joint torque vector and 
+
+(JT K−T )+ 
+
+> Wm
+
+= W−1 
+
+> m
+
+(JT K−T )T JT K−T W−1 
+
+> m
+
+(JT K−T )T −1
+
+(52) is the weighted parametrized Moore-Penrose pseudo-inverse of 
+
+JT K−T with weighting matrix Wm = K−1BT M−1BK −T .The forces generated by τ m generate the desired resultant wrench without generating internal loads. 
+
+A. A Note on the Static Determinacy of the Legs 
+
+It is clear from their definitions that the equilibrating force distribution and the manipulating wrench distribution are sets of forces and torques of specified directions and magnitudes applied to the rigid body . In the case of parallel manipulators with actuation redundancy, the rigid body is the end-effector and these forces and torques are applied by the legs which transmit the torques generated at the actuated joints. For a redundant parallel manipulator to be able to generate a valid set of applied forces (for eliminating either interaction 
+
+Fig. 6: Example of a 4-RRR planar parallel manipulator. Forces fe,i are required to generate fo without generating interaction forces, but the legs can only generate forces in directions ˆfi.forces or internal loads), it must be able to generate forces in any direction. This translates to each leg of the manipulator having as many actuators as there are components in the force it applies to the end-effector (2 actuators per leg for planar manipulators and 3 actuators per leg for spatial manipulators). Leg architectures which meet this criterion are statically determined , and form a rigid structure even when not attached to the end-effector. Consider the 4-RRR parallel manipulator shown in Fig. 6. If we wish to generate a pure force fo = 3 2T at the end-effector without generating interaction forces, each leg must apply an equilibrating force 
+
+fe,i = 14 fo ∀i (53) at its attachment point. However, the RRR architecture of the legs only allows them to apply forces in the direction of their distal links (along vectors ˆfi). There is no solution for τ which will generate the correct equilibrating force vector fe.VII. C ASE STUDY : 3-RRR P LANAR PARALLEL 
+
+MANIPULATOR 
+
+Let us now use the generalized method presented in the previous section to demonstrate how methods such as the one proposed by Kumar and Waldron in [4] have been erroneously applied to parallel manipulators in the literature. In this section, we give an example where Kumar and Waldron’s method is used to analyze a 3-RRR planar parallel manipulator with actuation redundancy. We show that the method used by the authors and our generalized method return different results, and that only our generalized method returns force sets free of interaction forces. 
+
+A. Manipulator Architecture 
+
+The chosen example is taken from [13]. Fig. 7 shows a schematic of the manipulator architecture. The geometry of the manipulator is defined by the link lengths ρ1, ..., ρ 6 and 9
+
+Fig. 7: 3-RRR planar parallel manipulator with actuation redundancy. Adapted from [13]. the end-effector geometry parameters l2, l3, and α. The pose of the end-effector is defined by x = x y ϕT where x
+
+and y define the coordinates of the origin O′ of the mobile frame in the base frame and angle ϕ defines the angle of the end-effector with respect to the x-axis of the base frame. Three legs, also called branches, with revolute actuators are mounted in parallel to the end-effector, which is assumed to be a rigid body. For this architecture, each leg has 2 actuators and can generate a force vector in any direction in the plane. It is therefore possible to find equilibrating and manipulating joint torque vectors. Each branch transmits a pure force to the end-effector. To remain consistent with the notation in [13], the subscript ij 
+
+designates the i-th actuated joint of the j-th branch. Let vectors 
+
+aj , bj , and cj define the locations of points Aj , Bj and Cj
+
+with respect to the origin of the base frame, respectively. We then let vector rj define the location of point Cj with respect to O′, expressed in the base frame, and we define vectors uj
+
+and vj as 
+
+uj = bj − aj , (54) 
+
+vj = cj − bj , (55) to represent the proximal and distal links of each leg, respec-tively. In [13], the authors analyze both a non-redundant and redundantly-actuated version of the manipulator. Here, we only analyze the redundantly-actuated architecture where the first two revolute joints of each branch are actuated. Note that our notation differs from the one used in [13]. The manipulator has six actuators which constrain three wrench components. The wrench equilibrium equation is written as 
+
+ho = JT K−T τ (56) where ho = fx fy mz
+
+T is the resultant wrench at the end-effector, JT is a 3 × 6 matrix whose i-th column is the wrench direction (able to be defined by only 3 components since it lies in the plane) of the i-th actuator, and matrix K−T
+
+Fig. 8: Screw axes of the forces applied to end-effector of the 3-RRR planar parallel manipulator by the actuated joints (forces not to scale). is a 6 × 6 diagonal matrix of transmission weights. J and K
+
+are written as 
+
+J =
+
+
+
+vT 
+
+> 1
+
+vT 
+
+> 1
+
+Er 1
+
+(u1 + v1)T (u1 + v1)T Er 1
+
+vT 
+
+> 2
+
+vT 
+
+> 2
+
+Er 2
+
+(u2 + v2)T (u2 + v2)T Er 2
+
+vT 
+
+> 3
+
+vT 
+
+> 3
+
+Er 3
+
+(u3 + v3)T (u3 + v3)T Er 3
+
+
+
+, (57) 
+
+K =
+
+K1 02 02
+
+02 K2 02
+
+02 02 K3
+
+ (58) where 
+
+Kj =
+
+vTj Eu j 00 || uj |||| vj || sin( θ′ 
+
+> 2j
+
+)
+
+
+
+(59) with θ′ 
+
+> 2j
+
+being the inside angle between uj and vj and E is defined as in (33). Since the form of matrices J and K that we provide differ from those given in [13], we have included their derivation in Appendix A (both forms are equivalent). The forces generated by each actuator are shown at their respective application points in Fig. 8 where ˆfij is the force produced by a unit torque applied by the i-th actuator on the j-th leg. The resultant force applied to the end-effector by each leg is a linear combination of the force directions of the joints on that leg with their corresponding transmission weights as coefficients. The force fj applied by leg j is obtained with 
+
+fj = τ1j
+
+kj, 11 
+
+ˆf1j + τ2j
+
+kj, 22 
+
+ˆf2j i = 1 , 2, 3 (60) where τ1j and τ2j are the torques applied by actuated joints 1 and 2 on leg j and kj,pq is element pq of matrix Kj . An example of how the forces produced by the actuators on a given leg sum to produce the resultant force applied to the end-effector by that leg is also shown for leg 1 in Fig. 8. 10 
+
+B. Methodology 
+
+The authors of [13] present two feasible force polygons with a prescribed moment of mz = 0 for the redundantly-actuated manipulator. The first polygon is obtained using the 
+
+scaling factor method which they propose in the same paper. The method first finds the minimum-norm joint torque vector required to generate a unit wrench in a given direction with 
+
+ˆτ = ( JT K−T )† ˆh (61) where ˆh is the unit resultant wrench and (JT K−T )† is the unweighted Moore-Penrose pseudo-inverse of JT K−T which is defined as 
+
+(JT K−T )† = ( JT K−T )T (JT K−T )( JT K−T )T −1 . (62) They then determine the scaling factor S, which is the max-imum factor by which all joint torques can be scaled while remaining within their allowable range. The maximum wrench that can be applied in the direction of ˆh is then 
+
+ho = SJT K−T ˆτ (63) The polygon is constructed by repeating this process for every direction in the plane. The second polygon represents the true maximum feasible force set that can be achieved by the manipulator with all actuators being exploited to their maximum potential. In [13], the authors use an optimization-based method to determine this polygon. Here, we take an alternate approach of first defining the feasible set of joint torques in the joint space and then applying the linear transformation defined by JT K−T to map this feasible set to the task space. The feasible set for τ is defined by 
+
+T = {τ ∈ R6 | || τ || ∞ ≤ τmax } (64) where || · || ∞ represents the ∞-norm of the argument (·) and 
+
+τmax is the maximum allowable torque value. The polyhedron of feasible wrenches is then easily obtained by mapping this feasible set to the task space. The set of feasible wrenches W
+
+is therefore given by 
+
+W = {ho ∈ R3 | ho = JT K−T τ , τ ∈ T } . (65) The result is a polyhedron (more specifically a zonohedron, since W is centrally symmetric) in the task space. The polygon of feasible forces for a prescribed moment of mz = 0 is obtained from the intersection of W and the plane defined by mz = 0 .Let us now determine the feasible force polygon for a prescribed moment of mz = 0 using the generalized method proposed in Section VI. To do so, we must determine matrix 
+
+B to be used in (30). For this manipulator, it is written as 
+
+B =
+
+ v1 u1 + v1 02×1 02×1 02×1 02×1
+
+02×1 02×1 v2 u2 + v2 02×1 02×1
+
+02×1 02×1 02×1 02×1 v3 u3 + v3
+
+ .
+
+(66) 
+
+Fig. 9: Feasible force polygons for a prescribed moment of 
+
+mz = 0 considering different constraints on the actuator torques. This matrix can then be used to calculate the weighted Moore-Penrose pseudo-inverse of JT K−T and apply the scaling factor method as described in [13] to find the new feasible force polygon. Note that, since the end-effector is an equilateral triangle, the virtual mass distribution which satisfies constraints (26)-(29) is m∗ 
+
+> 1
+
+= m∗ 
+
+> 2
+
+= m∗
+
+> 3
+
+. In addition, the legs can only apply pure forces, so we also have J∗ 
+
+> 1
+
+= J∗ 
+
+> 2
+
+= J∗ 
+
+> 3
+
+= 03. The inertia matrix M of the system is therefore proportional to the identity matrix, and the equilibrating force distribution and the manipulating wrench distribution (which in this case can only include pure forces) are identical [11]. 
+
+C. Results 
+
+In [13], the link lengths and the end-effector edge lengths are all equal to 0.200 m (i.e. ρ1 = ... = ρ6 = l1 = l2 =0.200 m), and α = 60 °. The bases of the branches are 0.500 m apart. The pose is set to x = 0.250 0.144 0T , the joint positions at this pose are {θ11 , θ 21 , θ 12 , θ 22 , θ 13 , θ 23 } =
+
+{94 .34 , −128 .68 ,
+
+214 .34 , −128 .68 , 334 .34 , −128 .68 }° and τmax is chosen to be 4.2 Nm. The three polygons are shown in Fig. 9. The polygon obtained from considering only the maximum allowable joint torques (|| τ || ∞ ≤ 4.2) and the one obtained from the minimum-norm solution for τ (min( τ T τ )) obtained with 
+
+(JT K−T )† are both consistent with the results reported in [13]. The new polygon obtained using our generalized method to obtain the minimum-norm solution for f (min( f T f )) differs from the latter, which the authors claimed did not produce interaction forces. 
+
+D. Verification 
+
+To prove that the results obtained using (48) are correct, we can plot the forces generated by the solution vector 11 
+
+τ e. For an adequate comparison, we select a wrench vec-tor ho that is on the boundary of the two polygons that correspond to the min (τ T τ ) and the min (f T f ) solutions. These polygons intersect at 12 points, we choose vector 
+
+ho = 1.662 70 .689 0T . It is identified by the dot on Fig. 9. Solving for the joint torques using both (JT K−T )†
+
+and (JT K−T )† 
+
+> We
+
+yields 
+
+τ min = ( JT K−T )†ho =
+
+
+
+2.290 1.895 
+
+−4.200 1.747 1.909 
+
+−3.641 
+
+
+
+, (67) 
+
+τ e = ( JT K−T )† 
+
+> We
+
+ho =
+
+
+
+3.486 3.954 
+
+−3.583 0.246 0.096 
+
+−4.200 
+
+
+
+. (68) We then perform the forward force problem to find the forces that these joint torque vectors generate. We obtain 
+
+f = JT K−T τ min =
+
+
+
+f1
+
+f2
+
+f3
+
+ =
+
+
+
+−3.008 13 .528 
+
+−6.354 31 .667 11 .024 25 .494 
+
+
+
+, (69) and 
+
+fe = JT K−T τ e =
+
+
+
+fe, 1
+
+fe, 2
+
+fe, 3
+
+ =
+
+
+
+0.554 23 .563 0.554 23 .563 0.554 23 .563 
+
+
+
+. (70) Finally, we plot these systems of forces at their respective application points. The results are shown in Fig. 10. It is then clear that only the force system found with the weighted pseudo-inverse (JT K−T )† 
+
+> We
+
+respects the zero interaction force condition for every pair of forces (see Eq. (2)). The scaling factor method was used for similar analyses in [14], [21]. We suspect that the analyses performed in these works—where the minimum-norm solution for τ is said to not produce interaction forces—suffer from the same issues as [13] which we have identified in this section. 
+
+E. Effect of Changing the End-Effector Geometry 
+
+The end-effector in the shape of an equilateral triangle used in [13] made it so that only homogeneous virtual mass distributions (m∗ 
+
+> 1
+
+= m∗ 
+
+> 2
+
+= m∗
+
+> 3
+
+) were valid solutions to constraints (26)-(29). Let us now modify the end-effector geometry such that the virtual mass distribution is no longer 
+
+Fig. 10: Force distributions f and fe which balance ho =1.662 70 .689 0T . Forces shown are scaled by a factor of 100. homogeneous causing the equilibrating force distribution and the manipulating wrench distribution to differ. For the same pose of x = 0.250 0.144 0T , we choose to reduce the height of the triangular end-effector by half, but assume that the new end-effector is non-isotropic such that the locations of the CoM and points C1 and C2 remain unchanged. In other words, we assume that the CoM of the new end-effector is in the same location as the original end-effector instead of at its geometric center. The attachment point of leg 3 is also lowered so as to keep the configuration of leg 3 the same, and thus the inverse kinematic solution remains unchanged. This has no effect on the solution for the forces applied to the end-effector. For this example, we wish to determine the equilibrating force distribution and manipulating wrench distribution for wrench ho = −25 25 −2T . Using (48), we find the equilibrating joint torque vector and the corresponding force vector that they generate: 
+
+τ e =
+
+
+
+2.867 1.114 0.367 2.005 
+
+−0.932 
+
+−1.968 
+
+
+
+fe =
+
+
+
+−9.810 13 .447 
+
+−9.810 3.220 
+
+−5.381 8.333 
+
+
+
+(71) Then, using (51) we find the manipulating joint torque vector and the corresponding force vector: 
+
+τ m =
+
+
+
+2.319 0.885 1.069 1.561 
+
+−1.554 
+
+−3.781 
+
+
+
+fm =
+
+
+
+−8.016 10 .834 
+
+−8.016 
+
+−2.501 
+
+−8.969 16 .667 
+
+
+
+(72) Each pair of forces that can be formed from the solution in (71) satisfies the geometric condition for no interaction forces (2), and each force from the solution in (72) induces the 12 
+
+Fig. 11: Force distributions fe and fm which balance ho =−25 25 −2T . Forces shown are scaled by a factor of 100. required constrained acceleration x∗ 
+
+> i
+
+of the LMIE of mass m∗
+
+> i
+
+which satisfies the kinematic constraints of rigid-body motion. Both force sets are shown in Fig. 11. VIII. C ONCLUSION 
+
+The aim of this paper is to adapt existing null-space wrench component analysis techniques for grasp-like systems to parallel manipulators with actuation redundancy. We first review existing adaptations and demonstrate how they fail to account for the fundamental differences in the wrench mappings of these two types of systems. We then provide our own adaptations by deriving generalized methods which do take into consideration the nature of parallel manipulator wrench transmission. Two novel solutions to the wrench synthesis problem for redundant parallel manipulators are presented in this paper. The first is a corrected form of an existing method for synthesizing equilibrating joint torque vectors. Our generalized method properly incorporates the mapping of joint torques to applied wrenches into a weighted Moore-Penrose pseudo-inverse of the wrench mapping defined by JT K−T . We prove the correctness of this approach by comparing our novel method with the existing method and show that our solution respects the necessary geometric conditions while the other does not. On the other hand, our second generalized method is a first of its kind and allows for the synthesis of manip-ulating joint torque vectors which do not generate internal loads. An additional example is provided to demonstrate the difference between the equilibrating force distribution and the manipulating force distribution. The results obtained from our analyses provide two major insights concerning wrench distribution in parallel manipula-tors with actuation redundancy. First, interaction forces and internal loads are distinct physical phenomena and must be treated as such. We have clearly defined both in this paper in the hopes that they will no longer be conflated in the robotics literature. Second, the wrench mapping of parallel manipulators differs from that of grasp-like systems, and this difference must be considered when adapting methods for the analysis of one system to the other. We are confident that the explicit methods for joint torque synthesis presented in this paper will prove useful for ma-nipulator design and control, since estimating the wrench capabilities of a manipulator and intelligently prescribing joint torques during path planning are critical for these tasks. Future work should notably be aimed at adapting our novel methods to wrench capability analysis of general manipulators and real-time torque control algorithms. ACKNOWLEDGMENTS 
+
+The authors would like to acknowledge the financial support of the Natural Sciences and Engineering Research Council of Canada (NSERC) through a scholarship (Canada Graduate Research Scholarship — Doctoral) to the first author and discovery grant DG-89715 to the second author. They would also like to acknowledge the financial support of the Institut de recherche Robert-Sauv´ e en sant´ e et s´ ecurit´ e du travail (IRSST) through a doctoral scholarship to the first author. APPENDIX 
+
+Let p = x yT define the position of the center of mass of the end-effector in the base frame. The loop closure equation of the j-th leg is then written as 
+
+p + rj = aj + uj + vj . (73) Rearranging the terms, we obtain 
+
+vTj vj = ( p + rj − aj − uj )T (p + rj − aj − uj ). (74) The first time derivative, after simplification, can be written as 
+
+(p + rj − aj − uj )T ( ˙ p + ˙ rj ) = ( p + rj − aj − uj )T ˙uj , (75) By substituting (73) into (75), we obtain 
+
+vTj ( ˙ p + ˙ rj ) = vTj ˙uj (76) In a planar system, the time derivatives ˙rj and ˙uj can be written as 
+
+˙rj = Er j ˙ϕ, (77) 
+
+˙uj = Eu j ˙θ1j . (78) We arrive at 
+
+vTj ˙p + vTj Er j ˙ϕ = vTj Eu j ˙θ1j . (79) The velocity equation of the second actuated joint can be obtained by applying the cosine law to triangle Aj Bj Cj . This is written as 
+
+(p+rj −aj )T (p+rj −aj ) = || uj || 2+|| vj || 2−2|| uj |||| vj || cos( θ′ 
+
+> 2j
+
+)
+
+(80) 13 
+
+where θ′ 
+
+> 2j
+
+is the inside angle between vectors uj and vj .Taking the first time derivative, we obtain 
+
+(p + rj − aj )T ( ˙ p + ˙ rj ) = || uj |||| vj || sin( θ′ 
+
+> 2j
+
+) ˙θ′ 
+
+> 2j
+
+. (81) Using (77) and noting that ˙θ′ 
+
+> 2j
+
+= ˙θ2j , this further simplifies to 
+
+(uj + vj )T ˙p + ( uj + vj )T E˙rj ˙ϕ = || uj |||| vj || sin( θ′ 
+
+> 2j
+
+) ˙θ2j .
+
+(82) When we gather the velocity equations (79) and (82) of the three legs in matrix form, we obtain the kinematic Jacobians 
+
+J and K shown in (57) and (58), respectively. REFERENCES [1] D. Prattichizzo and J. C. Trinkle, “Grasping,” in Springer Handbook of Robotics , B. Siciliano and O. Khatib, Eds. Springer, 2008, pp. 671–700. [2] C. Gosselin and L. T. Schreiber, “Redundancy in parallel mechanisms: A review,” Applied Mechanics Reviews , vol. 70, pp. 1–15, 2018. [3] I. D. Walker, R. A. Freeman, and S. I. Marcus, “Analysis of motion and internal loading of objects grasped by multiple cooperating manip-ulators,” The International Journal of Robotics Research , vol. 10, pp. 396–409, 1991. [4] V. R. Kumar and K. J. Waldron, “Force Distribution in Closed Kinematic Chains,” IEEE Transactions on Robotics , vol. 4, no. 6, pp. 657–664, 1988. [5] M. Uchiyama and P. Dauchez, “A symmetric hybrid position/force control scheme for the coordination of two robots,” in 1988 IEEE International Conference on Robotics and Automation , 1988. [6] D. Williams and O. Khatib, “The virtual linkage: A model for internal forces in multi-grasp manipulation,” in IEEE International Conference on Robotics and Automation . IEEE, 1993. [7] J. H. Chung, B. J. Yi, and W. K. Kim, “Analysis of internal loading at multiple robotic systems,” Journal of Mechanical Science and Technol-ogy , vol. 19, pp. 1554–1567, 2005. [8] B.-R. Zuo and W.-H. Qian, “Short paper on the equivalence of internal and interaction forces in multifingered grasping,” IEEE Transactions on Robotics and Automation , vol. 15, 1999. [9] S. Erhart and S. Hirche, “Internal Force Analysis and Load Distribu-tion for Cooperative Multi-Robot Manipulation,” IEEE Transactions on Robotics , vol. 31, no. 5, pp. 1238–1243, 2015. [10] F. E. Udwadia and R. E. Kalaba, The Fundamental Equation . Cam-bridge University Press, 4 2010, pp. 71–105. [11] J. Flight and C. Gosselin, “A generalized theory of load distribution in redundantly-actuated robotic systems,” 2026. [Online]. Available: https://arxiv.org/abs/2603.11431 [12] S. Krut, O. Company, and F. Pierrot, “Force performance indexes for parallel mechanisms with actuation redundancy, especially for parallel wire-driven manipulators,” 2004 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) , vol. 4, pp. 3936–3941, 2004. [13] S. B. Nokleby, R. Fisher, R. P. Podhorodeski, and F. Firmani, “Force capabilities of redundantly-actuated parallel manipulators,” Mechanism and Machine Theory , vol. 40, no. 5, pp. 578–599, 2005. [14] A. Zibil, F. Firmani, S. B. Nokleby, and R. P. Podhorodeski, “An explicit method for determining the force-moment capabilities of redundantly actuated planar parallel manipulators,” ASME Journal of Mechanical Design , vol. 129, no. 10, pp. 1046–1055, 2007. [15] F. Firmani, A. Zibil, S. B. Nokleby, and R. P. Podhorodeski, “Force-moment capabilities of revolute-jointed planar parallel manipulators with additional actuated branches,” Transactions of the Canadian Society for Mechanical Engineering , vol. 31, pp. 469–480, 2007. [16] ——, “Wrench capabilities of planar parallel manipulators. part i: Wrench polytopes and performance indices,” Robotica , vol. 26, pp. 791– 802, 2008. [17] ——, “Wrench capabilities of planar parallel manipulators. part ii: Redundancy and wrench workspace analysis,” Robotica , vol. 26, pp. 803–815, 2008. [18] L. Mejia, H. Simas, and D. Martins, “Force capability in general 3 dof planar mechanisms,” Mechanism and Machine Theory , vol. 91, pp. 120–134, 2015. [Online]. Available: http://dx.doi.org/10.1016/j. mechmachtheory.2015.04.013 [19] ——, “Wrench capability in redundant planar parallel manipulators with net degree of constraint equal to four, five or six,” Mechanism and Machine Theory , vol. 105, pp. 58–79, 2016. [Online]. Available: http://dx.doi.org/10.1016/j.mechmachtheory.2016.06.020 [20] L. Mejia, D. Ponce, H. Simas, and D. Martins, “Wrench capability of hyper-redundant planar parallel manipulators,” Mechanisms and Ma-chine Science , vol. 94, pp. 131–139, 2021. [21] V. Garg, S. B. Nokleby, and J. A. Carretero, “Wrench capability analysis of redundantly actuated spatial parallel manipulators,” Mechanism and Machine Theory , vol. 44, no. 5, pp. 1070–1081, 2009. [22] M. S. Erden and K. Leblebicioglu, “Torque distribution in a six-legged robot,” IEEE Transactions on Robotics , vol. 23, pp. 179–186, 2007. [23] Y. Xu, J. Yao, and Y. Zhao, “Inverse dynamics and internal forces of the redundantly actuated parallel manipulators,” Mechanism and Machine Theory , vol. 51, pp. 172–184, 2012.

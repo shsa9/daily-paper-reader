@@ -6,27 +6,26 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-05-04
-- 运行时间：2026-05-04 20:15:22 UTC
+- 最新运行日期：2026-05-05
+- 运行时间：2026-05-05 20:36:15 UTC
 - 运行状态：成功
-- 本次总论文数：2
+- 本次总论文数：1
 - 精读区：0
-- 速读区：2
+- 速读区：1
 
 ### 今日简报（AI）
-今日深入探讨了时滞系统稳定性与电磁场最优控制，涵盖从电机驱动到隐身技术的跨界应用
-- 详情：[/202605/04/README](/202605/04/README)
+今日聚焦冗余驱动并联机构的受力分析，深入探讨其内部载荷与相互作用力的复杂关系。
+研究明确了冗余驱动在调节机构内力分布中的关键作用，为提升并联机器人的作业精度提供了理论支撑。
+建议读者关注如何通过冗余设计优化机器人动力学性能，以应对高负载、高精度的工业挑战。
+- 详情：[/202605/05/README](/202605/05/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Stability Analysis and Data-Driven State Estimation for Generalized Persidskii Systems with Time Delays: Theory and Experimental Validation on PMSM Drives](/202605/04/2604.27509v2-stability-analysis-and-data-driven-state-estimation-for-generalized-persidskii-systems-with-time-delays-theory-and-experimental-validation-on-pmsm-drives)  
+1. [Interaction Forces and Internal Loads in Parallel Manipulators with Actuation Redundancy](/202605/05/2604.27095v1-interaction-forces-and-internal-loads-in-parallel-manipulators-with-actuation-redundancy)  
    标签：评分：6.0/10、query:em-force
-   evidence：永磁同步电机驱动等机电系统的状态估计与稳定性分析
-2. [Structure-Preserving Optimal Control of Maxwell's Equations with Applications to Source Cloaking](/202605/04/2605.00212v1-structure-preserving-optimal-control-of-maxwells-equations-with-applications-to-source-cloaking)  
-   标签：评分：6.0/10、query:em-force
-   evidence：电磁系统麦克斯韦方程组的最优控制
+   evidence：冗余驱动器中合成关节转矩矢量和相互作用力的方法
 
 
 <div class="dpr-home-promo-card">
