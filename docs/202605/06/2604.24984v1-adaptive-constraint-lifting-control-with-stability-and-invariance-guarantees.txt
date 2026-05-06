@@ -1,0 +1,526 @@
+Title: Adaptive Constraint-Lifting Control with Stability and Invariance Guarantees
+
+URL Source: https://arxiv.org/pdf/2604.24984v1
+
+Published Time: Wed, 29 Apr 2026 00:30:08 GMT
+
+Number of Pages: 6
+
+Markdown Content:
+# Adaptive Constraint-Lifting Control with Stability and Invariance Guarantees 
+
+Jhon Manuel Portella Delgado and Ankit Goel 
+
+Abstract — This paper develops an adaptive tracking con-troller for a class of nonlinear systems with parametric un-certainty subject to state constraints. The system is character-ized by a strict-feedback structure with unknown parameters entering both the drift and input channels. The objective is to design a control law, without knowledge of the unknown parameters, that guarantees closed-loop stability, achieves de-sired tracking performance, and ensures forward invariance of a prescribed safe set. An adaptive constraint-lifting framework is developed that transforms the constrained control problem into an equivalent unconstrained representation, enabling re-cursive controller synthesis in lifted coordinates. The proposed design integrates parameter estimation with constraint enforce-ment without requiring online optimization. A Lyapunov-based stability analysis, combined with the Barbashin–Krasovskii– LaSalle invariance principle, establishes boundedness of all closed-loop signals, asymptotic convergence of the system states to the desired equilibrium, and forward invariance of the safe set under uncertainty. In particular, the analysis char-acterizes the largest invariant set of the closed-loop system and guarantees convergence despite unknown parameters. The effectiveness of the proposed approach is demonstrated on a DC motor system with uncertain parameters, illustrating accurate tracking performance and safe operation. 
+
+keywords: Adaptive control, State-constrained systems, Nonlinear systems, Lyapunov stability. I. I NTRODUCTION 
+
+The enforcement of state constraints in nonlinear systems is closely related to the problem of forward invariance of a prescribed safe set. This problem arises naturally in safety-critical control applications, where physical limitations, ac-tuator bounds, and safety constraints must be satisfied at all times. Set-invariance methods provide the theoretical founda-tion for this problem, while constrained-control architectures, such as reference governors, offer practical approaches to enforce constraints without modifying a nominal stabilizing controller [ 1], [ 2], [ 3]. A widely used strategy for constrained control is to augment a nominal controller with a supervisory mechanism that adjusts the reference or control input when constraint violation is anticipated [ 2], [ 3]. While effective, such ap-proaches operate as add-on schemes and do not yield an explicit stabilizing control law for the constrained system itself. Barrier-based methods, including control barrier func-tions, provide an alternative by enforcing forward invariance through pointwise inequality constraints on the control input                  
+
+> Jhon Manuel Portella Delgado and Ankit Goel are with the De-partment of Mechanical Engineering, University of Maryland, Baltimore County, 1000 Hilltop Circle, Baltimore, MD 21250.
+
+jportella, ankgoel@umbc.edu 
+
+> Jhon Manuel Portella Delgado is now with the Department of Aerospace Engineering, University of Michigan, Ann Arbor, MI 48109, USA.
+
+[4]. However, these methods are typically implemented via online optimization, which may introduce computational overhead and complicate stability analysis, particularly for nonlinear systems and in the presence of uncertainty. The challenge becomes more pronounced when system dynamics are uncertain[ 5]. Adaptive control provides a prin-cipled framework for handling parametric uncertainty, but classical adaptive designs do not directly account for state constraints. Incorporating constraints into adaptive control laws remains nontrivial, as the interaction between parameter estimation, transient behavior, and constraint satisfaction can lead to constraint violations or loss of stability guarantees. An alternative approach to constraint enforcement is based on nonlinear coordinate transformations that map a con-strained state space into an unconstrained one, enabling the use of standard nonlinear control tools in the transformed co-ordinates [ 6], [ 7]. While such transformation-based methods avoid online optimization, they may suffer from numerical ill-conditioning near the constraint boundary, where the transformed coordinates or their derivatives become large. These challenges are further exacerbated in adaptive settings, where parameter-estimation dynamics can drive the system toward regions in which the transformation becomes poorly conditioned. Motivated by these limitations, this paper develops an adaptive constraint-lifting framework for continuous-time nonlinear systems. The central idea is to map constrained states into an unconstrained coordinate system via smooth constraint-lifting transformations constructed from strictly increasing sigmoid functions. Controller synthesis is carried out in the lifted coordinates using a recursive adaptive design, while the inverse transformation guarantees satisfaction of the original state constraints. The contributions of this paper are as follows. First, an adaptive constraint-lifting control framework is developed for a class of continuous-time strict-feedback systems with parametric uncertainty, transforming the constrained adap-tive control problem into an equivalent unconstrained one. Second, a recursive adaptive controller is constructed in the lifted coordinates, together with adaptation laws that compensate for uncertainty in both the drift and input chan-nels. Third, a Lyapunov-based stability analysis, combined with the Barbashin–Krasovskii–LaSalle invariance principle, establishes the asymptotic convergence of the system states, the boundedness of all closed-loop signals, and the forward invariance of the prescribed safe set. In particular, the anal-ysis characterizes the largest invariant set of the closed-loop system and guarantees convergence despite unknown parameters. The proposed approach yields an explicit adap-
+
+> arXiv:2604.24984v1 [math.OC] 27 Apr 2026
+
+tive control law, avoids online optimization, and ensures con-straint satisfaction under uncertainty. Numerical simulations illustrate the effectiveness of the proposed framework on representative nonlinear systems. The remainder of the paper is organized as follows. Section II formulates the problem and introduces the class of nonlinear systems considered in this work. Section III 
+
+presents the constraint-lifting framework, develops the adap-tive control law, and provides the Lyapunov-based stability analysis. Section IV demonstrates the effectiveness of the proposed approach through numerical simulations. Finally, Section V concludes the paper. II. P ROBLEM FORMULATION 
+
+Consider the system 
+
+˙x1 = g1(x1)x2, (1) 
+
+˙x2 = f2(x1, x 2) Θ 1 + g2(x1, x 2) u Θ2, (2) where x1 ∈ R, and x2 ∈ R are the states, u ∈ R is the control input, and Θ1, Θ2 ∈ R are unknown parameters, and the functions g1 : R → R, f 2 : R×R → R, and g2 : R×R → R.
+
+The control objective is to design a control law u without the knowledge of the unknown parameters Θ1 and Θ2, such that, i) the closed-loop system is stable, ii ) a desired tracking performance is achieved, and iii ) the state trajectory satisfies 
+
+x ∈ S , where S is a user-specified safe set. The safe set 
+
+S is assumed to be a compact hyper-rectangle of the form 
+
+S = ( −x1, x1) × (−x2, x2).
+
+Assumption 1. The function f2(x1, x 2) = 0 if and only if 
+
+x2 = 0 .
+
+Assumption 2. The matrices g1(x1) and g2(x1, x 2) are nonsingular for (x1, x 2) ∈ S .
+
+Remark 1. Assumption 1 ensures that the uncertain dy-namics associated with Θ1 are excited whenever x2 6 = 0 ,and vanish only at x2 = 0 . This condition prevents loss of excitation in the system and guarantees that the effect of the uncertainty is observable whenever the state is evolving. 
+
+Remark 2. Assumption 2 guarantees that the system remains free of singularities within the safe set S. In particular, 
+
+g1(x1) 6 = 0 ensures that the state x2 influences the evolution of x1, while g2(x1, x 2) 6 = 0 ensures that the control input 
+
+u influences the evolution of x2. Together, these conditions ensure well-posedness of the control design and avoid loss of controllability within S.
+
+Dynamics ( 1)–( 2) arises naturally in a variety of engineer-ing applications. A representative example is a DC motor driving a mechanical load, whose equations of motion are given by 
+
+˙θ = ω, (3) 
+
+˙ω = − bR − KbKt
+
+JR ω + Kt
+
+JR V, (4) where θ and ω are the shaft angle and angular velocity, V
+
+is the applied voltage, J is the rotor inertia, b is the viscous damping coefficient, R is the armature resistance, and Kt,
+
+Kb are the torque and back-EMF constants, respectively. This model fits ( 1)–( 2) with x1 = θ, x2 = ω, g1(x1) = 1 ,
+
+f2(x1, x 2) = ω, g2(x1, x 2) = 1 , u = V , and unknown parameters 
+
+Θ1 = − bR − KbKt
+
+JR , Θ2 = Kt
+
+JR , (5) which are uncertain in practice due to manufacturing toler-ances, temperature variation, and component wear. Note that the DC motor system fullfills Assumptions 1 and 
+
+2 are fulfilled since f2 = ω = 0 if and only if x2 = ω = 0 ,
+
+and g1 = g2 = 1 , are invertible. III. C ONSTRAINT LIFTING FRAMEWORK 
+
+This section presents the constraint-lifting framework for transforming the state-constrained control problem into an equivalent unconstrained representation. The original states are first normalized and mapped into a lifted coordinate space via smooth sigmoid-based transformations, enabling controller synthesis without explicit constraint handling. The resulting dynamics in the lifted coordinates are derived, and key structural properties required for control design are established. Based on this formulation, a recursive adaptive control law is developed, followed by a Lyapunov-based analysis that guarantees closed-loop stability, boundedness of all signals, and forward invariance of the prescribed safe set. The states to be constrained are lifted using a constraint-lifting transformation to obtain an unconstrained representa-tion in a lifted state space. The sigmoid functions and their inverses to lift the constraints are described in detail in [ 8]. First, the states (x1, x 2) are mapped to intermediate vari-ables (χ1, χ 2) such that the bounds on the components of 
+
+x1 and x2 are normalized to ±1. Consequently, whenever 
+
+(x1, x 2) ∈ S , each component of (χ1, χ 2) lies in (−1, 1) ,that is, (χ1, χ 2) ∈ C . The normalized variables (χ1, χ 2)
+
+are then mapped to (z1, z 2) ∈ Rn using a constraint-lifting function. Controller synthesis is performed in the lifted z-coordinates for the transformed state x1d . Finally, a transformation from (z1, z 2) to (ζ1, ζ 2) is introduced to simplify both the inverse mapping from z to x and the subsequent stability analysis. The sequence of transformations from x to z, together with the intermediate variables χ and ζ, is shown in Figure 
+
+1.
+
+x
+
+x x φ (χ)
+
+z
+
+x
+
+x ψ (ζ)
+
+χ ∈ C z ∈ Rn
+
+ζ ∈ Rn
+
+x ∈ S  
+
+> Fig. 1. State transformations with the constraint-lifting function and its inverse used in the control synthesis.
+
+Define the normalized states 
+
+χ1
+
+> △
+
+= x−11 x1, (6) 
+
+χ2
+
+> △
+
+= x−12 x2. (7) Note that the state variables χ1 and χ2 are defined to map the constraint boundaries to ±1, that is, when the constraints are satisfied, then, χ1, χ 2 ∈ C .
+
+Next, define 
+
+z1
+
+> △
+
+= x1φ(χ1), (8) 
+
+z2
+
+> △
+
+= x2φ(χ2), (9) where φ : C → Rn is a constraint-lifting function as defined in [ 8]. 
+
+Remark 3. For simplicity, the same constraint-lifting func-tion φ is used for both z1 and z2. This choice is made without loss of generality, as the formulation readily extends to the case where distinct constraint-lifting functions are assigned to each state. 
+
+Next, define 
+
+ζ1
+
+> △
+
+= x−11 z1, (10) 
+
+ζ2
+
+> △
+
+= x−12 z2. (11) The state variables ζ1 and ζ2 are defined to simplify the controller synthesis, as described below. Finally, define 
+
+x1 = x1ψ(ζ1), (12) 
+
+x2 = x2ψ(ζ2), (13) where ψ : Rn → S is an inverse of the constraint-lifting function as defined in [ 8]. With the state transformations defined above, the dynamics (1), ( 2) in terms of the transformed state z is 
+
+˙z1 = G1(z1, z 2), (14) 
+
+˙z2 = F2(z1, z 2)Θ 1 + G2(z1, z 2)u Θ2, (15) where 
+
+G1(z1, z 2) △
+
+= Φ( ζ1)ψ(ζ2), (16) 
+
+F2(z1, z 2) △
+
+= [ ∂χ2 φ(ψ(ζ2))] f2(x1ψ(ζ1), x2ψ(ζ2)) , (17) 
+
+G2(z1, z 2) △
+
+= [ ∂χ2 φ(ψ(ζ2))] g2(x1ψ(ζ1), x2ψ(ζ2)) , (18) and 
+
+Φ( ζ1) △
+
+= [ ∂χ1 φ(ψ(ζ1 ))] g1(x1ψ(ζ1)) x2. (19) Note that ζ1 and ζ2 are given by ( 10 ), ( 11 ). Algebraic details of the derivation of dynamics in z coordinates are shown in Appendix I.The following propositions establish key properties of the functions G1, F2, and G2, which are subsequently used in the controller design and stability analysis. 
+
+Proposition III.1. Consider G1(z1, z 2) ∈ Rn given by (16 ).Then, G1(z1, 0) = 0 .
+
+Proof. Since ψ(0) = 0 by definition, it follows from ( 16 )that G1(z1, 0) = Φ( x−11 z1)ψ(0) = 0 .
+
+Proposition III.2. Consider F2(z1, z 2) ∈ Rn given by (17 ).Then, F2(z1, 0) = 0 .
+
+Proof. Since ψ(0) = 0 by definition, it follows from As-sumption 1 that f2(x1ψ(ζ1), 0) = 0 , which in turn implies 
+
+F2(z1, 0) = 0 .
+
+Proposition III.3. Consider G2(z1, z 2) ∈ Rn×n given by 
+
+(18 ). Then, G2(z1, z 2) is nonsingular. Proof. It follows from Assumption 2 that 
+
+g2(x2ψ(ζ1), x2ψ(ζ2)) is nonsingular. Since the product of two nonsingular matrices is a nonsingular matrix, it follows that G2(z1, z 2) is nonsingular. 
+
+Proposition III.4. Consider Φ( ζ1) ∈ Rn×n given by (19 ).Then, Φ( ζ1) is nonsingular. Proof. It follows from Assumption 2 that g1(x2ψ(ζ1), ) is nonsingular. Furthermore, x2 is positive. Then, it follows that 
+
+Φ( ζ1) is nonsingular. 
+
+A. Controller Synthesis 
+
+Let x1d ∈ S be the desired value of x1. Let χ1d ∈ C and 
+
+z1d be the corresponding desired state values, that is, 
+
+χ1d 
+
+> △
+
+= x−11 x1d , (20) 
+
+z1d 
+
+> △
+
+= x1φ(χ1d ). (21) Define the tracking error 
+
+e1
+
+> △
+
+= z1 − z1d . (22) 
+
+1) e1 stabilization: Consider the function 
+
+V1
+
+> △
+
+= 1
+
+2 e21. (23) Differentiating ( 23 ) and using ( 14 ) yields 
+
+˙V1 = e1G1(z1, z 2). (24) If z2 is chosen such that G1(z1, z 2) = −ke 1, where k1 >
+
+0, then ˙V1 < 0. However, since z2 is not the control input, 
+
+G1(z1, z 2) cannot be arbitrarily chosen. Instead, we define 
+
+e2
+
+> △
+
+= G1(z1, z 2) − (−k1e1) = Φ( ζ1)ψ(ζ2) + k1e1. (25) and design the control law to ensure that e2 converges to 0, thus implying that G1(z1, z 2) converges to −k1e1.
+
+Substituting G1(z1, z 2) from ( 25 ) into ( 24 ) yields 
+
+˙V1 = −k1e21 + e2e1. (26) 2) e2 stabilization: Define p2
+
+> △
+
+= Θ −12 , and ˆp2 its corre-sponding estimate. Next, consider the function 
+
+V △
+
+= V1 + V(ζ2) + 1
+
+2 γ−1|Θ2| (ˆ p2 − p2)2 + 1
+
+2 α−1 (
+
+Θ1 − ˆΘ1
+
+)2
+
+,
+
+(27) where γ > 0, α > 0, and V is a sigmoid integral function as introduced in [ 8]. Note that 
+
+dtV(ζ2) = ψ(ζ2)x−12 ˙z2. (28) Thus, 
+
+˙V = −k1e21 + e2e1 + ψ(ζ2)x−12 F2(z1, z 2)Θ 1
+
++ ψ(ζ2)x−12 G2(z1, z 2)uΘ2 + γ−1|Θ2| (ˆ p2 − p2) ˙ˆp2
+
+− α−1 (
+
+Θ1 − ˆΘ1
+
+) ˙ˆΘ1. (29) Choose 
+
+˙p2 = γ σ (Θ 2)ψ(ζ2 )
+
+(
+
+F2(z1, z 2) ˆΘ1 + Φ( ζ1)k2e2
+
+)
+
+, (30) 
+
+˙ˆΘ1 = α ψ (ζ2)F2(z1, z 2), (31) 
+
+u = −x2G2(z1, z 2)−1 ˆp2
+
+(
+
+F2(z1, z 2) ˆΘ1 + Φ( ζ1)k2e2
+
+)
+
+,
+
+(32) where σ(Θ 2) △
+
+= sign(Θ) 2. Then, 
+
+˙V = −k1e21 + e2e1 − ψ(ζ2)Φ( ζ1)k2e2. (33) Substituting ψ(ζ2) from ( 25 ) in the equation above yields 
+
+˙V = −k1e21 + e2e1 − (e2 − k1e1)k2e2 (34) yields 
+
+˙V = −k1e21 + (1 + k1k2)e2e1 − k2e22
+
+= −k1e21 + (1 + k1k2)e2e1 − k2e22
+
++ 2 √k1k2e2e1 − 2√k1k2e2e1
+
+= −
+
+(√ k1e1 − √k2e2
+
+)2
+
++ (1 + k1k2 − 2√k1k2)e2e1.
+
+(35) Note that if k2 = k−11 , then, 
+
+˙V = −
+
+(√ k1e1 − √k2e2
+
+)2
+
+(36) Furthermore, if k1e1 = e2, then ˙V = 0 .
+
+B. Stability Analysis 
+
+The stability analysis of the closed-loop dynamics with the proposed control law uses the Barbashin-Krasovskii-LaSalle invariance principle, which originally appeared as Theorems 1 and 2 in [9]. In particular, the Barbashin-Krasovskii-LaSalles’s invariance principle is used to prove the asymptotic stability of the equilibrium point. Propositions III.5 , III.6 , III.7 , and III.8 introduced below define the sets used in the stability analysis and establish their properties. 
+
+Proposition III.5. [Equilibrium solution. ] Consider the system (14 ), (15 ). Let z1d ∈ Rn. Then, the solution 
+
+(z1, z 2, u ) = ( z1d , 0, 0) (37) 
+
+is an equilibrium point. Proof. If z2 = 0 , then it follows from Proposition III.1 that 
+
+G1(z1, z 2) = 0 , which implies that ˙z1 = 0 . Furthermore, it follows from Proposition III.2 that F2(z1, z 2) = 0.
+
+Moreover, if u = 0 , then ˙z2 = 0 , implying that (z1, z 2, u ) ≡
+
+(z1d , 0, 0) is an equilibrium point. 
+
+Proposition III.6. Consider the system (14 ), (15 ). Consider the Lyapunov candidate function (27 ). Let k1 > 0, k 2 = k−11 ,γ > 0, and α > 0. Let ℓ > 0. Define the sublevel set 
+
+Ω △
+
+= {z1, z 2, u, ˆp2, ˆΘ1 ∈ R : V ≤ ℓ}. (38) 
+
+Then, Ω is bounded and a positively invariant set. Proof. Since V is radially unbounded and Ω is defined by 
+
+V ≤ ℓ, it follows from Theorem 2 in [ 9] that Ω is bounded. Since ˙V ≤ 0 and V > 0, V is non-increasing along the trajectory of the system. Therefore, any trajectory starting in Ω cannot leave Ω, thus implying that Ω is a positively invariant set. 
+
+Proposition III.7. Consider the system (14 ), (15 ). Consider the function (27 ) and the positively invariant set Ω, given in 
+
+(38 ). Let k2 = k−11 . Define E ⊂ Ω such that z2 = 0 . Then, 
+
+E is the set of all the points in Ω such that ˙V = 0 .
+
+Proof. Note that it follows from ( 11 ) that ζ2 = 0 if and only if z2 = 0 . Next, ζ2 = 0 implies that ψ(ζ2) = 0 , which further implies that Φ( ζ1)ψ(ζ2 ) = 0 . Next, it follows from (25 ) that k1e1 = e2. Finally, since k2 = k−11 , it follows from (35 ) that ˙V = 0 if and only if k1e1 = e2.
+
+Proposition III.8. Consider the system (14 ), (15 ). Consider the function (27 ). Let k2 = k−11 . Let M ⊂ E such that 
+
+u = 0 . Then, M is the largest positively invariant set in E. 
+
+Proof. It follows from Proposition III.5 that the point z1 =
+
+z1d , z 2 = u = 0 is an equilibrium of the system. Hence, the set of all equilibrium points constitutes a positively invariant subset of E. Next, consider the case where u 6 = 0 and z2 = 0 .From ( 15 ) and the fact that G2(z1, z 2) is nonsingular for all z1, z 2 ∈ Rn, it follows that ˙z2 6 = 0 . Consequently, the trajectory leaves the set E. Therefore, M ⊂ E is the largest positively invariant subset of E.
+
+Theorem 1. Consider the system (1), (2) and the system (14 ),
+
+(15 ). Assume that the initial conditions of (1), (2) are inside the safe set, that is, (x1(0) , x 2(0)) ∈ S , and let |x1d | < x1.Consider the control law (32 ), with k2 = k−11 . Then, 
+
+lim  
+
+> t→∞
+
+z1(t) = z1d , (39) 
+
+lim  
+
+> t→∞
+
+z2(t) = 0 , (40) 
+
+lim  
+
+> t→∞
+
+u(t) = 0 , (41) 
+
+lim  
+
+> t→∞
+
+x1(t) = x1d , (42) 
+
+∀t ≥ 0, (x1(t), x 2(t)) ∈ S , (43) 
+
+and the estimates ˆp2(t), ˆΘ1(t) remain bounded. Proof. Consider the set Ω defined in Proposition III.6 and the set E defined in Proposition III.7 . It follows from Proposition 
+
+III.8 that M is the largest positively invariant set in E. It follows from Theorem 2 in [ 9] that any solution starting in Ω converge to M as t → ∞, which implies ( 39 )– (41 ), and the estimates ˆp1(t), ˆθ1(t), ˆϑ1(t), ˆθ2(t), ˆp2(t) remain bounded. Next, it trivially follows from ( 21 ) and ( 39 ) that 
+
+lim t→∞ x1(t) = x1d . Finally, since the map ψ is a bijection, it follows that ∀t ≥ 0, (x1(t), x 2(t)) ∈ S .
+
+Remark 4. It can not be concluded that ˆΘ1 converges to θ1
+
+and ˆp2 converges to p2. However, they remain bounded. 
+
+IV. N UMERICAL SIMULATION 
+
+In this section, we illustrate the proposed framework on the DC motor dynamics described by ( 3)–( 4). The control objective is to regulate the shaft position (angle) to a desired reference in the presence of unknown physical parameters, while ensuring that the system state remains within a pre-scribed safe set. The safe set is defined as 
+
+S △
+
+= ( −2, 2) × (−1, 1) . (44) For the constraint-lifting construction, we use the sigmoid function ψ(x) = tanh( x) and its associated integral 
+
+V(ζ2) = log ( cosh( ζ2)), (45) as described in [ 8]. The adaptation laws corresponding to the chosen sigmoid function are given by 
+
+ˆp2 = −γσ (Θ 2) tanh ζ2
+
+(
+
+tanh ( ζ2) cosh 2 (ζ2) ˆΘ1
+
++ x2 cosh 2 (ζ1)k−11 e2
+
+)
+
+, (46) 
+
+ˆΘ1 = α tanh 2 (ζ2) cosh 2 (ζ2), (47) and the corresponding controller is given by 
+
+u = −x2 sech 2 (ζ2)ˆ p2
+
+(
+
+cosh 2 (ζ2) tanh ( ζ2) ˆΘ1
+
++ x2 cosh 2 (ζ1)k−11 e2
+
+)
+
+. (48) Note that the initial condition ˆp2(0) cannot be chosen as zero, since this would result in u ≡ 0 at the initial time. The initial conditions are selected as 
+
+x1(0) = 0 , x2(0) = 0 .9, (49) with parameter estimates initialized as 
+
+ˆp2(0) = 1 , ˆΘ1(0) = 0 . (50) The control gain is set to k1 = 1 , and the adaptation gains are chosen as γ = α = 1 . To evaluate performance near the boundary of the safe set, the desired state is selected close to the constraint limit. In particular, we set x1d = −1.9.
+
+Figure 2 shows the closed-loop response of ( 3)–( 4) under the control law ( 32 ) and the adaptation laws ( 30 ) and ( 31 ). The results demonstrate successful tracking of x1d while maintaining the state within the prescribed safe set, indicated by the shaded yellow region in the first plot. Furthermore, the state x2 remains within its corresponding safe bounds, as shown by the shaded pink region in the second plot. Figure 3 presents the estimation errors | ˆΘ1 − Θ1| and 
+
+|ˆp2 − p2| on a logarithmic scale, corresponding to the update laws ( 31 ) and ( 30 ), respectively. Consistent with the stability analysis, neither ˆΘ1 nor ˆp2 converges to the true parameters 
+
+Θ1 and p2; however, both estimates remain bounded.      
+
+> Fig. 2. Closed-loop response of the system ( 3)–( 4) under the control law (32 ). The first and second plots show the states x1and x2, respectively, while the third plot shows the control input u.
+
+V. C ONCLUSIONS 
+
+This paper developed an adaptive constraint-lifting control framework for a class of nonlinear systems with multiplica-tive uncertainties and unknown parameters. The proposed approach transforms the constrained control problem into an equivalent unconstrained representation, enabling systematic controller synthesis in the presence of parametric uncertainty. An adaptive control law was constructed to compensate for uncertainties in both the input gain and the system dynamics while ensuring forward invariance of a prescribed safe set. A Lyapunov-based analysis established boundedness of all closed-loop signals and asymptotic convergence of the system states. Numerical simulations demonstrated the effectiveness of the proposed method in achieving safe tracking under uncertainty. 10 -1                
+
+> 10 0
+> 0510 15 20
+> 10 -3
+> 10 -2
+> 10 -1
+> 10 0
+> Fig. 3. Estimation errors |ˆΘ1−Θ1|and |ˆp2−p2|shown on a logarithmic scale. Consistent with the stability analysis, the parameter estimates do not converge to the true values Θ1and p2, but remain bounded.
+
+APPENDIX IDYNAMICS IN z COORDINATE 
+
+This appendix derives the system dynamics in the lifted 
+
+z-coordinates used for controller synthesis. It follows from ( 8) that 
+
+˙z1 = x1∂χ1 φ(χ1) ˙ χ1
+
+= x1∂χ1 φ(χ1)x−11 ˙x1
+
+= ∂χ1 φ(χ1)g1(x1)x2
+
+= ∂χ1 φ(ψ1(ζ1)) g1(x1ψ1(ζ1)) x2ψ2(ζ2)= Φ( ζ1)ψ2(ζ2)= G1(z1, z 2). (51) Similarly, it follows from ( 9) that 
+
+˙z2 = x2∂χ2 φ(χ2) ˙ χ2
+
+= ∂χ2 φ(χ2)x2x−12 ˙x2
+
+= ∂χ2 φ(χ2) ( f2(x1, x 2) + g2(x1, x 2)u)= ∂χ2 φ(ψ2(ζ2)) 
+
+(
+
+f2(x1ψ1(ζ1), x2ψ2(ζ2)) + g2(x2ψ1(ζ1), x2ψ2(ζ2)) u
+
+)
+
+= F2(z1, z 2) + G2(z1, z 2)u. (52) APPENDIX II TIME -DERIVATIVE OF SIGMOID INTEGRAL -BASED 
+
+LYAPUNOV FUNCTION 
+
+This appendix computes the time derivative of the sigmoid integral function used in the Lyapunov candidate, which is required for the stability analysis. Note that 
+
+dtV(ζ2) = d tσ(s)d s. (53) It follows from the Leibniz’s formula that 
+
+dtσ(s)d s = σ(ζ2) ˙ζ2, (54) which, using ( 11 ), implies that 
+
+dtV(ζ2) = σ(ζ2) ˙ζ2 = ψ(ζ) ˙ζ2
+
+= ψ(ζ2)x−12 ˙z2. (55) REFERENCES 
+
+[1] F. Blanchini, “Set invariance in control,” Automatica ,vol. 35, no. 11, pp. 1747–1767, 1999. [2] E. G. Gilbert, I. Kolmanovsky, and K. T. Tan, “Discrete-time reference governors and the nonlinear control of systems with state and control constraints,” Interna-tional Journal of Robust and Nonlinear Control , vol. 5, no. 5, pp. 487–504, 1995. [3] E. Garone, S. D. Cairano, and I. Kolmanovsky, “Ref-erence and command governors for systems with con-straints: A survey on theory and applications,” Auto-matica , vol. 75, pp. 306–328, 2017. [4] A. D. Ames, X. Xu, J. W. Grizzle, and P. Tabuada, “Control barrier function based quadratic programs for safety critical systems,” IEEE Transactions on Auto-matic Control , vol. 62, no. 8, pp. 3861–3876, 2016. [5] J. M. Portella Delgado and A. Goel, “Adaptive control of pure feedback systems without inversion of parame-ter estimates,” International Journal of Control , vol. 99, no. 2, pp. 358–366, 2026. [6] K. P. Tee, S. S. Ge, and E. H. Tay, “Barrier lyapunov functions for the control of output-constrained nonlin-ear systems,” Automatica , vol. 45, no. 4, pp. 918–927, 2009. [7] T. Guo and X. Wu, “Backstepping control for output-constrained nonlinear systems based on nonlinear map-ping,” Neural Computing and Applications , vol. 25, pp. 1665–1674, 2014. [8] J. M. Portella Delgado, “Adaptive and safe control of nonlinear systems with multiplicative uncertainty and state constraints,” Available at 
+
+https://github.com/estimation-control-learning-
+
+PhD thesis, University of Maryland, Baltimore County, 2025. [9] J. LaSalle, “Some extensions of liapunov’s second method,” IRE Transactions on circuit theory , vol. 7, no. 4, pp. 520–527, 1960.

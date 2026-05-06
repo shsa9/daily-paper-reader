@@ -1,0 +1,737 @@
+Title: 2605.03286v1.pdf
+
+URL Source: https://arxiv.org/pdf/2605.03286v1
+
+Published Time: Wed, 06 May 2026 00:23:59 GMT
+
+Number of Pages: 10
+
+Markdown Content:
+1
+
+# Study of the effect of electromagnetic damping force on a magnet 
+
+# oscillating near a non -ferromagnetic conducting plate 
+
+Sanjoy Kumar Pal 1, Soumen Sarkar 2, Pradipta Panchadhyayee 3,4* , and Debapriyo Syam 5
+
+> 1
+
+Anandapur H.S. School, Anandapur, PaschimMedinipur, West Bengal, India 
+
+> 2
+
+Karui P.C. High School, Hooghly, West Bengal, India 
+
+> 3
+
+Department of Physics (UG & PG), Prabhat Kumar College, Contai, PurbaMedinipur, India 
+
+> 4
+
+Institute of Astronomy, Space and Earth Science, Kolkata -700054, W. B., India 
+
+> 5
+
+Kalpana Chawla Centre for Space and Nanosciences, Kolkata -. 700010, India 
+
+> *
+
+E-mail: ppcontai@gmail.com 
+
+Abstract 
+
+We have design ed an experiment that involves studying the effects of a conducting plate on 
+
+the motion of an oscillating disc magnet. We have employ ed the video analysis method by 
+
+‘Tracker’ software to investigate the variation of electromagnetic damping coefficient with 
+
+distance between the plate and t he magnet. This experiment can indeed serve as a valuable 
+
+educational tool for undergraduate students, covering topics such as damped oscillation, 
+
+electromagnetic damping, Lenz's law, and eddy currents. 2
+
+Introduction 
+
+In practice , damping is a crucial aspect of controlling the motion of objects, and it 
+
+involves the dissipation of energy to reduce or control oscillations, vibrations, or other 
+
+undesired motions. Damping is commonly used in various systems to enhance stability, 
+
+reduce noise, and prevent damage. The damping techniques include (i) Conventional 
+
+friction al damping, (ii) Air friction (i.e. viscous) damping, (iii) Fluid friction (viscous) 
+
+damping, and (iv) Electromagnetic (EM) damping. 
+
+In EM damping, the basic operating principle is as follows: When a moving metallic 
+
+object passes th rough a magnetic field, it induces eddy currents (loops of electric current) in 
+
+the object. These currents, in turn, create t he corresponding magnetic field. Interaction 
+
+between the magnetic field due to the induced current and the disc magnet results in slowing 
+
+down (damping) of the object's motion. This method is often used in precision instruments 
+
+and systems where physical contact with damping materials might be undesirable. The 
+
+advantage of EM damping is that it can provide effective damping without introducing wear 
+
+and tear associated with physical contact damping methods. However, designing and 
+
+implementing electromagnetic damping systems can be complex and requires careful 
+
+consideration of the specific application requirements. 
+
+Addressing conceptual challenges related to electromagnetic damping (also called 
+
+braking ) several researchers reported experiments [1 -22] on Lenz’s law and eddy currents, 
+
+which are the building blocks of the related theory. Some of them have presented the 
+
+experiment s with a view to demonstrating Lenz’s law [1 -9]. The role of eddy currents in the 
+
+damped falling motion of magnets inside conducting tubes [10 -16] and in magnetic levitation 
+
+[17] ha s also been investigated. Some other researchers have conducted detailed analyses of 
+
+EM damping [18 -21]. Different physical quantities like displacement, velocity, and 
+
+acceleration [22] and current waveforms [23 -28] were studied for magnetically damped 
+
+oscillations. Inspired by these works, we have designed a demonstration experiment on the 
+
+dependence of the EM damping coefficient on distance between magnet and a metal plate . It 
+
+can also be considered as a practical application of Newton’s third law. Our experimental 
+
+arrangement consisted of a disc magnet attached to the lower end of a wooden strip hung 
+
+from a stout pin and a thin aluminium plate. A pair of slide -ca llipers, a smartphone and a 
+
+computer served as data acquisition and analysis devices. We believe that this experimental 
+
+arrangement would be found interesting by undergraduate students and their teachers. 
+
+Theoretical Framework 
+
+When a magnet oscillates near a conductor, it induces ring currents in the latter . This 
+
+is, of course, the phenomenon of electromagnetic induction. The induced current gives rise to 
+
+a magnetic field that opposes the motion of the magnet. If the magnet is suspended as a 
+
+pendulum in front of the conducto r, the opposing force produces the damping of the 
+
+oscillatory motion (over and above the damping due to air resistance). Fig.1 a shows a 
+
+schematic drawing of the experimental arrangement and Fig. 1b is drawn to facilitate the 
+
+understanding of the calculations. 
+
+The magnetic field produced by the disc magnet at the centre P of the shadow is given 
+
+by kBkrMB
+
+> P
+
+ˆˆ24 30 −=−=
+
+ (1) 3
+
+# rp
+
+where 30 24 PrMB = (ˆˆ ˆ, ,i j k  represent the unit vectors in the x, y and z directions ,
+
+respectively ). M is the magnetic dipole moment of the disc magnet, and 22 adrP += . We 
+
+assume that ad  . Here, d is the distance between the centre of gravity of the magnet and 
+
+the aluminium plate and the radius of the disc magnet is a.
+
+Fig. 1: (a) – Schematic diagram of the experimental setup. (b) – This figure is drawn to 
+
+facilitate the understanding of the calculations. 
+
+We assume that the magnet oscillates in the magnetic east -west direction and that it 
+
+never crosses the edges of the aluminium plate .
+
+If v
+
+ stands for the relative velocity of the aluminium plate with respect to the magnet, then 
+
+the effective value of the electric field at P is ( )
+
+ˆˆ ˆ.eff 
+
+dx dx v B i Bk Bj E dt dt 
+
+   =  = −  − = −       
+
+ 
+
+(2) 
+
+where x is the displacement of the centre of the bob (disc magnet) .
+
+The i nduced current density is ,eff j E
+
+## =
+
+  where σ is the electrical conductivity of aluminium. 
+
+We note that a cylindrical region appears under the shadow with the volume which is a 
+
+fraction ( f) of the volume element ,ba2
+
+ (b = thickness of aluminium plate ). More generally, 
+
+one may assume, 1. f  The force on the volume element is ( )
+
+iBdt dx bakBjBdt dx baBjbaF ˆ)ˆ(ˆ 2222 =−−==
+
+
+
+(3) 
+
+The force of reaction on the magnet, which produces the braking effect, is, therefore ,2 2 ˆ ˆ.mag 
+
+dx dx F a b B i idt dt 
+
+    = −  −       
+
+
+
+(4) 
+
+Here, the expression 2 2
+
+a b B
+
+  is written as  .
+
+Ignoring air resistance, t he e quation of motion of the magnet when suspended by a weightless 
+
+strip, is: 422 0, 
+
+d x dx mgx m dt dt l
+
++  + =
+
+(5) 
+
+where m is the mass of the magnet, g is strength of the Earth's gravitational field and l is the 
+
+length of the suspension strip. 
+
+If the mass ( sm ) of the suspension strip is not negligible, then it is better to first write the 
+
+equation of motion in terms of the angular displacement  𝜃  of the suspended system from its 
+
+equilibrium position. This equation is 
+
+Or ,0sin 23 22
+
+= +++ +
+
+gmmdt dldt dlmm ss
+
+(6) 
+
+where we have assumed that the strip has a uniform value of mass per unit length. 
+
+When  𝜃  is small, we may write,  𝑠𝑖𝑛𝜃 = 𝑥  
+
+> 𝑙
+
+≈ 𝜃 . Consequently , the equation of motion 
+
+becomes 0)2()3( 22
+
+=++++ lgx mmdt dx dt xdmm
+
+> ss
+
+
+
+We may rewrite this equation as 02 2022
+
+=++ xdt dx dt xd
+
+ (7) 
+
+with 32 smm += ;lgmmmm
+
+> ss
+
+++=
+
+3220
+
+ .
+
+The solution of Eq. (7) can be written as ( cos sin ) ,tx C t D t e 
+
+−= +
+
+where 220
+
+−= .
+
+Recalling the value of  , we note that smmBba
+
++= 3.23 22
+
+##  (with 30 24 PrMB = ). (8) 
+
+When air resistance is also taken into account, the total damping coefficient is 
+
+𝛼 = 𝛼 𝑒𝑚 + 𝛼 𝑎𝑖𝑟 , (9) 
+
+where we have assumed that the air resistance is proportional to the velocity of the disc. 
+
+Here ,sem mm += 3.23
+
+
+
+(10) 
+
+As  𝛼 𝑒𝑚  falls off very quickly with distance ( d) of the magnet from the aluminium sheet, s o, 
+
+for large d, 𝛼 ≈ 𝛼 𝑎𝑖𝑟 .
+
+So, the amplitude ( R) of oscillation falls off with time ( t) as √𝐶 2 + 𝐷 2𝑒 −𝛼 𝑎𝑖𝑟 𝑡 .
+
+Thus , ln 𝑅 ≈ −𝛼 𝑎𝑖𝑟 𝑡 + constant . (11) 
+
+From a graph of  ln (𝑅 ) against t, the value of  𝛼 𝑎𝑖𝑟  can be determined. 2 22 22 sin 03 2
+
+> ss
+
+m l d d lml l ml m gdt dt 
+
+   + + + + =     5
+
+On the other hand, for small d, the graph of  ln 𝑅  versus t has the equation 
+
+ln 𝑅 ≅ −(𝛼 𝑒𝑚 + 𝛼 𝑎𝑖𝑟 )𝑡 + constant . (1 2)
+
+Knowing the value of  𝛼 𝑎𝑖𝑟 , the value  𝛼 𝑒𝑚  can, therefore, be readily ascertained following 
+
+Eq. (9) .
+
+From the Eq. ( 10 ) for the EM damping coefficient we have 
+
+𝛼 𝑒𝑚 1/3 ∝ 1
+
+𝑟 𝑃 2
+
+or  𝛼 𝑒𝑚 −1/3 ∝ 𝑟 𝑃 2 (= 𝑑 2 + 𝑎 2) (1 3)
+
+So , we expect that the experimental data will yield: 
+
+𝛼 𝑒𝑚 −1/3 ∝ 𝑑 2 + constant . (14) 
+
+Experiment and Results 
+
+Fig. 1a shows a wooden strip (length 94.0 cm, breadth 2.2 0 cm, depth 0.8 0 cm) 
+
+suspended from a stout iron pin . A small ferrite di sc magnet (diameter and width being 1.80 
+
+cm and 0.4 8 cm, respectively) is attached at the lower end of the strip. The magnet is orient ed 
+
+in the north -south direction of the earth's magnetic field and is free to oscillate in the east -
+
+west direction. In this case, the axis of the magnetic dipole (associated with the disc magnet) 
+
+remains parallel to the horizontal component of the geomagnetic field. Thus, no torque due to 
+
+the geomagnetic field acts on the disc. So, the disc moves in the vertical plane defined by the 
+
+east -west direction. In front of the magnet, an aluminium sheet is place d vertically so that the 
+
+distance ( d) between the magnet and the aluminium plate always remains constant during the 
+
+oscillations (amplitude nearly 1 cm) of the magnet. In this connection, we note that t he 
+
+assumption of uniform magnetic field over the shadow region is certainly an approximation .
+
+We have measured the distance between the magnet and aluminium plate by a brass made 
+
+slide -calliper s of 0.01 cm accuracy. 
+
+A smartphone in video mode is placed on a small stand in front of the lower end 
+
+of the oscillator. Two small dashes are marked on the strip for calibration. Now, the oscillator 
+
+is allowed to oscillate, and the smartphone records the oscillations with a frame rate of 60 
+
+frames per second. The recorded video files are transferred to a laptop and analyzed using the 
+
+‘Tracker’ software [2 9].
+
+Fig. 2: (a) - Study of the recorded video using ‘Tracker’ software and plot of damping profile, 
+
+(b) – Zoomed -in version of the damping profile. 
+
+# (b)6
+
+By opening the video in the ‘Tracker’ application, we have calibrated the coordinates 
+
+by placing the value of the distance between the two dots drawn on the wooden strip in the 
+
+desired locations of the software. Next, we have selected the appropriate coordinates by 
+
+setting the origin at the equilibrium position of the pendulum. By locating the lower black dot 
+
+and using autotrack to follow the dot, the time vs displacement ( x-direction) graph is 
+
+obtained. Manually identifying the coordinates of the maximum displacement (amplitude), 
+
+we have recorded the time versus amplitude data. Subsequently, the graph of the natural 
+
+logarithm of amplitude (ln R) with time ( t) is plotted to determine the slope of the graph using 
+
+linear fitting. We have computed the total damping coefficient ( α) from the slope. In order to 
+
+determine the damping coefficient in air we have removed the aluminium plate from behind 
+
+the magnet. The same procedure has been repeated us ing a wooden board as a substitute for 
+
+the aluminium plate and the value of the damping coefficient in air ( αair ) is obtained as 0.0029 
+
+s-1. As we have mentioned above, α is the sum of the damping coefficient in air ( αair ) and the 
+
+EM damping coefficient ( αem ) under open -air conditions. We determine the value of αem 
+
+using the relation (Equation (9)) between α, αair , and αem . We have tabulated readings (see 
+
+Table I) for six different distances ( d) measured from the aluminium plate to the centre of 
+
+gravity of the magnet. For a particular value of d, we have repeated the experiment five 
+
+times. The ln R vs t graph for determining αair and one representative ln R vs t graph (when d =
+
+0.425 cm ) for the computation of αem are shown in Fig. 3a and Fig. 3b. 
+
+Fig. 3: (a) - ln R vs t plot to determine αair , (b) αem when d = 0.42 5( 0.43 ?) cm .        
+
+> Fig. 4: (𝛼 em )−1
+> 3vs d2plots with error bars : (a) -for aluminum plate; (b) -for copper plate .
+
+7
+
+Table I 
+
+Table for distance ( d) vs total damping coefficient ( α) and EM damping coefficient (𝛼 𝑒𝑚 )
+
+(Note that the damping coefficient in air ( αair ) = 0.0 029 s-1)
+
+d (cm)  d2(cm 2) α(s -1) αem (s -1) (𝛼 em )− 1
+
+> 3
+
+(s1
+
+> 3
+
+) Average αem (s -1)
+
+0.42  0. 1764 
+
+0.3722  0.3693  1.3938 
+
+0.3690 
+
+±0.0074 
+
+±0.0004 
+
+0.3713  0.3684  1.3950 
+
+0.3723  0.3694  1.3937 
+
+0.3708  0.3679  1.3956 
+
+0.3731  0.3702  1.3927 
+
+0.5 5 0.30 25 
+
+0.2733  0.2704  1.5464 
+
+0.2700 
+
+±0.0053 
+
+±0.0004 
+
+0.2720  0.2691  1.5489 
+
+0.2729  0.2700  1.5472 
+
+0.2724  0.2695  1.548 2
+
+0.2741  0.2712  1.5449 
+
+0.70  0.49 00 
+
+0.1758  0.1729  1.7950 
+
+0.1731 
+
+±0.0032 
+
+±0.0002 
+
+0.1755  0.1726  1.7960 
+
+0.1766  0.1737  1.7922 
+
+0.1763  0.1734  1.793 3
+
+0.1756  0.1727  1.7957 
+
+0.7 9 0.61 41 
+
+0.1341  0.1312  1.96 80 
+
+0.1315 
+
+±0.0023 
+
+±0.0001 
+
+0.1345  0.1316  1.96 60 
+
+0.1346  0.1317  1.965 5
+
+0.1345  0.1316  1.96 60 
+
+0.1341  0.1312  1.96 80 
+
+0.89  0.79 21 
+
+0.0939  0.0910  2.2232 
+
+0.0915 
+
+±0.0020 
+
+±0.0002 
+
+0.0952  0.0923  2.212 8
+
+0.0943  0.0914  2.2 200 
+
+0.0939  0.0910  2.2232 
+
+0.0946  0.0917  2.217 6
+
+0.96  0.9 216 
+
+0.0784  0.0755  2.3660 
+
+0.0755 
+
+±0.0020 
+
+±0.0001 
+
+0.0783  0.0754  2.367 1
+
+0.0786  0.0757  2.3639 
+
+0.0780  0.0751  2.3702 
+
+0.0785  0.0756  2.36 50 8
+
+Based on the data and results in Table I we have plotted Fig. 4(a) which clearly 
+
+displays the linear variation of  (𝛼 em )− 1 
+
+> 3
+
+with  d2, as expected from Eq. (13).  To test the 
+
+validity of the method, we have repeated the experiment using a copper plate in stead of the 
+
+aluminium plate , and the  variation of  (𝛼 em )− 1 
+
+> 3
+
+with  d2 is shown in the Fig. 4(b). A similar 
+
+variation is observed for the copper plate, like that shown in Fig. 4(a) for the aluminium 
+
+plate.  The value of the constant term (0.87 cm 2 for aluminium and 0.73 cm 2 for copper) in 
+
+Eq. (14) can be estimated from Fig. 4(a) , and it nearly matches the actual value of a2 (0.81 
+
+cm 2). In Table 1, for the aluminium plate, the last column shows the average values of  𝛼 em 
+
+for the corresponding values of d along  with the instrumental uncertainty and statistical error. 
+
+It is clearly noticeable  that the contribution of instrumental uncertainty in computing  𝛼 em 
+
+becomes less and gets a stable value with the increase in d.
+
+Conclusion: 
+
+In this paper, we describe an experiment to explore how the presence of a conducting 
+
+plate like an aluminium sheet affects the motion of an oscillating disc magnet, explicitly 
+
+focusing on electromagnetic interactions. Using video analysis with 'Tracker' software , we 
+
+have added a modern and quantitative aspect to our investigation. We have noted the 
+
+decrease in the oscillation amplitude of the magnet -bearing pendulum due to air damping and 
+
+EM damping using Tracker software. First, we have determined the value of the damping 
+
+coefficient in air ( αair ) in the presence of the wooden board. Finally, we have verified the 
+
+theoretically anticipated variation of the EM damping coefficient for different distances 
+
+between the aluminium plate and the oscillating magnet. To establish the robustness of the 
+
+method , we have repeated the experiment using a copper plate and obtained a variation of the 
+
+EM damping coefficient with the distance between the metallic plate and the magnet  that is 
+
+similar  to the one shown for the aluminium plate . This experiment not only offers a hands -on 
+
+approach but also covers important concepts such as damped oscillation, electromagnetic 
+
+damping, Lenz's law, and eddy currents. 
+
+Acknowledgement: We thankfully acknowledge Dr. Subhash Chandra Samanta and Dr. 
+
+Syed Minhaz Hossain for their valuable suggestions during the experiment .
+
+References :
+
+[1] Carpena P 1997 Velocity measurements through magnetic induction Am. J. Phys . 65 
+
+135 –140 
+
+[2] Ivanov D T 2000 Another way to demonstrate Lenz’s law Phys. Teach . 38 48 -49. 
+
+[3] D’Anna M and Corridoni T 2020 Magnetic Force from Terminal Velocity Phys. 
+
+Teach. 58 642 -645 
+
+[4] S F Petru and Peppard T 2012 Lenz’s Law Demonstration Using an Ultrasound 
+
+Position Sensor Phys. Teach. 50 344 -346 
+
+[5] Wei Y 2012 A simple demonstration of terminal velocity: An experimental approach 
+
+based on Lenz's law Phys. Educ . 47 265 -266 
+
+[6] Pathare S R, Huli S, Lahane R , and Sawant S 2014 Low -cost timer to measure the 
+
+terminal velocity of a magnet falling through a conducting pipe Phys. Teach . 52 160 -164 9
+
+[7] Zhang C G and Hu S F 2002 Another way to demonstrate Lenz’s law Phys. Teach . 40 
+
+249 -249 
+
+[8] Wood L T, Rottmann R M , and Barrera R 2004 Faraday’s law, Lenz’s law, and 
+
+conservation of energy Am. J. Phys . 72 376 –380. 
+
+[9] Pelesko J A, Cesky M , and Huertas S 2005 Lenz’s law and dimensional analysis Am. 
+
+J. Phys. 73 37 –39 
+
+[10] Íñiguez J, Raposo V, Hernández -López A, Flores A G , and Zazo M 2004 Study of 
+
+the conductivity of a metallic tube by analysing the damped fall of a magnet Eur. J. 
+
+Phys. 25 593 –604 
+
+[11 ] Roy M K, M. K. Harbola M K , and Verma H C 2007 Demonstration of Lenz’s law: 
+
+Analysis of a magnet falling through a conducting pipe Am. J. Phys . 75 728 –730 
+
+[12] Donoso G, Ladera C L , and Martín P 2009 Magnet fall inside a conductive pipe: 
+
+motion and the role of the pipe wall thickness Eur. J. Phys . 30 855 –869 
+
+[13] Behroozi F 2018 Weighing a magnet as it falls with terminal velocity through an 
+
+aluminium pipe Phys. Teach . 56 475 -477 
+
+[14] Marín -Sepulveda C F, Castro -Palacio J C, Giménez M H , and Monsoriu J A 2023 
+
+Acoustic determination of g by tracking a freefalling body using a smartphone as a 
+
+‘sonar’ Phys. Educ. 58 035011 
+
+[15] Pal S K , Sarkar S, and Panchadhyayee P 2024 Determination of the magnetic 
+
+moment of a magnet by letting it fall through a conducting pipe Phys. Educ . 59 015022 
+
+[16] Syed M and Nuessle N 2019 What a metal pipe can teach you about magnetism 
+
+Phys. Teach . 57 330 -333 
+
+[1 7] Íñiguez J, Raposo V, Flores A G and Zazo M, and Hernández -López A 2005 
+
+Magnetic levitation by induced eddy currents in non -magnetic conductors and 
+
+conductivity measurements Eur. J. Phys . 26 951 –957 
+
+[18] Singh A, Mohapatra Y N , and Kumar S 2002 Electromagnetic induction and 
+
+damping: Quantitative experiments using a PC interface Am. J. Phys . 70 424 –427. 
+
+[19] Levin Y, da Silveira F L , and Rizzato F B 2006 Electromagnetic braking: A simple 
+
+quantitative model Am. J. Phys. 74 815 -817 
+
+[20] Donoso G, Ladera C L , and Martin P 2011 Damped fall of magnets inside a 
+
+conducting pipe Am. J. Phys . 79 193 –200 
+
+[2 1] Irvine B, Kemnetz M, Gangopadhyaya A , and Ruubel T 2014 Magnet traveling 
+
+through a conducting pipe: A variation on the analytical approach Am. J. Phys . 82 273 –
+
+279 
+
+[2 2] Hinrichsen P F 2019 Acceleration, Velocity, and Displacement for Magnetically 
+
+Damped Oscillations Phys. Teach . 57 250 -253 
+
+[2 3] Ha H J , Jang T, and Sohn S H 2022 Currents induced in a circular loop by an 
+
+oscillating magnet Phys. Educ . 57 065013 
+
+[2 4] Jang T , Ha H J , Go J H , and Sohn S H 2023 Theory and experiment for a solenoid 
+
+based currents and the magnetic drag Eur. J. Phys . 44 045201 
+
+[2 5] Seo Y K , Jang T, Ha H J , and Sohn S H 2023 Analysis of the current induced by the 
+
+motion of a magnet pendulum with a large initial angle Eur. J. Phys . 44 015204 
+
+[26] Kraftmakher Y 2007 Experiments with a magnetically controlled pendulum Eur. J. 
+
+Phys. 28 1007 –20 10 
+
+[27] Ladera C L, Donoso G and Martin P, 2014 Spring -magnet oscillations through a 
+
+bored conductive plate Lat. Am. J. Phys. Educ . 8 109 -117 
+
+[28] D’Anna, T. Corridoni and H.U. Fuchs, 2014 Damped Mechanical Oscillator: 
+
+Experiment and Detailed Energy Analysis, Phys. Teach ., 52 88 –90 
+
+[29]  https://physlets.org/tracker/

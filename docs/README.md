@@ -6,26 +6,32 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-05-05
-- 运行时间：2026-05-05 20:36:15 UTC
+- 最新运行日期：2026-05-06
+- 运行时间：2026-05-06 20:36:28 UTC
 - 运行状态：成功
-- 本次总论文数：1
+- 本次总论文数：3
 - 精读区：0
-- 速读区：1
+- 速读区：3
 
 ### 今日简报（AI）
-今日聚焦冗余驱动并联机构的受力分析，深入探讨其内部载荷与相互作用力的复杂关系。
-研究明确了冗余驱动在调节机构内力分布中的关键作用，为提升并联机器人的作业精度提供了理论支撑。
-建议读者关注如何通过冗余设计优化机器人动力学性能，以应对高负载、高精度的工业挑战。
-- 详情：[/202605/05/README](/202605/05/README)
+- 今日共生成 3 篇推荐（精读 0 篇，速读 3 篇）
+- 速读：《Study of the effect of electromagnetic damping force on a magnet oscillating near a non-ferromagnetic conducting plate》（7.0/10）, 《Adaptive Constraint-Lifting Control with Stability and Invariance Guarantees》（6.0/10）, 《Determination of the magnetic moment of a magnet by letting it fall through a conducting pipe》（6.0/10）
+- 这些结果覆盖了当下较热的方向，建议先看精读区论文的关键问题与方法。
+- 详情：[/202605/06/README](/202605/06/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Interaction Forces and Internal Loads in Parallel Manipulators with Actuation Redundancy](/202605/05/2604.27095v1-interaction-forces-and-internal-loads-in-parallel-manipulators-with-actuation-redundancy)  
+1. [Study of the effect of electromagnetic damping force on a magnet oscillating near a non-ferromagnetic conducting plate](/202605/06/2605.03286v1-study-of-the-effect-of-electromagnetic-damping-force-on-a-magnet-oscillating-near-a-non-ferromagnetic-conducting-plate)  
+   标签：评分：7.0/10、query:em-force
+   evidence：振荡磁体中的电磁阻尼与涡流效应
+2. [Adaptive Constraint-Lifting Control with Stability and Invariance Guarantees](/202605/06/2604.24984v1-adaptive-constraint-lifting-control-with-stability-and-invariance-guarantees)  
    标签：评分：6.0/10、query:em-force
-   evidence：冗余驱动器中合成关节转矩矢量和相互作用力的方法
+   evidence：具有参数不确定性的非线性系统自适应跟踪控制
+3. [Determination of the magnetic moment of a magnet by letting it fall through a conducting pipe](/202605/06/2605.01530v1-determination-of-the-magnetic-moment-of-a-magnet-by-letting-it-fall-through-a-conducting-pipe)  
+   标签：评分：6.0/10、query:em-force
+   evidence：磁体与导电管之间的相互作用产生粘性（涡流效应相关）
 
 
 <div class="dpr-home-promo-card">

@@ -1,0 +1,125 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-05-06T20:35:32.670351+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2605.03286v1",
+      "title": "Study of the effect of electromagnetic damping force on a magnet oscillating near a non-ferromagnetic conducting plate",
+      "abstract": "We have designed an experiment that involves studying the effects of a conducting plate on the motion of an oscillating disc magnet. We have employed the video analysis method by Tracker software to investigate the variation of electromagnetic damping coefficient with distance between the plate and the magnet. This experiment can indeed serve as a valuable educational tool for undergraduate students, covering topics such as damped oscillation, electromagnetic damping, Lenz's law, and eddy currents.",
+      "authors": [
+        "Sanjoy Kumar Pal",
+        "Soumen Sarkar",
+        "Pradipta Panchadhyayee",
+        "Debapriyo Syam"
+      ],
+      "primary_category": "physics.ed-ph",
+      "categories": [
+        "physics.ed-ph"
+      ],
+      "published": "2026-05-05T02:17:11+00:00",
+      "link": "https://arxiv.org/pdf/2605.03286v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "electromagnetic damping and eddy currents in oscillating magnets",
+      "llm_evidence_cn": "振荡磁体中的电磁阻尼与涡流效应",
+      "llm_evidence": "振荡磁体中的电磁阻尼与涡流效应",
+      "canonical_evidence": "振荡磁体中的电磁阻尼与涡流效应",
+      "llm_tldr_en": "Investigates electromagnetic damping and eddy current effects on magnets near conducting plates.",
+      "llm_tldr_cn": "研究了导电板附近磁体的电磁阻尼效应和涡流影响。",
+      "llm_tldr": "研究了导电板附近磁体的电磁阻尼效应和涡流影响。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "eddy current effects in electromagnetic actuators dynamic modeling",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.24984v1",
+      "title": "Adaptive Constraint-Lifting Control with Stability and Invariance Guarantees",
+      "abstract": "This paper develops an adaptive tracking controller for a class of nonlinear systems with parametric uncertainty subject to state constraints. The system is characterized by a strict-feedback structure with unknown parameters entering both the drift and input channels. The objective is to design a control law, without knowledge of the unknown parameters, that guarantees closed-loop stability, achieves desired tracking performance, and ensures forward invariance of a prescribed safe set. An adaptive constraint-lifting framework is developed that transforms the constrained control problem into an equivalent unconstrained representation, enabling recursive controller synthesis in lifted coordinates. The proposed design integrates parameter estimation with constraint enforcement without requiring online optimization. A Lyapunov-based stability analysis, combined with the Barbashin-Krasovskii-LaSalle invariance principle, establishes boundedness of all closed-loop signals, asymptotic convergence of the system states to the desired equilibrium, and forward invariance of the safe set under uncertainty. In particular, the analysis characterizes the largest invariant set of the closed-loop system and guarantees convergence despite unknown parameters. The effectiveness of the proposed approach is demonstrated on a DC motor system with uncertain parameters, illustrating accurate tracking performance and safe operation.",
+      "authors": [
+        "Jhon Manuel Portella Delgado",
+        "Ankit Goel"
+      ],
+      "primary_category": "math.OC",
+      "categories": [
+        "math.OC"
+      ],
+      "published": "2026-04-27T20:40:23+00:00",
+      "link": "https://arxiv.org/pdf/2604.24984v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "adaptive tracking control for nonlinear systems with parametric uncertainty",
+      "llm_evidence_cn": "具有参数不确定性的非线性系统自适应跟踪控制",
+      "llm_evidence": "具有参数不确定性的非线性系统自适应跟踪控制",
+      "canonical_evidence": "具有参数不确定性的非线性系统自适应跟踪控制",
+      "llm_tldr_en": "Develops adaptive tracking for nonlinear systems with constraints, applicable to precision actuator control.",
+      "llm_tldr_cn": "开发了具有约束的非线性系统自适应跟踪控制，可应用于执行器的精密控制。",
+      "llm_tldr": "开发了具有约束的非线性系统自适应跟踪控制，可应用于执行器的精密控制。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.01530v1",
+      "title": "Determination of the magnetic moment of a magnet by letting it fall through a conducting pipe",
+      "abstract": "A novel method is proposed to determine the magnetic moment of a magnet by studying its free-falling motion inside a non-ferromagnetic and conducting pipe. The dynamics of a neodymium magnet falling inside a pipe is tracked by using sound waves of a fixed frequency generated by one smartphone and detecting acoustic resonance in the pipe simultaneously by the other. This tracking technique leads to the measurement of the terminal velocity of the falling magnet, as the interaction between the magnet and the conducting pipe creates viscosity artificially. The result obtained is verified by studying torsional oscillations of the suspended magnet and conforms to the reported value in such a low-cost setup. The experiment is designed with concepts integrating the domains of general physics, electromagnetic induction, and acoustics.",
+      "authors": [
+        "Sanjoy Kumar Pal",
+        "Soumen Sarkar",
+        "Pradipta Panchadhyayee"
+      ],
+      "primary_category": "physics.ed-ph",
+      "categories": [
+        "physics.ed-ph"
+      ],
+      "published": "2026-05-02T16:54:15+00:00",
+      "link": "https://arxiv.org/pdf/2605.01530v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "interaction between magnet and conducting pipe creating viscosity",
+      "llm_evidence_cn": "磁体与导电管之间的相互作用产生粘性（涡流效应相关）",
+      "llm_evidence": "磁体与导电管之间的相互作用产生粘性（涡流效应相关）",
+      "canonical_evidence": "磁体与导电管之间的相互作用产生粘性（涡流效应相关）",
+      "llm_tldr_en": "Determines magnetic moment by analyzing a magnet falling through a conducting pipe via eddy current effects.",
+      "llm_tldr_cn": "通过分析磁体在导电管中下落的涡流效应来确定磁矩。",
+      "llm_tldr": "通过分析磁体在导电管中下落的涡流效应来确定磁矩。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "eddy current effects in electromagnetic actuators dynamic modeling",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
