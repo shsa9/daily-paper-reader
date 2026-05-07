@@ -1,0 +1,412 @@
+Title: Quasi-Static Control of Discrete Cosserat Rod
+
+URL Source: https://arxiv.org/pdf/2605.01395v1
+
+Published Time: Tue, 05 May 2026 00:37:01 GMT
+
+Number of Pages: 6
+
+Markdown Content:
+# Quasi-Static Control of Discrete Cosserat Rod 
+
+Srishti Siddharth 
+
+Centre for Systems and Control Indian Institute of Technology, Bombay 
+
+Mumbai, India 214230005@iitb.ac.in 
+
+Abstract —In this paper, we design feedback control laws for soft robots modelled using the Cosserat rod, which is spatially discretised using the Piecewise Constant Strain (PCS) approach. The PCS approach transforms the nonlinear PDEs describing the Cosserat rod to a system of nonlinear ODEs. This simplification results in a model describing soft robots which is similar to the serial rigid-link manipulators. We design feedback control laws for the quasi-static PCS model by using the external end-effector wrench as control input. The control laws are designed based on state-feedback linearisation in strain and task spaces. An extensive set of numerical results demonstrates the performance of the control laws for end-effector trajectory tracking and shape control of soft robots. 
+
+Index Terms —Cosserat rod, Piecewise Constant Strain model, Quasi-Static Control, Soft Robots. 
+
+I. I NTRODUCTION 
+
+# IN many engineering and scientific applications, geomet-rically exact rods are used to obtain accurate models for highly deformable slender rods. Such flexible structures find applications in continuum robots [1], [2], DNA strands experi-encing various mechanical forces [3] and flexible microrobots for endovascular surgery [4]. The geometrically exact rod [5] or the Cosserat rod provides a mathematically elegant and high-fidelity model for such slender rods undergoing large deformations, unlike Euler-Bernoulli and Timoshenko beam theories, which account for small deformations. The variational formulation of the geometrically exact rod and its numerical aspects were presented in the extensive work of Simo et al. [6]–[8]. The book by Antman [5] presents the theory of planar and spatial geometrically exact rods. The modern treatment of geometrically exact rods is directed towards algorithm design and implementation based on the special Cosserat rod theory, which describes the motion of the rod using the position of its centerline and the orientation of the rigid cross-sections attached at each material point on the centerline. The soft robotics community has proposed various numer-ical models based on the Cosserat rod theory. The Piecewise Constant Curvature (PCC) model [9], [10] assumes that a continuum robot can be represented by a series of connected circular arcs, which is not not valid in case of out-of-plane external loads. The Piecewise Constant Strain (PCS) model introduced by Renda et al. [11]–[13], assumes that the soft robot consists of multiple sections, each with constant linear 
+
+> The author’s research has been supported by the Prime Minister’s Research Fellowship (PMRF), funded by the Government of India.
+
+and angular strains. The resulting geometric structure of the model is similar to the traditional rigid-link manipulators, thus unifying the theory of rigid-link and soft robots [14], [15]. This allows us to extend the control design theory developed for rigid-link manipulators to the soft robots. Other strain based models include the Geometric Variable Strain (GVS) model [16] and the Piecewise Linear Strain (PLS) model [17], which include discrete statics and dynamics models of the Cosserat rod based on strain basis functions. Several model-based controllers have been proposed for soft robots, which are inherently underactuated. Lyapunov function-based control laws have been developed in [18] and [19] for dynamics of soft robots. An inverse kinematics-based controller for the GVS model has been developed in [20]. Finally, a robust control law for the PLS static model has been proposed in [21]. For the sake of conciseness, we do not provide an extensive literature survey on control of soft robots. In this paper, we will focus on design of control laws for the quasi-static PCS model. Thus, the end-effector trajectory tracking and shape control tasks will be achieved by considering slow motion of the robot to satisfy the conditions for quasi-static operation. 
+
+Contributions: The contribution of the paper is to primarily develop the model-based control theory of soft robots. This is in contrast to the modern development of soft robots which focuses on learning-based control strategies. We formulate the inverse kinematics for soft robots, which provides the various strains for a given end-effector pose of the robot. We then derive simple and effective control schemes based on state-feedback linearisation in strain and task spaces, while remaining within the framework of the Cosserat rod theory. We present three numerical experiments to validate the control approaches. 
+
+Outline: In Section II, we present a brief review of the statics of the Cosserat rod. In Section III, we recall the theory of the PCS static model. In Section IV, we propose the inverse kinematics algorithm, followed by the design of feedback control laws in Section V. In Section VI, we present and discuss three numerical experiments to validate our control design approach. Section VII includes concluding remarks and future work. 
+
+> arXiv:2605.01395v1 [eess.SY] 2 May 2026
+
+II. S TATICS OF THE COSSERAT ROD 
+
+A. Kinematics of the Rod 
+
+The Cosserat rod theory accounts for stretching, shearing, bending and twisting strains of a rod. Let L be the length of the undeformed rod and let S ∈ [0 , L ] be the arc-length parameter which is used to identify the material points on the centerline of the rod. The configuration of the rod is described with respect to an inertial frame {e1, e 2, e 3}, where 
+
+e1, e 2, e 3 are the standard unit vectors in R3. The undeformed or reference configuration of the rod is assumed to be the one in which the rod is lying in a straight configuration along the e1 axis. The configuration of the rod at any time instant is completely described by the position of the material points lying on the centerline, denoted by x(S, t ) ∈ R3 and the orientation of the cross-sections attached to these points, denoted by R(S, t ) ∈ SO (3) . Thus, the configuration of the rod at a time instant t, defined by the map g : [0 , L ] → SE (3) ,is given as 
+
+g(S, t ) = 
+
+R(S, t ) x(S, t )0T 1
+
+
+
+(1) for all S ∈ [0 , L ]. In addition to the configuration described in (1), the kinematics of the rod is described by its strains and velocities. The velocity twist, expressed in the body-fixed frame (or the material frame) of the rod is given by 
+
+bη(S, t ) = g−1(S, t ) ∂g ∂t (S, t ) = g−1(S, t ) ˙ g(S, t ), (2) where 
+
+η(S, t ) = ωT (S, t ) γT (S, t )T ∈ R6, (3) 
+
+c(·) : R6 → se (3) is the hat map, γ(S, t ) ∈ R3 and ω(S, t ) ∈
+
+R3 are the linear and angular velocities, respectively. Similarly, the strain twist, expressed in the material frame, is given by 
+
+bξ(S, t ) = g−1(S, t ) ∂g ∂S (S, t ) = g−1(S, t )g′(S, t ), (4) where 
+
+ξ(S, t ) = κT (S, t ) V T (S, t )T ∈ R6, (5) 
+
+V (S, t ) ∈ R3 and κ(S, t ) ∈ R3 are the linear and angular strains, respectively. The first component of V (S, t ) represents the stretching strain along e1, and the remaining components represent the shearing strains along e2 and e3 axes, respec-tively. Similarly, the first component of κ(S, t ) represents the twisting strain about the e1 axis, and the remaining components represent bending strains about e2 and e3 axes, respectively. 
+
+Fig. 1: Deformation of the three-dimensional Cosserat rod discretised by the PCS approach. 
+
+Remark 1: For the sake of concise notation, the space and time dependence of the quantities described in (1) - (5) will be sometimes ignored. The relationship between velocity in (3) and strain in (5) is given by 
+
+η′ = ˙ξ − ad ξ η (6) due to the equality of the mixed partial derivatives, i.e., ( ˙ g)′ =˙(g′). Here, ad ξ is the adjoint map for the strain twist vector described in [13]. 
+
+B. Statics of the rod 
+
+The strain potential energy is stored in the rod due to various modes of deformation. Thus, the strain potential energy of the rod at time instant t is given as 
+
+U(t) = 
+
+Z L
+
+> 0
+
+12 (ξ(S) − ξ0)T Σ( S)( ξ(S) − ξ0) dS, (7) where ξ0 = 0 0 0 1 0 0T is the strain for the reference configuration and Σ( S) =
+
+diag (GJ x(S), EI y (S), EI z (S), EA (S), GA (S), GA (S)) 
+
+is the stiffness matrix of the rod, E is the Young’s modulus and G is the shear modulus of the rod. The relation between the moduli is given by G = E 
+
+> 2(1+ ν)
+
+where ν is the Poisson’s ratio of the rod [5]. The cross-section of the rod at S is denoted by A(S)
+
+and the second moment of inertia is given by I(S) =
+
+diag (Jx(S), J y (S), J z (S)) . For a circular cross-section, we have I(S) = diag (2 , 1, 1) A2(S)4π . Assuming a linear visco-elastic constitutive relation, the material stress, also called the wrench of internal elastic forces, is given as 
+
+Fi(S, t ) = Σ( S)( ξ(S, t ) − ξ0) + d ˙ξ(S, t ), (8) where d = diag (Jx, 3Jy , 3Jz , 3A, A, A )vs and vs is the shear viscosity modulus. The internal elastic wrench can be written as Fi = M Ti N Ti
+
+T , where Mi, N i ∈ R3 are the stresses, expressed in the rod’s fixed frame due to angular and linear strains, respectively. Let Fe = mTe nTe
+
+T be the external distributed wrench on the rod, where me, n e ∈ R3 are the external distributed moment and force, respectively, expressed in the rod’s fixed frame. Thus, the quasi-static equation of mo-tion of the rod, derived by applying the Lagrange-D’Alembert principle, is given as 
+
+F ′ 
+
+> i
+
++ ad ∗ 
+
+> ξ
+
+Fi + Fe = 0 , (9) where the coadjoint map ad ∗ 
+
+> ξ
+
+for the strain twist vector defined in [13]. In this paper, we consider the external dis-tributed load due to gravity. Thus, the distributed wrench due to gravity is given as Fe = M Ad −1 
+
+> g
+
+G where M =
+
+diag (Jx, J y , J z , A, A, A )ρ is the screw inertia matrix, ρ is the mass density of the rod, G = 0 0 0 0 0 −9.81 T is the gravity twist w.r.t the inertial frame and Ad is the Adjoint map for SE (3) defined in [13]. III. D ISCRETE MODEL OF THE STATIC COSSERAT ROD :PCS APPROACH 
+
+In this section, we will consider the Piecewise Constant Strain (PCS) approach to discretise the Cosserat rod [13]. The rod is spatially discretised into sections with constant strains, which results in analytical integration of the equations describing the continuous space-time equation of motion of the Cosserat rod. 
+
+A. Discrete Kinematics of the Rod 
+
+Let us consider that the rod of undeformed length L has been discretised into N sections. Thus, S ∈ [0 , L ] is divided into N sections: [0 , L 1], [L1, L 2], ..., [LN −1, L N ]. According to the PCS approach, each section is assumed to have a constant strain, denoted by ξn for n = 1 , 2, ..., N . The spatial evolution of the rod at time instant t is described by 
+
+g′ = g ˆξ. (10) Based on the PCS approach, the solution of (10) for S ∈
+
+[Ln−1, L n] can be written as 
+
+g(S) = g(Ln−1)e(S−Ln−1) ˆξn = g(Ln−1)gn(S), (11) where the closed-form expression for gn(S) := e(S−Ln−1) is given in [13]. The pose at S ∈ [Ln−1, L n] can be found recursively from (11), which gives us the product of exponentials (PoE) formula for the PCS model as 
+
+g(S) = g(0) eL1 bξ1 e(L2−L1)bξ2 ...e (S−Ln−1)bξn . (12) The PoE formula (12) allows us to represent the Cosserat rod by ξn = 1 , ..., N , which can be thought of as joint twists. Thus, the joint or the strain vector for a discrete rod is given by 
+
+q = ξT 
+
+> 1
+
+ξT 
+
+> 2
+
+...ξ TN
+
+T ∈ R6N . (13) The velocity of the cross-section at S ∈ [0 , L ] can be computed by integrating (6) for a section [Ln−1, L n], i.e., 
+
+η′(S) = ˙ξn − ad ξn η(S), S ∈ [Ln−1, L n]. (14) Since ξn is constant at time instant t, therefore, (14) is a nonhomogeneous, linear matrix differential equation with constant coefficient, and it’s solution is given by 
+
+η(S) = Ad −1
+
+> gn(S)
+
+(η(Ln−1) + Tgn(S) ˙ξn), (15) where the closed-form expressions for Ad gn(S) and Tgn(S) are provided in [13]. 
+
+Assumption 1: In this paper, we will consider a cantilever rod. Thus, the boundary conditions at the base of the rod are given by 
+
+g(0) = I4, η(0) = 0 ∈ R3. (16) 
+
+Remark 2: Ik ∈ Rk×k denotes the k dimensional identity matrix. On computing η(S) recursively from (15), we get 
+
+η(S) = J(S, q ) ˙ q, (17) where the closed-form expression for the geometric Jacobian, 
+
+J(S, q ) ∈ R6×6N is given in [13]. 
+
+B. Discrete statics of the rod 
+
+The discrete statics can be obtained by converting (9) to the weak form and applying the piecewise costant strain assumption [13]. Thus, we have 
+
+D ˙q + K(q − q∗) = JT (L, q )Fext (L, t ) + N (q)G, (18) where q∗ = ξT 
+
+> 0
+
+ξT 
+
+> 0
+
+... ξT
+
+> 0
+
+T ∈ R6N , D =
+
+diag (l1d, l 2d, ..., l nd) ∈ R6N ×6N is the generalised damping matrix, K = diag (l1Σ, l 2Σ, ..., l nΣ) ∈ R6N ×6N is the gen-eralised stiffness matrix, ln for n = 1 , ..., N is the length of section n and N (q) ∈ R6N ×6 is the gravitational matrix [13]. The strain potential energy for the discrete rod is given by 
+
+Ud(t) = 12 (q − q∗)T K(q − q∗), (19) which can be obtained by applying the PCS assumption to (7). IV. I NVERSE KINEMATICS FOR THE DISCRETE ROD 
+
+The inverse kinematics (IK) problem is formulated as fol-lows: 
+
+Problem 1: Given the end-effector desired pose of the rod 
+
+gd(L) ∈ SE (3) , find the strain vector q ∈ R6N such that the forward kinematics in (12) is satisfied for S = L.Analogous to rigid-link serial manipulators, the inverse kine-matics problem for the PCS model admits non-unique so-lutions owing to the presence of kinematic redundancy. A numerical solution of the IK problem is obtained by using the Newton-Raphson method. The Newton-Raphson algorithm for the PCS model, similar to the one in [14] for rigid-link manipulators, is given as follows: 1) Initialisation: Consider the desired end-effector pose 
+
+gd(L) and an initial guess of the strain vector q0 ∈ R6N .Set i = 0 .2) Error computation: Evaluate the pose error bV =log( g−1(L)gd(L)) , where g(L) is evaluated by substi-tuting the strain vector qi at the ith iteration in (12) and log is the logaritmic map in SE (3) [14]. Let ϵ > 0 be the desired error tolerance. While ||V|| < ϵ :a) Update the strain vector: The strain vector at the next iteration is given by 
+
+qi+1 = qi + J†(L, q i)V, (20) where (·)† denotes the Moore-Penrose pseudoin-verse [14]. b) Increment i.V. Q UASI -S TATIC CONTROL 
+
+The shape regulation and end-effector pose tracking for the rod can be achieved by formulating the control problems in the strain space or the task space. We will discuss both control approaches in this section. 
+
+A. Strain space control 
+
+Let us consider a new strain vector ¯q = q − q∗. Thus, the discrete statics of the rod, given in (18), can be written as 
+
+˙¯q = A¯q + D−1u(¯ q, t ) + D−1N (¯ q)G, (21) where A = −D−1K and u(¯ q, t ) = JT (L, ¯q)Fext (L, t ).
+
+Remark 3: It should be noted that A is a diagonal, Hurwitz matrix since the diagonal matrices D−1 and K contain strictly positive elements. Therefore, in the absence of any external wrenches, the rod converges to the reference configuration. 
+
+Theorem 1: Consider the desired strain vector of the rod, denoted by qd(t) ∈ R6N . Given a symmetric, positive definite matrix ¯K ∈ R6N ×6N , the feedback control law 
+
+u(¯ q, t ) = D(− ¯K ¯e − A¯e − A¯qd + ˙ ¯qd) − N (¯ q)G, (22) applied to (21), renders the desired trajectory globally asymp-totically stable. Here, ¯e(t) = ¯ q(t) − ¯qd(t) is the strain error. 
+
+Proof: From (21), the error dynamics are given by 
+
+˙¯e = A¯e + D−1u(¯ q, t ) + D−1N (¯ q)G + A¯qd − ˙¯qd. (23) Consider the Lyapunov function 
+
+V (¯ e) = 12 ¯eT ¯e. (24) Thus, V (¯ e) > 0 for ¯q̸ = ¯ qd and V (¯ e) = 0 for ¯q = ¯ qd.On differentiating (24) with respect to time and substituting the statics given in (21) and the feedback control law in (22), we get ˙V (¯ e) = −¯eT ¯K ¯e. (25) Thus, ˙V (¯ e) < 0 for ¯q̸ = ¯qd and ˙V (¯ e) = 0 for ¯q = ¯qd,which ensures that the strain error converges to the origin asymptotically. 
+
+Remark 4: For set-point control, ˙¯qd = 0 .For a single-section PCS system, the end-effector external wrench is given by 
+
+Fext (L) = J−T (L, ¯q)u(¯ q, t ). (26) Similarly, for a discrete Cosserat rod with multiple PCS sections ( N > 1), the end-effector external wrench, computed in the least-squares sense, is given by 
+
+Fext (L, t ) = ( JT (L, ¯q)) †u(¯ q, t ). (27) 
+
+B. Task space control 
+
+The end-effector pose tracking control can also be designed by transforming the quasi-static system in (18) from the strain space to the task space coordinates. Let us consider the minimal coordinates y(t) =(r(t), x (L, t )) ∈ R6, where r(t) = a(t)θ(t) (a(t) ∈ R3) is the exponential representation of the orientation of the cross-section at S = L and x(L, t ) is the end-effector position. Then, we have 
+
+˙y =
+
+ ˙r
+
+˙x(L)
+
+
+
+= T (r, x (L), R (L)) 
+
+ω(L)
+
+γ(L)
+
+
+
+, (28) where T (r, x (L), R (L)) ∈ R6×6 is given as 
+
+T (r, x (L), R (L)) = 
+
+W −1(r) 00 R(L)
+
+
+
+, (29) where W (r) = I3 − 1−cos( || r|| ) 
+
+> || r|| 2
+
+˜r + || r||− sin( || r|| ) 
+
+> || r|| 3
+
+˜r2 and ˜(·) : 
+
+R3 → so (3) is the hat map [14] . On substituting η = J ˙q in (28) and the resulting expression in (18), we get 
+
+˙y = ¯A(¯ q)¯ q + ¯B(¯ q)Fext (L, t ) + ¯C(¯ q)G, (30) where ¯A(¯ q) = T (r, x (L), R (L)) J(L, ¯q)A ∈ R6×6N , ¯B(¯ q) = 
+
+T (r, x (L), R (L)) J(L, ¯q)D−1JT (L, ¯q) ∈ R6×6 and ¯C(¯ q) = 
+
+T (r, x (L), R (L)) J(L, ¯q)D−1N (¯ q) ∈ R6×6. The position of the tip of the rod can be written as x(L, t ) = P y (t), where 
+
+P = 03×3 I3
+
+ ∈ R3×6 is the projection operator. Thus, we have 
+
+˙x(L) = P ¯A(¯ q)¯ q + P ¯B(¯ q)Fext (L, t ) + P ¯C(¯ q)G. (31) 
+
+Theorem 2: Consider a time-varying desired trajectory of the position of the tip of the rod, denoted by xd(L, t ) ∈ R3.Given a symmetric, positive definite matrix ¯Kt ∈ R3×3 and assuming that ¯B(¯ q) is invertible, the feedback control law 
+
+Fext (L, t ) = ( P ¯B(¯ q)) †(−P ¯A(¯ q)¯ q − P ¯C(¯ q)G + ˙ yd − ¯Kte),
+
+(32) applied to (31) , renders the desired trajectory globally asymp-totically stable. Here, e(t) = x(L, t ) − xd(L, t ) is the position error of the tip of the rod. 
+
+Proof: From (31), the error dynamics are given by 
+
+˙e = P ¯A(¯ q)¯ q + P ¯B(¯ q)Fext (L, t ) + P ¯C(¯ q)G − ˙xd. (33) Consider a Lyapunov function 
+
+V (e) = 12 eT e. (34) Thus, V (e) > 0 for x(L)̸ = xd(L) and V (e) = 0 for x(L) = 
+
+xd(L).On differentiating (34) with respect to time and substituting (33) and (32), we get 
+
+˙V (e) = −eT ¯Kte. (35) Thus, ˙V (e) < 0 for x(L)̸ = xd(L) and ˙V (e) = 0 for x(L) = 
+
+xd(L), which ensures that the tip position error converges to the origin asymptotically. Remark 5: For set-point control, ˙yd = 0 .
+
+Remark 6: The feedback control laws in (22) and (32) for end-effector pose tracking require the strains at the current time instant, which are computed using the IK algorithm given in Section IV. VI. N UMERICAL RESULTS 
+
+In this section, we present three numerical experiments to validate the IK algorithm and the control laws for the discrete Cosserat rod. We consider a cantilever cylindrical rod of length 
+
+0.3 m and radius 10 −2m. The material properties of the rod are as follows: ρ = 10 3 kg /m3 E = 10 6 Pa, ν = 0 .5 and 
+
+vs = 10 2 Pa s. The rod initially lies along the e1 axis in a straight configuration. Each section of the discrete Cosserat rod modelled by the PCS approach has been spatially discretised into 40 intervals to generate the shape of the rod. 
+
+A. Inverse kinematics for the discrete Cosserat rod 
+
+Let us consider the PCS model with two sections and the desired end-effector pose 
+
+gd(L) = 
+
+
+
+cos( π/ 4) − sin( π/ 4) 0 0.25 sin( π/ 4) cos( π/ 4) 0 0.20 0 1 00 0 0 1
+
+ . (36) The IK algorithm in Section IV determines the strain vector 
+
+q ∈ R12 such that the forward kinematics in (12) is satisfied for S = L. We consider the initial guesses 
+
+q01 = q∗ (37) and 
+
+q02 = 0 10 0 1 0 0 ξT
+
+> 0
+
+T . (38) Figure 2 shows the shapes of the rod obtained from the IK algorithm based on q01 and q02 . The rod admits multiple feasible configurations due to its inherent redundancy, leading to distinct solutions when different initial guesses are provided to the IK algorithm based on the Newton-Raphson method. The strain potential energy, given in (19), corresponding to q01
+
+and q02 are 10 .59 J and 32 .65 J, respectively. -0.03 0.2 -0.02 -0.01  
+
+> z (m)  00.01 0.1
+> y (m)
+> 0.2
+> x (m)
+> 0.15 0.1 0.05 00
+> q01
+> q02
+> S = L S = 0
+
+Fig. 2: IK solutions for two initial guesses q01 and q02 .
+
+B. Shape regulation of the discrete Cosserat rod 
+
+We consider the PCS model with two sections and the desired strain 
+
+qd = qTd1 qTd2
+
+ , (39) where qd1 = 0 −5 0 1 0 0T and qd2 =
+
+0 10 0 1 0 0T . The desired strain vector has been chosen to generate a symmetrical shape of the rod including two sections of constant curvatures. The desired tip pose can be determined by the forward kinematics in (12). The strain space control in (22) with ¯K = 2 I12 has been implemented to regulate the shape of the rod. The error dynamics in (23) have been simulated using the fourth-order Runge-Kutta method (RK4) for 5 seconds with a time step of 5 × 10 −3 seconds. Figure 3a and Figure 3b demonstrate the shape of the rod at various time instants and the end-effector external wrench, respectively. It can be observed from Figure 3a and Figure 3b that the rod achieves the desired shape in 2.5 seconds. 0 10 20 30 
+
+> x (cm)
+> 0123456789
+> y (cm)
+> Desired shape
+> t = 0
+
+(a) 0 1 2 3 4 5 
+
+> Time (seconds)
+> -0.4 -0.3 -0.2 -0.1 00.1 0.2 0.3 0.4
+> External tip wrench
+
+(b) 
+
+Fig. 3: (a) Evolution of the shape of the rod for the following time instants: t = 0 seconds (pink), t = 0 .5 seconds (orange), 
+
+t = 1 second (yellow), t = 1.5 seconds (purple) and 
+
+t = 2 seconds (green). (b) External tip wrench denoted by 
+
+Fext (L) = m(L)T n(L)T T , where m(L) = 0 τy 0T
+
+Nm and n(L) = Fx Fy Fz
+
+T N. Here, τx, F x, F y and Fz
+
+are shown in red, purple, green and blue, respectively. 
+
+C. End-effector position tracking control of the discrete Cosserat rod 
+
+We consider the PCS model with 10 sections and assume that the rod initially lies in the straight configuration along the 
+
+e1 axis. The objective is to ensure that the tip of the rod tracks a circular trajectory of radius 0.1 m in the e1–e2 plane. The IK algorithm is employed to obtain the desired strain vector, which is then used to implement the control law (22) in the task space with ¯K = 2 I6. The task space control in (32) with 
+
+¯Kt = 2 I3 has also been implemented to track the desired position of the tip of the rod. The error dynamics in (33) have been simulated using the fourth-order Runge-Kutta method (RK4) for 20 seconds with a time step of 10 −3 seconds. Figure 4a shows the trajectory of the tip of the rod and Figure 4b shows the convergence of the position error for both control approaches. It can be observed from Figure 5a and Figure 5b that the tip force along the e1 axis attains relatively large magnitudes, reaching approximately 400 N. Figure 5b shows that the the control law (32) generates forces only along the e1
+
+and e2 axes, since task space control in Section V-B accounts only for the position error of the tip of the rod. -0.1 0 0.1 0.2 0.3 
+
+> e1(m) -0.1 -0.05 00.05 0.1
+> e2(m)
+
+(a) 0 5 10 15 20 Time (seconds) 00.05 0.1 0.15 0.2  
+
+> jj x(L) ! xd(L)jj  (m)
+
+(b) 
+
+Fig. 4: (a) Position of the tip of the rod obtained from task space control. (b) Position error for the strain and task space control laws. 0 5 10 15 20 Time (seconds) -400 -300 -200 -100 0External tip wrench 
+
+(a) 0 5 10 15 20 Time (seconds) -500 -400 -300 -200 -100 0100 200 300 External tip wrench (b) 
+
+Fig. 5: (a) External tip wrench obtained from the strain space control. (b) External tip wrench obtained from the task space control. External tip wrench is denoted by Fext (L) = 
+
+m(L)T n(L)T T , where m(L) = τx τy τz
+
+T Nm and 
+
+n(L) = Fx Fy Fz
+
+T N. Here, τx, F x and Fy are shown in green, blue and magenta, respectively. VII. C ONCLUSIONS AND FUTURE WORK 
+
+In this paper, we developed feedback control laws in the strain and task spaces for the discrete Cosserat rod. The Piece-wise Constant Strain (PCS) discretisation approach presents a simplified model of the Cosserat rod, which is described by a set of nonlinear PDEs evolving on SE (3) . The IK algorithm and the corresponding numerical test illustrated the kinematic strain redundancy of the Cosserat rod. Shape regulation of the rod was achieved by implementing the feedback control in the strain space. The performance of the proposed feedback control laws employed for end-effector pose tracking of the rod was compared. Future work will focus on the development of an IK algorithm which provides a solution with minimum strain potential energy and an optimal control framework for cable-actuated soft robots, along with the incorporation of buckling analysis in the control design. REFERENCES [1] I.A. Gravagne, C.D. Rahn, and I.D. Walker. Large deflection dynamics and control for planar continuum robots. IEEE/ASME Transactions on Mechatronics , 8(2):299–307, 2003. [2] Cosimo Della Santina, Christian Duriez, and Daniela Rus. Model-based control of soft robots: A survey of the state of the art and open challenges. IEEE Control Systems Magazine , 43(3):30–65, 2023. [3] Scott Forth, Christopher Deufel, Maxim Y. Sheinin, Bryan Daniels, James P. Sethna, and Michelle D. Wang. Abrupt buckling transition observed during the plectoneme formation of individual dna molecules. 
+
+Phys. Rev. Lett. , 100:148301, Apr 2008. [4] Yan Bailly, Yacine Amirat, and Georges Fried. Modeling and control of a continuum style microrobot for endovascular surgery. IEEE Transactions on Robotics , 27(5):1024–1030, 2011. [5] Stuart S. Antman. Nonlinear Problems of Elasticity . Springer New York, NY, Upper Saddle River, NJ, 1 edition, 1995. [6] J.C. Simo. A finite strain beam formulation. the three-dimensional dynamic problem. part i. Computer Methods in Applied Mechanics and Engineering , 49(1):55–70, 1985. [7] J.C. Simo and L. Vu-Quoc. A three-dimensional finite-strain rod model. part ii: Computational aspects. Computer Methods in Applied Mechanics and Engineering , 58(1):79–116, 1986. [8] J.C. Simo and L. Vu-Quoc. On the dynamics in space of rods undergoing large motions — a geometrically exact approach. Computer Methods in Applied Mechanics and Engineering , 66(2):125–161, 1988. [9] Valentin Falkenhahn, Tobias Mahl, Alexander Hildebrandt, R¨ udiger Neumann, and Oliver Sawodny. Dynamic modeling of bellows-actuated continuum robots using the euler–lagrange formalism. IEEE Transac-tions on Robotics , 31(6):1483–1496, 2015. [10] B.A. Jones and I.D. Walker. Kinematics for multisection continuum robots. IEEE Transactions on Robotics , 22(1):43–55, 2006. [11] Federico Renda, Vito Cacucciolo, Jorge Dias, and Lakmal Seneviratne. Discrete cosserat approach for soft robot dynamics: A new piece-wise constant strain model with torsion and shears. In 2016 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) ,pages 5495–5502, 2016. [12] Federico Renda, Matteo Cianchetti, Haider Abidi, Jorge Dias, and Lakmal Seneviratne. Screw-based modeling of soft manipulators with tendon and fluidic actuation. Journal of Mechanisms and Robotics ,9(4):041012, 05 2017. [13] Federico Renda, Fr´ ed´ eric Boyer, Jorge Dias, and Lakmal Seneviratne. Discrete cosserat approach for multisection soft manipulator dynamics. 
+
+IEEE Transactions on Robotics , 34(6):1518–1533, 2018. [14] KM Lynch and FC Park. Modern Robotics: Mechanics, Planning and Control . Cambridge University Press, Cambridge, UK, 1 edition, 2017. [15] RM Murray, Z Li, and S.S Sastry. A Mathematical Introduction to Robotic Manipulation . T&F, Boca Raton, USA, 1994. [16] Frederic Boyer, Vincent Lebastard, Fabien Candelier, and Federico Renda. Dynamics of continuum and soft robots: A strain parameteri-zation based approach. IEEE Transactions on Robotics , 37(3):847–863, 2021. [17] Haihong Li, Lingxiao Xun, and Gang Zheng. Piecewise linear strain cosserat model for soft slender manipulator. IEEE Transactions on Robotics , 39(3):2342–2359, 2023. [18] Apoorva Kapadia and Ian D. Walker. Task-space control of extensible continuum manipulators. In 2011 IEEE/RSJ International Conference on Intelligent Robots and Systems , pages 1087–1092, 2011. [19] Lekan Molu and Shaoru Chen. Structural properties and control of soft robots modeled as discrete cosserat rods. In 2024 IEEE 63rd Conference on Decision and Control (CDC) , pages 3592–3598, 2024. [20] Federico Renda, Costanza Armanini, Anup Mathew, and Frederic Boyer. Geometrically-exact inverse kinematic control of soft manipulators with general threadlike actuators’ routing. IEEE Robotics and Automation Letters , 7(3):7311–7318, 2022. [21] Haihong Li, Lingxiao Xun, Gang Zheng, and Federico Renda. Discrete cosserat static model-based control of soft manipulator. IEEE Robotics and Automation Letters , 8(3):1739–1746, 2023.

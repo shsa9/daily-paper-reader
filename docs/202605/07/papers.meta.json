@@ -1,0 +1,93 @@
+{
+  "label": "2026-05-07",
+  "date": "2026-05-07",
+  "generated_at": "2026-05-07T20:18:09",
+  "count": 6,
+  "papers": [
+    {
+      "paper_id": "202605/07/2605.02018v1-diffusion-wall-time-in-toroidally-segmented-shell-aka-armadillo",
+      "section": "quick",
+      "title_en": "Diffusion wall time in toroidally segmented shell aka Armadillo",
+      "authors": "D. Abate, A. Corbioli",
+      "date": "2026-05-03",
+      "pdf": "https://arxiv.org/pdf/2605.02018v1",
+      "score": "7.0",
+      "evidence": "导电壳中的涡流效应和扩散壁时间",
+      "tldr": "本研究推导了环向分段导电壳层（Armadillo结构）壁扩散时间的解析表达式，填补了该领域在MHD稳定性分析中的空白。通过扩展连续壳层理论并引入由环向间隙引起的电流驻波模式，研究揭示了分段导致的有效电阻率增加及其对壁扩散时间的削减作用。结果显示，该公式与3D电磁数值模拟的误差在10%以内，且发现低环向模数模式受分段影响最为严重。该成果为核聚变装置的磁流体动力学稳定性和控制提供了高效的评估工具。",
+      "tags": "query:em-force",
+      "abstract_en": "An analytical expression for the diffusion wall time of a toroidally segmented conducting shell (the Armadillo configuration) is derived by extending the continuous-shell formulation to include the non-axisymmetric current pattern imposed by the presence of toroidal gaps. The segmentation constrains the toroidal current to follow a standing-wave structure that vanishes at the gap locations, introducing a correction to the effective resistivity that grows quadratically with the number of gaps and competes with the intrinsic toroidal scale of the mode. As a result, the wall time decreases rapidly for low toroidal-number modes, more gradually for intermediate ones, and only for sufficiently large segmentation in the high-n regime. The analytical formula shows agreement within 10% against 3D electromagnetic numerical calculations. The resulting expression provides a compact tool for estimating the wall time of segmented conducting structures surrounding the plasma, with direct applications to MHD stability and control in both RFPs and tokamaks.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/07/2604.26172v2-co-learning-port-hamiltonian-systems-and-optimal-energy-shaping-control",
+      "section": "quick",
+      "title_en": "Co-Learning Port-Hamiltonian Systems and Optimal Energy-Shaping Control",
+      "authors": "Ankur Kamboj, Biswadip Dey, Vaibhav Srivastava",
+      "date": "2026-04-28",
+      "pdf": "https://arxiv.org/pdf/2604.26172v2",
+      "score": "6.0",
+      "evidence": "端口哈密顿系统的能量成形控制",
+      "tldr": "本研究提出一种物理启发的协同学习框架，旨在从轨迹数据中同时获取端口哈密顿（pH）系统模型及其最优能量平衡被动控制器（EB-PBC）。该方法利用神经网络参数化pH动力学和控制器结构，通过交替优化和策略感知的数据采集，确保了闭环系统的被动性、稳定性和可解释性。此外，引入耗散正则化增强了对模型误差的鲁棒性，在单摆系统的调节与起摆任务中展现了优异的性能。",
+      "tags": "query:em-force",
+      "abstract_en": "We develop a physics-informed learning framework for energy-shaping control of port-Hamiltonian (pH) systems from trajectory data. The proposed approach co-learns a pH system model and an optimal energy-balancing passivity-based controller (EB-PBC) through alternating optimization with policy-aware data collection. At each iteration, the system model is refined using trajectory data collected under the current control policy, and the controller is re-optimized on the updated model. Both components are parameterized by neural networks that embed the pH dynamics and EB-PBC structure, ensuring interpretability in terms of energy interactions. The learned controller renders the closed-loop system inherently passive and provably stable, and exploits passive plant dynamics without canceling the natural potential. A dissipation regularization enforces strict energy decay during training, thereby enhancing robustness to sim-to-real gaps. The proposed framework is validated on state-regulation and swing-up tasks for planar and torsional pendulum systems.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/07/2605.01395v1-quasi-static-control-of-discrete-cosserat-rod",
+      "section": "quick",
+      "title_en": "Quasi-Static Control of Discrete Cosserat Rod",
+      "authors": "Srishti Siddharth",
+      "date": "2026-05-02",
+      "pdf": "https://arxiv.org/pdf/2605.01395v1",
+      "score": "6.0",
+      "evidence": "非线性模型的状态反馈线性化",
+      "tldr": "本研究针对基于 Cosserat 杆建模的软体机器人，提出了一种反馈控制方案。通过分段恒定应变（PCS）方法将复杂的非线性偏微分方程离散化为类似于刚性连杆机构的常微分方程组。在此基础上，利用末端执行器外力矩作为控制输入，设计了应变空间和任务空间的状态反馈线性化控制律。该方法有效解决了软体机器人在准静态下的形状控制与轨迹跟踪问题，为软体机器人控制提供了新思路。",
+      "tags": "query:em-force",
+      "abstract_en": "In this paper, we design feedback control laws for soft robots modelled using the Cosserat rod, which is spatially discretised using the Piecewise Constant Strain (PCS) approach. The PCS approach transforms the nonlinear PDEs describing the Cosserat rod to a system of nonlinear ODEs. This simplification results in a model describing soft robots which is similar to the serial rigid-link manipulators. We design feedback control laws for the quasi-static PCS model by using the external end-effector wrench as control input. The control laws are designed based on state-feedback linearisation in strain and task spaces. An extensive set of numerical results demonstrates the performance of the control laws for end-effector trajectory tracking and shape control of soft robots.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/07/2605.03726v1-global-exponential-stabilization-of-a-force--and-torque-actuated-unicycle-by-flexible-step-mpc",
+      "section": "quick",
+      "title_en": "Global exponential stabilization of a force- and torque-actuated unicycle by flexible-step MPC",
+      "authors": "Ala Kolsi, Christian Ebenbauer, Bahman Gharesifard, Raik Suttner",
+      "date": "2026-05-05",
+      "pdf": "https://arxiv.org/pdf/2605.03726v1",
+      "score": "6.0",
+      "evidence": "力驱动模型的全局指数稳定",
+      "tldr": "本研究针对力与力矩驱动的单轮机器人模型，提出了一种基于变步长模型预测控制（Flexible-step MPC）的全局指数稳定方法。该方法通过在每次迭代中实施灵活数量的输入，并引入状态相关的平均下降权重，克服了传统MPC对终端约束或特定代价函数的依赖。研究不仅为通用非线性离散系统建立了稳定性框架，还证明了该方法能实现单轮机器人模型在特定意义下的最优全局指数稳定性，并通过仿真验证了其在连续时间系统中的有效性。",
+      "tags": "query:em-force",
+      "abstract_en": "We study the problem of global exponential stabilization of a force- and torque-controlled unicycle model in discrete time. To this end, we extend a recently introduced approach to model predictive control (MPC) in which a flexible number of inputs is implemented in every iteration. We present the first flexible-step MPC protocol with state-dependent weights for average descent. Notably, the proposed method relies neither on a suitable design of running or terminal cost functions nor on a suitable choice of terminal constraints. Instead, stability is guaranteed through a generalized discrete-time control Lyapunov function. We establish a new theoretical framework for global exponential stabilization of general nonlinear discrete-time control systems by flexible-step MPC. The obtained results go beyond the unicycle example. However, given the importance of the unicycle dynamics, we make that a focal point of our work. For the particular case of the dynamic (second-order) unicycle model, we show that global exponential stability cannot be attained in the classical sense, but in a slightly weaker sense. The proposed flexible-step MPC method is shown to induce the best possible notion of global exponential stability for this model. We provide explicit rules for the choice of parameters, which guarantee feasibility and global exponential stability. Our numerical simulations show that the discrete MPC method also works very well in applications to a continuous-time torque-actuated unicycle.",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/07/2605.04656v1-adaptive-mpc-for-constrained-trajectory-tracking-of-uncertain-lti-system-with-input-rate-limits",
+      "section": "quick",
+      "title_en": "Adaptive MPC for Constrained Trajectory Tracking of Uncertain LTI System with Input-Rate Limits",
+      "authors": "Bishal Dey, Abhishek Dhar, Sumit kr. Pandey, Anindita Sengupta",
+      "date": "2026-05-06",
+      "pdf": "https://arxiv.org/pdf/2605.04656v1",
+      "score": "6.0",
+      "evidence": "针对不确定系统的自适应模型预测控制可应用于电磁执行器的精密力控制。",
+      "tldr": "针对具有参数不确定性及状态、输入和输入变化率约束的离散线性时不变系统，本文提出了一种自适应模型预测控制（MPC）方案。该方法通过系统地利用参数估计和重新构建的MPC框架，解决了输入变化率约束导致的递归可行性难题，实现了在全参数不确定性下的精确轨迹跟踪，并保证了闭环系统的稳定性和状态有界性。",
+      "tags": "query:em-force",
+      "abstract_en": "This paper addresses the trajectory-tracking problem for discrete-time linear time-invariant systems with bounded parametric uncertainty, subject to hard constraints on system states, control inputs, and input rates. Unlike existing methods, which often consider only partial uncertainty, omit input-rate or state constraints, or focus on regulation problems, this work provides a systematic adaptive model predictive control (MPC) solution for constrained trajectory tracking under full parametric uncertainty. Determining the control input required to achieve zero tracking error under unknown parameters is challenging. Simultaneously, trajectory tracking under uncertainty with input-rate constraints induces temporal coupling in the control sequence, resulting in a time-varying admissible control set and rendering standard recursive feasibility arguments inapplicable. These challenges are overcome by systematically utilizing the estimated system parameters, coupled with a suitably designed adaptive learning process within a reformulated MPC framework. The recursive feasibility of the proposed MPC optimization routine is then rigorously established despite the time-varying admissible control set induced by input-rate constraints. Closed-loop stability is guaranteed via Lyapunov-based analysis, ensuring convergence of the tracking error and boundedness of system states. Simulation results validate the effectiveness of the pr",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202605/07/2605.04691v1-uncertainty-quantification-methods-for-optimal-excitation-design-in-parameter-identification",
+      "section": "quick",
+      "title_en": "Uncertainty Quantification Methods for Optimal Excitation Design in Parameter Identification",
+      "authors": "Kevin Schmidt, Nicola Henkelmann, Christoph Mark, Johannes von Keler",
+      "date": "2026-05-06",
+      "pdf": "https://arxiv.org/pdf/2605.04691v1",
+      "score": "6.0",
+      "evidence": "工程系统参数辨识的最优激励设计",
+      "tldr": "针对虚拟工程中参数识别面临的激励设计难题，本文提出一种通过最大化全局灵敏度来推导最优激励的系统方法。研究开发了基于多项式混沌展开（PCE）的侵入式方法和基于最优传输理论（Wasserstein距离）的非侵入式方法，旨在降低计算成本并提升复杂工程系统的参数识别能力，并在车辆动力学模型及实车实验中验证了其有效性。",
+      "tags": "query:em-force",
+      "abstract_en": "Parameter identification is crucial in virtual engineering processes, yet determining appropriate system excitations for identifying specific parameters remains challenging. In practice, extensive experimental programs often fail to generate data with sufficient information content for reliable parameter estimation. This work presents a systematic approach for deriving optimal excitations by maximizing the global sensitivity of target parameters across the space of possible excitation functions. To address the computational challenge of sensitivity evaluation during optimization, we develop two complementary approaches based on uncertainty quantification (UQ) methods. For systems with known mathematical structure, we present an intrusive polynomial chaos expansion (PCE) method that constructs deterministic surrogate models, enabling rapid sensitivity computation. For black-box models where intrusive approaches are not feasible, we introduce a novel non-intrusive method based on optimal transport theory, specifically using Wasserstein distances to quantify sensitivity measures without requiring knowledge of internal system dynamics. Both methods significantly reduce computational costs, making optimal excitation design practical for complex engineering systems. We demonstrate the effectiveness of both approaches on vehicle dynamics models, showing substantial improvements in parameter identification capability. The benefit for parameter identification is further validated experimentally on a test vehicle and compared to the state of the art.",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

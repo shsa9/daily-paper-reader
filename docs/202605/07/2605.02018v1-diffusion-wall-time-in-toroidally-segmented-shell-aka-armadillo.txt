@@ -1,0 +1,424 @@
+Title: Diffusion wall time in toroidally segmented shell aka Armadillo
+
+URL Source: https://arxiv.org/pdf/2605.02018v1
+
+Published Time: Tue, 05 May 2026 01:21:29 GMT
+
+Number of Pages: 16
+
+Markdown Content:
+# Diffusion wall time in toroidally segmented shell aka Armadillo 
+
+## D. Abate ∗
+
+## Consorzio RFX (CNR, ENEA, INFN, Universit` a di Padova, Acciaierie Venete SpA), C.so Stati Uniti 4, 35127 Padova, Italy A. Corbioli Consorzio RFX (CNR, ENEA, INFN, Universit` a di Padova, Acciaierie Venete SpA), C.so Stati Uniti 4, 35127 Padova, Italy April 2026 
+
+Accepted manuscript for Plasma Physics and Controlled Fusion (PPCF). 
+
+DOI: 10.1088/1361-6587/ae63f7 
+
+Abstract 
+
+An analytical expression for the diffusion wall time of a toroidally segmented conducting shell (the Armadillo configuration) is derived by extending the continuous-shell formulation to include the non-axisymmetric current pattern imposed by the presence of toroidal gaps. The segmentation constrains the toroidal current to follow a standing-wave structure that vanishes at the gap locations, introduc-ing a correction to the effective resistivity that grows quadratically with the number of gaps and competes with the intrinsic toroidal 
+
+> ∗
+
+Corresponding author: domenico.abate@igi.cnr.it 
+
+1  
+
+> arXiv:2605.02018v1 [physics.plasm-ph] 3 May 2026 scale of the mode. As a result, the wall time decreases rapidly for low toroidal-number modes, more gradually for intermediate ones, and only for sufficiently large segmentation in the high-nregime. The analytical formula shows agreement within 10% against 3D electro-magnetic numerical calculations. The resulting expression provides a compact tool for estimating the wall time of segmented conducting structures surrounding the plasma, with direct applications to MHD stability and control in both RFPs and tokamaks.
+
+Keywords : Tokamak, RFP, wall time, RWM 
+
+# 1 Introduction 
+
+In magnetic confinement fusion devices, the diffusion of magnetic fields through the conducting structures surrounding the plasma plays a central role in magneto-hydrodynamic (MHD) stability and control. In particular, the so-called wall time τw sets the characteristic timescale for magnetic field diffu-sion through the wall and strongly influences the growth rate of resistive wall modes (RWMs) [1–3]. The commonly used expression for the wall time: 
+
+τw ≡ μ0rwtwη−1 
+
+> w
+
+(1) refers to the magnetic field diffusion time scale through a thin continuous cylindrical resistive shell of radius rw, thickness tw and with constant elec-trical resistivity ηw. The wall time is also equivalently interpreted as the characteristic decay time of eddy-current patterns induced by a RWM [4]. Regardless of the adopted physical picture, this widely adopted formula was firstly introduced, to the best of our knowledge, by C. G. Gimblett in the Appendix of [5] who obtained the decay rate by matching vacuum magnetic fields across a resistive thin wall. This formulation naturally introduces the possibility of different toroidal and poloidal resistivities and leads to the so-called ”Gimblett effective resistivity”, which mixes different poloidal and toroidal wall resistivities (for example due to a bellows construction) [5]. A generalization of this approach to perturbations of arbitrary helicity (m, n ) - where m is the poloidal and n the toroidal wavenumbers- was pre-sented in [6]. There, the diffusion time γ(m, n )−1 is obtained from the jump of the radial derivative of the magnetic flux across the wall. In the limit 
+
+n → 0, the resulting expression reduces to the classical vertical field pene-tration time. Importantly, the commonly used wall time τw - or ”long” time 2constant as named in [5] - actually corresponds to twice of the vertical field penetration time. This relation is well known for circular shells [7] and follows from the classical cylindrical–toroidal correspondence. However, these char-acteristic times are sensitive to the specific vessel geometry and elongation: in particular, the derivation of eddy-current eigenmodes and decay times for elliptical cross-section walls [8] further contributes to the identification of these characteristic scales. The distinction between the various characteristic wall times has been examined in previous analytical studies. In particular, in [9] is shown that the magnetic field penetration through a toroidal conducting shell involves multiple time scales, only one of which corresponds to the physical diffu-sion time. More recent analyses [10, 11] further clarified that the wall time 
+
+τw commonly used in RWM theory is primarily a convenient normalization parameter, while the actual decay time of a perturbation with poloidal num-ber m ≥ 1 scales as τw/(2 m) for axisymmetric perturbations and a circular shell [8, 10, 11]. A similar distinction between the characteristic wall time and the geometric multipliers entering the RWM dispersion relation is dis-cussed in [12], where the normalization differs from the conventional τw (see Eqs. (57) and (71) therein). These distinctions are often irrelevant when 
+
+τw is used as a normalization parameter for example in RWM stability cal-culations where the dispersion relation naturally involves the dimensionless combination γτ w. Nevertheless, the absolute value of τw becomes relevant when growth rates are expressed in physical units for designing feedback control systems in both Tokamak and reversed field pinch (RFP) devices. In RFP devices, a toroidal passive stabilizing shell (PSS) is employed to slow down the broad spectrum of MHD instabilities to resistive time scales. In practice, the PSS includes toroidal and poloidal gaps that interrupt the net circulation of eddy currents. A new configuration of interest is the toroidally segmented shell or Armadillo configuration (inspired by the segmented struc-ture of the animal’s shell). This concept emerged during the design of the RFX-mod2 experiment [13], where the PSS is placed directly in vacuum in-side the vacuum-tight support structure (VTSS) [14]. In this environment, electrical insulation of the PSS becomes critical and difficult to guarantee because of the presence of a diffused plasma even in the ”ideally” vacuum regions [15]. Introducing multiple toroidal gaps reduces the induced electro-motive force on each segment, easing insulation requirements and simplifying mechanical assembly. In the context of vertical plasma position control, the impact of toroidal 3gaps on the eddy-current distribution and the associated decay time in a resistive shell was first modelled in [16] where an analytical estimate of the gap-induced correction to the shell resistance was derived for the axisymmet-ric ( m = 1, n = 0) mode. In addition, segmentation reduces the magnitude of the PSS error fields, which is beneficial for MHD control. The aim of this work is to derive an analytical expression for the wall time of a toroidally segmented thin shell. The key step is to represent the segmentation-induced modulation of the toroidal surface current as a stand-ing wave constrained by the gap positions, which introduces a segmentation wavenumber proportional to the number of gaps. This additional spectral component enhances the poloidal dissipation channel and modifies the effec-tive resistivity by adding a segmentation term to the classical Gimblett ex-pression. The resulting wall time retains the structure of the continuous-shell formula but incorporates segmentation through the modified resistivity (Sec-tion 2). The analytical model highlights how segmentation competes with the intrinsic ( m, n ) structure of each harmonic (Section 3), and its predictions are consistent with 3D electromagnetic numerical calculations. The result-ing formulation provides a compact analytical tool that can be applied to both RFPs and tokamaks, where discrete conducting structures (e.g. shell, blanket modules) can affect MHD stability and control (Section 4). 
+
+# 2 Mathematical model 
+
+The problem is solved in vacuum, where the magnetic field of given helicity (m, n ) can be produced either inside the shell (e.g. by plasma current) or outside it (e.g. by coils or other conductors). Throughout this work, the presence of plasma is neglected: this would modify the boundary conditions at the plasma surface, introducing a coupled plasma-wall problem which is beyond the scope of the present analysis. We consider a thin cylindrical conducting shell of radius rw and thickness tw ≪ rw, characterized by an electrical resistivity with components ηϕ and ηθ in the toroidal and poloidal directions, respectively. The system is described in cylindrical coordinates (r, θ, ϕ ), where ϕ = z/R 0 mimics the toroidal angle. In the following, the magnetic field is decomposed as B = B0 + b, where B0 denotes the equilib-rium field and b the perturbation. The magnetic field evolution is described 4by Maxwell equations in the quasi-static approximation: 
+
+∇ × E = −∂B
+
+∂t , ∇ × B = μ0J, ∇ · B = 0 . (2) In the vacuum regions ( r < r w, r > r w), where J = 0, the magnetic field is both solenoidal and curl-free. The curl-free condition ∇ × b = 0 allows to write the magnetic field as the gradient of a scalar potential: 
+
+b = ∇Φ, (3) and the divergence-free condition implies that Φ satisfies Laplace’s equation: 
+
+∇2Φ = 0 . (4) Exploiting linearity and the spatial periodicities of the system, the scalar potential is written as a sum of harmonics: Φ( r, θ, ϕ, t ) = ˜Φ( r) ei(mθ −nϕ ) e−γt . (5) Substituting into (4) yields the modified Bessel equation for the radial func-tion ˜Φ( r): d2 ˜Φdr2 + 1
+
+r
+
+d ˜Φdr −
+
+m2
+
+r2 + n2
+
+R20
+
+
+
+˜Φ = 0 . (6) The regular solution in the inner vacuum region (0 < r < r w) is ˜Φin (r) = 
+
+C I m(kr ), whereas the decaying solution in the outer vacuum region ( r > r w)is ˜Φout (r) = D K m(kr ), where Im and Km are the modified Bessel functions of the first and second kind of order m, respectively. Continuity of the radial magnetic field at the wall ( r = rw) requires d ˜Φin 
+
+dr rw
+
+= d ˜Φout 
+
+dr rw
+
+≡ brw = br(rw), (7) which allows to express the potential on both sides in terms of the radial field amplitude: ˜Φin (rw) = brw 
+
+rw
+
+uIm(u)
+
+I′
+
+> m
+
+(u), ˜Φout (rw) = brw 
+
+rw
+
+uKm(u)
+
+K′
+
+> m
+
+(u), u = nr w
+
+R0
+
+. (8) where primes denote derivatives with respect to the argument, evaluated at 
+
+u = nr w/R 0.5In the thin–wall approximation ( tw ≪ rw), the current density inside the shell is assumed to have no radial component ( Jr = 0) and to be uniform across the thickness. The magnetic field is likewise taken to vary negligibly through the wall, so that Br is evaluated at r = rw. Under these assumptions, the current in the wall is represented as a surface current K = R tw 
+
+> 0
+
+J dr =(Kθ, K ϕ) following the classical thin-shell treatment [17]. The discontinuity of the tangential magnetic field across the wall is then related to the surface current through the standard jump condition ˆr × (Bout − Bin ) = μ0K (9) which gives 
+
+μ0Kϕ = ∆ Bθ, μ0Kθ = −∆Bϕ. (10) Using the field components, the surface currents are linked to the jump in the scalar potential ∆ ˜Φw = ˜Φout (rw) − ˜Φin (rw): 
+
+Kϕ = im μ0rw
+
+∆ ˜Φw, Kθ = in μ0R0
+
+∆ ˜Φw. (11) The ratio of these two expressions gives 
+
+Kθ = nr w
+
+mR 0
+
+Kϕ = um Kϕ, (12) which satisfies the surface current continuity condition ∇ · K = 0. The potential jump is evaluated exactly using the Wronskian identity 
+
+Im(u)K′
+
+> m
+
+(u) − I′
+
+> m
+
+(u)Km(u) = −1/u :∆ ˜Φw = brw rw
+
+uI′
+
+> m
+
+(u) Km(u) − Im(u) K′
+
+> m
+
+(u)
+
+I′
+
+> m
+
+(u) K′
+
+> m
+
+(u) = brw rw
+
+u2 I′
+
+> m
+
+(u) K′
+
+> m
+
+(u). (13) We therefore introduce the geometric factor 
+
+Gm(u) = − 1
+
+u2 I′
+
+> m
+
+(u) K′
+
+> m
+
+(u), (14) which is positive for all u > 0 since I′ 
+
+> m
+
+> 0 and K′ 
+
+> m
+
+< 0, so that ∆ ˜Φw = − brw rw Gm(u). (15) 6In the limit u → 0 ( n = 0), using the small-argument asymptotics I′
+
+> m
+
+(u) ∼
+
+um−1/[2 m(m−1)!] and K′
+
+> m
+
+(u) ∼ − m(m−1)! 2 m−1/u m+1 , one finds u2I′
+
+> m
+
+(u)K′
+
+> m
+
+(u) →−m/ 2, so that 
+
+Gm(0) = 2
+
+m, (16) which recovers the standard decay time τ (cont)  
+
+> w
+
+(m, 0) = τw/(2 m) for axisym-metric perturbations of a circular shell [8, 10, 11], as shown explicitly in the following section, see relation (23). 
+
+## 2.1 Continuous shell 
+
+The characteristic decay rate γ is obtained by evaluating the radial compo-nent of Faraday’s law: (∇ × E)r|r=rw = − ∂B r
+
+∂t r=rw
+
+. (17) which in cylindrical coordinates, with the assumed modal dependence, re-duces to: im rw
+
+Eϕ + in R0
+
+Eθ = γ b rw . (18) Integrating Ohm’s law across the wall thickness yields the surface currents 
+
+Kϕ =
+
+Z tw
+
+> 0
+
+Jϕ dr = tw
+
+ηϕ
+
+Eϕ, Kθ =
+
+Z tw
+
+> 0
+
+Jθ dr = tw
+
+ηθ
+
+Eθ. (19) With (11) this transforms (18) into 
+
+γ b rw = −m2ηϕ + u2ηθ
+
+μ0 tw r2
+
+> w
+
+∆ ˜Φw. (20) By using (15), the radial field brw cancels out yielding the decay rate: 
+
+γ(m, n ) = m2ηϕ + u2ηθ
+
+μ0 tw rw
+
+Gm(u). (21) The corresponding wall time for the continuous shell is 
+
+τ (cont)  
+
+> w
+
+(m, n ) = γ(m, n )−1 = μ0 tw rw
+
+(m2ηϕ + u2ηθ) Gm(u). (22) 7Figure 1: Continuous toroidal shell ( Ng = 0) and segmented one (Armadillo) where Ng is the number of gaps. 
+
+For an axisymmetric vertical field ( m = 1 , n = 0), using G1(0) = 2 and 
+
+ηϕ = ηw, leads to: 
+
+τ (cont)  
+
+> w
+
+(1 , 0) = μ0 tw rw
+
+2ηw
+
+, (23) which shows that the well-known and commonly adopted definition in (1) - corresponding to the ”long” time constant of the wall in [5]- is twice the characteristic diffusion time associated with the penetration of a vertical (m = 1 , n = 0) magnetic perturbation. This combination of ηϕ and ηθ is equivalent to the effective wall resistivity introduced in [5] for a given ( m, n ), up to the factor m2 + u2.
+
+## 2.2 Segmented shell (Armadillo) 
+
+The following derivation applies to m ≥ 1: m = 1 modes dominate the MHD spectrum in RFP devices, while higher-m harmonics ( m ≥ 2) are impor-tant for error-field correction and resistive wall mode dynamics in tokamaks. For m = 0, the jump condition (11) gives Kϕ = 0 identically, so there is no toroidal surface current to modulate and the segmentation has no effect within the present framework; that case would require a separate treatment. Consider a shell divided into Ng identical toroidal segments (Fig. 1). The segmentation constrains the toroidal surface current to vanish at the gap locations ϕj = 2 πj/N g, which consequently modulates the ( m, n ) Fourier component of the current. The toroidal surface current takes the form 
+
+Kϕ(θ, ϕ, t ) = Kϕ(t) ei(mθ −nϕ ) w(ϕ, t ), (24) where the modulation function w(ϕ, t ) enforces w(ϕj , t ) = 0 at the gaps. 8Modeling w as the fundamental standing wave compatible with the gap pat-tern, 
+
+w(ϕ, t ) = sin( kϕϕ) T (t), kϕ = Ng
+
+2 , ks = kϕ
+
+R0
+
+. (25) follows from the natural boundary conditions at the gap edges and from the dominance of the lowest eigenmode in the thin–gap limit. Enforcing current continuity ∇ · K = 0 on the segmented shell, the poloidal surface current becomes 
+
+Kθ = rw
+
+mR 0
+
+Kϕ ei(mθ −nϕ )in w (ϕ, t ) − ∂ϕw(ϕ, t ). (26) Averaging the squared magnitudes over one toroidal period: 
+
+⟨| Kϕ|2⟩ϕ = 12 |K ϕ|2|T |2, ⟨| Kθ|2⟩ϕ =
+
+ rw
+
+mR 0
+
+212 |K ϕ|2|T |2 (n2 + k2
+
+> ϕ
+
+). (27) The average Joule dissipation per unit area is 
+
+P = ⟨| Kϕ|2⟩ϕ
+
+"
+
+ηϕ + ηθ
+
+ rw
+
+mR 0
+
+2
+
+(n2 + k2
+
+> ϕ
+
+)
+
+#
+
+. (28) Defining the reference current amplitude consistently with the continuous case, K2ref = ⟨| Kϕ|2⟩ϕ (m2 + u2)/m 2, the effective resistivity of the segmented shell follows from P ≡ K2ref ηeff :
+
+ηeff (m, n ; Ng) = m2ηϕ + u2ηθ
+
+m2 + u2 + ηθ
+
+m2 + u2
+
+ rw
+
+R0
+
+2Ng
+
+2
+
+2
+
+= m2ηϕ + u2ηθ + ηθ (rwks)2
+
+m2 + u2 .
+
+(29) By analogy with (22), the characteristic wall time for the Armadillo shell can be expressed as 
+
+τw(m, n ; Ng) = μ0 tw rw
+
+(m2 + u2) Gm(u) ηeff (m, n ; Ng), u = nr w
+
+R0
+
+. (30) In the continuous limit ( Ng = 0), relation (30) reduces exactly to (22). The quadratic scaling of the effective resistivity with the number of gaps is consis-tent with the earlier circuit-model result of [16], derived for the axisymmetric (m = 1 , n = 0) mode; the present formulation extends that result to arbi-trary helicity ( m, n ) and anisotropic wall resistivity. 9Table 1: Wall time τw (ms) for m = 1 as a function of toroidal mode number n 
+
+> and number of toroidal gaps Ng.
+
+n Ng = 0 1 2 4 6 8 10 15 20 0 57.39 56.46 53.85 45.44 36.06 27.97 21.71 12.22 7.58 1 57.06 56.20 53.75 45.77 36.69 28.72 22.45 12.77 7.96 2 53.00 52.32 50.38 43.87 36.09 28.92 23.03 13.49 8.54 5 35.20 34.98 34.35 32.02 28.76 25.18 21.71 14.67 10.10 6 30.85 30.70 30.26 28.61 26.24 23.50 20.73 14.70 10.45 7 27.36 27.25 26.94 25.75 23.99 21.90 19.69 14.58 10.70 10 20.32 20.27 20.14 19.63 18.84 17.84 16.69 13.65 10.88 20 10.85 10.84 10.82 10.75 10.62 10.45 10.23 9.56 8.74     
+
+> Figure 2: Wall time given by the analytical model for different ( m= 1 , n ) (left) and ( m= 2 , n ) (right) as a function of different number of gaps Ng.
+
+# 3 Results 
+
+The parameters used throughout ( rw = 0 .5115 m, tw = 3 mm, R0 = 1 .995 m, 
+
+ηϕ = ηθ = 1 .68 ×10 −8 Ωm, εw ≡ rw/R 0 ≈ 0.26) refer to the passive stabilizing shell of the RFX-mod2 experiment. We focus on the m = 1 modes, which dominate the RFP magnetic configuration and are therefore the most relevant harmonics for assessing the impact of toroidal segmentation in the Armadillo concept. The segmented shell wall time in (30), is evaluated for different (m = 1 , n ) modes and for a range of toroidal gap numbers Ng (Table 1 and Fig. 2). As expected from (30), increasing the number of gaps Ng enhances the segmentation term proportional to ( Ng/2) 2, thereby reducing the wall time relative to the continuous–shell value. 10 Table 2: Wall time τw (ms) for m = 1 and representative toroidal mode numbers     
+
+> n= 0 ,6,20 as a function of the number of toroidal gaps Ng.
+
+n Ng = 0 2 10 20 40 60 80 100 200 300 400 0 57.39 53.85 21.71 7.58 2.10 0.95 0.54 0.35 0.087 0.039 0.022 6 30.85 30.26 20.73 10.45 3.50 1.66 0.96 0.62 0.157 0.070 0.039 20 10.85 10.82 10.23 8.74 5.53 3.43 2.24 1.55 0.433 0.197 0.111 In particular, the relation in (30) allows quantifying the impact of seg-mentation (Table 1 and Fig. 2) by examining the competition between the two toroidal terms in the denominator, namely n2 and N 2 
+
+> g
+
+/4. These represent the intrinsic toroidal scale of the n harmonic and the segmentation-imposed scale, respectively; their relative magnitude determines when segmentation begins to influence the wall time as shown for larger values of Ng in Table 2 and Fig. 3. Modes with low toroidal number ( n ≪ Ng/2) are affected early, and their wall time decreases rapidly with Ng. Intermediate-n modes (n ∼ Ng/2) retain the unsegmented behaviour until the segmentation scale becomes comparable to the intrinsic one, after which the expected 1 /N 2
+
+> g
+
+scaling is recovered. High-n modes ( n ≫ Ng/2) remain dominated by their intrinsic toroidal scale over a wide range of Ng, and segmentation becomes relevant only when Ng is increased substantially. This follows directly from (29) and allows to assess when segmentation begins to influence a given ( m, n )harmonic. While m = 1 modes are the most relevant for RFP configurations, higher-
+
+m harmonics become important in tokamaks, where m ≥ 2 components are present in error-field spectra and RWM dynamics. The behaviour for higher poloidal mode numbers follows directly from the effective resistivity in (29). In the denominator of (30), the intrinsic poloidal scale enters through the term m2, while the segmentation contribution depends only on the toroidal combination n2+N 2 
+
+> g
+
+/4. Increasing m therefore enhances the intrinsic poloidal scale without modifying the segmentation-imposed scale, reducing the rela-tive impact of segmentation for m > 1. For example, for m = 2 (Fig. 2 right) the intrinsic contribution is four times larger than for m = 1 at low n,suppressing the influence of the N 2 
+
+> g
+
+term by approximately the same factor. As a consequence, a larger number of gaps is required for the segmentation contribution to compete with the intrinsic scale. The precise threshold de-pends on the combined intrinsic structure m2 + n2: for modes with small n
+
+11 Figure 3: Scaling law for the wall time τw as a function of the number of gaps     
+
+> Ngfor different m= 1 , n harmonics.
+
+the required Ng grows roughly with m, whereas for modes with sufficiently large n the toroidal term n2 dominates and the segmentation must compete with it. If this condition is not met, the reduction of the wall time with Ng
+
+is correspondingly weaker than in the m = 1 case. The analytical wall-time expression can also be used as a practical bridge between normalized MHD stability analyses - where the dispersion relation naturally involves the combination γτ w - and growth rates expressed in phys-ical units by using the mode-segmentation-dependent τw given by (30). This is essential for the design and implementation of MHD control schemes based on realistic time scales. For each ( m, n ) and Ng, the analytical predictions are compared with the numerical values obtained using the 3D electromagnetic model given by CARIDDI code [18]. In particular, the numerical wall time of a given har-monic is extracted from the eigenvalue analysis of the conducting structures. The wall–current eigenmodes are computed, their Fourier content is eval-uated, and the modes carrying the largest amplitude of the desired ( m, n )harmonic are identified. Since no eigenmode of a fully 3D structure is a pure ( m, n ) component, several eigenmodes contribute to the same harmonic with different weights. The corresponding decay rates (the eigenvalues) are therefore combined through a weighted average, with weights proportional to the ( m, n ) content of each eigenmode, to obtain the numerical estimate of τw. The comparison between analytical and numerical results are shown 12 Figure 4: Comparison of the analytical model results with the CARIDDI calcula-tions for different ( m = 1 , n ) and number of gaps Ng. The shaded area represents a ±10% variation around the analytical prediction. 
+
+in Fig. 4: the accordance is within approximately 10% (shaded area) across the considered range of n and Ng confirming that the segmentation effect is accurately described by the additional quadratic term in (30). 
+
+# 4 Conclusions 
+
+An analytical expression for the diffusion wall time of a toroidally segmented conducting shell has been derived, extending the continuous–shell formula-tion to account for the presence of Ng toroidal gaps. Segmentation introduces an additional toroidal scale that competes with the intrinsic structure of each (m, n ) harmonic, leading to a mode-dependent reduction of the wall time. The analysis reveals a clear hierarchy in the sensitivity of different harmonics to segmentation. Modes with weak intrinsic toroidal structure ( n ≪ Ng/2) are affected early and exhibit a rapid decrease of the wall time as the number of gaps increases. Modes with intermediate toroidal content ( n ∼ Ng/2) re-tain the behaviour of a continuous shell until the segmentation scale becomes 13 comparable to their intrinsic one, after which the expected inverse-quadratic scaling is recovered. High-n harmonics ( n ≫ Ng/2) remain dominated by their intrinsic toroidal scale over a wide range of gap numbers, and segmen-tation becomes relevant only for sufficiently large Ng. A similar trend applies to higher poloidal harmonics: increasing m strengthens the intrinsic poloidal scale and correspondingly reduces the relative impact of segmentation. The analytical predictions have also been benchmarked against full 3D electro-magnetic calculations, showing agreement within approximately 10% across the explored range of mode numbers and gap configurations. The resulting analytical formula provides a compact and physically trans-parent tool for estimating the wall time of segmented conducting structures surrounding the plasma. It can support design choices such as the number of gaps, shell thickness, or material selection, and offers a fast alternative to full 3D numerical simulations. The analytical formula allows also a direct con-version of RWM stability analysis results into growth rates in physical units, which are useful for designing feedback control systems and assessing stabil-ity margins. Although developed for an RFP configuration, the formulation is general and applicable to any confinement system where non-axisymmetric conducting structures influence MHD stability and control, such as error-field correction and RWM dynamics in tokamaks. 
+
+# Acknowledgements 
+
+The authors thank L. Marrelli and R. Cavazzana for conceiving the origi-nal Armadillo concept, and R. Paccagnella and P. Zanca for their work on diffusion wall times for fields of general helicity. They also acknowledge G. Marchiori for contributions on the harmonic decomposition of state-space eigenvectors. A particular thanks goes to V. D. Pustovitov for reading the entire manuscript and for his comments, which improved the completeness and quality of the paper, as well as for his continuous encouragement and support. 14 5 References References 
+
+[1] EJ Strait, J Bialek, N Bogatu, M Chance, MS Chu, D Edgell, AM Garo-falo, GL Jackson, TH Jensen, LC Johnson, et al. Resistive wall stabi-lization of high-beta plasmas in diii–d. Nuclear fusion , 43(6):430–440, 2003. [2] MS Chu and M Okabayashi. Stabilization of the external kink and the re-sistive wall mode. Plasma Physics and Controlled Fusion , 52(12):123001, 2010. [3] VD Pustovitov. Plasma stability theory including the resistive wall ef-fects. Journal of Plasma Physics , 81(6):905810609, 2015. [4] H Reimerdes, TC Hender, SA Sabbagh, JM Bialek, MS Chu, AM Garo-falo, MP Gryaznevich, DF Howell, GL Jackson, RJ La Haye, et al. Cross-machine comparison of resonant field amplification and resis-tive wall mode stabilization by plasma rotation. Physics of Plasmas ,13(5):056107, 2006. [5] CG Gimblett. On free boundary instabilities induced by a resistive wall. 
+
+Nuclear fusion , 26(5):617, 1986. [6] R Paccagnella and P Zanca. Diffusion of the radial field through a thin shell in the vacuum. Consorzio RFX technical report , NT-FC-57, 20/06/2001. [7] Nicola Isernia, Vladimir Dmitrievich Pustovitov, F Villone, and V Yanovskiy. Cross-validation of analytical models for computation of disruption forces in tokamaks. Plasma Physics and Controlled Fusion ,61(11):115003, 2019. [8] NV Chukashev. Toroidal current eigenmodes in the vacuum vessel of an elliptical cross-section tokamak. Plasma Physics and Controlled Fusion ,67(3):035007, 2025. [9] D Dialetis, LK Len, J Golden, and CA Kapetanakos. Diffusion of mag-netic fields in a toroidal conducting shell of circular cross section. Journal of applied physics , 69(4):1813–1821, 1991. 15 [10] VD Pustovitov. General formulation of the resistive wall mode coupling equations. Physics of Plasmas , 15(7), 2008. [11] VD Pustovitov. Reaction of the toroidal resistive wall on the magnetic field variations in tokamak-like systems. Physics of Plasmas , 25(6), 2018. [12] VD Pustovitov. General dispersion relations for resistive wall modes in tokamaks. Physics of Plasmas , 30(9), 2023. [13] Lionello Marrelli, Giuseppe Marchiori, Paolo Bettini, Roberto Cavaz-zana, Bernard Kapidani, Luca Grando, Nicol` o Marconato, Ruben Specogna, and Dimitri Voltolina. Optimization of rfx-mod2 gap con-figuration by estimating the magnetic error fields due to the passive structure currents. Fusion Engineering and Design , 146:680–683, 2019. [14] Simone Peruzzo, Daniele Aprile, Mauro Dalla Palma, Mauro Pavei, Dario Rizzetto, Andrea Rizzolo, Domenico Abate, Piero Agostinetti, Matteo Agostini, Roberto Andreani, et al. The new vessel complex for the RFX-mod2 experiment: An effective synergy between fusion re-search and technological development. Fusion Engineering and Design ,194:113890, 2023. [15] Luigi Cordaro, Matteo Zuin, Luca Peruzzo, Domenico Abate, Roberto Cavazzana, Bruno Laterza, Luca Lotto, and Simone Peruzzo. Electrical insulation properties in a cold plasma of alumina coating for the in-vessel stabilizing shell of the rfx-mod2 fusion device. Fusion Engineering and Design , 207:114638, 2024. [16] Y Nagayama, M Naito, Y Ueda, Y Ohki, and K Miyamoto. Feedback control of vertical plasma position in non-circular tokamak tnt-a. Nu-clear fusion , 24(10):1243–1249, 1984. [17] A. I. Morozov and L. S. Solov’ev. The structure of magnetic fields. In M. A. Leontovich, editor, Reviews of Plasma Physics , volume 2, pages 1–101. Consultants Bureau, New York, 1966. [18] Raffaele Albanese and Guglielmo Rubinacci. Finite element methods for the solution of 3d eddy current problems. Advances in imaging and electron physics , 102:1–86, 1997. 16

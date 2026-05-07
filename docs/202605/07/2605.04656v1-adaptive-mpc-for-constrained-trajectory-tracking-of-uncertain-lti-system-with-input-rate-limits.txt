@@ -1,0 +1,1338 @@
+Title: Adaptive MPC for Constrained Trajectory Tracking of Uncertain LTI System with Input-Rate Limits
+
+URL Source: https://arxiv.org/pdf/2605.04656v1
+
+Published Time: Thu, 07 May 2026 01:22:45 GMT
+
+Number of Pages: 10
+
+Markdown Content:
+# Adaptive MPC for Constrained Trajectory Tracking of Uncertain LTI System with Input-Rate Limits 
+
+# Bishal Dey a, Abhishek Dhar b, Sumit Kr. Pandey c, Anindita Sengupta a
+
+> a
+
+Department of Electrical Engineering, Indian Institute of Engineering Science and Technology, Howrah 
+
+> b
+
+Division of Technology and Innovation, Epiroc, Sweden 
+
+> c
+
+Faculty of Science and Engineering, Jharkhand Rai University, Ranchi 
+
+Abstract 
+
+This paper addresses the trajectory-tracking problem for discrete-time linear time-invariant systems with bounded parametric uncertainty, subject to hard constraints on system states, control inputs, and input rates. Unlike existing methods, which often consider only partial uncertainty, omit input-rate or state constraints, or focus on regulation problems, this work provides a systematic adaptive model predictive control (MPC) solution for constrained trajectory tracking under full parametric uncertainty. Determining the control input required to achieve zero tracking error under unknown parameters is challenging. Simultaneously, trajectory tracking under uncertainty with input-rate constraints induces temporal coupling in the control sequence, resulting in a time-varying admissible control set and rendering standard recursive feasibility arguments inapplicable. These challenges are overcome by systematically utilizing the estimated system parameters, coupled with a suitably designed adaptive learning process within a reformulated MPC framework. The recursive feasibility of the proposed MPC optimization routine is then rigorously established despite the time-varying admissible control set induced by input-rate constraints. Closed-loop stability is guaranteed via Lyapunov-based analysis, ensuring convergence of the tracking error and boundedness of system states. Simulation results validate the effectiveness of the proposed approach in achieving robust constrained trajectory tracking under uncertainty. 
+
+Key words: Adaptive Control; Constrained System; MPC; Trajectory Tracking; Uncertain LTI System. 
+
+1 Introduction 
+
+The design of control frameworks for trajectory tracking in constrained dynamical systems with bounded plant-parameter uncertainty is critical in safety-critical ap-plications such as aerospace systems [1], autonomous vehicles [2, 3], and robotics [4]. In such systems, con-trollers must ensure accurate tracking while respecting constraints arising from actuator limitations, safety re-quirements on system states, and restrictions on control input rates. In practice, plant-parameter uncertainty is unavoidable due to modelling inaccuracies, unmodeled dynamics, environmental variations, component ageing, manufacturing tolerances, or time-varying characteris-tics, leading to deviations between the nominal model 
+
+⋆ Corresponding author B. Dey 
+
+Email addresses: dey.bishal@gmail.com (Bishal Dey), 
+
+abhishek.dharr@gmail.com (Abhishek Dhar), 
+
+skpdmk@gmail.com (Sumit Kr. Pandey), 
+
+aninsen@ee.iiests.ac.in (Anindita Sengupta). 
+
+and actual system behaviour and potentially causing performance degradation or constraint violations. Con-sequently, developing control strategies that ensure ro-bust trajectory tracking under multiple constraints in the presence of uncertainty remains a significant chal-lenge. This challenge is further intensified when hard con-straints are imposed simultaneously on system states, control inputs, and input increments. State constraints ensure safe operation within physical limits, while input constraints arise from actuator saturation or hardware limitations. Input-rate constraints are imposed to pre-vent abrupt control variations, reduce actuator wear, avoid excitation of unmodeled high-frequency dynam-ics, and ensure smooth implementation. However, the input-rate constraints introduce additional complexity by coupling successive control inputs and restricting feasible control sequences, thereby reducing the admis-sible solution space. In the presence of plant-parameter uncertainty, this coupling further complicates trajec-
+
+> arXiv:2605.04656v1 [eess.SY] 6 May 2026
+
+tory prediction and makes it difficult to guarantee both constraint satisfaction and tracking performance. Exist-ing studies have primarily addressed either constrained regulation problems for uncertain systems [5], [6] or unconstrained [7] or partially constrained [8] trajectory tracking under uncertainty. Several control strategies have been proposed to ad-dress constrained tracking problems. Among these meth-ods, model predictive control (MPC) has become one of the most widely used frameworks for constrained sys-tems [9], as it explicitly incorporates state and input con-straints within an online optimization routine. However, classical MPC relies on accurate plant models, which are rarely available in practice due to modelling errors and parameter uncertainty, potentially resulting in infeasible or degraded solutions. Therefore, various extensions of MPC have been developed to address this problem. The tube-based MPC (TMPC) strategies [10], [11] provide robustness against additive uncertainties by confining system trajectories within invariant tubes around nomi-nal trajectories. Recent studies have also explored com-bining MPC with machine learning [12] and deep learn-ing [13] for uncertainty modelling [14]. However, such data-driven approaches typically lack guarantees of re-cursive feasibility, robustness, and closed-loop stability. Adaptive MPC approaches [15], [16] address parametric uncertainty through online parameter estimation. Early methods required identification of the full set of un-certain parameters [17], while later approaches reduced computational complexity by requiring only parameter bounds [18] or using gradient-descent-based adaptive laws [19]. Other approaches, such as control barrier func-tions [20], reference governors [21], anti-windup compen-sation [22], and saturation-based designs [23], have also been proposed for enforcing safety and input constraints. Despite these advances, extending existing approaches to trajectory-tracking problems under uncertainty re-mains challenging, particularly when input-rate con-straints are imposed alongside state and input con-straints. Unlike regulation problems, trajectory track-ing requires continuous adaptation of control actions to follow a time-varying reference. In such settings, input-rate constraints are not only practical but often necessary to avoid abrupt variations in control signals required to drive the system along the desired trajectory. This ensures smooth actuator operation and prevents excessive wear or excitation of undesirable dynamics. However, the presence of input-rate constraints further limits control flexibility by restricting how rapidly con-trol inputs can evolve over time, thereby limiting the system’s ability to respond to both reference variations and uncertainty. In uncertain systems, this poses a fun-damental difficulty in constructing control sequences that simultaneously ensure accurate tracking, satisfy all constraints at every time step, and remain robust to pa-rameter variations. As a result, guaranteeing constraint satisfaction and performance across all admissible un-certainty realizations becomes significantly more com-plex. This motivates the development of new control frameworks that address these challenges systematically and computationally tractably. In this article, an adaptive MPC framework is proposed for trajectory tracking of a discrete-time linear time-invariant (LTI) system with bounded parametric un-certainty, subject to hard constraints on system states, control inputs, and input rates. The system dynamics are expressed in equivalent error coordinates with re-spect to a time-varying reference, thereby transform-ing the trajectory-tracking problem into a regulation problem. The system constraints, including state, in-put, and input-rate constraints, are meticulously refor-mulated in the error-dynamics domain to ensure con-sistency with the original system’s physical constraints and to facilitate their enforcement in the control de-sign. A key challenge in solving the tracking problem in the presence of parametric uncertainty is determining the appropriate input required to maintain zero track-ing error, as such an input generally depends on the exact knowledge of the system parameters. This chal-lenge is systematically addressed by constructing the re-quired input signal using adaptively estimated parame-ters, which are subsequently incorporated into the con-trol design to guarantee the desired system-theoretic properties. The proposed control framework ensures re-cursive feasibility, guaranteeing that the optimization problem remains solvable at all subsequent time steps. Furthermore, closed-loop stability of the system is ana-lyzed to demonstrate convergence of the error dynamics to the origin while ensuring boundedness of the physical system states. 
+
+Notations: If a nonempty set P ⊂ Rn is compact and convex, then it is termed a C-set, and if in its interior the origin lies, then it is called a C0-set. The diameter of P is diam( P) = max {‖ m − n‖F : m, n ∈ P} . The symbols ‖ · ‖ , ‖ · ‖ ∞, and ‖ · ‖ F denote the Euclidean, infinity, and Frobenius norms, respectively. For two sets 
+
+P and Q, the Minkowski sum and Pontryagin difference are defined as P ⊕ Q = {a + b : a ∈ P , b ∈ Q} and 
+
+P ⊖ Q = {a : a + Q ⊆ P} . The index sets are defined as I = {0, 1, 2, . . . }, IN = {0, 1, . . . , N }, I+ = {1, 2, . . . },and I+ 
+
+> N
+
+= {1, 2, . . . , N }. For P ∈ Rn×n and x ∈ Rn, the weighted quadratic norm is ‖x‖2 
+
+> P
+
+= x⊤P x . The convex hull generated by points {s1, . . . , s m} ⊂ Rn is denoted by co {s1, . . . , s m}. A compact ball centered at M ∈ Rn×m
+
+with radius r is given by Br (M ) = {M ′ : ‖M − M ′‖F ≤
+
+r}.
+
+2 Problem Statement 
+
+In this work, a constrained uncertain discrete-time LTI plant is taken into consideration 
+
+xk+1 = Ax k + Bu k = Θ Xk (1) 2xk ∈ X (2a) 
+
+uk ∈ U (2b) ∆uk ∈ U ∆ (2c) where, ∆ uk = uk − uk−1. The lumped parameter Θ = [A, B ] is uncertain and Xk = [ xTk , u Tk ]T is the lumped regressor vector. A ∈ Rn×n and B ∈ Rn×m are unknown and constant matrices. The constraints X ⊂ Rn, U ⊂ 
+
+Rm and U∆ ⊂ Rm are C0−sets. 
+
+Assumption 1 The lumped uncertain parameter Θ sat-isfies the following 
+
+Θ ∈ Ψ , co {ψ1, ψ 2, · · · , ψ G}
+
+where ψi , [Ai, B i], ∀i ∈ I+ 
+
+> G
+
+are known. 
+
+The objective is to design a control strategy that enables the states of the uncertain system (1) to track a reference trajectory xrk, which satisfies the following assumption 
+
+Assumption 2 xrk ∈ X r , ∀k ∈ I+, where X r ,
+
+co {xr
+
+> 1
+
+, x r
+
+> 2
+
+, · · · , x rL} ⊂ Rn, where L ∈ I+ is finite and 
+
+xri , ∀i ∈ I+ 
+
+> L
+
+are known. 
+
+Proposition 1 If xrk is reachable for all [ ¯ A, ¯B] ∈ Ψ,then there exists a urk ∈ U r , such that 
+
+xrk+1 = Ax rk + Bu rk (3) 
+
+where [A, B ] are the uncertain system parameters and 
+
+Ur = {urk|urk = ( ¯ BT ¯B)−1 ¯BT (xrk+1 − ¯Ax rk), [ ¯ A, ¯B] ∈
+
+Ψ, x rk ∈ X r }.
+
+Lemma 3 If urk ∈ U r , ∀k ∈ I+, then the bound on the input rate ∆urk is given as 
+
+‖∆urk‖ ≤ du := diam( Ur ), ∀k ∈ I+ (4) 
+
+Proof. Since urk ∈ U r , ∀k ∈ I+, it follows, ‖∆urk‖ =
+
+‖urk − urk−1‖ ≤ du , diam( Ur ), ∀k ∈ I+. Hence, ∆ urk ∈Bdu (¯ 0), ∀k ∈ I+, where ¯ 0 ∈ Rm is a zero vector. It is concluded that (4) holds. 
+
+Definition 1: The C0−set containing the input rate (de-fined in Lemma 3) is defined as Ur 
+
+> ∆
+
+= {∆urk|‖ ∆urk‖ ≤ 
+
+du, ∆urk = urk − urk−1, ∀urk ∈ Rm, ∀k ∈ I+}.In case of successful tracking, xk → xrk , and uk → urk. To facilitate the tracking problem, it is reformulated into a regulatory problem as given below 
+
+xek+1 = Ax ek + Bu ek = Θ Xek (5) subjected to 
+
+xek ∈ X e := {x − xr |x ∈ X , x r ∈ X r } (6a) 
+
+uek ∈ U e := {u − ur |u ∈ U , u r ∈ U r } (6b) ∆uek ∈ U e 
+
+> ∆
+
+:= {∆u − ∆ur |∆u ∈ U ∆, ∆ur ∈ U r
+
+> ∆
+
+} (6c) where Xek ,
+
+[
+
+xeT 
+
+> k
+
+, u eT
+
+> k
+
+]T
+
+∈ R(n+m). The following COCP presents the regulatory problem (5) in the pres-ence of (6a), (6b) and (6c) 
+
+P : ue∗ 
+
+> k
+
+= argmin uek
+
+Jk
+
+s.t. xek+i|k = Ax ek+i−1|k + Bu ek+i−1|k, ∀i ∈ I+ 
+
+> N
+
+(7a) 
+
+uek+i−1|k ∈ U e, ∆uek+i−1|k ∈ U e 
+
+> ∆
+
+(7b) 
+
+xek+i|k ∈ X e, x ek+N |k ∈ X T ⊂ X e (7c) where xek+i|k and uek+i−1|k are the predictions of length N, Jk is the cost function and the solution of the COCP 
+
+P is ue∗ 
+
+> k
+
+= {ue∗
+
+> k|k
+
+, · · · , u e∗ 
+
+> k+N−1|k
+
+}T . Since A and B are unknown, so (7a) is unimplementable and hence (5) is reformulated using the following estimated dynamics ˆxek+1 = ˆAkxek + ˆBkuek (8) The matrices ˆAk ∈ Rn×n and ˆBk ∈ Rn×m vary with time, and are updated using a projection-based gradient descent adaptive law. The COCP P is modified to guar-antee trajectory tracking and recursive feasibility of the uncertain plant (1). 
+
+3 Indirect Adaptive Law 
+
+This section presents the adaptive law for parameter estimation and the development of error sets that bound the state errors arising from parameter adaptation. 
+
+3.1 Parameter Update Law 
+
+The estimated system (8) can be expressed in a compact form as follows ˆxek+1 = ˆΘkXek (9) where ˆΘk ,
+
+[ ˆAk ˆBk
+
+]
+
+∈ Rn×(n+m). A gradient-descent-based adaptive law, which updates the estimated system parameters are as follows: ˆΘk+1 = ˆΘk + λ˜xek+1 XeT 
+
+> k
+
+(10) where λ is the learning rate and ˜xek , xek − ˆxek; ˜ xek+1 = ˜ΘkXek; ˜Θk , Θ − ˆΘk (11) 3Theorem 4 [19] For the uncertain system (5) , if there exists a uek that satisfies 
+
+XeT 
+
+> k
+
+Xek ≤ 2 − α
+
+λ (12) 
+
+given α ∈ (0 , 2) and λ > 0, then with the adaptive law 
+
+(10) , ˆΘk and ˜xek is ultimately bounded and ˜xek asymptot-ically converges to zero. 
+
+To ensure ˆΘk ∈ Ψ, for all k ∈ I, the update law (10) is reformulated as follows ˆΘk+1 = Proj Ψ( ˆΘk + λ˜xek+1 XeT 
+
+> k
+
+) (13) where Ψ is known, ˆΘ0 ∈ Ψ and Proj Ψ(.) returns the orthogonal projection of the argument matrix on Ψ. 
+
+Proposition 2 Since the sets X e and Uek (Computation of the set Uek is shown in Section 4.2) are C0-sets, there exists xm, um ∈ R such that ‖xek‖ ≤ xm, ∀xek ∈ X e and 
+
+‖uek‖ ≤ um, ∀uek ∈ U ek . If λ and α are chosen such that 
+
+x2 
+
+> m
+
++ u2 
+
+> m
+
+≤ 2 − α
+
+λ ; α ∈ (0 , 2); λ > 0 (14) 
+
+then the constraint (12) is satisfied ∀(xek , u ek, k ) ∈ X e ×Uek × I+.3.2 State Error Induced by Parameter Adaptation 
+
+The system (5) can be rewritten as 
+
+xek+1 = ˆAkxek + ˆBkuek + ˜ xek+1 (15) 
+
+Lemma 5 Let e , ΘdXe, where Θd ∈ Rn×(n+m) and 
+
+Xe = [ xeT
+
+, u eT
+
+]T ∈ Rn+m. When ˆΘk is updated follow-ing (13) with ˆΘ0 ∈ Ψ and ∀Xe = [ xeT
+
+, u eT
+
+]T , x e ∈ X e,and ue ∈ U ek , then the bound on ˜xek can be given by 
+
+‖˜xek‖ ≤ √δ˜xe , ∀k ∈ I+ (16) 
+
+where δ˜xe can be computed from δ˜xe = max {eT e|e ∈ Γ},where Γ , {ΘdXe|Θd ∈ B dΘ (0), X e = [ xeT
+
+, u eT
+
+]T , x e ∈X e, u e ∈ U ek }, d Θ = diam (Ψ) , and 0 ∈ Rn×(n+m) is the zero vector. 
+
+Lemma 6 When ˆΘk is updated based on (13) and for all instants the constraints (2b) and (2c) are satisfied, then the following is true 
+
+‖∆ ˆΘk+1 Xe‖ ≤ δΘ = (2 − α)√δ˜xe (17) 
+
+∀Xe = [ xeT
+
+, u eT
+
+]T , x e ∈ X e, and ue ∈ U ek , where δ˜xe
+
+and α are obtained from Lemma 5 and Proposition 2, respectively. Definition 2: The C0−set containing the errors (defined in lemmas 5 and 6) are defined as W˜xe = {˜xek|‖ ˜xek‖ ≤ √δ˜xe , ˜xe = xek − ˆxek, ∀xek , ˆxek ∈ Rn, ∀k ∈ I+} and 
+
+WΘ = {∆ ˆΘXe|‖ ∆ ˆΘXe‖ ≤ δΘ, ∆ ˆΘ = ˆΘi − ˆΘj , ∀ ˆΘi,j ∈
+
+Ψ, ∀i, j ∈ I+, X e ∈ R(n+m), X eT Xe ≤ 2−α 
+
+> λ
+
+}.
+
+4 Controller Design 
+
+This section provides insight into the controller design, including the formulation of the state feedback gain, the reformulation of input and input rate constraints in the error dynamics domain, the development of the terminal set, the formulation of the MPC optimization problem, and the analysis of recursive feasibility and closed-loop stability. 
+
+4.1 State Feedback Gain 
+
+Assumption 7 Let (P, K ) ∈ Rn×n × Rm×n be a pair associated with a positive definite matrix Q ∈ Rn×n such that ∀[ ˆAk , ˆBk] ∈ Ψ and ∀k ∈ I+ the following holds 
+
+P > 0; ( ˆAk + ˆBkK)T P ( ˆAk + ˆBkK) − P + Q < 0 (18) 
+
+Moreover, there exists a set ζ ⊂ X e associated with a constant γ ∈ (0 , 1) such that: 
+
+zTk+1 P z k+1 < γ 2zTk P z k, where (19) 
+
+zk+1 = ( ˆAk + ˆBkK)zk,
+
+∀([ ˆAk , ˆBk], z k, Kz k, k ) ∈ Ψ × ζ × U × I+ (20) Condition (19) assumes that ζ is a γ-contractive set with respect to the stabilizing feedback gain K, ensuring that 
+
+zk+1 ∈ γζ for all zk ∈ ζ, where γ ∈ (0 , 1). For a given 
+
+γ, the γ−contractive set can be determined using the procedure outlined in [6]. The control input uek can be chosen as 
+
+uek = Kx ek + vek (21) 
+
+Remark 1: In the same lines, the control input rate can be chosen as ∆uek = K∆xek + ∆ vek (22) The MPC algorithm developed in the subsequent section computes the control input vek . Substituting (21) in (5), the following is obtained 
+
+xek+1 = Asxek + Bv ek = Θ sXvk (23) where As = A + BK , Θ s = [As, B ], and Xvk =
+
+[
+
+xeT k veT k
+
+]T
+
+. In a similar manner, (8) and (9) can be modified as follows: ˆxek+1 = ˆAskxek + ˆBkvek = ˆΘskXvk (24) 4where ˆAsk = ˆAk + ˆBkK and ˆΘsk =
+
+[ ˆAsk ˆBk
+
+]
+
+.
+
+Remark 2: It is defined in Assumption 1 that Ψ is a 
+
+C−set and Θ , ˆΘ ∈ Ψ and K is a finite gain matrix, then there is a C−set Ψ a such that As, ˆAsk ∈ Ψa, ∀k ∈ I,where Ψ a is Ψa = co {ψa 
+
+> 1
+
+, ψ a 
+
+> 2
+
+, · · · , ψ aL}; ψai , Ai + BiK, ∀i ∈ I+
+
+> L
+
+(25) where 
+
+[
+
+Ai Bi
+
+]
+
+, ∀i ∈ I+ 
+
+> L
+
+is defined in Assumption 1. 
+
+4.2 Constraint Reformulation 
+
+Lemma 8 If (6a) is satisfied, then the state increment 
+
+∆xek is bounded as 
+
+‖∆xek‖ ≤ dx := diam( X e), ∀k ∈ I+ (26) 
+
+Definition 3: The C0−set containing the state rate (de-fined in Lemma 8) is X e 
+
+> ∆
+
+= {∆xek|‖ ∆xek‖ ≤ dx, ∆xek =
+
+xek − xek−1, ∀xek ∈ Rn, ∀k ∈ I+} .
+
+Lemma 9 At the kth instant if (6b) and (6c) holds, then for all i ∈ IN −1 the following can be inferred 
+
+uek+i|k∈ U ek := 
+
+{
+
+uek ∈ RN m 
+
+∣∣∣∣
+
+Huuek ≤ hu111N m 
+
+H∆uek ≤ hu
+
+> ∆
+
+111N m + ¯Hu ek−1
+
+}
+
+(27) 
+
+where 
+
+Hu =
+
+
+
+Im 0m · · · 0m
+
+0m Im · · · 0m
+
+... ... . . . ...
+
+0m 0m · · · Im
+
+
+
+∈ RN m ×N m 
+
+H∆ =
+
+
+
+Im 0m · · · 0m 0m 0m
+
+−Im Im · · · 0m 0m 0m
+
+... ... . . . ... ... ...
+
+0m 0m · · · − Im Im 0m
+
+0m 0m · · · 0m −Im Im
+
+
+
+∈ RN m ×N m 
+
+hu ∈ R; hu 
+
+> ∆
+
+∈ R
+
+¯H =
+
+[
+
+Im 0N m −1×m
+
+]T
+
+∈ RN m ×m
+
+uek = {uek|k, u ek+1 |k · · · , u ek+N −1|k}T , uek−1 is the control input of the preceding instant and 111N m =
+
+[
+
+1, 1, · · · , 1
+
+]T
+
+∈ RN m .Proof. At the kth instant for all i ∈ IN −1, the predicted control inputs uek+i|k must satisfy (6b) for the system (5) 
+
+uek+i|k ∈ U e := {uek | Huuek ≤ hu111N m } (28) At the kth instant for all i ∈ IN −1, the predicted incre-mental control inputs ∆ uek+i|k must satisfy (6c) for the system (5) ∆uek+i|k ∈ U ∆ := {∆uek|Hu∆uek ≤ hu
+
+> ∆
+
+111N m } (29) For the entire prediction horizon ∆ uek+i|k can be refor-mulated as ∆uek+i|k = uek+i|k − uek+i−1|k, ∀i ∈ IN −1 (30) and for i = 0 ⇒ uek−1|k = uek−1, which is the control input of the preceding instant and is measured at the 
+
+kth instant. Utilizing (29) and (30) the following can be inferred 
+
+uek+i|k ∈ U ∆ := {uek|H∆uek ≤ hu
+
+> ∆
+
+111N m + ¯Hu ek−1} (31) The solution of the COCP P, uek must satisfy (28) and (31) for all i ∈ IN −1
+
+uek+i|k∈ U ek := 
+
+{
+
+uek ∈ RN m 
+
+∣∣∣∣
+
+Huuek ≤ hu111N m 
+
+H∆uek ≤ hu
+
+> ∆
+
+111N m + ¯Hu ek−1
+
+}
+
+This concludes the proof. 
+
+Remark 3: The admissible set Uek is time varying due to its dependency on previous input uek−1, but it still remains a convex polytope. 
+
+Lemma 10 At the kth instant if (6a) , (6b) and (6c) 
+
+holds, then the following can be inferred for all i ∈ IN −1
+
+vek+i|k∈ V ek := 
+
+{
+
+vek ∈ RN m 
+
+∣∣∣∣
+
+Huvek ≤ hv111N m 
+
+H∆vek ≤ hv
+
+> ∆
+
+111N m + ¯Hv ek−1
+
+}
+
+(32) 
+
+where hv, h v 
+
+> ∆
+
+∈ R, vek−1 is the optimized control input of the preceding instant and vek = {vek|k, v ek+1 |k, · · · , v ek+N −1|k}T .Proof. Utilizing (21), if (6a) and (6b) holds then at kth 
+
+instant for all i ∈ IN −1, the following can be inferred 
+
+vek+i|k ∈ V e , Ue ⊖ kX e := {vek|Huvek ≤ hv111N m } (33) In the same lines, at kth instant for all i ∈ IN −1 utilizing (22) and Definition 3 , the following can be inferred for ∆vek+i|k , if (6c) holds ∆vek+i|k ∈ V e 
+
+> ∆
+
+, Ue
+
+> ∆
+
+⊖KX e 
+
+> ∆
+
+:= {∆vek|Hu∆vek ≤ hv
+
+> ∆
+
+111N m }
+
+(34) 5where ∆ vek = {∆vek|k, ∆vek+1 |k , · · · , ∆vek+N −1|k }T . For the entire prediction horizon, ∆ vek+i|k can be reformu-lated as ∆vek+i|k = vek+i|k − vek+i−1|k, ∀i ∈ IN (35) 
+
+vek−1|k = vek−1 is the optimal control input of the preced-ing instant and is a measured value at the kth instant. From (34) and (35) the following can be obtained 
+
+vek+i|k ∈ V e 
+
+> ∆
+
+:= {vek|H∆vek ≤ hv
+
+> ∆
+
+111N m + ¯Hv ek−1} (36) Therefore, a combined constraint at kth instant for all 
+
+i ∈ IN −1 on vek+i|k can be given by 
+
+vek+i|k∈ V ek := 
+
+{
+
+vek ∈ RN m 
+
+∣∣∣∣
+
+Huvek ≤ hv111N m 
+
+H∆vek ≤ hv
+
+> ∆
+
+111N m + ¯Hv ek−1
+
+}
+
+(37) This concludes the proof. 
+
+For the uncertain system (23), the objective function Jk
+
+is defined by Jk = ∑N −1  
+
+> i=0 1
+> 2
+
+[‖xek+i|k ‖2 
+
+> Q
+
++ ‖vek+i|k‖2
+
+> R
+
+] + 
+
+Jf (xek+N |k ), where Q and R are positive definite ma-trices. The terminal constraint Jf is defined as Jf , 
+
+> 1
+> 2
+
+‖xek+N |k‖2 
+
+> P
+
+, where P is chosen from (18). The COCP 
+
+P1 for the uncertain system (23) is defined as 
+
+P1 : ve∗ 
+
+> k
+
+= argmin vek
+
+Jk
+
+s.t. xek+i|k = Asxek+i−1|k + Bv ek+i−1|k , ∀i ∈ I+ 
+
+> N
+
+(38a) 
+
+xek+i|k ∈ X e, v ek+i−1|k ∈ V ek , ∀i ∈ I+ 
+
+> N
+
+(38b) 
+
+xek+N |k ∈ X T ⊂ X e (38c) At kth instant the optimization routine solution is 
+
+ve∗ 
+
+> k
+
+= {ve∗
+
+> k|k
+
+, v e∗ 
+
+> k+1 |k
+
+, · · · , v e∗ 
+
+> k+N−1|k
+
+}T and the terminal set is XT . Since equation (38a) depends on uncertain system parameters, it is not implementable. An esti-mated system model is introduced via the following proposition, which can be used in P1 as an alternative to (38a). 
+
+Proposition 3 Based on (15) , the prediction model 
+
+(38a) is equivalent to the following model 
+
+xek+i|k= ˆAsk+i−1xek+i−1|k +ˆBk+i−1vek+i−1|k +˜ xek+i|k , ∀i ∈ I+
+
+> N
+
+(39) 
+
+where, ˆAsk+( .)= ˆAk+( .)+ ˆBk+( .)K, ˜xek+i|k=˜Θsk+i−1Xvk+i−1|k,
+
+˜Θsk+( .), Θs − ˆΘsk+( .), and Xvk+( .)|k =
+
+[
+
+xeT 
+
+> k+( .)|k
+
+veT
+
+> k+( .)|k
+
+]
+
+.Remark 4: At the kth instant for all i ∈ I+ 
+
+> N
+
+the knowl-edge of ˆΘsk+i−1 and ˜ xek+i are not known. Hence (39) is unimplementable. 
+
+Proposition 4 If (13) updates ˆΘk with Xek+i|k satisfy-ing (6a) and (27) , then xek+i|k can be segregated as 
+
+xek+i|k = ¯ sek+i|k + ǫk+i|k + ek+i|k, ∀i ∈ I+ 
+
+> N
+
+(40) 
+
+where ǫk+i|k ∈ ZΘ 
+
+> i
+
+and ek+i|k ∈ Z˜xe
+
+capture the errors induced by parameter estimation and disturbance term 
+
+˜xek+i|k respectively. Remark 5: The sets ZΘ 
+
+> i
+
+and Z˜xe
+
+are obtained from the sets W˜xe and WΘ defined in Definition 2 . The compu-tation follows the methodology presented in [ Section V-B, [6]]. 
+
+4.3 Terminal Constraints 
+
+The system given by xek+1 = ˆAsk xek, ˆAsk ∈ Ψa, ∀k ∈ I+
+
+can be claimed to be exponentially stable by utilizing 
+
+Assumption 7. There is a need to obtain γ−contractive set X eT as follows 
+
+X eT ⊂ X e ⊖ Z˜xe
+
+(41) ˆAsksek ∈ γX eT , ∀sek ∈ X eT , ∀ ˆAsk ∈ Ψa, ∀k ∈ I (42) The value of γ is chosen between (0 , 1). If K(X eT ⊕Z˜xe
+
+) ⊂Uek , only then is X eT said to be feasible. The optimized control input sequence vek is subjected to the following terminal constraint 
+
+vek+N −1|k ≥ − hv
+
+> ∆
+
+111m (43) where 1 11m =
+
+[
+
+1, 1, · · · , 1
+
+]T
+
+∈ Rm.
+
+4.4 Reformulated MPC Problem 
+
+The constraints on ¯ sek+i|k and ¯ sek+N |k after tightening are given by ¯sek+i|k ∈ X ei , X e ⊖ ZΘ 
+
+> i
+
+⊖ Z˜xe
+
+, ∀i ∈ I+ 
+
+> N−1
+
+¯sek+N |k ∈ ¯X eT , X eT ⊖ ZΘ 
+
+> N
+
+⊂ X e ⊖ ZΘ 
+
+> N
+
+⊖ Z˜xe (44) The MPC optimization routine designed for the uncer-tain system is defined as follows ¯sek+i|k = ˆAsk ¯sek+i−1|k + ˆBkvek+i−1|k, ∀i ∈ I+ 
+
+> N
+
+(45) The cost function for the system (45) is defined as 
+
+Jsk = ∑N −1  
+
+> i=0 1
+> 2
+
+[‖¯sek+i|k‖2 
+
+> Q
+
++ ‖vek+i|k‖2
+
+> R
+
+] + Jsf (¯ sek+N |k ), where Jsf (¯ sek+N |k ) , 1 
+
+> 2
+
+‖¯sek+N |k‖2 
+
+> P
+
+. The modified COCP 
+
+P1 is as follows 
+
+P2 : ve∗ 
+
+> k
+
+= argmin vek
+
+Jsk
+
+6s.t. ¯ sek+i|k = ˆAsk ¯sek+i−1|k + ˆBkvek+i−1|k, ∀i ∈ I+ 
+
+> N
+
+(46a) ¯sek+i|k ∈ X ei , v ek+i−1|k ∈ V ek , ∀i ∈ I+ 
+
+> N
+
+(46b) 
+
+vek+N −1|k ≥ − hv
+
+> ∆
+
+1m, ¯sek+N |k ∈ ¯X eT (46c) 
+
+4.5 Recursive Feasibility 
+
+Lemma 11 If P2 is initially feasible at kth instant, then there exists a control input sequence vek+1 at k + 1 th in-stant such that 
+
+vek+1 ∈ V ek+1 := 
+
+{
+
+vek+1 ∈ RN m 
+
+∣∣∣∣
+
+Huvek+1 ≤ hv111N m 
+
+H∆vek+1 ≤ hv
+
+> ∆
+
+111N m + ¯Hv ek
+
+}
+
+(47) 
+
+where vek+1 , {vek+1 |k, · · · , v ek+N −1|k, 0m}T , and vek is the optimal control input of the kth instant. Proof. The initial feasibility of P2 at kth instant guar-antees vek ∈ V ek . Therefore, at k + 1 th instant, with 
+
+vek+i|k+1 = vek+i|k , ∀i ∈ I+  
+
+> N−1
+
+and utilizing (34) and (35) the following can be inferred 
+
+Hu(vek+i|k+1 − vek+i−1|k+1 ) ≤ hv
+
+> ∆
+
+111N m , ∀i ∈ I+ 
+
+> N−1
+
+(48) At k + 1 th instant, vek is the implemented control input from the preceding instant. Utilizing (36), (48) can be rewritten as 
+
+H∆vek+i|k+1 ≤ hv
+
+> ∆
+
+111N m + ¯Hv ek, ∀i ∈ I+  
+
+> N−1
+
+(49) Since vek+N |k+1 = 0 m, the following is concluded by in-voking (43), 
+
+vek+N |k+1 − vek+N −1|k+1 ≤ hv
+
+> ∆
+
+1m (50) Therefore utilizing (33), (34), (43) and (49), it can be concluded that (47) holds. 
+
+Remark 6: The term ¯Hv ek in equation (49) is responsible for making the set Vek+1 in equation (47)(and hence the input constraint) time varying in nature. 
+
+Lemma 12 At the kth instant, if xek ∈ X e and ¯sek|k ∈X e 
+
+> 0
+
+, then the feasibility of the COCP P2 ensures the fol-lowing (1) xek+i|k ∈ X e, ∀i ∈ I+
+
+> N
+
+(2) xk+i|k ∈ X , ∀i ∈ I+
+
+> N
+
+Proof. At the kth instant, vek is considered to be the solution of P2. The following has been assumed for a value of i, where i ∈ I+
+
+> N
+
+xek+j−1|k ∈ X e, ∆xek+j−1|k ∈ X e
+
+> ∆
+
+, ∀j ∈ I+ 
+
+> i
+
+(51) 
+
+vek ∈ V ek is guaranteed as P2 is initially feasible, which along with (21), (22) and (51) implies uek+j−1|k ∈ U ek .Since (13) updates the estimated parameters, and Xe =[xeT
+
+, u eT
+
+]T where xe ∈ X e and ue ∈ U ek then the follow-ing holds for all j ∈ Ii, i ∈ I+
+
+> N
+
+ek+j ∈ Z˜xe
+
+, ǫ k+j|k ∈ ZΘ 
+
+> j
+
+(52) For the value of i ∈ I+ 
+
+> N
+
+utilized in (51) the following can be concluded ¯sek+j|k + ǫk+j|k + ek+j|k ∈ ¯sek+j|k ⊕ ZΘ 
+
+> j
+
+⊕ Z˜xe
+
+(53) At kth instant if P2 is feasible and (51) holds, then using (40), (44) and (53) the following can be inferred 
+
+xek+i|k ∈ X e, if i ∈ I+ 
+
+> N
+
+(54) Therefore, if Assumption 2 holds and xek , xk −xrk, then utilizing (54) the following is concluded 
+
+xk+i|k ∈ X , if i ∈ I+ 
+
+> N
+
+(55) Hence, if xek|k ∈ X e and ¯ sek|k ∈ X e 
+
+> 0
+
+then at kth instant by recursively using (51)-(55) the claimed assertions hold. 
+
+
+
+Theorem 13 The recursive feasibility of P2 for (k +i)th 
+
+instants for all i ∈ I+ is guaranteed if the COCP P2 is feasible at the kth instant. Proof. At kth instant it is assumed that P2 is feasible and provides a feasible solution vek. Hence, at kth instant the following is guaranteed ¯ sek+i|k ∈ X ei , ∀i ∈ I+  
+
+> N−1
+
+and ¯sek+N |k ∈ ¯X eT , where X ei and ¯X eT is defined by (44). From 
+
+Lemma 11 it is inferred that there exists a control input sequence vek+1 ∈ V ek+1 . Hence, the recursive feasibility of P2 is guaranteed if ¯sek+1+ i|k+1 ∈ X ei , ∀i ∈ IN −1; ¯sek+1+ N |k+1 ∈ ¯XT (56) The remaining proof proceeds along the same lines as provided in [ Section V-E , [6]]. 
+
+Corollary 1: From lemma 12 it is proved that at kth in-stant the feasibility of P2 guarantees xk+i|k ∈ X . Hence, the recursive feasibility of P2 is guaranteed if there exists a feasible solution that xk+j+i|k ∈ X , ∀(i, j ) ∈ IN × I+.
+
+4.6 Stability Analysis Remark 7: Let ¯ α1(·) and ¯ α2(·) be class K functions such that: ¯α1(‖¯sek‖2 
+
+> Q
+
++ ‖vek‖2
+
+> R
+
+) ≤ Jsk ≤ ¯α2(‖¯sek‖2 
+
+> Q
+
++ ‖vek‖2
+
+> R
+
+) (57) 7Theorem 14 Provided P2 is feasible, the closed loop sys-tem (45) is bounded and asymptotically converging to zero. Proof. A Lyapunov function candidate for the system (45) is constructed as 
+
+Vk =Jsk= 
+
+> N−1
+
+∑
+
+> i=0
+
+1
+
+2 [‖¯sek+i|k‖2 
+
+> Q
+
++‖vek+i|k‖2
+
+> R
+
+]+ Jsf (¯ sek+N |k) (58) At kth instant the optimal control input sequence vek is obtained by solving the cost function Jsk , having ¯ sek+i|k
+
+as the optimal states for all i ∈ I+ 
+
+> N
+
+. A feasible solution 
+
+vek+1 is available at the k + 1 th instant, since at the kth 
+
+instant P2 is feasible (using Lemmas 11,12 and Theorem 13 ). The cost function Jsk+1 and a scalar function Vk+1 
+
+corresponding to the solution vek+1 is defined as 
+
+Vk+1 = Jsk+1 = 
+
+> N−1
+
+∑
+
+> i=1
+
+1
+
+2 [‖¯sek+i|k+1 ‖2 
+
+> Q
+
++ ‖vek+i|k‖2
+
+> R
+
+]+ 1
+
+2 [‖¯sek+N |k+1 ‖2 
+
+> Q
+
++ ‖vek+N |k+1 ‖2
+
+> R
+
+] + Jsf (¯ sek+1+ N |k+1 )(59) On implementing vek+1 in (45), ¯ sek+i|k+1 are obtained. Let ∆ Vk+1 = Vk+1 − Vk. This yields: ∆Vk+1 = − 1
+
+2 [‖¯sek|k‖2 
+
+> Q
+
++‖vek|k‖2
+
+> R
+
+]+ 1
+
+2 ‖¯sek+N |k‖2 
+
+> Q
+
+−Jsf (¯ sek+N |k )+Jsf (¯ sek+1+ N |k+1 )+ 
+
+> N
+
+∑
+
+> i=1
+
+1
+
+2 [‖ǫ1
+
+> k+i|k
+
+‖2 
+
+> Q
+
++2¯ seT
+
+> k+i|k
+
+Qǫ 1
+
+> k+i|k
+
+](60) 
+
+ǫ1 
+
+> k+i|k
+
+is the error due to the difference in the pre-diction model ˆΘk at kth instant and ˆΘk+1 at k + 1 th 
+
+instant with respect to the input sequence vek+1 , de-fined as ǫ1 
+
+> k+i|k
+
+= ¯sek+i|k+1 − ¯sek+i|k . For the feasi-ble solution vek+1 , ¯sek+1+ N |k+1 = ˆAsk+1 ¯sek+N |k+1 =ˆAsk+1 (¯ sek+N |k + ǫ1 
+
+> k+N|k
+
+). From (18) the following can be inferred (¯ sek+N |k( ˆAsk+1 P ˆAsT 
+
+> k+1
+
+− P + Q)¯ sek+N |k) < 0, that implies 1
+
+2 ‖¯sek+N |k‖2 
+
+> Q
+
++ Jsf (¯ sek+1+ N |k+1 ) − Jsf (¯ sek+N |k) ≤
+
+1
+
+2 ‖ ˆAsk+1 ǫ1 
+
+> k+N|k
+
+‖2 
+
+> P
+
++ ¯ seT  
+
+> k+N|k
+
+ˆAsT 
+
+> k+1
+
+P ˆAsk+1 ǫ1 
+
+> k+N|k
+
+The above inequality is utilized to modify (60) as follows ∆Vk+1 = − 1
+
+2 [‖¯sek|k‖2 
+
+> Q
+
++ ‖vek|k‖2
+
+> R
+
+] + 1
+
+2 ‖ ˆAsk+1 ǫ1 
+
+> k+N|k
+
+‖2
+
+> P
+
++ ¯ seT  
+
+> k+N|k
+
+ˆAsT
+
+> k+1
+
+P ˆAsk+1 ǫ1 
+
+> k+N|kN
+
+∑
+
+> i=1
+
+1
+
+2 [‖ǫ1
+
+> k+i|k
+
+‖2
+
+> Q
+
++ 2¯ seT
+
+> k+i|k
+
+Qǫ 1
+
+> k+i|k
+
+] (61) As P2 is recursively feasible, ¯ sek+i|k ∈ X ei ⊂ X e, ∀i ∈
+
+I+  
+
+> N−1
+
+and ¯ sek+N |k ∈ ¯X eT ⊂ X e, hence ‖¯sek+i|k‖ ≤ xm, ∀i ∈
+
+I+ 
+
+> N
+
+, where xm is defined in Proposition 2 . Moreover, ˆAsk ∈
+
+Ψa, ∀k ∈ I+, where Ψ a is a C-set, then ‖ ˆAsk‖F ≤ a,where a ∈ R is a scalar. The class K function ρ(‖Lk‖)can be defined as 
+
+ρ(‖Lk‖) , 1
+
+2 (a2‖P ‖F ‖ǫ1 
+
+> k+N|k
+
+‖2 +
+
+> N
+
+∑
+
+> i=1
+
+[‖Q‖F ‖ǫ1
+
+> k+i|k
+
+‖2
+
++ 2 xm‖Q‖F ‖ǫ1
+
+> k+i|k
+
+‖]) + a2xm‖P ‖F ‖ǫ1 
+
+> k+N|k
+
+‖
+
+(62) The upper bound of ‖Lk‖ is used to obtain the function 
+
+ρ(‖Lk‖). From Remark 7 and (58), the following can be inferred 
+
+‖¯sek|k‖2 
+
+> Q
+
++ ‖vek|k‖2 
+
+> R
+
+≥ ¯α−12 (Jsk ) = α−12 (Vk ) (63) ¯α−12 (.) is the inverse function of α2, and therefore is a class K function. Utilizing (62) and (63), (61) is further modified into ∆Vk+1 ≤ 1
+
+2 ¯α−12 (Vk) + ρ(‖Lk‖) (64) From [6] it is seen that ǫ1 
+
+> k+i|k
+
+is bounded and ǫ1 
+
+> k+i|k
+
+→
+
+0n, ∀i ∈ I+ 
+
+> N
+
+as k → 0. Hence, from (62) it can be inferred that ρ(‖Lk‖) is bounded and ρ(‖Lk‖) → 0 as k → 0. 
+
+Corollary 2: Using (40), the following is claimed 
+
+xek = ¯ sek + ǫk + ek (65) If (13) updates ˆΘk and P2 is feasible then using [6] and 
+
+Theorem 14 it is guaranteed that ǫk, e k, ¯sek are bounded and ǫk, e k, ¯sek → 0n, as k → ∞. This implies xek is bounded for all k ∈ I and xek → 0n as k → ∞ . There-fore, provided Assumption 2 holds and xek = xk − xrk, it is claimed that xk is ultimately bounded. 
+
+5 Simulation Results 
+
+The developed control framework is implemented on a stable second-order discrete-time plant described by A = [−0.5, 0; 0 .5, −0.4] and B = [1 , 0; 0 , 1]. The uncertain system is expected to track a time-varying reference signal. The model parameters of the un-certain system belongs to the set Ψ, given as Ψ =
+
+co {[Ai, B i]}, i ∈ I+4 , where A1 = [ −0.6, 0; 0 .35 , −0.5], 
+
+A2 = [ −0.4, 0; 0 .35 , −0.32], A3 = [ −0.6, 0.15; 0 .6, −0.5] and A4 = [ −0.4, 0.15; 0 .6, −0.32] and B1 = [0 .8, 0; 0 , 0.8], 
+
+B2 = [1 .2, 0; 0 , 1.2], B3 = [0 .8, 0.1; 0 .1, 0.8] and 
+
+B4 = [1 .2, 0.1; 0 .1, 1.2]. The imposed state, input and input rate constraints are ‖x‖∞ ≤ 2.25, ‖uk‖∞ ≤ 3and ‖∆uk‖∞ ≤ 2.5 respectively, where xk = [ x1
+
+> k
+
+; x2 
+
+> k
+
+]T .The initial estimated model parameters are ˆA0 =80 5 10 15 20 25 30 35 40 45 
+
+> Time (s)
+> -2.5 -2 -1.5 -1 -0.5 00.5 11.5 22.5
+> xk
+
+Fig. 1. System States          
+
+> 0510 15 20 25 30 35 40 45
+> Time (s)
+> -2 -1.5 -1 -0.5 00.5 11.5 2
+> sek
+
+Fig. 2. Error States          
+
+> 0510 15 20 25 30 35 40 45
+> Time (s)
+> -3 -2 -1 0123
+> uk
+
+Fig. 3. Control Input          
+
+> 0510 15 20 25 30 35 40 45
+> Time (s)
+> -3 -2 -1 0123
+> uk
+
+Fig. 4. Rate of Change of Control Input 
+
+[−0.4, 0.15; 0 .35 , −0.5] and ˆB0 = [1 , 0.1; 0 .1, 0.8]. The prediction horizon length N is set to 5. To assess the performance of the proposed control framework under various conditions, simulations are performed with 10 different initial parameter estimates and 10 different initial states distributed throughout the prescribed constraint region.          
+
+> 0510 15 20 25 30 35 40 45
+> Time (s)
+> 00.05 0.1 0.15
+
+Fig. 5. Parameter Estimation Error 
+
+Fig. 1 illustrates that the uncertain system achieves sat-isfactory tracking of the time-varying reference trajec-tory while ensuring that the system states remain within the prescribed constraint bounds. The nominal states of the error dynamics (¯ sek) are also confined within their computed region as illustrated in Fig. 2. The control in-puts and input rate satisfy their respective constraint bounds as shown in Fig. 3 and Fig. 4. The parameter estimation errors remain bounded as shown in Fig. 5. In the same figure, a noticeable drop in parameter esti-mation errors is observed around 30s. This arises from a sudden change in the reference trajectory at that time instant. As the controller starts tracking the new refer-ence signal, ˜ xek+1 becomes non-zero, providing excitation to the adaptation law (13). Thereby, resuming adaptive learning until the system converges to the new reference trajectory. 
+
+6 Conclusion 
+
+An adaptive MPC control framework was proposed for the tracking of a discrete-time linear time-invariant sys-tem with bounded parametric uncertainties under hard constraints on state, input and input rate. To facilitate tracking, the tracking problem was reformulated as a regulatory problem by expressing the system dynamics in terms of their equivalent error dynamics with respect to a time-varying reference signal. Constraint reformu-lation in the error dynamics domain was performed to preserve the original system’s physical limitations. The uncertain system parameters were adaptively estimated to construct an input to maintain zero tracking error. Despite the time-varying nature of the admissible con-trol sequence, which rendered the standard recursive fea-sibility argument inapplicable, the developed solution ensured recursive feasibility by guaranteeing the contin-ued solvability of the associated optimization problem at each time step. The tracking error dynamics were observed to converge to the origin while maintaining boundedness of the physical system states. 
+
+References           
+
+> [1] G. Tian, B. Li, Q. Zhao, and G. Duan. High-precision trajectory tracking control for free-flying space manipulators
+
+9with multiple constraints and system uncertainties. IEEE Transactions on Aerospace and Electronic Systems ,60(1):789–801, 2023. [2] C. Hu, Z. Wang, X. Bu, J. Zhao, J. Na, and H. Gao. Optimal tracking control for autonomous vehicle with prescribed performance via adaptive dynamic programming. 
+
+IEEE Transactions on Intelligent Transportation Systems ,25(9):12437–12449, 2024. [3] B. Dey, A. Dhar, S. K. Pandey, and A. Sengupta. Tlbo integrated mpc for autonomous vehicles with guaranteed safety and passenger comfort. In Proc. Indian Control Conference (ICC) , pages 576–581, Bangalore, India, 2025. [4] Z. Liu, O. Zhang, Y. Gao, Y. Zhao, Y. Sun, and J. Liu. Adaptive neural network-based fixed-time control for trajectory tracking of robotic systems. IEEE Transactions on Circuits and Systems II: Express Briefs , 70(1):241–245, 2022. [5] P. Ghosh and S. Bhasin. State and input constrained model reference adaptive control with robustness and feasibility analysis. IEEE Transactions on Automatic Control , pages 1–7, 2026. [6] A. Dhar and S. Bhasin. Indirect adaptive mpc for discrete-time lti systems with parametric uncertainties. IEEE Transactions on Automatic Control , 66(11):5498–5505, 2021. [7] Z. Yang, J. Huang, H. Yin, D. Yang, and Z. Zhong. Path tracking control for underactuated vehicles with matched-mismatched uncertainties. IEEE Transactions on Intelligent Transportation Systems , 23(8):12894–12907, 2021. [8] J. K¨ ohler. Certainty-equivalent adaptive mpc for uncertain nonlinear systems, 2026. arXiv:2603.17843. [9] B. Kouvaritakis and M. Cannon. Model Predictive Control .Springer, Cham, Switzerland, 2016. [10] S. V. Rakovi´ c, B. Kouvaritakis, R. Findeisen, and M. Cannon. Homothetic tube model predictive control. Automatica ,48(8):1631–1638, 2012. [11] W. Langson, I. Chryssochoos, S. V. Rakovi´ c, and D. Q. Mayne. Robust model predictive control using tubes. 
+
+Automatica , 40(1):125–133, 2003. [12] S. Yao, Q. Kang, M. Zhou, M. J. Rawa, and A. Albeshri. Discriminative manifold distribution alignment for domain adaptation. IEEE Transactions on Systems, Man, and Cybernetics: Systems , 53(2):1183–1197, February 2023. [13] J. Hu, B. Zhang, H. Wang, L. Zhao, and P. Jiang. Coordinated control and torque distribution of differential steering and anti-skid driving of distributed drive electric vehicle considering stability. Proceedings of the Institution of Mechanical Engineers, Part D: Journal of Automobile Engineering , 237(12):2780–2796, 2023. [14] U. Rosolia and F. Borrelli. Learning how to autonomously race a car: A predictive control approach. IEEE Transactions on Control Systems Technology , 28(6):2713–2719, November 2020. [15] M. Tanaskovic, L. Fagiano, R. Smith, and M. Morari. Adaptive receding horizon control for constrained mimo systems. Automatica , 50(12):3019–3029, 2014. [16] D. Fan and S. Di Cairano. Further results and properties of indirect adaptive model predictive control for linear systems with polytopic uncertainty. In Proceedings of the American Control Conference (ACC) , pages 2948–2953, 2016. [17] M. Lorenzen, F. Allg¨ ower, and M. Cannon. Adaptive model predictive control with robust constraint satisfaction. IFAC-PapersOnLine , 50(1):3313–3318, 2017. [18] A. Dhar, A. Dey, and S. Bhasin. Homothetic tube-based adaptive mpc. International Journal of Robust and Nonlinear Control , 35(13):5705–5716, 2025. [19] B. Zhu and X. Xia. Adaptive model predictive control for unconstrained discrete-time linear systems with parametric uncertainties. IEEE Transactions on Automatic Control ,61(10):3171–3176, December 2015. [20] A. D. Ames, J. W. Grizzle, and P. Tabuada. Control barrier function based quadratic programs with application to adaptive cruise control. In IEEE Conference on Decision and Control , pages 6271–6278, 2014. [21] A. Bemporad, A. Casavola, and E. Mosca. Nonlinear control of constrained linear systems via predictive reference management. IEEE Transactions on Automatic Control ,42(3):340–349, 1997. [22] E. Lavretsky and N. Hovakimyan. Stable adaptation in the presence of input constraints. Systems & Control Letters ,56(11-12):722–729, 2007. [23] G. Niu and C. Qu. Global asymptotic nonlinear pid control with a new generalized saturation function. IEEE Access ,8:210513–210531, 2020. 
+
+10

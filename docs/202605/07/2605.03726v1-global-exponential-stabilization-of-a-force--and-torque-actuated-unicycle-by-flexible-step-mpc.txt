@@ -1,0 +1,779 @@
+Title: Global exponential stabilization of a force- and torque-actuated unicycle by flexible-step MPC
+
+URL Source: https://arxiv.org/pdf/2605.03726v1
+
+Published Time: Wed, 06 May 2026 00:58:41 GMT
+
+Number of Pages: 11
+
+Markdown Content:
+# Global exponential stabilization of a force- and torque-actuated unicycle by flexible-step MPC ⋆
+
+# Ala Kolsi a, Christian Ebenbauer a, Bahman Gharesifard b, Raik Suttner a
+
+> a
+
+Chair of Intelligent Control Systems, RWTH Aachen University, Aachen, Germany 
+
+> b
+
+Department of Mathematics and Statistics at Queen’s University, Kingston, Canada 
+
+Abstract 
+
+We study the problem of global exponential stabilization of a force- and torque-controlled unicycle model in discrete time. To this end, we extend a recently introduced approach to model predictive control (MPC) in which a flexible number of inputs is implemented in every iteration. We present the first flexible-step MPC protocol with state-dependent weights for average descent. Notably, the proposed method relies neither on a suitable design of running or terminal cost functions nor on a suitable choice of terminal constraints. Instead, stability is guaranteed through a generalized discrete-time control Lyapunov function. We establish a new theoretical framework for global exponential stabilization of general nonlinear discrete-time control systems by flexible-step MPC. The obtained results go beyond the unicycle example. However, given the importance of the unicycle dynamics, we make that a focal point of our work. For the particular case of the dynamic (second-order) unicycle model, we show that global exponential stability cannot be attained in the classical sense, but in a slightly weaker sense. The proposed flexible-step MPC method is shown to induce the best possible notion of global exponential stability for this model. We provide explicit rules for the choice of parameters, which guarantee feasibility and global exponential stability. Our numerical simulations show that the discrete MPC method also works very well in applications to a continuous-time torque-actuated unicycle. 
+
+Key words: Model predictive control, Lyapunov methods, Exponential stabilization, Nonholonomic systems. 
+
+1 Introduction 
+
+Wheeled mobile robots are widely used for industrial and service applications due to their mechanical simplicity and versatility. The unicycle model is a standard bench-mark example, which serves as a simplified model for the motion of a mobile robot. Many studies assume that the longitudinal and rotational velocity can be set instanta-neously through the inputs. However, when inertial ef-fects cannot be neglected, a force- and torque-actuated model may provide a more realistic description. In the present paper, we consider a discrete-time dynamic uni-cycle model in which the velocities do not serve as inputs but are part of the system state. 
+
+⋆ This paper was not presented at any IFAC meeting. Cor-responding author: Ala Kolsi 
+
+Email addresses: ala.kolsi@ic.rwth-aachen.de (Ala Kolsi), christian.ebenbauer@ic.rwth-aachen.de 
+
+(Christian Ebenbauer), bahman.gharesifard@queensu.ca 
+
+(Bahman Gharesifard), raik.suttner@ic.rwth-aachen.de 
+
+(Raik Suttner). 
+
+A frequently studied control objective in this context is asymptotic stabilization about a prescribed position and orientation. In case of nonholonomic velocity con-straints, this task can typically not be accomplished by continuous static state feedback. To overcome this ob-struction, many different methods and ideas have been proposed, including discontinuous static state feedback [1], [2], [3], and time-varying continuous state feedback [4], [5], [6] for the unicycle and related nonholonomic systems. In many applications, the control objective is not lim-ited to mere asymptotic stabilization, but it also in-volves satisfaction of constraints and optimization of performance. To meet all of these requirements, model predictive control (MPC) provides a general and well-established approach [7], [8]. Several MPC-based results on set-point stabilization of unicycles have been reported so far, e.g. in [9], [10], [11]. Notably, the MPC method in [12] provides local asymptotic stability for a kine-matic unicycle through a suitable choice of the running cost and the prediction horizon, but without the need for stabilizing terminal costs or constraints. A more gen-1
+
+> arXiv:2605.03726v1 [math.OC] 5 May 2026
+
+eral study on MPC without stabilizing terminal costs or constraints, which is based on homogeneous approxima-tions, can be found in [13]. For the unicycle model, which is non-homogeneous, such a homogeneous approxima-tion can typically only lead to local or semi-global sta-bilization. Building on the results in [12] and [13], semi-global asymptotic stability of a partially dynamic uni-cycle model has been shown in [14], where the domain of attraction grows with increasing prediction horizon. In the present paper, we aim for global exponential sta-bility. In most of the known discrete-time MPC schemes, only the first element of a predicted optimal input sequence is applied to a control system. This procedure typically yields static state feedback in the sense that the next ap-plied input depends solely on the current system state. In the present paper, we use an MPC scheme with a temporal component, which generates time-varying state feedback . Such an approach is well-suited for applica-tions to control systems that cannot be asymptotically stabilized by smooth static state feedback, such as non-holonomic systems. The temporal component of the em-ployed MPC schemes originates from a flexible num-ber of implemented steps for each predicted optimal in-put sequence. Here, we build on the recently introduced flexible-step MPC approach from [15]. The distinct fea-ture of this approach relative to other MPC methods with a flexible number of implemented inputs, see [16] [17] [18], is that the tasks of optimization and stabiliza-tion are separated. This means that a suitable design of cost functions or terminal constraints for stabilization, which is often difficult to obtain, is not needed. Instead, stability of a system is guaranteed through a so-called 
+
+generalized control Lyapunov function in the underlying optimal control problem. Relaxed feasibility and stabil-ity criteria for flexible-step MPC are presented in [19]. Also applications to known switched linear systems [20] and unknown linear systems [21] have been investigated so far. In the present paper, we investigate exponential stabilization of nonlinear systems by flexible-step MPC with a focus on the dynamic (second-order) unicycle model. 
+
+Main contributions . We extend the theory of flexible-step MPC from [15] to a general framework for global exponential stabilization of nonlinear discrete-time sys-tems. We relax several components of flexible-step MPC so that very simple generalized control Lyapunov func-tions can be used for stabilization. For the example of a dynamic unicycle, we show that choosing the state norm as this function is sufficient for global exponential sta-bility. In this context, exponential stability in the classi-cal sense will be shown to be not attainable for the dy-namic unicycle model. However, one can achieve this by relaxing the exponent on the norm of the initial state. Remarkably, it turns out that the proposed flexible-step MPC protocol achieves the best possible exponent. To the best of our knowledge, this is also the first result on global exponential stabilization of a force- and torque-actuated unicycle by model predictive control. The paper is organized as follows. Basic notation and definitions are summarized in Section 2. The problem of exponential stabilization of a dynamic unicycle model and its challenges are described in Section 3. An ap-proach to global exponential stabilization of general non-linear discrete-time systems by flexible-step MPC and a general stability result are presented in Section 4. The general theory is then applied to the unicycle model in Section 5. Finally, numerical tests can be found in Sec-tion 6, where the proposed discrete-time MPC scheme is applied to a continuous-time force- and torque-actuated unicycle. 
+
+2 Notation 
+
+Let N denote the set of nonnegative integers. For s, t ∈ N
+
+with s ≤ t, the integer intervals [ s : t], [ s : t), ( s : t], and (s : t) are given by the intersection of N with the usual real number intervals [ s, t ], [ s, t ), ( s, t ], and ( s, t ), respec-tively. Let K denote the set of continuous and strictly increasing functions γ : [0 , ∞) → [0 , ∞) with γ(0) = 0. Let K∞ be the set of all elements γ of K with γ(r) → ∞ 
+
+as r → ∞ . Let KL be the set of continuous functions 
+
+β : [0 , ∞)2 → [0 , ∞) such that β(·, t ) is an element of 
+
+K for each t ≥ 0 and such that β(r, ·) is non-increasing with β(r, t ) → 0 as t → ∞ for each r ≥ 0. For imple-mented states and inputs of a control system at time 
+
+t ∈ N, we use the bracket notation x(t) and u(t). For predicted states and inputs of an optimal control prob-lem at time i ∈ N within the prediction horizon, we use the subscript notation xi and ui.
+
+3 Problem statement and challenges 
+
+We consider a dynamic (force- and torque-controlled) unicycle model with mass m > 0, inertia J > 0, and linear damping constants k, κ > 0. In continuous time, the second-order dynamic unicycle model reads ˙x = v cos( θ), ˙y = v sin( θ), ˙θ = ω, m ˙v = F − k v, J ˙ω = T − κ ω, (1) see e.g. [22]. The Euler discretization of the continuous-time system (1) with step size h > 0 is given by x( t + 1) = x( t) + h v (t) cos( θ(t)) , (2a) y( t + 1) = y( t) + h v (t) sin( θ(t)) , (2b) 
+
+θ(t + 1) = θ(t) + h ω (t), (2c) 
+
+v(t + 1) = v(t) + hm (F (t) − k v (t)) , (2d) 
+
+ω(t + 1) = ω(t) + hJ (T (t) − κ ω (t)) . (2e) The five-dimensional system state of (2) consists of the position components x( t), y( t), an angle θ(t) for the 2alignment, the linear velocity v(t), and the angular ve-locity ω(t). The two input components of (2) are a force 
+
+F (t) and a torque T (t). We naturally use the notation 
+
+x(t) =  x( t), y( t), θ (t), v (t), ω (t) ⊤ ∈ R5, (3a) 
+
+u(t) =  F (t), T (t) ⊤ ∈ R2 (3b) for the state and the input vector of (2), respectively. The control objective is to globally exponentially stabilize the unicycle model (2) with respect to the origin. The nonlinear discrete-time control system (2) does not satisfy Brockett’s necessary condition for local asymp-totic stabilization from [23]. Hence, there exists no con-tinuously differentiable static state feedback that locally asymptotically stabilizes (2) around the origin. However, system (2) can be asymptotically stabilized by time-varying state feedback. The proposed flexible-step MPC approach in this paper may be seen as such a time-varying method. It differs from the standard one-step im-plementation of MPC, which typically generates static state feedback. A flexible number of implemented steps for each predicted optimal input sequence represents an additional temporal component, which is beneficial for asymptotic stabilization. The proposed general flexible-step MPC approach in the subsequent Section 4 is not limited to the unicycle model (2) but also applicable to discretizations of other nonholonomic systems. In the present paper, we do not limit our objectives to local asymptotic stabilization of (2). Instead, we aim to achieve global exponential stabilization. However, this goal comes with an additional challenge. Namely, the question whether it is possible to globally exponentially stabilize (2) by any kind of control strategy. As we will see below, the answer is negative if we want to achieve the classical notion of exponential stability. The subse-quent “negative result,” Proposition 1, makes a stronger statement: Even a weaker stability property than local exponential stability cannot be achieved for (2). There is no control strategy for the unicycle model (2) such that, locally around the origin, every solution x : N → R5 of the closed-loop system satisfies an exponential stability condition of the form 
+
+∥x(t)∥ ≤ ∥ x(0) ∥q λ e−μ t , (4) where λ, μ, q are positive real numbers with 1 /2 < q ≤ 1and ∥ · ∥ denotes the Euclidean norm on R5, we state this formally next. 
+
+Proposition 1 Let r, q, λ, and μ be positive real num-bers with 1/2 < q ≤ 1. Then there exists ε ∈ (0 , r ) such that, for every u : N → R2, there exists τ ∈ N such that the solution x : N → R5 of (2) with input u and initial condition 
+
+x(0) =  0, ε, 0, 0, 0 ⊤ (5) 
+
+violates inequality (4) at time t = τ .
+
+A proof of Proposition 1 can be found in Appendix A. Because of Proposition 1, the “best” exponent q that one can expect for (2) in a local exponential stability condi-tion of the form (4) is q = 1 /2. The exponent q = 1 /2 is directly linked to a local homogeneity property of the dy-namic unicycle model, which originates from the prod-uct v(t) sin( θ(t)) in (2) when the angle θ(t) and the ve-locity v(t) are close to zero. A local exponential stability property of the form (4) with q = 1 /2 is weaker than the classical notion with q = 1, since it allows more over-shoot for solutions that start close to the origin. This is-sue is also reflected by the initial condition (5) in Propo-sition 1. For small ε > 0, initial condition (5) prohibits a fast “zig-zag motion” of the unicycle towards the origin with large velocities. This problem does not occur for the more frequently studied kinematic unicycle model (2a)-(2c) in which the velocities v(t) and ω(t) are not components of the system state but inputs. Since Propo-sition 1 rules out classical exponential stability for (2), we introduce the following potentially weaker notion of exponential stability. 
+
+Definition 1 Let X be a finite-dimensional vector space. Let ∥ · ∥ be a norm on X. Let g : N × X → X and γ ∈ K ∞.We say that the time-varying discrete-time system 
+
+x(t + 1) = g(t, x (t)) (6) 
+
+is globally γ-exponentially stable if there exist positive real numbers λ and μ such that 
+
+∥x(t)∥ ≤ γ(∥x(0) ∥) λ e−μ t (7) 
+
+for every solution x of (6) and every time t ∈ N.
+
+Definition 1 is inspired by the notion of K-exponential stability from [6]. For γ = id, inequality (7) reduces to the usual condition for global exponential stability. Be-cause of Proposition 1, γ(r) = O(r1/2) for r → 0 is the “best” local asymptotic behavior of γ ∈ K ∞ that we can expect for the unicycle model (2). We will show in Section 5 that this best-case scenario is actually es-tablished by flexible-step MPC. More precisely, we will prove global γ-exponential stability for the closed-loop system, where γ ∈ K ∞ is defined by 
+
+γ(r) := max {r1/2, r }. (8) That is, flexible-step MPC achieves the best possible lo-cal exponential stability property and also classical ex-ponential stability for all solutions with initial states outside an arbitrary small neighborhood of the origin. In the subsequent Section 4, a new approach to global exponential stabilization by flexible-step MPC for gen-eral nonlinear discrete-time control systems is presented. Later, in Section 5, the general approach is applied to 3the unicycle model (2) and global γ-exponential stability (as in Definition 1) is proved for γ ∈ K ∞ defined by (8). 
+
+4 Global exponential stabilization of nonlinear systems by flexible-step MPC 
+
+In this section, we present a flexible-step MPC method for global exponential stabilization, which is not only applicable to the unicycle model (2), but to a more gen-eral class of nonlinear discrete-time control systems. The general approach in this section is applied to the unicy-cle model (2) later in Section 5. Throughout this section, let X and U be finite-dimen-sional vector spaces and let ∥ · ∥ be a norm on X. Let f
+
+be a map from X × U to X. We consider the nonlinear discrete-time control system 
+
+x(t + 1) = f (x(t), u (t)) (9) with state x(t) ∈ X and input u(t) ∈ U at time t ∈ N.Clearly, the unicycle model (2) in the previous section is a special case of (9). In the next paragraph, we introduce the key components of flexible-step MPC for global γ-exponential stability in the sense of Definition 1. This in-volves a so-called generalized control Lyapunov function for (9) with suitable properties. The subsequent Defini-tion 2 provides a novel class of these control Lyapunov functions, which is tailored for the goal of establishing global γ-exponential stability in the sense of Definition 1. 
+
+Definition 2 Let N be a positive integer. By an expo-nential generalized discrete-time control Lyapunov func-tion (EGDCLF) of order N for (9) we mean a real-valued function V on X together with a constant α ∈ (0 , 1) and functions σ1, . . . , σ N : X → (0 , ∞) such that the follow-ing four properties (P1)–(P4) hold. (P1) There exist χ1, χ 2 ∈ K ∞ such that 
+
+χ1(∥x∥) ≤ V (x) ≤ χ2(∥x∥) (10) 
+
+for every x ∈ X.(P2) For every x0 ∈ X, there exists u : [0 : N ) → U such that the solution x : [0 : N ] → X of (9) with input u
+
+and initial condition x(0) = x0 satisfies the average descent condition 
+
+> N
+
+X
+
+> t=1
+
+σt(x0) V (x(t)) ≤ (1 − α) V (x0), (11) 
+
+where 
+
+σ1(x0) + · · · + σN (x0) ≥ 1. (12) 
+
+(P3) There exists φ ∈ K ∞ such that 
+
+(1 − α) V (x) ≤ φ(V (x)) · min   
+
+> i∈[1: N]
+
+σi(x) (13) 
+
+for every x ∈ X.(P4) There exist ˜λ, ˜μ > 0 such that the K∞-functions χ1
+
+from (P1) and φ from (P3) satisfy 
+
+(χ−11 ◦ φ)( r e−τ ) ≤ (χ−11 ◦ φ)( r) ˜λ e−˜μ τ (14) 
+
+for every r ≥ 0 and every τ ≥ − α.
+
+Properties (P1)–(P4) in Definition 2 serve the following purposes. Property (P1) is just the standard require-ment of a global control Lyapunov function to be positive definite and radially unbounded. Property (P2) guar-antees the existence of inputs over the prediction hori-zon N for which V decays on average along solutions of (9). Note that the average descent condition (11) does not demand monotonic descent of V in every step. It only requires that a weighted average of V is reduced relative to the initial value. In the stability analysis of the closed-loop system (see proof of Theorem 1 in Ap-pendix B), the EGDCLF V will play the role of a non-monotonic Lyapunov function (see e.g. [24]). The func-tions σ1, . . . , σ N in (11) act as state-dependent weights 
+
+of the values of V and the decay constant α determines the magnitude of average descent. The state dependence of the weights is one of the main differences relative to the class of generalized control Lyapunov functions in [15], where the weights are assumed to be constant. This novel feature will allow us to use very simple and basic EGDCLFs for flexible-step MPC, such as the state norm 
+
+V = ∥ · ∥ for the unicycle model in Section 5. Property (P3) is also a novel feature compared to [15]. It replaces the small-control property in [15], which can be difficult to check in practice because it requires a careful anal-ysis of the input–state trajectories of (9). By contrast, property (P3) does not involve input–state trajectories of (9). It provides a suitable upper bound for the values of V in the average descent condition (11); see equation (B.4) in Appendix B. Finally, property (P4) is a techni-cal growth assumption on the comparison functions χ1
+
+and φ in order to get not just asymptotic stability but in fact exponential stability. It guarantees that the com-position χ−11 ◦ φ decays exponentially fast whenever its argument decays exponentially fast; see equation (B.6) in Appendix B. 
+
+Remark 1 The defining properties of an EGDCLF in Definition 2 are tailored for the purpose of global exponen-tial stabilization. Since exponential stability is a stronger property than asymptotic stability, some of the assump-tions on an EGDCLF (like (P2) and (P4) in Defini-tion 2) are stronger than the assumptions on a general-ized discrete-time control Lyapunov functions (GDCLF) in [15], where the focus is on asymptotic stabilization. Moreover, the definition of a GDCLF in [15] is more gen-eral than Definition 2 in the sense that a GDCLF may not only depend on the state but also on a finite sequence of previously predicted inputs. In the present paper, we only consider purely state-dependent EGDCLFs without an additional dependence on inputs. 
+
+4Now we use the concept of an EGDCLF from Defini-tion 2 to guarantee exponential stability for the control system (9) by means of flexible-step MPC. To this end, we insert an EGDCLF into the constraints of an opti-mal control problem. We will subsequently consider the following type of optimal control problem. 
+
+Problem 1 Let N be a positive integer, f0 : X × U → R,and F : X → R. Moreover, let V : X → R, α ∈ (0 , 1) ,and σ1, . . . , σ N : X → (0 , ∞). For any given initial state 
+
+x0 ∈ X, solve the optimal control problem minimize    
+
+> u0,...,u N−1∈U
+> x1,...,x N∈X
+> N−1
+
+X
+
+> i=0
+
+f0(xi, u i) + F (xN ) (15) 
+
+subject to ∀i ∈ [0 : N ) : xi+1 = f (xi, u i),
+
+> N
+
+X
+
+> i=1
+
+σi(x0) V (xi) ≤ (1 − α) V (x0),
+
+where it is assumed that if (15) is feasible , i.e, the set over which optimization takes place is not empty, then 
+
+(15) has a solution. 
+
+In this paper, we only consider optimal control problems without hard state and input constraints. Extensions to flexible-step MPC with constraints, as in [15], are left to future research. Note, however, that one can use the 
+
+running cost f0 and the terminal cost F to enforce soft state and input constraints. In the general stability result (Theorem 1), we do not impose assumptions on f0 and 
+
+F , which means that the user can choose f0 and F freely in any desired manner. The average descent condition in the last line of (15) does not guarantee monotonic descent of V in every step, but only for a weighted average of V . However, if the weights 
+
+σ1, . . . , σ N also satisfy the bound (12), then it is possible to choose a “flexible step” for which descent of V by a factor (1 − α) is guaranteed. For a later reference in the proposed flexible-step MPC algorithm (Algorithm 1), we make following remark. 
+
+Remark 2 (choice of a flexible step) Assume that, for an initial state x0 ∈ X, the optimal control problem (15) is feasible and provides optimal inputs 
+
+u0, . . . , u N −1 ∈ U and optimal states x1, . . . , x N ∈ X. In addition, assume that inequality (12) is satisfied. Then, it follows from (12) and the average descent condition 
+
+(15) that there exists a “flexible step” ℓ ∈ [1 : N ] such that 
+
+V (xℓ) ≤ (1 − α) V (x0). An implementation of the first ℓ
+
+inputs u0, . . . , u ℓ−1 steers (9) from x0 to xℓ, resulting in a non-monotonic decay of V . To induce fast convergence of the system state to the origin, one can select the “flex-ible step” ℓ as the first time instant at which the value of 
+
+V is reduced by the factor (1 − α). That is, one chooses the smallest ℓ ∈ [1 : N ] for which V (xℓ) ≤ (1 − α)V (x0).
+
+Now we can formulate a flexible-step MPC algorithm for the nonlinear discrete-time control system (9). 
+
+Algorithm 1 (flexible-step MPC) 
+
+0: Set t := 0 .1: Measure the current state x(t) of (9) .2: Solve the optimal control problem (15) with initial state x0 := x(t) and obtain optimal inputs u0, . . . , u N −1 ∈ U and optimal states 
+
+x1, . . . , x N ∈ X.3: Choose a “flexible step” ℓ ∈ [1 : N ] such that V (xℓ) ≤
+
+(1 − α) V (x0); cf. Remark 2. 4: Apply u(t) := uk to (9) and increment t → t + 1 
+
+for k = 0 , 1 . . . , ℓ − 1. Go to line 1. 
+
+Clearly, for Algorithm 1 to be well-defined, one has to guarantee that the optimal control problem (15) is al-ways feasible. This is guaranteed by one of the defin-ing properties of an EGDCLF, namely property (P2) in Definition 2. The following main result of this section states that if V is an EGDCLF for (9), then Algorithm 1 is well-defined and the closed-loop system is globally γ-exponentially stable in the sense of Definition 1. 
+
+Theorem 1 Let N be a positive integer, f0 : X×U → R,and F : X → R. Assume that V : X → R is an EGD-CLF of order N for (9) with α ∈ (0 , 1) , σ1, . . . , σ N : X →
+
+(0 , ∞), and χ1, χ 2, φ ∈ K ∞ as in Definition 2. Then, the optimal control problem (15) is feasible for every initial state x0 ∈ X. Moreover, system (9) controlled by Algorithm 1 is globally γ-exponentially stable, where 
+
+γ := χ−11 ◦ φ ◦ χ2 ∈ K ∞.
+
+A proof of Theorem 1 can be found in Appendix B. To the best of our knowledge, Theorem 1 is the first sta-bility result for flexible-step MPC with state-dependent weights σ1, . . . , σ N . As shown in the next section, the state dependence of the weights allows us to consider simple Lyapunov functions, such as the state norm for the unicycle model (2). In contrast to the stability results in [15] for constant weights, Theorem 1 does not require an additional small control property of (9) but only the control-independent boundedness property (P3) in Def-inition 2. 
+
+5 Global exponential stabilization of a unicycle by flexible-step MPC 
+
+Now we apply the proposed flexible-step MPC method (Algorithm 1) to the unicycle model (2). That is, as a special case of the problem in Section 4, we consider system (9) with state space X := R5, input space U := 
+
+R2, Euclidean norm ∥ · ∥ , and, using the notation in (3), 5the transition map f : R5 × R2 → R5 is defined by 
+
+f (x, u ) := 
+
+       
+
+> x+ h v cos( θ)y+ h v sin( θ)
+> θ+h ω v+hm(F−k v )
+> ω+hJ(T − κ ω )
+
+ , (16) where m, J, k, κ, h > 0 are arbitrary but fixed constants. As explained in Section 3, the “best” notion of global 
+
+γ-exponential stability for the unicycle model (2) in the sense of Definition 1 is the one with γ ∈ K ∞ defined by (8). For a successful application of Algorithm 1, we have to choose an EGDCLF V : R5 → R for (2) with α ∈ (0 , 1) and σ1, . . . , σ N : R5 → (0 , ∞) as in Definition 2. The subsequent Conditions 1 and 2 provide two examples of possible choices of V , α, and σ1, . . . , σ N .
+
+Condition 1 Choose N ∈ N, V : R5 → R, α ∈ (0 , 1) ,and σ1, . . . , σ N : R5 → (0 , ∞) such that the following three conditions (C1)–(C3) are satisfied. (C1) N ≥ 8.(C2) The function V is given by 
+
+V (x) =  x4 + |y|ϕ(|y|) + θ4 + v4 + ω41/4, (17) 
+
+where ϕ : [0 , ∞) → [2 , 4] is non-decreasing, and sat-isfies ϕ(s) = 2 for s ≤ 1 and ϕ(s) = 4 for s ≥ 2.(C3) The functions σ1, . . . , σ N are constant and satisfy 
+
+σi ≤ 1−α   
+
+> (N−1) c
+
+(18a) 
+
+for every i ∈ { 1, . . . , N − 1} and 
+
+σN = 1 − (σ1 + · · · + σN −1), (18b) 
+
+where 
+
+c := max {32(3 + 16 ·74   
+
+> h4max(7 ,N −8) 4
+
+),
+
+(24 h4 + 128 ·74  
+
+> max(7 ,N −8) 4
+
+)} 14 . (19) The function V in (17) is inspired by the running cost function in [12] for MPC for a kinematic unicycle. For states x ∈ R5 with component |y| ≤ 1, the function V in (17) coincides with the running cost function from [12]. The function from [12] is well-suited for semi-global sta-bilization but not for global stabilization. To circumvent this problem, we introduce the state-dependent expo-nent function ϕ in (C2) of Condition 1. For states x ∈ R5
+
+with component |y| ≥ 2, the function V in (17) coincides with the 4-norm on R5. The function ϕ provides a tran-sition between the exponents 2 and 4 on the compact interval [1 , 2]. A transition from 2 to 4 on an interval different than [1 , 2] would also be possible. 
+
+Proposition 2 Choose N ∈ N, V : R5 → R, α ∈ (0 , 1) ,and σ1, . . . , σ N : R5 → (0 , ∞) according to Condition 1. Then V is an EGDCLF of order N for (2) with α and 
+
+σ1, . . . , σ N as in Definition 2. Moreover, there exist con-stants ξ1, ξ 2, ζ > 0 such that 
+
+χ1(r) := ξ1 r, χ2(r) := ξ2 max {r1/2, r },φ(r) := ζ r (20) 
+
+define K∞-functions χ1, χ 2, φ for which (10) and (13) 
+
+are satisfied for every x ∈ R5.
+
+A proof of Proposition 2 can be found in Appendix C. As an alternative to Condition 1, another example of a suitable choice of V , α, and σ1, . . . , σ N is provided in the subsequent Condition 2. 
+
+Condition 2 Choose N ∈ N, V : R5 → R, α ∈ (0 , 1) ,and σ1, . . . , σ N : R5 → (0 , ∞) such that the following three conditions (C1)–(C3) are satisfied. (C1) N ≥ 8.(C2) The function V is given by 
+
+V (x) = ∥x∥. (21) 
+
+(C3) The functions σ1, . . . , σ N are given by 
+
+σi(x) = 1−α   
+
+> (N−1) c
+
+·
+
+( ∥x∥ 12 if 0 < ∥x∥ < 1
+
+1 otherwise (22a) 
+
+for every i ∈ { 1, . . . , N − 1} and by 
+
+σN (x) = 1 −  σ1(x) + · · · + σN −1(x), (22b) 
+
+where 
+
+c := 2 (1 + h2) 12
+
+  94 + 4  
+
+> h2max {1,(N−8) /7}2
+
+ 12 . (23) The function V in (21) is just the norm of the system state of the dynamic unicycle model (2). Such a very sim-ple choice of V is possible due to the state dependence of the weights σ1, . . . , σ N . The first N − 1 weights in (22a) become smaller with decreasing distance to the origin. This novel feature gives the unicycle more freedom to move from a “critical” initial state like (5) in Proposi-tion 1 towards the origin within the prediction horizon. 
+
+Proposition 3 Choose N ∈ N, V : R5 → R, α ∈ (0 , 1) ,and σ1, . . . , σ N : R5 → (0 , ∞) according to Condition 2. Then V is an EGDCLF of order N for (2) with α and 
+
+σ1, . . . , σ N as in Definition 2. Moreover, there exist con-stants ξ1, ξ 2, ζ > 0 such that 
+
+χ1(r) := ξ1 r, χ2(r) := ξ2 r, φ(r) := ζ max {r1/2, r } (24) 
+
+define K∞-functions χ1, χ 2, φ for which (10) and (13) 
+
+are satisfied for every x ∈ R5.
+
+6A proof of Proposition 3 can be found in Appendix C. 
+
+Remark 3 The choice of parameters according to Con-dition 1 or Condition 2 depends only on the step size 
+
+h > 0 but not on the physical constants m, J, k, and 
+
+κ. This independence of the components from physical constants may be an advantageous feature for future ex-tensions to flexible-step MPC for systems with unknown system parameters as, e.g., in [21] for linear systems. 
+
+Conditions 1 and 2 offer two possible ways for the choice of parameters among many others. For these two choices of parameters, we can now directly conclude that flexible-step MPC renders the unicycle globally 
+
+γ-exponentially stable in the sense of Definition 1. 
+
+Corollary 1 Let f0 : R5 ×R2 → R, F : R5 → R. Choose 
+
+N ∈ N, V : R5 → R, α ∈ (0 , 1) , σ1, . . . , σ N : R5 →
+
+(0 , ∞) according to Condition 1 or Condition 2. Then, the optimal control problem (15) with f : R5 × R2 → R5
+
+defined by (16) is feasible for every initial state x0 ∈ R5.Moreover, the unicycle model (2) controlled by Algo-rithm 1 is globally γ-exponentially stable, where γ ∈ K ∞
+
+is defined by (8) .
+
+PROOF. The statement is a direct consequence of Theorem 1 and Propositions 2 and 3. 2
+
+Recall from Section 3 that the K∞-function γ defined in (8) describes the “best” notion of global γ-exponential stability that one can expect for the unicycle model (2). Corollary 1 states that this optimal stability notion can be established by flexible-step MPC. In the next sec-tion, we show through numerical simulations that the proposed method is not limited to the discretized uni-cycle model (2), but can also be successfully applied to the force- and torque-controlled continuous-time unicy-cle (1) even when the step size h is large. 
+
+6 Simulation results 
+
+To illustrate the closed-loop behavior of Algorithm 1 under the parameter choices of Conditions 1 and 2, we present two simulations, one for each condition and with a different initial state. The plant is assumed to evolve according to the continuous-time dynamics (1), whereas the prediction model is taken as in (2) with h = 1. In both experiments, we consider soft state constraints induced by two prohibited ellipsoidal regions in the (x , y)-plane. These regions are incorporated into the stage cost via penalty terms. More precisely, we choose 
+
+f0(x, u ) := ∥[ xy ]∥2 + ∥u∥2 +
+
+> 2
+
+X
+
+> i=1
+
+ρ ℓ2 
+
+> i
+
++ ℓi
+
+,
+
+where ℓi := max −(p − pi)⊤Qi(p − pi) + 1 , 0 , i ∈{1, 2}. For both experiments, the parameters m =10 , J = 20 , k = 5 , κ = 15 , α = 0 .3, ρ = 10 5, N =12 , p 1 = [ 67 ], p 2 = [ 40 ], Q 1 = [ 0.1 00 0.4 ], Q 2 = 17 [ 3.5 00 0.6 ]are chosen to be the same. The first simulation is taken according to Condi-tion 1 with σi = 10 −3, i ∈ [1 : 11] and the EGD-CLF V1 is taken such that ϕ(s) = 12 s5 − 90 s4 +260 s3 − 360 s2 + 240 s − 60 , s ∈ [1 , 2]. The initial state is x(1) 0 = [15 , 15 , − π 
+
+> 4
+
+, 0, 0] ⊤. The second sim-ulation is taken according to Condition 2, where we denote the EGDCLF V2 = ∥x∥. The initial state is 
+
+x(2) 0 = [10 , 0, π 
+
+> 2
+
+, −3, 0] ⊤. Different initial conditions are chosen, as both parametrizations behave similarly for large state norms, while their differences are primarily visible near the origin. Figure 1 illustrates the resulting closed-loop trajectories together with the prohibited regions. In both cases, we observe that the proposed flexible-step MPC scheme steers the system toward the origin while successfully avoiding the penalized regions. The use of the discretized prediction model seems not to have a significant effect on the closed-loop behav-ior. In general we have observed that parametrizations according to Condition 1 lead to smoother behavior around the origin, whereas Condition 2 typically results in more pronounced fluctuations. 0 5 10 15        
+
+> −5
+> 0510 15 xyTrajectory with V1
+> Trajectory with V2
+> Initial conditions
+> −1−0.500.51
+> −1
+> −0.5
+> 0
+> 0.5
+> 1
+> Fig. 1. Closed-loop trajectories of flexible-step MPC with the
+> continuous-time dynamic unicycle (1) in the presence of soft state constraints. The direction of each arrow indicates the orientation of the unicycle. In the simulation with EGDCLF
+> V2, the unicycle is moving “backwards” towards the origin.
+
+77 Conclusions and outlook 
+
+We have investigated global exponential stabilization of the force- and torque-actuated unicycle model with flexible-step MPC. This nonholonomic system cannot be exponentially stabilized in the classical sense, as a high overshoot turns to be necessary for initial conditions in arbitrary small neighborhoods. Our algorithm guaran-tees the smallest possible overshoot. For future research, it might be promising to investigate a systematic ap-proach to parametrize flexible-step MPC for other non-linear systems. Finally, the incorporation of input and state constraints into the present framework appears to be a natural next step. 
+
+References 
+
+[1] A. Astolfi, “Discontinuous control of nonholonomic systems,” 
+
+Syst. Control Lett. , vol. 27, no. 1, pp. 37–45, 1996. [2] A. Bloch and S. Drakunov, “Stabilization and tracking in the nonholonomic integrator via sliding modes,” Syst. Control Lett. , vol. 29, no. 2, pp. 91–99, 1996. [3] R. T. M’Closkey and R. M. Murray, “Exponential stabilization of driftless nonlinear control systems using homogeneous feedback,” IEEE Trans. Autom. Control ,vol. 42, no. 5, pp. 614–628, 1997. [4] C. Samson, “Time-varying Feedback Stabilization of Car-like Wheeled Mobile Robots,” Int. J. Robot. Res. , vol. 12, no. 1, pp. 55–64, 1993. [5] J.-B. Pomet, “Explicit design of time-varying stabilizing control laws for a class of controllable systems without drift,” 
+
+Syst. Control Lett. , vol. 18, no. 2, pp. 147–158, 1992. [6] O. J. Sørdalen and O. Egeland, “Exponential stabilization of nonholonomic chained systems,” IEEE Trans. Autom. Control , vol. 40, no. 1, pp. 35–49, 1995. [7] L. Gr¨ une and J. Pannek, Nonlinear Model Predictive Control ,2nd ed. Cham: Springer, 2017. [8] M. Schwenzer, M. Ay, T. Bergs, and D. Abel, “Review on model predictive control: an engineering perspective,” Int. J. Adv. Manuf. Technol. , vol. 117, p. 1327–1349, 2021. [9] F. Xie and R. Fierro, “First-state contractive model predictive control of nonholonomic mobile robots,” in Proc. ACC , 2008, pp. 3494–3499. [10] Y. Zhang, X. Zhao, B. Tao, and H. Ding, “Point Stabilization of Nonholonomic Mobile Robot by B´ ezier Smooth Subline Constraint Nonlinear Model Predictive Control,” IEEE/ASME Transactions on Mechatronics ,vol. 26, no. 2, pp. 990–1001, 2021. [11] H. A. van Essen and H. Nijmeijer, “Non-linear model predictive control for constrained mobile robots,” in Proc. ECC , 2001, pp. 1157–1162. [12] K. Worthmann, M. W. Mehrez, M. Zanon, G. K. Mann, R. G. Gosine, and M. Diehl, “Model Predictive Control of Nonholonomic Mobile Robots Without Stabilizing Constraints and Costs,” IEEE Trans. Contr. Syst. Technol. ,vol. 24, no. 4, pp. 1394–1406, 2016. [13] J.-M. Coron, L. Gr¨ une, and K. Worthmann, “Model Predictive Control, Cost Controllability, and Homogeneity,” 
+
+SIAM J. Control Optim. , vol. 58, no. 5, pp. 2979–2996, 2020. [14] F. Rußwurm, W. Esterhuizen, K. Worthmann, and S. Streif, “On MPC without terminal conditions for dynamic non-holonomic robots,” in Proc. 7th IFAC Conf. on NMPC , 2021, pp. 133–138. [15] A. F¨ urnsinn, C. Ebenbauer, and B. Gharesifard, “Flexible-step model predictive control based on generalized Lyapunov functions,” Automatica , vol. 175, p. 112215, 2025. [16] T. H. Yang and E. Polak, “Moving horizon control of nonlinear systems with input saturation, disturbances and plant uncertainty,” International Journal of Control , vol. 58, no. 4, pp. 875–903, 1993. [17] M. Alamir, “Contraction-based nonlinear model predictive control formulation without stability-related terminal constraints,” Automatica , vol. 75, pp. 288–292, 2017. [18] K. Worthmann, M. W. Mehrez, G. K. Mann, R. G. Gosine, and J. Pannek, “Interaction of open and closed loop control in MPC,” Automatica , vol. 82, pp. 243–250, 2017. [19] A. F¨ urnsinn, C. Ebenbauer, and B. Gharesifard, “Relaxed Feasibility and Stability Criteria for Flexible-Step MPC,” 
+
+IEEE Control Syst. Lett. , vol. 7, pp. 2851–2856, 2023. [20] ——, “Flexible-Step MPC for Switched Linear Systems With No Quadratic Common Lyapunov Function,” IEEE Trans. Autom. Control , vol. 70, no. 9, pp. 6316–6322, 2025. [21] M. Pietschner, C. Ebenbauer, B. Gharesifard, and R. Suttner, “Flexible-step MPC for Unknown Linear Time-Invariant Systems,” accepted for European Control Conference 2026, preprint available at https://arxiv.org/abs/2510.00961. [22] V. Gazi and B. Fidan, “Coordination and Control of Multi-agent Dynamic Systems: Models and Approaches,” in Swarm Robotics . Berlin: Springer, 2007, pp. 71–102. [23] V. Sundarapandian, “A necessary condition for local asymptotic stability of discrete-time nonlinear systems with parameters,” Applied Mathematics Letters , vol. 15, no. 3, pp. 271–274, 2002. [24] A. N. Michel, L. Hou, and D. Liu, Stability of Dynamical Systems , 2nd ed. Cham: Birkh¨ auser, 2015. 
+
+A Proof of Proposition 1 
+
+Let r, q, λ, μ be positive real numbers with 1 /2 < q ≤ 1. For every z ∈ R, let ⌈z⌉ denote the smallest integer ≥ z.Because 1 /2 < q ≤ 1, we can find some sufficiently small 
+
+ε ∈ (0 , r ) such that 
+
+l
+
+− 1 
+
+> μ
+
+log   12 λ ε1−q m| {z }
+
+> =: τ
+
+h λ 2 ε2 q−1 < 12 . (A.1) For the sake of reaching a contradiction, suppose that there exists u : N → R2 such that the solution x : N →
+
+R5 of (2) with input u and initial condition x(0) = [0 , ε, 0, 0, 0] ⊤ satisfies inequality (4) for every t ∈ N.Then, in particular, 
+
+∥x(t)∥ ≤ λ ε q (A.2) for every t ∈ N and also 
+
+∥x(τ )∥ ≤ ∥ x(0) ∥q λ e−μ τ ≤ ε 
+
+> 2
+
+, (A.3) 8where we have used (A.1). We conclude from (A.2), (A.1) that  
+
+> τ−1
+
+X
+
+> s=0
+
+h v (s) sin( θ(s)) ≤ τ h λ 2 ε2q < ε 
+
+> 2
+
+. (A.4) Since x is a solution of (2), it follows that 
+
+∥x(t)∥ ≥ | y( t)| = y(0) + 
+
+> t−1
+
+X
+
+> s=0
+
+h v (s) sin( θ(s)) 
+
+≥ ε −
+
+> t−1
+
+X
+
+> s=0
+
+h v (s) sin( θ(s)) > ε 
+
+> 2
+
+, (A.5) which contradicts (A.3). 
+
+B Proof of Theorem 1 
+
+Assume that V is an EGDCLF of order N for (9) with 
+
+α ∈ (0 , 1), σ1, . . . , σ N : X → (0 , ∞), χ1, χ 2, φ ∈ K ∞, and ˜λ, ˜μ > 0 as in Definition 2. Because of property (P2) in Definition 2, the optimal control problem (15) is feasi-ble for every initial state x0 ∈ X. For a proof of Theo-rem 1, it remains to be shown that system (9) controlled by Algorithm 1 is globally γ-exponentially stable, where 
+
+γ := χ−11 ◦ φ ◦ χ2 ∈ K ∞. To this end, set λ := ˜λ e˜μα ,and μ := α ˜μ/N . Fix an arbitrary state–input trajec-tory ( x, u ) : N → X × U of system (9) controlled by Al-gorithm 1. The proof is complete if we can show that inequality (7) holds at every time t ∈ N.Let 0 = τ0 < τ 1 < · · · denote all time instants at which step 1 in Algorithm 1 is executed. Because of step 2 in Algorithm 1 and property (P3) in Definition 2, we have (1 −α) V (x(τk)) ≤ φ(V (x(τk))) · min   
+
+> i∈[1: N]
+
+σi(x(τk)) (B.1) for every k ∈ N. Because of step 3 in Algorithm 1, we have 
+
+V (x(τk+1 )) ≤ (1 − α) V (x(τk)) (B.2) for every k ∈ N. Because of step 4 in Algorithm 1 and the average descent condition (P2) in Definition 2, we have 
+
+V (x(t)) · min   
+
+> i∈[1: N]
+
+σi(x(τk)) ≤ (1 − α) V (x(τk)) (B.3) for every k ∈ N and every t ∈ (τk : τk+1 ]. Fix an arbitrary k ∈ N and an arbitrary t ∈ (τk : τk+1 ]. Because σ1, . . . , σ N are assumed to attain only positive values, it follows from (B.1) and (B.3) that 
+
+V (x(t)) ≤ φ(V (x(τk))) . (B.4) Using t ≤ (k + 1) N and the known inequality 1 − α ≤
+
+e−α, we conclude from (B.2) and (B.4) that 
+
+V (x(t)) ≤ φ V (x0) e α−α t/N . (B.5) Because of property (P1) in Definition 2, it follows that 
+
+∥x(t)∥ ≤  χ−11 ◦ φ  χ2(∥x0∥) e α−α t/N  (B.6) Now the asserted inequality (7) follows from property (P4) in Definition 2 and the suitable definitions of γ, λ,and μ.
+
+C Proofs of Propositions 2 and 3 
+
+C.1 Steering the unicycle to the origin 
+
+Fix an arbitrary initial state 
+
+x0 =  x0, y0, θ 0, v 0, ω 0
+
+⊤ ∈ R5. (C.1) We will construct a suitable state-input trajectory ( x, u ), which describes the motion of the unicycle (2) from x0 to the origin within a prescribed prediction horizon N ≥ 8. As abbreviations, set x1 := x 0 + h v 0 cos( θ0), θ1 := θ0 + h ω 0,
+
+y1 := y 0 + h v 0 sin( θ0). (C.2) Choose any ¯θ ∈ [− π 
+
+> 4
+
+, π 
+
+> 4
+
+] and d ≥ 0 such that ¯x := d cos( −¯θ), ¯y := y1 
+
+> 2
+
+= y 1+d sin( −¯θ). (C.3) Then ¯ x2 + ¯ y2 = d2. Let T be the largest integer less than or equal to ( N − 1) /7. Set ti := 1 + ( i − 1) T for every 
+
+i ∈ [1 : 8]. Define x = [x , y, θ, v, ω ]⊤ : [0 : N ] → R5 by 
+
+x(t) := x0 for t = 0 ,x(t) := 
+
+  
+
+> x1
+> y1
+> θ1+t−t1
+> T(−θ1)0
+> −θ1
+> hT
+
+ for t ∈ [t1 : t2),x(t) := 
+
+    
+
+> x1+t−t2
+> T(−x1) cos(0) y1+t−t2
+> T(−x1) sin(0) 0
+> −x1
+> hT
+> 0
+
+ for t ∈ [t2 : t3),x(t) := 
+
+   
+
+> 0y1
+> 0+ t−t3
+> T(−¯θ)0
+> −¯θhT
+
+ for t ∈ [t3 : t4),x(t) := 
+
+      
+
+> 0+ t−t4
+> Tdcos( −¯θ)y1+t−t4
+> Tdsin( −¯θ)
+> −¯θ
+> dhT
+> 0
+
+ for t ∈ [t4 : t5),
+
+9x(t) := 
+
+  
+
+> ¯x¯y
+> −¯θ+t−t5
+> T2 ¯θ
+> 0
+> 2 ¯θhT
+
+ for t ∈ [t5 : t6),x(t) := 
+
+    
+
+> ¯x+ t−t6
+> T(−d) cos( ¯θ)¯y+ t−t6
+> T(−d) sin( ¯θ)¯θ
+> −dhT
+> 0
+
+ for t ∈ [t6 : t7),x(t) := 
+
+   
+
+> 00¯θ+t−t7
+> T(−¯θ)0
+> −¯θhT
+
+ for t ∈ [t7 : t8),x(t) := 0 for t ∈ [t8 : N ]. (C.4) Define u = [ F, T ]⊤ : [0 : N ) → R2 by 
+
+"F (t)
+
+T (t)
+
+#
+
+:= 
+
+" k v (t) + mh (v(t + 1) − v(t)) 
+
+κ ω (t) + Jh (ω(t + 1) − ω(t)) 
+
+#
+
+. (C.5) It is easy to see that ( u, x ) is an input–state trajectory of the unicycle (2). 
+
+C.2 Proof of Proposition 2 
+
+Choose N ∈ N, V : R5 → R, α ∈ (0 , 1), as well as 
+
+σ1, . . . , σ N : R5 → (0 , ∞) according to Condition 1. Set 
+
+ξ1 := 120 , ξ2 := 2 , ζ := 1min {σ1,...,σ N } , (C.6) and define χ1, χ 2, φ ∈ K ∞ by (20). Then, it is straight-forward to check that (10) and (13) are satisfied for ev-ery x ∈ R5. Moreover, if we set ˜λ := ˜ μ := 1, then (14) holds for every r ≥ 0 and every τ ≥ − α. The proof of Proposition 2 is complete if we can show that property (P2) in Definition 2 holds. Define ¯θ := sgn(y 1)
+
+( arctan( |y1|1/2) if |y1| ≤ 1 
+
+> π
+> 4
+
+if |y1| > 1 ,d := 
+
+( 12 |y1|1/2 (1 + |y1|)1/2 if |y1| ≤ 1 
+
+> 121/2
+
+|y1| if |y1| > 1 .
+
+(C.7) Let x : [0 : N ] → R5 be defined as in Section C.1. The proof of Proposition 2 is complete if we can show that the average descent condition (11) is satisfied for x. From the definitions in (17) and (C.4), we get 
+
+V (x(t)) 4 ≤ x41 + |y1|ϕ(|y1|) + θ41 + θ41  
+
+> (hT )4
+
+for t ∈ [t1 : t2),V (x(t)) 4 ≤ x41 + |y1|ϕ(|y1|) + x41  
+
+> (hT )4
+
+for t ∈ [t2 : t3),V (x(t)) 4 ≤ | y1|ϕ(|y1|) + ¯θ4 + ¯θ4  
+
+> (hT )4
+
+for t ∈ [t3 : t4),V (x(t)) 4 ≤ ¯x4 + |y1|ϕ(|y1|) + ¯θ4 + d4  
+
+> (hT )4
+
+for t ∈ [t4 : t5),V (x(t)) 4 ≤ ¯x4 + |¯y|ϕ(|¯y|) + ¯θ4 + (2 ¯θ)4  
+
+> (hT )4
+
+for t ∈ [t5 : t6),V (x(t)) 4 ≤ ¯x4 + |¯y|ϕ(|¯y|) + ¯θ4 + d4  
+
+> (hT )4
+
+for t ∈ [t6 : t7),V (x(t)) 4 ≤ ¯θ4 + ¯θ4  
+
+> (hT )4
+
+for t ∈ [t7 : t8). (C.8) In the next step, we derive estimates for the terms on the right-hand side of (C.8). It follows from equation (C.2) and the assumptions on the function ϕ in Condition 1 that x41 ≤ 8 x 40 + 8 h4 v40 , θ41 ≤ 8 θ40 + 8 h4 ω40 ,
+
+|y1|ϕ(|y1|) ≤ 32 |y0|ϕ(|y0|) + 8 h4 v40 + θ40 . (C.9) Using the definitions in (C.3), (C.7), and the assump-tions on ϕ, we also obtain max {¯x4, ¯θ4, |¯y|ϕ(|¯y|)} ≤ | y1|ϕ(|y1|). (C.10) By applying the estimates in (C.9), (C.10) to the terms on the right-hand side of (C.8) and by using the defini-tion of V in (17), it follows that 
+
+V (x(t)) 4 ≤ c4 V (x0)4 (C.11) for every t ∈ [t1 : t8), where the constant c is defined according to Condition 1. Because 
+
+> N
+
+X
+
+> t=1
+
+σt(x0) V (x(t)) ≤
+
+> t8−1
+
+X
+
+> t=1
+
+σt(x0) c V (x0)
+
+≤ (1 − α) V (x0), (C.12) the average descent condition (11) is satisfied. 
+
+C.3 Proof of Proposition 3 
+
+Choose N ∈ N, V : R5 → R, α ∈ (0 , 1), as well as 
+
+σ1, . . . , σ N : R5 → (0 , ∞) according to Condition 2. Set 
+
+ξ1 := 1 , ξ2 := 1 , ζ := ( N − 1) c, (C.13) and define χ1, χ 2, φ ∈ K ∞ by (24). Then, it is straight-forward to check that (10) and (13) are satisfied for ev-ery x ∈ R5. Moreover, if we set ˜λ := e α 
+
+> 2
+
+and ˜ μ := 12 ,then (14) holds for every r ≥ 0 and every τ ≥ − α. The proof of Proposition 3 is complete if we can show that property (P2) in Definition 2 holds. Let x : [0 : N ] → R5 be defined as in Section C.1. The proof of Proposition 3 is complete if we can show that the average descent condition (11) is satisfied for x. From the definitions in (21) and (C.4), we get 
+
+V (x(t)) 2 ≤ x21 + y 21 + θ21 + θ21  
+
+> (hT )2
+
+for t ∈ [t1 : t2),V (x(t)) 2 ≤ x21 + y 21 + x21  
+
+> (hT )2
+
+for t ∈ [t2 : t3),
+
+10 V (x(t)) 2 ≤ y21 + ¯θ2 + ¯θ2  
+
+> (hT )2
+
+for t ∈ [t3 : t4),V (x(t)) 2 ≤ ¯x2 + y 21 + ¯θ2 + d2  
+
+> (hT )2
+
+for t ∈ [t4 : t5),V (x(t)) 2 ≤ ¯x2 + ¯ y2 + ¯θ2 + (2 ¯θ)2  
+
+> (hT )2
+
+for t ∈ [t5 : t6),V (x(t)) 2 ≤ ¯x2 + ¯ y2 + ¯θ2 + d2  
+
+> (hT )2
+
+for t ∈ [t6 : t7),V (x(t)) 2 ≤ ¯θ2 + ¯θ2  
+
+> (hT )2
+
+for t ∈ [t7 : t8). (C.14) In the next step, we derive estimates for the terms on the right-hand side of (C.14). It follows from (C.2) that x21 ≤ 2 x 20 + 2 h2 v20 , θ21 ≤ 2 θ20 + 2 h2 ω20 ,
+
+y21 ≤ 2 y 20 + 2 h2 v20 . (C.15) Now we make a case analysis. First, we consider the case 
+
+∥x0∥ ≤ 1. In this case, we define ¯θ and d as in (C.7). For this choice, we get estimates ¯θ2 ≤ | y1|, d2 ≤ 12 max {| y1|, |y1|2},
+
+¯x2 ≤ 14 max {| y1|, |y1|2}. (C.16) Second, we consider the case ∥x0∥ > 1. In this case, we define ¯θ and d by ¯θ := sgn(y 1) π 
+
+> 4
+
+, d := 121/2 |y1|, (C.17) and we obtain that ¯θ2 ≤ ∥ x0∥2, d2 = 2 ¯ x2 ≤ 12 |y1|2. (C.18) By applying the estimates in (C.15), (C.16), (C.18) to the terms on the right-hand side of (C.14), it follows that 
+
+V (x(t)) 2 ≤ c2 max {∥ x0∥, ∥x0∥2} (C.19) for every t ∈ [t1 : t8), where the constant c is defined according to Condition 2. Because 
+
+> N
+
+X
+
+> t=1
+
+σt(x0) V (x(t)) 
+
+≤
+
+> t8−1
+
+X
+
+> t=1
+
+σt(x0) c max ∥x0∥ 12 , ∥x0∥
+
+≤ (1 − α) ∥x0∥ = (1 − α) V (x0), (C.20) the average descent condition (11) is satisfied. 11

@@ -1,0 +1,1483 @@
+Title: Uncertainty Quantification Methods for Optimal Excitation Design in Parameter Identification
+
+URL Source: https://arxiv.org/pdf/2605.04691v1
+
+Published Time: Thu, 07 May 2026 01:11:26 GMT
+
+Number of Pages: 17
+
+Markdown Content:
+# Uncertainty Quantification Methods for Optimal Excitation Design in Parameter Identification ⋆
+
+Kevin Schmidt a, Nicola Henkelmann a, Christoph Mark a, and Johannes von Keler a
+
+> aCorporate Sector Research and Advance Engineering, Robert Bosch GmbH, Renningen, Germany
+
+Abstract 
+
+Parameter identification is crucial in virtual engineering processes, yet determining appropriate system excitations for identifying specific parameters remains challenging. In practice, extensive experimental programs often fail to generate data with su ffi cient information content for reliable parameter estimation. This work presents a systematic approach for deriving optimal excitations by maximizing the global sensitivity of target parameters across the space of possible excitation functions. To address the computational challenge of sensitivity evaluation during optimization, we develop two complementary approaches based on uncertainty quantification (UQ) methods. For systems with known mathematical structure, we present an intrusive polynomial chaos expansion (PCE) method that constructs deterministic surrogate models, enabling rapid sensitivity computation. For black-box models where intrusive approaches are not feasible, we introduce a novel non-intrusive method based on optimal transport theory, specifically using Wasserstein distances to quantify sensitivity measures without requiring knowledge of internal system dynamics. Both methods significantly reduce computational costs, making optimal excitation design practical for complex engineering systems. We demonstrate the e ff ectiveness of both approaches on vehicle dynamics models, showing substantial improvements in parameter identification capability. The benefit for parameter identification is further validated experimentally on a test vehicle and compared to the state of the art. 
+
+Keywords: Global sensitivity analysis, Polynomial chaos expansion, Optimal transport, Stochastic optimal control 
+
+1. Introduction 
+
+System identification is a fundamental challenge in virtual en-gineering processes, where accurate model parametrization di-rectly impacts the reliability of simulations and control system design [ 1]. The choice of system excitation signals critically de-termines the quality of parameter identification results. However, determining appropriate excitation signals for identifying spe-cific parameters remains a significant challenge [ 2]. In industrial practice, this often relies on extensive experimental programs and expert knowledge accumulated over years of application experience. The consequence is often a conservative approach involving comprehensive measurement catalogues that require substantial time and financial investment during application and calibration phases. Moreover, the information content of individ-ual maneuvers for system identification purposes often remains unclear, leading to potentially redundant or insu ffi cient experi-mental procedures. The fundamental issue underlying these challenges is the lack of systematic methods to quantify the sensitivity of system outputs with respect to uncertain parameters under di ff erent ex-citation conditions. While classical sensitivity analysis methods exist, they are often computationally prohibitive for complex engineering systems or fail to account for the stochastic nature of parameter uncertainty and measurement noise. This creates a 
+
+> ⋆Preprint, submitted to Control Engineering Practice
+
+significant gap between the theoretical understanding of param-eter identifiability and practical excitation design for complex engineering systems. 
+
+State of the Art. The design of optimal excitations for sys-tem identification has been widely studied in literature [ 2, 1 ]. Classical signal design techniques include as pseudo-random binary sequences (PRBS) [ 3 ], chirp signals [ 4] and multi-sine signals [ 5] and are able to cover a broad frequency spectrum [ 1]. These signals serve as a basis for many maneuver designs in practice, but do not exploit particular system properties. Thus, they often lack optimality for the specific system at hand. On the other hand, the Fisher information matrix (FIM) is the theoretical gold standard for quantification of the achievable accuracy in parameter estimates [ 2]. Related methods typically involve formulating the excitation design as an optimal control problem, where the objective is to maximize a scalar function of the FIM, such as its determinant or trace [ 6 ]. While e ff ec-tive for linear systems with Gaussian noise, these approaches can be computationally intensive and do not generalize well to nonlinear systems or non-Gaussian uncertainties. In addition, op-timal experiment design methods often rely on local sensitivity measures, i.e., neglect the full range of parameter uncertainties present in many applications [7, 8]. In the domain of uncertainty quantification (UQ), global sensitivity analysis has been widely studied [ 9, 10 , 11 ]. How-ever, to the best of the authors’ knowledge, global sensitivity analysis has not yet been applied to optimal excitation design by 
+
+> arXiv:2605.04691v1 [math.OC] 6 May 2026
+
+combining it with system theoretical aspects. In [ 12 ], an intru-sive PCE-based surrogate for optimal design of experiments is presented, focusing on polynomial systems and without taking robustness and disturbances into account. For the latter aspect, a non-intrusive approach can be found in [ 13 ] and applications to model predictive control [14, 15]. More recent advancements have explored the direction of more robust and application-specific inputs, such as Bayesian ex-perimental design or Reinforcement Learning techniques. This allows considering prior knowledge and process noise, but of-ten leads to high computational costs for optimization in prac-tice [16, 17, 18]. 
+
+Contributions. The main contribution of this article is the de-velopment of a systematic methodology for optimal excitation design in parameter identification. We therefore formulate a stochastic optimal control problem that maximizes global sen-sitivity measures while accounting for model uncertainties and measurement noise. The combination of UQ methods and sys-tem theoretical aspects enables the derivation of excitations that are robust and specific to the identification task. Key features are the incorporation of prior knowledge about the parameter distributions and the possibility to explicitly consider constraints of the input and output signals. To solve this computationally challenging problem e ffi ciently, we develop two complementary uncertainty quantification ap-proaches for sensitivity computation. For systems with known mathematical structure, we present an intrusive polynomial chaos expansion method that derives deterministic surrogate models. For black-box models, we introduce a novel non-intrusive approach based on optimal transport theory that re-quires no knowledge of the system’s internal dynamics. Both methods significantly reduce the computational burden of global sensitivity computation compared to traditional Monte Carlo approaches. This makes optimal excitation design feasible for complex engineering systems such as vehicle dynamics. Beyond simulation studies, we further validate the proposed method-ology experimentally on a test vehicle, demonstrating that the optimized excitations substantially improve the identifiability of the target parameter under real-world driving conditions. 
+
+Structure of the Article. We begin in Section 2 by introducing the problem formulation and objectives, presenting the stochastic system modeling approach and formulating the optimal excita-tion problem as a stochastic optimal control problem (SCOP), which is computationally intractable. In the subsequent sections we introduce two UQ schemes to effi ciently compute global sensitivity measures. In Section 3, we develop an intrusive method for global sensitivity analysis based on polynomial chaos expansions (PCE). This approach is partic-ularly applicable to systems with known mathematical structure, where we derive surrogate models for linear parameter-varying (LPV) systems and present e ffi cient computation of variance-based sensitivity measures. For black-box models where intru-sive methods are not feasible, Section 4 presents a non-intrusive approach for sensitivity analysis using optimal transport theory. The chosen UQ method enables an e ffi cient evaluation of the cost function. Hence, the implementation of the SCOP is addressed in Section 5, which covers the parameterization of input signals and presents optimization algorithms for solving the finite-dimensional optimal excitation problem. We demon-strate the methodology throughout sections 3–5 with a recurring illustrative spring-damper example. An industry application is provided in Section 6, focusing on optimal input design for ve-hicle systems and comparing both intrusive and non-intrusive approaches on a single-track vehicle dynamics model. Finally, the paper concludes with a discussion of the results and compu-tational benefits of the proposed methods. 
+
+Notation. Throughout the paper, we denote with Θ and Y the parameter and output spaces, and assume that they are Polish, i.e., separable and completely metrizable topological spaces such as Rn or Lp for 1 ≤ p < ∞. We denote with P(Θ) and 
+
+P(Y) the space of all Borel probability distributions on Θ and 
+
+Y. Let z = (θ, y) ∈ Θ × Y be a random vector in the probability space ( Ω, B, P), where Ω is the sample space, B the Borel σ-algebra and P the probability measure. We define the marginal probability measures (distributions) of z as the parameter distri-bution Pθ ∈ P(Θ) and the output distribution Py ∈ P(Y). The conditional distribution of y given θ is denoted as Py|θ. The (conditional) expectation and (conditional) variance of a random variable y w.r.t. a distribution ν ∈ P(Y) is denoted as Eν(y)and Vν(y), respectively. The variance Vν[y] ∈ Rm of a vector of random variables 
+
+y ∈ Rm is the diagonal of the covariance cov [y] ∈ Rm×m. For vectors v ∈ Rm the exponent vn denotes the element-wise power with ( vn)i = vni for all i ∈ [1 , m]. The linear operation μ =
+
+vec (M) ∈ Rmn ×1 is the column-wise vectorization of a matrix 
+
+M ∈ Rm×n with μ⊤ = [M1i, M2i, . . . , Mni ] for all i ∈ [1 , m]. The inverse mapping is given by mat( μ) = M for suitable m, n.
+
+2. Problem description and objectives 
+
+In the following paragraphs, we introduce the stochastic modeling approach for the optimal excitation problem (see sec-tion 2.1). Next, we state the general solution of this problem in the form of a stochastic optimal control problem in section 2.2. Finally, we summarize our objectives on the resulting formula-tion from a technical perspective in section 2.3. 
+
+2.1. Stochastic system modeling 
+
+The basis for the proposed method is the description of the system behavior through a model M, which relates an input signal u(t) ∈ Rl and parameters θ ∈ Rq with output variables 
+
+y(t) ∈ Rm, by the mapping 
+
+y(t) = M(u(t), θ ). (1) The parameters θ which shall be identified are interpreted as uncertain quantities and described by a probability measure θ ∼
+
+Pθ to include prior knowledge about the parameters or physical constraints. In case further assumptions on the inner structure of the model (1) apply, e ffi cient UQ methods for solving the optimal excitation problem are applicable. Given a certain input trajectory u(t) for t ∈ [0 , tf ] resulting in model output y(t) from (1) , we define a sensitivity measure S i j (t)2which quantifies the amount of information in the output signal. In addition, we claim the property [ S i j ] = [yi], i.e. the unit of the sensitivity measure corresponds to the unit of the output yi
+
+under consideration. A natural choice is the Sobol-like global sensitivity measure 
+
+S 2
+
+> i j
+
+(t) = Eθ j
+
+h  E∼θ j [yi(t)|θ j] − E[yi(t)] 2i (2) with the dimension S (t) ∈ Rm×q and the property [ S i j ] = [yi], i.e. the unit of the sensitivity measure corresponds to the unit of the output under consideration. More specifically, the quantity S 2
+
+> i j
+
+(t)is the amount of variance in the output yi which can be explained by the uncertain parameter θ j. Note that Sobol’ indices are typi-cally normalized in literature with respect to the variance of the output signal [ 19 , 11 ]. The normalization is omitted by intention due to the unit-property stated above. Further sensitivity mea-sures and remarks on their computation are stated and discussed later in section 3.3. 
+
+2.2. Optimal excitation problem 
+
+In view of the stochastic sensitivity measure S (t), the opti-mal excitation problem is stated as a stochastic optimal control problem. To this end, we need to define an objective function and constraints. Instead of formulating the cost functional directly with re-spect to a desired sensitivity measure such as (2) , we introduce a surrogate sensitivity measure defined as 
+
+∆S (t) B max {0, S (t) − S min (t)} , (3) where S min (t) denotes a minimum sensitivity threshold that needs to be exceeded to ensure a su ffi cient information con-tent in the output signal y(t)
+
+Remark 1. The minimum sensitivity threshold S min (t) can be interpreted as the error induced by a model-plant mismatch or sensor noise, both of which cannot be captured by the model parameters θ. In practice, S min (t) can be derived from prior knowledge about the model-plant mismatch or sensor noise, e.g., similar to the signal-to-noise ratio, or estimated by propagating known disturbances to the output. Thus, the surrogate sensitivity measure (3) factors out the impact of the unmodeled e ff ects. 
+
+Note that, if no information about the minimal sensitivity level is available, one can set S min (t) = 0 which results in ∆S (t) = S (t)since the targeted global sensitivity measures have the prop-erty S (t) ≥ 0 for t ∈ [0 , tf ]. With the e ff ective sensitivity measure (3) at hand, a cost functional J is defined as 
+
+J =
+
+Z tf
+
+> 0
+
+g ∆S (t), u(t)dt. (4) In addition to maximizing the sensitivity measure, the cost func-tional may also penalize the required input energy to achieve a desired excitation. Thus a possible choice of the stage cost g is a quadratic form such as 
+
+g(∆S , u) = vec ⊤(∆S )Q vec( ∆S ) − u⊤Ru (5) with quadratic matrices Q ∈ Rmq ×mq and R ∈ Rl×l. Di ff erent choices of the sensitivity weight Q allow to generate excitations which are tailored to the identification of certain parameters or outputs. An important feature of the optimal excitation problem is the definition of admissible inputs u ∈ U and constraints on the outputs y ∈ Y. The set of admissible inputs U is considered as deterministic and may include bounds on the input amplitude, rate constraints or constraints that characterize desired smooth-ness. In addition, periodic inputs or inputs with a certain energy content may be enforced. The output constraints Y may include physical limitations on the outputs y(t) such as position or velocity bounds. Since the output is of stochastic nature, these constraints need to be formulated in a probabilistic manner in the form of chance or value-at-risk constraints. A possible formulation for an upper bound ymax  
+
+> i
+
+on the i-th output is given by Pr  yi(t) > ymax 
+
+> i
+
+ ≤ α ∀t ∈ [0 , tf ], (6) where α ∈ (0 , 1) is a predefined risk level. Using Chebyshev’s inequality, the chance constraint (6) can be approximated by the deterministic constraint using the first two moments of the output distribution [ 20 , 21 ]. With the above definitions, the optimal excitation problem is given by the SOCP max   
+
+> u∈U,t∈[0 ,tf]
+
+J ∆S (t), u(t)) (7) s. t. y(t) = M(u(t), θ )
+
+y ∈ Y.
+
+The above problem is computationally intractable due to the stochastic nature of the output constraints and the input space of infinite dimension. Finding solutions requires the repeated evaluation of the sensitivity measures S (t) for di ff erent input trajectories u(t) during the optimization procedure. 
+
+2.3. Objectives 
+
+The objective of this article is to find input trajectories u(t)which maximize the information content in the output signal y(t)w.r.t. the parameters θ ∼ Pθ to be identified in view of the SOCP (7) . A key aspect of the stochastic modeling of the SOCP is to incorporate prior knowledge about disturbances and model mismatch through the definition of a minimal sensi-tivity level S min (t) in (3) . The identification of this threshold is crucial to ensure that the derived excitations are robust against disturbances and model mismatch. The main contribution of this work is to provide methods to e ffi ciently solve the optimal excitation problem (7) for dif-ferent assumptions on the model (1) . In addition, we aim to identify a suitable threshold for the minimal sensitivities S min (t)ensuring the persistence of excitation. To achieve this goal, we propose di ff erent methods from uncertainty quantification (UQ) to e ffi ciently compute the sensitivity measures S (t) during the optimization procedure: 
+
+• An intrusive polynomial chaos expansion (PCE) method with parametric uncertainties and disturbances in section 3 for models (1) with a known inner structure. 3• A non-intrusive PCE method in section 4 based on optimal transport theory for black-box models (1). The contribution of the above aspects goes beyond the proposed optimal excitation problem and may be used in other UQ and control contexts, such as model order reduction or stochastic optimal control. 
+
+3. The intrusive method for global sensitivity analysis 
+
+The core idea of an e ffi cient computation scheme for optimal excitations is the intrusive polynomial chaos expansion (PCE) method. The concept relies on deriving a surrogate model be-forehand, which significantly reduces the computational e ff ort for the evaluation of the desired sensitivity measures S i j during the optimization algorithm. However, further assumptions for the inner model structure of (1) are required to apply an intrusive PCE [ 10 ]. In this section, we first introduce the basic notions of PCEs, then state the model class of interest and derive the surrogate model. Finally, we give insight into how to e ffi ciently compute the required sensitivities. 
+
+3.1. Fundamentals of Polynomial Chaos Expansion 
+
+We consider a probability space ( Ω, B(Ω), μ ), where Ω is the sample space, B(Ω) the Borel σ-algebra on Ω and μ the probability measure on ( Ω, B(Ω)). In the following we consider a scalar random variable defined on Ω = R, i.e., r : R≥0 ×Θ → R,where the first argument takes the time and the second one the parameter vector θ ∈ Θ ⊆ Rq. An approximation of r is then given by the truncated polynomial chaos expansion 
+
+r(t, θ ) ≈
+
+> ℓ
+
+X
+
+> i=1
+
+ϕi(θ)Ri(t) = ϕ⊤(θ)R(t), (8) where R ∈ RI are deterministic, so-called chaos coe ffi cients and 
+
+ϕ(θ) ∈ RI is a vector of q-variate polynomials with the property of two components of ϕ being orthogonal, i.e., 
+
+Eθ(ϕiϕ j) ≜
+
+Z
+
+> Θ
+
+ϕi(θ)ϕ j(θ)d μ(θ) = δi j Eθ(ϕ2 
+
+> i
+
+), (9) where δi j is the Kronecker-delta and d μ(θ) the joint probability measure of θ. Since (9) defines an inner product on the underly-ing function space, the polynomials ϕi are referred to as orthogo-nal polynomials [ 22 ]. For the sake of simplicity, the parameters are assumed to be uniformly distributed throughout this section, i.e., Pθ = U(θ−, θ +) with the expectation ¯θ = E(θ) = 12 (θ+ + θ−), restricting the admissible parameter between [ θ−, θ +]. As a consequence, the polynomials ϕi(θ) are products of univariate Legendre-polynomials [ 15 ]. In case of a lexicographical trun-cation scheme, we obtain ℓ q!d! = (q + d)! given a desired total polynomial degree of d. Note that the convergence of the PCE (8) is exponential in d [ 23 , 24 ] and further details on the truncation error are discussed in [ 25 ]. The definition (9) implies 
+
+ϕ1 = 1 and the following relations for the first moments of a PCE: 
+
+Eθ(r(t, θ )) = R1(t) = [1 0 . . . 0] R(t) ≜ m⊤R(t) (10a) 
+
+Vθ(r(t, θ )) = h0 Eθ(ϕ22) . . . Eθ(ϕ2 
+
+> I
+
+)i R2(t) ≜ v⊤R2(t). (10b) With the definition Φm = Im ⊗ ϕ, the PCE of a vector valued quantity y(t, θ ) ∈ Rm is given by y = Φ ⊤
+
+> m
+
+Y with an amount of mℓ
+
+coe ffi cients. In addition, analogue relations to (10) hold for the moments with Mm = Im ⊗ m and Vm = Im ⊗ v. 
+
+3.2. Intrusive surrogates for LPV systems with noise 
+
+In the subsequent section we derive the intrusive surrogate for the system class of linear parameter-varying (LPV) systems. Depending on the context, this is a substantial simplification in comparison to the general model class (1) . On the other hand, this simplification allows us to explicitly consider modeling mismatches by introducing process noise ω and measurement noise ν. This is useful to quantify the amount of minimal sensi-tivity thresholds S min (t) resp. (3) as defined in section 2.1. The starting point is a linear parameter-varying (LPV) repre-sentation of the dynamic system under consideration ˙x = A(θ)x + B(θ)u + E(θ) + ω for t > 0, (11a) 
+
+y = C(θ)x + D(θ)u + F(θ) + ν for t ≥ 0, (11b) 
+
+x(0 , θ ) = x0(θ), (11c) where ω ∼ N ( ¯ω(θ), Σw(θ)) and ν ∼ N ( ¯ν(θ), Σν(θ)) are possibly parameter-dependent Gaussian noise terms with respective mean and covariance. In addition to the quantities defined in the general model (1) , the system has x(t, θ ) ∈ Rn internal states evolving from an initial condition (11c). In the LPV-model (11) , there are two di ff erent sources of uncertainty. We first derive the surrogate model for the parame-ters θ which shall be identified using a PCE for the conditional means w.r.t. the noise terms 
+
+Eω,ν (x(t)) = Φ ⊤ 
+
+> n
+
+(θ)X(t) (12a) 
+
+Eω,ν (y(t)) = Φ ⊤
+
+> m
+
+(θ)Y(t). (12b) As a second step, the impact of the noise terms ω and ν on the output y(t) is quantified. The dynamics of the chaos coe ffi -cients X(t) of the state is given by the surrogate model ˙X = A′ X + B′u + E′ for t > 0, X(0) = X0 (13a) 
+
+Y = C′ X + D′u + F′ for t ≥ 0. (13b) The system matrices are deterministic and obtained by applying a Galerkin projection to (11) . The following set of projections are used to obtain an optimal approximation of the stochastic LPV-system (11): 
+
+A′ = G−1 
+
+> n
+
+Eθ
+
+Φn AΦ⊤
+
+> n
+
+ E′ = G−1 
+
+> n
+
+Eθ
+
+ Φn[E + ¯ω] (14a) 
+
+B′ = G−1 
+
+> n
+
+Eθ
+
+ Φn B F′ = G−1 
+
+> m
+
+Eθ
+
+ Φm[F + ¯ν] (14b) 
+
+C′ = G−1 
+
+> m
+
+Eθ
+
+ΦmCΦ⊤
+
+> n
+
+ X0 = G−1 
+
+> n
+
+Eθ
+
+ Φn x0
+
+ (14c) 
+
+D′ = G−1 
+
+> m
+
+Eθ
+
+ Φn D G(·) = Eθ
+
+ Φ(·)Φ⊤
+
+> (·)
+
+. (14d) To quantify the deviation of the surrogate model (13) from the 4original model (11), we define so-called defects 
+
+δ˙x(θ, t) = A(θ)Φ⊤ 
+
+> n
+
+(θ)X(t) + B(θ)u(t) + E(θ) + ¯ω(θ)
+
+− Φ⊤ 
+
+> n
+
+(θ) ˙ X(t), t > 0, (15a) 
+
+δy(θ, t) = C(θ)Φ⊤ 
+
+> n
+
+(θ)X(t) + D(θ)u(t) + F(θ) + ¯ν(θ)
+
+− Φ⊤
+
+> m
+
+(θ)Y(t), t ≥ 0, (15b) 
+
+δx0 (θ) = Φ ⊤ 
+
+> n
+
+(θ)X0 − x0(θ), t = 0 (15c) which are obtained by inserting the PCE (12) into the original model (11) after taking the conditional expectation w.r.t. the noise terms ω and ν. As stated in the subsequent proposition, the defects (15) are minimal in a weighted L1-norm using the surrogate (13) . For this purpose, we define the following norm given a function z(θ) ∈ Rkℓ on θ ∈ Pθ
+
+∥z∥ϕ ≜
+
+Z
+
+> Θ
+
+w⊤Φk(θ)z(θ) dμ(θ) (16) for any non-zero choice of weights w , 0 with w ∈ Rkℓ. We end up with the following result for the approximation of the surrogate model (13): 
+
+Proposition 1 (Optimal Approximation). Given non-signular matrices det (Gn) , 0 and det (Gm) , 0, then the surrogate model (13) globally minimizes the defects (15) for any w , 0 in the norm (16) for all t ≥ 0 and all θ ∈ Pθ.Proof . Due to the property of orthogonality of the polynomial basis functions ϕ, it directly follows det (Gn) , and det (Gm) , 0. As a consequence, all matrices in (14) are well-defined. We start with computing norm of (15c) with w1 ∈ Rnℓ. Using the Cauchy-Schwarz inequality, we conclude that 
+
+∥δx0 ∥ϕ = Eθ
+
+ w⊤ 
+
+> 1
+
+Φn[Φ⊤ 
+
+> n
+
+(θ)X0 − x0(θ)]  ≤ ∥ w1∥· (17) 
+
+Eθ
+
+Φn(θ)Φ⊤ 
+
+> n
+
+(θ)] X0 − x0(θ)]  ≜ ∥w1∥ · ∥ v∥.
+
+Making use of the definition of X0 and Gn from (14c) and (14d) ,proves that the auxiliary vector v vanishes, due to 
+
+v = Eθ
+
+ΦnΦ⊤
+
+> n
+
+ G−1 
+
+> n
+
+Eθ (Φn x0(θ)) − Eθ (Φn x0(θ)) . (18) The fact v = 0 implies ∥δx0 ∥ϕ = 0 due to (17) . Since (16) is a norm with ∥δx0 ∥ϕ ≥ 0, it is globally minimized for any w1 , 0. Next, the norm (16) of (15a) is bounded by 
+
+∥δ˙x∥ϕ(t) ≤ w2 ·  Eθ(Φn AΦ⊤ 
+
+> n
+
+) − Eθ(ΦnΦ⊤ 
+
+> n
+
+)A′X(t)
+
++  Eθ(Φn B) − Eθ(ΦnΦ⊤ 
+
+> n
+
+)B′u(t)
+
++ Eθ(Φn(E + ¯w)) − Eθ(ΦnΦ⊤ 
+
+> n
+
+)E′ (19) due to the same arguments than above for any choice w2 ∈ Rnℓ
+
+and all t > 0. Again, with the definitions of A′, B′ and E′ from (14a) and (14b) , we verify that the upper bound in (19) vanishes, and conclude ∥δ˙x∥ϕ(t) = 0 for all t > 0 and all θ ∈ Pθ. Repeating the same procedure for (15b) yields 
+
+∥δy∥ϕ(t) ≤ w3 ·  Eθ(ΦmCΦ⊤ 
+
+> n
+
+) − Eθ(ΦmΦ⊤
+
+> m
+
+)C′X(t)
+
++  Eθ(Φm D) − Eθ(ΦmΦ⊤
+
+> m
+
+)D′u(t)
+
++ Eθ(Φm(F + ¯ν)) − Eθ(ΦmΦ⊤
+
+> m
+
+)F′ .
+
+The above inequality in conjunction with the definitions of C′, D′
+
+and F′ from (14b) – (14d) , shows that ∥δy∥ϕ(t) = 0 holds for all 
+
+t ≥ 0 and all θ ∈ Pθ and any weighting vector w3 ∈ Rmℓ. We conclude that (15b) and (15a) are globally minimized by (13) ,which completes the proof. □
+
+For the computation of the surrogate matrices (14) , the under-lying q-dimensional integrals need to be evaluated numerically. Depending on the number of parameters θ this can be done by using dense multivariate Gaussian quadrature rules or sparse Smolyak grids [ 10 , 22 ]. For instance for (14a) we define the integrand a(θ) = Φ n(θ)A(θ)Φ⊤ 
+
+> n
+
+(θ) and obtain the result 
+
+A′ = G−1
+
+> n
+
+
+
+> N
+
+X
+
+> i=1
+
+a(θi)wi + ∆ 
+
+ (20) with the quadrature error ∆, the quadrature nodes θi and weights 
+
+wi for i = 1, . . . , N. If the integrand a(θ) is polynomial in θ, i.e. if A(θ) is polynomial in θ, there exists a quadrature order N∗
+
+with vanishing ∆ = 0 for N ≥ N∗.After deriving the surrogate for the expected means (13) , our second step is analyzing the dynamics of the conditional covari-ances cov w(x(t)) = V(t, θ ) w.r.t. the process noise ω. Given a set of parameters θ, system (11) is linear in view of the process noise ω. As a consequence the standard relation ˙V(t, θ ) = A(θ)V(t, θ ) + V(t, θ )A⊤(θ) + Σ w(θ) t > 0,
+
+V(0 , θ ) = 0 (21) holds. By superposition of the variance and the conditional mean (12a), we obtain the relation 
+
+x(t, θ, ϵ ) = Φ ⊤ 
+
+> n
+
+(θ)X(t) + V(t, θ )ϵ(t)with standard Gaussian ϵ ∼ N (0 , In). For sensitivity measures, we require solely the variance, not the full PDF. When applying the output mapping (11b) to (22) and using the law of total variance, it follows for the output 
+
+V(y(t)) = Vθ(Ew,ν (y(t)) + Eθ(Vw(y(t))) + Vν(Ep(y(t)) 
+
+= VmY2(t) + C(¯ θ) diag V(t, ¯θ) + diag Σν(¯ θ)
+
+| {z } 
+
+> σ2
+> y(t)
+
+(22) for all t ≥ 0. This makes it possible to combine the propagated variance of the process noise ω and measurement noise ν to the variances σ2 
+
+> y
+
+.We conclude that it is su ffi cient to focus on the conditional mean (12b) of the output for the design of optimal input tra-jectories. In addition, the impact of model uncertainties and measurement noise is accounted for by the choice 
+
+S min (t) = σy(t)1 ⊤ 
+
+> q
+
+∈ Rm×q (23) for the minimal sensitivities in (3) , where 1 q is a vector of length q containing ones. 
+
+3.3. Global sensitivty measures based on PCE-surrogates 
+
+As motivated in section 2, variance-based global sensitivity measures shall be used for the design of optimal input signals for 5system identification. Typically, first-order SU j(yi(t)) and total-order Sobol’ indices SU T 
+
+> j
+
+(yi(t)) are used for this purpose [ 11 ]. The first type captures the fraction of the variance of the output yi
+
+which can be explained by the uncertainty of the parameter θ j
+
+alone . On the other hand, the total-order indices reflect the variance of the output yi caused by θ j taking all interaction with the other parameter θ∼ j into account [ 9]. In this section we introduce both types of sensitivty measures and afterwards state how to compute them using PCEs. 
+
+First-order sensitivity measures . For all time t ≥ 0 with positive overall variance var θ(yi(t)) > 0, the first-order Sobol’ indices are defined by SU j(yi(t)) = Vθ j
+
+E∼θ j (yi(t)) 
+
+Vθ(yi(t)) ≜ S 2
+
+> i j
+
+(t)
+
+Vθ(yi(t)) . (24) The notation E∼θ j is the conditional mean w.r.t. all parameter besides θ j. Since SU j is dimensionless, this contradicts the initial claim from section 2, that the chosen sensitivity measure shall be of the same unit than the output under consideration. However, the demoninator of the equation above is a meaningful choice for the desired sensitivity measure S 2
+
+> i j
+
+. Exploiting the properties of PCE, allows to compute the quantities SU j(yi) and S i j very effi ciently by virtue of a single simulation of the surrogate (13) –without any sampling. From the definition (24) an index-set I j
+
+can be determined from the choice of basis function ϕ(θ) for all parameters θ j with j = 1, . . . , q
+
+I j =
+
+(
+
+1 ≤ i ≤ ℓ ∂ϕ i(θ)
+
+∂θ j
+
+, 0 ∧ ∂ϕ i(θ)
+
+∂θ k
+
+= 0, ∀ j , k
+
+)
+
+. (25) The criterion above checks for each component ϕi(θ) of the q-variate basis function if it depends on the parameter θ j alone. Only choosing the respective components of the variance map-ping (10b) to be non-zero by (v j)i =
+
+
+
+Eθ(ϕ2 
+
+> i
+
+) if i ∈ I j
+
+0 otherwise (26) with v j ∈ Rℓ allows us to define the first-order sensitivity of all outputs with regard to the parameter θ j
+
+S (·) j(t) =
+
+q
+
+(Im ⊗ v⊤ 
+
+> j
+
+)Y2(t). (27) 
+
+Total-order sensitivity measures . Since the computation of seper-ate higher order Sobol’ indices requires computing 2 q −1 indices, the interference of the di ff erent parameters is condensed using total-order Sobol’ indices [9] SU T 
+
+> j
+
+(yi(t)) = E∼θ j
+
+Vθ j (yi(t)) 
+
+Vθ(yi(t)) ≜ (S T
+
+> i j
+
+)2(t)
+
+Vθ(yi(t)) . (28) Similar as above, this allows to derive an alternative unit-conserving sensitivity measure S T
+
+> i j
+
+(t). Evaluating (28) for a PCE of the out-put yi(t) leads to the index set 
+
+I T 
+
+> j
+
+=
+
+(
+
+1 ≤ i ≤ ℓ ∂ϕ i(θ)
+
+∂θ j
+
+, 0
+
+)
+
+. (29)                                     
+
+> 00.511.522.533.54
+> −1
+> −0.5
+> 0
+> 0.5
+> 1
+> input
+> u(t) in N
+> 00.511.522.533.54
+> −0.2
+> 0
+> 0.2
+> 0.4
+> output
+> y(t) in m  mean Eθ[y]( t)
+> ±3σtube
+> 00.511.522.533.54
+> 0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1
+> 1.2
+> 1.4
+> ·10 −2
+> time tin s sensitivity measure
+> S 1 j(t) in m
+> pvar θ[y]( t)
+> S11 (t), θ1=c
+> S12 (t), θ2=d
+> Figure 1: Sensitivities of the spring damper system. The mean output and the overall uncertainty (middle) for a sinusoidal input (top) are computed by an intrusive surrogate. The contribution of the parameters to the variance are shown in the lower graph.
+
+Remark 2. By comparing the equation above with (25) , we notice that I j ⊆ I T 
+
+> j
+
+since also interaction terms are allowed in the total-order framing. Analogously than in (26) , a selection vector vT 
+
+> j
+
+∈ Rℓ makes it possible to compute a relation similar to (27) for the sensitivity measures S T
+
+> i j
+
+(t) based on the PCE coe ffi cients Y (t).Summary . Given a specific trajectory of the input u(t), the rel-evant properties of stochastic models (11) can be evaluated by a simulation of the intrusive surrogate model. In particular, the simulation of (13) with nℓ states. After that, the computation of the required sensitivities S i j (t) is straightforward using (27) for all j = 1, . . . , q. In addition, a numerical integration of the sys-tem (21) with n2 states evaluated at ¯θ gives the quantity S min (t)by virtue of (23) . Combining both by means of (3) gives the eff ective sensitivities ∆S (t) required for the stochastic optimal control problem (7). 
+
+3.4. Illustrative example for sensitivities 
+
+As an illustrative example how to compute the sensitivities for a given input signal, we consider a spring-damper system gov-erned by the dynamics 
+
+d ˙x(t) = −cx (t) + u(t), t > 0, x(0) = 0 (30) with the input signal u(t) = u0 sin (2 π f0t) being a given sinusoidal force with amplitude u0 = 1.0 N and frequency f0 = 0.5 Hz . In the equation above, x(t) denotes the displacement, c the spring constant and d the damping constant. We assume that both 6sti ff ness θ1 = c damping θ2 = d        
+
+> 0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1·10 −2
+> overall impact in rad s −1
+> ∥∆S1j∥1
+> ∥S1j∥1− ∥ ∆S1j∥1
+> Figure 2: Overall sensitivity scores. The total height indicates the total sensitivity score of the spring damper system, the dark blue part the e ff ective one.
+
+parameters are uniformly distributed with q = 2 and 
+
+c ∼ U(1 .8 N /m, 2.2 N /m) ,
+
+d ∼ U(0 .9 Ns /m, 1.1 Ns /m) .
+
+In addition, the displacement x(t) is considered as the scalar output of the system with m = 1. Using a PCE-order of d = 3, the resulting surrogate model (13) has ℓn = ℓm = 10 states and outputs. To illustrate the impact of the disturbances we further assume a measurement noise with variance Σν = 0.007 m 2 and no process noise, i.e., Σw = 0. The expected value of the system’s displacement is visual-ized in Fig. 1 (middle). The shaded area indicates the overall uncertainty w.r.t. θ given by the standard deviation computed from the conditional variance (10b) , which is shown as the black line in lower graph in Fig. 1. The resulting sensitivities are shown in Fig. 1 (bottom) and computed in first-order sense using (27) .We observe, that peak sensitivites of the spring constant c occur at the extrema of the sinusoidal input, whereas the damping constant d has its highest impact during the zero-crossings of the input, where the velocity is maximal. To illustrate how to condense the sensitivities into a single score per parameter, we compute the sensitivity scores similar to the cost functional (4) using the 1-Norm of the time-series. The results are visualized in Fig. 2. The total height of each bar indicates the total sensitivity score ∥S 1 j∥1, whereas the dark blue part reflects the e ff ective sensitivity ∥∆S 1 j∥1. As can be seen from (23) , the minimal sensitivity S min is constant over time here, since the output mapping is deterministic C(θ) = 1, and purely determined by the measurement noise. We observe that the spring constant c has a higher overall impact on the output uncertainty than the damping constant d.
+
+4. The non-intrusive method for sensitivity global analysis 
+
+In this section, we introduce a new approach to non-intrusive global sensitivity analysis using optimal transport. This method is particularly useful when dealing with complex models where intrusive methods may not be feasible. We begin with a brief overview of optimal transport theory, followed by the formula-tion of sensitivity measures based on this framework. 
+
+4.1. Introduction to optimal transport 
+
+Given a non-negative lower semi-continuous function (trans-portation cost) κ : Y × Y → R≥0, the optimal transport dis-crepancy between two probability distributions P, Q ∈ P(Y) is defined as 
+
+Dκ(P, Q) B inf 
+
+> γ∈Γ(P,Q)
+
+Z
+
+> Y×Y
+
+κ(y1, y2)dγ(y1, y2), (31) where Γ(P, Q) is the set of all joint probability distributions over 
+
+Y × Y with marginals P and Q, also known as couplings or 
+
+transport plans [26]. When κ(y1, y2) = |y1 − y2|p for some p ∈ [1 , ∞], the optimal transport discrepancy (31) collapses to the celebrated type-p
+
+Wasserstein distance 
+
+Wp(P, Q) B D|y1−y2|p (P, Q)1/p
+
+. (32) In general, closed-form expressions of (32) are out of reach. However, one prominent exception is the type-2 Wasserstein distance, which according to [27] can be expressed as 
+
+W22 (P, Q) B W2B(P, Q) + Ψ (P, Q). (33) The first part is the so-called Bures metric [28] 
+
+W2B(P, Q) B M 2(μP, μ Q) + V 2(ΣP, ΣQ) (34) which computes the deviation between the first two moments 
+
+M 2(μP, μ Q) B ∥μP − μQ∥22
+
+V 2(ΣP, ΣQ) B tr 
+
+
+
+ΣP + Σ Q − 2 Σ1/2 
+
+> Q
+
+ΣPΣ1/2
+
+> Q
+
+1/2
+
+,
+
+while the second part denotes a non-negative residual term 
+
+Ψ(P, Q) ≥ 0 that is positive for distributions with higher mo-ments. In general it holds that W22 (P, Q) ≥ W2B(P, Q). 
+
+Remark 3. Under the assumption that both, P and Q are ellipti-cal distributions with the same density generator, Gelbrich [ 27 ]proved that Ψ(P, Q) ≡ 0. Intuitively, this follows from the fact that elliptical distributions are fully specified by their first two moments, i.e., the mean μ and the covariance Σ, in which case higher moments do not exist. 
+
+Next, we draw the connection between the optimal transport discrepancy and global sensitivities. 
+
+4.2. First-order optimal transport sensitivities 
+
+For the sake of simplicity, we assume that the parameter vector θ is scalar, i.e., the parameter distribution Pθ is univariate 1.We define the first-order global optimal transport sensitivity index of θ ∼ Pθ with respect to y ∼ Py along (31) as in [29] 
+
+ξ(θ, y) B Eθ
+
+Dκ(Py, Py|θ) . (35) Assuming positivity of the transport cost κ under two indepen-dent random vectors y1, y2 ∼ Py, i.e, Ey(κ(y1, y2)) > 0, we can normalize (35) as follows 
+
+ι(θ, y) B Ey(κ(y1, y2)) −1
+
+ξ(θ, y). (36)              
+
+> 1In the multivariate case, it is typically assumed that the parameters θ1, . . . , θ q
+> are mutually independent. Thus, the joint parameter distribution Pθis defined as the product of its marginals Pθ=Qqi=1Pθi. Consequently, the analysis presented in this section can be repeated for each parameter i=1, . . . , qindependently.
+
+7Remark 4. The normalization Ey(κ(y1, y2)) in (36) can be un-derstood as a generalization of the variance-based normaliza-tion from classical sensitivity analysis methods. 
+
+Next, we focus on the type-2 Wasserstein distance with corre-sponding global sensitivity index 
+
+ξW22 (θ, y) B Eθ
+
+W22 (Py, Py|θ)
+
+> (33)
+
+= Eθ
+
+W2B(Py, Py|θ) + Eθ
+
+Ψ(Py, Py|θ)
+
+≥ Eθ
+
+W2B(Py, Py|θ) = ξW2B (θ, y), (37) where the inequality holds as equality if both Py and Py|θ are elliptical. In view of the normalized index (36) , it amounts to substitute κ(y1, y2) = |y1 − y2|2 and ξW2B (θ, y), resulting in 
+
+ιB(θ, y) B (Ey(|y1 − y2|2)
+
+| {z } 
+
+> =2tr( ΣPy)
+
+)−1ξW2B (θ, y). (38) 
+
+Remark 5. The type-2 Wasserstein sensitivity can be related to variance-based sensitivities [ 29 ], i.e., first order Sobol indices. By substituting the definition of ξW2B (x, y) along with (34) into 
+
+(38) , one obtains the separation 
+
+ιB(θ, y) = M 2(μPy , μ Py|θ ) + V 2(μPy , μ Py|θ )2tr( ΣPy ) ,
+
+where the mean deviation (advective part) M 2(μPy , μ Py|θ ) is con-nected to the first order Sobol’ index as 
+
+ιS (θ, y) = M 2(μPy , μ Py|θ )tr( ΣPy ) .
+
+Note that each quantity (35) - (38) requires the true (but un-known) parameter and output distribution to be evaluated and thus, an approximation scheme is required. 
+
+4.3. Bin-wise sample-average approximation 
+
+From now on we assume to have access to Ns ∈ N param-eter /output pairs {(θi, yi)}Ns
+
+> i=1
+
+, e.g., obtained from simulation or real-world measurements. Thus, we replace the parameter and output distributions Pθ and Py with their empirical counterparts 
+
+PNs 
+
+> θ
+
+= N−1s
+
+PNs 
+
+> i=1
+
+δθi and PNs 
+
+> y
+
+= N−1s
+
+PNs 
+
+> i=1
+
+δyi .
+
+Θ6Θ5Θ1 Θ2 Θ3 Θ4                      
+
+> p1=530
+> p2=830
+> Figure 3: Exemplary scatter plot. Scatter plot with Ns=30 samples ( θi,yi) divided into M=6 bins. p1and p2
+> denote the frequencies of xibeing located in bins Θ1and Θ2, respectively.
+> Figure 4: Sampling error for di ff erent sample sizes. Infinity norm error between the intrusive and non-intrusive method computed over M=100 experiments. The box plots illustrate the median, the 25th and 75th percentiles, while the whiskers denote the outliers.
+
+Definition 1. Given an empirical distribution PNs 
+
+> y
+
+, we define the sample mean and variance as 
+
+ˆμy B N−1s
+
+> Ns
+
+X
+
+> i=1
+
+yi, ˆΣy B N−1s
+
+> Ns
+
+X
+
+> i=1
+
+(yi − ˆμy)2. (39) 
+
+Consider a non-empty subset of the parameter space Θ j ⊂ Θ
+
+with cardinality |Θ j| = N j ≥ 1. The conditional sample mean and variance of y i given θi ∈ Θ j are defined as 
+
+ˆμy|Θ j B
+
+X 
+
+> θi∈Θj
+
+yi
+
+N j
+
+, ˆΣy|Θ j B
+
+X 
+
+> θi∈Θj
+
+(yi − ˆμy|Θ j )2
+
+N j
+
+.
+
+In order to estimate (37) from data, we first partition the pa-rameter space Θ into M non-overlapping (and not necessarily uniform) subsets Θ j for j = 1, . . . , M, such that Θ = SMj=1 Θ j.To give an importance weighting to the bins, we define 
+
+p j = |Θ j|/Ns j = 1, . . . , M, (40) where PMj=1 |Θ j| = Ns, see Figure 3 for an illustration. The bin-wise SSA of (37) is then given by ˆξW2B (θ, y) = Eˆθ
+
+W2B
+
+PNy , PNy|θ
+
+ 
+
+≈
+
+> M
+
+X
+
+> j=1
+
+p j
+
+M 2  ˆμy, ˆμy|Θ j
+
+ + V 2  ˆΣy, ˆΣPy|Θ j
+
+ , (41) which, after normalization with the sample variance of y, re-sults in an empirical approximation of the type-2 Wasserstein sensitivity index (38), i.e., ˆιB(θ, y) = (2tr( ˆ Σy)) −1 ˆξW2 (θ, y). (42) The first order Sobol’ index can similarly be approximated as ˆιS (θ, y) = (tr( ˆ Σy)) −1
+
+> M
+
+X
+
+> j=1
+
+p jM 2  ˆμy, ˆμy|Θ j
+
+ . (43) 
+
+Remark 6. The intuition behind (41) is the following: For each bin Θ j we compute the distance between the conditional dis-tribution PNy|Θ j and the marginal distribution PNy to measure discrepancies in the output y over the partitioned parameter space Θ, see also Figure 3. 
+
+8Preprocessing of optimization problem & setup build surrogate (13)                      
+
+> Intrusive : simulate surrogate (13) once with u(i)and eval. (10b), (23), (27)
+> Non-intrusive : get
+> Nssamples of model
+> Mu(i), θ (j)to compute (39), (43) Solver: p(i)7→u(i)=u(t,p(i))UQ scheme
+> ∆S(i),E(y(i))V(y(i))
+> J(i)
+> u(i)
+> Evaluate cost function (4) Evaluate cons-traints Y,U
+> Optimal solution: u⋆(t)=u(t,p⋆)
+> Figure 5: Steps to solve the optimization problem (44).
+
+4.4. Example transport sensitivities 
+
+In the following, we recommence the spring-damper exam-ple introduced in Section 3.4. Unlike the intrusive method, the non-intrusive method relies on samples of the state trajectory to derive the Wasserstein sensitivities. To quantify the finite sample error between both methods, we compute the maximum deviation between (24) and (43) along the trajectory y(t) for di ff erent sample sizes Ns ∈ [10 , 10 2, 10 3, 10 4], i.e., 
+
+ei( j, Ns) B max  
+
+> t
+
+ˆιS (θ j, y(t)) − SU j(y(t)) , i = 1, . . . , M,
+
+and repeat the experiment for M = 100 times to enable statistical inferences. The results are visualized in Figure 4, illustrating the finite sample error between the intrusive and non-intrusive method for both the spring and damper constants. As expected, increasing the sample size Ns improves the reliability of the Wasserstein sensitivity estimate. Consequently, the estimation error converges to zero as Ns → ∞ , an observation that is at-tributable to the SAA in (41). 
+
+5. The optimization method 
+
+While the two previous sections focused on the computation of sensitivities for a given input signal, we now turn the attention back to the optimization of the input signal itself. As stated in section 2.2 the optimal excitation is considered as the solution of the infinite-dimension stochastic optimal control problem (7) .With the results from the sections 3 and 4, we are now able to evaluate the cost functional (4) for a given input signal. However, problem (7) is still ill-posed since the optimization is performed over an infinite-dimensional space of input func-tions. This aspect is addressed in section 5.1. Afterwards, we discuss suitable optimization algorithms to solve the resulting finite-dimensional optimization problem in section 5.2 and show exemplary results for the spring-damper system in section 5.3. 
+
+5.1. Parameterization of the input 
+
+Finding numerical solutions to optimal control problems typically involves the discretization of the input signal [ 30 , 31 ]. A common approach to parameterize an input signal u(p, t) with finite degrees of freedom p is using the superposition of ba-sis functions ρi(t, p). For example Fourier methods, where the frequencies and amplitudes of sinusoidal basis functions are optimized, fall under this category and are widely used in opti-mal input design [ 32 , 1]. If the shape of the basis functions is fixed, the parameterization reduces to the form u(t, p) = p⊤ρ(t). Note that the direct discretization of the signal at certain time instances is a special case of this approach, where the basis functions are linear interpolants, splines or piecewise-constant functions [ 30 ]. An important requirement for the choice of basis functions is the ability to verify input constraints u(t, p) ∈ U,e.g., amplitude or rate limits, for all times t ∈ [0 , tf ] – not solely at the certain points in time. Here the use of Bernstein polyno-mials is advantageous, since the constraints can be verified by checking the coe ffi cients only [33]. For the sake of generality, we stick to the general notation 
+
+u(t, p) leading to the optimization problem for the degrees of freedoms p ∈ RN
+
+max 
+
+> p∈RN
+
+J ∆S (t), u(t, p)) (44) s. t. y(t) = M(u(t, p), θ ), for all t ∈ [0 , tf ],
+
+y(t) ∈ Y, u(t, p) ∈ U, for all t ∈ [0 , tf ]being a finite-dimensional approximation of the original prob-lem (7). 
+
+5.2. Optimization algorithm 
+
+To compute a solution of the optimization problem (44) , suit-able optimization algorithms are required. Since problem (44) is typically non-convex and possibly non-smooth, gradient-free optimization algorithms such as evolutionary strategies [ 34 ] or Bayesian optimization [ 35 ] are reasonable choices. For the ex-amples presented in this work, we use the scipy.optimize 
+
+implementation of the di ff erential evolution algorithm [ 34 ] from the SciPy library [36] to solve (44). The overall steps to solve the optimization problem (44) are summarized in Fig. 5. Once the objective, constraints, and un-certain parameters have been defined, the input signal is then parameterized in terms of a set of basis functions. If the intru-sive method is used to compute the sensitivities, the surrogate model is also derived in this first step. Then, the optimization algorithm iteratively proposes new input parameters p(i), which are used to evaluate the input signal u(t, p(i)). With the current input signal, the sensitivity measures and statistics of the outputs are computed using either the intrusive or non-intrusive method. The latter case requires a sampling algorithm and more func-tion evaluations but less preprocessing e ff ort. In the intrusive case, the computation of the sensitivity solely requires a single evaluation of the surrogate model with the current input u(t, p(i)). Based on this information, the cost and the constraints of the optimization problem are evaluated and given back to the opti-mization algorithm. This process is repeated until a convergence criterion is met. 90 0.2 0.4 0.6 0.8 1 1.2 1.4 1.6 1.8 2 2.2 2.4 2.6 2.8 3                                                                        
+
+> −0.6
+> −0.4
+> −0.2
+> 0
+> output
+> y(t) in m
+> (a) System response for input optimal in θ1=c
+> mean Eθ[y]( t)
+> ±3σtube
+> 00.20.40.60.811.21.41.61.822.22.42.62.83
+> 0
+> 1
+> 2
+> 3·10 −2
+> time tin s
+> sensitivity measure
+> S 1 j(t) in m  pvar θ[y]( t)
+> S11 (t), θ1=c
+> ∥S11 ∥1
+> S12 (t), θ2=d
+> ∥S12 ∥1
+> 00.20.40.60.811.21.41.61.822.22.42.62.83
+> −0.4
+> −0.2
+> 0
+> 0.2
+> 0.4
+> output
+> y(t) in m
+> (b) System response for input optimal in θ2=d
+> 00.20.40.60.811.21.41.61.822.22.42.62.83
+> 0
+> 0.5
+> 1
+> 1.5·10 −2
+> time tin s
+> sensitivity measure
+> S 1 j(t) in m
+> Figure 6: Spring damper system with optimal inputs. Response of the spring-damper example under optimal inputs taylored for the identification of (a) the spring constant cand (b) the damper constant d. The mean output and the overall uncertainty are shown in the upper plots while the sensitivities of the parameters can be seen in the lower plots.
+
+5.3. Illustrative example: optimal input design 
+
+In the previous sections, we inspected two di ff erent methods to compute the sensitivities for the spring-damper system (30) with a fixed input signal. In the subsequent paragraphs, we demonstrate the use of the optimization method to find optimal sinusoidal input signals for the individual uncertain parameters c
+
+and d. To this end, we define the input set 
+
+U1 = {u(t) = u0 sin(2 π f t − φ) | u0 ∈ [0 .0 N , 1.0 N] ,
+
+f ∈ [0 .0 Hz , 5.0 Hz] , φ ∈ [0 , 2π]}, (45) which comes with the degrees of freedom p⊤ = [u0, f, φ ] while the output remains unconstrained. For the cost functional (4) ,we define the two pairs of weighting matrices 
+
+Qa =
+
+"1 00 0
+
+#
+
+, Qb =
+
+"0 00 1
+
+#
+
+, Ra = Rb = 0to maximize the sensitivity either w.r.t. the spring coe ffi cient θ1 =
+
+c or the damper constant θ2 = d, respectively. The optimization algorithm from Section 5.2 is then used to solve the two opti-mization problems (44) . To this end the di ff erential evolution algorithm is configured with a population size of Npop = 20 and terminated after 24 (task a) and 28 (task b) iterations. A gradient-based optimization is done after the di ff erential evolu-tion to refine the solution. With both methods for sensitivity analysis presented in sec-tions 3 and 4, we obtain the same results but with di ff erent 
+
+> Table 1: Optimal parameters of the input signal given by (45).
+
+optimization task u0 in N f in Hz φ
+
+(a): θ1 = c 1.000 0.002 1.590 (b): θ2 = d 1.000 0.350 2.310 computation times (i.e. function evaluations). Since the algo-rithm uses Npop · dim (p) = 60 function evaluations per iteration, the non-intrusive method with sample size Ns = 100 needs 
+
+Ns Npop · dim (p) = 6 · 10 3 simulations of the original model (30) .Contrarily the intrusive procedure requires solely a single simu-lation of the surrogate per evaluation of the cost function. This corresponds to Npop · dim( p) = 60 evaluations of the surrogate. We obtain the optimal input signals listed in Tab. 1. The resulting outputs for both optimization tasks are shown in Fig. 6 (upper graphs) along with corresponding sensitivity time series (lower graphs). We observe that the optimal input signal for the spring con-stant c tends to a step with the maximum amplitude. This result is expected since since the spring constant is very dominant in the steady-state solution ¯x = ¯u/c of the system. The lower plot in Fig. 6(a) clearly confirms that this influence of the damping insensitive in steady-state. On the other hand, the optimal input signal for the damper constant d is shown in Fig. 6(b). Here, the optimal solution trades o ff the increasing damping for higher fre-quencies and the higher impact of the damper in transient states. However, we observe that optimal sensitivities for the damping are significantly smaller compared to the spring constant case. To illustrate the benefits in the parameter identification pro-cess using the optimized input signals, we synthetically generate experimental data with a known ground truth of the parameters, 
+
+c⋆ = 2.0 N/m and d⋆ = 1 Ns /m . The experimental data is generated synthetically by adding measurement noise to the pre-dicted data. The resulting shape of the cost function is shown in Fig. 7 for both optimization tasks. In according with the optimal sensitivities, the cost optimized for the spring constant c shows a significantly steeper descent towards the ground truth compared to the cost optimized for the damper constant d.The benefit of the optimal excitation is reflected in the confi-dence intervals of the resulting parameter estimates, which are shown in black in Fig. 7. Using a standard least squares esti-10 mate [ 1 ] for both parameters the mean values are consistent with the ground thruth for both optimization tasks, but the standard deviation of the estimates read as task (a) : σa(ˆ c) = 0.0220 N /m, σa( ˆ d) = 0.0655 Ns /mtask (b) : σb(ˆ c) = 0.0397 N /m, σb( ˆ d) = 0.0246 Ns /m.
+
+As the expected information of the damping constant d is very low for the task (a), the standard deviation of the parameter estimate remains high. This observation is in line with the optimal sensitivities shown in Fig. 6(a) and the shape of the cost function Fig. 7. By combining the data of both individual optimization tasks, we can significantly reduce the uncertainty of both parameter estimates, i.e. σa∪b( ˆc) = 0.0225 N/m and 
+
+σa∪b( ˆ d) = 0.0266 Ns /m. 
+
+6. Industry application: optimal input design for vehicle systems 
+
+As an industry example, we consider a vehicle dynamics model commonly used in automotive applications for control and simulation. The model captures the vehicle’s lateral dy-namics using a single-track representation, which simplifies its behavior yet provides a su ffi cient approximation for a wide range of driving scenarios. The setting is visualized in Figure 8 show-ing the most important vehicle states. Single-track models form the basis for various automotive motion control applications such as lane-keeping assistance [ 37 ], electronic stability con-trol [ 38 ], or automated driving systems [ 39 ]. The objective is to determine an optimal steering angle trajectory u that maximizes the identifiability of the unknown parameters θ from the mea-sured output y. In this example, the yaw rate serves as output while the inertia around the vertical axis shall be identified. Within this chapter, we first introduce the vehicle model in section 6.1 and then apply the optimization method to find optimal steering trajectories in section 6.2. Finally, the ultimate benefit is illustrated for a real-world by comparing the parameter estimates obtained with the optimal input against standard input signals in section 6.3 in a real-world setting. 
+
+6.1. Vehicle System Modeling 
+
+We utilize a nonlinear model to compare the intrusive ap-proach from Section 3 against the non-intrusive approach from                               
+
+> 1.61.822.22.4
+> 0.8
+> 0.9
+> 1
+> 1.1
+> 1.2
+> sti ff ness cin N /mdamping  d in Ns /m
+> (a) cost optimized for θ1=c
+> 20
+> 40
+> 1.61.822.22.4
+> 0.8
+> 0.9
+> 1
+> 1.1
+> 1.2
+> sti ff ness cin N /m
+> (b) cost optimized for θ2=d
+> 5
+> 10
+> 15
+> Figure 7: Shape of the cost function for identification and resulting estimates. Input optimized for (a) the spring constant cand (b) the damper constant d.The 3 σ-confidence intervals of the resulting parameter estimates ˆcand ˆdare indicated by the black bars.
+> β
+> v
+> ˙ψ
+> yxz
+> yaw rate ˙ ψ
+> side slip angle β
+> steering angle δ
+> velocity v
+> Center of gravity Vehicle coordinate system ( x,y,z)
+> δ
+> Figure 8: Illustration of the lateral vehicle dynamics.
+
+Section 4. For the latter, the model is characterized as a black box, making no assumptions about its underlying mathematical structure. Afterwards, a linearized version of the model is used to compute a intrusive surrogate model. 
+
+Nonlinear vehicle model . The dynamics of the yaw rate ˙ψ, the side slip angle β, and the longitudinal speed v are given by ¨ψ = 1
+
+Jz
+
+lf Fy,f cos δ − lr Fy,r
+
+ (46a) ˙β = 1
+
+mv 
+
+Fy,f cos δ + Fy,r
+
+ − ˙ψ (46b) ˙v = 1
+
+m
+
+Fx cos β + Fy,f sin( δ − β) + Fy,r sin β , (46c) where m is the vehicle mass, Jz is the yaw moment of inertia, lf
+
+and lr are the distances from the center of gravity to the front axle (index f) and the rear one (index r). Since the focus of this investigation is on the lateral dynamics, we assume no external accelerating force, i.e. Fx = 0. The actual lateral tire forces Fy,f
+
+and Fy,r tend to their stationary levels by first-order dynamics. The latter ones are given by Pacejka’s simplified tire model [ 40 ]
+
+Tf ˙Fy,f = Fy,f − μf Cf m g l r
+
+lf + lr
+
+arctan( Bf αf ) (47a) 
+
+Tr ˙Fy,r = Fy,r − μr Cr m g l f
+
+lf + lr
+
+arctan( Br αr), (47b) both being functions of the slip angles αf and αr, respectively. These are defined as the di ff erence between the steering angle δ
+
+and the actual slip angle of the front and rear tires and given by 
+
+αf = δ − arctan lf ˙ψ + v sin β
+
+v cos β
+
+!
+
+(48a) 
+
+αr = − arctan lr ˙ψ − v sin β
+
+v cos β
+
+!
+
+. (48b) In order to acccount for the fact, that a desired steering angle u
+
+with ν = 1 is not immediately applied to the vehicle, the second-order lag element ¨δ + 2dsωs ˙δ + ω2s δ = ω2s u (49) 11 with uncertain natural frequency ωs and damping ratio ds is used to model the steering dynamics. In total, the nonlin-ear vehicle model is given by (46) – (49) , with the state x =
+
+[ ˙ψ, β, v, Fy,f , Fy,r, δ, ˙δ]. In this example, the yaw rate ˙ψ is con-sidered as scalar output y, i.e. ν = 1. The initial conditions are set to zero, except for the longitudinal speed, which is initialized with v0 = 13 .89 m/s . The remaining vehicle parameters are assumed to be deterministic and listed in Table 2. The prior knowledge of the inertia is reflected by the nor-mal distribution Jz ∼ N (6000 kg m 2, 1000 kg m 2). As addi-tional uncertain parameters we consider the tire sti ff nesses Bf ∼
+
+N (10 , 1.0) and Br ∼ N (10 , 1.0) from (47) , as well as the param-eters of the steering dynamics (49) , i.e. ωs ∼ N (17 rad s , 4.0 rad s )and the damping ratio ds ∼ N (0 .75 , 0.05). To summarize, we have a total of q = 5 uncertain parameters θ = [Jz, Bf , Br, ω s, ds]⊤.
+
+Linear single track model . We derive a linearized single track model by imposing several typical assumptions. These include small angle approximations, neglecting the tire dynamics (47) ,and assuming the lateral tire forces Fy,(·) are a ffi ne functions of their respective slip angles α(·). The nonlinear relations (46) – (48) simplify to the linear ODEs ¨ψ = −cf l2f − crl2r
+
+Jz
+
+˙ψ + crlr − cf lf
+
+Jz
+
+β + cf lf
+
+Jz
+
+δ (50a) ˙β = −cf lf + crlr
+
+mv 2 − 1
+
+!
+
+˙ψ − cf + cr
+
+mv β + cf
+
+mv δ. (50b) In addition, the vehicle speed v = v0 becomes a constant pa-rameter instead of a state. To consider the neglected dynam-ics, the speed is also treated as an uncertain parameter with 
+
+v ∼ N (11 .27 m/s, 0.87 m/s ). The cornering sti ff nesses c(·) at the respective axle are given by 
+
+cf = Kf
+
+mgl r
+
+lf + lr
+
+, Kf ∼ N
+
+
+
+9.53 sm , 1.20 sm
+
+
+
+(51a) 
+
+cr = Kr
+
+mgl f
+
+lf + lr
+
+, Kr ∼ N
+
+
+
+18 .8 sm , 2.00 sm
+
+
+
+. (51b) To consider the neglected nonlinearities, the standard deviation of the combined sti ff nesses K(·) = μ(·)C(·) B(·) are overapproxi-mated as stated above. We end up with q = 6 uncertain param-eters θ = [Jz, Kf , Kr, ω s, ds, v]⊤ and a n = 4 dimensional state vector x = [ ˙ψ, β, δ, ˙δ]⊤ for the linearized model. In accordance with the nonlinear model, the initial condition vanishes. In addi-tion, it is straightforward to verify that the linear model featuring the ODEs (50) and (49) complies with the LPV-model structure defined in (11) for the intrusive method from Section 3. 
+
+6.2. Optimization of the vehicle’s excitation 
+
+The objective is to find an optimal steering angle trajectory u
+
+that maximizes the sensitivity of the yaw rate ˙ψ with respect to the inertia Jz. In comparison to the sinusiodal input space from Section 5.3, we consider more advanced input signals that comprise the superposition of multiple ramp signals. An individual ramp is parameterized with p = [u0, uT , tT , t∆]⊤ and is defined as 
+
+ρ(t, p) = sat [u0, uT ]
+
+u0 + t−(tT −t∆) 
+
+> t∆
+
+(uT − u0) , (52) where u0 and uT denote the start and end values, tT the final time and t∆ ≤ tT the rise time. In addition, the saturation func-tion sat [a,b](x) = max {min (a, b), min {x, max (a, b)}} is used in the equation above. The space U2 of possible excitation functions is then defined as the set of all possible superpositions of N ramp signals, i.e., 
+
+U2 =
+
+
+
+u(t) =
+
+> N
+
+X
+
+> i=1
+
+ρ(t, pi) ui 
+
+> 0
+
+= 0, ti 
+
+> ∆
+
+≤ tiT , tiT ∈ (0 , T ],
+
+u(0) = u(T ) = 0, |u(t)| < u+, |˙u(t)| < ˙u+, ∀t ∈ [0 , T ]
+
+
+
+, (53) with the time horizon T = 10 .0 s, the maximum amplitude 
+
+u+ = 0.14 rad and a rate limit of ˙u+ = 0.157 rad s . We choose 
+
+N = 4 and obtain p = [p1, . . . , pN ]⊤ ∈ R16 total degrees of freedom. Similar to the previous example, the output y remains unconstrained. In addition, process and measurement noise vanishes according to the model representation. This implies 
+
+S min (t) = 0 and leads to the e ff ective sensitivities ∆S (t) = S (t), see (3) . The di ff erential evolution algorithm is configured with a population size of Npop = 30 and terminated after 250 iterations. For the non-intrusive approach we use the sample size Ns = 50. 
+
+Setup and computationally complexity . Due to the structure of the nonlinear model (46) – (49) , the intrusive method with the pre-sented LPV-structure is not applicable. Therefore, we first solve the optimization problem (44) based on the nonlinear model using the non-intrusive method from Section 4. Subsequently, the linearized model (50) – (49) is used to build a PCE-surrogate model for the intrusive method from Section 3. Due to the amount of q = 6 parameters, building a surrogate model with PCE-order d = 3 results in ℓn = 336 states and ℓm = 84 out-puts with the lexicographical truncation scheme. On a standard Intel(R) Xeon(R) 6346 CPU, the computation time is reason-ably small with 1 .88 s using a quadrature order of Nq = 4 and a sparse Smolyak grid. An increase of d or Nq did not lead to di ff erent simulation results. Still, the mean computation time for a single simulation of the surrogate of E[tclin ] = 0.58 s is compa-rable to a a single simulation of the nonlinear model which is 
+
+E[tcnl ] = 0.46 s. This implies a significant impact on the computation time for an iteration of the optimization algorithm. We obtain the 
+
+> Table 2: Vehicle Parameters of the exemplary vehicle model representing a middle class car.
+
+Parameter description Symbol Unit Value 
+
+Initial vehicle speed v m/s 13.89 Vehicle mass m 10 3 kg 2.700 Distance CoG to front axle lf m 1.548 Distance CoG to rear axle lr m 1.441 Front tire friction coe ffi cient μf – 1.000 Rear tire friction coe ffi cient μr – 1.000 Front tire sti ff ness Cf N/rad 0.953 Rear tire sti ff ness Cr N/rad 1.878 Gravity constant g m/s2 9.810 Front tire time constant Tf ms 28.57 Rear tire time constant Tr ms 28.57 12 0 1 2 3 4 5 6 7 8 9 10                                  
+
+> −0.2
+> −0.1
+> 0
+> 0.1
+> 0.2
+> (a)  steering angle
+> u(t) in rad
+> initial opt (lin) opt (nl)
+> 012345678910
+> 0
+> 1
+> 2
+> 3
+> ·10 −2
+> (b)  init. sensitivities
+> S (t) in rad /s sensitivity of θ1=Jz
+> sensitivity of θ2=ωs
+> sensitivity of θ3=ds
+> linear model (lin)
+> nonlinear model (nl)
+> 012345678910
+> 0
+> 1
+> 2
+> 3
+> ·10 −2
+> time tin s
+> (c)  opt. sensitivities
+> S (t) in rad /s (lin)
+> Figure 9: Optimal excitation signals for the vehicle systems. The optimal inputs for the linear (grey) and nonlinear (dark blue) are shown in addition to an initial guess (black) and the amplitude restrictions (dashed lines) in (a). The other graphs show the resulting sensitivity trajectories for both models under the initial guess in (b) and the optimal input of the linear model in (c). The sensitivites according to the linear model are depicted in solid lines, the ones of the nonlinear model in dashed lines.
+
+following estimates for the linear an nonlinear case 
+
+E[tc,iter lin ] = E[tclin ] Npop dim p = 4.64 min 
+
+E[tc,iter nl ] = E[tcnl ]Ns Npop dim p = 184 min ,
+
+which di ff ers mainly due to the 480 instead of 2 .4 · 10 4 function calls per iteration. Certainly, the computation time for the non-linear non-intrusive case can be reduced by using parallelization strategies, which is not considered here. 
+
+Optimal input signals . The resulting optimal input signals for the nonlinear and linear model are depicted in Fig. 9(a). We observe that the ramps with maximum slope lead to the highest sensitivities. Due to the constraints of the input set (53) the linear model would not benefit from using the fourth ramp segment due to the simplification. In contrast, the nonlinear model utilizes the full input space, applying all four ramps for system exci-tation. Nonetheless, the two optimal input trajectories display comparable overall characteristics, leading to the conclusion that the linear model captures the relevant dynamics of the vehicle su ffi ciently accurate. 
+
+Resulting sensitivity trajectories . Figure 9(b) illustrates the re-sulting sensitivity trajectories for both models, obtained by ac-tuating each system with an initial input guess uinit < U2. This guess (depicted in Figure 9(a)) incorporates a ramp segment with maximum slope, yet it fails to satisfy the terminal condi-tion u(tT ) = 0. For the sake of simplicity, we only show the sensitivities w.r.t. the inertia Jz (dark blue, the objective) and the two other common parameters (light blue /orange). Again we 
+
+> Figure 10: Test vehicle ID.Buzz on the test track.
+
+notice that both models exhibit similar sensitivity characteristics, however, due to the neglected dynamics, the linear model does not consider the sensitivity in steady-state. In Figure 9(c) the sensitivities for both models under the optimal input signals of the linear model are shown, i.e., the grey line in Figure 9(a). Compared to the initial guess, both models exhibit significantly increased sensitivities for the inertia Jz (dark blue). Despite being optimized for the inertia, it proved to be less dominant compared to other parameters in both simulations. A potential increase could be achieved with a less restrictive input set. 
+
+Key findings. The results indicate that the input design with the linearized model is able to find an optimal excitation that is comparable to the one obtained from the nonlinear model. Im-portantly, this aspect is an inherent system property, meaning it is independent of the UQ method chosen for the sensitivity anal-ysis. From a computational perspective, the intrusive method off ers significant performance advantages over the non-intrusive approach, provided it is applicable to the system. In our example, building the intrusive surrogate model requires negligible e ff ort, even within an industrial application context. While the intrusive method o ff ers the major advantage of requiring no sampling for cost function evaluations, the non-intrusive method, conversely, provides the clear benefit of applicability to black-box models without further assumptions or simplifications. 
+
+6.3. Parameter identification for the vehicle system 
+
+Finally, we present benefit of the method for system iden-tification based on a test vehicle. The respective vehicle is a modified VW ID.Buzz minibus with access to the steering con-trol interface. The vehicle is shown in Fig. 10. With the open steering control interface we are able to directly apply optimized control inputs to the vehicle. The parameter identification in this study is focused on the inertia Jz and the sti ff nesses Kf and Kr,which are the most relevant parameters for the lateral dynamics. 
+
+Considered maneuvers . To validate the proposed optimal ex-citation design, we compare its resulting parameter estimates against those obtained from standard field-test maneuvers, with both methods applied to the same test vehicle. The measurement results for all maneuvers are compiled in 13 Fig. 11, where each row corresponds to one maneuver. The columns show, from left to right, the applied steering angle δ,the yaw-rate residual ˙ψ − ˙ψmeas between the model prediction and the measurement, the longitudinal speed v, and the resulting vehicle trajectory in absolute coordinates. Further, note that the following analysis is based on the linear model (50) – (49) , which is used to identify the parameters based on the measured data. As a consequence the speed v is a static uncertain parameter in the linear model, whose confidence set covers all performed measurements. As a baseline, three standard automotive maneuvers are used: cornering left (Ref. #1), cornering right (Ref. #2), and a sinu-soidal slalom (Ref. #3). These represent common practice in vehicle testing and together form the first reference data set with a total duration of Ttot = 20 s. To obtain a more informative refer-ence set, two additional maneuvers are considered: a ramp-like slalom (Ref. #4) and a high-frequency slalom (Ref. #5). All five reference maneuvers together constitute the second reference data set with Ttot = 40 s. All reference maneuvers are depicted in orange in Fig. 11. To ensure a fair comparison, the steering amplitude and slope are chosen to match those of the optimal inputs from Section 6.2, i.e. each maneuver uses either the max-imum amplitude u+ or the maximum rate ˙ u+, as applicable. Both optimized maneuvers are shown in blue in Fig. 11. The ramp-based optimal input from Section 6.2 is used directly as the first optimized excitation (Opt. #1). To broaden the comparison, the optimization is additionally carried out for a sinusoidal input set based on the linear model with analogous constraints, 
+
+U3 = {u(t) = u0 sin(2 π f t − φ) | u(0) = 0, |u(t)| < u+,
+
+|˙u(t)| < ˙u+, ∀t ∈ [0 , T ]},
+
+yielding the optimal sinusoidal slalom maneuver denoted Opt. #2. 
+
+Identification results . The identified parameters for the three data sets are summarized in Table 3. The ranges correspond to the mean and standard deviation of the identified parameters, i.e. 
+
+E[ˆ θi] ± σ(ˆ θi) for each data set. The parameter identification is performed using a standard least-squares approach [ 1 ], where the cost function is defined as the sum of squared yaw-rate residuals ˙ψ − ˙ψmeas across all maneuvers in the respective data set. The resulting parameter estimates are then used to compute the confidence bounds shown as shaded areas in Fig. 11, which represent the 5%–95% confi-dence intervals based on the identified parameter distributions. 
+
+Discussion . The results in Table 3 indicate that the cornering sti ff ness parameters Kf and Kr are consistently well excited across all maneuvers and therefore easier to identify, leading to                                               
+
+> Table 3: Identification results for di ff erent data sets. The ranges below correspond to the mean and the standard deviation of the identified parameters, i.e. E[ˆθi]±σ(ˆθi), for the given data set. Reference maneuvers (orange) and optimized ones (blue) are shown in Fig. 11. The total time Ttot corresponds to the sum of the durations of the individual maneuvers.
+> Data Set Ttot in s ˆJzin kg m 2ˆKfin s /mˆKrin s /mRef. #1–#3 20.0 2397 ±1473 6.245 ±0.512 14 .17 ±1.21 Ref. #1–#5 40.0 2562 ±858 6.240 ±0.492 14 .18 ±1.20 Opt. #1–#2 20.0 2542 ±585 6.291 ±0.481 13 .98 ±1.19
+
+comparable estimates in all three data sets. Also the expected values of all three parameters are consistent across the di ff erent data sets. In contrast, the standard reference set Ref. #1–#3 provides only weak information on the yaw inertia Jz, as evidenced by the large standard deviation of 1473 kg m 2. Extending the reference data to Ref. #1–#5 by adding the two further slalom maneuvers improves the identification of Jz noticeably, but at the cost of doubling the measurement time to 40 s. The optimized input set Opt. #1–#2 achieves a standard deviation of only 585 kg m 2
+
+with the same measurement time of 20 s as the basic reference set, thereby outperforming even the extended 40 s reference set in terms of identification quality per measurement time. The improved identification performance of the optimized maneuvers can be explained by their significantly higher sensi-tivity with respect to the inertia Jz, which is the parameter of interest. This is illustrated in Fig. 12, where the overall impact score ∥∆S ∥1 for each maneuver is compared across the refer-ence and optimized maneuvers. The optimized maneuvers (blue) exhibit substantially higher sensitivity for Jz compared to the reference maneuvers (orange), while maintaining comparable sensitivities for the cornering sti ff nesses Kf and Kr. This con-firms that the optimal excitation design successfully tailored the maneuvers to enhance the identifiability of the target param-eter, leading to improved estimation quality within the same measurement time. It is worth emphasizing that, beyond the design of new tai-lored excitations, the parameter-wise sensitivity signatures de-picted in Fig. 12 are already a valuable analysis tool for existing 
+
+measurement catalogues in practice. By computing the impact score ∥∆S ∥1 for each maneuver and parameter, redundant maneu-vers carrying similar information can be identified and removed, gaps in the parameter coverage of a catalogue can be detected, and individual maneuvers can be ranked according to their iden-tification value per measurement time. The proposed framework can therefore be used both to generate new optimal maneuvers and to systematically assess and curate established field-test catalogues. 
+
+7. Conclusion and Outlook 
+
+This paper presents a systematic framework for optimal excitation design in parameter identification, formulated as a stochastic optimal control problem that maximizes global sen-sitivity measures while accounting for model uncertainties and measurement noise. We developed two complementary uncer-tainty quantification approaches to make the computationally intractable problem tractable. For systems with known math-ematical structure, our intrusive polynomial chaos expansion method constructs deterministic surrogate models that enable rapid sensitivity evaluation through a single simulation, achiev-ing significant computational speedups. For black-box models, we introduced a novel non-intrusive approach based on opti-mal transport theory using Wasserstein distances, requiring no knowledge of internal system dynamics. The vehicle dynamics application demonstrated that both methods generate comparable optimal excitations, with the in-14 0 1 2 3 4 5
+
+> 0
+> 0.05
+> 0.1
+> reference #1
+
+steering angle 
+
+u, δ in rad      
+
+> 012345
+> −5
+> 0
+> 5
+> ·10 −2
+
+yaw rate residuals ˙ψ − ˙ψmeas in rad /s     
+
+> 012345
+> 10
+> 11
+> 12
+
+vehicle speed 
+
+v in m /s   
+
+> 010 20 30
+> 0
+> 10
+> 20
+> 30
+> Y in m
+
+trajectory (X, Y) in m                                                                                                        
+
+> 012345
+> −0.1
+> −0.05
+> 0
+> reference #2
+> 012345
+> −5
+> 0
+> 5
+> ·10 −2
+> 012345
+> 10
+> 11
+> 12
+> 010 20 30
+> −30
+> −20
+> −10
+> 0
+> Y in m
+> 0246810
+> −0.1
+> 0
+> 0.1
+> reference #3
+> 0246810
+> −5
+> 0
+> 5
+> ·10 −2
+> 0246810
+> 10
+> 11
+> 12
+> 020 40 60 80 100
+> 0
+> 20
+> 40
+> Y in m
+> 0246810
+> −0.1
+> 0
+> 0.1
+> reference #4
+> 0246810
+> −5
+> 0
+> 5
+> ·10 −2
+> 0246810
+> 10
+> 11
+> 12
+> 020 40 60 80 100
+> 0
+> 20
+> 40
+> Y in m
+> 0246810
+> −0.1
+> 0
+> 0.1
+> reference #5
+> 0246810
+> −1
+> 0
+> 1
+> 2·10 −2
+> 0246810
+> 10
+> 11
+> 12
+> 020 40 60 80 100 120
+> 0
+> 5
+> 10
+> Y in m
+> 0246810
+> −0.1
+> 0
+> 0.1
+> optimized #1
+> 0246810
+> −2
+> 0
+> 2
+> ·10 −2
+> 0246810
+> 10
+> 11
+> 12
+> 40 60 80 100 120
+> 30
+> 40
+> Y in m
+> 246810
+> −0.1
+> 0
+> 0.1
+
+time t in s     
+
+> optimized #2
+> 246810
+> −2
+> 0
+> 2
+> ·10 −2
+
+time t in s     
+
+> 246810
+> 10
+> 11
+> 12
+
+time t in s    
+
+> 20 40 60 80
+> 0
+> 10
+> 20
+> 30
+
+X in m 
+
+> Y in m
+
+Figure 11: Identification results for a reference input set and two optimized inputs. Each row of this figure corresponds to one maneuver; the row label on the left indicates whether it belongs to the reference set (Ref. #1–#5, orange labels) or to the optimized set (Opt. #1–#2, blue labels). The columns show, from left to right, the desired and actual steering angles u, δ, the yaw-rate residual ˙ψ − ˙ψmeas , the longitudinal speed v, and the resulting vehicle trajectory in absolute coordinates. Within each graph, thin black solid curves denote the measured signals, thick coloured lines the expected values, and the shaded areas the 5%–95% confidence bounds predicted by the identified parameter distributions. 
+
+15 θ1 = Jz θ2 = Kf θ3 = Kr
+
+> 0
+> 0.02
+> 0.04
+> 0.06
+> 0.08
+> 0.1
+> overall impact
+> ∥∆S ∥1 in rad s −1 reference #1
+> reference #2
+> reference #3
+> reference #4
+> reference #5
+> optimized #1
+> optimized #2
+
+Figure 12: Ranking of maneuver sensitivities. Comparison of the overall impact score ∥∆S ∥1 for the reference maneuvers (orange) and optimized maneuvers (blue) from Fig. 11 with respect to the inertia 
+
+θ1 = Jz, and the cornering sti ff nesses θ2 = Kf , θ3 = Kr.
+
+trusive method providing substantial computational advantages when applicable. The framework successfully produces parameter-specific excitations tailored to identification objectives, signifi-cantly improving identification capability compared to classical signals. The methodology was further validated experimentally on a test vehicle, where the optimized maneuvers reduced the standard deviation of the yaw-inertia estimate by more than a factor of two compared to a standard reference set of equal mea-surement time, and even outperformed a reference set of twice the duration. This confirms that the proposed framework trans-lates the theoretical sensitivity gains into tangible improvements in identification quality per measurement time under real-world conditions. Future work includes the integration with online parame-ter identification algorithms and the extension to multi-output and constrained-output settings. The methodology has broad applicability across engineering disciplines, providing a founda-tion for advancing virtual engineering processes and reducing reliance on extensive experimental programs as systems become increasingly complex and expensive to test. 
+
+References 
+
+[1] Lennart Ljung. System identification: theory for the user . Prentice Hall, Upper Saddle River, NJ, 2nd edition, 1999. [2] Raman Mehra. Optimal input signals for parameter estimation in dynamic systems–Survey and new results. IEEE Transactions on Automatic Control ,19(6):753–768, 2003. [3] Johan Schoukens, Rik Pintelon, and Yves Rolain. Mastering system identification in 100 exercises . John Wiley & Sons, Hoboken, NJ, 2017. [4] Douglas F Elliott and K Ramamohan Rao. Signals and systems . Academic Press, San Diego, CA, 2001. [5] Rik Pintelon and Johan Schoukens. System identification: a frequency domain approach . John Wiley & Sons, Hoboken, NJ, 2nd edition, 2012. [6] Michel Gevers and Lennart Ljung. Optimal experiment design with respect to the intended model application. Automatica , 22:543–554, 1986. [7] Valerii Vasilievich Fedorov. Theory of optimal experiments . Academic Press, New York, NY, 1972. [8] Anthony Atkinson, Alexander Donev, and Randall Tobias. Optimum Experimental Designs, With SAS . Oxford University Press, Oxford, UK, 2007. [9] Andrea Saltelli, Marco Ratto, Terry Andres, Francesca Campolongo, Jes-sica Cariboni, Debora Gatelli, Michaela Saisana, and Stefano Tarantola. 
+
+Global sensitivity analysis: the primer . John Wiley & Sons, 2008. [10] Olivier Le Maître and Omar M Knio. Spectral methods for uncer-tainty quantification: with applications to computational fluid dynamics .Springer Science & Business Media, 2010. [11] Bruno Sudret. Global sensitivity analysis using polynomial chaos expan-sions. Reliability engineering & system safety , 93(7):964–979, 2008. [12] Stefan Streif, Felix Petzke, Ali Mesbah, Rolf Findeisen, and Richard D Braatz. Optimal experimental design for probabilistic model discrimination using polynomial chaos. In Proc. IFAC world congress , pages 4103–4109, 2014. [13] Joel A Paulson and Ali Mesbah. An e ffi cient method for stochastic optimal control with joint chance constraints for nonlinear systems. International Journal of Robust and Nonlinear Control , 29(15):5017–5037, 2019. [14] Joel A Paulson, Stefan Streif, and Ali Mesbah. Stability for receding-horizon stochastic model predictive control. In Proc. American Control Conference (ACC) , pages 937–943. IEEE, 2015. [15] James Robert Fisher. Stability analysis and control of stochastic dynamic systems using polynomial chaos . Texas A&M University, 2008. [16] Thomas P Ryan. Modern experimental design . Wiley, Hoboken, NJ, 2003. [17] Kathryn Chaloner and Isabella Verdinelli. Bayesian experimental design: a review. Statistical Science , 10(3):273–304, 1995. [18] Stefano Conti and Anthony O’Hagan. Bayesian emulation of complex multi-output and dynamic computer models. Journal of Statistical Plan-ning and Inference , 140(3):640–651, 2014. [19] Ilya Meyerovich Sobo´ l. Sensitivity estimates for nonlinear mathematical models. Math. Model. Comput. Exp. , 1(4):407–414, 1993. [20] Giuseppe Carlo Calafiore and L El Ghaoui. On distributionally robust chance-constrained linear programs. Journal of Optimization Theory and Applications , 130(1):1–22, 2006. [21] Albert W Marshall and Ingram Olkin. Multivariate chebyshev inequalities. 
+
+The Annals of Mathematical Statistics , pages 1001–1014, 1960. [22] Bruno Sudret. Polynomial chaos expansions and stochastic finite element methods. Risk and reliability in geotechnical engineering , pages 265–300, 2014. [23] Norbert Wiener. The homogeneous chaos. American Journal of Mathe-matics , 60(4):897–936, 1938. [24] Dongbin Xiu and George Em Karniadakis. The Wiener–Askey polynomial chaos for stochastic di ff erential equations. SIAM journal on scientific computing , 24(2):619–644, 2002. [25] Tillmann Mühlpfordt, Rolf Findeisen, Veit Hagenmeyer, and Timm Faulwasser. Comments on truncation errors for polynomial chaos ex-pansions. IEEE Control Systems Letters , 2(1):169–174, 2017. [26] Cédric Villani. Optimal transport: old and new . Springer, 2008. [27] Matthias Gelbrich. On a formula for the L2 Wasserstein metric between measures on Euclidean and Hilbert spaces. Mathematische Nachrichten ,147(1):185–203, 1990. [28] Donald Bures. An extension of kakutani’s theorem on infinite product measures to the tensor product of semifinite w*-algebras. Transactions of the American Mathematical Society , 135:199–212, 1969. [29] Emanuele Borgonovo, Alessio Figalli, Elmar Plischke, and Giuseppe Savaré. Global sensitivity analysis via optimal transport. Management Science , 2024. [30] John T Betts. Survey of numerical methods for trajectory optimization. 
+
+Journal of guidance, control, and dynamics , 21:193–207, 1998. [31] Daniel Liberzon. Calculus of variations and optimal control theory: a concise introduction . Princeton university press, 2011. [32] Michel Gevers, Xavier Bombois, Benoit Codrons, Gérard Scorletti, and Brian DO Anderson. Optimal experiment design with respect to the intended model application. Automatica , 41:1159–1167, 2005. [33] Rida T Farouki and VT Rajan. On the numerical condition of polynomials in bernstein form. Computer Aided Geometric Design , 4(3):191–216, 1987. [34] Rainer Storn and Kenneth Price. Di ff erential evolution–a simple and effi cient heuristic for global optimization over continuous spaces. Journal of Global Optimization , 11(4):341–359, 1997. [35] Jasper Snoek, Hugo Larochelle, and Ryan P Adams. Practical bayesian op-timization of machine learning algorithms. Advances in neural information processing systems , 25, 2012. [36] Pauli Virtanen, Ralf Gommers, Travis E Oliphant, Matt Haberland, Tyler Reddy, David Cournapeau, Evgeni Burovski, Pearu Peterson, Warren Weckesser, Jonathan Bright, et al. SciPy 1.0: fundamental algorithms for scientific computing in Python. Nature Methods , 17(3):261–272, 2020. [37] Paolo Falcone, Francesco Borrelli, Jahan Asgari, H. Eric Tseng, and Davor Hrovat. Predictive Active Steering Control for Autonomous Vehicle 
+
+16 Systems. IEEE Transactions on Control Systems Technology , 15:566–580, 2007. [38] A. T. van Zanten. Bosch ESP Systems: 5 Years of Experience. SAE Transactions , 109:428–436, 2000. [39] Jarrod M. Snider. Automatic Steering Methods for Autonomous Auto-mobile Path Tracking. Robotics Institute, Carnegie Mellon University ,2009. [40] Hans Pacejka. Tire and vehicle dynamics . Elsevier, 2005. 
+
+17

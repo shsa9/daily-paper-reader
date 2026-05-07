@@ -1,0 +1,239 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-05-07T20:17:22.170967+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 6,
+    "quick_skim_target": 11,
+    "quick_selected": 6
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2605.02018v1",
+      "title": "Diffusion wall time in toroidally segmented shell aka Armadillo",
+      "abstract": "An analytical expression for the diffusion wall time of a toroidally segmented conducting shell (the Armadillo configuration) is derived by extending the continuous-shell formulation to include the non-axisymmetric current pattern imposed by the presence of toroidal gaps. The segmentation constrains the toroidal current to follow a standing-wave structure that vanishes at the gap locations, introducing a correction to the effective resistivity that grows quadratically with the number of gaps and competes with the intrinsic toroidal scale of the mode. As a result, the wall time decreases rapidly for low toroidal-number modes, more gradually for intermediate ones, and only for sufficiently large segmentation in the high-n regime. The analytical formula shows agreement within 10% against 3D electromagnetic numerical calculations. The resulting expression provides a compact tool for estimating the wall time of segmented conducting structures surrounding the plasma, with direct applications to MHD stability and control in both RFPs and tokamaks.",
+      "authors": [
+        "D. Abate",
+        "A. Corbioli"
+      ],
+      "primary_category": "physics.plasm-ph",
+      "categories": [
+        "physics.plasm-ph"
+      ],
+      "published": "2026-05-03T18:46:45+00:00",
+      "link": "https://arxiv.org/pdf/2605.02018v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "eddy current effects in conducting shells and diffusion wall time",
+      "llm_evidence_cn": "导电壳中的涡流效应和扩散壁时间",
+      "llm_evidence": "导电壳中的涡流效应和扩散壁时间",
+      "canonical_evidence": "导电壳中的涡流效应和扩散壁时间",
+      "llm_tldr_en": "Analytical modeling of eddy current diffusion time in segmented conducting shells for magnetic systems.",
+      "llm_tldr_cn": "磁系统中分段导电壳涡流扩散时间的解析建模。",
+      "llm_tldr": "磁系统中分段导电壳涡流扩散时间的解析建模。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "eddy current effects in electromagnetic actuators dynamic modeling",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2604.26172v2",
+      "title": "Co-Learning Port-Hamiltonian Systems and Optimal Energy-Shaping Control",
+      "abstract": "We develop a physics-informed learning framework for energy-shaping control of port-Hamiltonian (pH) systems from trajectory data. The proposed approach co-learns a pH system model and an optimal energy-balancing passivity-based controller (EB-PBC) through alternating optimization with policy-aware data collection. At each iteration, the system model is refined using trajectory data collected under the current control policy, and the controller is re-optimized on the updated model. Both components are parameterized by neural networks that embed the pH dynamics and EB-PBC structure, ensuring interpretability in terms of energy interactions. The learned controller renders the closed-loop system inherently passive and provably stable, and exploits passive plant dynamics without canceling the natural potential. A dissipation regularization enforces strict energy decay during training, thereby enhancing robustness to sim-to-real gaps. The proposed framework is validated on state-regulation and swing-up tasks for planar and torsional pendulum systems.",
+      "authors": [
+        "Ankur Kamboj",
+        "Biswadip Dey",
+        "Vaibhav Srivastava"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY",
+        "cs.AI",
+        "cs.LG",
+        "math.OC",
+        "stat.ML"
+      ],
+      "published": "2026-04-28T23:27:10+00:00",
+      "link": "https://arxiv.org/pdf/2604.26172v2",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "energy-shaping control for port-Hamiltonian systems",
+      "llm_evidence_cn": "端口哈密顿系统的能量成形控制",
+      "llm_evidence": "端口哈密顿系统的能量成形控制",
+      "canonical_evidence": "端口哈密顿系统的能量成形控制",
+      "llm_tldr_en": "A physics-informed framework for co-learning system models and optimal energy-shaping controllers.",
+      "llm_tldr_cn": "一种用于共同学习系统模型和最优能量成形控制器的物理启发式框架。",
+      "llm_tldr": "一种用于共同学习系统模型和最优能量成形控制器的物理启发式框架。",
+      "llm_tags": [
+        "query:em-force:composite"
+      ],
+      "matched_query_tag": "query:em-force:composite",
+      "matched_query_text": "Papers central to 查找非接触式电磁激振器的力控制方法，特别是精密控制策略, especially work that connects or combines: electromagnetic exciter force control; ddy current magnetic bearing modeling; magnetic bearing flux feedback; non-contact electromagnetic shaker force control; precision force control strategies for electromagnetic actuators; closed-loop force control for electromagnetic shakers; flux feedback linearization zero bias magnetic bearing; non contact electromagnetic exciter precision force control; eddy current effects in electromagnetic actuators dynamic modeling; flux feedback control for magnetic bearing force precision.",
+      "matched_requirement_id": "req-composite-em-force",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.01395v1",
+      "title": "Quasi-Static Control of Discrete Cosserat Rod",
+      "abstract": "In this paper, we design feedback control laws for soft robots modelled using the Cosserat rod, which is spatially discretised using the Piecewise Constant Strain (PCS) approach. The PCS approach transforms the nonlinear PDEs describing the Cosserat rod to a system of nonlinear ODEs. This simplification results in a model describing soft robots which is similar to the serial rigid-link manipulators. We design feedback control laws for the quasi-static PCS model by using the external end-effector wrench as control input. The control laws are designed based on state-feedback linearisation in strain and task spaces. An extensive set of numerical results demonstrates the performance of the control laws for end-effector trajectory tracking and shape control of soft robots.",
+      "authors": [
+        "Srishti Siddharth"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY",
+        "cs.RO"
+      ],
+      "published": "2026-05-02T11:35:02+00:00",
+      "link": "https://arxiv.org/pdf/2605.01395v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "state-feedback linearization for nonlinear models",
+      "llm_evidence_cn": "非线性模型的状态反馈线性化",
+      "llm_evidence": "非线性模型的状态反馈线性化",
+      "canonical_evidence": "非线性模型的状态反馈线性化",
+      "llm_tldr_en": "Applies state-feedback linearization to soft robots, a core strategy for precision electromagnetic force control.",
+      "llm_tldr_cn": "将状态反馈线性化应用于软机器人，这是精密电磁力控制的核心策略。",
+      "llm_tldr": "将状态反馈线性化应用于软机器人，这是精密电磁力控制的核心策略。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "flux feedback linearization zero bias magnetic bearing",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.03726v1",
+      "title": "Global exponential stabilization of a force- and torque-actuated unicycle by flexible-step MPC",
+      "abstract": "We study the problem of global exponential stabilization of a force- and torque-controlled unicycle model in discrete time. To this end, we extend a recently introduced approach to model predictive control (MPC) in which a flexible number of inputs is implemented in every iteration. We present the first flexible-step MPC protocol with state-dependent weights for average descent. Notably, the proposed method relies neither on a suitable design of running or terminal cost functions nor on a suitable choice of terminal constraints. Instead, stability is guaranteed through a generalized discrete-time control Lyapunov function. We establish a new theoretical framework for global exponential stabilization of general nonlinear discrete-time control systems by flexible-step MPC. The obtained results go beyond the unicycle example. However, given the importance of the unicycle dynamics, we make that a focal point of our work. For the particular case of the dynamic (second-order) unicycle model, we show that global exponential stability cannot be attained in the classical sense, but in a slightly weaker sense. The proposed flexible-step MPC method is shown to induce the best possible notion of global exponential stability for this model. We provide explicit rules for the choice of parameters, which guarantee feasibility and global exponential stability. Our numerical simulations show that the discrete MPC method also works very well in applications to a continuous-time torque-actuated unicycle.",
+      "authors": [
+        "Ala Kolsi",
+        "Christian Ebenbauer",
+        "Bahman Gharesifard",
+        "Raik Suttner"
+      ],
+      "primary_category": "math.OC",
+      "categories": [
+        "math.OC",
+        "eess.SY"
+      ],
+      "published": "2026-05-05T13:11:22+00:00",
+      "link": "https://arxiv.org/pdf/2605.03726v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "global exponential stabilization of a force-actuated model",
+      "llm_evidence_cn": "力驱动模型的全局指数稳定",
+      "llm_evidence": "力驱动模型的全局指数稳定",
+      "canonical_evidence": "力驱动模型的全局指数稳定",
+      "llm_tldr_en": "Develops a flexible-step MPC for stabilizing force-actuated systems, applicable to precision actuator control.",
+      "llm_tldr_cn": "开发了一种用于稳定力驱动系统的柔性步长MPC，适用于精密执行器控制。",
+      "llm_tldr": "开发了一种用于稳定力驱动系统的柔性步长MPC，适用于精密执行器控制。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.04656v1",
+      "title": "Adaptive MPC for Constrained Trajectory Tracking of Uncertain LTI System with Input-Rate Limits",
+      "abstract": "This paper addresses the trajectory-tracking problem for discrete-time linear time-invariant systems with bounded parametric uncertainty, subject to hard constraints on system states, control inputs, and input rates. Unlike existing methods, which often consider only partial uncertainty, omit input-rate or state constraints, or focus on regulation problems, this work provides a systematic adaptive model predictive control (MPC) solution for constrained trajectory tracking under full parametric uncertainty. Determining the control input required to achieve zero tracking error under unknown parameters is challenging. Simultaneously, trajectory tracking under uncertainty with input-rate constraints induces temporal coupling in the control sequence, resulting in a time-varying admissible control set and rendering standard recursive feasibility arguments inapplicable. These challenges are overcome by systematically utilizing the estimated system parameters, coupled with a suitably designed adaptive learning process within a reformulated MPC framework. The recursive feasibility of the proposed MPC optimization routine is then rigorously established despite the time-varying admissible control set induced by input-rate constraints. Closed-loop stability is guaranteed via Lyapunov-based analysis, ensuring convergence of the tracking error and boundedness of system states. Simulation results validate the effectiveness of the pr",
+      "authors": [
+        "Bishal Dey",
+        "Abhishek Dhar",
+        "Sumit kr. Pandey",
+        "Anindita Sengupta"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-05-06T09:02:27+00:00",
+      "link": "https://arxiv.org/pdf/2605.04656v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Adaptive MPC for constrained trajectory tracking of uncertain systems can be applied to precision force control.",
+      "llm_evidence_cn": "针对不确定系统的自适应模型预测控制可应用于电磁执行器的精密力控制。",
+      "llm_evidence": "针对不确定系统的自适应模型预测控制可应用于电磁执行器的精密力控制。",
+      "canonical_evidence": "针对不确定系统的自适应模型预测控制可应用于电磁执行器的精密力控制。",
+      "llm_tldr_en": "Proposes an adaptive MPC for trajectory tracking under uncertainty, potentially applicable to actuator control.",
+      "llm_tldr_cn": "提出一种不确定性下的自适应模型预测控制方法，可用于执行器精密控制。",
+      "llm_tldr": "提出一种不确定性下的自适应模型预测控制方法，可用于执行器精密控制。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "precision force control strategies for electromagnetic actuators",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.04691v1",
+      "title": "Uncertainty Quantification Methods for Optimal Excitation Design in Parameter Identification",
+      "abstract": "Parameter identification is crucial in virtual engineering processes, yet determining appropriate system excitations for identifying specific parameters remains challenging. In practice, extensive experimental programs often fail to generate data with sufficient information content for reliable parameter estimation. This work presents a systematic approach for deriving optimal excitations by maximizing the global sensitivity of target parameters across the space of possible excitation functions. To address the computational challenge of sensitivity evaluation during optimization, we develop two complementary approaches based on uncertainty quantification (UQ) methods. For systems with known mathematical structure, we present an intrusive polynomial chaos expansion (PCE) method that constructs deterministic surrogate models, enabling rapid sensitivity computation. For black-box models where intrusive approaches are not feasible, we introduce a novel non-intrusive method based on optimal transport theory, specifically using Wasserstein distances to quantify sensitivity measures without requiring knowledge of internal system dynamics. Both methods significantly reduce computational costs, making optimal excitation design practical for complex engineering systems. We demonstrate the effectiveness of both approaches on vehicle dynamics models, showing substantial improvements in parameter identification capability. The benefit for parameter identification is further validated experimentally on a test vehicle and compared to the state of the art.",
+      "authors": [
+        "Kevin Schmidt",
+        "Nicola Henkelmann",
+        "Christoph Mark",
+        "Johannes von Keler"
+      ],
+      "primary_category": "math.OC",
+      "categories": [
+        "math.OC"
+      ],
+      "published": "2026-05-06T09:43:29+00:00",
+      "link": "https://arxiv.org/pdf/2605.04691v1",
+      "tags": [
+        "keyword:EM-Force",
+        "query:EM-Force"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Optimal excitation design for parameter identification in engineering systems",
+      "llm_evidence_cn": "工程系统参数辨识的最优激励设计",
+      "llm_evidence": "工程系统参数辨识的最优激励设计",
+      "canonical_evidence": "工程系统参数辨识的最优激励设计",
+      "llm_tldr_en": "Presents a systematic approach for deriving optimal system excitations to improve parameter identification.",
+      "llm_tldr_cn": "提出一种系统化的最优激励设计方法，以提高工程系统参数辨识的可靠性。",
+      "llm_tldr": "提出一种系统化的最优激励设计方法，以提高工程系统参数辨识的可靠性。",
+      "llm_tags": [
+        "query:em-force"
+      ],
+      "matched_query_tag": "query:em-force",
+      "matched_query_text": "electromagnetic exciter force control",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
