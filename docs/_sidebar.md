@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-05-08 <!--dpr-date:20260508-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202605/08/2605.06286v1-power-efficiency-and-scalability-analysis-of-magnetically-actuated-satellite-swarms-via-convex-optimization" data-sidebar-item="{&quot;title&quot;: &quot;Power-Efficiency and Scalability Analysis of Magnetically-Actuated Satellite Swarms via Convex Optimization&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2605.06286v1-power-efficiency-and-scalability-analysis-of-magnetically-actuated-satellite-swarms-via-convex-optimization&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;em-force&quot;}], &quot;evidence&quot;: &quot;磁驱动编队控制与磁场相互作用&quot;}">Power-Efficiency and Scalability Analysis of Magnetically-Actuated Satellite Swarms via Convex Optimization</a>
   * 2026-05-07 <!--dpr-date:20260507-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202605/07/2605.02018v1-diffusion-wall-time-in-toroidally-segmented-shell-aka-armadillo" data-sidebar-item="{&quot;title&quot;: &quot;Diffusion wall time in toroidally segmented shell aka Armadillo&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2605.02018v1-diffusion-wall-time-in-toroidally-segmented-shell-aka-armadillo&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;em-force&quot;}], &quot;evidence&quot;: &quot;导电壳中的涡流效应和扩散壁时间&quot;}">Diffusion wall time in toroidally segmented shell aka Armadillo</a>
